@@ -462,6 +462,64 @@ func probeGridIsClockGrid(ctx context.Context, md, tok string) {
 		when, ag, when, rb, same, want, isClock))
 }
 
+// probeGfexNoNight 从 1m 数据反推 GFEX 的【实际】交易时段。
+//
+// 背景：openmd 目录 334 MiB，GFEX 从 40% 之后才出现，本仓分析用的两份快照
+// 只覆盖前 5%——于是「GFEX 有没有夜盘」一度被判成「要先拉完目录才能答」。
+// 那是路径选错：**一根 1m 存在 ⇔ 那一分钟在交易**，分钟数据直接就能答，
+// 而 calendar/derived 本来就是照这个思路设计的。
+//
+// 判据两条，缺一不可：
+//   - GFEX 三个品种（si/lc/ps）**没有**任何 20:00 之后 / 04:00 之前的 1m；
+//   - **对照组** SHFE.rb **必须有**——否则「没检测到夜盘」可能只是方法失效。
+func probeGfexNoNight(ctx context.Context, md, tok string) {
+	hasNight := func(sym string) (bool, int, error) {
+		m, err := minuteLabels(ctx, md, tok, sym, 1)
+		if err != nil {
+			return false, 0, err
+		}
+		n := 0
+		night := false
+		for _, ts := range m {
+			for _, t := range ts {
+				n++
+				if t >= "20:00" || t < "04:00" {
+					night = true
+				}
+			}
+		}
+		return night, n, nil
+	}
+
+	var b strings.Builder
+	bad := 0
+	for _, sym := range []string{"KQ.m@GFEX.si", "KQ.m@GFEX.lc", "KQ.m@GFEX.ps"} {
+		night, n, err := hasNight(sym)
+		if err != nil {
+			fmt.Fprintf(&b, "%-16s 失败 %v\n       ", sym, err)
+			bad++
+			continue
+		}
+		if night {
+			bad++
+		}
+		fmt.Fprintf(&b, "%-16s %4d 根 1m  夜盘=%v（期望 false）\n       ", sym, n, night)
+	}
+	// 对照组：方法本身能不能看见夜盘
+	night, n, err := hasNight("KQ.m@SHFE.rb")
+	if err != nil || !night {
+		bad++
+	}
+	fmt.Fprintf(&b, "对照 KQ.m@SHFE.rb  %4d 根 1m  夜盘=%v（期望 true——"+
+		"它为 false 说明是方法失效，不是 GFEX 真没夜盘）", n, night)
+
+	st := "PASS"
+	if bad > 0 {
+		st = "FAIL"
+	}
+	report("shinny-gfex-no-night", st, b.String())
+}
+
 func main() {
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
 	fmt.Println()
@@ -567,6 +625,7 @@ func main() {
 			len(baseline.expiredSyms)-expiredBad, len(baseline.expiredSyms), baseline.floorDay))
 
 	probeGridIsClockGrid(ctx, md, tok)
+	probeGfexNoNight(ctx, md, tok)
 
 	if failed > 0 {
 		fmt.Printf("%d 条偏离记录 → 先判断是上游变了还是记录错了，再更新 docs/probe.md\n", failed)
