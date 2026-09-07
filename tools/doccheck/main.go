@@ -91,25 +91,62 @@ func main() {
 		os.Exit(1)
 	}
 
-	var missing, mismatch, staleWL []string
-	used := map[string]bool{}
+	res := compare(docDecls, srcDecls, pending, docConflicts,
+		func(v string) bool { return tagExists(*root, v) })
+	fmt.Print(res.render())
+	if res.count() > 0 {
+		os.Exit(1)
+	}
+}
 
+// findings 是一次比对的全部结论，按类别分开。
+//
+// 把它从 main 里拆出来，是为了让测试能【读到措辞】。
+// 本工具至今出过三个真 bug，三个的形态一模一样：**退出码正确、文本错误**——
+// 一行多名的字段只登记第一个（误报三个「找不到」）、单行结构体扫进了下一个类型、
+// 「欠条已兑现」被说成「文档里没声明」。
+// 这类失败自动化天然抓不住，除非把**期望的输出文本**也写进断言。
+type findings struct {
+	docN, srcN, wlN int
+	missing         []string
+	mismatch        []string
+	staleWL         []string
+	orphan          []string
+	paid            []string
+	conflicts       []string
+	used            map[string]bool
+	direct          int
+}
+
+func (f findings) count() int {
+	return len(f.missing) + len(f.mismatch) + len(f.staleWL) +
+		len(f.orphan) + len(f.paid) + len(f.conflicts)
+}
+
+// compare 是全部判定逻辑。tagged 注入，测试不必真去建 git tag。
+func compare(docDecls, srcDecls map[string]decl, pending map[string]string,
+	conflicts []string, tagged func(string) bool) findings {
+	f := findings{
+		docN: len(docDecls), srcN: len(srcDecls), wlN: len(pending),
+		conflicts: conflicts, used: map[string]bool{},
+	}
 	for _, d := range sorted(docDecls) {
 		s, ok := srcDecls[d.Name]
 		if !ok {
 			if v, wl := whitelisted(pending, d.Name); wl {
-				used[d.Name] = true
-				if tagExists(*root, v) {
-					staleWL = append(staleWL,
+				f.used[d.Name] = true
+				if tagged(v) {
+					f.staleWL = append(f.staleWL,
 						fmt.Sprintf("%s —— 白名单写着 %s，而 %s 已经打过 tag", d.Name, v, v))
 				}
 				continue
 			}
-			missing = append(missing, fmt.Sprintf("%s (%s) —— 文档 %s", d.Name, d.Kind, d.Src))
+			f.missing = append(f.missing,
+				fmt.Sprintf("%s (%s) —— 文档 %s", d.Name, d.Kind, d.Src))
 			continue
 		}
 		if d.Sig != "" && s.Sig != d.Sig {
-			mismatch = append(mismatch, fmt.Sprintf(
+			f.mismatch = append(f.mismatch, fmt.Sprintf(
 				"%s\n      文档: %s   (%s)\n      源码: %s   (%s)",
 				d.Name, d.Sig, d.Src, s.Sig, s.Src))
 		}
@@ -120,70 +157,69 @@ func main() {
 	// 原来两种都报「文档里没有声明它」，而其中一种文档明明声明了、
 	// 源码也实现了——**报告本身在说一件不真的事**，而这个工具的全部价值
 	// 就是「报告说的是真的」。
-	var paid, orphan []string
 	for name, v := range pending {
 		if _, done := srcDecls[name]; done {
 			// 欠条已经兑现：v0.2 把 Source 写出来了，这一行该删了。
 			// 这【不是】守卫坏了，也不是「设计如此的红」——
 			// 它是版本收尾动作里漏了一步，红得其所。
-			paid = append(paid, fmt.Sprintf(
+			f.paid = append(f.paid, fmt.Sprintf(
 				"%s (%s) —— 源码里已经有了，欠条该销：把这一行从 pending.txt 删掉",
 				name, v))
 			continue
 		}
-		if !used[name] {
-			orphan = append(orphan, fmt.Sprintf(
+		if !f.used[name] {
+			f.orphan = append(f.orphan, fmt.Sprintf(
 				"%s (%s) —— 白名单里有，但【文档里】没有声明它（写错名字？还是文档删了没同步？）",
 				name, v))
 		}
 	}
-	sort.Strings(paid)
-	sort.Strings(orphan)
+	sort.Strings(f.paid)
+	sort.Strings(f.orphan)
+	// 分开数：直接写在 pending.txt 里的，和由所属类型继承来的。
+	// 合成一个数会让白名单看起来比实际长——**报告里的每个数也要是真的**。
+	for n := range f.used {
+		if _, ok := pending[n]; ok {
+			f.direct++
+		}
+	}
+	return f
+}
 
-	fmt.Printf("文档声明 %d 处；源码声明 %d 处；白名单 %d 项\n\n",
-		len(docDecls), len(srcDecls), len(pending))
-
-	bad := 0
-	report := func(title string, items []string) {
+// render 把结论渲染成报告。测试比对的就是这段文本。
+func (f findings) render() string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "文档声明 %d 处；源码声明 %d 处；白名单 %d 项\n\n", f.docN, f.srcN, f.wlN)
+	sec := func(title string, items []string) {
 		if len(items) == 0 {
 			return
 		}
-		bad += len(items)
-		fmt.Printf("== %s（%d）==\n", title, len(items))
+		fmt.Fprintf(&b, "== %s（%d）==\n", title, len(items))
 		for _, s := range items {
-			fmt.Println("  " + s)
+			fmt.Fprintln(&b, "  "+s)
 		}
-		fmt.Println()
+		fmt.Fprintln(&b)
 	}
-	report("源码里找不到，且不在白名单", missing)
-	report("名字在、【签名不同】", mismatch)
-	report("白名单已过期（预定版本已打 tag）", staleWL)
-	report("白名单里的孤儿项", orphan)
-	report("欠条已兑现，但白名单没清", paid)
-	report("【文档内部】同一标识符声明了两次且不一致", docConflicts)
+	sec("源码里找不到，且不在白名单", f.missing)
+	sec("名字在、【签名不同】", f.mismatch)
+	sec("白名单已过期（预定版本已打 tag）", f.staleWL)
+	sec("白名单里的孤儿项", f.orphan)
+	sec("欠条已兑现，但白名单没清", f.paid)
+	sec("【文档内部】同一标识符声明了两次且不一致", f.conflicts)
 
-	if bad == 0 {
-		// 分开数：直接写在 pending.txt 里的，和由所属类型继承来的。
-		// 合成一个数会让白名单看起来比实际长——**报告里的每个数也要是真的**。
-		direct := 0
-		for n := range used {
-			if _, ok := pending[n]; ok {
-				direct++
-			}
-		}
-		fmt.Printf("一致。（%d 项记为「尚未实现」：%d 项白名单直接写明，%d 项由所属类型继承）\n",
-			len(used), direct, len(used)-direct)
-		return
+	if f.count() == 0 {
+		fmt.Fprintf(&b, "一致。（%d 项记为「尚未实现」：%d 项白名单直接写明，%d 项由所属类型继承）\n",
+			len(f.used), f.direct, len(f.used)-f.direct)
+		return b.String()
 	}
-	fmt.Printf("%d 处不一致。\n", bad)
-	fmt.Println("按类别处置：")
-	fmt.Println("  源码里找不到   → 实现它，或改文档，或写进 pending.txt 并注明预定版本")
-	fmt.Println("  签名不同       → 改源码或改文档，让两边一致")
-	fmt.Println("  白名单已过期   → 那个版本到了而实现没做完：做完它，或推迟预定版本并说明")
-	fmt.Println("  欠条已兑现     → 实现做完了：把那几行从 pending.txt 删掉")
-	fmt.Println("  孤儿项         → 名字写错了，或文档删了没同步")
-	fmt.Println("  文档内部矛盾   → 同一标识符两处声明不一致，先让文档跟自己一致")
-	os.Exit(1)
+	fmt.Fprintf(&b, "%d 处不一致。\n", f.count())
+	b.WriteString("按类别处置：\n" +
+		"  源码里找不到   → 实现它，或改文档，或写进 pending.txt 并注明预定版本\n" +
+		"  签名不同       → 改源码或改文档，让两边一致\n" +
+		"  白名单已过期   → 那个版本到了而实现没做完：做完它，或推迟预定版本并说明\n" +
+		"  欠条已兑现     → 实现做完了：把那几行从 pending.txt 删掉\n" +
+		"  孤儿项         → 名字写错了，或文档删了没同步\n" +
+		"  文档内部矛盾   → 同一标识符两处声明不一致，先让文档跟自己一致\n")
+	return b.String()
 }
 
 // docConflicts 记的是【同一个标识符在文档里被声明了两次、而且不一样】。
@@ -223,6 +259,9 @@ func sorted(m map[string]decl) []decl {
 var fenceGo = "```go"
 
 func fromDocs(dir string) (map[string]decl, error) {
+	// 每次调用重置：docConflicts 是包级的，跨调用累积就会让第二次调用
+	// 继承第一次的结论。main 只调一次看不出来，测试一调两次就现形。
+	docConflicts = nil
 	out := map[string]decl{}
 	files, err := filepath.Glob(filepath.Join(dir, "*.md"))
 	if err != nil {
