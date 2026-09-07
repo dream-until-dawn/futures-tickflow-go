@@ -572,3 +572,47 @@ func TestNightRemainderStillMergesWhenTemplateMatches(t *testing.T) {
 		t.Error("模板与实际一致，不该带矛盾标记")
 	}
 }
+
+// TestKnownDefect_PermanentNightCancellationLooksLikeHoliday 钉住一条
+// 【按设计静默】的洞，不是期望行为。
+//
+// TemplateMismatch 豁免 actual == 0，理由是「停一天不构成标称错了的证据」。
+// 但**单日停（长假）与永久取消，在 Day 这一级不可分辨**——
+// 而后者是真的模板过期：
+//
+//	mismatch 永远 false（actual > 0 这个前置条件永远不成立）；
+//	Phase 继续按陈旧的标称 330 算；
+//	沪银日盘一直给 09:30/10:45/13:45/14:45/15:00，而实际已是 10:00/11:15/14:15/15:00。
+//	每一根都错 30 分钟，永远，静默。
+//
+// 区分需要【序列】（连续 N 个交易日 actual == 0），那是 v0.2 Syncer 的层级，
+// 不是 Day 的——所以边界划在这里是对的，洞是它的代价，代价要记账。
+//
+// 这条断言的是**错误行为**：v0.2 补上序列级检测后它会变红，
+// 那时请一并更新 Day.TemplateMismatch 的文档与 contract.md 那一行风险。
+func TestKnownDefect_PermanentNightCancellationLooksLikeHoliday(t *testing.T) {
+	// 交易所永久取消了沪银夜盘，而内置模板仍写着 330
+	d := day(20260907, "2026-09-04", "2026-09-07", 0)
+
+	if _, actual, bad := d.TemplateMismatch(tmplAG); bad || actual != 0 {
+		t.Fatalf("按当前设计，实际=0 不算矛盾（得到 actual=%d mismatch=%v）；"+
+			"若这是 v0.2 序列级检测修好的结果，"+
+			"请一并更新 Day.TemplateMismatch 的文档与 contract.md 的风险行",
+			actual, bad)
+	}
+
+	// 而它切出来的网格【确实是错的】——这才是这个洞的代价
+	p := MustIntraday(60)
+	stale := dayPart(p.Bars(tmplAG, d)) // 按过期模板（标称 330）
+	truth := dayPart(p.Bars(tmplSI, d)) // 按真实情况（无夜盘）
+	if eq(stale, truth) {
+		t.Fatalf("两者本应不同，得到同一组 %v——"+
+			"若相位规则改了，这条已知缺陷的代价描述要重写", stale)
+	}
+	if want := []string{"09:30", "10:45", "13:45", "14:45", "15:00"}; !eq(stale, want) {
+		t.Errorf("过期模板切出 %v，期望 %v", stale, want)
+	}
+	if want := []string{"10:00", "11:15", "14:15", "15:00"}; !eq(truth, want) {
+		t.Errorf("真实情况切出 %v，期望 %v", truth, want)
+	}
+}
