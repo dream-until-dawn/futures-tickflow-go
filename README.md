@@ -135,6 +135,19 @@ python tools/probe/probe.py
 
 ## 与姊妹项目的关系
 
+**下游**是回测引擎，它同时消费本库与
+[futures-position-simulator-go](https://github.com/dream-until-dawn/futures-position-simulator-go)：
+
+```
+futures-tickflow-go ──视图──> 回测引擎 ──成交/结算──> futures-position-simulator-go
+      （本库）                                              （记账）
+```
+
+两个上游各自独立，但**口径在设计阶段就对齐**，免得回测引擎夹在中间多转一层。
+已对出一处真冲突（郑商所三位 vs 四位年月码）、两样本库可以直接供给对方的
+（**当日结算价**、**交易日历与时段表**），以及 float64/decimal 的边界该画在哪。
+逐条见 [design.md 第十二节](docs/design.md)。
+
 [okx-tickflow-go](https://github.com/dream-until-dawn/okx-tickflow-go)
 在加密市场做同一件事。本库**不是它的移植**：指标层与存储层可以共享思路，
 但**时间模型是全新的**，而且是本库绝大部分复杂度的来源。
