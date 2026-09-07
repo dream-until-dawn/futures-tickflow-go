@@ -29,6 +29,12 @@ SINA_REF = "https://finance.sina.com.cn"
 SINA_K = ("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
           "var%20_=/InnerFuturesNewService.")
 TQ_SYMBOLS = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
+SHINNY_AUTH = "https://auth.shinnytech.com"
+# 这个 client 身份是从开源 tqsdk 包里读出来的，不是发给本项目的。
+# 库代码里【不设默认值】，必须由使用者显式提供——见 contract.md 的合规风险行。
+# 探针里写出来是为了能重跑，它本来就公开在 PyPI 上。
+SHINNY_CLIENT_ID = "shinny_tq"
+SHINNY_CLIENT_SECRET = "REDACTED-取值见-tqsdk-包-auth.py"
 
 # docs/probe.md 记录的基线。改这里之前先想清楚是上游变了还是记录错了。
 BASELINE = {
@@ -41,11 +47,43 @@ BASELINE = {
 
 results = []
 
+PASS, FAIL, SKIP = "PASS", "FAIL", "SKIP"
 
-def record(name, ok, detail):
-    results.append((name, ok, detail))
-    mark = "PASS" if ok else "FAIL"
-    print(f"[{mark}] {name}\n       {detail}")
+
+def record(name, status, detail):
+    """status 取 PASS / FAIL / SKIP。
+
+    SKIP 是【测不了】，与 FAIL（结论变了）分开——理由和第九节把「连不上」
+    与「结论变了」分开是同一条：把两者混在一起，退出码就再也说明不了问题。
+    兼容旧的布尔用法。
+    """
+    if status is True:
+        status = PASS
+    elif status is False:
+        status = FAIL
+    results.append((name, status, detail))
+    print(f"[{status}] {name}\n       {detail}")
+
+
+def load_dotenv():
+    """从仓库根的 .env 读凭证；没有就回落到环境变量。缺失返回 (None, None)。"""
+    import os
+    import pathlib
+    user, pw = os.environ.get("SHINNY_USER"), os.environ.get("SHINNY_PASS")
+    if user and pw:
+        return user, pw
+    root = pathlib.Path(__file__).resolve().parents[2]
+    f = root / ".env"
+    if not f.exists():
+        return None, None
+    kv = {}
+    for line in f.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        kv[k.strip()] = v.strip().strip('"').strip("'")
+    return kv.get("SHINNY_USER"), kv.get("SHINNY_PASS")
 
 
 def fetch(url, referer=SINA_REF, timeout=30):
@@ -229,9 +267,12 @@ def probe_grid_phase_is_constant():
 
     normal = normal_days[0][1] if normal_days else None
     if normal is None or not susp:
-        record("grid-phase-constant", False,
+        # 【测不了】≠【结论变了】。停夜盘只在长假前后出现，而 AG0 的 1023 根
+        # 窗口是全仓最短的（约 4.8 个月，见坑一），赶上没有长假的时段就取不到
+        # 对照日。这时报 SKIP，不能报 FAIL——否则退出码 1 会被当成结论变了。
+        record("grid-phase-constant", SKIP,
                f"窗口内找不到对照日（普通日={len(normal_days)} 停夜盘日={len(susp)}）。"
-               f"停夜盘只在长假前后出现，窗口太短时取不到")
+               f"停夜盘只在长假前后出现，而 AG0 的窗口约 4.8 个月，是全仓最短的")
         return
     bad = [(d, g) for d, g in susp if g != normal]
     record("grid-phase-constant", not bad,
@@ -325,6 +366,70 @@ def probe_tq_trading_time():
            f"前 256KB 内 trading_time={yes_no(has_tt)}  volume_multiple={yes_no(has_vm)}")
 
 
+def probe_shinny_auth():
+    """天勤鉴权链路：client_secret 是否仍有效、futr 权限是否还在、名称服务是否还给 mdurl。
+
+    这三样是第六节全部结论的前提，也是【最容易失效】的一环——
+    client_secret 是从开源 tqsdk 包里读出来的，不是发给我们的，随时可能轮换。
+    probe.md 6.1 自己写了这条风险，那就该有探针盯着。
+
+    没有凭证时 SKIP，不是 FAIL——没有账户的人克隆下来不该看到一片红。
+
+    【只覆盖 HTTP 那一半】。websocket + 深度那一半用不了标准库
+    （要 permessage-deflate），走 tools/probe/shinny/ 的 Go 探针。
+    """
+    import urllib.parse
+
+    user, pw = load_dotenv()
+    if not user or not pw:
+        record("shinny-auth", SKIP,
+               "未提供凭证（.env 的 SHINNY_USER / SHINNY_PASS 或同名环境变量），跳过")
+        return
+
+    body = urllib.parse.urlencode({
+        "grant_type": "password",
+        "client_id": SHINNY_CLIENT_ID,
+        "client_secret": SHINNY_CLIENT_SECRET,
+        "username": user,
+        "password": pw,
+    }).encode()
+    req = urllib.request.Request(
+        f"{SHINNY_AUTH}/auth/realms/shinnytech/protocol/openid-connect/token",
+        data=body, headers={"Content-Type": "application/x-www-form-urlencoded"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            tok = json.loads(r.read())["access_token"]
+    except urllib.error.HTTPError as e:
+        record("shinny-auth", FAIL,
+               f"取 token 失败 HTTP {e.code}。**最可能的原因是 client_secret 被轮换了**"
+               f"（它硬编码在 tqsdk 包里，不是发给我们的）；其次才是凭证不对")
+        return
+
+    # JWT 的 payload 段，只看 grants，不碰身份字段
+    import base64
+    seg = tok.split(".")[1]
+    seg += "=" * (-len(seg) % 4)
+    grants = json.loads(base64.urlsafe_b64decode(seg)).get("grants", {})
+    feats = grants.get("features", [])
+    has_futr = "futr" in feats
+
+    # 名称服务：行情地址不能写死，必须问它
+    ns = urllib.request.Request(
+        "https://api.shinnytech.com/ns?stock=false&backtest=false",
+        headers={"Authorization": "Bearer " + tok, "Accept": "application/json",
+                 "User-Agent": "tqsdk-python 3.10.2"})
+    try:
+        with urllib.request.urlopen(ns, timeout=30) as r:
+            mdurl = json.loads(r.read()).get("mdurl", "")
+    except urllib.error.HTTPError as e:
+        mdurl = f"<HTTP {e.code}>"
+
+    ok = has_futr and mdurl.startswith("wss://")
+    record("shinny-auth", ok,
+           f"token OK；futr={'有' if has_futr else '【无】'}；"
+           f"features={sorted(feats)}\n       名称服务 mdurl={mdurl or '【空】'}")
+
+
 def probe_rb0_depth():
     """新浪日线深度是否仍覆盖到 2009 年。"""
     b = bars("RB0")
@@ -343,6 +448,7 @@ PROBES = {
     "rb0-unadjusted": probe_rb0_unadjusted,
     "czce-four-digit": probe_czce_four_digit,
     "tq-trading-time": probe_tq_trading_time,
+    "shinny-auth": probe_shinny_auth,
     "rb0-depth": probe_rb0_depth,
 }
 
@@ -365,9 +471,14 @@ def main():
             record(n, False, f"探测失败（网络或解析）: {type(e).__name__}: {e}")
         print()
 
-    bad = [n for n, ok, _ in results if not ok]
+    bad = [n for n, st, _ in results if st == FAIL]
+    skipped = [n for n, st, _ in results if st == SKIP]
+    passed = [n for n, st, _ in results if st == PASS]
     print("-" * 60)
-    print(f"{len(results) - len(bad)}/{len(results)} 条与 docs/probe.md 的记录一致")
+    print(f"{len(passed)}/{len(passed) + len(bad)} 条与 docs/probe.md 的记录一致"
+          + (f"；{len(skipped)} 条跳过（测不了，不计入）" if skipped else ""))
+    if skipped:
+        print(f"跳过: {', '.join(skipped)}")
     if bad:
         print(f"偏离: {', '.join(bad)}")
         print("→ 这不一定是 bug。先判断是上游变了还是记录错了，然后更新 docs/probe.md。")
