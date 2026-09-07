@@ -40,7 +40,12 @@ SHINNY_CLIENT_ID = "shinny_tq"
 # 用上那个身份，缓解措施就被本仓自己的工具绕过了。
 #
 # 「可被发现」不等于「可被转发」：值确实公开在 PyPI 的 tqsdk 包里
-# （tqsdk/auth.py 的 _request_token），但本仓不做那个转发点。
+# （tqsdk/auth.py 的 _request_token），本仓不再做那个转发点。
+#
+# 照实记一条：该值【曾】进入过本仓的公开历史，2026-09-07 已对分支做历史重写
+# 并 force-push 移除。但 GitHub 对被弃置的 commit 对象仍会保留一段时间
+# （按 SHA 仍可取到，直到 GC），所以这是「大幅降低」而非「彻底消除」。
+# 详见 docs/probe.md 6.1。
 #
 # 取值：环境变量或仓库根 .env 的 SHINNY_CLIENT_SECRET，缺失则该条 SKIP。
 

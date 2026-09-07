@@ -49,7 +49,10 @@ const (
 //
 // 「可被发现」不等于「可被转发」：值确实公开在 PyPI 的 tqsdk 包里
 // （`tqsdk/auth.py` 的 `_request_token`，形如 `client_secret` 那一项），
-// 但本仓不做那个转发点。
+// 本仓不再做那个转发点。
+//
+// 照实记：该值【曾】进入本仓公开历史，已做历史重写 + force-push 移除；
+// 但 GitHub 对弃置对象保留一段时间，按 SHA 仍可取到，属「大幅降低」非「彻底消除」。
 //
 // 取值方式：环境变量或仓库根 `.env` 的 SHINNY_CLIENT_SECRET，缺失则 SKIP。
 func clientSecret() string {
