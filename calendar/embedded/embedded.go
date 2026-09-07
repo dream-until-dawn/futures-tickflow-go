@@ -28,6 +28,7 @@
 package embedded
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -156,13 +157,20 @@ var cffexDay = map[string][]tickflow.Session{
 	"T": dayBond, "TF": dayBond, "TS": dayBond, "TL": dayBond,
 }
 
-// Template 返回该品种的内置标称模板。未收录、或交易日早于生效起点时 ok=false。
-func Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, bool) {
+// Template 返回该品种的内置标称模板。
+// 未收录、或交易日早于生效起点时返回 ErrUncovered——**那是「答不了」，不是「没有交易」**。
+func Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, error) {
 	t, ok := template(k)
-	if !ok || !t.Covers(num) {
-		return tickflow.SessionTemplate{}, false
+	if !ok {
+		return tickflow.SessionTemplate{}, fmt.Errorf(
+			"embedded: 未收录品种 %s.%s: %w", k.Exchange, k.Product, tickflow.ErrUncovered)
 	}
-	return t, true
+	if !t.Covers(num) {
+		return tickflow.SessionTemplate{}, fmt.Errorf(
+			"embedded: %s.%s 的内置模板自 %s 起生效，问的是 %s: %w",
+			k.Exchange, k.Product, baseFrom, num, tickflow.ErrUncovered)
+	}
+	return t, nil
 }
 
 func template(k tickflow.ProductKey) (tickflow.SessionTemplate, bool) {
@@ -239,8 +247,28 @@ func (c *Calendar) Days() []tickflow.TradingDay {
 }
 
 // Template 见包级 Template。
-func (c *Calendar) Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, bool) {
+func (c *Calendar) Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, error) {
 	return Template(k, num)
+}
+
+// Covers 报告本日历对该品种能回答的交易日闭区间。
+//
+// 两个约束取交集：注入的交易日列表，与内置模板的生效起点 baseFrom。
+// 品种没收录 → ok=false（整个答不了）。
+func (c *Calendar) Covers(k tickflow.ProductKey) (from, to tickflow.TradingDay, ok bool) {
+	if _, ok := template(k); !ok {
+		return 0, 0, false
+	}
+	for _, d := range c.days {
+		if d < baseFrom {
+			continue
+		}
+		if from == 0 {
+			from = d
+		}
+		to = d
+	}
+	return from, to, from != 0
 }
 
 // DayOf 组装某个交易日的【实际】时段。
@@ -249,14 +277,19 @@ func (c *Calendar) Template(k tickflow.ProductKey, num tickflow.TradingDay) (tic
 // 那需要从分钟数据反推（v0.3 的 calendar/derived）。
 // 所以本实现在长假前后会给出多余的夜盘段。
 // 相位不受影响（相位按标称算，是品种常量），受影响的是切分与判完结。
-func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.Day, bool) {
+func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.Day, error) {
+	// 顺序要紧：先问「答得了吗」，再问「那天交易吗」。
+	//
+	// 反过来的话，一个覆盖不到的日期会因为不在 index 里而被报成
+	// ErrNotTradingDay——**又把「答不了」说成了「没有交易」**，
+	// 只是换了个更像模像样的说法。
+	t, err := Template(k, num)
+	if err != nil {
+		return tickflow.Day{}, err
+	}
 	i, ok := c.index[num]
 	if !ok {
-		return tickflow.Day{}, false
-	}
-	t, ok := Template(k, num)
-	if !ok {
-		return tickflow.Day{}, false
+		return tickflow.Day{}, fmt.Errorf("embedded: %s: %w", num, tickflow.ErrNotTradingDay)
 	}
 	var ss []tickflow.Session
 	// 夜盘挂在【上一个交易日】的自然日上——这正是「交易日 ≠ 自然日」。
@@ -270,11 +303,12 @@ func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickfl
 	for _, s := range t.Day {
 		ss = append(ss, tickflow.Session{Start: base + s.Start, End: base + s.End})
 	}
-	return tickflow.Day{Num: num, Sessions: ss}, true
+	return tickflow.Day{Num: num, Sessions: ss}, nil
 }
 
-// DayAt 返回包含 ts 的交易日。落在休市段时 ok=false。
-func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, bool) {
+// DayAt 返回包含 ts 的交易日。
+// 休市 → ErrClosed；覆盖不到 → ErrUncovered。
+func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, error) {
 	// 夜盘最多往前挂一个交易日，所以只需看当天与下一个交易日。
 	i := sort.Search(len(c.days), func(i int) bool {
 		return midnight(c.days[i]) > ts
@@ -283,23 +317,46 @@ func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, bool) {
 		if j < 0 || j >= len(c.days) {
 			continue
 		}
-		d, ok := c.DayOf(k, c.days[j])
-		if !ok {
+		d, err := c.DayOf(k, c.days[j])
+		if err != nil {
+			// 覆盖不到就直说，别把它降级成「这一刻没在交易」
+			if errors.Is(err, tickflow.ErrUncovered) {
+				return tickflow.Day{}, err
+			}
 			continue
 		}
 		for _, s := range d.Sessions {
 			if s.Contains(ts) {
-				return d, true
+				return d, nil
 			}
 		}
 	}
-	return tickflow.Day{}, false
+	return tickflow.Day{}, fmt.Errorf("embedded: %s: %w",
+		time.UnixMilli(ts).In(tickflow.CST).Format("2006-01-02 15:04"),
+		tickflow.ErrClosed)
 }
 
 // Walk 按升序遍历 [from, to] 之间的交易日。
-func (c *Calendar) Walk(k tickflow.ProductKey, from, to tickflow.TradingDay, fn func(tickflow.Day) bool) error {
+//
+// ⚠️ **区间只要有一端落在 Covers 之外就报错。** 这是本组里唯一真正的护栏：
+// 上层最自然的写法就是把整个请求区间交给 Walk，于是那个写法天生安全——
+// 请 2009–2026 而日历只覆盖 2020–2026 会当场炸，
+// 而不是安静地少遍历十一年、再让上层以为那十一年没有交易日。
+func (c *Calendar) Walk(k tickflow.ProductKey, from, to tickflow.TradingDay,
+	fn func(tickflow.Day) bool) error {
 	if from > to {
-		return fmt.Errorf("embedded: from(%d) 晚于 to(%d)", int32(from), int32(to))
+		return fmt.Errorf("embedded: from(%s) 晚于 to(%s)", from, to)
+	}
+	cf, ct, ok := c.Covers(k)
+	if !ok {
+		return fmt.Errorf("embedded: 未收录品种 %s.%s: %w",
+			k.Exchange, k.Product, tickflow.ErrUncovered)
+	}
+	if from < cf || to > ct {
+		return fmt.Errorf(
+			"embedded: 请求 [%s, %s]，而本日历只覆盖 [%s, %s]"+
+				"——超出的那一段【答不了】，不是「没有交易日」: %w",
+			from, to, cf, ct, tickflow.ErrUncovered)
 	}
 	for _, num := range c.days {
 		if num < from {
@@ -308,8 +365,13 @@ func (c *Calendar) Walk(k tickflow.ProductKey, from, to tickflow.TradingDay, fn 
 		if num > to {
 			break
 		}
-		d, ok := c.DayOf(k, num)
-		if !ok {
+		d, err := c.DayOf(k, num)
+		if err != nil {
+			// 走到这里只可能是 ErrNotTradingDay 之外的意外——
+			// 区间已经在覆盖内了，所以任何 ErrUncovered 都是实现自相矛盾。
+			if errors.Is(err, tickflow.ErrUncovered) {
+				return fmt.Errorf("embedded: 区间在覆盖内却报答不了（实现 bug）: %w", err)
+			}
 			continue
 		}
 		if !fn(d) {

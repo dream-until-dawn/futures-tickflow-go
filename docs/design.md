@@ -166,21 +166,64 @@ type ProductKey struct {
 
 func (s Symbol) ProductKey() ProductKey
 
+// 日历说不出结果的三种原因，**必须分得开**。
+var (
+    ErrNotTradingDay = errors.New("tickflow: 该日不是交易日")
+    ErrClosed        = errors.New("tickflow: 该时刻不在任何交易时段内")
+    ErrUncovered     = errors.New("tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」")
+)
+
 // Calendar 交易日历。
 //
 // 键是 ProductKey，因为时段随品种不同（商品/股指/国债三套），
 // 也随时间变（夜盘时间历史上调整过多次）。
 type Calendar interface {
-    // DayAt 返回包含 ts 的交易日。ts 落在休市段时 ok=false。
-    DayAt(k ProductKey, ts int64) (Day, bool)
-    // DayOf 按交易日编号取。
-    DayOf(k ProductKey, num TradingDay) (Day, bool)
+    // DayAt 返回包含 ts 的交易日。休市 → ErrClosed；覆盖不到 → ErrUncovered。
+    DayAt(k ProductKey, ts int64) (Day, error)
+    // DayOf 按交易日编号取。不交易 → ErrNotTradingDay；覆盖不到 → ErrUncovered。
+    DayOf(k ProductKey, num TradingDay) (Day, error)
     // Template 返回该品种在该交易日生效的【标称】时段模板，算相位要用。
-    Template(k ProductKey, num TradingDay) (SessionTemplate, bool)
-    // Walk 按升序遍历 [from, to] 之间的交易日。fn 返回 false 即停止。
+    Template(k ProductKey, num TradingDay) (SessionTemplate, error)
+    // Covers 报告能回答的交易日闭区间。让边界出现在一行日志里。
+    Covers(k ProductKey) (from, to TradingDay, ok bool)
+    // Walk 按升序遍历 [from, to]。fn 返回 false 即停止。
+    // ⚠️ 区间有一端落在 Covers 之外就【报错】，绝不静默少遍历。
     Walk(k ProductKey, from, to TradingDay, fn func(Day) bool) error
 }
 ```
+
+> **`v0.1.0` 之后这个接口变过一次**（`(X, bool)` → `(X, error)` + `Covers`）。
+> 照着 `v0.1.0` 的文档写代码的人会撞墙，所以记在这里。原因：
+>
+> `v0.1.0` 里那个 `bool` 承载了两件完全不同的事——
+>
+> ```
+> DayOf(rb, 20260905) → false   ← 周六，真的不是交易日
+> DayOf(rb, 20160104) → false   ← 2016 年，日历【答不了】（早于生效起点）
+> ```
+>
+> 后者被当成前者的后果很具体：内置模板自 `2020-05-06` 生效，
+> 而新浪 `RB0` 日线自 `2009-03-27` 起——**中间十一年日历全答「不知道」**，
+> `Syncer` 读成「不是交易日」就会静默跳过日线最值钱的那一段，且不会自愈。
+>
+> **三者的职责必须分清，别把前两个当护栏：**
+>
+> | | 挡住「静默少同步十一年」 |
+> |---|---|
+> | 哨兵错误 | ✗ —— `if err != nil { continue }` 一行全吞，成本和 `if !ok` 一样 |
+> | `Covers` | 半 —— 得有人记得调 |
+> | **`Walk` 拒绝超界** | **✓ —— 不调它就得自己写循环，那是看得见的选择** |
+>
+> 哨兵错误负责**说清楚**，`Covers` 负责**让边界可见**，`Walk` 负责**真的拦住**。
+>
+> ⇒ 一条通则：**给一个返回值之前，先数它要区分几种情况，看类型装不装得下；
+> 装得下之后再问——这几种情况在调用点会不会被【一个惯用法】一次吞掉。**
+> `bool` 的 `!ok`、`error` 的 `err != nil`、枚举的 `!= Found`，
+> 每种类型都自带一个「一把全吞」的惯用法。**装得下是必要条件，分得开才是目的。**
+>
+> 时机取「现在」而不是「v0.2 一起改」：`Calendar` 当时零个消费者，
+> 而 `Syncer` 正是那个会把 bug 写进去的消费者——**现在改，那个 bug 根本没机会被写出来**。
+> 依据是 contract.md 第五节已公布的政策：v0.x API 会变，v1.x 才是对外契约。
 
 ### Period：在交易时间轴上等分
 

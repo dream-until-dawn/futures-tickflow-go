@@ -1,6 +1,8 @@
 package embedded
 
 import (
+	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -9,6 +11,8 @@ import (
 
 // 2026-09 的一小段真实交易日（周四、周五、下周一——中间隔着周末）。
 var days = []tickflow.TradingDay{20260903, 20260904, 20260907, 20260908}
+
+var rb = tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
 
 func newCal(t *testing.T) *Calendar {
 	t.Helper()
@@ -23,6 +27,17 @@ func hhmm(ms int64) string {
 	return time.UnixMilli(ms).In(tickflow.CST).Format("01-02 15:04")
 }
 
+func mustTS(s string) int64 {
+	t, err := time.ParseInLocation("2006-01-02 15:04", s, tickflow.CST)
+	if err != nil {
+		panic(err)
+	}
+	return t.UnixMilli()
+}
+
+// Calendar 必须满足 tickflow.Calendar 接口。
+var _ tickflow.Calendar = (*Calendar)(nil)
+
 // TestNewRefusesToGuessTradingDays 不给交易日就报错，**不从工作日近似**。
 //
 // 用工作日近似会在每个长假前后错一次——而那正是保证金上调的时候。
@@ -36,6 +51,119 @@ func TestNewRefusesToGuessTradingDays(t *testing.T) {
 	}
 }
 
+// TestUncoveredIsDistinguishableFromNoTrading 是这一组里最要紧的一条。
+//
+// 「日历答不了」与「那天不是交易日」**必须分得开**。
+//
+// v0.1.0 里两者都是 ok=false，后果很具体：内置模板自 2020-05-06 生效，
+// 而新浪 RB0 日线自 2009-03-27 起——**中间十一年日历全答「不知道」**，
+// 上层读成「不是交易日」就会静默跳过日线最值钱的那一段，且不会自愈。
+//
+// 这条测试的存在，是为了让下一次重构没法把它们合回去而不出声。
+func TestUncoveredIsDistinguishableFromNoTrading(t *testing.T) {
+	c := newCal(t)
+	for _, cs := range []struct {
+		what string
+		k    tickflow.ProductKey
+		num  tickflow.TradingDay
+		want error
+	}{
+		{"周六——日历知道，那天不交易", rb, 20260905, tickflow.ErrNotTradingDay},
+		{"2016 年——早于生效起点，答不了", rb, 20160104, tickflow.ErrUncovered},
+		{"没收录的品种——答不了",
+			tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "zzz"}, 20260907,
+			tickflow.ErrUncovered},
+	} {
+		_, err := c.DayOf(cs.k, cs.num)
+		if err == nil {
+			t.Errorf("%s：应当报错", cs.what)
+			continue
+		}
+		if !errors.Is(err, cs.want) {
+			t.Errorf("%s：得到 %v，期望 %v", cs.what, err, cs.want)
+		}
+	}
+	// 反向：这两种原因【绝不能】互相包含，否则上面三条一起退化成「反正都报错」，
+	// 而调用方分不出该重拉还是该跳过。
+	if errors.Is(tickflow.ErrNotTradingDay, tickflow.ErrUncovered) ||
+		errors.Is(tickflow.ErrUncovered, tickflow.ErrNotTradingDay) {
+		t.Fatal("「不是交易日」与「答不了」不能是同一个错误")
+	}
+	if _, err := c.DayOf(rb, 20260907); err != nil {
+		t.Errorf("正常交易日不该报错: %v", err)
+	}
+}
+
+// TestWalkRefusesOutOfCoverage Walk 是这一组里【唯一真正的护栏】。
+//
+// 哨兵错误只负责把话说清楚——`if err != nil { continue }` 一行就能把三种一起吞掉，
+// 成本和 `if !ok { continue }` 一模一样。真正拦住「静默少同步十一年」的，
+// 是把检查放在【循环所在的地方】：上层最自然的写法就是把整个请求区间交给 Walk。
+func TestWalkRefusesOutOfCoverage(t *testing.T) {
+	c := newCal(t)
+	err := c.Walk(rb, 20090327, 20260908, func(tickflow.Day) bool { return true })
+	if err == nil {
+		t.Fatal("区间超出覆盖时必须报错，不能静默少遍历")
+	}
+	if !errors.Is(err, tickflow.ErrUncovered) {
+		t.Errorf("应当是 ErrUncovered，得到 %v", err)
+	}
+	// 错误信息要说出【覆盖到哪】，否则调用方只知道错了、不知道边界在哪
+	for _, want := range []string{"2009-03-27", "2026-09-03", "2026-09-08"} {
+		if !strings.Contains(err.Error(), want) {
+			t.Errorf("错误信息应含 %q，得到 %v", want, err)
+		}
+	}
+	n := 0
+	if err := c.Walk(rb, 20260903, 20260908,
+		func(tickflow.Day) bool { n++; return true }); err != nil {
+		t.Fatalf("覆盖内的区间不该报错: %v", err)
+	}
+	if n != 4 {
+		t.Errorf("应当走 4 天，实际 %d", n)
+	}
+	// 未收录品种：整个答不了。
+	//
+	// ⚠️ 这里【必须】比对措辞，不能只比 errors.Is(err, ErrUncovered)——
+	// 品种没收录时 Covers 返回 (0, 0, false)，于是下面那个区间检查
+	// （from < 0 || to > 0）也会成立，**同样吐出一个 ErrUncovered**。
+	// 只断言错误类型的话，把品种检查整个删掉测试照样全绿：
+	// 两条路给出同一个可观察量，测试就分不出哪条在承重。
+	err = c.Walk(tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "zzz"},
+		20260903, 20260908, func(tickflow.Day) bool { return true })
+	if !errors.Is(err, tickflow.ErrUncovered) {
+		t.Errorf("未收录品种应当 ErrUncovered，得到 %v", err)
+	} else if !strings.Contains(err.Error(), "未收录品种") {
+		t.Errorf("应当说清是【品种没收录】而不是区间超界，得到 %v", err)
+	}
+}
+
+// TestCovers 覆盖区间取「注入的交易日」与「模板生效起点」的交集。
+func TestCovers(t *testing.T) {
+	c := newCal(t)
+	from, to, ok := c.Covers(rb)
+	if !ok || from != 20260903 || to != 20260908 {
+		t.Errorf("Covers = (%s, %s, %v)，期望 (2026-09-03, 2026-09-08, true)", from, to, ok)
+	}
+	if _, _, ok := c.Covers(tickflow.ProductKey{Exchange: tickflow.SHFE,
+		Product: "zzz"}); ok {
+		t.Error("未收录品种应当 ok=false")
+	}
+	// 注入的交易日早于 baseFrom 时，覆盖起点要抬到 baseFrom 之后的第一天——
+	// 否则 Covers 会承诺一段它其实答不了的区间，而 Walk 就是照它放行的。
+	old, err := New([]tickflow.TradingDay{20160104, 20160105, 20260907})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if from, _, _ := old.Covers(rb); from != 20260907 {
+		t.Errorf("baseFrom 之前的交易日不该算进覆盖，得到起点 %s", from)
+	}
+	if err := old.Walk(rb, 20160104, 20260907,
+		func(tickflow.Day) bool { return true }); !errors.Is(err, tickflow.ErrUncovered) {
+		t.Errorf("请求含 baseFrom 之前的区间应当被拒，得到 %v", err)
+	}
+}
+
 // TestFridayNightBelongsToMonday 是「交易日 ≠ 自然日」的直接断言。
 //
 // 周一（09-07）这个交易日的第一段，落在【上周五 09-04】的 21:00。
@@ -43,11 +171,9 @@ func TestNewRefusesToGuessTradingDays(t *testing.T) {
 // 而那会让结算错位一天，且不报错。
 func TestFridayNightBelongsToMonday(t *testing.T) {
 	c := newCal(t)
-	k := tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
-
-	mon, ok := c.DayOf(k, 20260907)
-	if !ok {
-		t.Fatal("取不到周一的交易日")
+	mon, err := c.DayOf(rb, 20260907)
+	if err != nil {
+		t.Fatal(err)
 	}
 	if len(mon.Sessions) != 4 {
 		t.Fatalf("期望 1 段夜盘 + 3 段日盘，得到 %d 段", len(mon.Sessions))
@@ -58,44 +184,51 @@ func TestFridayNightBelongsToMonday(t *testing.T) {
 	if got := hhmm(mon.Sessions[len(mon.Sessions)-1].End); got != "09-07 15:00" {
 		t.Errorf("周一交易日的末段应收在 09-07 15:00，得到 %s", got)
 	}
-
-	// 反向：周五晚 22:00 这一刻，属于【周一】那个交易日
-	at, ok := c.DayAt(k, mustTS("2026-09-04 22:00"))
-	if !ok {
-		t.Fatal("周五 22:00 应当落在某个交易日内")
+	at, err := c.DayAt(rb, mustTS("2026-09-04 22:00"))
+	if err != nil {
+		t.Fatalf("周五 22:00 应当落在某个交易日内: %v", err)
 	}
 	if at.Num != 20260907 {
-		t.Errorf("周五 22:00 属于交易日 %d，期望 20260907", int32(at.Num))
+		t.Errorf("周五 22:00 属于交易日 %s，期望 2026-09-07", at.Num)
 	}
 }
 
-// TestDayAtRejectsClosedTime 休市时刻必须 ok=false，不能就近吸附到某一天。
+// TestDayAtRejectsClosedTime 休市时刻必须 ErrClosed，不能就近吸附到某一天。
 func TestDayAtRejectsClosedTime(t *testing.T) {
 	c := newCal(t)
-	k := tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
 	for _, s := range []string{
 		"2026-09-04 12:00", // 午休
 		"2026-09-04 10:20", // 上午休市段
 		"2026-09-05 10:00", // 周六
 		"2026-09-04 20:00", // 夜盘开盘前
 	} {
-		if d, ok := c.DayAt(k, mustTS(s)); ok {
-			t.Errorf("%s 是休市时刻，却被判进交易日 %d", s, int32(d.Num))
+		d, err := c.DayAt(rb, mustTS(s))
+		if err == nil {
+			t.Errorf("%s 是休市时刻，却被判进交易日 %s", s, d.Num)
+			continue
 		}
+		if !errors.Is(err, tickflow.ErrClosed) {
+			t.Errorf("%s 应当 ErrClosed，得到 %v", s, err)
+		}
+	}
+	// 未收录品种是 ErrUncovered，**不是** ErrClosed——
+	// 「答不了」不该被降级成「这一刻没在交易」，那是同一个塌缩换了个说法。
+	if _, err := c.DayAt(tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "zzz"},
+		mustTS("2026-09-07 10:00")); !errors.Is(err, tickflow.ErrUncovered) {
+		t.Errorf("未收录品种应当 ErrUncovered，得到 %v", err)
 	}
 }
 
-// TestTemplateRefusesBeforeBaseFrom 生效起点之前【没有依据】，必须 ok=false。
+// TestTemplateRefusesBeforeBaseFrom 生效起点之前【没有依据】，必须 ErrUncovered。
 //
 // 拿当前模板去顶替历史是错的：实测 rb1605（2016 上半年）每交易日约 445 分钟，
 // 而 rb1801 约 345 分钟——夜盘长度差了近一倍。
 func TestTemplateRefusesBeforeBaseFrom(t *testing.T) {
-	k := tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
-	if _, ok := Template(k, 20160104); ok {
-		t.Error("2016 年没有依据，应当 ok=false 而不是拿当前模板顶替")
+	if _, err := Template(rb, 20160104); !errors.Is(err, tickflow.ErrUncovered) {
+		t.Errorf("2016 年没有依据，应当 ErrUncovered，得到 %v", err)
 	}
-	if _, ok := Template(k, 20260907); !ok {
-		t.Error("2026 年应当有模板")
+	if _, err := Template(rb, 20260907); err != nil {
+		t.Errorf("2026 年应当有模板: %v", err)
 	}
 }
 
@@ -105,15 +238,15 @@ func TestTemplateRefusesUnknownProduct(t *testing.T) {
 		{Exchange: tickflow.SHFE, Product: "zzz"},
 		{Exchange: tickflow.CFFEX, Product: "XX"},
 	} {
-		if _, ok := Template(k, 20260907); ok {
-			t.Errorf("%v 没收录，应当 ok=false", k)
+		if _, err := Template(k, 20260907); !errors.Is(err, tickflow.ErrUncovered) {
+			t.Errorf("%v 没收录，应当 ErrUncovered，得到 %v", k, err)
 		}
 	}
 }
 
 // TestNightLengthsByProduct 三档夜盘长度，以及广期所无夜盘。
 func TestNightLengthsByProduct(t *testing.T) {
-	cases := []struct {
+	for _, c := range []struct {
 		k    tickflow.ProductKey
 		mins int
 	}{
@@ -121,17 +254,16 @@ func TestNightLengthsByProduct(t *testing.T) {
 		{tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "au"}, 330},
 		{tickflow.ProductKey{Exchange: tickflow.INE, Product: "sc"}, 330},
 		{tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "cu"}, 240},
-		{tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}, 120},
+		{rb, 120},
 		{tickflow.ProductKey{Exchange: tickflow.GFEX, Product: "si"}, 0}, // 实测无夜盘
 		{tickflow.ProductKey{Exchange: tickflow.GFEX, Product: "lc"}, 0},
 		{tickflow.ProductKey{Exchange: tickflow.GFEX, Product: "ps"}, 0},
 		{tickflow.ProductKey{Exchange: tickflow.CFFEX, Product: "IF"}, 0},
 		{tickflow.ProductKey{Exchange: tickflow.CFFEX, Product: "T"}, 0},
-	}
-	for _, c := range cases {
-		tm, ok := Template(c.k, 20260907)
-		if !ok {
-			t.Fatalf("%v 没有模板", c.k)
+	} {
+		tm, err := Template(c.k, 20260907)
+		if err != nil {
+			t.Fatalf("%v 没有模板: %v", c.k, err)
 		}
 		if got := tm.NightMinutes(); got != c.mins {
 			t.Errorf("%v 夜盘 %d 分，期望 %d", c.k, got, c.mins)
@@ -143,7 +275,7 @@ func TestNightLengthsByProduct(t *testing.T) {
 func TestCffexDayDiffersFromCommodity(t *testing.T) {
 	idx, _ := Template(tickflow.ProductKey{Exchange: tickflow.CFFEX, Product: "IF"}, 20260907)
 	bond, _ := Template(tickflow.ProductKey{Exchange: tickflow.CFFEX, Product: "T"}, 20260907)
-	comm, _ := Template(tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}, 20260907)
+	comm, _ := Template(rb, 20260907)
 
 	if idx.DayMinutes() == comm.DayMinutes() && len(idx.Day) == len(comm.Day) {
 		t.Error("股指日盘不该与商品相同")
@@ -179,9 +311,9 @@ func TestEndToEndGridMatchesMeasured(t *testing.T) {
 		{"si", tickflow.GFEX, []string{"10:00", "11:15", "14:15", "15:00"}, 4},
 	} {
 		k := tickflow.ProductKey{Exchange: tc.exch, Product: tc.prod}
-		d, ok := c.DayOf(k, 20260907)
-		if !ok {
-			t.Fatalf("%v 取不到交易日", k)
+		d, err := c.DayOf(k, 20260907)
+		if err != nil {
+			t.Fatalf("%v 取不到交易日: %v", k, err)
 		}
 		tm, _ := Template(k, 20260907)
 		bars := p.Bars(tm, d)
@@ -211,9 +343,8 @@ func TestEndToEndGridMatchesMeasured(t *testing.T) {
 // TestWalkAscending Walk 按升序、可中断。
 func TestWalkAscending(t *testing.T) {
 	c := newCal(t)
-	k := tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
 	var seen []tickflow.TradingDay
-	if err := c.Walk(k, 20260904, 20260908, func(d tickflow.Day) bool {
+	if err := c.Walk(rb, 20260904, 20260908, func(d tickflow.Day) bool {
 		seen = append(seen, d.Num)
 		return true
 	}); err != nil {
@@ -228,26 +359,14 @@ func TestWalkAscending(t *testing.T) {
 			t.Fatalf("Walk 得到 %v，期望 %v", seen, want)
 		}
 	}
-	// 中断
 	n := 0
-	c.Walk(k, 20260903, 20260908, func(tickflow.Day) bool { n++; return false })
+	c.Walk(rb, 20260903, 20260908, func(tickflow.Day) bool { n++; return false })
 	if n != 1 {
 		t.Errorf("返回 false 应当立刻停止，实际走了 %d 步", n)
 	}
-	if err := c.Walk(k, 20260908, 20260903, nil); err == nil {
+	if err := c.Walk(rb, 20260908, 20260903, nil); err == nil {
 		t.Error("from 晚于 to 应当报错")
 	}
-}
-
-// Calendar 必须满足 tickflow.Calendar 接口。
-var _ tickflow.Calendar = (*Calendar)(nil)
-
-func mustTS(s string) int64 {
-	t, err := time.ParseInLocation("2006-01-02 15:04", s, tickflow.CST)
-	if err != nil {
-		panic(err)
-	}
-	return t.UnixMilli()
 }
 
 // TestKnownDefect_EmbeddedCannotSeeSuspendedNight 钉住一条【已知缺陷】，不是期望行为。
@@ -273,14 +392,13 @@ func TestKnownDefect_EmbeddedCannotSeeSuspendedNight(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	k := tickflow.ProductKey{Exchange: tickflow.SHFE, Product: "rb"}
-	d, ok := c.DayOf(k, 20261009)
-	if !ok {
-		t.Fatal("取不到节后第一个交易日")
+	d, err := c.DayOf(rb, 20261009)
+	if err != nil {
+		t.Fatalf("取不到节后第一个交易日: %v", err)
 	}
 	if got := hhmm(d.Sessions[0].Start); got != "09-30 21:00" {
 		t.Fatalf("内置实现【应当】给出这段并不存在的夜盘（已知缺陷），得到 %s；"+
-			"若这是 calendar/derived 修好的结果，请一并更新 DayOf 文档与 contract.md",
-			got)
+			"若这是 calendar/derived 修好的结果，"+
+			"请一并更新 DayOf 文档与 contract.md", got)
 	}
 }

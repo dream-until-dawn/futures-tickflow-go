@@ -1,6 +1,9 @@
 package tickflow
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // TradingDay 是交易日编号，形如 20260907。
 //
@@ -116,24 +119,71 @@ type ProductKey struct {
 
 func (k ProductKey) String() string { return k.Exchange + "." + k.Product }
 
+// 日历说不出结果时的三种原因。**它们必须分得开。**
+//
+// v0.1.0 的接口全都返回 `(X, bool)`，而那个 bool 承载了两件完全不同的事：
+//
+//	DayOf(rb, 20260905) → false   ← 周六，真的不是交易日
+//	DayOf(rb, 20160104) → false   ← 2016 年，日历【答不了】（早于生效起点）
+//
+// 后者被当成前者的后果很具体：内置模板的生效起点是 2020-05-06，
+// 而新浪 `RB0` 日线从 2009-03-27 起——**中间十一年日历全答「不知道」**，
+// 上层读成「不是交易日」就会静默跳过日线最值钱的那一段，且不会自愈。
+//
+// ⚠️ **这三个错误值本身【不构成】护栏。** `if err != nil { continue }`
+// 一行就把三种一起吞掉，成本和 `if !ok { continue }` 完全一样——
+// Go 里 `error` 反而是「泛化忽略」最顺手的通道。
+// 它们负责把话【说清楚】；真正拦住那个失败的是 Walk（见下）。
+var (
+	// ErrNotTradingDay 日历知道，而答案是「那天不交易」。
+	ErrNotTradingDay = errors.New("tickflow: 该日不是交易日")
+
+	// ErrClosed 日历知道，而那一刻不在任何交易时段内（休市段、周末夜里）。
+	ErrClosed = errors.New("tickflow: 该时刻不在任何交易时段内")
+
+	// ErrUncovered 日历【答不了】：品种没收录，或日期在覆盖区间之外。
+	//
+	// **这不是「没有交易」。** 把它当成后者，会静默跳过一整段历史。
+	ErrUncovered = errors.New("tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」")
+)
+
 // Calendar 是交易日历：哪些日子是交易日，以及每个交易日实际开了哪些时段。
 //
 // 【按 ProductKey 给】，因为时段随品种不同，也随时间变。
 //
-// 本库不猜未来：对未知的交易日一律返回 ok=false，由调用方决定怎么办。
+// 本库不猜未来：覆盖不到的一律 ErrUncovered，由调用方决定怎么办。
 // 反推只能覆盖到「已有数据」的最后一天，实盘要判断明天是否开市，
-// 得靠内置表的前瞻部分或交易所公告。
+// 得靠交易所公告。
 type Calendar interface {
-	// DayAt 返回包含 ts 的交易日。ts 落在休市段时 ok=false。
-	DayAt(k ProductKey, ts int64) (Day, bool)
+	// DayAt 返回包含 ts 的交易日。
+	// 休市 → ErrClosed；覆盖不到 → ErrUncovered。
+	DayAt(k ProductKey, ts int64) (Day, error)
 
 	// DayOf 按交易日编号取。
-	DayOf(k ProductKey, num TradingDay) (Day, bool)
+	// 那天不交易 → ErrNotTradingDay；覆盖不到 → ErrUncovered。
+	DayOf(k ProductKey, num TradingDay) (Day, error)
 
 	// Template 返回该品种在该交易日生效的【标称】时段模板。算相位要用。
-	Template(k ProductKey, num TradingDay) (SessionTemplate, bool)
+	// 覆盖不到 → ErrUncovered。
+	Template(k ProductKey, num TradingDay) (SessionTemplate, error)
+
+	// Covers 报告日历对该品种能回答的交易日闭区间。
+	// ok=false 表示这个品种整个答不了。
+	//
+	// 它让边界在【一行日志】里出现，而不是散在十一年的逐日错误里。
+	Covers(k ProductKey) (from, to TradingDay, ok bool)
 
 	// Walk 按升序遍历 [from, to] 之间的交易日。fn 返回 false 即停止。
+	//
+	// ⚠️ **区间只要有一端落在 Covers 之外就报错，绝不静默少遍历。**
+	//
+	// 这是这一组里唯一真正的护栏，理由是【循环在这里】：
+	// 上层最自然的写法就是把整个请求区间交给 Walk，而那个写法因此天生安全——
+	// 请 2009–2026 而日历只覆盖 2020–2026 会【当场炸】，
+	// 不会安静地少同步十一年。
+	//
+	// 绕过 Walk 去逐日调 DayOf 当然做得到，但那需要自己写循环——
+	// **那是一个看得见的选择，不是一个默认。**
 	Walk(k ProductKey, from, to TradingDay, fn func(Day) bool) error
 }
 
