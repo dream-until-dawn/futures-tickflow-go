@@ -128,14 +128,30 @@ Go 版本取 **1.22**，与姊妹项目对齐，便于两边共享指标层的�
 // Session 一段连续交易时间，左闭右开 [Start, End)，毫秒墙钟。
 type Session struct{ Start, End int64 }
 
-// TradingDay 一个交易日。
+// TradingDay 是交易日【编号】，形如 20260907。
 //
+// 具名类型而非 int32 别名——防的正是它与自然日混用。
 // 夜盘在【自然日】上早于日盘，但属于【同一个交易日】：
 // 交易日 20260907 = 周五 09-04 21:00–23:00 + 周一 09-07 09:00–15:00。
 // 周五 15:00 是交易日 20260904 的结束，周五 21:00 是 20260907 的开始。
-type TradingDay struct {
-    Day      int32     // 20260907
+//
+// 下游记账内核 futsim 用同一个表示，见第十二节——两边不必在边界上转。
+type TradingDay int32
+
+// Day 是一个交易日：编号，加上它【实际】开了哪些时段。
+//
+// 「实际」是关键：长假前停夜盘，那天的 Sessions 里就是没有夜盘段。
+// 这是逐日事实，区间模式表达不了。相位不看这里，看 SessionTemplate。
+type Day struct {
+    Num      TradingDay
     Sessions []Session // 升序，第一段可能落在前一个自然日
+}
+
+// SessionTemplate 是【标称】时段模板，带生效区间。相位按它算。
+type SessionTemplate struct {
+    From, To TradingDay // 生效的交易日区间；To 为 0 表示至今
+    Day      []Session  // 相对时刻：当日 00:00 起的毫秒偏移
+    Night    []Session  // 可能为空；跨日用 >24h 的偏移表示
 }
 
 // ProductKey 是时段表的键：交易所 + 品种。
@@ -156,13 +172,13 @@ func (s Symbol) ProductKey() ProductKey
 // 也随时间变（夜盘时间历史上调整过多次）。
 type Calendar interface {
     // DayAt 返回包含 ts 的交易日。ts 落在休市段时 ok=false。
-    DayAt(k ProductKey, ts int64) (TradingDay, bool)
+    DayAt(k ProductKey, ts int64) (Day, bool)
     // DayOf 按交易日编号取。
-    DayOf(k ProductKey, day int32) (TradingDay, bool)
+    DayOf(k ProductKey, num TradingDay) (Day, bool)
     // Template 返回该品种在该交易日生效的【标称】时段模板，算相位要用。
-    Template(k ProductKey, day int32) (SessionTemplate, bool)
-    // Walk 遍历 [from, to] 之间的交易日。
-    Walk(k ProductKey, from, to int32, fn func(TradingDay) bool) error
+    Template(k ProductKey, num TradingDay) (SessionTemplate, bool)
+    // Walk 按升序遍历 [from, to] 之间的交易日。fn 返回 false 即停止。
+    Walk(k ProductKey, from, to TradingDay, fn func(Day) bool) error
 }
 ```
 
@@ -193,17 +209,20 @@ const (
 type BarBound struct {
     Open  int64
     Close int64
-    Full  bool // 是否是完整的一根（交易日末尾那根常常是短的）
+    // Full 表示这是一个【完整的网格格子】，不是交易日末尾的冲刷残段。
+    // 它【不】等于「装了整整一个周期的交易时间」——停夜盘那天沪银的第一根
+    // 日盘 K 线是完整格子，却只装了 30 分钟。要问装了多少，用 Minutes。
+    Full bool
 }
 
 // Bars 给出某个交易日内该周期的全部 K 线边界。
 //
 // 这是本库最核心的一个函数：判完结、聚合、对齐、补洞全走它。
 // tmpl 是品种的【标称】时段模板，用来算相位——见下面为什么少不了它。
-func (p IntradayPeriod) Bars(tmpl SessionTemplate, td TradingDay) []BarBound
+func (p IntradayPeriod) Bars(tmpl SessionTemplate, d Day) []BarBound
 
 // Group 把一串交易日按周/月成组。日线就是一天一组。
-func (p CalendarPeriod) Group(days []TradingDay) []BarBound
+func (p CalendarPeriod) Group(days []Day) []BarBound
 ```
 
 > 一开始只有一个 `Period`，注释里写着「内部：分钟数，或 Daily/Weekly/Monthly」，
@@ -236,7 +255,24 @@ func (p IntradayPeriod) Phase(tmpl SessionTemplate) time.Duration
 ```
 
 1. **相位按标称模板算**，是品种常量：沪银 `330 mod 60 = 30`，沪铜 `240 mod 60 = 0`；
-2. **切分沿当天实际交易的时段累计**，从相位起算，交易日结束时强制冲刷。
+2. **切分沿当天实际交易的时段累计**，从相位起算，交易日结束时强制冲刷；
+3. **夜盘残段的 `Open` 要带进日盘块**——相位管「网格切在哪」，`Open` 管「那段时间归谁」。
+
+第 3 条是 v0.1 实现时补的，因为漏了它的第一版**能通过全部标签比对**：
+
+> **v0.1 自查发现的静默丢数。** 第一版只把「相位」带进日盘块，`Open` 让日盘
+> 自己从 `09:00` 起。于是沪银 60m 的 `02:00–02:30` **不属于任何一根 K 线的
+> `[Open, Close)`** ——收盘标签序列一根不差（`22:00 23:00 00:00 01:00 02:00
+> 09:30 …`），总根数一根不差，唯独那半小时凭空消失。
+>
+> 按 `[Open, Close)` 聚合的下游会安静地少掉 30 分钟成交量，**不报错**。
+> 而 `BarBound` 的注释当时就已经写着「沪银 60m 的某一根 = 前一日 `02:00–02:30`
+> \+ 当日 `09:00–09:30`」——**文档是对的，实现没做到，而测试比的是标签，
+> 看不见这个差别**。doccheck 也看不见：它比签名，不比语义。
+>
+> 补上的是一条不变量而不是一个回归值：`TestBarsCoverEveryTradingMinute`
+> 把交易日的每一分钟点一遍，要求**恰好**落在一根 K 线里——不能漏、
+> 也不能被两根同时认领。1m/5m/15m/30m/60m × 含停夜盘日全点。
 
 第二半解释跨休市段（30m 的 `10:45`）与日末短根（30m 的 `15:00` 只有 15 分钟）；
 第一半解释跨隔夜缺口（`AG0` 的 `09:30`）**以及停夜盘日为什么不变**。
@@ -1052,7 +1088,7 @@ float64 → decimal 往返：29/29 逐位无损
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
-| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | 待办 |
+| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ 本版 |
 | v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 待办 |
 | v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |

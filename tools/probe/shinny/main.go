@@ -472,6 +472,10 @@ func probeGridIsClockGrid(ctx context.Context, md, tok string) {
 // 判据两条，缺一不可：
 //   - GFEX 三个品种（si/lc/ps）**没有**任何 20:00 之后 / 04:00 之前的 1m；
 //   - **对照组** SHFE.rb **必须有**——否则「没检测到夜盘」可能只是方法失效。
+//
+// 对照组就是把那条最便宜的证伪检查焊死在流程里，让人没法跳过。
+// 「没检测到」和「不存在」是两回事，而它们看起来一模一样：
+// token 过期、symbol 拼错、时区算错，都会安安静静地给出「没有夜盘」。
 func probeGfexNoNight(ctx context.Context, md, tok string) {
 	hasNight := func(sym string) (bool, int, error) {
 		m, err := minuteLabels(ctx, md, tok, sym, 1)
