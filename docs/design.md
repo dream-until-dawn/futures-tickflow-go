@@ -783,8 +783,8 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (SyncReport, error)
 type SyncRequest struct {
     Symbol Symbol
     Period IntradayPeriod // 或 CalendarPeriod，见第二节
-    From   int32          // 起始交易日 yyyymmdd，必填
-    To     int32          // 0 表示到最后一个已收盘的
+    From   TradingDay     // 起始交易日，必填
+    To     TradingDay     // 0 表示到最后一个已收盘的
     Force  bool           // 忽略 coverage 强制重拉该段
 }
 ```
@@ -802,22 +802,103 @@ type SyncRequest struct {
 `Close` 已经过去。**新浪会把还在累积的那根一并返回并标上未来时刻**
 （[probe.md 坑四](probe.md)），不主动挡就会存进去，而且此后再不会去补。
 
-**二、`Report` 要报「对不上网格的根数」。**
-上游给的每一根，其 `Ts`/`TsEnd` 都应当落在 `Period.Bars(td)` 算出的边界上。
+**二、`Report` 要报「对不上网格的根数」，并且【扫 `BarBound.Anomalous`】。**
+
+上游给的每一根，其 `Ts`/`TsEnd` 都应当落在 `Period.Bars(tmpl, d)` 算出的边界上。
 不为零就说明**时段表与实际对不上**——多半是交易所改了夜盘而内置表没跟上。
-这是本库唯一能自动发现「日历过期」的地方，必须报出来。
 
-**三、缺口要区分三种，而不是两种。**
+⚠️ **必须扫 `Anomalous`，而不是自己再判一遍**：v0.1 里那个标志一度
+挂在周期上（`nightCarried > phase`，两个取模后的余数相比），于是同一个
+「标称 330 / 实际 310」的事实在 15m/30m 报、5m/60m/90m 不报。
+现在它由 `Day.TemplateMismatch` 按**交易日**判、那天每一根都带——
+**上层只要扫这一位就不会按周期漏**。自己另写一套判定，就是把那个坑重挖一遍。
 
-| 情形 | 姊妹项目 | 本库 |
-|---|---|---|
-| 没拉过 | ✓ | ✓ |
-| 拉过，确认没有 | ✓ | ✓ |
-| **不是交易日 / 不在交易时段** | 不存在 | **必须单独一类** |
+**三、缺口要区分【四种】，而不是两种、也不是三种。**
 
-第三类在加密市场根本不存在。混进第二类的话，`SyncReport.Gaps` 会把每个周末、
-每个午休、每个春节都列成「数据缺失」，那张表就没人看了——**一份全是噪声的
-告警等于没有告警**。
+| 情形 | 真值来自 | 姊妹项目 | 本库 | **最危险的错认**（方向要写明） |
+|---|---|---|---|---|
+| 没拉过 | coverage | ✓ | ✓ | 当成「拉过确认没有」⇒ **静默漏数据，且不会自愈** |
+| 拉过，确认没有 | coverage | ✓ | ✓ | 当成「没拉过」⇒ 每次都重拉一段确实没有的区间（吵，但不丢数据） |
+| 不是交易日 / 不在交易时段 | **日历** | 不存在 | ✓ | 当成「没拉过」⇒ 永远重拉一段**不存在**的区间 |
+| **日历答不了**（`ErrUncovered`） | **日历的覆盖边界** | 不存在 | **✓ 第四类** | 当成「不是交易日」⇒ **静默跳过整段历史** |
+
+> ⚠️ **这一列必须逐行写明方向**。上一版的表头是「错认成『不是交易日』的后果」，
+> 而第二行填的是「永远重拉」——那是把**「不是交易日」错认成「没拉过」**的后果，
+> **方向反了**。把「拉过确认没有」当成「不是交易日」其实无害（本来就该跳过）。
+>
+> 这一格要紧，因为**这张表是 v0.2 分类逻辑的规格书**：
+> 照着它实现的人会去防一个方向，而表里那一格指的是另一个方向。
+> ⇒ **一个统一的列头，会把每行各不相同的方向抹平成一个。**
+> 这和「一个数字盖住三件事」是同一个形状，只是发生在表头上。
+
+第三类在加密市场根本不存在。混进第二类的话，`Gaps` 会把每个周末、
+每个午休、每个春节都列成「数据缺失」——**一份全是噪声的告警等于没有告警**。
+
+**第四类是 v0.1 之后加的**，因为它在 `Calendar` 那个 `bool` 里和第三类塌缩过：
+内置模板自 `2020-05-06` 生效，而新浪 `RB0` 日线自 `2009-03-27` 起——
+**中间十一年日历全答「不知道」**，读成「不是交易日」就会静默跳过日线
+最值钱的那一段。
+
+> 两条同构的话，放在一起记：
+>
+> - **「没拉过」和「拉过确认没有」在存储层长得一样** ⇒ coverage 必须记**区间**，不能只记「有哪些根」；
+> - **「不是交易日」和「日历答不了」在 `bool` 上长得一样** ⇒ `Calendar` 返回**区分得开的错误**。
+>
+> 两条都是**答案的取值空间比问题的答案空间小**。
+
+**四、`SyncReport` 必须带「请求区间 vs 日历覆盖区间」两行。**
+
+```go
+type SyncReport struct {
+    Requested [2]TradingDay // 请求的闭区间
+    // Covered 是日历【能回答】的闭区间（Calendar.Covers）。
+    // CoversOK 为 false 表示【整个品种】日历都答不了——那时 Covered 无意义，
+    // 不能填 [0,0]：一个零值区间读起来仍然像一个区间。
+    Covered   [2]TradingDay
+    CoversOK  bool
+    Synced    [2]TradingDay // 实际同步到的
+
+    Bars       int
+    Misaligned int // 边界对不上网格的根数
+
+    // AnomalousDays 是【模板与实际矛盾】的交易日，**不是根数**。
+    //
+    // 写成根数是错的，而且错法有名字——那就是 K1 在报告层复发：
+    // 那个标志由 Day.TemplateMismatch 按【交易日】判、那天每一根都带，
+    // 于是按根数计就是「天数 × 每天根数」，**同一个事实在 60m 给约 30、
+    // 在 1m 给约 1650**。标志本身修到了交易日一级，计数又把它挂回周期上。
+    //
+    // 而且报告是给人看的：人问的是「哪几天的数据可疑」，
+    // 不是「有多少根带了这一位」。给日期，直接可行动。
+    AnomalousDays []TradingDay
+
+    Gaps []Gap // 四类，见上
+}
+```
+
+`Walk` 已经会在区间超出 `Covers` 时报错，所以**正常路径上这两行应当相等**。
+它们存在的理由是：**万一有人绕过 `Walk` 逐日调 `DayOf`，报告里这两行对不上
+就是可见的**。护栏挡住的是默认路径，这两行守的是绕过它的那条。
+
+**五、序列级的「永久取消夜盘」检测。**
+
+`Day.TemplateMismatch` 豁免 `actual == 0`（停夜盘日不构成「标称错了」的证据）。
+代价是：**单日停（长假）与交易所永久取消夜盘，在 `Day` 这一级不可分辨**，
+而后者是真的模板过期——它会让 `TemplateMismatch` 永远返回 false、
+`Phase` 继续按陈旧标称算，**每一根都错 30 分钟，永远，静默**。
+
+区分需要**序列**，而 `Syncer` 是第一个持有交易日序列的地方：
+
+```
+连续 N 个交易日 actual == 0（而标称 > 0） ⇒ 判为模板过期，报出来
+```
+
+`N` 取多少**未验**——长假最长多少个连续交易日无夜盘，要从历史数据量。
+在量出来之前不设默认（`N` 必须显式给）。
+
+修好那天 `TestKnownDefect_PermanentNightCancellationLooksLikeHoliday` 会变红，
+那条测试的失败信息里写着「请一并更新 `Day.TemplateMismatch` 的文档与
+contract.md 的风险行」。
 
 ---
 
@@ -864,7 +945,7 @@ type ContinuousSpec struct {
 
 type RollRule interface {
     // Pick 在给定交易日，从候选合约里选出主力。
-    Pick(day int32, cands []ContractDay) (symbol string, ok bool)
+    Pick(day TradingDay, cands []ContractDay) (symbol string, ok bool)
 }
 // 内置：ByOpenInterest / ByVolume / ByOIAndVolume（两者都最大才换）/
 //       FixedDaysBeforeExpiry(n)
@@ -888,7 +969,7 @@ type Continuous struct {
 }
 
 type Roll struct {
-    Day       int32   // 换月发生在哪个交易日
+    Day       TradingDay // 换月发生在哪个交易日
     From, To  string  // 旧合约 → 新合约
     Basis     float64 // 换月当日两个合约的价差（基差）
     Factor    float64 // 复权因子
@@ -1189,7 +1270,7 @@ float64 → decimal 往返：29/29 逐位无损
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
 | v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ `v0.1.0` |
-| v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 待办 |
+| v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 设计中 |
 | v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
 | v0.5 | `continuous`——换月、复权、接缝 | 待办 |
