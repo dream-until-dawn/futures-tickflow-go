@@ -366,20 +366,36 @@ def probe_tq_trading_time():
 
     12.5 MB 全量太慢，这里只读前若干字节确认结构还在。
     """
-    # 这个端点很慢（实测约 1.3 MB / 3 分钟），且服务端会忽略 Range。
-    # 所以只读够判断结构的前若干字节就主动断开，不等它传完 12.5 MB。
+    # 服务端【遵守】Range（206 + 正确的 Content-Range），所以只取前若干字节即可。
+    #
+    # 顺带把【真实总大小】从 Content-Range 里读出来断言——本文一度记成
+    # 「约 12.5 MB」，那是从一份没拉完的文件上量的，实际约 334 MiB，差 27 倍。
+    # 按实测速度拉完要十几小时，这直接决定这个端点能不能当参考数据源用。
     req = urllib.request.Request(TQ_SYMBOLS, headers={
         "User-Agent": "futures-tickflow-go/probe", "Range": "bytes=0-262144"})
     with urllib.request.urlopen(req, timeout=180) as r:
         head = r.read(262144).decode("utf-8", "replace")
+        crange = r.headers.get("Content-Range", "")
+        status = r.status
+    total = 0
+    if "/" in crange:
+        try:
+            total = int(crange.rsplit("/", 1)[1])
+        except ValueError:
+            pass
     # 转义提到 f-string 外面：表达式内的反斜杠要到 PEP 701（Python 3.12）才合法，
     # 写在里面会让【整份脚本】在 3.11 及更早上 SyntaxError——一条结论都给不出来，
     # 而不是某一条 FAIL。一个自称事实底座的脚本不该这么脆。
     has_tt = '"trading_time"' in head
     has_vm = '"volume_multiple"' in head
     yes_no = lambda b: "有" if b else "无"
-    record("tq-trading-time", has_tt and has_vm,
-           f"前 256KB 内 trading_time={yes_no(has_tt)}  volume_multiple={yes_no(has_vm)}")
+    ranged = status == 206 and total > 0
+    # 大小会随合约增减而变，所以断言量级而不是精确值
+    size_ok = 200 * 1024 * 1024 < total < 600 * 1024 * 1024
+    record("tq-trading-time", has_tt and has_vm and ranged and size_ok,
+           f"前 256KB 内 trading_time={yes_no(has_tt)}  volume_multiple={yes_no(has_vm)}\n"
+           f"       HTTP {status}（206=遵守 Range）  全量大小 {total/1048576:.0f} MiB"
+           f"（期望 200–600 MiB；按实测 ~1.3MB/3min，拉完约 {total/1048576/1.3*3/60:.0f} 小时）")
 
 
 def probe_settle_zero():
