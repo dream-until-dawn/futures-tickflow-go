@@ -481,10 +481,14 @@ def probe_cffex_settlement():
     import datetime
     import xml.etree.ElementTree as ET
 
+    # 「连不上」与「结论变了」必须分开——这是第九节自己的约定。
+    # 全部往回找的日子都因为【网络/传输】失败 ⇒ 测不了 ⇒ SKIP；
+    # 连得上但内容不对（404 之外的响应、没有 dailydata、结算价为零）⇒ FAIL。
     day, root, tried = None, None, []
+    net_err, http_404 = 0, 0
     d = datetime.date.today()
     for _ in range(12):                       # 往回最多找 12 个自然日
-        url = (f"http://www.cffex.com.cn/sj/hqsj/rtj/{d:%Y%m}/{d:%d}/index.xml")
+        url = f"http://www.cffex.com.cn/sj/hqsj/rtj/{d:%Y%m}/{d:%d}/index.xml"
         tried.append(f"{d:%Y-%m-%d}")
         try:
             with urllib.request.urlopen(urllib.request.Request(
@@ -494,14 +498,31 @@ def probe_cffex_settlement():
             if root.findall("dailydata"):
                 day = d
                 break
-        except Exception:
-            pass
+            root = None                        # 有响应但没有数据，继续往回找
+        except urllib.error.HTTPError as e:
+            # 非交易日就是 404，属正常，不算故障
+            if e.code == 404:
+                http_404 += 1
+            else:
+                net_err += 1
+        except (urllib.error.URLError, OSError):
+            net_err += 1                       # 连不上 / 超时
+        except ET.ParseError:
+            net_err += 1                       # 传输被截断导致 XML 不完整
         d -= datetime.timedelta(days=1)
 
     if root is None or day is None:
-        record("cffex-settlement", FAIL,
-               f"往回 {len(tried)} 天都取不到 XML（{tried[0]} … {tried[-1]}）。"
-               f"**中金所品种的结算价就没有来源了**")
+        # 一天都没连上过 ⇒ 是「测不了」，不是「中金所不给结算价了」
+        if http_404 == 0 and net_err > 0:
+            record("cffex-settlement", SKIP,
+                   f"往回 {len(tried)} 天全部【连不上】（{net_err} 次网络/解析失败，"
+                   f"0 次 404）。这是测不了，不是结论变了")
+        else:
+            record("cffex-settlement", FAIL,
+                   f"往回 {len(tried)} 天都拿不到有效 XML"
+                   f"（404 {http_404} 次 / 网络失败 {net_err} 次，"
+                   f"{tried[0]} … {tried[-1]}）。"
+                   f"**中金所品种的结算价就没有来源了**")
         return
 
     rows = root.findall("dailydata")
