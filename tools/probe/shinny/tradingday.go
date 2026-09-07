@@ -136,14 +136,29 @@ var nominalDayMinutes = map[string]int64{
 // # 对照组：防的不是数据变化，是【本探针自己失效】
 //
 // 「收盘时段跑出来的 end==last」和「盘中跑出来的 end==last」长得一样，
-// 而后者才是有意义的否定结论。所以先得证明**此刻真的在盘中**，两条独立的腿：
+// 而后者才是有意义的否定结论。所以先得证明**此刻真的在盘中**：
+// `SHFE.rb` 最新一根距 now 不超过 5 分钟。
 //
-//  1. **新鲜度**：`SHFE.rb` 最新一根的 datetime 距now 不超过 5 分钟；
-//  2. **对照组** `GFEX.si` **无夜盘**（v0.0 已实测），此刻它的最新一根**必须是陈旧的**。
-//     它要是也「新鲜」，说明新鲜度判据本身坏了（时区、时钟、服务端回放……），
-//     那么第 1 条对 rb 的结论一文不值。
+// 但「新鲜度判据」自己可能坏（时区、时钟、服务端回放），所以要对照组。
+// 两个，**前提不同、覆盖面也不同**：
 //
-// 两条腿会因为不同的原因失败，所以是两条腿。任一不成立 ⇒ SKIP，**不出结论**。
+//   - `SHFE.rb1605` 已退市，序列停在 2016，**任何时刻都必须陈旧**。
+//     挡的是最危险那种坏法：判据恒返回「新鲜」。**但它只挡得住这一种**——
+//     阈值从 5 分钟松到几小时，它照样是陈旧的，拦不住。
+//   - `GFEX.si` **无夜盘**（v0.0 实测），夜盘时段里它必须陈旧。
+//     它能挡住小时量级的松动，**但只在夜盘时段成立**——GFEX 有日盘。
+//
+// 于是覆盖面是**不对称**的，这一点必须说出来而不是含糊过去：
+//
+//	夜盘时段：两个对照组都在 → 强
+//	日盘时段：只有退市那个  → 弱（小时量级的判据松动没人拦）
+//
+// 所以日盘时段即使得出结论，也在输出里标明「对照组较弱」。
+// 本探针的正路是**夜盘跑**，那也正是这个问题所在的时段。
+//
+// 评审 J1：原来只有 GFEX 一个且不分时段，白天跑会走进
+// 「对照组也新鲜 ⇒ 判据坏了」——**SKIP 是对的，归因是错的**，
+// 而错的归因会把下一个人送去查时区和时钟，那里什么也没有。
 //
 // # 第二条独立证据：跨度
 //
@@ -152,9 +167,11 @@ var nominalDayMinutes = map[string]int64{
 // 那它只能是预知的——这条不依赖 last_id 的取值。
 func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 	const subject = "KQ.m@SHFE.rb"
-	const control = "KQ.m@GFEX.si"
+	const nightCtl = "KQ.m@GFEX.si" // 只在夜盘时段有效——GFEX【有日盘】
+	const alwaysCtl = "SHFE.rb1605" // 2016 年就退市了，任何时刻都必须是陈旧的
 
-	nodes, err := dayNodes(ctx, md, tok, []string{subject, control, "KQ.m@SHFE.ag"})
+	nodes, err := dayNodes(ctx, md, tok,
+		[]string{subject, nightCtl, alwaysCtl, "KQ.m@SHFE.ag"})
 	if err != nil {
 		report("shinny-trading-day-predicted", "FAIL", "拉取失败: "+err.Error())
 		return
@@ -164,7 +181,6 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 		report("shinny-trading-day-predicted", "FAIL", subject+" 未就绪")
 		return
 	}
-	ctl, okCtl := nodes[control]
 
 	now := time.Now().In(cst)
 	fresh := func(n dayNode) (bool, string) {
@@ -172,42 +188,87 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 			return false, "无 datetime"
 		}
 		age := now.Sub(n.newest)
-		return age <= 5*time.Minute, fmt.Sprintf("%s（%.0f 分钟前）",
-			n.newest.Format("01-02 15:04"), age.Minutes())
+		// 带上年份：rb1605 打成「05-13」会被读成今年，而它是 2016 的
+		return age <= 5*time.Minute, fmt.Sprintf("%s（%.1f 天前）",
+			n.newest.Format("2006-01-02 15:04"), age.Hours()/24)
 	}
 	subFresh, subAge := fresh(sub)
-	ctlFresh, ctlAge := "", ""
-	ctlLive := false
-	if okCtl {
-		ctlLive, ctlAge = fresh(ctl)
-		ctlFresh = fmt.Sprintf("对照 %s 最新=%s 新鲜=%v（期望 false——无夜盘）",
-			control, ctlAge, ctlLive)
-	} else {
-		ctlFresh = "对照 " + control + " 未就绪"
-	}
+
+	// 墙钟在不在 rb 的交易时段里，以及是不是夜盘那一段。
+	//
+	// 这一条**不看数据**，只看钟——所以它与「新鲜度」是两种坏法：
+	// 新鲜度坏在数据侧（喂过来的 datetime 不对），这一条坏在时间侧。
+	// 判据松动到几小时时，新鲜度会放行而这一条不会。
+	//
+	// 时段是照交易所公布的写死的，**不 import 本库**：
+	// 探针要断言外部世界长什么样，用本库的日历去验本库，
+	// 日历错了两边会一起错，那就不是两条路。
+	inSess, inNight := rbSession(now)
 
 	var b strings.Builder
-	fmt.Fprintf(&b, "此刻 %s\n", now.Format("2006-01-02 15:04:05"))
+	fmt.Fprintf(&b, "此刻 %s（%s）\n", now.Format("2006-01-02 15:04:05"),
+		map[bool]string{true: "夜盘时段", false: "非夜盘时段"}[inNight])
 	fmt.Fprintf(&b, "       %s  last_id=%d  最新=%s\n", subject, sub.lastID, subAge)
-	fmt.Fprintf(&b, "       %s\n", ctlFresh)
+
+	// —— 对照组：证明「新鲜度判据」本身没坏 ——
+	//
+	// 分两个，因为它们的前提不同：
+	//
+	//  1. alwaysCtl 是【已退市】合约，序列停在 2016 年，**任何时刻都必须陈旧**。
+	//     它挡的是最危险的那一种坏法：判据恒返回「新鲜」。
+	//
+	//  2. nightCtl 是 GFEX，**只在夜盘时段成立**——GFEX 有日盘
+	//     （09:00-10:15 / 10:30-11:30 / 13:30-15:00，v0.0 实测）。
+	//     白天它当然是新鲜的，那不是判据坏了，是**这个对照组此刻不适用**。
+	//
+	// 这一条是评审 J1：原来只有第 2 个，且不分时段。白天跑会走进
+	// 「对照组也新鲜 ⇒ 判据坏了」——**SKIP 是对的，归因是错的**。
+	// 而错的归因会把下一个人送去查时区和时钟，那里什么也没有。
+	checkCtl := func(sym, why string, applicable bool) (halt bool) {
+		n, ok := nodes[sym]
+		if !ok {
+			fmt.Fprintf(&b, "       对照 %-14s 未就绪\n", sym)
+			return applicable // 适用却取不到，就不能往下判
+		}
+		live, age := fresh(n)
+		note := "期望陈旧"
+		if !applicable {
+			note = "此刻【不适用】，仅记录"
+		}
+		fmt.Fprintf(&b, "       对照 %-14s 最新=%-22s 新鲜=%-5v %s（%s）\n",
+			sym, age, live, note, why)
+		return applicable && live
+	}
+	bad := checkCtl(alwaysCtl, "已退市，序列停在 2016", true)
+	if checkCtl(nightCtl, "GFEX 无夜盘、但有日盘", inNight) {
+		bad = true
+	}
 
 	// —— 先判「此刻能不能得出结论」——
+	//
+	// 两道，坏法不同，缺一不可：
+	//   墙钟不在时段内 → 根本没开市；
+	//   墙钟在时段内但数据不新鲜 → 开市了但喂不过来（或今天是节假日）。
+	if !inSess {
+		fmt.Fprintf(&b, "       ⇒ SKIP：墙钟 %s 不在 %s 的任何交易时段内。\n"+
+			"       收盘时 end==last 对两种假设都成立，此刻【不可分辨】——"+
+			"这一条不看数据只看钟，\n"+
+			"       所以判据松动也绕不过去。夜盘 21:00 开。",
+			now.Format("15:04"), subject)
+		report("shinny-trading-day-predicted", "SKIP", b.String())
+		return
+	}
 	if !subFresh {
-		fmt.Fprintf(&b, "       ⇒ SKIP：%s 的数据不新鲜，说明不在盘中。"+
-			"收盘时 end==last 对两种假设都成立，此刻【不可分辨】。\n"+
-			"       夜盘 21:00 开，21:15 之后再跑。", subject)
+		fmt.Fprintf(&b, "       ⇒ SKIP：墙钟在时段内，但 %s 的数据不新鲜——"+
+			"开市了却喂不过来，或今天是节假日。\n"+
+			"       不出结论。", subject)
 		report("shinny-trading-day-predicted", "SKIP", b.String())
 		return
 	}
-	if !okCtl {
-		b.WriteString("       ⇒ SKIP：对照组未就绪，无法排除「新鲜度判据本身失效」。")
-		report("shinny-trading-day-predicted", "SKIP", b.String())
-		return
-	}
-	if ctlLive {
-		fmt.Fprintf(&b, "       ⇒ SKIP：对照组 %s 【无夜盘】却也判成新鲜，"+
-			"说明新鲜度判据坏了（时区/时钟/服务端回放），\n"+
-			"       此时 %s 的「在盘中」不成立，不出结论。", control, subject)
+	if bad {
+		b.WriteString("       ⇒ SKIP：有对照组在【它适用的时段里】却判成新鲜，" +
+			"说明新鲜度判据坏了（时区/时钟/服务端回放），\n" +
+			"       此时「在盘中」不成立，不出结论。")
 		report("shinny-trading-day-predicted", "SKIP", b.String())
 		return
 	}
@@ -269,6 +330,14 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 	}
 
 	st := "PASS"
+	// 拿到定论后【必须】填上 baselineAnswer，见它的注释。
+	if concl := verdictOf(leg1, leg2); baselineAnswer != "" && concl != "" &&
+		concl != baselineAnswer {
+		fmt.Fprintf(&b, "       ⇒ FAIL：基线记的是「%s」，这次测出「%s」——"+
+			"上游行为变了，先判断是它变了还是记录错了。\n", baselineAnswer, concl)
+		report("shinny-trading-day-predicted", "FAIL", b.String())
+		return
+	}
 	switch {
 	case sub.endID < sub.lastID:
 		st = "FAIL"
@@ -295,5 +364,66 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 	}
 	b.WriteString("       两条腿会因不同原因失败，所以是两条腿：\n" +
 		"       腿①比 end 与 last，腿②只看跨度、不依赖 last_id。")
+	if !inNight {
+		// 覆盖面不对称，就得说出来。「得出了结论」和「结论有多硬」是两件事，
+		// 把后者含糊过去，下一个人会按夜盘那一次的强度去信这一次。
+		b.WriteString("\n       ⚠️ 非夜盘时段：只有【已退市】那个对照组在，" +
+			"它挡得住「判据恒返回新鲜」，\n" +
+			"       挡不住小时量级的阈值松动。结论强度低于夜盘那一次，" +
+			"定论以夜盘的为准。")
+	}
 	report("shinny-trading-day-predicted", st, b.String())
+}
+
+// baselineAnswer 是【已经定论】的答案："预知" / "不预知"；空串表示尚未定论。
+//
+// ⚠️ **拿到定论那一刻就要把它填上**，把这条探针从「提问期」转成「守基线期」。
+//
+// 为什么这个转换非做不可（评审提的，我认）：
+// 提问期的 `PASS` 同时承载「预知」与「不预知」两个【相反】的结论，
+// 退出码根本分不开它们。于是答案一旦翻转——上游哪天改了这个字段的行为——
+// 探针照样 PASS，**而这正是探针存在的理由**。
+// 不转，就等于在拿到答案的同时永久丧失了发现答案翻转的能力。
+//
+// 同一个形状在别处也出现过：一个会红的必过项迟早被加 `|| true`；
+// 一个总亮着的标志位等于没有这一位。**一个不会失败的检查不是检查。**
+const baselineAnswer = ""
+
+// verdictOf 把两条腿归并成一个结论；两腿都判不出时返回空串。
+func verdictOf(leg1, leg2 string) string {
+	if leg1 != "不确定" {
+		return leg1
+	}
+	if leg2 != "不确定" {
+		return leg2
+	}
+	return ""
+}
+
+// rbSession 报告墙钟 t 是否落在 SHFE.rb 的交易时段内，以及是不是夜盘那一段。
+//
+// 时段照交易所公布写死：夜盘 21:00–23:00；日盘 09:00–10:15 / 10:30–11:30 / 13:30–15:00。
+// **刻意不 import 本库的日历**——探针要断言外部世界长什么样；
+// 拿本库的日历去验本库，日历错了两边会一起错，那就不是两条独立的路。
+//
+// 它不认节假日，所以「墙钟在时段内」只是必要条件；充分性由「数据新鲜」补齐。
+// 两者坏法不同：这一条坏在时间侧（时区/时钟），新鲜度坏在数据侧。
+func rbSession(t time.Time) (inSession, isNight bool) {
+	m := t.Hour()*60 + t.Minute()
+	const (
+		h9, h1015    = 9 * 60, 10*60 + 15
+		h1030, h1130 = 10*60 + 30, 11*60 + 30
+		h1330, h15   = 13*60 + 30, 15 * 60
+		h21, h23     = 21 * 60, 23 * 60
+	)
+	if m >= h21 && m < h23 {
+		return true, true
+	}
+	switch {
+	case m >= h9 && m < h1015,
+		m >= h1030 && m < h1130,
+		m >= h1330 && m < h15:
+		return true, false
+	}
+	return false, false
 }
