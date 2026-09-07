@@ -56,7 +56,7 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 	}
 
 	var b strings.Builder
-	bad := 0
+	bad, notSettled := 0, 0
 	for _, r := range reps {
 		lbls, err := minuteLabelsWide(ctx, md, tok, r.sym)
 		if err != nil {
@@ -75,6 +75,36 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 				r.sym, nBars, lo, hi)
 			continue
 		}
+		// —— 读第二遍，两遍必须一致 ——
+		//
+		// 这一格原来是空的：si/IF 那对对照组张开的是【读数】维度，
+		// 而「读到的比实际少」属于【数据完整性】维度——**当时没有任何东西守它**。
+		//
+		// 它挡的是一整类失效，**与根因无关**：窗口截断、快照没收齐、
+		// 服务端增量还在到达……只要两遍读出的不是同一个东西，就不出结论。
+		// 这一点要紧，因为这次的根因我并没有完全定死：
+		// 我证明了「窗口锚在起点会截断」，但评审观测到的是**间歇**，
+		// 而间歇不是那个机制的形状。**根因未定时，先让错误的形态变安全。**
+		//
+		// 为什么非有不可：这条探针出错时**不是沉默，是发出一条指控**，
+		// 而且是间歇的。间歇的错误指控比确定性的更糟——自然反应是「再跑一次」，
+		// 跑一次它就绿了，于是它永远不会被修，只会被【习惯】。
+		// 那就是 `|| true` 的形状，只不过不用谁去加那三个字符，它自己会变绿。
+		lbls2, err2 := minuteLabelsWide(ctx, md, tok, r.sym)
+		if err2 != nil {
+			fmt.Fprintf(&b, "  %-14s 第二遍拉取失败，不出结论: %v\n", r.sym, err2)
+			notSettled++
+			continue
+		}
+		day2, segs2 := lastFullDaySegs(lbls2)
+		if day2 != day || strings.Join(segs2, " ") != strings.Join(segs, " ") {
+			fmt.Fprintf(&b, "  %-14s 两遍读出的不一样，判为【数据未收齐】，不出结论：\n"+
+				"                 第一遍 %s %s\n                 第二遍 %s %s\n",
+				r.sym, day, strings.Join(segs, " "), day2, strings.Join(segs2, " "))
+			notSettled++
+			continue
+		}
+
 		tmpl, terr := embedded.Template(r.key, dayNum(day))
 		if terr != nil {
 			fmt.Fprintf(&b, "  %-14s 内置表答不了: %v\n", r.sym, terr)
@@ -122,6 +152,13 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 		}
 	}
 
+	// 有任何一个代表没读稳，就【不宣称】全部对过——少一个代表就是少一整族。
+	if bad == 0 && notSettled > 0 {
+		report(name, "SKIP", fmt.Sprintf(
+			"已比对的都相同，但有 %d 个代表数据未收齐，不宣称全部对过：\n", notSettled)+
+			strings.TrimRight(b.String(), "\n"))
+		return
+	}
 	if bad == 0 {
 		report(name, "PASS", "六种形状各取一个代表，日盘【与夜盘】都与实测相同：\n"+
 			strings.TrimRight(b.String(), "\n")+
