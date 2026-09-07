@@ -494,14 +494,16 @@ func rbSession(t time.Time) (inSession, isNight bool) {
 // ⇒ **对照组会不会在你最需要它的那天失效，是设计对照组时的第一问。**
 func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
 	const (
-		subject  = "KQ.m@SHFE.rb" // 标称有夜盘（120 分）
-		noNight  = "KQ.m@GFEX.si" // 标称无夜盘 → 09:00 那一侧的正例
-		hasNight = "KQ.m@SHFE.ag" // 标称 330 分 → 21:00 那一侧的正例
-		expired  = "SHFE.rb1605"  // 已退市 → 必须陈旧
+		subject  = "KQ.m@SHFE.rb"  // 标称有夜盘（120 分）
+		noNight  = "KQ.m@GFEX.si"  // 标称无夜盘 → 09:00 那一侧的正例
+		hasNight = "KQ.m@SHFE.ag"  // 标称 330 分 → 21:00 那一侧的正例
+		expired  = "SHFE.rb1605"   // 已退市 → 必须陈旧
+		cffex    = "KQ.m@CFFEX.IF" // 中金所 09:30 起，且【永不随停夜盘退化】
 	)
 	name := "shinny-suspended-night-span"
 
-	nodes, err := dayNodes(ctx, md, tok, []string{subject, noNight, hasNight, expired})
+	nodes, err := dayNodes(ctx, md, tok,
+		[]string{subject, noNight, hasNight, expired, cffex})
 	if err != nil {
 		report(name, "FAIL", "拉取失败: "+err.Error())
 		return
@@ -532,7 +534,8 @@ func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
 	subFirst, ok := show(subject, "← 判据看这个")
 	nnFirst, ok2 := show(noNight, "（标称无夜盘，期望 09:00）")
 	hnFirst, ok3 := show(hasNight, "（标称 330 分，普通日期望 21:00）")
-	if !ok || !ok2 || !ok3 {
+	cfFirst, ok4 := show(cffex, "（中金所，任何天都期望 09:30）")
+	if !ok || !ok2 || !ok3 || !ok4 {
 		b.WriteString("       ⇒ SKIP：有序列取不到第一根，不出结论。")
 		report(name, "SKIP", b.String())
 		return
@@ -561,8 +564,23 @@ func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
 		return
 	}
 
-	// 对照组二：读法必须两种值都产得出
-	if nnFirst.Hour() != 9 {
+	// 对照组二：读法必须【在同一天】产得出两个不同的值。
+	//
+	// si 读 09:00、IF 读 09:30，而**两者都没有夜盘**——「夜盘停了」对它们的
+	// 第一根时刻毫无作用，所以它们**不会和被测对象一起退化**，
+	// 停夜盘那天照样是两个不同的已知值。这一对合起来杀掉「恒返回某个常量」
+	// 的读法，不管那个常量是几点。（评审给的，补上了 ag 那一侧的退化。）
+	//
+	// 期望值 09:30 是【从实测写死】的，**不读 calendar/embedded**：
+	// 探针不拿本库的表当期望，否则表错了就把错误抄进探针——
+	// 而那张表的国债那一行刚刚就是错的（09:15，实际 09:30），例子太现成了。
+	if cfFirst.Hour() != 9 || cfFirst.Minute() != 30 {
+		fmt.Fprintf(&b, "       ⇒ SKIP：%s 任何天都该 09:30 开，实际 %s——读法可疑。\n",
+			cffex, cfFirst.Format("15:04"))
+		report(name, "SKIP", b.String())
+		return
+	}
+	if nnFirst.Hour() != 9 || nnFirst.Minute() != 0 {
 		fmt.Fprintf(&b, "       ⇒ SKIP：%s 标称无夜盘，第一根却不是 09:00（%s）"+
 			"——「读第一根」这个判据本身可疑，不出结论。\n",
 			noNight, nnFirst.Format("15:04"))
@@ -599,8 +617,9 @@ func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
 	// 说出来，别让下一个人按平时的强度去信这一次。
 	degraded := ""
 	if hnFirst.Hour() == 9 {
-		degraded = "\n       ⚠️ 对照组当天退化：ag 也停了夜盘，" +
-			"「21:00 那一侧的正例」不存在，结论强度低于平时。"
+		degraded = "\n       注：ag 当天也停了夜盘，「21:00 那一侧的正例」不存在；" +
+			"\n       但 si(09:00) 与 IF(09:30) 都没有夜盘、不随停夜盘退化，" +
+			"\n       同一天仍给出两个不同的已知值，读法的分辨力有人守着。"
 	}
 
 	fmt.Fprintf(&b, "       今天【是】停夜盘日。跨度=%d（标称 %d / 当日实际 %d）\n",
