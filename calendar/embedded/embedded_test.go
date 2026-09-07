@@ -250,7 +250,13 @@ func mustTS(s string) int64 {
 	return t.UnixMilli()
 }
 
-// TestEmbeddedCannotSeeSuspendedNight 钉住一条【已知缺陷】，不是期望行为。
+// TestKnownDefect_EmbeddedCannotSeeSuspendedNight 钉住一条【已知缺陷】，不是期望行为。
+//
+// 前缀 TestKnownDefect_ 是约定：**欠条要能被一条命令列出来**，
+// 否则「本仓当前钉住了几个已知缺陷」只能靠翻文件，
+// 那它会和白名单走同一条路——迟早变成垃圾桶。
+//
+//	go test -list 'TestKnownDefect_.*' ./...
 //
 // 内置实现假定「实际 = 标称」：只要品种有夜盘，它就给一段夜盘。
 // 但长假前最后一个交易日的夜盘是【不开】的——2026-09-30 晚上没有夜盘，
@@ -261,7 +267,7 @@ func mustTS(s string) int64 {
 // 从而逼着改的人同时更新 DayOf 的文档与 contract.md 的限定。
 //
 // 相位不受影响（相位按标称算，是品种常量），受影响的是切分与判完结。
-func TestEmbeddedCannotSeeSuspendedNight(t *testing.T) {
+func TestKnownDefect_EmbeddedCannotSeeSuspendedNight(t *testing.T) {
 	// 节前最后一个交易日 09-30，节后第一个 10-09。真实情况：09-30 晚无夜盘。
 	c, err := New([]tickflow.TradingDay{20260929, 20260930, 20261009})
 	if err != nil {

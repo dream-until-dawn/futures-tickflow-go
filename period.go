@@ -18,7 +18,22 @@ type BarBound struct {
 	// 注意它【不】等于「装了整整一个周期的交易时间」：停夜盘那天沪银的
 	// 第一根日盘 K 线是完整格子（Full=true），却只装了 30 分钟——
 	// 另外 30 分钟来自一个没有开的夜盘。要问装了多少，用 Minutes。
+	//
+	// 反过来【绝不成立】：任何一根都不会装【超过】一个周期。见 Anomalous。
 	Full bool
+
+	// Anomalous 表示这一根是【标称模板与当日实际时段互相矛盾】的产物。
+	//
+	// 触发条件只有一个：当日实际夜盘的余数【多于】相位所能容纳的，
+	// 也就是交易所延长了夜盘而模板没跟上（contract.md 的「时段表过期」那条风险）。
+	//
+	// 这时不把多出来的时间硬塞进第一根日盘——那会造出一根装了 1.5 个周期的
+	// 「完整」格子，而收盘标签序列与覆盖检查【都看不出来】。
+	// 改成把夜盘残段单独冲刷成一根短的，并在这里说明白。
+	//
+	// 上层（v0.2 的 SyncReport.Misaligned）扫这一位就能报「模板过期」。
+	// **不要静默跳过它**：跳过等于把丢数据换成一个更安静的丢数据。
+	Anomalous bool
 }
 
 // Minutes 返回这根 K 线实际装了多少分钟【交易时间】（不含中间的休市段）。
@@ -121,9 +136,29 @@ func (p IntradayPeriod) Bars(tmpl SessionTemplate, d Day) []BarBound {
 	// 沪银的 02:00–02:30 必须落在某根 K 线的 [Open, Close) 里，
 	// 否则那半小时不属于任何一根，聚合时被静默丢掉——
 	// 收盘标签序列完全正常，只是少了 30 分钟的成交。
+	//
+	// 但「沿用」有个上界：残段只有【不超过相位】时才塞得进第一根日盘。
+	// 第一根日盘装的是 nightCarried + (周期 − 相位)，
+	// 所以 nightCarried > phase 时它会【超过一个周期】——
+	// 一根装了 1.5 个周期的「完整」格子，而标签序列与覆盖检查都看不出来。
+	//
+	// nightCarried > phase 意味着当日实际夜盘比标称长，即模板过期。
+	// 这一侧【未验】：实测只覆盖「实际 ≤ 标称」（停夜盘日，实际为 0）。
+	// 未验就不替它选一套口径——把残段单独冲刷成一根短的并标 Anomalous，
+	// 让矛盾显式冒到上层，而不是安静地摊进网格。
 	dayOpen := int64(0)
-	if nightCarried > 0 {
+	switch {
+	case nightCarried == 0:
+		// 夜盘正好切齐，或当天根本没有夜盘：日盘块从日盘首段开盘
+	case nightCarried <= phase:
 		dayOpen = nightOpen
+	default:
+		out = append(out, BarBound{
+			Open:      nightOpen,
+			Close:     night[len(night)-1].End,
+			Full:      false,
+			Anomalous: true,
+		})
 	}
 	dayBars, carried, open := p.grid(day, phase, dayOpen, nil)
 	out = append(out, dayBars...)
@@ -227,17 +262,30 @@ func (p CalendarPeriod) Group(days []Day) []BarBound {
 		if len(cur) == 0 {
 			return
 		}
-		first, last := cur[0], cur[len(cur)-1]
-		if len(first.Sessions) == 0 || len(last.Sessions) == 0 {
-			cur = nil
+		// 取【首个有时段的日】与【末个有时段的日】，不是首日与末日。
+		//
+		// 原来直接取 cur[0] / cur[len-1]，只要这一组的【边界日】没有时段，
+		// 整组就被 return 掉——**丢的是一整周或一整月，而且不出声**。
+		// 组里其余的日全都有时段也照丢。
+		//
+		// 全组都没有时段时才不出这一根：那时这一组确实没有任何交易时间，
+		// 「没有」是对的答案，不是丢失。
+		var open, close int64
+		found := false
+		for _, d := range cur {
+			if len(d.Sessions) == 0 {
+				continue
+			}
+			if !found {
+				open, found = d.Sessions[0].Start, true
+			}
+			close = d.Sessions[len(d.Sessions)-1].End
+		}
+		cur = nil
+		if !found {
 			return
 		}
-		out = append(out, BarBound{
-			Open:  first.Sessions[0].Start,
-			Close: last.Sessions[len(last.Sessions)-1].End,
-			Full:  true,
-		})
-		cur = nil
+		out = append(out, BarBound{Open: open, Close: close, Full: true})
 	}
 	for i, d := range days {
 		if i > 0 && p.newGroup(days[i-1].Num, d.Num) {

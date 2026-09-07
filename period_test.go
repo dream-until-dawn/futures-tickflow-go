@@ -336,11 +336,17 @@ func TestBarsCoverEveryTradingMinute(t *testing.T) {
 		{"ag", tmplAG, day(20260904, "2026-09-03", "2026-09-04", 330)},
 		{"cu", tmplCU, day(20260904, "2026-09-03", "2026-09-04", 240)},
 		{"rb", tmplRB, day(20260904, "2026-09-03", "2026-09-04", 120)},
-		// 停夜盘日：模板有夜盘，当天实际没有
+		// 停夜盘日：模板有夜盘，当天实际没有（实际 < 标称，实测过的那一侧）
 		{"ag 停夜盘", tmplAG, day(20260904, "2026-09-03", "2026-09-04", 0)},
 		{"rb 停夜盘", tmplRB, day(20260904, "2026-09-03", "2026-09-04", 0)},
+		// 模板过期：实际 > 标称。**这一侧原先只有上界那条测试覆盖**——
+		// 成对的不变量必须跑在【同一片输入】上，否则「成对」是假的：
+		// 一条测 A 集合、另一条测 B 集合，两个方向就各留了一半没人看。
+		{"cu模板/实际330", tmplCU, day(20260904, "2026-09-03", "2026-09-04", 330)},
+		{"ag模板/实际390", tmplAG, day(20260904, "2026-09-03", "2026-09-04", 390)},
+		{"si模板/实际120", tmplSI, day(20260904, "2026-09-03", "2026-09-04", 120)},
 	}
-	for _, mins := range []int{1, 5, 15, 30, 60} {
+	for _, mins := range []int{1, 5, 15, 30, 60, 90} {
 		p := MustIntraday(mins)
 		for _, c := range cases {
 			owners := map[int64]int{}
@@ -385,5 +391,119 @@ func TestBarsCoverEveryTradingMinute(t *testing.T) {
 					time.UnixMilli(dup).In(CST).Format("01-02 15:04"))
 			}
 		}
+	}
+}
+
+// TestBarsNeverExceedOnePeriod 是 TestBarsCoverEveryTradingMinute 的【另一半】。
+//
+// 守恒类不变量是有方向的，必须成对：
+//
+//	下界「不漏」——每一分钟至少落在一根里；
+//	上界「不超」——每一根至多装一个周期。
+//
+// 只写一条，另一个方向的错误照样全绿。这条就是被那样漏掉的：
+// 标称夜盘 240 而当日实际 330 时，第一根日盘装了 90 分钟、Full=true，
+// 而覆盖检查 555=555 通过、收盘标签序列一根不差。
+//
+// Full=true 可以装得【少】（停夜盘日沪银第一根只装 30 分钟，因为那 30 分钟
+// 来自一个没开的夜盘），但绝不该装得【多】——多出来的时间是从别处偷的。
+func TestBarsNeverExceedOnePeriod(t *testing.T) {
+	tmpls := map[string]SessionTemplate{
+		"标称120": tmplRB, "标称240": tmplCU, "标称330": tmplAG, "标称0": tmplSI,
+	}
+	// 实际夜盘长度遍历：既覆盖「实际 < 标称」（停夜盘），
+	// 也覆盖「实际 > 标称」（交易所延长夜盘、模板过期）——**后者正是漏掉的方向**
+	for _, actual := range []int{0, 90, 120, 150, 240, 300, 330, 390} {
+		d := day(20260907, "2026-09-04", "2026-09-07", actual)
+		for _, mins := range []int{1, 5, 15, 30, 60, 90} {
+			p := MustIntraday(mins)
+			for name, tmpl := range tmpls {
+				for i, b := range p.Bars(tmpl, d) {
+					if got := b.Minutes(d); got > mins {
+						t.Errorf("%s 实际夜盘 %d 分 %s：第 %d 根装了 %d 分钟 > 周期 %d"+
+							"（Full=%v Anomalous=%v）——多出来的时间是从别处偷的",
+							name, actual, p, i, got, mins, b.Full, b.Anomalous)
+					}
+				}
+			}
+		}
+	}
+}
+
+// TestStaleTemplateIsFlaggedNotSmoothed 钉住 I1 的【行为决定】。
+//
+// 当日实际夜盘比标称长 ⇒ 标称模板过期。这一侧【未验】（实测只覆盖实际 ≤ 标称），
+// 未验就不替它选一套口径：把夜盘残段单独冲刷成一根短的并标 Anomalous，
+// 让矛盾显式冒到上层，而不是安静地摊进网格。
+func TestStaleTemplateIsFlaggedNotSmoothed(t *testing.T) {
+	p := MustIntraday(60)
+	// 标称 240（相位 0），实际 330（余数 30）
+	bars := p.Bars(tmplCU, day(20260907, "2026-09-04", "2026-09-07", 330))
+
+	n := 0
+	for _, b := range bars {
+		if b.Anomalous {
+			n++
+			if b.Full {
+				t.Error("矛盾产物不该标成完整格子")
+			}
+			if got := time.UnixMilli(b.Open).In(CST).Format("01-02 15:04"); got != "09-05 02:00" {
+				t.Errorf("矛盾那一根应从夜盘残段起点 09-05 02:00 起，得到 %s", got)
+			}
+		}
+	}
+	if n != 1 {
+		t.Fatalf("期望恰好 1 根被标 Anomalous，得到 %d 根", n)
+	}
+
+	// 反向：模板与实际【一致】时，一根都不该被标——
+	// 否则这一位会因为总是亮着而被上层忽略，等于没有。
+	for _, tc := range []struct {
+		tmpl   SessionTemplate
+		actual int
+	}{
+		{tmplRB, 120}, {tmplCU, 240}, {tmplAG, 330}, {tmplSI, 0},
+		{tmplAG, 0},   // 停夜盘日：实际 < 标称，是实测过的那一侧，不算矛盾
+		{tmplCU, 120}, // 实际 < 标称
+	} {
+		for _, mins := range []int{5, 15, 30, 60} {
+			d := day(20260907, "2026-09-04", "2026-09-07", tc.actual)
+			for _, b := range MustIntraday(mins).Bars(tc.tmpl, d) {
+				if b.Anomalous {
+					t.Errorf("标称夜盘 %d / 实际 %d / %dm：不该有 Anomalous",
+						tc.tmpl.NightMinutes(), tc.actual, mins)
+				}
+			}
+		}
+	}
+}
+
+// TestGroupKeepsGroupWithEmptyEdgeDay 边界日没有时段时，【整组】不该被静默丢掉。
+//
+// 丢的是一整周或一整月，而且不出声；组里其余的日全都有时段也照丢。
+func TestGroupKeepsGroupWithEmptyEdgeDay(t *testing.T) {
+	full := func(num TradingDay, date string) Day {
+		return day(num, "2026-09-04", date, 0)
+	}
+	// 同一周：周一空、周二三有、周五空
+	week := []Day{
+		{Num: 20260907},
+		full(20260908, "2026-09-08"),
+		full(20260909, "2026-09-09"),
+		{Num: 20260911},
+	}
+	got := Weekly.Group(week)
+	if len(got) != 1 {
+		t.Fatalf("整周应当仍出一根，得到 %d 根", len(got))
+	}
+	if o := time.UnixMilli(got[0].Open).In(CST).Format("01-02 15:04"); o != "09-08 09:00" {
+		t.Errorf("应从首个【有时段】的日开盘 09-08 09:00 起，得到 %s", o)
+	}
+	if c := time.UnixMilli(got[0].Close).In(CST).Format("01-02 15:04"); c != "09-09 15:00" {
+		t.Errorf("应收在末个【有时段】的日 09-09 15:00，得到 %s", c)
+	}
+	// 全组都没有时段：那一组确实没有交易时间，不出根是对的答案，不是丢失
+	if n := len(Weekly.Group([]Day{{Num: 20260907}, {Num: 20260908}})); n != 0 {
+		t.Errorf("全空的一组不该凭空造出 %d 根", n)
 	}
 }

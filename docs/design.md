@@ -212,7 +212,12 @@ type BarBound struct {
     // Full 表示这是一个【完整的网格格子】，不是交易日末尾的冲刷残段。
     // 它【不】等于「装了整整一个周期的交易时间」——停夜盘那天沪银的第一根
     // 日盘 K 线是完整格子，却只装了 30 分钟。要问装了多少，用 Minutes。
+    // 反过来【绝不成立】：任何一根都不会装【超过】一个周期。
     Full bool
+    // Anomalous 表示这一根是【标称模板与当日实际时段互相矛盾】的产物。
+    // 触发条件只有一个：当日实际夜盘的余数多于相位所能容纳的，即模板过期。
+    // 上层（v0.2 的 SyncReport.Misaligned）扫这一位就能报。
+    Anomalous bool
 }
 
 // Bars 给出某个交易日内该周期的全部 K 线边界。
@@ -222,6 +227,9 @@ type BarBound struct {
 func (p IntradayPeriod) Bars(tmpl SessionTemplate, d Day) []BarBound
 
 // Group 把一串交易日按周/月成组。日线就是一天一组。
+//
+// 组的边界取【首个有时段的日】与【末个有时段的日】，不是首日与末日——
+// 后者会让边界日没有时段时整组被静默丢掉，丢的是一整周或一整月。
 func (p CalendarPeriod) Group(days []Day) []BarBound
 ```
 
@@ -256,7 +264,9 @@ func (p IntradayPeriod) Phase(tmpl SessionTemplate) time.Duration
 
 1. **相位按标称模板算**，是品种常量：沪银 `330 mod 60 = 30`，沪铜 `240 mod 60 = 0`；
 2. **切分沿当天实际交易的时段累计**，从相位起算，交易日结束时强制冲刷；
-3. **夜盘残段的 `Open` 要带进日盘块**——相位管「网格切在哪」，`Open` 管「那段时间归谁」。
+3. **夜盘残段的 `Open` 要带进日盘块**——相位管「网格切在哪」，`Open` 管「那段时间归谁」；
+4. **但「带进去」有上界**：残段只有不超过相位时才塞得进第一根日盘。
+   超了就说明标称与实际矛盾，**单独冲刷成一根短的并标 `Anomalous`**，不摊进网格。
 
 第 3 条是 v0.1 实现时补的，因为漏了它的第一版**能通过全部标签比对**：
 
@@ -273,6 +283,28 @@ func (p IntradayPeriod) Phase(tmpl SessionTemplate) time.Duration
 > 补上的是一条不变量而不是一个回归值：`TestBarsCoverEveryTradingMinute`
 > 把交易日的每一分钟点一遍，要求**恰好**落在一根 K 线里——不能漏、
 > 也不能被两根同时认领。1m/5m/15m/30m/60m × 含停夜盘日全点。
+
+第 4 条是评审 I1 逼出来的，**方向和上面那次正好相反**：
+
+> **超装。** 补完「不漏」之后，`nightCarried > phase` 时第一根日盘会装
+> `nightCarried + (周期 − 相位)` 分钟——**一根 60m 的「完整」格子装了 90 分钟**。
+> 触发条件是当日实际夜盘比标称长，即交易所延长了夜盘而模板没跟上。
+>
+> 三道守卫一道都没覆盖：标签序列一根不差；覆盖不变量 `555 = 555` **通过**
+> （多装的时间是从别处偷的，总量不变）；doccheck 比签名不比语义。
+>
+> ⇒ **守恒类不变量是有方向的，必须成对。**
+> 「不漏」（下界：每一分钟至少落在一根里）与「不超」（上界：每一根至多装一个周期）
+> 是两条独立的断言，只写一条，另一个方向的错误照样全绿。
+>
+> 而且**成对的两条必须跑在同一片输入上**——原先上界那条测了「实际 > 标称」，
+> 下界那条没测，于是「成对」是假的：一条测 A 集合、另一条测 B 集合，
+> 两个方向各留了一半没人看。现在两条共用同一个矩阵
+> （标称 0/120/240/330 × 实际 0/90/120/150/240/300/330/390 × 周期 1…90m）。
+
+**为什么是「标记」而不是「按某一侧截断」**：`实际 > 标称` 这一侧**未验**——
+实测只覆盖 `实际 ≤ 标称`（停夜盘日，实际为 0，那时标称胜出）。
+未验就不替它选口径，把矛盾显式冒到上层，比安静地摊进网格便宜得多。
 
 第二半解释跨休市段（30m 的 `10:45`）与日末短根（30m 的 `15:00` 只有 15 分钟）；
 第一半解释跨隔夜缺口（`AG0` 的 `09:30`）**以及停夜盘日为什么不变**。
@@ -358,12 +390,12 @@ const (
 // SessionTemplate 品种的【标称】时段模板，带生效区间。
 // 相位按它算（见上）。夜盘时间历史上调整过，所以要带区间。
 type SessionTemplate struct {
-    From, To int32     // 生效的交易日区间
+    From, To TradingDay // 生效的交易日区间
     Day      []Session // 相对时刻
     Night    []Session // 可能为空；跨日用 25:00 / 26:30 表示
 }
 
-// 而 TradingDay.Sessions 是【那一天实际开了哪些段】——逐日事实，
+// 而 Day.Sessions 是【那一天实际开了哪些段】——逐日事实，
 // 区间模式表达不了：长假前停夜盘就是单独某一天没有夜盘段。
 ```
 
@@ -395,7 +427,7 @@ type SessionTemplate struct {
 type Bar struct {
     Ts         int64 // 开盘墙钟时刻，毫秒
     TsEnd      int64 // 收盘墙钟时刻，毫秒
-    TradingDay int32 // 所属交易日，yyyymmdd
+    TradingDay TradingDay // 所属交易日，yyyymmdd
 
     Open, High, Low, Close float64
 
@@ -404,7 +436,7 @@ type Bar struct {
     OpenInterest float64 // 持仓量（手）
     Settle       float64 // 结算价；仅日线有，分钟线为 NaN
 
-    Flags uint32 // 完整性与来源，见下
+    Flags BarFlags // 完整性与来源，见下
 }
 ```
 
@@ -511,8 +543,9 @@ type Symbol struct {
 type Source interface {
     // Bars 返回 [From, To) 内【已完结】的 K 线，按 Ts 升序。
     Bars(ctx context.Context, req BarRequest) ([]Bar, error)
-    // Caps 报告这个源的能力与边界，见下。
-    Caps() Capabilities
+    // Caps 报告这个源【在某个品种上】的能力与边界，见下。
+    // 深度必须按品种问，不能只按周期——同为 60m，AG0 与 RB0 的可回溯天数差近两倍。
+    Caps(k ProductKey) Capabilities
 }
 ```
 
@@ -1088,7 +1121,7 @@ float64 → decimal 往返：29/29 逐位无损
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
-| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ 本版 |
+| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | 评审中（有条件通过，I1 已改） |
 | v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 待办 |
 | v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
