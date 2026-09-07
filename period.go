@@ -22,14 +22,17 @@ type BarBound struct {
 	// 反过来【绝不成立】：任何一根都不会装【超过】一个周期。见 Anomalous。
 	Full bool
 
-	// Anomalous 表示这一根是【标称模板与当日实际时段互相矛盾】的产物。
+	// Anomalous 表示【这个交易日】的标称模板与实际时段互相矛盾，
+	// 也就是交易所改了夜盘而模板没跟上（contract.md 的「时段表过期」那条风险）。
 	//
-	// 触发条件只有一个：当日实际夜盘的余数【多于】相位所能容纳的，
-	// 也就是交易所延长了夜盘而模板没跟上（contract.md 的「时段表过期」那条风险）。
+	// 它是【交易日一级】的事实，所以那天的**每一根**都会带上，不是只标某一根。
+	// 判据见 Day.TemplateMismatch——比的是分钟数，**不是取模后的余数**：
+	// 按余数比会让同一个矛盾在 15m/30m 报、在 5m/60m/90m 不报，
+	// 标志骑在周期上，上层按周期扫就按周期漏（评审 K1）。
 	//
-	// 这时不把多出来的时间硬塞进第一根日盘——那会造出一根装了 1.5 个周期的
-	// 「完整」格子，而收盘标签序列与覆盖检查【都看不出来】。
-	// 改成把夜盘残段单独冲刷成一根短的，并在这里说明白。
+	// 与它相关但【不是同一件事】的是超装：矛盾发生时，夜盘残段可能多于
+	// 相位所能容纳的，硬塞进第一根日盘会造出一根装了 1.5 个周期的「完整」格子，
+	// 而收盘标签序列与覆盖检查都看不出来。所以那段单独冲刷成一根短的。
 	//
 	// 上层（v0.2 的 SyncReport.Misaligned）扫这一位就能报「模板过期」。
 	// **不要静默跳过它**：跳过等于把丢数据换成一个更安静的丢数据。
@@ -153,11 +156,12 @@ func (p IntradayPeriod) Bars(tmpl SessionTemplate, d Day) []BarBound {
 	case nightCarried <= phase:
 		dayOpen = nightOpen
 	default:
+		// 这一根不在这里打 Anomalous——日级那一遍会把【整天】都标上。
+		// 只标这一根的话，标志就骑在了周期上：同一个矛盾在 15m 报、60m 不报。
 		out = append(out, BarBound{
-			Open:      nightOpen,
-			Close:     night[len(night)-1].End,
-			Full:      false,
-			Anomalous: true,
+			Open:  nightOpen,
+			Close: night[len(night)-1].End,
+			Full:  false,
 		})
 	}
 	dayBars, carried, open := p.grid(day, phase, dayOpen, nil)
@@ -166,6 +170,17 @@ func (p IntradayPeriod) Bars(tmpl SessionTemplate, d Day) []BarBound {
 	// 交易日结束，冲刷残段（最后一根可以是短的）
 	if carried > 0 && len(day) > 0 {
 		out = append(out, BarBound{Open: open, Close: day[len(day)-1].End, Full: false})
+	}
+
+	// 「模板与实际矛盾」是【交易日一级】的事实，与周期无关——所以整天都标上。
+	//
+	// 原先它由 nightCarried > phase 决定，那是两个【取模后的余数】相比，
+	// 于是同一个事实在 15m/30m 报、在 5m/60m/90m 不报（评审 K1）。
+	// 上层按周期扫这一位就会按周期漏报，而漏掉的那些看起来完全正常。
+	if _, _, bad := d.TemplateMismatch(tmpl); bad {
+		for i := range out {
+			out[i].Anomalous = true
+		}
 	}
 	return out
 }

@@ -136,3 +136,28 @@ type Calendar interface {
 	// Walk 按升序遍历 [from, to] 之间的交易日。fn 返回 false 即停止。
 	Walk(k ProductKey, from, to TradingDay, fn func(Day) bool) error
 }
+
+// TemplateMismatch 报告当日【实际】夜盘与【标称】模板是否矛盾。
+//
+// 这是一条**交易日一级、与周期无关**的事实——它取决于交易所那天开了多久夜盘，
+// 不取决于你打算切成 5m 还是 60m。
+//
+// 曾经不是这样：矛盾原先由 `nightCarried > phase` 检测，**两个取模后的余数相比**，
+// 于是同一个「标称 330 / 实际 310」的事实在 15m/30m 报、在 5m/60m/90m 不报
+// （60m 下是一根装 40 分钟、不带标记的完整格子）。
+// **标志骑在周期上**，上层按周期扫就会按周期漏。
+//
+// 判据里 `actual == 0` **不算矛盾**：那是停夜盘日，是实测过的、预期内的逐日事实
+// （长假前交易所不开夜盘），相位规则本来就按标称算、处理得对。
+// 把它算成矛盾，这一位会在每个长假前后亮起来，
+// 而**一个经常亮的标志和一个不亮的标志一样没用**。
+//
+// 返回 nominal / actual 是让上层能把差异写进报告，而不是只知道「有问题」。
+func (d Day) TemplateMismatch(tmpl SessionTemplate) (nominal, actual int, mismatch bool) {
+	nominal = tmpl.NightMinutes()
+	night, _ := splitNightDay(d.Sessions)
+	for _, s := range night {
+		actual += int((s.End - s.Start) / 60000)
+	}
+	return nominal, actual, actual > 0 && actual != nominal
+}

@@ -436,24 +436,54 @@ func TestBarsNeverExceedOnePeriod(t *testing.T) {
 // 未验就不替它选一套口径：把夜盘残段单独冲刷成一根短的并标 Anomalous，
 // 让矛盾显式冒到上层，而不是安静地摊进网格。
 func TestStaleTemplateIsFlaggedNotSmoothed(t *testing.T) {
-	p := MustIntraday(60)
 	// 标称 240（相位 0），实际 330（余数 30）
-	bars := p.Bars(tmplCU, day(20260907, "2026-09-04", "2026-09-07", 330))
+	d := day(20260907, "2026-09-04", "2026-09-07", 330)
+	bars := MustIntraday(60).Bars(tmplCU, d)
 
-	n := 0
+	// 超装那段被单独冲刷成一根短的，而不是硬塞进第一根日盘
+	short := 0
 	for _, b := range bars {
-		if b.Anomalous {
-			n++
-			if b.Full {
-				t.Error("矛盾产物不该标成完整格子")
-			}
-			if got := time.UnixMilli(b.Open).In(CST).Format("01-02 15:04"); got != "09-05 02:00" {
-				t.Errorf("矛盾那一根应从夜盘残段起点 09-05 02:00 起，得到 %s", got)
-			}
+		if !b.Full && time.UnixMilli(b.Open).In(CST).Format("01-02 15:04") == "09-05 02:00" {
+			short++
 		}
 	}
-	if n != 1 {
-		t.Fatalf("期望恰好 1 根被标 Anomalous，得到 %d 根", n)
+	if short != 1 {
+		t.Errorf("夜盘残段应单独成一根短的（从 09-05 02:00 起），得到 %d 根", short)
+	}
+
+	// 【K1】矛盾是交易日一级的事实，与周期无关：每个周期都要报，且整天都带标。
+	//
+	// 原先判据是 nightCarried > phase——两个【取模后的余数】相比，
+	// 于是「标称 330 / 实际 310」这同一个事实在 15m/30m 报、5m/60m/90m 不报。
+	// 上层按周期扫这一位就按周期漏，而漏掉的那些看起来完全正常。
+	for _, tc := range []struct {
+		tmpl    SessionTemplate
+		actual  int
+		nominal int
+	}{
+		{tmplCU, 330, 240}, // 实际比标称长
+		{tmplAG, 310, 330}, // 实际比标称短——K1 报的就是这一组
+		{tmplSI, 120, 0},   // 本无夜盘的品种开了夜盘
+	} {
+		dd := day(20260907, "2026-09-04", "2026-09-07", tc.actual)
+		if n, a, bad := dd.TemplateMismatch(tc.tmpl); !bad || n != tc.nominal || a != tc.actual {
+			t.Errorf("TemplateMismatch(标称%d/实际%d) = (%d,%d,%v)，期望矛盾",
+				tc.nominal, tc.actual, n, a, bad)
+		}
+		for _, mins := range []int{1, 5, 15, 30, 60, 90} {
+			got := MustIntraday(mins).Bars(tc.tmpl, dd)
+			flagged := 0
+			for _, b := range got {
+				if b.Anomalous {
+					flagged++
+				}
+			}
+			if flagged != len(got) {
+				t.Errorf("标称%d/实际%d %dm：%d/%d 根带标——"+
+					"矛盾是交易日一级的事实，不该随周期变",
+					tc.nominal, tc.actual, mins, flagged, len(got))
+			}
+		}
 	}
 
 	// 反向：模板与实际【一致】时，一根都不该被标——
@@ -462,9 +492,12 @@ func TestStaleTemplateIsFlaggedNotSmoothed(t *testing.T) {
 		tmpl   SessionTemplate
 		actual int
 	}{
+		// 实际 == 标称：本来就一致
 		{tmplRB, 120}, {tmplCU, 240}, {tmplAG, 330}, {tmplSI, 0},
-		{tmplAG, 0},   // 停夜盘日：实际 < 标称，是实测过的那一侧，不算矛盾
-		{tmplCU, 120}, // 实际 < 标称
+		// 停夜盘日（实际为 0）：这是实测过的、预期内的逐日事实，**不算模板过期**。
+		// 把它算成矛盾，这一位会在每个长假前后亮起来——
+		// 而一个经常亮的标志和一个不亮的标志一样没用。
+		{tmplAG, 0}, {tmplCU, 0}, {tmplRB, 0},
 	} {
 		for _, mins := range []int{5, 15, 30, 60} {
 			d := day(20260907, "2026-09-04", "2026-09-07", tc.actual)
@@ -505,5 +538,37 @@ func TestGroupKeepsGroupWithEmptyEdgeDay(t *testing.T) {
 	// 全组都没有时段：那一组确实没有交易时间，不出根是对的答案，不是丢失
 	if n := len(Weekly.Group([]Day{{Num: 20260907}, {Num: 20260908}})); n != 0 {
 		t.Errorf("全空的一组不该凭空造出 %d 根", n)
+	}
+}
+
+// TestNightRemainderStillMergesWhenTemplateMatches 守住「残段单独冲刷」这个改法
+// 最大的回归风险：模板与实际【一致】时，跨隔夜那一根不能被拆掉。
+//
+// 沪银 330/330 的 60m，02:00–02:30 的余数要与次日 09:00–09:30 拼成【一根完整的】
+// 60m，标注 09:30——这是实测基线（probe.md），也是 BarBound 注释里的那句承诺。
+// 拆掉它同样满足覆盖与上界（两根短的，总量不变），所以那两条不变量看不见这次回归。
+func TestNightRemainderStillMergesWhenTemplateMatches(t *testing.T) {
+	d := day(20260904, "2026-09-03", "2026-09-04", 330)
+	bars := MustIntraday(60).Bars(tmplAG, d)
+	var got *BarBound
+	for i := range bars {
+		if time.UnixMilli(bars[i].Close).In(CST).Format("15:04") == "09:30" {
+			got = &bars[i]
+		}
+	}
+	if got == nil {
+		t.Fatal("没找到标注 09:30 的那一根")
+	}
+	if o := time.UnixMilli(got.Open).In(CST).Format("01-02 15:04"); o != "09-04 02:00" {
+		t.Errorf("它应当从前一日 02:00 起（跨隔夜缺口），得到 %s", o)
+	}
+	if m := got.Minutes(d); m != 60 {
+		t.Errorf("它应当装满 60 分钟（02:00–02:30 + 09:00–09:30），实际 %d", m)
+	}
+	if !got.Full {
+		t.Error("它是个完整格子")
+	}
+	if got.Anomalous {
+		t.Error("模板与实际一致，不该带矛盾标记")
 	}
 }
