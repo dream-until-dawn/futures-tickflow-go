@@ -82,12 +82,41 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 			mark = "≠"
 			bad++
 		}
-		fmt.Fprintf(&b, "  %-14s %s  实测 %s\n", r.sym, day, got)
-		fmt.Fprintf(&b, "  %-14s %s  内置 %s   ← %s\n", "", mark, want, r.shape)
+		fmt.Fprintf(&b, "  %-14s %s  日盘实测 %s\n", r.sym, day, got)
+		fmt.Fprintf(&b, "  %-14s %s  日盘内置 %s   ← %s\n", "", mark, want, r.shape)
+
+		// —— 夜盘那一半 ——
+		//
+		// 这一半原来【一条都没对过】：cu 那 240 分钟没有任何探针查过；
+		// 而 rb/ag 的「间接覆盖」是循环的——它比的是天勤给的
+		// trading_day_end_id 跨度，而那个跨度多半就是照标称模板算的
+		// （这正是我们自己开的那条未验项）。**拿一个可能照标称算的数去验标称。**
+		//
+		// 现有的 grid-differs-by-night 也不够：它断言 CU0 的 60m 日盘标签，
+		// 那只约束「夜盘分钟数 % 60 == 0」——**180 和 300 照样通过**。
+		//
+		// 而相位挂在夜盘上（Phase = 标称夜盘 mod 周期）——
+		// **烧到我的那一半（日盘）和最承重的那一半（夜盘），不是同一半。**
+		nightGot, okN := nightMinutesOf(lbls, day)
+		nightWant := tmpl.NightMinutes()
+		switch {
+		case !okN && nightWant == 0:
+			fmt.Fprintf(&b, "  %-14s =  夜盘 无，内置也是 0\n", "")
+		case !okN:
+			fmt.Fprintf(&b, "  %-14s ?  夜盘取不到（内置 %d 分）"+
+				"——【取不到】不是【没有】，不算数\n", "", nightWant)
+		case nightGot == nightWant:
+			fmt.Fprintf(&b, "  %-14s =  夜盘实测 %d 分 = 内置 %d 分\n",
+				"", nightGot, nightWant)
+		default:
+			fmt.Fprintf(&b, "  %-14s ≠  夜盘实测 %d 分 ≠ 内置 %d 分\n",
+				"", nightGot, nightWant)
+			bad++
+		}
 	}
 
 	if bad == 0 {
-		report(name, "PASS", "六种形状各取一个代表，日盘时段与实测逐段相同：\n"+
+		report(name, "PASS", "六种形状各取一个代表，日盘【与夜盘】都与实测相同：\n"+
 			strings.TrimRight(b.String(), "\n")+
 			"\n\n       代表选错会让整族漏检，所以每行都注明它代表谁。")
 		return
@@ -194,4 +223,40 @@ func dayNum(date string) tickflow.TradingDay {
 // 其实是取数窗口的问题。**取不到和不存在长得一样**，所以这里单开一个。
 func minuteLabelsWide(ctx context.Context, md, tok, sym string) (map[string][]string, error) {
 	return minuteLabelsN(ctx, md, tok, sym, 1, 2000, 10)
+}
+
+// nightMinutesOf 从 1m 标签反推「属于交易日 D 的那段夜盘」有多少分钟。
+//
+// 夜盘挂在【前一个交易日】的自然日上：交易日 2026-09-07 的夜盘在 09-04（周五）
+// 21:00 起，跨午夜的部分落在 09-05（周六）的日期上。所以要找 D 之前
+// 最近一个有 ≥21:00 根的自然日 P，再把 P 的晚间与 P+1 的凌晨加起来。
+//
+// 返回 (分钟数, 找到没有)。找不到就说找不到——**别把「取不到」当成 0**，
+// 那正好是「停夜盘」的读数，两者混起来会让一次取数失败伪装成一条结论。
+func nightMinutesOf(m map[string][]string, d string) (int, bool) {
+	dt, err := time.ParseInLocation("2006-01-02", d, cst)
+	if err != nil {
+		return 0, false
+	}
+	for back := 1; back <= 4; back++ {
+		p := dt.AddDate(0, 0, -back).Format("2006-01-02")
+		var evening int
+		for _, l := range m[p] {
+			if l >= "21:00" {
+				evening++
+			}
+		}
+		if evening == 0 {
+			continue
+		}
+		next := dt.AddDate(0, 0, -back+1).Format("2006-01-02")
+		var early int
+		for _, l := range m[next] {
+			if l < "04:00" {
+				early++
+			}
+		}
+		return evening + early, true
+	}
+	return 0, false
 }
