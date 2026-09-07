@@ -65,7 +65,7 @@ futures-tickflow-go/
 ├── source/
 │   ├── sinasource/      新浪：日线 17 年 + 分钟线 1023 根
 │   ├── shinnysource/    天勤：深度分钟 + 实时（需快期账户）
-│   └── cffexsource/     中金所官方（对账用，可选）
+│   └── cffexsource/     中金所官方：**中金所品种结算价的唯一源**（非可选）
 ├── store/segfile/       默认实现：定长文件
 ├── continuous/          主力连续 / 换月 / 复权
 ├── indicator/           MA EMA MACD KDJ RSI CCI BOLL
@@ -529,7 +529,7 @@ type Capabilities struct {
 |---|---|
 | **新浪** | JSONP 包裹要剥；GBK（实时接口）；**标签是收盘时刻**；**含未完结的当前根且标签在未来**；1023 根硬顶且**无翻页**；郑商所要 4 位码；`null` ≠ `[]`；**实时接口已冻结两年，不接** |
 | **天勤** | OIDC 取 token（**机密客户端**）；**行情地址必须问名称服务**；websocket 要 `permessage-deflate`；DIFF 协议的增量合并；**日期按交易日而非自然日** |
-| **中金所** | XML；只有日线；只覆盖中金所 |
+| **中金所** | XML；只有日线；只覆盖中金所。**714 条里 686 条是期权**，按 `instrumentid` 含 `-` 过滤 |
 
 ### 天勤源的四个实现约束（都是实测出来的，见 [probe.md 第六节](probe.md)）
 
@@ -1053,7 +1053,7 @@ float64 → decimal 往返：29/29 逐位无损
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
 | v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | 待办 |
-| v0.2 | `Source`(新浪) / `Store`(segfile) / `Syncer` | 待办 |
+| v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 待办 |
 | v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
 | v0.5 | `continuous`——换月、复权、接缝 | 待办 |
