@@ -387,7 +387,13 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 //
 // 同一个形状在别处也出现过：一个会红的必过项迟早被加 `|| true`；
 // 一个总亮着的标志位等于没有这一位。**一个不会失败的检查不是检查。**
-const baselineAnswer = ""
+// 2026-09-07 21:16 夜盘实测定论：**预知**。
+//
+// 从这一刻起本探针不再是「提问」，而是【守基线】：测出的结论与这里不符即 FAIL。
+// 转换时机就是拿到定论那一刻，不能拖——提问期的 PASS 同时承载
+// 「预知」与「不预知」两个相反结论，退出码分不开它们；不转，
+// 就等于在拿到答案的同时永久丧失了发现答案翻转的能力。
+const baselineAnswer = "预知"
 
 // verdictOf 把两条腿归并成一个结论；两腿都判不出时返回空串。
 func verdictOf(leg1, leg2 string) string {
