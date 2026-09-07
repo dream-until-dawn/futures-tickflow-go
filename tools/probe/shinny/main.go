@@ -305,6 +305,160 @@ func depths(ctx context.Context, md, tok string, syms []string) (map[string]seri
 	return out, nil
 }
 
+// minuteLabels 拉一个合约某周期的 K 线，返回 自然日 -> [时刻标签]。
+// 标签取的是 datetime 字段本身，即天勤的【开盘时刻】。
+func minuteLabels(ctx context.Context, md, tok, sym string, min int) (map[string][]string, error) {
+	c, _, err := websocket.Dial(ctx, md, &websocket.DialOptions{
+		CompressionMode: websocket.CompressionNoContextTakeover,
+		HTTPHeader: http.Header{
+			"User-Agent":    {"tqsdk-python 3.10.2"},
+			"Accept":        {"application/json"},
+			"Authorization": {"Bearer " + tok},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer c.CloseNow()
+	c.SetReadLimit(256 << 20)
+
+	send := func(v any) { b, _ := json.Marshal(v); c.Write(ctx, websocket.MessageText, b) }
+	dur := int64(min) * 60 * 1e9
+	dk := fmt.Sprintf("%d", dur)
+	from := time.Now().AddDate(0, 0, -20)
+	send(map[string]any{"aid": "set_chart", "chart_id": "g", "ins_list": sym,
+		"duration": dur, "view_width": 300,
+		"focus_datetime": from.UnixNano(), "focus_position": 0})
+	send(map[string]any{"aid": "peek_message"})
+
+	snap := map[string]any{}
+	deadline := time.Now().Add(60 * time.Second)
+	for time.Now().Before(deadline) {
+		_, msg, err := c.Read(ctx)
+		if err != nil {
+			return nil, err
+		}
+		var m struct {
+			Aid  string           `json:"aid"`
+			Data []map[string]any `json:"data"`
+		}
+		if json.Unmarshal(msg, &m) != nil || m.Aid != "rtn_data" {
+			send(map[string]any{"aid": "peek_message"})
+			continue
+		}
+		for _, d := range m.Data {
+			merge(snap, d)
+		}
+		ch := obj(snap, "charts", "g")
+		ser := obj(snap, "klines", sym, dk)
+		if ch == nil || ser == nil {
+			send(map[string]any{"aid": "peek_message"})
+			continue
+		}
+		if ready, _ := ch["ready"].(bool); !ready {
+			send(map[string]any{"aid": "peek_message"})
+			continue
+		}
+		if _, ok := ser["last_id"].(float64); !ok {
+			send(map[string]any{"aid": "peek_message"})
+			continue
+		}
+		out := map[string][]string{}
+		for _, v := range obj(ser, "data") {
+			r, _ := v.(map[string]any)
+			ts, _ := r["datetime"].(float64)
+			if ts == 0 {
+				continue
+			}
+			t := time.Unix(0, int64(ts)).In(cst)
+			d := t.Format("2006-01-02")
+			out[d] = append(out[d], t.Format("15:04"))
+		}
+		return out, nil
+	}
+	return nil, fmt.Errorf("%s 超时未就绪", sym)
+}
+
+// dayLabels 取某个合约在最后一个【日盘完整】自然日上、该周期的日盘标签。
+//
+// 「日盘完整」用 15:00 之后仍有 09:00–15:00 区间的根来判；天勤按开盘时刻标注，
+// 所以日盘最后一根是 14:xx 而不是 15:00，这里改用「至少 4 根落在日盘区间」。
+func dayLabels(m map[string][]string) (string, []string) {
+	days := make([]string, 0, len(m))
+	for d := range m {
+		days = append(days, d)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(days)))
+	for _, d := range days {
+		var day []string
+		for _, t := range m[d] {
+			if t >= "09:00" && t <= "15:00" {
+				day = append(day, t)
+			}
+		}
+		sort.Strings(day)
+		if len(day) >= 4 {
+			return d, day
+		}
+	}
+	return "", nil
+}
+
+// probeGridIsClockGrid 钉住本轮最大的一条结论：
+// **天勤用纯时钟网格、按开盘时刻标注，没有「相位」这个概念。**
+//
+// 判据是两条同时成立：
+//
+//   - 沪银（标称夜盘 330 分，对 60 余 30）与螺纹（120 分，整除）的 60m
+//     日盘标签【完全相同】——若天勤改成交易时间轴，这两个会错开 30 分钟；
+//   - 标签是 09:00 而不是 09:30/10:00 之类——即按【开盘时刻】标注。
+//
+// 这条 FAIL 就说明 design 第二节那个架构决策（自己从 1m 聚合、
+// 两套聚合规则、默认未定）的前提变了。**它是本轮唯一一条会改变
+// 全部高周期 K 线内容的结论，所以必须有东西盯着。**
+func probeGridIsClockGrid(ctx context.Context, md, tok string) {
+	want := []string{"09:00", "10:00", "11:00", "13:00", "14:00"}
+	got := map[string][]string{}
+	var when string
+	for _, sym := range []string{"SHFE.ag2612", "SHFE.rb2701"} {
+		m, err := minuteLabels(ctx, md, tok, sym, 60)
+		if err != nil {
+			report("shinny-grid-clock", "FAIL", sym+" 拉取失败: "+err.Error())
+			return
+		}
+		d, lab := dayLabels(m)
+		when, got[sym] = d, lab
+	}
+	ag, rb := got["SHFE.ag2612"], got["SHFE.rb2701"]
+	same := len(ag) == len(rb)
+	if same {
+		for i := range ag {
+			if ag[i] != rb[i] {
+				same = false
+				break
+			}
+		}
+	}
+	isClock := len(ag) == len(want)
+	if isClock {
+		for i := range ag {
+			if ag[i] != want[i] {
+				isClock = false
+				break
+			}
+		}
+	}
+	st := "PASS"
+	if !same || !isClock {
+		st = "FAIL"
+	}
+	report("shinny-grid-clock", st, fmt.Sprintf(
+		"%s  ag2612 60m 日盘=%v\n       %s  rb2701 60m 日盘=%v\n"+
+			"       两者必须【相同】(实为 %v) 且等于时钟网格 %v (实为 %v)\n"+
+			"       —— 天勤按开盘时刻标注、无相位；新浪是 09:30 10:45 13:45 14:45 15:00，两套不同",
+		when, ag, when, rb, same, want, isClock))
+}
+
 func main() {
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
 	fmt.Println()
@@ -369,29 +523,47 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 分子与分母必须同源。
+	//
+	// 原来用一个 bad 在【5 个】symbol（含主连 KQ.m@）上累加，却减在
+	// len(expiredSyms)=【4】上：主连超时就会打印「已到期合约 3/4」，
+	// 五个全挂会打印「-1/4」——而这正是决定 D2 的那个数字。
+	expired := make(map[string]bool, len(baseline.expiredSyms))
+	for _, s := range baseline.expiredSyms {
+		expired[s] = true
+	}
 	var b strings.Builder
-	bad := 0
+	expiredBad, otherBad := 0, 0
+	countBad := func(s string) {
+		if expired[s] {
+			expiredBad++
+		} else {
+			otherBad++
+		}
+	}
 	for _, s := range syms {
 		r, ok := res[s]
 		if !ok {
 			fmt.Fprintf(&b, "%-16s 超时未就绪\n       ", s)
-			bad++
+			countBad(s)
 			continue
 		}
 		if r.total <= 0 {
 			fmt.Fprintf(&b, "%-16s 【无序列】\n       ", s)
-			bad++
+			countBad(s)
 			continue
 		}
 		fmt.Fprintf(&b, "%-16s %7d 根  最早 %s\n       ", s, r.total, r.earliest)
 	}
 	st = "PASS"
-	if bad > 0 {
+	if expiredBad > 0 || otherBad > 0 {
 		st = "FAIL"
 	}
 	report("shinny-depth", st, strings.TrimRight(b.String(), " \n")+
 		fmt.Sprintf("\n       已到期合约 %d/%d 有 1m 历史；地板线记录为 %s",
-			len(baseline.expiredSyms)-bad, len(baseline.expiredSyms), baseline.floorDay))
+			len(baseline.expiredSyms)-expiredBad, len(baseline.expiredSyms), baseline.floorDay))
+
+	probeGridIsClockGrid(ctx, md, tok)
 
 	if failed > 0 {
 		fmt.Printf("%d 条偏离记录 → 先判断是上游变了还是记录错了，再更新 docs/probe.md\n", failed)

@@ -377,6 +377,70 @@ def probe_tq_trading_time():
            f"前 256KB 内 trading_time={yes_no(has_tt)}  volume_multiple={yes_no(has_vm)}")
 
 
+def probe_settle_zero():
+    """结算价 `s == 0` 的三种形态，各自的后果不同，不能合成一个百分比。
+
+    ① 中金所【系统性缺失】——不是数据质量问题，是能力缺失，且持续到今天；
+    ② 全市场【单日坏点】——某几天多个交易所同时为零，是上游那几天的故障；
+    ③ 【早期历史缺失】——某些品种的早年。
+
+    这条 FAIL 有两种含义：中金所突然有值了（好事，记录该更新），
+    或者商品品种的近期零值变多了（上游在退化）。
+    """
+    import collections
+    cffex = ("IF0", "IH0", "T0")
+    commodity = ("AG0", "RB0", "CU0", "M0")
+    recent_zero_days = collections.Counter()
+    lines, bad = [], []
+
+    for sym in cffex + commodity:
+        b = bars(sym)
+        if not b:
+            bad.append(sym + "(无数据)")
+            continue
+        z = [r for r in b if float(r["s"]) == 0]
+        pct = len(z) / len(b) * 100
+        after2020 = [r for r in z if r["d"] >= "2020-01-01"]
+        if sym in cffex:
+            # 中金所：预期【持续】缺失，最后一根仍应为零
+            ok = float(b[-1]["s"]) == 0 and pct > 80
+            if not ok:
+                bad.append(f"{sym}(中金所不再系统性缺失? pct={pct:.1f})")
+        else:
+            # 商品：预期近期基本可用
+            ok = pct < 40 and len(after2020) < 200
+            if not ok:
+                bad.append(f"{sym}(商品近期零值异常 pct={pct:.1f} 2020后={len(after2020)})")
+            for r in after2020:
+                recent_zero_days[r["d"]] += 1
+        lines.append(f"{sym} {pct:5.1f}%  2020后={len(after2020):4d}")
+
+    # 多个品种在【同一天】同时为零 = 上游单日坏点，不是品种属性
+    shared = sorted(d for d, n in recent_zero_days.items() if n >= 3)
+    record("settle-zero-shapes", not bad,
+           "  ".join(lines)
+           + f"\n       多品种同日坏点（≥3 个品种同时为零）: {shared or '无'}"
+           + (f"\n       偏离: {bad}" if bad else ""))
+
+
+def probe_contract_daily_wall():
+    """新浪【合约级】日线的保留墙——「17 年」是主连口径，合约级只有约 7.5 年。
+
+    墙会随时间前滚（它像是个滚动保留窗口），所以这里不写死日期，
+    而是断言【形状】：近年的合约有数据、2018 年之前的合约为 null，
+    且墙的位置与主连的深度差出一个数量级。
+    """
+    deep = len(bars("RB0"))
+    recent = len(bars("RB2101"))        # 2020-01 上市，应当仍在
+    old = bars_raw("RB1605")            # 2016 到期，应当已被清掉
+    old_n, old_null = bars_or_none(old)
+    ok = deep > 4000 and recent > 200 and old_null
+    record("contract-daily-wall", ok,
+           f"主连 RB0={deep} 根（≈17 年）  合约级 RB2101={recent} 根  "
+           f"RB1605 -> {'null（已过墙）' if old_null else f'数组[{old_n}]（墙动了！）'}\n"
+           f"       「17 年」是【主连】口径；合约级真值的可信起点是 2016-01-04（天勤地板线）")
+
+
 def probe_shinny_auth():
     """天勤鉴权链路：client_secret 是否仍有效、futr 权限是否还在、名称服务是否还给 mdurl。
 
@@ -464,6 +528,8 @@ PROBES = {
     "czce-four-digit": probe_czce_four_digit,
     "tq-trading-time": probe_tq_trading_time,
     "shinny-auth": probe_shinny_auth,
+    "settle-zero-shapes": probe_settle_zero,
+    "contract-daily-wall": probe_contract_daily_wall,
     "rb0-depth": probe_rb0_depth,
 }
 
