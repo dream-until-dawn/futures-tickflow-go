@@ -661,6 +661,9 @@ func main() {
 	if !skipped("shinny-trading-day-predicted") {
 		probeTradingDayPredicted(ctx, md, tok)
 	}
+	if !skipped("shinny-suspended-night-span") {
+		probeSuspendedNightSpan(ctx, md, tok)
+	}
 
 	if failed > 0 {
 		fmt.Printf("%d 条偏离记录 → 先判断是上游变了还是记录错了，再更新 docs/probe.md\n", failed)

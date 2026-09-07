@@ -17,6 +17,7 @@ type dayNode struct {
 	startID  int64
 	endID    int64
 	newest   time.Time // 最新一根的 datetime（天勤按开盘时刻标注）
+	first    time.Time // 【本交易日第一根】的 datetime，即 bar[startID]
 	haveSpan bool      // start/end 两个字段是否都拿到了
 }
 
@@ -47,7 +48,10 @@ func dayNodes(ctx context.Context, md, tok string, syms []string) (map[string]da
 
 	for i, s := range syms {
 		send(map[string]any{"aid": "set_chart", "chart_id": fmt.Sprintf("t%d", i),
-			"ins_list": s, "duration": durNano, "view_width": 200})
+			// 500 要盖住整个交易日（rb 345 根）——窗口不够长时 bar[startID]
+			// 会掉在窗口外、first 取不到，而那正好发生在日盘后段，
+			// 也就是这条探针最需要它的时候。
+			"ins_list": s, "duration": durNano, "view_width": 500})
 	}
 	send(map[string]any{"aid": "peek_message"})
 
@@ -94,6 +98,16 @@ func dayNodes(ctx context.Context, md, tok string, syms []string) (map[string]da
 			st, okS := ser["trading_day_start_id"].(float64)
 			en, okE := ser["trading_day_end_id"].(float64)
 			n.startID, n.endID, n.haveSpan = int64(st), int64(en), okS && okE
+
+			// 本交易日第一根：bar[startID]。它是「今天有没有夜盘」的直接证据——
+			// 21:00 起 ⇒ 那天有夜盘；09:00 起 ⇒ 那天停了夜盘。
+			if n.haveSpan {
+				if r := obj(obj(ser, "data"), fmt.Sprintf("%d", n.startID)); r != nil {
+					if ts, ok := r["datetime"].(float64); ok && ts != 0 {
+						n.first = time.Unix(0, int64(ts)).In(cst)
+					}
+				}
+			}
 
 			// 最新一根的 datetime：按 id 取，不靠 map 遍历顺序
 			if r := obj(obj(ser, "data"), fmt.Sprintf("%d", int64(last))); r != nil {
@@ -432,4 +446,179 @@ func rbSession(t time.Time) (inSession, isNight bool) {
 		return true, false
 	}
 	return false, false
+}
+
+// probeSuspendedNightSpan 回答 contract.md 未验表新开的那一条：
+// **停夜盘日，`trading_day_end_id` 是按【当日实际】算，还是按【标称】算？**
+//
+// 为什么要紧：2026-09-07 夜盘实测到跨度 345 = 标称（225 日盘 + 120 夜盘），
+// 说明这个预知值多半是照标称模板算的。若停夜盘那天它仍然预测 345，
+// 就多预测了 120 分钟——那天**永远等不到 `last_id == end_id`**，
+// 「判完结」会在长假前后永远判不出完结。
+//
+// # 判据
+//
+// 本交易日第一根 `bar[startID]` 的时刻：
+//
+//	21:00 起 → 那天有夜盘 → 本题不适用 → SKIP
+//	09:00 起 → 那天停了夜盘 → 断言跨度：
+//	    跨度 == 225 ⇒ 按当日实际算（好）
+//	    跨度 == 345 ⇒ 按标称算 ⇒ 那天永远判不出完结
+//
+// **不用「本自然日有没有凌晨根」**：周五夜盘的凌晨部分落在【周六】的日期上，
+// 那个判据会把每个周一误判成停夜盘日。J1 那轮纠正过一次，这里不再犯。
+//
+// # 它把「记得在某天跑一次」变成「那天一到自己就答」
+//
+// 原来这条未验项写的是「须在停夜盘日复跑」——**一件靠人记住的事**，
+// 而这个仓库的信条恰恰是不靠人自觉。「记得三周后跑一次」比手验还弱一档：
+// 手验至少发生过，而它连发生都取决于有没有人想起来。
+//
+// # 对照组：证明「读第一根时刻」这件事本身没坏
+//
+// 只断言「rb 的第一根是 09:00」是不够的——**一个恒返回 09:00 的读法
+// 会让每一天都看起来像停夜盘日**。所以要一对，证明这个读法两种值都产得出：
+//
+//	KQ.m@GFEX.si  标称无夜盘 → 任何一天都必须读出 09:00   （09:00 这一侧的正例）
+//	KQ.m@SHFE.ag  标称 330 分夜盘 → 普通日必须读出 21:00  （21:00 这一侧的正例）
+//
+// 两个方向各有一个已知为真的样本，读法才谈得上「能分辨」。
+// 外加 SHFE.rb1605（已退市）必须陈旧，挡「数据源整个在回放」。
+//
+// ⚠️ **这对对照组在【停夜盘那天】会退化**，必须说出来：
+// 商品夜盘品种实践中一起停，所以那天 ag 也读 09:00，
+// 「21:00 那一侧的正例」在【恰恰需要它的那一天】不存在。
+// 那天剩下的守卫只有：si 必须读 09:00、first 必须严格早于 newest、rb1605 陈旧。
+// 输出里会标明结论强度低于平时。
+//
+// ⇒ **对照组会不会在你最需要它的那天失效，是设计对照组时的第一问。**
+func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
+	const (
+		subject  = "KQ.m@SHFE.rb" // 标称有夜盘（120 分）
+		noNight  = "KQ.m@GFEX.si" // 标称无夜盘 → 09:00 那一侧的正例
+		hasNight = "KQ.m@SHFE.ag" // 标称 330 分 → 21:00 那一侧的正例
+		expired  = "SHFE.rb1605"  // 已退市 → 必须陈旧
+	)
+	name := "shinny-suspended-night-span"
+
+	nodes, err := dayNodes(ctx, md, tok, []string{subject, noNight, hasNight, expired})
+	if err != nil {
+		report(name, "FAIL", "拉取失败: "+err.Error())
+		return
+	}
+
+	var b strings.Builder
+	now := time.Now().In(cst)
+	fmt.Fprintf(&b, "此刻 %s\n", now.Format("2006-01-02 15:04:05"))
+
+	firstOf := func(sym string) (time.Time, bool) {
+		n, ok := nodes[sym]
+		if !ok || n.first.IsZero() {
+			return time.Time{}, false
+		}
+		return n.first, true
+	}
+	show := func(sym, note string) (time.Time, bool) {
+		t, ok := firstOf(sym)
+		if !ok {
+			fmt.Fprintf(&b, "       %-14s 第一根：取不到  %s\n", sym, note)
+			return t, false
+		}
+		fmt.Fprintf(&b, "       %-14s 第一根：%s  %s\n",
+			sym, t.Format("2006-01-02 15:04"), note)
+		return t, true
+	}
+
+	subFirst, ok := show(subject, "← 判据看这个")
+	nnFirst, ok2 := show(noNight, "（标称无夜盘，期望 09:00）")
+	hnFirst, ok3 := show(hasNight, "（标称 330 分，普通日期望 21:00）")
+	if !ok || !ok2 || !ok3 {
+		b.WriteString("       ⇒ SKIP：有序列取不到第一根，不出结论。")
+		report(name, "SKIP", b.String())
+		return
+	}
+
+	// 对照组一：已退市合约必须陈旧
+	if n, ok := nodes[expired]; !ok || n.newest.IsZero() ||
+		now.Sub(n.newest) < 365*24*time.Hour {
+		fmt.Fprintf(&b, "       ⇒ SKIP：对照组 %s 应当是多年前的陈旧序列，"+
+			"却不是——数据源可能在回放，不出结论。\n", expired)
+		report(name, "SKIP", b.String())
+		return
+	}
+
+	// 对照组二之前的完整性检查：first 必须【严格早于】newest。
+	// 一个把 newest 错当 first 返回的实现，会让第一根永远等于最新一根——
+	// 而那在日盘刚开时看起来正好像「09:00 开盘」，即「停夜盘」。
+	// 这一条任何天都成立，停夜盘那天也不退化。
+	if sn := nodes[subject]; !sn.newest.IsZero() && sn.lastID > sn.startID &&
+		!subFirst.Before(sn.newest) {
+		fmt.Fprintf(&b, "       ⇒ SKIP：第一根(%s)不早于最新一根(%s)，而已到 %d 根"+
+			"——「读第一根」很可能读成了最新一根，不出结论。\n",
+			subFirst.Format("15:04"), sn.newest.Format("15:04"),
+			sn.lastID-sn.startID+1)
+		report(name, "SKIP", b.String())
+		return
+	}
+
+	// 对照组二：读法必须两种值都产得出
+	if nnFirst.Hour() != 9 {
+		fmt.Fprintf(&b, "       ⇒ SKIP：%s 标称无夜盘，第一根却不是 09:00（%s）"+
+			"——「读第一根」这个判据本身可疑，不出结论。\n",
+			noNight, nnFirst.Format("15:04"))
+		report(name, "SKIP", b.String())
+		return
+	}
+	subNight := subFirst.Hour() >= 20 || subFirst.Hour() < 4
+	if !subNight && hnFirst.Hour() != 9 {
+		// rb 读成停夜盘，而 ag 读成有夜盘——两个同为商品夜盘品种，
+		// 实践中一起停。这种分歧说明判据或数据有问题，不下结论。
+		fmt.Fprintf(&b, "       ⇒ SKIP：%s 读成停夜盘，而 %s 仍读出 %s——"+
+			"两者实践中一起停，分歧说明判据或数据可疑。\n",
+			subject, hasNight, hnFirst.Format("15:04"))
+		report(name, "SKIP", b.String())
+		return
+	}
+
+	if subNight {
+		fmt.Fprintf(&b, "       ⇒ SKIP：今天【不是】停夜盘日"+
+			"（%s 第一根 %s，夜盘正常），此题不适用。\n"+
+			"       下一个停夜盘日一到，这条自己会给出答案——不用谁记着。",
+			subject, subFirst.Format("15:04"))
+		report(name, "SKIP", b.String())
+		return
+	}
+
+	// —— 今天是停夜盘日，可以判了 ——
+	n := nodes[subject]
+	nominal := nominalDayMinutes[subject] // 345 = 225 + 120
+	actual := int64(225)                  // 停夜盘 ⇒ 只有日盘
+
+	// ⚠️ 恰恰在需要它的这一天，「21:00 那一侧的正例」不存在：
+	// 商品夜盘品种实践中一起停，所以 ag 当天也读 09:00。
+	// 说出来，别让下一个人按平时的强度去信这一次。
+	degraded := ""
+	if hnFirst.Hour() == 9 {
+		degraded = "\n       ⚠️ 对照组当天退化：ag 也停了夜盘，" +
+			"「21:00 那一侧的正例」不存在，结论强度低于平时。"
+	}
+
+	fmt.Fprintf(&b, "       今天【是】停夜盘日。跨度=%d（标称 %d / 当日实际 %d）\n",
+		n.span(), nominal, actual)
+	switch n.span() {
+	case actual:
+		b.WriteString("       ⇒ **按当日实际算**：判完结可以用 " +
+			"`last_id == end_id`，停夜盘日也成立。" + degraded)
+		report(name, "PASS", b.String())
+	case nominal:
+		b.WriteString("       ⇒ **按标称算**：多预测了夜盘那段，" +
+			"今天永远等不到 last_id == end_id。\n" +
+			"       ⇒ 判完结不能只靠这个字段，仍需交易日历。这是结论，不是故障。" +
+			degraded)
+		report(name, "PASS", b.String())
+	default:
+		fmt.Fprintf(&b, "       ⇒ FAIL：跨度既不等于标称 %d 也不等于实际 %d，"+
+			"我对这个字段的理解是错的。", nominal, actual)
+		report(name, "FAIL", b.String())
+	}
 }
