@@ -57,14 +57,22 @@ def fetch(url, referer=SINA_REF, timeout=30):
 
 
 def sina_json(raw):
-    """剥掉 JSONP 外壳与那行防盗链 script。
+    """剥掉 JSONP 外壳与那行防盗链 script。原样返回，不做归一。
 
-    无数据时新浪返回的是 `var _=(null);` —— 不是空数组，是 null。
-    统一成空列表，免得每个调用点都要判一次 None。
+    无数据时新浪返回的是 `var _=(null)` —— 是 null，不是空数组。
+    **这里刻意不把 null 归一成 []**：docs/probe.md 把「代码写错」与
+    「这段确实没数据」渲染成同一个结果列为一种静默失败，
+    在解析器里做归一等于亲手制造那个失败。要区分的调用点自己判。
     """
     t = raw.decode("utf-8", "replace")
-    v = json.loads(t[t.index("=(") + 2: t.rindex(")")])
-    return v if isinstance(v, list) else []
+    return json.loads(t[t.index("=(") + 2: t.rindex(")")])
+
+
+def bars_or_none(v):
+    """把 sina_json 的结果规约成 (根数, 是否为 null)。"""
+    if v is None:
+        return 0, True
+    return len(v), False
 
 
 def bars(symbol, typ=None):
@@ -72,7 +80,13 @@ def bars(symbol, typ=None):
         url = f"{SINA_K}getDailyKLine?symbol={symbol}"
     else:
         url = f"{SINA_K}getFewMinLine?symbol={symbol}&type={typ}"
-    return sina_json(fetch(url))
+    v = sina_json(fetch(url))
+    return [] if v is None else v
+
+
+def bars_raw(symbol):
+    """不做 None 归一的版本，给需要区分 null 的探针用。"""
+    return sina_json(fetch(f"{SINA_K}getDailyKLine?symbol={symbol}"))
 
 
 def last_full_day(b):
@@ -163,6 +177,47 @@ def probe_grid_differs_by_night():
            f"两者必须不同（沪银夜盘 330 分钟对 60 余 30，跨隔夜缺口）")
 
 
+def probe_grid_phase_is_constant():
+    """网格相位是【品种的固定属性】，与当天是否真的有夜盘无关。
+
+    长假前交易所停夜盘。对 au/ag/sc（标称夜盘 330 分，对 60 余 30）来说，
+    「按当天实际时段累计」会预测停夜盘日的日盘网格退化成 CU0 那样的
+    10:00/11:15/14:15/15:00；而实测【仍是】 09:30/10:45/13:45/14:45/15:00。
+
+    这条钉住的是：相位按【标称模板】算，不按当天实际交易的时段算。
+    实现里若照着「遍历当天 sessions」写，就会在每个长假前后错一整天。
+    """
+    def split(sym):
+        b = bars(sym, 60)
+        by = {}
+        for r in b:
+            by.setdefault(r["d"][:10], []).append(r["d"][11:16])
+        out = {}
+        for d, ts in by.items():
+            ts = sorted(ts)
+            out[d] = {
+                "day": [t for t in ts if "09:00" <= t <= "15:00"],
+                "early": [t for t in ts if t < "09:00"],
+                "full": "15:00" in ts,
+            }
+        return out
+
+    ag = split("AG0")
+    # 普通日：有凌晨根（说明前夜有夜盘）且日盘完整
+    normal = next((v["day"] for d, v in sorted(ag.items()) if v["full"] and v["early"]), None)
+    # 停夜盘日：日盘完整但【没有】凌晨根
+    susp = [(d, v["day"]) for d, v in sorted(ag.items()) if v["full"] and not v["early"]]
+    if normal is None or not susp:
+        record("grid-phase-constant", False,
+               f"窗口内找不到对照日（普通日={normal is not None} 停夜盘日={len(susp)}）")
+        return
+    bad = [(d, g) for d, g in susp if g != normal]
+    record("grid-phase-constant", not bad,
+           f"AG0 普通日日盘网格={normal}\n       "
+           f"停夜盘日 {len(susp)} 天（{', '.join(d for d, _ in susp)}）"
+           f"{'，全部与普通日相同（相位是常量）' if not bad else f'，其中 {len(bad)} 天不同: {bad}'}")
+
+
 def probe_rb0_unadjusted():
     """主力连续是否仍是未复权拼接。
 
@@ -210,12 +265,17 @@ def probe_rb0_unadjusted():
 
 
 def probe_czce_four_digit():
-    """郑商所 3 位码是否仍返回空数组（而不是报错）。"""
-    three, four = bars("TA701"), bars("TA2701")
-    ok = len(three) == 0 and len(four) > 0
+    """郑商所 3 位码返回的是 null 还是空数组——这两者必须分得开。
+
+    docs/probe.md 记的是 **null**。若哪天上游改成 `[]`，
+    「代码写错」与「确实没数据」就真的合并了，解析层的处置要跟着改。
+    """
+    n3, is_null3 = bars_or_none(bars_raw("TA701"))
+    n4, is_null4 = bars_or_none(bars_raw("TA2701"))
+    ok = is_null3 and n3 == 0 and (not is_null4) and n4 > 0
     record("czce-four-digit", ok,
-           f"TA701={len(three)} 根（期望 0；上游给的是 var _=(null)，不是空数组）  "
-           f"TA2701={len(four)} 根（期望 >0）")
+           f"TA701 -> {'null' if is_null3 else f'数组[{n3}]'}（期望 null）  "
+           f"TA2701 -> {'null' if is_null4 else f'数组[{n4}]'}（期望 非null且非空）")
 
 
 def probe_tq_trading_time():
@@ -223,10 +283,12 @@ def probe_tq_trading_time():
 
     12.5 MB 全量太慢，这里只读前若干字节确认结构还在。
     """
+    # 这个端点很慢（实测约 1.3 MB / 3 分钟），且服务端会忽略 Range。
+    # 所以只读够判断结构的前若干字节就主动断开，不等它传完 12.5 MB。
     req = urllib.request.Request(TQ_SYMBOLS, headers={
         "User-Agent": "futures-tickflow-go/probe", "Range": "bytes=0-262144"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        head = r.read().decode("utf-8", "replace")
+    with urllib.request.urlopen(req, timeout=180) as r:
+        head = r.read(262144).decode("utf-8", "replace")
     ok = '"trading_time"' in head and '"volume_multiple"' in head
     record("tq-trading-time", ok,
            f"前 256KB 内 trading_time={'有' if '\"trading_time\"' in head else '无'}  "
@@ -247,6 +309,7 @@ PROBES = {
     "close-labelled": probe_close_labelled,
     "session-break-absent": probe_session_break_absent,
     "grid-differs-by-night": probe_grid_differs_by_night,
+    "grid-phase-constant": probe_grid_phase_is_constant,
     "rb0-unadjusted": probe_rb0_unadjusted,
     "czce-four-digit": probe_czce_four_digit,
     "tq-trading-time": probe_tq_trading_time,
