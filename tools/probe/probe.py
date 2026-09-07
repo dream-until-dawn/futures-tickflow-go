@@ -392,40 +392,119 @@ def probe_settle_zero():
     这条 FAIL 有两种含义：中金所突然有值了（好事，记录该更新），
     或者商品品种的近期零值变多了（上游在退化）。
     """
-    import collections
     cffex = ("IF0", "IH0", "T0")
-    commodity = ("AG0", "RB0", "CU0", "M0")
-    recent_zero_days = collections.Counter()
+    # 商品每个【交易所】取一个代表品种。
+    #
+    # 第一版取的是 AG0/RB0/CU0/M0 = 上期所×3 + 大商所×1，然后按「≥3 个品种
+    # 同日为零」判坏点——**三个上期所品种就能触发**，它检测的其实是
+    # 「上期所那天为零」，看不见交易所这一维。评审 G1 指出的。
+    by_exchange = {"SHFE": "RB0", "INE": "SC0", "DCE": "M0", "GFEX": "SI0",
+                   "CZCE": "TA0"}
+    # CZCE 是【阴性对照】：实测三个已知坏日它全部正常，从未受影响。
+    # 它要是也进了坏日名单，说明这已经不是「按交易所基础设施族」的故障了。
+    control = "CZCE"
+
+    zero_days = {}          # 交易所 -> {日期}
     lines, bad = [], []
 
-    for sym in cffex + commodity:
+    for sym in cffex:
         b = bars(sym)
         if not b:
             bad.append(sym + "(无数据)")
             continue
         z = [r for r in b if float(r["s"]) == 0]
         pct = len(z) / len(b) * 100
-        after2020 = [r for r in z if r["d"] >= "2020-01-01"]
-        if sym in cffex:
-            # 中金所：预期【持续】缺失，最后一根仍应为零
-            ok = float(b[-1]["s"]) == 0 and pct > 80
-            if not ok:
-                bad.append(f"{sym}(中金所不再系统性缺失? pct={pct:.1f})")
-        else:
-            # 商品：预期近期基本可用
-            ok = pct < 40 and len(after2020) < 200
-            if not ok:
-                bad.append(f"{sym}(商品近期零值异常 pct={pct:.1f} 2020后={len(after2020)})")
-            for r in after2020:
-                recent_zero_days[r["d"]] += 1
-        lines.append(f"{sym} {pct:5.1f}%  2020后={len(after2020):4d}")
+        # 中金所：预期【持续】缺失，最后一根仍应为零
+        if not (float(b[-1]["s"]) == 0 and pct > 80):
+            bad.append(f"{sym}(中金所不再系统性缺失? pct={pct:.1f})")
+        lines.append(f"{sym} {pct:.1f}%")
 
-    # 多个品种在【同一天】同时为零 = 上游单日坏点，不是品种属性
-    shared = sorted(d for d, n in recent_zero_days.items() if n >= 3)
-    record("settle-zero-shapes", not bad,
-           "  ".join(lines)
-           + f"\n       多品种同日坏点（≥3 个品种同时为零）: {shared or '无'}"
-           + (f"\n       偏离: {bad}" if bad else ""))
+    for ex, sym in by_exchange.items():
+        b = bars(sym)
+        if not b:
+            bad.append(f"{ex}/{sym}(无数据)")
+            continue
+        z = [r for r in b if float(r["s"]) == 0]
+        pct = len(z) / len(b) * 100
+        after2020 = {r["d"] for r in z if r["d"] >= "2020-01-01"}
+        zero_days[ex] = after2020
+        if pct > 40 or len(after2020) > 200:
+            bad.append(f"{ex}/{sym}(商品近期零值异常 pct={pct:.1f} 2020后={len(after2020)})")
+        lines.append(f"{ex}/{sym} {pct:.1f}%")
+
+    # 坏日 = 【≥2 个交易所】同日为零。按交易所数，不按品种数。
+    allday = set().union(*zero_days.values()) if zero_days else set()
+    incidents = {}
+    for d in sorted(allday):
+        hit = sorted(ex for ex, ds in zero_days.items() if d in ds)
+        if len(hit) >= 2:
+            incidents[d] = hit
+    # 阴性对照：CZCE 不该出现在任何坏日里
+    control_hit = [d for d, hit in incidents.items() if control in hit]
+    if control_hit:
+        bad.append(f"{control} 出现在坏日 {control_hit}（阴性对照失效，故障模式变了）")
+
+    detail = "  ".join(lines) + "\n       按【交易所】统计的坏日:"
+    for d, hit in incidents.items():
+        detail += f"\n         {d}  {hit}  ({len(hit)} 家)"
+    if not incidents:
+        detail += " 无"
+    detail += f"\n       阴性对照 {control}: {'仍未受影响' if not control_hit else '【已受影响】'}"
+    record("settle-zero-shapes", not bad, detail + (f"\n       偏离: {bad}" if bad else ""))
+
+
+def probe_cffex_settlement():
+    """中金所官网日行情：**中金所品种结算价的唯一来源**，必须有东西盯着。
+
+    分量在于 probe.md 第七节自己记着：四家交易所官网里【三家被 WAF 挡】。
+    中金所今天开着不代表明天开着，而 contract.md 已经把 cffexsource
+    从「可选对账通道」升级成了「唯一来源」。
+
+    日期不写死（会随时间前滚）：从今天往回找最近一个能取到的交易日。
+    """
+    import datetime
+    import xml.etree.ElementTree as ET
+
+    day, root, tried = None, None, []
+    d = datetime.date.today()
+    for _ in range(12):                       # 往回最多找 12 个自然日
+        url = (f"http://www.cffex.com.cn/sj/hqsj/rtj/{d:%Y%m}/{d:%d}/index.xml")
+        tried.append(f"{d:%Y-%m-%d}")
+        try:
+            with urllib.request.urlopen(urllib.request.Request(
+                    url, headers={"User-Agent": "Mozilla/5.0"}), timeout=25) as r:
+                body = r.read()
+            root = ET.fromstring(body)
+            if root.findall("dailydata"):
+                day = d
+                break
+        except Exception:
+            pass
+        d -= datetime.timedelta(days=1)
+
+    if root is None or day is None:
+        record("cffex-settlement", FAIL,
+               f"往回 {len(tried)} 天都取不到 XML（{tried[0]} … {tried[-1]}）。"
+               f"**中金所品种的结算价就没有来源了**")
+        return
+
+    rows = root.findall("dailydata")
+    fut = [r for r in rows
+           if "-" not in (r.findtext("instrumentid") or "")]   # 含 "-" 的是期权
+    def nonzero(r, tag):
+        v = (r.findtext(tag) or "").strip()
+        try:
+            return float(v) != 0
+        except ValueError:
+            return False
+    settle_ok = sum(1 for r in fut if nonzero(r, "settlementprice"))
+    pre_ok = sum(1 for r in fut if nonzero(r, "presettlementprice"))
+    ok = len(fut) > 0 and settle_ok == len(fut) and pre_ok == len(fut)
+    record("cffex-settlement", ok,
+           f"{day:%Y-%m-%d}  共 {len(rows)} 条（期权 {len(rows)-len(fut)} 条已按 "
+           f'instrumentid 含 "-" 过滤）\n'
+           f"       纯期货 {len(fut)} 条：settlementprice 非零 {settle_ok}/{len(fut)}，"
+           f"presettlementprice 非零 {pre_ok}/{len(fut)}")
 
 
 def probe_contract_daily_wall():
@@ -535,6 +614,7 @@ PROBES = {
     "shinny-auth": probe_shinny_auth,
     "settle-zero-shapes": probe_settle_zero,
     "contract-daily-wall": probe_contract_daily_wall,
+    "cffex-settlement": probe_cffex_settlement,
     "rb0-depth": probe_rb0_depth,
 }
 
