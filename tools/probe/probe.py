@@ -362,9 +362,11 @@ def probe_czce_four_digit():
 
 
 def probe_tq_trading_time():
-    """天勤 openmd 是否仍免费提供 trading_time。
+    """天勤 openmd 是否仍免费提供 trading_time，以及全量到底有多大。
 
-    12.5 MB 全量太慢，这里只读前若干字节确认结构还在。
+    **不整包下载**：全量约 334 MiB，按实测速度要十几小时。
+    只用一个 Range 请求读前 256 KB，既确认结构还在，
+    又从 Content-Range 拿到权威总大小。
     """
     # 服务端【遵守】Range（206 + 正确的 Content-Range），所以只取前若干字节即可。
     #
