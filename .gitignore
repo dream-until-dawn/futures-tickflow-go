@@ -30,3 +30,7 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# 探针缓存与本地凭证
+.env
+tools/probe/*.json
