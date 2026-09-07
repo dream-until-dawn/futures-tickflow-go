@@ -64,9 +64,15 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 			bad++
 			continue
 		}
+		// 把【窗口本身】打出来。这条 bug 之所以能发出一条错误的指控，
+		// 就是因为「窗口覆盖到哪」是个不可见的中间量：
+		// 断在交易日中间时，输出看起来只是「那天的时段短了一点」。
+		// **能靠结构看见的，就别靠注意力盯住。**
+		nBars, lo, hi := windowShape(lbls)
 		day, segs := lastFullDaySegs(lbls)
 		if day == "" {
-			fmt.Fprintf(&b, "  %-14s 窗口里没有完整的日盘，跳过\n", r.sym)
+			fmt.Fprintf(&b, "  %-14s 窗口 %d 根 %s→%s，里面没有【完整】的日盘，跳过\n",
+				r.sym, nBars, lo, hi)
 			continue
 		}
 		tmpl, terr := embedded.Template(r.key, dayNum(day))
@@ -82,7 +88,8 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 			mark = "≠"
 			bad++
 		}
-		fmt.Fprintf(&b, "  %-14s %s  日盘实测 %s\n", r.sym, day, got)
+		fmt.Fprintf(&b, "  %-14s %s  日盘实测 %s   [窗口 %d 根 %s→%s]\n",
+			r.sym, day, got, nBars, lo, hi)
 		fmt.Fprintf(&b, "  %-14s %s  日盘内置 %s   ← %s\n", "", mark, want, r.shape)
 
 		// —— 夜盘那一半 ——
@@ -121,10 +128,20 @@ func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
 			"\n\n       代表选错会让整族漏检，所以每行都注明它代表谁。")
 		return
 	}
-	report(name, "FAIL", "内置时段表与实测不符（"+fmt.Sprint(bad)+" 处）：\n"+
+	// ⚠️ 措辞不能预设是表错了。
+	//
+	// 这条探针的职责是【拿外部真值去指控内置表】——所以它出错时不是沉默，
+	// 是**发出一条指控**。而它确实出过一次：窗口断在交易日中间，
+	// 那一天的时段被读短一截，输出渲染成「内置时段表与实测不符」。
+	// 要不是评审那边有第二个客户端去对，结论会是「快改内置表」——
+	// **而那会把一张对的表改错**。
+	report(name, "FAIL", "内置表与实测【不符】（"+fmt.Sprint(bad)+" 处）——先判断是哪一边：\n"+
 		strings.TrimRight(b.String(), "\n")+
-		"\n\n       内置表抄自被截断的 openmd 目录，而那里的 trading_time 是按合约给的——\n"+
-		"       抄到老合约那一行就会把过期时段当成当前值。改表，别改这条断言。")
+		"\n\n       ① 取数不全？看每行末尾的【窗口】——断在交易日中间时，\n"+
+		"          那一天的时段会看起来短一截，而这不是表错了。\n"+
+		"       ② 表旧了？内置表抄自被截断的 openmd 目录，而那里的\n"+
+		"          trading_time 是按合约给的；抄到老合约那一行就会把过期时段当成当前值。\n"+
+		"\n       先排除 ① 再动表。")
 }
 
 func pk(exch, prod string) tickflow.ProductKey {
@@ -169,12 +186,21 @@ func lastFullDaySegs(m map[string][]string) (string, []string) {
 			continue
 		}
 		sort.Strings(day)
-		// 「完整」要两头都够，而且根数要像那么回事。
+
+		// 「完整」的判据是**精确的**，不是余量。
 		//
-		// 第一版只查了末根晚于 14:00——**于是一个只剩 `14:59` 一根的截断日
-		// 也算「完整」**，然后拿它去和内置表比，比出一个假的不符。
-		// 否定式的判据（「没走完就跳过」）天然只看得住一头。
-		if day[0] > "09:31" || day[len(day)-1] < "14:50" || len(day) < 200 {
+		// 前两版都栽在余量上：
+		//   第一版 `末根 >= 14:00`   → 只剩 14:59 一根的截断日也算完整
+		//   第二版 `末根 >= 14:50`   → 缺末尾 1–10 分钟的截断日仍算完整（实测缺到 14:56）
+		// **我第二次只是把余量收紧了，没有把判据换成精确的**——
+		// 于是同一个 bug 换了个幅度又回来了。
+		//
+		// 精确的判据：**窗口里必须还有【更晚的自然日】**。
+		// 那证明窗口的末端已经越过了这一天，所以这一天不可能是被窗口切断的。
+		// 它不看根数、不看时刻、**也不看内置表**（拿模板去判「测全了没有」是循环的）。
+		//
+		// 前端同理由 day[0] 守着：窗口起点落在日中时，首根会偏晚。
+		if day[0] > "09:31" || !hasLaterDate(days, d) {
 			continue
 		}
 		// 连续分钟聚成段。天勤按【开盘时刻】标注，所以段末要 +1 分钟才是收盘。
@@ -222,7 +248,9 @@ func dayNum(date string) tickflow.TradingDay {
 // 就不够了——于是「窗口里没有完整的日盘」，而那看起来像是数据的问题，
 // 其实是取数窗口的问题。**取不到和不存在长得一样**，所以这里单开一个。
 func minuteLabelsWide(ctx context.Context, md, tok, sym string) (map[string][]string, error) {
-	return minuteLabelsN(ctx, md, tok, sym, 1, 2000, 10)
+	// daysBack=0 ⇒ 锚在末端：取最新的 2000 根。
+	// 锚在起点时窗口末端会断在某个交易日中间，而那正是这条探针最会误判的地方。
+	return minuteLabelsN(ctx, md, tok, sym, 1, 2000, 0)
 }
 
 // nightMinutesOf 从 1m 标签反推「属于交易日 D 的那段夜盘」有多少分钟。
@@ -259,4 +287,47 @@ func nightMinutesOf(m map[string][]string, d string) (int, bool) {
 		return evening + early, true
 	}
 	return 0, false
+}
+
+// hasLaterDate 报告 days 里有没有严格晚于 d 的自然日。
+//
+// 这是「这一天没被窗口切断」的**精确**证据：窗口的末端既然已经落到更晚的日子上，
+// 就不可能同时切在这一天中间。
+//
+// 为什么不用「根数够不够 / 末根够不够晚」——那些都是【余量】判据，
+// 而余量判据的失效方式是**渐进的**：窗口边界每天挪一点，
+// 总有一天它落进余量里，而那天探针会发出一条【指控内置表】的错误结论。
+// 这条探针的唯一职责就是拿外部真值去指控内置表，
+// **它出错时不是沉默，是发出一条指控**——所以它的前置判据不能有余量。
+func hasLaterDate(days []string, d string) bool {
+	for _, x := range days {
+		if x > d {
+			return true
+		}
+	}
+	return false
+}
+
+// windowShape 返回这次取数的窗口形状：总根数、最早、最晚。
+//
+// 存在的理由只有一个：**让「窗口覆盖到哪」变成可见的**。
+//
+// 这条探针出过一个真错：窗口锚在起点、末端断在某个交易日中间，
+// 于是那一天的时段被读短了一截，而输出把它渲染成
+// 「内置时段表与实测不符」——**一条没有依据的指控**。
+// 当时我写注释时是小心的（甚至专门算过「对 rb 恰好够」），
+// 但「此刻窗口覆盖到哪」这个量不在输出里，所以它变化时没有人会知道。
+//
+// ⇒ **凡是要求「小心」的地方，先问那里是不是缺了一个可见的中间量。**
+func windowShape(m map[string][]string) (n int, lo, hi string) {
+	for d, ls := range m {
+		n += len(ls)
+		if lo == "" || d < lo {
+			lo = d
+		}
+		if d > hi {
+			hi = d
+		}
+	}
+	return n, lo, hi
 }

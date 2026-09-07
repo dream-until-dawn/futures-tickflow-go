@@ -354,10 +354,19 @@ func minuteLabelsN(ctx context.Context, md, tok, sym string, min, width, daysBac
 	send := func(v any) { b, _ := json.Marshal(v); c.Write(ctx, websocket.MessageText, b) }
 	dur := int64(min) * 60 * 1e9
 	dk := fmt.Sprintf("%d", dur)
-	from := time.Now().AddDate(0, 0, -daysBack)
-	send(map[string]any{"aid": "set_chart", "chart_id": "g", "ins_list": sym,
-		"duration": dur, "view_width": width,
-		"focus_datetime": from.UnixNano(), "focus_position": 0})
+	req := map[string]any{"aid": "set_chart", "chart_id": "g", "ins_list": sym,
+		"duration": dur, "view_width": width}
+	// daysBack <= 0 表示【锚在末端】：不给 focus_datetime，服务端给最新的 width 根。
+	//
+	// 锚在起点（给 focus_datetime）时，窗口的【末端】落在哪取决于品种每天多少根——
+	// ag 每天 555 根，2000 根只够 3.6 天，末端就断在某个交易日的中间。
+	// 而断在中间这件事**在输出里看不见**，于是它被读成了「那天的时段只有这么长」。
+	if daysBack > 0 {
+		from := time.Now().AddDate(0, 0, -daysBack)
+		req["focus_datetime"] = from.UnixNano()
+		req["focus_position"] = 0
+	}
+	send(req)
 	send(map[string]any{"aid": "peek_message"})
 
 	snap := map[string]any{}
