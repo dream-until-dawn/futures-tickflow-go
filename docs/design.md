@@ -157,7 +157,7 @@ type SessionTemplate struct {
 // ProductKey 是时段表的键：交易所 + 品种。
 //
 // 【不能只用 product】——郑商所的 `CF`(棉花) 与别处的同名品种要分开，
-// 而且交易所本身就决定了时段大类（中金所股指 09:30 开、国债 09:15 开、
+// 而且交易所本身就决定了时段大类（中金所股指 09:30 开收 15:00、国债 09:30 开收 15:15、
 // 商品 09:00 开）。probe.md 第五节的 9 种时段模式正是按这个分的。
 type ProductKey struct {
     Exchange string // SHFE DCE CZCE CFFEX INE GFEX

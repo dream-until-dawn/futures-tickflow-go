@@ -1,0 +1,197 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"sort"
+	"strings"
+	"time"
+
+	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
+	"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded"
+)
+
+// probeEmbeddedTemplateMatchesMeasured 拿【实测 1m】去对 calendar/embedded 的内置时段表。
+//
+// # 为什么要有这条
+//
+// 内置表抄自天勤 openmd 目录，而那份目录被截断过，且它的 trading_time 是
+// **按合约**给的——抄到老合约那一行就会把一个【过期的】时段当成当前值。
+// 2026-09-07 实测抓到一个：中金所国债起点写的是 `09:15`，实际是 `09:30`，
+// 而它已经随 `v0.1.0` 发出去了。
+//
+// **完全静默**：`embedded.DayOf` 照模板合成 Sessions，于是那一族的每一根 K 线
+// 边界都错、判完结以为交易早开 15 分钟，而相位不受影响（国债无夜盘），
+// 所以没有任何东西会报错。
+//
+// # 这条探针存在的真正理由：那张表还有五种形状没被对过
+//
+// 修掉国债那一行而不管其余的，就是「修了看得见的那一半」。
+// 表里一共六种不同形状，这条探针每种取一个代表，全部对一遍：
+//
+//	商品日盘 × 夜盘 0 / 120 / 240 / 330 分   四种
+//	中金所股指日盘（无夜盘）                  一种
+//	中金所国债日盘（无夜盘）                  一种
+//
+// # 方向：本库是【被测对象】，真值来自天勤
+//
+// 别和「探针不该拿本库的日历验本库」搞混——那条说的是不能用本库的日历
+// 去给探针自己当**对照组**（日历错了两边会一起错）。
+// 这里本库是**被测的那一方**，真值来自外部，方向是对的。
+func probeEmbeddedTemplateMatchesMeasured(ctx context.Context, md, tok string) {
+	name := "shinny-embedded-template-matches-measured"
+
+	// 每种形状取一个代表。**代表选错会让整族漏检**，所以注明它代表谁。
+	reps := []struct {
+		sym   string
+		key   tickflow.ProductKey
+		shape string
+	}{
+		{"KQ.m@SHFE.rb", pk(tickflow.SHFE, "rb"), "商品日盘 + 夜盘 120（34 个品种）"},
+		{"KQ.m@SHFE.cu", pk(tickflow.SHFE, "cu"), "商品日盘 + 夜盘 240（7 个品种）"},
+		{"KQ.m@SHFE.ag", pk(tickflow.SHFE, "ag"), "商品日盘 + 夜盘 330（3 个品种）"},
+		{"KQ.m@GFEX.si", pk(tickflow.GFEX, "si"), "商品日盘 + 无夜盘（17 个品种）"},
+		{"KQ.m@CFFEX.IF", pk(tickflow.CFFEX, "IF"), "中金所股指日盘（4 个品种）"},
+		{"KQ.m@CFFEX.T", pk(tickflow.CFFEX, "T"), "中金所国债日盘（4 个品种）"},
+	}
+
+	var b strings.Builder
+	bad := 0
+	for _, r := range reps {
+		lbls, err := minuteLabelsWide(ctx, md, tok, r.sym)
+		if err != nil {
+			fmt.Fprintf(&b, "  %-14s 拉取失败: %v\n", r.sym, err)
+			bad++
+			continue
+		}
+		day, segs := lastFullDaySegs(lbls)
+		if day == "" {
+			fmt.Fprintf(&b, "  %-14s 窗口里没有完整的日盘，跳过\n", r.sym)
+			continue
+		}
+		tmpl, terr := embedded.Template(r.key, dayNum(day))
+		if terr != nil {
+			fmt.Fprintf(&b, "  %-14s 内置表答不了: %v\n", r.sym, terr)
+			bad++
+			continue
+		}
+		want := dayShape(tmpl)
+		got := strings.Join(segs, " ")
+		mark := "="
+		if got != want {
+			mark = "≠"
+			bad++
+		}
+		fmt.Fprintf(&b, "  %-14s %s  实测 %s\n", r.sym, day, got)
+		fmt.Fprintf(&b, "  %-14s %s  内置 %s   ← %s\n", "", mark, want, r.shape)
+	}
+
+	if bad == 0 {
+		report(name, "PASS", "六种形状各取一个代表，日盘时段与实测逐段相同：\n"+
+			strings.TrimRight(b.String(), "\n")+
+			"\n\n       代表选错会让整族漏检，所以每行都注明它代表谁。")
+		return
+	}
+	report(name, "FAIL", "内置时段表与实测不符（"+fmt.Sprint(bad)+" 处）：\n"+
+		strings.TrimRight(b.String(), "\n")+
+		"\n\n       内置表抄自被截断的 openmd 目录，而那里的 trading_time 是按合约给的——\n"+
+		"       抄到老合约那一行就会把过期时段当成当前值。改表，别改这条断言。")
+}
+
+func pk(exch, prod string) tickflow.ProductKey {
+	return tickflow.ProductKey{Exchange: exch, Product: prod}
+}
+
+// dayShape 把模板的日盘段渲染成 "09:00-10:15 10:30-11:30 13:30-15:00"。
+func dayShape(t tickflow.SessionTemplate) string {
+	out := make([]string, 0, len(t.Day))
+	for _, s := range t.Day {
+		out = append(out, fmt.Sprintf("%s-%s", hhmmOf(s.Start), hhmmOf(s.End)))
+	}
+	return strings.Join(out, " ")
+}
+
+// hhmmOf 把「当日 00:00 起的毫秒偏移」渲染成 HH:MM。
+func hhmmOf(off int64) string {
+	m := off / 60000
+	return fmt.Sprintf("%02d:%02d", m/60, m%60)
+}
+
+// lastFullDaySegs 从「自然日 → 时刻标签」里挑最后一个【完整的】日盘自然日，
+// 把连续分钟聚成时段，返回 "09:00-10:15 10:30-11:30 13:30-15:00" 这样的分段。
+//
+// 「完整」判据：既有 09:xx 之后的根，也有 14:xx 之后的根——
+// 只看「有没有根」会把今天这种刚开盘的日子也算进来，
+// 那时段会被截成一小截，然后与内置表比出一个假的不符。
+func lastFullDaySegs(m map[string][]string) (string, []string) {
+	days := make([]string, 0, len(m))
+	for d := range m {
+		days = append(days, d)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(days)))
+	for _, d := range days {
+		var day []string
+		for _, l := range m[d] {
+			if l >= "09:00" && l < "16:00" { // 只看日盘，夜盘另说
+				day = append(day, l)
+			}
+		}
+		if len(day) == 0 {
+			continue
+		}
+		sort.Strings(day)
+		// 「完整」要两头都够，而且根数要像那么回事。
+		//
+		// 第一版只查了末根晚于 14:00——**于是一个只剩 `14:59` 一根的截断日
+		// 也算「完整」**，然后拿它去和内置表比，比出一个假的不符。
+		// 否定式的判据（「没走完就跳过」）天然只看得住一头。
+		if day[0] > "09:31" || day[len(day)-1] < "14:50" || len(day) < 200 {
+			continue
+		}
+		// 连续分钟聚成段。天勤按【开盘时刻】标注，所以段末要 +1 分钟才是收盘。
+		var segs []string
+		start := day[0]
+		for i := 1; i < len(day); i++ {
+			if mins(day[i]) != mins(day[i-1])+1 {
+				segs = append(segs, start+"-"+plus1(day[i-1]))
+				start = day[i]
+			}
+		}
+		segs = append(segs, start+"-"+plus1(day[len(day)-1]))
+		return d, segs
+	}
+	return "", nil
+}
+
+func mins(hhmm string) int {
+	var h, m int
+	fmt.Sscanf(hhmm, "%d:%d", &h, &m)
+	return h*60 + m
+}
+
+func plus1(hhmm string) string {
+	t := mins(hhmm) + 1
+	return fmt.Sprintf("%02d:%02d", t/60, t%60)
+}
+
+// dayNum 把 "2026-09-04" 转成 TradingDay。
+//
+// 用的是**自然日**当交易日编号——对日盘段来说两者相同（日盘不跨日），
+// 而本条只比日盘，所以够用。夜盘长度由别的探针管。
+func dayNum(date string) tickflow.TradingDay {
+	t, err := time.ParseInLocation("2006-01-02", date, cst)
+	if err != nil {
+		return 0
+	}
+	y, mo, d := t.Date()
+	return tickflow.TradingDay(y*10000 + int(mo)*100 + d)
+}
+
+// minuteLabelsWide 与 minuteLabels 同源，但窗口大得多。
+//
+// 共用的那个 view_width=300：对 rb 恰好够一个完整日盘，对 ag（每日 555 根）
+// 就不够了——于是「窗口里没有完整的日盘」，而那看起来像是数据的问题，
+// 其实是取数窗口的问题。**取不到和不存在长得一样**，所以这里单开一个。
+func minuteLabelsWide(ctx context.Context, md, tok, sym string) (map[string][]string, error) {
+	return minuteLabelsN(ctx, md, tok, sym, 1, 2000, 10)
+}

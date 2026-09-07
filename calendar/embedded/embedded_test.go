@@ -284,9 +284,13 @@ func TestCffexDayDiffersFromCommodity(t *testing.T) {
 		t.Errorf("国债(%d 分)与股指(%d 分)日盘不该相同",
 			bond.DayMinutes(), idx.DayMinutes())
 	}
-	// 国债 09:15–11:30 + 13:00–15:15 = 135 + 135 = 270
-	if got := bond.DayMinutes(); got != 270 {
-		t.Errorf("国债日盘 %d 分，期望 270", got)
+	// 国债 09:30–11:30 + 13:00–15:15 = 120 + 135 = 255
+	//
+	// 这个数曾经写的是 270（起点 09:15）——**测试把 bug 一起编码了进去**，
+	// 于是它绿着守了一个错的值。实测见 dayBond 的注释。
+	// ⇒ 一个从实现读出来的期望值，守的是实现而不是事实。
+	if got := bond.DayMinutes(); got != 255 {
+		t.Errorf("国债日盘 %d 分，期望 255（09:30–11:30 + 13:00–15:15）", got)
 	}
 	// 股指 09:30–11:30 + 13:00–15:00 = 120 + 120 = 240
 	if got := idx.DayMinutes(); got != 240 {

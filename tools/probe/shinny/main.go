@@ -325,7 +325,18 @@ func depths(ctx context.Context, md, tok string, syms []string) (map[string]seri
 
 // minuteLabels 拉一个合约某周期的 K 线，返回 自然日 -> [时刻标签]。
 // 标签取的是 datetime 字段本身，即天勤的【开盘时刻】。
+// minuteLabels 保持原签名不动——别的探针的基线是照它跑出来的，
+// 改窗口就等于悄悄换了那些基线的取样条件。
 func minuteLabels(ctx context.Context, md, tok, sym string, min int) (map[string][]string, error) {
+	return minuteLabelsN(ctx, md, tok, sym, min, 300, 20)
+}
+
+// minuteLabelsN 同上，但窗口宽度与回溯天数可调。
+//
+// 拆出来是因为 300 根对 rb 恰好够一个完整日盘，对 ag（每日 555 根）就不够——
+// 于是「窗口里没有完整的日盘」，那看起来像数据的问题，其实是取数窗口的问题。
+// **取不到和不存在长得一样**，所以宁可让窗口成为一个显式参数。
+func minuteLabelsN(ctx context.Context, md, tok, sym string, min, width, daysBack int) (map[string][]string, error) {
 	c, _, err := websocket.Dial(ctx, md, &websocket.DialOptions{
 		CompressionMode: websocket.CompressionNoContextTakeover,
 		HTTPHeader: http.Header{
@@ -343,9 +354,9 @@ func minuteLabels(ctx context.Context, md, tok, sym string, min int) (map[string
 	send := func(v any) { b, _ := json.Marshal(v); c.Write(ctx, websocket.MessageText, b) }
 	dur := int64(min) * 60 * 1e9
 	dk := fmt.Sprintf("%d", dur)
-	from := time.Now().AddDate(0, 0, -20)
+	from := time.Now().AddDate(0, 0, -daysBack)
 	send(map[string]any{"aid": "set_chart", "chart_id": "g", "ins_list": sym,
-		"duration": dur, "view_width": 300,
+		"duration": dur, "view_width": width,
 		"focus_datetime": from.UnixNano(), "focus_position": 0})
 	send(map[string]any{"aid": "peek_message"})
 
@@ -663,6 +674,9 @@ func main() {
 	}
 	if !skipped("shinny-suspended-night-span") {
 		probeSuspendedNightSpan(ctx, md, tok)
+	}
+	if !skipped("shinny-embedded-template") {
+		probeEmbeddedTemplateMatchesMeasured(ctx, md, tok)
 	}
 
 	if failed > 0 {
