@@ -115,12 +115,29 @@ func main() {
 		}
 	}
 
-	var orphan []string
+	// 白名单里没被用上的条目，分两种——**它们要做的事不一样，就不能共用一句话**。
+	//
+	// 原来两种都报「文档里没有声明它」，而其中一种文档明明声明了、
+	// 源码也实现了——**报告本身在说一件不真的事**，而这个工具的全部价值
+	// 就是「报告说的是真的」。
+	var paid, orphan []string
 	for name, v := range pending {
+		if _, done := srcDecls[name]; done {
+			// 欠条已经兑现：v0.2 把 Source 写出来了，这一行该删了。
+			// 这【不是】守卫坏了，也不是「设计如此的红」——
+			// 它是版本收尾动作里漏了一步，红得其所。
+			paid = append(paid, fmt.Sprintf(
+				"%s (%s) —— 源码里已经有了，欠条该销：把这一行从 pending.txt 删掉",
+				name, v))
+			continue
+		}
 		if !used[name] {
-			orphan = append(orphan, fmt.Sprintf("%s (%s) —— 白名单里有，但文档里没有声明它", name, v))
+			orphan = append(orphan, fmt.Sprintf(
+				"%s (%s) —— 白名单里有，但【文档里】没有声明它（写错名字？还是文档删了没同步？）",
+				name, v))
 		}
 	}
+	sort.Strings(paid)
 	sort.Strings(orphan)
 
 	fmt.Printf("文档声明 %d 处；源码声明 %d 处；白名单 %d 项\n\n",
@@ -142,6 +159,7 @@ func main() {
 	report("名字在、【签名不同】", mismatch)
 	report("白名单已过期（预定版本已打 tag）", staleWL)
 	report("白名单里的孤儿项", orphan)
+	report("欠条已兑现，但白名单没清", paid)
 	report("【文档内部】同一标识符声明了两次且不一致", docConflicts)
 
 	if bad == 0 {
@@ -158,7 +176,13 @@ func main() {
 		return
 	}
 	fmt.Printf("%d 处不一致。\n", bad)
-	fmt.Println("要么让源码与文档一致，要么改文档，要么把它写进 tools/doccheck/pending.txt 并注明预定版本。")
+	fmt.Println("按类别处置：")
+	fmt.Println("  源码里找不到   → 实现它，或改文档，或写进 pending.txt 并注明预定版本")
+	fmt.Println("  签名不同       → 改源码或改文档，让两边一致")
+	fmt.Println("  白名单已过期   → 那个版本到了而实现没做完：做完它，或推迟预定版本并说明")
+	fmt.Println("  欠条已兑现     → 实现做完了：把那几行从 pending.txt 删掉")
+	fmt.Println("  孤儿项         → 名字写错了，或文档删了没同步")
+	fmt.Println("  文档内部矛盾   → 同一标识符两处声明不一致，先让文档跟自己一致")
 	os.Exit(1)
 }
 
