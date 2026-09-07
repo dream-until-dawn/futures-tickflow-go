@@ -36,12 +36,28 @@ const (
 	authURL = "https://auth.shinnytech.com/auth/realms/shinnytech/protocol/openid-connect/token"
 	nsURL   = "https://api.shinnytech.com/ns?stock=false&backtest=false"
 
-	// 这个 client 身份是从开源 tqsdk 包里读出来的，不是发给本项目的。
-	// 探针里写死是为了能重跑（它本来就公开在 PyPI 上）；
-	// 【库代码里必须由使用者显式提供，不设默认值】——见 contract.md 的合规风险行。
-	clientID     = "shinny_tq"
-	clientSecret = "REDACTED-取值见-tqsdk-包-auth.py"
+	// clientID 是公开的客户端名，不敏感。
+	clientID = "shinny_tq"
 )
+
+// clientSecret 【刻意不写死在本仓】。
+//
+// 它是对方 SDK 的客户端身份，不是发给本项目的。contract.md 的缓解措施写着
+// 「不设默认值，必须显式提供，让这成为明确的一步」——探针也是本仓的一部分，
+// 把值提交进这个【公开仓库】等于让 clone 下来 `go run .` 的人在毫无察觉的情况下
+// 用上那个身份，缓解措施就被本仓自己的工具绕过了。
+//
+// 「可被发现」不等于「可被转发」：值确实公开在 PyPI 的 tqsdk 包里
+// （`tqsdk/auth.py` 的 `_request_token`，形如 `client_secret` 那一项），
+// 但本仓不做那个转发点。
+//
+// 取值方式：环境变量或仓库根 `.env` 的 SHINNY_CLIENT_SECRET，缺失则 SKIP。
+func clientSecret() string {
+	if v := os.Getenv("SHINNY_CLIENT_SECRET"); v != "" {
+		return v
+	}
+	return dotenvKey("SHINNY_CLIENT_SECRET")
+}
 
 var cst = time.FixedZone("CST", 8*3600)
 
@@ -63,21 +79,17 @@ func report(name, status, detail string) {
 	}
 }
 
-// dotenv 读仓库根的 .env；找不到就回落到环境变量。
-func dotenv() (string, string) {
-	if u, p := os.Getenv("SHINNY_USER"), os.Getenv("SHINNY_PASS"); u != "" && p != "" {
-		return u, p
-	}
+// dotenvKey 从仓库根的 .env 取一个键；找不到返回空串。
+func dotenvKey(key string) string {
 	root, err := filepath.Abs(filepath.Join("..", "..", ".."))
 	if err != nil {
-		return "", ""
+		return ""
 	}
 	f, err := os.Open(filepath.Join(root, ".env"))
 	if err != nil {
-		return "", ""
+		return ""
 	}
 	defer f.Close()
-	kv := map[string]string{}
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
 		line := strings.TrimSpace(sc.Text())
@@ -85,19 +97,31 @@ func dotenv() (string, string) {
 			continue
 		}
 		k, v, ok := strings.Cut(line, "=")
-		if !ok {
+		if !ok || strings.TrimSpace(k) != key {
 			continue
 		}
-		kv[strings.TrimSpace(k)] = strings.Trim(strings.TrimSpace(v), `"'`)
+		return strings.Trim(strings.TrimSpace(v), `"'`)
 	}
-	return kv["SHINNY_USER"], kv["SHINNY_PASS"]
+	return ""
 }
 
-func token(user, pw string) (string, []string, error) {
+// dotenv 读凭证：环境变量优先，回落到仓库根的 .env。
+func dotenv() (string, string) {
+	u, p := os.Getenv("SHINNY_USER"), os.Getenv("SHINNY_PASS")
+	if u == "" {
+		u = dotenvKey("SHINNY_USER")
+	}
+	if p == "" {
+		p = dotenvKey("SHINNY_PASS")
+	}
+	return u, p
+}
+
+func token(user, pw, secret string) (string, []string, error) {
 	form := url.Values{
 		"grant_type":    {"password"},
 		"client_id":     {clientID},
-		"client_secret": {clientSecret},
+		"client_secret": {secret},
 		"username":      {user},
 		"password":      {pw},
 	}
@@ -286,13 +310,25 @@ func main() {
 	fmt.Println()
 
 	user, pw := dotenv()
-	if user == "" || pw == "" {
+	secret := clientSecret()
+	if user == "" || pw == "" || secret == "" {
+		missing := []string{}
+		if user == "" {
+			missing = append(missing, "SHINNY_USER")
+		}
+		if pw == "" {
+			missing = append(missing, "SHINNY_PASS")
+		}
+		if secret == "" {
+			missing = append(missing, "SHINNY_CLIENT_SECRET")
+		}
 		report("shinny-ws", "SKIP",
-			"未提供凭证（仓库根 .env 的 SHINNY_USER / SHINNY_PASS 或同名环境变量），跳过")
+			"缺少 "+strings.Join(missing, " / ")+"（环境变量或仓库根 .env），跳过。\n"+
+				"       SHINNY_CLIENT_SECRET 的取值见 docs/probe.md 6.1——本仓刻意不提交它")
 		return
 	}
 
-	tok, feats, err := token(user, pw)
+	tok, feats, err := token(user, pw, secret)
 	if err != nil {
 		report("shinny-auth", "FAIL", "取 token 失败: "+err.Error())
 		os.Exit(1)

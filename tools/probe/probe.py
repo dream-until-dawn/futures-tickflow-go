@@ -30,11 +30,19 @@ SINA_K = ("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
           "var%20_=/InnerFuturesNewService.")
 TQ_SYMBOLS = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
 SHINNY_AUTH = "https://auth.shinnytech.com"
-# 这个 client 身份是从开源 tqsdk 包里读出来的，不是发给本项目的。
-# 库代码里【不设默认值】，必须由使用者显式提供——见 contract.md 的合规风险行。
-# 探针里写出来是为了能重跑，它本来就公开在 PyPI 上。
+# 客户端名是公开的，不敏感。
 SHINNY_CLIENT_ID = "shinny_tq"
-SHINNY_CLIENT_SECRET = "REDACTED-取值见-tqsdk-包-auth.py"
+# client_secret 【刻意不写死在本仓】。
+#
+# 它是对方 SDK 的客户端身份，不是发给本项目的。contract.md 的缓解措施写着
+# 「不设默认值，必须显式提供，让这成为明确的一步」——探针也是本仓的一部分，
+# 把值提交进这个【公开仓库】，等于让 clone 下来直接跑的人在毫无察觉的情况下
+# 用上那个身份，缓解措施就被本仓自己的工具绕过了。
+#
+# 「可被发现」不等于「可被转发」：值确实公开在 PyPI 的 tqsdk 包里
+# （tqsdk/auth.py 的 _request_token），但本仓不做那个转发点。
+#
+# 取值：环境变量或仓库根 .env 的 SHINNY_CLIENT_SECRET，缺失则该条 SKIP。
 
 # docs/probe.md 记录的基线。改这里之前先想清楚是上游变了还是记录错了。
 BASELINE = {
@@ -65,25 +73,28 @@ def record(name, status, detail):
     print(f"[{status}] {name}\n       {detail}")
 
 
-def load_dotenv():
-    """从仓库根的 .env 读凭证；没有就回落到环境变量。缺失返回 (None, None)。"""
+def dotenv_key(key):
+    """取一个凭证键：环境变量优先，回落到仓库根的 .env。缺失返回 None。"""
     import os
     import pathlib
-    user, pw = os.environ.get("SHINNY_USER"), os.environ.get("SHINNY_PASS")
-    if user and pw:
-        return user, pw
-    root = pathlib.Path(__file__).resolve().parents[2]
-    f = root / ".env"
+    v = os.environ.get(key)
+    if v:
+        return v
+    f = pathlib.Path(__file__).resolve().parents[2] / ".env"
     if not f.exists():
-        return None, None
-    kv = {}
+        return None
     for line in f.read_text(encoding="utf-8", errors="replace").splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
-        k, v = line.split("=", 1)
-        kv[k.strip()] = v.strip().strip('"').strip("'")
-    return kv.get("SHINNY_USER"), kv.get("SHINNY_PASS")
+        k, val = line.split("=", 1)
+        if k.strip() == key:
+            return val.strip().strip('"').strip("'") or None
+    return None
+
+
+def load_dotenv():
+    return dotenv_key("SHINNY_USER"), dotenv_key("SHINNY_PASS")
 
 
 def fetch(url, referer=SINA_REF, timeout=30):
@@ -381,15 +392,19 @@ def probe_shinny_auth():
     import urllib.parse
 
     user, pw = load_dotenv()
-    if not user or not pw:
+    secret = dotenv_key("SHINNY_CLIENT_SECRET")
+    missing = [n for n, v in (("SHINNY_USER", user), ("SHINNY_PASS", pw),
+                              ("SHINNY_CLIENT_SECRET", secret)) if not v]
+    if missing:
         record("shinny-auth", SKIP,
-               "未提供凭证（.env 的 SHINNY_USER / SHINNY_PASS 或同名环境变量），跳过")
+               "缺少 " + " / ".join(missing) + "（环境变量或仓库根 .env），跳过。"
+               "SHINNY_CLIENT_SECRET 的取值见 docs/probe.md 6.1——本仓刻意不提交它")
         return
 
     body = urllib.parse.urlencode({
         "grant_type": "password",
         "client_id": SHINNY_CLIENT_ID,
-        "client_secret": SHINNY_CLIENT_SECRET,
+        "client_secret": secret,
         "username": user,
         "password": pw,
     }).encode()
