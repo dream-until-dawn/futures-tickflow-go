@@ -12,7 +12,8 @@
   - 失败不代表本库有 bug，代表 docs/probe.md 该更新了；
   - 因此它【不应该】进 CI 的必过项，否则迟早会被人加 `|| true` 绕过。
 
-依赖：只用标准库。
+依赖：只用标准库，Python 3.8+（刻意不用 3.12 的 f-string 新语法——
+一个自称事实底座的脚本，不该在旧解释器上整份 SyntaxError）。
 
 退出码：0 全部符合记录；1 有偏离；2 网络/解析失败无法判断。
 """
@@ -110,10 +111,14 @@ def last_full_day(b):
 # ---------------------------------------------------------------- 探针
 
 def probe_sina_frozen():
-    """新浪期货实时接口是否仍处于冻结状态。
+    """新浪期货实时接口是否仍处于【记录中的那个冻结状态】。
 
-    判据不是「日期字段等于某个值」，而是「日期字段不是最近的交易日」——
-    前者在解封后仍会 FAIL 得莫名其妙，后者说的才是我们真正关心的事。
+    判据是两条【同时】成立：日期字段不是最近的交易日（= 仍然冻着），
+    且它就是 docs/probe.md 记的 2024-07-17（= 冻在原处没挪）。
+
+    两个方向的偏离都要报：解封了要报（记录该更新），
+    改冻在另一个日期也要报（说明上游动过，快照不是同一份了）。
+    detail 里会把实际值打出来，看一眼就知道是哪一种。
     """
     raw = fetch("https://hq.sinajs.cn/list=RB0")
     txt = raw.decode("gbk", "replace")
@@ -197,19 +202,36 @@ def probe_grid_phase_is_constant():
             ts = sorted(ts)
             out[d] = {
                 "day": [t for t in ts if "09:00" <= t <= "15:00"],
-                "early": [t for t in ts if t < "09:00"],
-                "full": "15:00" in ts,
+                "evening": [t for t in ts if t >= "21:00"],   # 当晚的夜盘开头
+                "full": "15:00" in ts,                        # 走完整个日盘 = 是交易日
             }
         return out
 
     ag = split("AG0")
-    # 普通日：有凌晨根（说明前夜有夜盘）且日盘完整
-    normal = next((v["day"] for d, v in sorted(ag.items()) if v["full"] and v["early"]), None)
-    # 停夜盘日：日盘完整但【没有】凌晨根
-    susp = [(d, v["day"]) for d, v in sorted(ag.items()) if v["full"] and not v["early"]]
+    # 交易日 = 走完整个日盘的自然日。周六只有夜盘残段，不算。
+    tdays = [d for d, v in sorted(ag.items()) if v["full"]]
+
+    # 判「这个交易日有没有夜盘」，要看【上一个交易日的当晚】有没有 21:00 之后的根。
+    #
+    # 【不能】用「本自然日有没有凌晨根」——周一的夜盘在【周五晚】开，
+    # 它跨过午夜的部分落在【周六】那个自然日上，于是周一自己永远没有凌晨根。
+    # 按那个判据取，会把每个周一都误判成「停夜盘日」。
+    # 这个 bug 本探针犯过，是评审追问 A2 时查出来的。
+    susp, normal_days = [], []
+    for i, d in enumerate(tdays):
+        if i == 0:
+            continue
+        prev = tdays[i - 1]
+        if ag[prev]["evening"]:
+            normal_days.append((d, ag[d]["day"]))
+        else:
+            susp.append((d, ag[d]["day"]))
+
+    normal = normal_days[0][1] if normal_days else None
     if normal is None or not susp:
         record("grid-phase-constant", False,
-               f"窗口内找不到对照日（普通日={normal is not None} 停夜盘日={len(susp)}）")
+               f"窗口内找不到对照日（普通日={len(normal_days)} 停夜盘日={len(susp)}）。"
+               f"停夜盘只在长假前后出现，窗口太短时取不到")
         return
     bad = [(d, g) for d, g in susp if g != normal]
     record("grid-phase-constant", not bad,
@@ -256,12 +278,16 @@ def probe_rb0_unadjusted():
         record("rb0-unadjusted", False, "最近 60 个交易日里没找到换月点（可能是探测窗口太窄）")
         return
     pd_, d, o, n, surface, reals = found
-    gap = surface - max(reals)
-    ok = abs(gap) > 0.003          # 虚增超过 0.3pp 就认定未复权
+    # 虚增是【一个区间】而不是一个数：持有旧合约与持有新合约的真实收益不同，
+    # 所以「主连比真实多出多少」也就有上下界。文档里只报上界是把区间悄悄
+    # 收成了最好看的那一头——评审 C4 就是揪这个。这里两个界都打出来。
+    lo = surface - max(reals)
+    hi = surface - min(reals)
+    ok = abs(lo) > 0.003           # 连最保守的那一头都超过 0.3pp 才认定未复权
     record("rb0-unadjusted", ok,
            f"{pd_}[{o}] → {d}[{n}]  RB0 表面={surface*100:+.2f}%  "
            f"真实={'/'.join(f'{r*100:+.2f}%' for r in reals)}  "
-           f"虚增={gap*100:+.2f}pp")
+           f"虚增={lo*100:.2f}–{hi*100:.2f}pp（对不同持仓而言）")
 
 
 def probe_czce_four_digit():
@@ -289,10 +315,14 @@ def probe_tq_trading_time():
         "User-Agent": "futures-tickflow-go/probe", "Range": "bytes=0-262144"})
     with urllib.request.urlopen(req, timeout=180) as r:
         head = r.read(262144).decode("utf-8", "replace")
-    ok = '"trading_time"' in head and '"volume_multiple"' in head
-    record("tq-trading-time", ok,
-           f"前 256KB 内 trading_time={'有' if '\"trading_time\"' in head else '无'}  "
-           f"volume_multiple={'有' if '\"volume_multiple\"' in head else '无'}")
+    # 转义提到 f-string 外面：表达式内的反斜杠要到 PEP 701（Python 3.12）才合法，
+    # 写在里面会让【整份脚本】在 3.11 及更早上 SyntaxError——一条结论都给不出来，
+    # 而不是某一条 FAIL。一个自称事实底座的脚本不该这么脆。
+    has_tt = '"trading_time"' in head
+    has_vm = '"volume_multiple"' in head
+    yes_no = lambda b: "有" if b else "无"
+    record("tq-trading-time", has_tt and has_vm,
+           f"前 256KB 内 trading_time={yes_no(has_tt)}  volume_multiple={yes_no(has_vm)}")
 
 
 def probe_rb0_depth():

@@ -50,7 +50,7 @@ futures-tickflow-go/
 ├── bar.go               Bar：K 线（含持仓量/结算价/交易日）
 ├── symbol.go            Symbol：合约代码解析与规范化
 ├── calendar.go          Session / TradingDay / Calendar 接口
-├── period.go            Period：在交易时间轴上算 K 线边界
+├── period.go            IntradayPeriod / CalendarPeriod：算 K 线边界
 ├── source.go            Source 接口
 ├── store.go             Store / Iterator 接口
 ├── sync.go              Syncer：按 coverage 只拉缺失区间
@@ -58,8 +58,8 @@ futures-tickflow-go/
 ├── indicator_api.go     Indicator 接口（别名指向 indicator 子包）
 │
 ├── calendar/
-│   ├── embedded/        内置时段表（自天勤导出，带生效区间）
-│   └── derived/         从日线序列反推交易日历
+│   ├── embedded/        内置：标称时段模板（带生效区间）+ 交易日表
+│   └── derived/         从【分钟线】反推逐日实际时段（日线只定交易日）
 ├── refdata/             合约参考数据接口（乘数/最小变动价/到期日）
 │   └── shinnyref/       天勤 openmd symbols 实现
 ├── source/
@@ -91,6 +91,7 @@ futures-tickflow-go/
 > 值得记的是**这个错误有多难从表象定位**：400 Bad Request，响应体只有
 > 「Bad Request」四个字，加不加 token 都一样——看起来像鉴权问题，
 > 实际在压缩协商。是靠抓本地回环上的原始握手、与 Python 客户端逐行对比才找出来的。
+
 需要 `decimal` 的对接层隔离在 `adapter/` 这个**独立嵌套模块**里，
 理由与姊妹项目相同——只想拉数据的人不该被迫拉进一个记账内核。
 
@@ -137,27 +138,53 @@ type TradingDay struct {
     Sessions []Session // 升序，第一段可能落在前一个自然日
 }
 
+// ProductKey 是时段表的键：交易所 + 品种。
+//
+// 【不能只用 product】——郑商所的 `CF`(棉花) 与别处的同名品种要分开，
+// 而且交易所本身就决定了时段大类（中金所股指 09:30 开、国债 09:15 开、
+// 商品 09:00 开）。probe.md 第五节的 9 种时段模式正是按这个分的。
+type ProductKey struct {
+    Exchange string // SHFE DCE CZCE CFFEX INE GFEX
+    Product  string // rb / TA / IF
+}
+
+func (s Symbol) ProductKey() ProductKey
+
 // Calendar 交易日历。
 //
-// 【按品种给】，因为时段随品种不同（商品/股指/国债三套），
+// 键是 ProductKey，因为时段随品种不同（商品/股指/国债三套），
 // 也随时间变（夜盘时间历史上调整过多次）。
 type Calendar interface {
     // DayAt 返回包含 ts 的交易日。ts 落在休市段时 ok=false。
-    DayAt(product string, ts int64) (TradingDay, bool)
+    DayAt(k ProductKey, ts int64) (TradingDay, bool)
     // DayOf 按交易日编号取。
-    DayOf(product string, day int32) (TradingDay, bool)
+    DayOf(k ProductKey, day int32) (TradingDay, bool)
+    // Template 返回该品种在该交易日生效的【标称】时段模板，算相位要用。
+    Template(k ProductKey, day int32) (SessionTemplate, bool)
     // Walk 遍历 [from, to] 之间的交易日。
-    Walk(product string, from, to int32, fn func(TradingDay) bool) error
+    Walk(k ProductKey, from, to int32, fn func(TradingDay) bool) error
 }
 ```
 
 ### Period：在交易时间轴上等分
 
+周期分**两类**，不是一个类型。日内周期在交易日**之内**切分，
+日线及以上按交易日**成组**——把两者塞进一个 `Bars(td)` 里，
+后者根本表达不出来（周线跨 5 个交易日，给它一个 `TradingDay` 无从下手）。
+
 ```go
-// Period 周期。
-//
-// 中国期货的周期【不是】一个时钟网格，而是「交易日内已交易分钟数」上的等分。
-type Period struct{ /* 内部：分钟数，或 Daily/Weekly/Monthly */ }
+// IntradayPeriod 日内周期：1m / 5m / 15m / 30m / 60m …
+// 在【一个交易日之内】把交易时间等分。
+type IntradayPeriod struct{ /* 内部：分钟数 */ }
+
+// CalendarPeriod 日线及以上：1d / 1w / 1M。
+// 按【交易日】成组，一组的边界是首个交易日的开盘到末个交易日的收盘。
+type CalendarPeriod int
+const (
+    Daily CalendarPeriod = iota
+    Weekly
+    Monthly
+)
 
 // BarBound 一根 K 线的墙钟边界。
 //
@@ -172,8 +199,18 @@ type BarBound struct {
 // Bars 给出某个交易日内该周期的全部 K 线边界。
 //
 // 这是本库最核心的一个函数：判完结、聚合、对齐、补洞全走它。
-func (p Period) Bars(td TradingDay) []BarBound
+// tmpl 是品种的【标称】时段模板，用来算相位——见下面为什么少不了它。
+func (p IntradayPeriod) Bars(tmpl SessionTemplate, td TradingDay) []BarBound
+
+// Group 把一串交易日按周/月成组。日线就是一天一组。
+func (p CalendarPeriod) Group(days []TradingDay) []BarBound
 ```
+
+> 一开始只有一个 `Period`，注释里写着「内部：分钟数，或 Daily/Weekly/Monthly」，
+> 而唯一的方法是 `Bars(td TradingDay)`。**注释承诺的三种日历周期，
+> 那个签名一种都实现不了**——评审 B1 指出的。
+> 拆成两个类型之后，「哪些操作对哪类周期有意义」由类型系统回答，
+> 不再靠使用者记住。
 
 实现**不是**「沿 `td.Sessions` 累计交易毫秒」。这一点被实测推翻过一次，
 值得把两个版本都留着。
@@ -184,9 +221,9 @@ func (p Period) Bars(td TradingDay) []BarBound
 > **它有一个可证伪的预言**：长假前交易所停夜盘，那天沪银没有 30 分钟的夜盘余数，
 > 日盘就该从 09:00 干净地重开、网格退化成 `CU0` 那样。
 >
-> **实测把它证伪了**（[probe.md 坑三之三](probe.md)）：三个停夜盘日 × 三个品种，
-> 日盘网格**与普通日完全相同**。沪银在没有夜盘的那天，第一根 60m 仍然只装
-> 30 分钟、仍然收在 `09:30`。
+> **实测把它证伪了**（[probe.md 坑三之三](probe.md)）：**两个**真正的停夜盘日
+> （2026-05-06 五一后、2026-06-22 端午后）× 三个品种，日盘网格**与普通日完全相同**。
+> 沪银在没有夜盘的那天，第一根 60m 仍然只装 30 分钟、仍然收在 `09:30`。
 
 正确的规则分两半：
 
@@ -195,7 +232,7 @@ func (p Period) Bars(td TradingDay) []BarBound
 //
 // 它等于「标称夜盘长度 mod 周期」，是【品种的固定属性】，
 // 不依赖某一天是否真的开了夜盘。
-func (p Period) Phase(tmpl SessionTemplate) time.Duration
+func (p IntradayPeriod) Phase(tmpl SessionTemplate) time.Duration
 ```
 
 1. **相位按标称模板算**，是品种常量：沪银 `330 mod 60 = 30`，沪铜 `240 mod 60 = 0`；
@@ -204,14 +241,10 @@ func (p Period) Phase(tmpl SessionTemplate) time.Duration
 第二半解释跨休市段（30m 的 `10:45`）与日末短根（30m 的 `15:00` 只有 15 分钟）；
 第一半解释跨隔夜缺口（`AG0` 的 `09:30`）**以及停夜盘日为什么不变**。
 
-**所以 `Period.Bars` 的签名要多一个参数**——只给 `TradingDay` 是不够的，
-还得给品种的标称模板：
+这就是 `Bars` 为什么要吃 `tmpl SessionTemplate` ——只给 `TradingDay` 不够，
+因为停夜盘那天 `TradingDay.Sessions` 里根本没有夜盘段，相位就无从算起。
 
-```go
-func (p Period) Bars(tmpl SessionTemplate, td TradingDay) []BarBound
-```
-
-> 置信度：**「相位与当天实际交易无关」是实测**（3 个停夜盘日 × 3 个品种）。
+> 置信度：**「相位与当天实际交易无关」是实测**（2 个停夜盘日 × 3 个品种）。
 > **「相位 = 标称夜盘长度 mod 周期」这个公式是推定**——它拟合了目前观察到的
 > 全部数据，但只在 330 分与 240 分两种夜盘长度上验过。
 > 变了会怎样：`SyncReport.Misaligned` 不为零。
@@ -235,8 +268,38 @@ func (p Period) Bars(tmpl SessionTemplate, td TradingDay) []BarBound
   提供当前时段；历史时段变更从**历史 K 线的实际时间戳**反推
   （某天最早的一根是 21:05 还是 09:05，夜盘最晚一根到几点）。
 
-内置一份导出快照在 `calendar/embedded`（**带生效区间**，不是单张表），
-`calendar/derived` 提供从库里已有数据现场反推的实现。两者都实现 `Calendar` 接口。
+内置一份导出快照在 `calendar/embedded`，`calendar/derived` 提供从库里已有数据
+现场反推的实现。两者都实现 `Calendar` 接口。
+
+**时段表要分成两层，因为「标称」与「实际」是两回事：**
+
+```go
+// SessionTemplate 品种的【标称】时段模板，带生效区间。
+// 相位按它算（见上）。夜盘时间历史上调整过，所以要带区间。
+type SessionTemplate struct {
+    From, To int32     // 生效的交易日区间
+    Day      []Session // 相对时刻
+    Night    []Session // 可能为空；跨日用 25:00 / 26:30 表示
+}
+
+// 而 TradingDay.Sessions 是【那一天实际开了哪些段】——逐日事实，
+// 区间模式表达不了：长假前停夜盘就是单独某一天没有夜盘段。
+```
+
+**两层各管一件事，不能合并**：
+
+- **相位**看 `SessionTemplate`（标称），停夜盘也不变；
+- **切分**沿 `TradingDay.Sessions`（实际）累计，停夜盘那天就是少一段。
+
+> 评审 A2 要求「`TradingDay` 的构造路径要能逐日给 `Sessions`，不能只给模式」——
+> 这条成立，而且**即使相位不受影响也仍然成立**：那天确实少了几根夜盘 K 线，
+> 切分要知道。
+>
+> **`calendar/derived` 从日线反推不出「那天有没有夜盘」**（日线只能给「哪天是交易日」）。
+> 一轮时这是个真缺口——新浪 60m 只有 9 个月，更早的长假无从确定。
+> **二轮之后不再是**：天勤有 10 年 1m 数据，每个交易日实际开了哪些段可以逐日反推
+> （1m K 线存在与否就是交易与否）。所以 `calendar/derived` 的输入应当是
+> **分钟线**而不是日线；日线只用来定「哪天是交易日」。
 
 > **未来的交易日历推不出来。** 反推只能覆盖到「已有数据」的最后一天。
 > 实盘要判断明天是否开市，得靠 `embedded` 的前瞻表或交易所公告。
@@ -455,7 +518,7 @@ SQLite 要 CGO 或几十 MB 生成代码；bbolt 的 B+ 树页会让文件膨胀
       1m.dat               纯定长记录数组，offset = i * 88
       1m.meta              JSON，人可读
     _continuous/           主连序列（见第八节），与合约分开放
-      SHFE.rb@oi-ratioback/1d.dat
+      SHFE.rb@oi--ratioback-v1/1d.dat
   .lock
 ```
 
@@ -467,10 +530,32 @@ SQLite 要 CGO 或几十 MB 生成代码；bbolt 的 B+ 树页会让文件膨胀
 休市段本来就没有数据，用时间戳记会让每个夜盘间隙都长得像一个空洞。
 按交易日记，语义是清楚的：「20260101 到 20260131 这些交易日我都问过了」。
 
-**二、主连序列单独放 `_continuous/`，且键里带拼接参数。**
+**二、主连序列单独放 `_continuous/`，且键里带【全部】拼接参数。**
 同一个品种按不同换月规则、不同复权方式拼出来的是**不同的序列**，
-它们必须能共存。把参数编进目录名（`SHFE.rb@oi-ratioback`），
-换个参数就是另一条序列，不会互相覆盖。
+它们必须能共存。
+
+键的生成规则**必须写死，且必须覆盖每一个参数**：
+
+```
+<product>@<rollRule>-<rollParams>-<adjust>-v<keyVersion>
+例：SHFE.rb@oi--ratioback-v1
+    SHFE.rb@fixeddays-3-ratioback-v1
+    SHFE.rb@fixeddays-10-ratioback-v1
+```
+
+> **`SHFE.rb@oi-ratioback` 这个第一版的键是错的**：它没编码 `RollRule` 的参数，
+> 于是 `FixedDaysBeforeExpiry(3)` 与 `FixedDaysBeforeExpiry(10)` 会落到
+> **同一个目录，静默互相覆盖**——而这一段自己写的理由正是「换个参数就是
+> 另一条序列，不会互相覆盖」。**一句承诺，配一个兑现不了它的键。**
+> 评审 B3 指出的。
+>
+> 参数多了目录名会长，所以规则定成：**参数少于 4 个直接编进目录名，
+> 超过则用 `h<8位哈希>`，并在该目录的 `.meta` 里存全量参数**。
+> `keyVersion` 是给「以后改了键的算法」留的——不带它的话，
+> 换算法就会让旧目录被当成新参数的序列读出来，那又是一次静默覆盖。
+>
+> `Open` 时会把 `.meta` 里的全量参数与请求的参数**比对**，
+> 不一致直接报错而不是接着写——哈希碰撞与手工改目录名都能被挡住。
 
 并发模型与姊妹项目相同：进程内多读单写，跨进程靠 `Open` 时的写锁，
 `OpenReadOnly` 不取锁、读打开那一刻的快照。
@@ -481,10 +566,23 @@ Windows 上只读端持有序列时写者回填不了（`MoveFileEx` 限制）�
 ## 七、同步
 
 ```go
-func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (Report, error)
+func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (SyncReport, error)
+```
+
+```go
+type SyncRequest struct {
+    Symbol Symbol
+    Period IntradayPeriod // 或 CalendarPeriod，见第二节
+    From   int32          // 起始交易日 yyyymmdd，必填
+    To     int32          // 0 表示到最后一个已收盘的
+    Force  bool           // 忽略 coverage 强制重拉该段
+}
 ```
 
 读 `Meta.Coverage`（交易日区间）→ 求缺失 → 只拉这些 → 落库 → 合并 coverage。
+
+`Force` 有两个正当用途：**交易所修正了历史结算价**，以及
+**上游抖动被固化成「确认无数据」**——后者不重拉就会永久留一个不该存在的空洞。
 
 三条本库特有的规则：
 
@@ -507,7 +605,7 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (Report, error)
 | 拉过，确认没有 | ✓ | ✓ |
 | **不是交易日 / 不在交易时段** | 不存在 | **必须单独一类** |
 
-第三类在加密市场根本不存在。混进第二类的话，`Report.Gaps` 会把每个周末、
+第三类在加密市场根本不存在。混进第二类的话，`SyncReport.Gaps` 会把每个周末、
 每个午休、每个春节都列成「数据缺失」，那张表就没人看了——**一份全是噪声的
 告警等于没有告警**。
 
@@ -522,7 +620,8 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (Report, error)
 
 **新浪 `RB0`**（[probe.md 第四节](probe.md)）：未复权。2026-08-28 → 08-31 换月那天，
 `RB0` 显示 **+2.73%**，而实际持有 `RB2610` 是 **+1.00%**、`RB2701` 是 **+1.23%**——
-凭空多出约 1.7 个百分点。
+凭空多出 **1.5–1.7 个百分点**（是个区间，取决于你持的是哪一个合约；
+只报上界就是把区间悄悄收成最好看的那一头）。
 
 **天勤 `KQ.m@SHFE.rb`**（[probe.md 6.5](probe.md)）：**同样未复权，而且更坏**。
 它在 **09-02** 换月（**比新浪晚两天，换月规则不同**），那天：
