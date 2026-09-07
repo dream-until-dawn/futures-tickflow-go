@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -75,7 +76,21 @@ var baseline = struct {
 
 var failed int
 
+// only 由 -only 指定：只跑名字含该子串的探针。
+//
+// 加它是因为 shinny-trading-day-predicted 是【时间窗口敏感】的：
+// 判据只在盘中成立，收盘时跑什么都判不出来。为了补跑那一条而把整套重跑一遍，
+// 代价不在耗时，在于**人会因此不跑**。
+var only string
+
+func skipped(name string) bool {
+	return only != "" && !strings.Contains(name, only)
+}
+
 func report(name, status, detail string) {
+	if skipped(name) {
+		return
+	}
 	fmt.Printf("[%s] %s\n       %s\n\n", status, name, detail)
 	if status == "FAIL" {
 		failed++
@@ -525,7 +540,13 @@ func probeGfexNoNight(ctx context.Context, md, tok string) {
 }
 
 func main() {
+	flag.StringVar(&only, "only", "", "只跑名字含该子串的探针，如 -only trading-day")
+	flag.Parse()
+
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
+	if only != "" {
+		fmt.Printf("（-only %q：其余探针跳过）\n", only)
+	}
 	fmt.Println()
 
 	user, pw := dotenv()
@@ -572,7 +593,7 @@ func main() {
 	}
 	report("shinny-ns", "PASS", "mdurl="+md+"（不能写死域名，必须问名称服务）")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 260*time.Second)
 	defer cancel()
 
 	// 关键一条：【已到期】合约还供不供分钟线。
@@ -582,10 +603,13 @@ func main() {
 	// 这一条不成立的话，「分钟级硬缺口已解决」就不成立——
 	// 缺口只是从「新浪 1023 根」挪到了「天勤只给在市合约」。
 	syms := append([]string{"KQ.m@SHFE.rb"}, baseline.expiredSyms...)
-	res, err := depths(ctx, md, tok, syms)
-	if err != nil {
-		report("shinny-depth", "FAIL", "连接或拉取失败: "+err.Error())
-		os.Exit(1)
+	var res map[string]serie
+	if !skipped("shinny-depth") {
+		res, err = depths(ctx, md, tok, syms)
+		if err != nil {
+			report("shinny-depth", "FAIL", "连接或拉取失败: "+err.Error())
+			os.Exit(1)
+		}
 	}
 
 	// 分子与分母必须同源。
@@ -628,12 +652,23 @@ func main() {
 		fmt.Sprintf("\n       已到期合约 %d/%d 有 1m 历史；地板线记录为 %s",
 			len(baseline.expiredSyms)-expiredBad, len(baseline.expiredSyms), baseline.floorDay))
 
-	probeGridIsClockGrid(ctx, md, tok)
-	probeGfexNoNight(ctx, md, tok)
+	if !skipped("shinny-grid-clock") {
+		probeGridIsClockGrid(ctx, md, tok)
+	}
+	if !skipped("shinny-gfex-no-night") {
+		probeGfexNoNight(ctx, md, tok)
+	}
+	if !skipped("shinny-trading-day-predicted") {
+		probeTradingDayPredicted(ctx, md, tok)
+	}
 
 	if failed > 0 {
 		fmt.Printf("%d 条偏离记录 → 先判断是上游变了还是记录错了，再更新 docs/probe.md\n", failed)
 		os.Exit(1)
+	}
+	if only != "" {
+		fmt.Printf("含 %q 的探针与记录一致；**其余未跑，不代表通过**\n", only)
+		return
 	}
 	fmt.Println("全部与 docs/probe.md 第六节的记录一致")
 }

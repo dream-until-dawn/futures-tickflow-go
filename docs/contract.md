@@ -134,7 +134,7 @@
 | 未验 | 为什么要紧 |
 |---|---|
 | ~~未完结那一根有没有标志位~~ **已测：结构性不存在** | 字段集里根本没有这一项（不是「值为 false」）。所以判完结**只能靠交易日历**，时间模型那条主线不变 |
-| **`trading_day_end_id` 是否【预知】** | 若是，「`last_id < trading_day_end_id` ⇒ 未完结」比 confirm 标志更强，还顺带给交易日边界。收盘后探两者相等，**分辨不了**，须盘中再探 |
+| **`trading_day_end_id` 是否【预知】** | 若是，「`last_id < trading_day_end_id` ⇒ 未完结」比 confirm 标志更强，还顺带给交易日边界。**已写成探针 `shinny-trading-day-predicted`**（两条腿 + 无夜盘品种作对照组），收盘时它会 SKIP 而不是给结论；`cd tools/probe/shinny && go run . -only trading-day`，**须盘中跑** |
 | `trading_day_length` / `market_time_length` 的单位 | 5190 / 1240 都对不上分钟或秒，含义不明，暂不使用 |
 | 实时推送的延迟与断线重连行为 | v1 要接实时 |
 | 2016-01-04 是否是**所有品种**的历史地板 | 决定各品种能回测多久。目前只在 `KQ.m@SHFE.rb` 上量过 |
