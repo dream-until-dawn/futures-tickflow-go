@@ -34,3 +34,7 @@ go.work.sum
 # 探针缓存与本地凭证
 .env
 tools/probe/*.json
+
+# Python
+__pycache__/
+*.pyc
