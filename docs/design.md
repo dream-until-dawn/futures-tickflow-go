@@ -1145,7 +1145,7 @@ float64 → decimal 往返：29/29 逐位无损
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
-| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | 评审中（有条件通过，I1 已改） |
+| v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ `v0.1.0` |
 | v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 待办 |
 | v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
