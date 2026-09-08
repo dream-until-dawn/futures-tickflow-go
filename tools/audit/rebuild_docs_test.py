@@ -40,6 +40,38 @@ def run(*cmd):
     return r.returncode, (r.stdout + r.stderr).decode("utf-8", "replace")
 
 
+HIGH_WATER = os.path.join(HERE, "high_water.txt")
+
+
+def readHighWater():
+    """读高水位。返回 (值字典, 原始行) —— 保留原始行是为了回写时不动注释。"""
+    lines = open(HIGH_WATER, encoding="utf-8").read().splitlines()
+    hw = {}
+    for ln in lines:
+        t = ln.strip()
+        if not t or t.startswith("#"):
+            continue
+        parts = t.split()
+        assert len(parts) == 2, "high_water.txt 这一行读不懂：%r" % ln
+        hw[parts[0]] = int(parts[1])
+    assert hw, "high_water.txt 里一个数都没有 —— 那等于没有下限"
+    return hw, lines
+
+
+def writeHighWater(lines, hw):
+    """只改数值行，注释与顺序原样保留。"""
+    out = []
+    for ln in lines:
+        t = ln.strip()
+        if t and not t.startswith("#"):
+            k = t.split()[0]
+            if k in hw:
+                out.append("%s %d" % (k, hw[k]))
+                continue
+        out.append(ln)
+    open(HIGH_WATER, "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
+
+
 def drill():
     """演练一次「第二步失败」，确认还原路径真的把盘上恢复成原样。
 
@@ -89,17 +121,31 @@ def main():
     for name, blob in (("rows", rows), ("quotes", quotes), ("census", census)):
         assert blob.strip(), "%s.gen 是空的 —— 生成器没产出东西，拒绝写空表" % name
 
-    # 下限跟表一起生成（理由见 gen_quoted_rules.py 里那段）：
-    # 手写在 Go 里的下限会【随规模自动变松】——这是这套守卫里唯一
-    # 「什么都不做也会变弱」的一处，评审方 2026-09-08 量出来的。
-    floors = open(os.path.join(ROOT, "floors.gen"), encoding="utf-8").read().split()
-    assert len(floors) == 2, "floors.gen 格式不对：%r" % floors
-    quotedFloor, censusFloor = int(floors[0]), int(floors[1])
-    # 锚点表的下限这里算：三张表要么都生成下限，要么都别生成——
-    # 只生成两张会留下第三张继续随规模变松，而它读起来和另外两张一样「已经处理过」。
-    anchorFloor = int((rows.count("\n") + 1) * 0.9)
+    # —— 下限 = 高水位，不是「当前条数 × 比例」——
+    #
+    # 上一版是 int(当前条数 × 0.9)，而评审方 2026-09-08 收回了他自己那条建议并证明了它更糟：
+    # 从【被守的量】派生出来的阈值在生成那一刻恒真，只在两次生成之间有力气，
+    # 而正常流程（改 .md → 重生成）从不留下那个窗口。
+    # 实测：删掉一整节规矩 + 重生成 → 全绿，下限跟着掉。
+    #
+    # ⇒ 高水位只涨不落；要合法缩小就得动手改 tools/audit/high_water.txt。
+    #   理由与全仓一致：**删一条规矩应该是显式动作。**
+    counts = {"rules": quotes.count("\n") + 1,
+              "anchors": rows.count("\n") + 1,
+              "census": census.count("\n") + 1}
+    hw, hwLines = readHighWater()
+    grew = []
+    for k, n in counts.items():
+        assert k in hw, "high_water.txt 缺一项：%s" % k
+        if n > hw[k]:
+            grew.append("%s %d→%d" % (k, hw[k], n))
+            hw[k] = n
+    if grew:
+        writeHighWater(hwLines, hw)
+        print("高水位抬高：%s（表长大了，这是自动的）" % "，".join(grew))
+    anchorFloor, quotedFloor, censusFloor = hw["anchors"], hw["rules"], hw["census"]
     assert quotedFloor > 0 and censusFloor > 0 and anchorFloor > 0, \
-        "下限生成成了 0 —— 那等于没有下限"
+        "下限是 0 —— 那等于没有下限"
 
     body = (prefix + TPL_ANCHORS + rows + TPL_MID_A + TPL_QUOTED + quotes
             + TPL_MID_B + census + TPL_TAIL)
@@ -125,14 +171,14 @@ def main():
     # 而那句话把两者说成了一件事（评审方 2026-09-08 造了一个 vet 失败量出来的）。
     #
     # 这就是「自述比实现宽」，这次在【失败路径】上，也就是没人会去看的地方。
-    for f in ("rows.gen", "quotes.gen", "census.gen", "floors.gen"):
+    for f in ("rows.gen", "quotes.gen", "census.gen"):
         p = os.path.join(ROOT, f)
         if os.path.exists(p):
             os.remove(p)
 
     if not ok:                                     # ④ 任何一步失败就整份还原
         open(TARGET, "wb").write(original)
-        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen", "floors.gen")
+        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
                      if os.path.exists(os.path.join(ROOT, f))]
         assert not leftovers, "中间产物没清干净：%s" % leftovers
         print("已把 docs_test.go 逐字节还原，中间产物也清了 —— 盘上没有留半成品")
@@ -237,8 +283,12 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 	}
 
 	if len(ruleAnchors) < __ANCHOR_FLOOR__ {
-		t.Fatalf("ruleAnchors 只有 %d 条，不像覆盖了五份载体——"+
-			"先确认这张表没被清空，再谈它有没有全过", len(ruleAnchors))
+		t.Fatalf("ruleAnchors 只有 %d 节，低于高水位 %d —— 这张表【缩水】了。"+
+			"下限是高水位（历来最大值），不是当前值的某个比例："+
+			"从被守的量派生出来的阈值在生成那一刻恒真，等于不设防。"+
+			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
+			"并在提交信息里说删了什么。删规矩是显式动作。",
+			len(ruleAnchors), __ANCHOR_FLOOR__)
 	}
 	t.Logf("锚住 %d 节，其中 %d 节写明豁免", len(ruleAnchors), countExempt())
 }
@@ -407,8 +457,12 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 		}
 	}
 	if len(quotedRules) < __QUOTED_FLOOR__ {
-		t.Fatalf("quotedRules 只有 %d 条，不像覆盖了五份载体 —— 先确认这张表没被清空",
-			len(quotedRules))
+		t.Fatalf("quotedRules 只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
+			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
+			"并在提交信息里说删了什么。"+
+			"⚠️ 这一条挡的正是「删掉规矩 + 重生成 ⇒ 全绿」——"+
+			"上一版下限跟着当前条数走，那个组合是绿的。",
+			len(quotedRules), __QUOTED_FLOOR__)
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
 }
@@ -436,7 +490,9 @@ func TestCarrierCensus(t *testing.T) {
 		}
 	}
 	if len(carrierCensus) < __CENSUS_FLOOR__ {
-		t.Fatalf("普查表只有 %d 份文件，载体不止这些", len(carrierCensus))
+		t.Fatalf("普查表只有 %d 份文件，低于高水位 %d —— 少了载体。"+
+			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt",
+			len(carrierCensus), __CENSUS_FLOOR__)
 	}
 }
 '''

@@ -490,9 +490,13 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 		}
 	}
 
-	if len(ruleAnchors) < 42 {
-		t.Fatalf("ruleAnchors 只有 %d 条，不像覆盖了五份载体——"+
-			"先确认这张表没被清空，再谈它有没有全过", len(ruleAnchors))
+	if len(ruleAnchors) < 47 {
+		t.Fatalf("ruleAnchors 只有 %d 节，低于高水位 %d —— 这张表【缩水】了。"+
+			"下限是高水位（历来最大值），不是当前值的某个比例："+
+			"从被守的量派生出来的阈值在生成那一刻恒真，等于不设防。"+
+			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
+			"并在提交信息里说删了什么。删规矩是显式动作。",
+			len(ruleAnchors), 47)
 	}
 	t.Logf("锚住 %d 节，其中 %d 节写明豁免", len(ruleAnchors), countExempt())
 }
@@ -698,6 +702,13 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `仍然盖不住：写成普通行文、加粗只在句中的那些。我判断它们多半是解释而不是规矩——`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `但那是判断，不是测量，所以它进上面那张表的 ❌ 行。`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `一个「由模式生成」的登记表，它的覆盖面永远只能被【另一个模式】测出来。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `⚠️ 同一句的第二次应用，2026-09-08 晚：为了治「下限随规模变松」，`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `我把下限改成了 int(当前条数 × 0.9) ——而那是从【被守的量】派生出来的。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `实测：删掉一整节规矩 + 重生成 ⇒ 全绿，下限跟着掉。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `一个从被守的东西派生出来的阈值，不是阈值。 它在生成那一刻恒真，`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `而最该记的是评审方那句自我更正：「我抱怨的『陈旧』，恰恰是它唯一的独立性来源。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `我把陈旧修掉了，连带把它的功能修没了。」`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `⇒ 凡阈值，先问它是从哪儿来的。 从被守的量派生 ⇒ 它守的是「派生动作没发生」，`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `生成器和验证器用同一个模式 ⇒ 它对自己永远自洽。`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `我曾有 76 条登记、44 节锚点、五种拆除验证全绿，`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `而当时实际漏着两条——因为那五种拆除也在同一个模式内部。`},
@@ -756,7 +767,7 @@ var carrierCensus = []struct {
 	{`docs/README.md`, 123},
 	{`CONTRIBUTING.md`, 131},
 	{`tools/audit/README.md`, 34},
-	{`docs/method-landing.md`, 152},
+	{`docs/method-landing.md`, 160},
 }
 
 // sectionedRule 是一条规矩连同它所在的小节。
@@ -855,9 +866,13 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 	}
-	if len(quotedRules) < 178 {
-		t.Fatalf("quotedRules 只有 %d 条，不像覆盖了五份载体 —— 先确认这张表没被清空",
-			len(quotedRules))
+	if len(quotedRules) < 205 {
+		t.Fatalf("quotedRules 只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
+			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
+			"并在提交信息里说删了什么。"+
+			"⚠️ 这一条挡的正是「删掉规矩 + 重生成 ⇒ 全绿」——"+
+			"上一版下限跟着当前条数走，那个组合是绿的。",
+			len(quotedRules), 205)
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
 }
@@ -885,6 +900,8 @@ func TestCarrierCensus(t *testing.T) {
 		}
 	}
 	if len(carrierCensus) < 5 {
-		t.Fatalf("普查表只有 %d 份文件，载体不止这些", len(carrierCensus))
+		t.Fatalf("普查表只有 %d 份文件，低于高水位 %d —— 少了载体。"+
+			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt",
+			len(carrierCensus), 5)
 	}
 }

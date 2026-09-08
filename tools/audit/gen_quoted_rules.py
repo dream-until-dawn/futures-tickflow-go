@@ -94,20 +94,6 @@ for f in FILES:
 
 open("quotes.gen", "w", encoding="utf-8", newline="\n").write(
     "\n".join("\t{%s, %s, %s}," % (gq(f), gq(sec), gq(n)) for f, sec, n in rows) + "\n")
-# —— 下限跟表一起生成 ——
-#
-# 评审方 2026-09-08 量出来的：这是这套守卫里【唯一「什么都不做也会变松」】的一处。
-#   quotedRules  195 条  下限 60  余量 135   ← 写下 60 那天表里就是六十几条，它没变而表长了
-#   ruleAnchors   47 节  下限 20  余量  27
-#   carrierCensus  5 份  下限  5  余量   0   ← 只有这个是紧的
-# 别的守卫都要有人动手才会弱；下限是【随规模自动变松】的。
-#
-# 比例本身也生成、不手写在 Go 里——否则它就是「凭记忆递增一个计数」的又一个实例：
-# 一个当初对、之后没人再算过的数。
-FLOOR_RATIO = 0.9   # 评审方过：挡得住清空与大幅缩水，又容不下正常增减的误报
-
-open("floors.gen", "w", encoding="utf-8", newline="\n").write(
-    "%d %d\n" % (int(len(rows) * FLOOR_RATIO), len(census)))
 open("census.gen", "w", encoding="utf-8", newline="\n").write(
     "\n".join("\t{%s, %d}," % (gq(f), n) for f, n in census) + "\n")
 
