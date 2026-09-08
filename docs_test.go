@@ -468,6 +468,11 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `不对。那天不该红；红了就是有一步没做（实现完了要删 pending.txt 那几行）。`},
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `提前解释一个红色，和给检查加 || true，最终下场一样：没人再读它。`},
 	{`CONTRIBUTING.md`, `## 七、合并 / 删除**之后**，回头用一条独立命令核对`, `remotes/origin/ 不是远端状态，是「上次 fetch 时的远端状态」。`},
+	{`CONTRIBUTING.md`, `## 自检（送审前跑，输出贴进第 3 样材料）`, `go test ./... 的射程是【当前模块】，而本仓有两个：`},
+	{`CONTRIBUTING.md`, `## 自检（送审前跑，输出贴进第 3 样材料）`, `一条没有被任何门禁跑到的守卫，坏了不会有人知道 ——`},
+	{`CONTRIBUTING.md`, `## 自检（送审前跑，输出贴进第 3 样材料）`, `它和不存在的区别，只在读者的印象里。`},
+	{`CONTRIBUTING.md`, `## 自检（送审前跑，输出贴进第 3 样材料）`, `那就成了又一条「靠人记得」的规矩 —— 而本仓这一类已经杀过十次。`},
+	{`CONTRIBUTING.md`, `## 自检（送审前跑，输出贴进第 3 样材料）`, `一个不用 go.mod 组织的东西它照样看不见。`},
 	{`tools/audit/README.md`, `(文件开头，尚未进入任何小节)`, `本目录的脚本分三类，退出码的含义按类不同（2026-09-08 起；上一版写成`},
 	{`tools/audit/README.md`, `(文件开头，尚未进入任何小节)`, `而它有，写在自己 docstring 的第 5 行：「差值若正好是边界条目数，解释成立。」`},
 	{`tools/audit/README.md`, `(文件开头，尚未进入任何小节)`, `⇒ 一个「docstring 写了判据、输出印了判据的两个操作数、却从不比较它们」的脚本，`},
@@ -491,6 +496,7 @@ var quotedRules = []struct {
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `和「唯一」同族：把「我处理过的范围」写成了「存在的范围」。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `这个目录存在的理由（2026-09-08 学到的，代价是同一段文档改了三次）：`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `有些格子不是审计漏了，是它已经无法被审计了——`},
+	{`tools/audit/README.md`, `## 现有脚本`, `而「它们是绿的」和「它们在跑」是两件事。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `它自己复制一份仓库（不带 .git / .env）在那儿动手，跑完删，所以跑它不会弄脏工作区。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `一行标签与实际跑的不符的对照组，比缺这一行更糟——缺了是一处空白，`},
 	{`tools/audit/README.md`, `## 现有脚本`, `它跑出来的绿是【已知边界】，不是缺陷——那一类写在 docs/method-landing.md 第三类。`},
@@ -594,8 +600,8 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
-	{`CONTRIBUTING.md`, 217},
-	{`tools/audit/README.md`, 71},
+	{`CONTRIBUTING.md`, 225},
+	{`tools/audit/README.md`, 75},
 	{`docs/method-landing.md`, 163},
 }
 

@@ -519,8 +519,37 @@ git ls-remote origin
 ## 自检（送审前跑，输出贴进第 3 样材料）
 
 ```bash
-gofmt -l . && go vet ./... && go test ./... -count=1 && go run ./tools/doccheck
+python tools/audit/module_sweep.py && go run ./tools/doccheck
 ```
+
+#### ⛔ 为什么不再是那一行 `gofmt && vet && go test ./...`
+
+**`go test ./...` 的射程是【当前模块】，而本仓有两个：**
+
+```
+./go.mod                        根模块
+./tools/probe/shinny/go.mod     天勤探针（要 coder/websocket，故意独立出去）
+```
+
+实测（2026-09-09）：第二个模块里有两条守卫，**从来没有被自检链跑过**——
+
+```
+TestProbesDoNotImportLibrary       探针不许 import 本库
+                                   （拿本库去判定本库，本库错了两边会一起错）
+TestGuardListCoversEveryProbeFile  豁免清单要覆盖每个探针文件
+```
+
+手动跑，它们是绿的。⚠️ **而「它们是绿的」和「它们在跑」是两件事**：
+
+> **一条没有被任何门禁跑到的守卫，坏了不会有人知道 ——
+> 它和不存在的区别，只在读者的印象里。**
+
+⇒ `module_sweep.py` **枚举** `go.mod` 而不是写死那两个，并把找到的模块清单**打印出来**：
+写死的话，第三个模块进来时没有任何机械途径提醒人把它加进去，
+**那就成了又一条「靠人记得」的规矩** —— 而本仓这一类已经杀过十次。
+
+⚠️ 它的射程也写在它自己的输出里：判据是「目录里有 `go.mod`」，
+**一个不用 `go.mod` 组织的东西它照样看不见。**
 
 ```bash
 python tools/probe/probe.py
