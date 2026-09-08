@@ -350,8 +350,11 @@ def main():
         before = [ln for ln in hwLines if provOf(ln)]
         today = datetime.date.today().isoformat()
         for k, old, new in grew:
-            hwLines.append("# 来历 %s %s %d 自动：重造时表长大（%d -> %d）"
-                           % (today, k, new, old, new))
+            # `自 <前值>` 是【正式字段】，不是说明文字的一部分：
+            # 两行都声称从同一个前值来 ⇒ 那是一次分叉，而分叉与并集的顺序无关。
+            # （括号里那个 `%d -> %d` 留着给人读；机器读的是 `自` 后面那个。）
+            hwLines.append("# 来历 %s %s %d 自 %d 自动：重造时表长大（%d -> %d）"
+                           % (today, k, new, old, old, new))
         writeHighWater(hwLines, hw)
         # 只增不改：已有的来历行必须原样、原序地还在前面。
         #
