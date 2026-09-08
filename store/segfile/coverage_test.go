@@ -58,6 +58,18 @@ var absent = map[string]string{
 // ⚠️ 这和评审方那次 `[ab]?` 漏掉 `A1c` 是同一形状，只是换到了字母那一位。
 // ⇒ 所以这里不是「加一个 G」，是**别再写死字母表**。
 //
+// ⛔ **而上一版只走了一位** —— 字母放宽了，**数字那一位仍是 `[0-9]`（单个数字）**，
+// 失效形状一模一样，只是往右挪了一个字符（评审方 2026-09-09 指出，我复现了）：
+//
+//	表行侧   `| A4 |` → A4      `| A10 |`  → **不认得**
+//	测试侧   TestInvariantA4_Red → A4   TestInvariantA10_Red → **不认得**
+//	⇒ 两侧都不认得 ⇒ 两侧都【一声不响】，而 `absent` 那条双向查也救不了
+//	  （`absent` 是拿 key 去比 `want`，而 `want` 里根本没有 A10）
+//
+// 今天不会错（本仓最大编号是个位数），改它的理由是这一格自己的论点：
+// **A 组两天里从 A3 长到 A4，表从 6 行长到 20 行；`[0-9]` 就是下一个 `[A-F]`。**
+// ⇒ `[0-9]` → `[0-9]+`。验过不过收：A1a→A1a，A4→A4，G1→G1，A10→A10，B12b→B12b。
+//
 // ⚠️ 而 `A4` / `G1` 要进 absent 的那一半**不在这条分支上**：
 // 那两个编号是另一条分支往 `design.md` 里加的，本分支的表里还没有它们，
 // **现在就登记进 absent，这条测试会立刻红**（它双向查：absent 里的编号必须在表里）。
@@ -66,8 +78,8 @@ var absent = map[string]string{
 //	  合并的那一刻，A4 会让这条测试红，红的信息里就写着要补什么。
 //	  **一条跨分支的约束，分支上的绿灯看不见它 —— 看得见的是合并。**
 var (
-	tableRow = regexp.MustCompile(`^\| ([A-Z][0-9][a-z]?) \|`)
-	testName = regexp.MustCompile(`^TestInvariant([A-Z][0-9][a-z]?)_(Red|Green)$`)
+	tableRow = regexp.MustCompile(`^\| ([A-Z][0-9]+[a-z]?) \|`)
+	testName = regexp.MustCompile(`^TestInvariant([A-Z][0-9]+[a-z]?)_(Red|Green)$`)
 )
 
 // tableIDs 从 design.md 那张表里现读编号集合。
@@ -79,10 +91,41 @@ func tableIDs(t *testing.T) map[string]bool {
 		t.Fatalf("读不到 %s：%v —— 这条测试要拿它当权威", p, err)
 	}
 	ids := map[string]bool{}
-	for _, ln := range strings.Split(string(b), "\n") {
+	var first, last, n int
+	for i, ln := range strings.Split(string(b), "\n") {
 		if m := tableRow.FindStringSubmatch(ln); m != nil {
 			ids[m[1]] = true
+			if n == 0 {
+				first = i
+			}
+			last = i
+			n++
 		}
+	}
+	// ⛔ 命中行必须是【一整块连续的】。
+	//
+	// 这条测试读的是**整份 design.md**，没有节边界；而 design.md 现在已经不止一张
+	// 不变量表了（另一条分支加了 `SRC-1..14` / `SYN-1..8` 那 22 行）。
+	// 今天不撞车（`SRC-`/`SYN-` 是三字母加连字符，`[A-Z][0-9]+` 认不得，实测误收 0 条），
+	// 但状态变了：
+	//
+	//	**本包的收集测试，把「单个大写字母 + 数字」这个编号空间，
+	//	在【全仓 design.md 范围内】占住了。**
+	//	哪天同步层那张表改用 `| S1 |` 这种短编号，segfile 会开始要求
+	//	`TestInvariantS1_Red/Green` —— 而那条不变量根本不属于这一层。
+	//
+	// ⇒ 一行连续性断言就挡得住：别处冒出同形状的表行，它当场红。
+	// ⚠️ 而**不用「按节切」来解**：`meta_census.py` 那一格刚好给了反例 ——
+	// 它按节切了，而节边界错了没人看得见（那条 ✅ 恒真，边界错了不可能红）。
+	//
+	//	**两条分支在同一个问题上翻了相反的错：一个切了节但没人核边界，一个根本没切。**
+	//	⇒ 「这条检查的权威是【文件】还是【文件里的哪一块】」必须被问一次，
+	//	  **而两种答案都要配一个能红的东西。**
+	if n > 0 && last-first+1 != n {
+		t.Fatalf("design.md 里形如 `| A1a |` 的表行【不连续】：%d 行散布在 %d..%d。\n"+
+			"⇒ 多半是别处也出现了同形状的表行，而本包会把它们一起当成自己的不变量。\n"+
+			"⇒ 确认那些行不该由 store/segfile 认领之后，给它们换一个形状"+
+			"（例如加前缀，像 SRC-/SYN- 那样）", n, first+1, last+1)
 	}
 	if len(ids) == 0 {
 		t.Fatal("从 design.md 里一个编号都没读到 —— 要么表没了，要么行的形状变了。" +
