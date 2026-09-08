@@ -781,6 +781,49 @@ func TestHighWaterChain(t *testing.T) {
 	}
 	st := map[string]*seen{}
 	var lines int
+
+	// ⛔ 先收一遍「每个名字出现过哪些值」——给下面那条 `自` 的检查用。
+	//
+	// 为什么要有它（评审方 2026-09-09）：`自 <前值>` 落地之后是一个
+	// **只写不读**的字段 —— 没有任何东西要求它存在，也没有任何东西检查它的值。
+	//
+	//	`TestHighWaterProvenance`  只读 f[3]/f[4]
+	//	本守卫（上一版）            只在 f[5] == "合流" 时读 f[6]
+	//	⇒ 生成器那个格式串哪天写错（old,old,new 写成 old,new,new），**没有任何东西会红**
+	//
+	// 而这正是我自己在另一条分支上写下的判据：
+	//
+	//	**那一格填了、而守卫没被登记或从来没红过 —— 比空着更糟：
+	//	空着说「还没做」，填错了说「已经守住了」。**
+	//	⇒ **`自` 今天就是那样一格。**
+	//
+	// ⚠️ 判据取【集合成员关系】，**不是「跟上一行比」** —— 这一点要紧：
+	// 别在治顺序病的这一格里，用一个看顺序的检查把病再犯一次。
+	// 它抓得住写错的 `自`，也抓得住凭空填的 `自`；
+	// 它**抓不住**「两行都从同一个值抬起」那件事 —— 那是分叉判据的活，留给评审那一格。
+	//
+	// ✅ 而它有一个**没打算要的好处**，实测出来的：它让本文件那条
+	// 「手动调低的人得自己补一行来历」从一句约定变成了一条会红的规矩。
+	//
+	//	实测：把 `census` 从 5 手动调到 4 而【不补来历行】，再让生成器抬回去
+	//	⇒ 生成器写出 `census 5 自 4`，而 `census` 名下没有任何一行的值是 4
+	//	⇒ **下一次重造时当场红。**
+	//
+	// ⇒ 也就是说：**调低的人不补来历，账不会当场爆，但它在下一次抬高时一定爆。**
+	// 这不是设计出来的，是集合成员这个判据自带的 —— 记下来，免得哪天有人以为它是巧合。
+	values := map[string]map[int]bool{}
+	for _, raw := range strings.Split(highWaterRaw, "\n") {
+		f := strings.Fields(raw)
+		if len(f) < 5 || f[0] != "#" || f[1] != "来历" {
+			continue
+		}
+		if v, err := strconv.Atoi(f[4]); err == nil {
+			if values[f[3]] == nil {
+				values[f[3]] = map[int]bool{}
+			}
+			values[f[3]][v] = true
+		}
+	}
 	for i, raw := range strings.Split(highWaterRaw, "\n") {
 		f := strings.Fields(raw)
 		if len(f) < 5 || f[0] != "#" || f[1] != "来历" {
@@ -822,6 +865,22 @@ func TestHighWaterChain(t *testing.T) {
 			s.allow, s.hasA = other, true
 			s.max = val
 			continue
+		}
+		// `自 <前值>`：那个前值必须是同名的某一行来历的值。
+		// 与顺序无关 —— 它是一条集合成员关系。
+		if len(f) >= 7 && f[5] == "自" {
+			frm, err := strconv.Atoi(f[6])
+			if err != nil {
+				t.Errorf("high_water.txt:%d `自` 后面读不懂：%q\n"+
+					"格式是「# 来历 <日期> <名字> <值> 自 <前值> <说明>」", i+1, f[6])
+			} else if !values[name][frm] {
+				t.Errorf("high_water.txt:%d 这一行说它从 %d 抬起，"+
+					"而 %q 名下【没有任何一行的值是 %d】。\n"+
+					"  ⇒ 要么那个前值填错了，要么它抬起的那一行被删了。\n"+
+					"  ⚠️ 这条查的是【集合成员】，与顺序无关 ——"+
+					"别把它读成「跟上一行比」，那正是这一格要治的病。",
+					i+1, frm, name, frm)
+			}
 		}
 		if val < s.max && !(s.hasA && val <= s.allow) {
 			t.Errorf("high_water.txt:%d 链断了：%q = %d，而此前已经见过 %d。\n"+
