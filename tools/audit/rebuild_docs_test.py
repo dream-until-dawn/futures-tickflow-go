@@ -32,7 +32,8 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 TARGET = os.path.join(ROOT, "docs_test.go")
-MARK = "\n// —— 规则锚点表 ——"
+# MARK 常量已删：拆分之后不再有截断点。
+# 留着一个没有作用的常量，只会让下一个人以为它还在守什么。
 
 
 def run(*cmd):
@@ -100,17 +101,25 @@ def drill():
 
 
 def main():
-    original = open(TARGET, "rb").read()          # ② 先备份
-    src = original.decode("utf-8")
+    # ② 先备份。文件可能不存在——**那正是「删掉能不能造回来」那条判据要的情形**，
+    #    所以这里不能假设它在。
+    original = open(TARGET, "rb").read() if os.path.exists(TARGET) else None
 
-    # ① 每一步都断言
-    assert MARK in src, "docs_test.go 里找不到 %r —— 文件结构变了，先看一眼再跑" % MARK.strip()
-    prefix = src[:src.index(MARK)].rstrip("\n") + "\n"
-    assert prefix.startswith("package tickflow"), \
-        "截出来的前半段不是一个 Go 文件头 —— 拒绝在这上面接东西"
-    for must in ("func TestDocLinksResolve", "func TestLandingCarriersStillCarry",
-                 "func TestCarriersHaveNoHTMLComments"):
-        assert must in prefix, "前半段里缺 %s —— 截断位置不对" % must
+    # ⚠️ 这里【不再】从旧文件里截 prefix。
+    #
+    # 原来是 prefix = src[:src.index(MARK)] —— 把旧文件的前 9212 字节【照抄】回去，
+    # 于是这个文件只有一半是生成的。后果（评审方 2026-09-08 实测，我复现过）：
+    # **一个自足的守卫可以被静默删掉，而 rebuild 退 0、gofmt 干净、vet 过、测试全绿。**
+    #
+    # 那时还有一张 must 清单守着「prefix 里必须有这几个名字」——
+    # **而清单已经落后两个**（TestNoOrphanedSentences /
+    # TestNoDuplicateHeadingsInCarriers 都不在里面）。
+    # 今天顶着的其实是版面：commentOutsideCode 恰好排在守卫之后、被幸存的守卫调用，
+    # 于是丢守卫的截断会顺手弄坏编译。**版面撑不到下一个自足的守卫。**
+    #
+    # ⇒ 手写守卫已挪进 docs_guards_test.go；这个文件从第一行到最后一行都是生成的。
+    #   那张 must 清单随 prefix 一起消失——**别把一个已经失效的清单留在那儿。**
+    prefix = TPL_HEAD
 
     for gen in ("gen_rule_anchors.py", "gen_quoted_rules.py"):
         code, out = run(sys.executable, os.path.join("tools", "audit", gen))
@@ -177,16 +186,52 @@ def main():
             os.remove(p)
 
     if not ok:                                     # ④ 任何一步失败就整份还原
-        open(TARGET, "wb").write(original)
+        # original 为 None 表示这次跑之前文件【本来就不存在】（「删掉能不能造回来」那条判据）。
+        # 那时「还原」= 把它删掉，而不是写一个 None 进去 —— 否则失败路径自己会崩，
+        # 而崩在还原步骤上，等于盘上留着半成品。
+        if original is None:
+            if os.path.exists(TARGET):
+                os.remove(TARGET)
+            what = "把 docs_test.go 删掉了（它本来就不存在）"
+        else:
+            open(TARGET, "wb").write(original)
+            what = "把 docs_test.go 逐字节还原了"
         leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
                      if os.path.exists(os.path.join(ROOT, f))]
         assert not leftovers, "中间产物没清干净：%s" % leftovers
-        print("已把 docs_test.go 逐字节还原，中间产物也清了 —— 盘上没有留半成品")
+        # ⚠️ 这句必须分两种说：文件本来就不存在时，做的是【删掉】不是【还原】。
+        # 上一版两种情况共用「逐字节还原」——而那在第二种情况下是一句假话，
+        # 正是本仓一直在拆的「自述比实现宽」，这次在失败路径上（没人会去看的地方）。
+        print("已%s，中间产物也清了 —— 盘上没有留半成品" % what)
         sys.exit(1)
 
     print("docs_test.go 重建完成：锚点 %d 节 / 规矩 %d 条 / 普查 %d 份；gofmt 与 vet 均过"
           % (rows.count("\n") + 1, quotes.count("\n") + 1, census.count("\n") + 1))
 
+
+TPL_HEAD = '''package tickflow
+
+// 这一份【整份都是生成的】：tools/audit/rebuild_docs_test.py 造它。
+//
+// 别手改这里的任何一行 —— 下一次重建会把改动冲掉，而且不会有任何提示。
+// 手写的守卫在 docs_guards_test.go。
+//
+// 「整份都是生成的」是可验的，不靠人读代码确认：
+//
+//	rm docs_test.go && python tools/audit/rebuild_docs_test.py
+//	⇒ 它应当【逐字节一模一样地】回来
+//
+// 拆分之前这条判据是不成立的：那时删掉它 → FileNotFoundError，造不回来，
+// 因为重建脚本要读旧文件去截前半段。**一个需要自己才能造出自己的文件，
+// 只有一半是生成的。**
+
+import (
+	"os"
+	"regexp"
+	"strings"
+	"testing"
+)
+'''
 
 TPL_ANCHORS = '''
 // —— 规则锚点表 ——
