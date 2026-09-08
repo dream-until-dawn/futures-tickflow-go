@@ -492,6 +492,7 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `remotes/origin/ 不是远端状态，是「上次 fetch 时的远端状态」。`},
 	{`tools/audit/README.md`, `这个目录存在的理由（2026-09-08 学到的，代价是同一段文档改了三次）：`},
 	{`tools/audit/README.md`, `有些格子不是审计漏了，是它已经无法被审计了——`},
+	{`tools/audit/README.md`, `它跑出来的绿是【已知边界】，不是缺陷——那一类写在 docs/method-landing.md 第三类。`},
 	{`tools/audit/README.md`, `用生成器自己的模式测生成器，得到的一定是满分——这个脚本存在就是为了绕开那一点。`},
 	{`tools/audit/README.md`, `登记表不手敲：手敲的登记表会在你以为它覆盖住的地方漏掉东西`},
 	{`docs/method-landing.md`, `有五六个时刻，人会真的伸手去做一件容易做错的事。`},
@@ -579,7 +580,7 @@ var carrierCensus = []struct {
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 108},
 	{`CONTRIBUTING.md`, 89},
-	{`tools/audit/README.md`, 27},
+	{`tools/audit/README.md`, 29},
 	{`docs/method-landing.md`, 135},
 }
 
