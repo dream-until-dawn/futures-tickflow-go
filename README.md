@@ -106,12 +106,25 @@ python tools/probe/probe.py
 | 文档 | 写给谁 |
 |---|---|
 | [docs/probe.md](docs/probe.md) | 想知道**上游到底是什么样**的人。全部实测结论 + 重跑命令 |
-| [docs/design.md](docs/design.md) | 想**改这个库**的人。取舍与理由 |
+| [docs/design.md](docs/design.md) | 想**改这个库**的人。取舍与理由、测试策略 |
 | [docs/contract.md](docs/contract.md) | 想**用这个库**的人。能力、边界、置信度、静默风险表 |
 
 三份文档里，**[probe.md](docs/probe.md) 是事实底座**——设计里任何一处
 「因为上游是这样，所以我们那样做」，都能在那里找到对应的实测行。
 没有实测支撑的判断一律标注为「推定」或「未验」。
+
+### 动手之前
+
+规矩不写在一份总纲里，**写在你那一刻会打开的那个文件里**：
+
+| 你正要做什么 | 看这里 |
+|---|---|
+| 写一条新探针 | [tools/probe/README.md](tools/probe/README.md) |
+| 写一条断言 / 做破坏性验证 | [docs/design.md §14](docs/design.md) |
+| 改一份文档 | [docs/README.md](docs/README.md) |
+| 送审 / 合并 / 打 tag | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| 复核一条已记录的测量 | [tools/audit/README.md](tools/audit/README.md) |
+| **学到一条新规矩，不知道它该落在哪** | [docs/method-landing.md](docs/method-landing.md) |
 
 ---
 
