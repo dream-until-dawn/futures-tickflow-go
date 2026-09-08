@@ -21,6 +21,7 @@
 3. 写完立刻跑 `gofmt` + `go vet`；
 4. **只要任何一步失败，就把原文件逐字节写回去**——不留一个半成品在盘上。
 """
+import datetime
 import io
 import os
 import re
@@ -71,6 +72,21 @@ def writeHighWater(lines, hw):
                 continue
         out.append(ln)
     open(HIGH_WATER, "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
+
+
+def provOf(line):
+    """从一行里读出来历：(名字, 值)；不是来历行就返回 None。
+
+    ⚠️ 判据必须与 docs_guards_test.go 的 TestHighWaterProvenance 一致——
+    两边都按【空白切开的字段】读，不用正则，就是为了少一个会分岔的地方。
+    """
+    f = line.strip().split()
+    if len(f) >= 5 and f[0] == "#" and f[1] == "来历":
+        try:
+            return f[3], int(f[4])
+        except ValueError:
+            return None
+    return None
 
 
 def restore(original):
@@ -237,15 +253,34 @@ def main():
               "census": census.count("\n") + 1,
               "guards": len(names)}
     hw, hwLines = readHighWater()
-    grew = []
-    for k, n in counts.items():
+    grew = []                      # [(名字, 旧值, 新值)]
+    for k in sorted(counts):
+        n = counts[k]
         assert k in hw, "high_water.txt 缺一项：%s" % k
         if n > hw[k]:
-            grew.append("%s %d→%d" % (k, hw[k], n))
+            grew.append((k, hw[k], n))
             hw[k] = n
     if grew:
+        # 来历：抬多少、什么时候、因为什么，由【做这件事的那一趟】自己写下来。
+        # 手写的来历没有守卫，而一个假的来历比没有来历更危险（评审方 2026-09-08）。
+        before = [ln for ln in hwLines if provOf(ln)]
+        today = datetime.date.today().isoformat()
+        for k, old, new in grew:
+            hwLines.append("# 来历 %s %s %d 自动：重造时表长大（%d -> %d）"
+                           % (today, k, new, old, new))
         writeHighWater(hwLines, hw)
-        print("高水位抬高：%s（表长大了，这是自动的）" % "，".join(grew))
+        # 只增不改：已有的来历行必须原样、原序地还在前面。
+        #
+        # ⚠️ 判据取【盘上读回来的】，不是内存里那份 hwLines ——
+        # 内存里那份是这段代码自己拼的，拿它自证等于没证：
+        # writeHighWater 若哪天把注释行吃掉，内存那份照样对得上。
+        # 第一版就是这么写的，是在对照组里发现「把它弄坏也不会红」才改的。
+        _, wroteLines = readHighWater()
+        wrote = [ln for ln in wroteLines if provOf(ln)]
+        assert wrote[:len(before)] == before,             "只增不改被破坏了——盘上已有的来历行被改动或删除了"
+        assert len(wrote) == len(before) + len(grew),             "盘上的来历行数对不上：原 %d 行 + 本次 %d 行 ≠ %d 行"             % (len(before), len(grew), len(wrote))
+        print("高水位抬高：%s（表长大了，这是自动的）；追加来历 %d 行"
+              % ("，".join("%s %d→%d" % g for g in grew), len(grew)))
     # 下限本身不再写进生成物，但生成器仍然要为它把关：
     # 一个 0 或负数的下限等于没有下限，而它会一路安静地生效。
     for k in ("anchors", "rules", "census", "guards"):

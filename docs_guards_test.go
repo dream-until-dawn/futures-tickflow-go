@@ -33,6 +33,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -609,4 +610,67 @@ func commentOutsideCode(line string) bool {
 		}
 	}
 	return false
+}
+
+// TestHighWaterProvenance 守 tools/audit/high_water.txt 里的【来历】行。
+//
+// 为什么它必须存在：`rebuild_docs_test.py` 抬高水位时会自动追加一行来历，
+// 而**没人核对的来历只是装饰**——一个假的来历比没有来历更危险，
+// 因为它让读者以为这个数被人想过。（评审方 2026-09-08 提②时给的理由。）
+//
+// 判据：每个名字【最后一行】来历记的值，必须等于它当前的值。
+//
+//	自动抬高  ⇒ 同一趟里改数 + 追加来历 ⇒ 恒相等 ⇒ 绿
+//	手动调低  ⇒ 数变了、来历没跟上     ⇒ 红，直到调的人自己补一行
+//	手动调高  ⇒ 同上
+//
+// ⚠️ 它的射程：这条守卫【不】声称来历写的内容是真的，
+// 它只保证「有人签了字，而且签的是当前这个数」。
+// 机器签的字由机器保证；手签的字只保证它被写下来了。**别当成更多。**
+//
+// ⚠️ 格式判据必须与 tools/audit/rebuild_docs_test.py 的 provOf 一致：
+// 两边都按【空白切开的字段】读，不用正则——少一个会分岔的地方。
+// 于是 high_water.txt 里那行讲格式的「#     # 来历 <日期> …」不会被误当成来历，
+// 因为它切开之后第二个字段是「#」而不是「来历」。
+// **这一条不是运气：它是「用同一条判据、而不是用子串」换来的。**
+func TestHighWaterProvenance(t *testing.T) {
+	cur := highWater(t)
+	last := map[string]int{}
+	where := map[string]int{}
+	for i, raw := range strings.Split(highWaterRaw, "\n") {
+		f := strings.Fields(raw)
+		if len(f) < 2 || f[0] != "#" || f[1] != "来历" {
+			continue
+		}
+		if len(f) < 5 {
+			t.Fatalf("high_water.txt:%d 来历行字段不够：%q\n"+
+				"格式是「# 来历 <日期> <名字> <值> <说明>」", i+1, raw)
+		}
+		n, err := strconv.Atoi(f[4])
+		if err != nil {
+			t.Fatalf("high_water.txt:%d 来历行的值读不懂：%q", i+1, f[4])
+		}
+		last[f[3]] = n
+		where[f[3]] = i + 1
+	}
+	if len(last) == 0 {
+		t.Fatal("high_water.txt 里一行来历都没有 —— 那几个下限就成了没有出处的数")
+	}
+	for k, v := range cur {
+		n, ok := last[k]
+		if !ok {
+			t.Errorf("high_water.txt 里 %q = %d，却没有任何一行来历。\n"+
+				"下限是一个会挡住别人的数，它得说明自己怎么来的。\n"+
+				"补一行：# 来历 <日期> %s %d <为什么是这个数>", k, v, k, v)
+			continue
+		}
+		if n != v {
+			t.Errorf("high_water.txt 里 %q 现在是 %d，而最后一行来历（第 %d 行）记的是 %d。\n"+
+				"两种成因：\n"+
+				"  ① 有人手动改了这个数而没补来历 ⇒ 补一行，写明为什么改\n"+
+				"  ② 自动抬高那一趟改了数却没追加来历 ⇒ 那是 rebuild_docs_test.py 坏了，去查它\n"+
+				"⚠️ 别反过来改来历行去迁就当前值 —— 那正是这条守卫要挡的事。",
+				k, v, where[k], n)
+		}
+	}
 }
