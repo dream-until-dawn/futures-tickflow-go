@@ -177,6 +177,7 @@ var ruleAnchors = []struct {
 	{`docs/README.md`, `### 5. **读回别手敲**`, `刚写进去的那个变量本身`, ``},
 	{`docs/README.md`, "### 6. 不是探针输出的数字，**产生它的脚本要落进 `tools/audit/`**", `内联跑的、没落盘`, ``},
 	{`docs/README.md`, `### 7. **结论的强度是谁给的**`, `读者默认是写文档的人验的`, ``},
+	{`docs/README.md`, `### 7c. 记下一处差异是对的，**而「原因是……」是另一条要单独验的断言**`, `原因是选的行不同`, ``},
 	{`docs/README.md`, `### 7b. **这条结论挂在哪根证据上？更强的那一根是不是就在旁边**`, `七个交易所，零条 GFEX`, ``},
 	{`docs/README.md`, `### 8. 撤回一条结论时，**先问「换一条」和「撤掉这一维」哪个才对**`, `重新量能验证「是什么」，验证不了「在哪」——如果「在哪」本身不是个稳定的量。`, ``},
 	{`docs/README.md`, `## 反驳 / 更正（别人的，或自己的）`, `反驳分两种，举证责任完全不同。动手前先分清你在做哪一种。`, ``},
@@ -314,29 +315,32 @@ func countExempt() int {
 // 评审方的 X2 打穿的是上面那一层：按【小节】锚，一节只锚一句，
 // 于是同一节里另外几条可以被静默删掉。我实测过，按小节锚【仍然全绿】。
 //
-// 这一层的覆盖面有个**机械定义**，不是「我记得锚住了哪些」：
+// 这一层逐条登记，覆盖面有个模式化的定义：
 //
-//	载体文件里，① `> ` 引用块中的加粗行  ② 独立成行的加粗句
-//	——这两种格式就是本仓写「一句可以单独拿走的规矩」时实际在用的。
+//	载体里，① `> ` 引用块中的加粗行  ② 行首加粗且有闭合的行（表格行按【行首是 |】排除）
 //
-// ⚠️ 这个定义是【量出来的，而且量错过一次】：第一版只认 ①，漏掉 11 条 ②，
-// 其中就有 CONTRIBUTING.md 那条「把「哪一刻的快照」写进快照本身」。
-// 是一次变异（改写一条已登记规矩）打不中目标才发现的 —— 那条根本没被登记。
-// **「有个机械定义」这句话本身也可能是「看起来像守住了」。**
+// ⚠️ **这个模式改过两次，两次都是【外部】发现的，不是我读出来的**：
 //
-// 仍然盖不住的：写成普通行文、加粗只在句中的那些。它们多半是解释而不是规矩，
-// 但这是**判断**，不是测量 —— 见 docs/method-landing.md 第四节。
+//	v1 只认 ①            → 漏 11 条（独立加粗行）；一次打不中目标的变异暴露的
+//	v2 加了「整行加粗」    → 仍漏 2 条，评审方实测找到：
+//	     tools/probe/README.md:81  被我的「排除表格行」误伤 —— 判据写成了
+//	                               `含竖线`，而那行的竖线在行内代码 `|| true` 里
+//	     CONTRIBUTING.md:50        「加粗开头 + 后续文字」，我只认整行加粗
 //
-// 针取每行前若干字符（可读前缀，不是哈希）：断言失败时要能看出它在守什么。
+// 所以下面还有一张【普查表】：见 carrierCensus。
+//
 // 表是生成的（tools/audit/gen_quoted_rules.py），不手敲。
 var quotedRules = []struct {
 	file   string
 	needle string
 }{
+	{`tools/probe/README.md`, `探针不是测试。 测试断言「本库的行为」，探针断言「外`},
 	{`tools/probe/README.md`, `焊了对照组 ≠ 对照组在承重。得拆一次，看它塌。`},
 	{`tools/probe/README.md`, `1 个已知值挡不住「恰好返回那个值」；2 个不同的已`},
 	{`tools/probe/README.md`, `⚠️ 这条最容易只做一半。 同一次提交里，夜盘那半照`},
 	{`tools/probe/README.md`, `因为夜盘那半是刚被提醒的。一条刚学会的规则，默认只作`},
+	{`tools/probe/README.md`, `这就是 || true 的形状，只不过不用谁去加那三`},
+	{`tools/probe/README.md`, `退出码不再区分。所以答案一旦拿到，必须把它转成「守基`},
 	{`tools/probe/README.md`, `转换时机就是拿到定论那一刻。`},
 	{`tools/probe/README.md`, `「我想不出怎么触发它」是一个缺口；「我找过了，当前触`},
 	{`tools/probe/README.md`, `探针断言的是「外部世界是什么样」。用本库去解析外部世`},
@@ -348,11 +352,19 @@ var quotedRules = []struct {
 	{`docs/README.md`, `「一个不解释的数字读起来像没查过；一个被拆开的数字读`},
 	{`docs/README.md`, `于是我做的不是查，是让它看起来像查过了。」`},
 	{`docs/README.md`, `没有一个字是假的，而整体是一个未被支持的断言。`},
+	{`docs/README.md`, `把手敲那一步整个去掉，而不是要求下次小心。`},
 	{`docs/README.md`, `有些格子不是审计漏了，是它已经无法被审计了——`},
 	{`docs/README.md`, `而记录当时【怎么量的】，本来可以让它可审。`},
+	{`docs/README.md`, `同一封信里他还要求我给另一组数标出处。 后来实测：两`},
 	{`docs/README.md`, `不是发明了一个错误，是把一个错误的强度提高了一档。`},
 	{`docs/README.md`, `传播一条解释之前，先问：这条是我验的，还是我读来的？`},
 	{`docs/README.md`, `改写的那一下，出处就没了。`},
+	{`docs/README.md`, `「我记下了差异」和「我解释了差异」是两件事，而后者是`},
+	{`docs/README.md`, `要单独验。 一句没验过的「原因是」，会让那处差异看起`},
+	{`docs/README.md`, `传播一条解释之前，先问：这条是我验的，还是我读来的？`},
+	{`docs/README.md`, `改写的那一下，出处就没了。`},
+	{`docs/README.md`, `那是一次采样。而同一份文档里就有完整枚举：那两份截断`},
+	{`docs/README.md`, `七个交易所，零条 GFEX。`},
 	{`docs/README.md`, `重新量能验证「是什么」，验证不了「在哪」——如果「在`},
 	{`docs/README.md`, `「我的数据分不开这两种解释」是一句关于【我手上这批数`},
 	{`docs/README.md`, `不是关于【这个问题】的话。说它之前必须先问：再取一次`},
@@ -363,26 +375,38 @@ var quotedRules = []struct {
 	{`docs/README.md`, `认错、caveat、自我批评都会让读者停止追问，因为`},
 	{`docs/README.md`, `一句 caveat 若同时解释掉好几个不一致，先别信`},
 	{`docs/README.md`, `同理：一句听起来像结论的话，即便内容没错，也会让人停`},
+	{`CONTRIBUTING.md`, `他的独立性正是他的价值，本仓不替他规定。`},
 	{`CONTRIBUTING.md`, `一条被丢弃了输出的命令，不能拿来当「已完成」的依据。`},
 	{`CONTRIBUTING.md`, `要么留输出，要么事后用一条独立命令查状态。`},
 	{`CONTRIBUTING.md`, `凡出现「分不开 / 想不出 / 做不到 / 无法确定`},
 	{`CONTRIBUTING.md`, `给不出成本的，那不是一条限制，是一个没做的检查。`},
 	{`CONTRIBUTING.md`, `不是「把『我没做 X』说成『X 不成立』」，是说成【`},
 	{`CONTRIBUTING.md`, `肯定式的更危险，因为它读起来像信息，不像判断。`},
+	{`CONTRIBUTING.md`, `写下这一句是必要的：不写，它就会变成又一个「看起来那`},
 	{`CONTRIBUTING.md`, `把「哪一刻的快照」写进快照本身。`},
+	{`CONTRIBUTING.md`, `评审对象必须是个不动的靶子。`},
+	{`CONTRIBUTING.md`, `批的 SHA 不等于当时的 tip——那时他批的是一`},
+	{`CONTRIBUTING.md`, `规则的字面满足了，目的没满足。`},
 	{`CONTRIBUTING.md`, `「我建议你做 X」不等于「X 已放行」——建议是输入`},
 	{`CONTRIBUTING.md`, `送审方打算做而清单上没有的，动手【之前】问，不是做完`},
 	{`CONTRIBUTING.md`, `「事后主动说」和「事前确认」不是一回事——前者让错误`},
 	{`CONTRIBUTING.md`, `我在合并那一刻就知道 SHA 不同——我把它打印出来`},
 	{`CONTRIBUTING.md`, `把疑虑打印出来，不等于解决了疑虑。`},
 	{`CONTRIBUTING.md`, `我为它写了一行解释，说明我心里知道它需要解释——需要`},
+	{`CONTRIBUTING.md`, `分别评 A、分别评 B，不等于评了 A+B。 合并后`},
 	{`CONTRIBUTING.md`, `空跑不是为了看它退不退非零，是为了【读它说了什么】。`},
 	{`CONTRIBUTING.md`, `一条只在未来才执行的分支，它既没被执行过，也没被读过`},
 	{`CONTRIBUTING.md`, `空跑解决前者，读输出解决后者——而只做前者会让你以为`},
+	{`CONTRIBUTING.md`, `不对。那天不该红；红了就是有一步没做（实现完了要删 `},
+	{`CONTRIBUTING.md`, `提前解释一个红色，和给检查加 || true，最终下`},
 	{`CONTRIBUTING.md`, `remotes/origin/ 不是远端状态，是「上`},
+	{`tools/audit/README.md`, `这个目录存在的理由（2026-09-08 学到的，代`},
 	{`tools/audit/README.md`, `有些格子不是审计漏了，是它已经无法被审计了——`},
+	{`tools/audit/README.md`, `用生成器自己的模式测生成器，得到的一定是满分——这个`},
+	{`tools/audit/README.md`, `登记表不手敲：手敲的登记表会在你以为它覆盖住的地方漏`},
 	{`docs/method-landing.md`, `有五六个时刻，人会真的伸手去做一件容易做错的事。`},
 	{`docs/method-landing.md`, `那一刻他手边打开的是哪个文件？规矩就写在那个文件里。`},
+	{`docs/method-landing.md`, `第 5 行是这张表的样板：doccheck 不是把规`},
 	{`docs/method-landing.md`, `能写进工具输出的，就别写进文档。`},
 	{`docs/method-landing.md`, `⚠️ 原本这里有第六条「编造一个拆解没有机械守卫」，`},
 	{`docs/method-landing.md`, `tools/audit/ 那条规矩就是那道闸门的一半`},
@@ -392,6 +416,8 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `一次审计的完整性受限于它用的来源。「审计过了」这句话`},
 	{`docs/method-landing.md`, `我用的来源，三样，按可靠性从高到低：`},
 	{`docs/method-landing.md`, `第 3 条要单说，因为它改变了这次审计的性质：`},
+	{`docs/method-landing.md`, `理由是两边各扫一遍才是两条独立的路。而我读了他那份记`},
+	{`docs/method-landing.md`, `这两条路已经共用了一个来源 ⇒ 按本仓自己的判据（两`},
 	{`docs/method-landing.md`, `不会因为同一个原因同时漏。`},
 	{`docs/method-landing.md`, `四道刹车分工不同，已逐个拆过：`},
 	{`docs/method-landing.md`, `⚠️ 这里有两处「第一版是绿的」，都值得记，因为它们`},
@@ -402,27 +428,77 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `我发明了那个模式，却没把它用在自己刚建的这套东西上。`},
 	{`docs/method-landing.md`, `「它有一个机械定义」这句话本身，也可能是一个「看起来`},
 	{`docs/method-landing.md`, `定义要和文件里实际用的格式对齐，而那要数一遍，不是想`},
-	{`docs/method-landing.md`, `模式识别型的守卫，覆盖面 = 那个模式；而模式是人写`},
-	{`docs/method-landing.md`, `这不是这一版没做好，是这类守卫的固有形状。证据就在本`},
-	{`docs/method-landing.md`, `我为覆盖面写的第一个模式漏掉了 11 条，而发现它靠`},
-	{`docs/method-landing.md`, `不是靠读那个模式。模式自己不会告诉你它漏了什么。`},
-	{`docs/method-landing.md`, `⇒ 所以这类守卫的正确读法是：它保证的是「符合这个模`},
-	{`docs/method-landing.md`, `不是「规矩没被删」。 两句话的差就是模式的边界，而那`},
+	{`docs/method-landing.md`, `仍然盖不住：写成普通行文、加粗只在句中的那些。我判断`},
+	{`docs/method-landing.md`, `但那是判断，不是测量，所以它进上面那张表的 ❌ 行。`},
+	{`docs/method-landing.md`, `一个「由模式生成」的登记表，它的覆盖面永远只能被【另`},
+	{`docs/method-landing.md`, `生成器和验证器用同一个模式 ⇒ 它对自己永远自洽。`},
+	{`docs/method-landing.md`, `我曾有 76 条登记、44 节锚点、五种拆除验证全绿`},
+	{`docs/method-landing.md`, `而当时实际漏着两条——因为那五种拆除也在同一个模式内`},
+	{`docs/method-landing.md`, `这个模式改过两次，两次都是外部发现的，一次都不是我读`},
+	{`docs/method-landing.md`, `⚠️ 我上一版在这里写的残留是「纯散文 / 表格单元`},
+	{`docs/method-landing.md`, `实测漏掉的两条都是加粗行，落在我认为已经覆盖的格式里`},
+	{`docs/method-landing.md`, `一个低估的残留比不写残留更糟：它给出的边界，让人以为`},
+	{`docs/method-landing.md`, `不管那条规矩长什么样。两张表因不同原因失效：`},
+	{`docs/method-landing.md`, `有些行根本不在登记表里。       ← 16 个字`},
+	{`docs/method-landing.md`, `同一个阈值 16，两边的单位不同。 于是登记表少一条`},
+	{`docs/method-landing.md`, `两处「必须一致」的判据写在两种语言里，一致性就得自己`},
+	{`docs/method-landing.md`, `这次守住它的是那条测试本身——因为它比的是两边的【产`},
+	{`docs/method-landing.md`, `⚠️ 对照组这一步不能省。「299 行全响」和「这个`},
+	{`docs/method-landing.md`, `在输出上长得一模一样。第一遍我跑出 0 的时候，ha`},
+	{`docs/method-landing.md`, `而我只用了 returncode——一个favora`},
+	{`docs/method-landing.md`, `正是这份文档从头到尾在讲的那件事。 重跑：改成 by`},
 	{`docs/method-landing.md`, `上表那三个 ❌ 是这张表最诚实的部分。`},
 }
 
+// —— 普查表：一个【不用任何模式】的数 ——
+//
+// 评审方指出的结构性问题：
+//
+//	一个「由模式生成」的登记表，它的覆盖面永远只能被【另一个模式】测出来。
+//	生成器和验证器用同一个模式 ⇒ 它对自己永远自洽。
+//
+// 上面那张表就是这样：76 条登记、44 节锚点、我拆的五种变异，全都在同一个模式内部，
+// 于是它们一致地报告「全覆盖」——而实际漏着两条。
+//
+// 所以这里记一个最宽的数：**每份载体里含 `**` 的行数**。
+// 它不挑格式，删掉任何一条规矩它都会掉，不管那条规矩长什么样。
+//
+// 两张表因【不同原因】失效，这是留着两张的理由：
+//
+//	普查数    挡不住「原地改写」（行数不变）        挡得住「没进登记表的行被删」
+//	登记表    挡得住改写（针对不上）               挡不住没进表的行被删
+//
+// 代价要说清楚：**改这五份文件时，加/删任何一个加粗短语都会让它变红**，
+// 得重跑生成器。这是有意的摩擦，同 pending.txt——**不这样，覆盖面就只能靠回想。**
+var carrierCensus = []struct {
+	file      string
+	boldLines int
+}{
+	{`tools/probe/README.md`, 56},
+	{`docs/README.md`, 88},
+	{`CONTRIBUTING.md`, 74},
+	{`tools/audit/README.md`, 21},
+	{`docs/method-landing.md`, 100},
+}
+
 // ruleLines 把一份 markdown 里所有「独立成句的规矩行」抠出来。
-// 判据必须和 tools/audit/gen_quoted_rules.py 一致，否则登记表和检查各说各的。
+// 判据必须和 tools/audit/gen_quoted_rules.py 的 is_rule 一致，否则登记表和检查各说各的。
 func ruleLines(src string) []string {
 	stripMark := strings.NewReplacer("*", "", "`", "", ">", "")
 	var out []string
 	for _, raw := range strings.Split(src, "\n") {
 		line := strings.TrimSpace(strings.TrimRight(raw, "\r"))
+		if strings.HasPrefix(line, "|") { // 表格行：判据是【行首】，不是「含竖线」
+			continue
+		}
 		quoted := strings.HasPrefix(line, "> ") && strings.Contains(line, "**")
-		standalone := strings.HasPrefix(line, "**") && strings.HasSuffix(line, "**") &&
-			strings.Count(line, "**") == 2 && !strings.Contains(line, "|") &&
-			len(line) > 16
-		if !quoted && !standalone {
+		// ⚠️ 用 rune 不用 byte：生成器那边是 Python 的 len()，数的是【字符】。
+		// 同一个阈值 16，Go 的 len() 数字节 ⇒ 一行 16 个汉字在两边落到不同的一侧。
+		// 这个不一致是被 TestEveryQuotedRuleIsRegistered 自己抓到的
+		//（生成器丢掉了一行，验证器认了它 ⇒ 报「多了一条没登记的规矩」）。
+		bold := strings.HasPrefix(line, "**") && strings.Count(line, "**") >= 2 &&
+			len([]rune(line)) > 16
+		if !quoted && !bold {
 			continue
 		}
 		plain := strings.TrimSpace(stripMark.Replace(line))
@@ -439,9 +515,6 @@ func ruleLines(src string) []string {
 //	删掉一条 → 登记表里那条的针找不到
 //	改写一条 → 同上（有意的：改规矩就该顺手改登记表）
 //	新增一条 → 文件里多出一行没登记的
-//
-// 第三条是关键：**新加规矩必须登记**，否则这张表会慢慢落后于文件，
-// 而它看起来仍然全绿 —— 同 tools/probe/shinny 的 TestGuardListCoversEveryProbeFile。
 func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 	byFile := map[string][]string{}
 	for _, q := range quotedRules {
@@ -456,9 +529,12 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 		}
 		actual := ruleLines(string(b))
 
-		hasPrefix := func(list []string, n string) bool {
-			for _, a := range list {
-				if strings.HasPrefix(a, n) {
+		anyPrefix := func(list []string, s string, sIsLine bool) bool {
+			for _, x := range list {
+				if sIsLine && strings.HasPrefix(s, x) {
+					return true
+				}
+				if !sIsLine && strings.HasPrefix(x, s) {
 					return true
 				}
 			}
@@ -466,7 +542,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 		}
 
 		for _, n := range needles {
-			if !hasPrefix(actual, n) {
+			if !anyPrefix(actual, n, false) {
 				t.Errorf("%s 少了一条登记过的规矩：\n  %q\n"+
 					"  被删了还是被改写了？改写就把 quotedRules 里那一行一起改，"+
 					"删了就把那一行也删掉。\n"+
@@ -475,33 +551,54 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 		for _, a := range actual {
-			if !hasPrefix2(needles, a) {
+			if !anyPrefix(needles, a, true) {
 				r := []rune(a)
 				if len(r) > 40 {
 					r = r[:40]
 				}
 				t.Errorf("%s 多了一条没登记的规矩：\n  %q…\n"+
-					"  跑 tools/audit/gen_quoted_rules.py 重新生成 quotedRules。\n"+
+					"  跑 tools/audit/gen_quoted_rules.py 重新生成。\n"+
 					"  不登记的后果不是现在出错，是【以后它被删掉时没有东西会响】",
 					file, string(r))
 			}
 		}
 	}
 
-	// 对照组：表空的时候上面每个循环都不执行，而结果同样是「全过」。
-	if len(quotedRules) < 40 {
+	if len(quotedRules) < 60 {
 		t.Fatalf("quotedRules 只有 %d 条，不像覆盖了五份载体 —— "+
 			"先确认这张表没被清空", len(quotedRules))
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
 }
 
-// hasPrefix2 问的是反方向：actual 这一行，是不是某个已登记的针的延长。
-func hasPrefix2(needles []string, actual string) bool {
-	for _, n := range needles {
-		if strings.HasPrefix(actual, n) {
-			return true
+// TestCarrierCensus 用一个【不带模式】的数守着同一批文件。
+//
+// 它存在的唯一理由是：上面那张登记表是按模式生成、又按同一个模式验证的，
+// **它对自己永远自洽**。这一条不问「像不像规矩」，只数含 `**` 的行。
+//
+// 变红时先看是不是你刚编辑了这五份文件——是的话跑生成器重算，不是的话有人删了东西。
+func TestCarrierCensus(t *testing.T) {
+	for _, c := range carrierCensus {
+		b, err := os.ReadFile(c.file)
+		if err != nil {
+			t.Errorf("%s 读不到：%v", c.file, err)
+			continue
+		}
+		n := 0
+		for _, raw := range strings.Split(string(b), "\n") {
+			if strings.Contains(raw, "**") {
+				n++
+			}
+		}
+		if n != c.boldLines {
+			t.Errorf("%s 含 `**` 的行数：登记 %d，实际 %d（%+d）\n"+
+				"  · 你刚改过这份文件 ⇒ 跑 tools/audit/gen_quoted_rules.py 重算两张表\n"+
+				"  · 你没改过 ⇒ 有人动了它，而【登记表可能看不见那一处】——"+
+				"这一条守的正是登记表的模式盖不住的地方",
+				c.file, c.boldLines, n, n-c.boldLines)
 		}
 	}
-	return false
+	if len(carrierCensus) < 5 {
+		t.Fatalf("普查表只有 %d 份文件，载体不止这些", len(carrierCensus))
+	}
 }

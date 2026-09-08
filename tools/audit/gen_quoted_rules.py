@@ -1,8 +1,30 @@
-"""把五份载体里【每一条引用块规矩】抠出来，生成登记表。
+"""生成 docs_test.go 里的规矩登记表 + 【普查数】。
 
-为什么是 `> ` 开头且含 `**` 的行：这是本仓写「一条可脱离上下文引用的规矩」时
-一直在用的格式。它不是我挑的，是数出来的——所以这张表的覆盖面有个
-【机械定义】，而不是「我记得锚住了哪些」。
+## 为什么有普查数
+
+评审方 2026-09-08 指出的结构性问题：
+
+    一个「由模式生成」的登记表，它的覆盖面永远只能被【另一个模式】测出来。
+    生成器和验证器用同一个模式 ⇒ 它对自己永远自洽。
+
+所以除了按模式登记，再记一个**不用任何模式**的数：
+**每份载体里含 `**` 的行数**。这是最宽的网——删掉任何一条规矩它都会掉，
+不管那条规矩长什么样、符不符合我挑的格式。
+
+它挡不住「原地改写」（行数不变），而登记表挡得住；
+登记表挡不住「没进表的行被删」，而普查数挡得住。**两者因不同原因失效。**
+
+## 模式修过两次，两次都是被外部发现的
+
+v1 只认 `> **…**`（引用块）——漏 11 条独立加粗行。
+v2 加了「整行加粗」，仍漏两条，评审方实测找到：
+
+    tools/probe/README.md:81  **…`|| true` 的形状…**   ← 被我的「排除表格行」误伤
+                                                          （判据写的是 `"|" in line`，
+                                                           而这行的竖线在行内代码里）
+    CONTRIBUTING.md:50        **写下这一句是必要的**：不写…  ← 「加粗开头 + 后续文字」
+
+v3（本版）：表格行改判 `startswith("|")`；加粗行改成「行首加粗且有闭合」。
 """
 import io, sys, re
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
@@ -12,6 +34,7 @@ FILES = ["tools/probe/README.md", "docs/README.md", "CONTRIBUTING.md",
 
 BQ = chr(96)
 BS = chr(92)
+N = 26
 
 
 def gq(x):
@@ -20,44 +43,46 @@ def gq(x):
     return '"' + x.replace(BS, BS + BS).replace('"', BS + '"') + '"'
 
 
-# 取每行的前 N 个字符当针：删掉整行 → 针没了；改写开头 → 针没了（该改登记表）。
-# 用前缀而不是整行，是为了让登记表读得下去；用【可读前缀】而不是哈希，
-# 是因为断言失败时要能看出它当时在守什么。
-N = 26
+def is_rule(line):
+    """一条【可脱离上下文引用】的规矩。判据必须与 docs_test.go 里的 ruleLines 一致。"""
+    if line.startswith("|"):          # 表格行（判据是行首，不是「含竖线」）
+        return False
+    if line.startswith("> ") and "**" in line:
+        return True
+    return line.startswith("**") and line.count("**") >= 2 and len(line) > 16
 
-rows, seen = [], set()
+
+rows, census, seen = [], [], set()
 for f in FILES:
     src = open(f, encoding="utf-8").read()
+    n_bold = 0
     for raw in src.splitlines():
         line = raw.strip()
-        # 两种格式都算「一条可脱离上下文引用的规矩」——这是数出来的，不是挑的：
-        #   ① `> ` 引用块里的加粗行   ② 独立成行的加粗句
-        quoted = line.startswith("> ") and "**" in line
-        standalone = (line.startswith("**") and line.endswith("**")
-                      and line.count("**") == 2 and "|" not in line and len(line) > 16)
-        if not (quoted or standalone):
+        if "**" in line:
+            n_bold += 1              # 普查：不挑格式，含 ** 就算
+        if not is_rule(line):
             continue
-        # 去掉 markdown 记号，留下人读的那句
         plain = re.sub(r'[*`>]', '', line).strip()
         if len(plain) < 12:
             continue
         needle = plain[:N]
-        key = (f, needle)
-        if key in seen:            # 同一文件里前缀撞车：加长到能区分为止
+        if (f, needle) in seen:
             for k in range(N + 4, len(plain) + 1, 4):
                 needle = plain[:k]
                 if (f, needle) not in seen:
                     break
-            key = (f, needle)
-        seen.add(key)
+        seen.add((f, needle))
         rows.append((f, needle))
+    census.append((f, n_bold))
 
-out = ["\t{%s, %s}," % (gq(f), gq(n)) for f, n in rows]
-open("quotes.gen", "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
+open("quotes.gen", "w", encoding="utf-8", newline="\n").write(
+    "\n".join("\t{%s, %s}," % (gq(f), gq(n)) for f, n in rows) + "\n")
+open("census.gen", "w", encoding="utf-8", newline="\n").write(
+    "\n".join("\t{%s, %d}," % (gq(f), n) for f, n in census) + "\n")
 
 per = {}
 for f, _ in rows:
     per[f] = per.get(f, 0) + 1
-print("共 %d 条引用块规矩：" % len(rows))
-for f in FILES:
-    print("  %-30s %d" % (f, per.get(f, 0)))
+print("登记 %d 条规矩；普查（含 ** 的行）：" % len(rows))
+for f, n in census:
+    print("  %-30s 规矩 %2d / 含 ** 的行 %3d" % (f, per.get(f, 0), n))
