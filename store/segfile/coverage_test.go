@@ -44,9 +44,30 @@ var absent = map[string]string{
 	"D2b": "两种结果都进 SyncReport（LegacyMetaDiscarded / LegacyMetaUnverified）—— 同上",
 }
 
+// ⛔ 字母那一位写 `[A-Z]`，不写 `[A-F]`。
+//
+// 2026-09-09 实测（把本分支与那条改表的分支合起来跑）：表里新增了 `A4` 与 `G1`，
+// 而这两条正则当时写的是 `[A-F]` ——
+//
+//	A4  落在 A–F 里 ⇒ 被抓住，报「表里有、没人认领」（对）
+//	G1  落在 A–F 外 ⇒ **一声不响**：既不算表里的编号，也就永远不会被报
+//
+// > **一条【只抓得住一部分新编号】的收集测试，比完全抓不住更危险：
+// > 它当场给了一个红，让人以为这一轮已经查干净了。**
+//
+// ⚠️ 这和评审方那次 `[ab]?` 漏掉 `A1c` 是同一形状，只是换到了字母那一位。
+// ⇒ 所以这里不是「加一个 G」，是**别再写死字母表**。
+//
+// ⚠️ 而 `A4` / `G1` 要进 absent 的那一半**不在这条分支上**：
+// 那两个编号是另一条分支往 `design.md` 里加的，本分支的表里还没有它们，
+// **现在就登记进 absent，这条测试会立刻红**（它双向查：absent 里的编号必须在表里）。
+//
+//	⇒ 这两件事是【一格】，被切到了两条分支上。而它不需要靠人记得：
+//	  合并的那一刻，A4 会让这条测试红，红的信息里就写着要补什么。
+//	  **一条跨分支的约束，分支上的绿灯看不见它 —— 看得见的是合并。**
 var (
-	tableRow = regexp.MustCompile(`^\| ([A-F][0-9][a-z]?) \|`)
-	testName = regexp.MustCompile(`^TestInvariant([A-F][0-9][a-z]?)_(Red|Green)$`)
+	tableRow = regexp.MustCompile(`^\| ([A-Z][0-9][a-z]?) \|`)
+	testName = regexp.MustCompile(`^TestInvariant([A-Z][0-9][a-z]?)_(Red|Green)$`)
 )
 
 // tableIDs 从 design.md 那张表里现读编号集合。
