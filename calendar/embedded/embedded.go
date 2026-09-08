@@ -454,6 +454,10 @@ func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, error) 
 			// 而它正是在这次改动里当场红给我看的。
 			//
 			// ⛔ 而【只跳过理由覆盖得到的那两种】，别的原样抛出去。
+			//
+			// ⚠️ 来历：这一处是**评审方对 fix/embedded-uncovered-impl 那一格的意见**，
+			// 而它落在了 slice2 这一格（我在那条分支上改完没提交就切了分支）。
+			// 写在这儿，免得下一个人从 embedded 那一格的历史里找不到它的出处。
 			// 上一版这里是无差别 `continue`，**理由只覆盖一种错，代码跳过全部**。
 			// 影响面今天是 0（评审方与我各数过一遍 DayOf 的返回口子：
 			// coversDay ⇒ ErrUncovered 这一支才可达），
