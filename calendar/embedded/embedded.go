@@ -221,6 +221,21 @@ func Products() []tickflow.ProductKey {
 type Calendar struct {
 	days  []tickflow.TradingDay // 升序、去重
 	index map[tickflow.TradingDay]int
+
+	// coverFrom / coverTo 是覆盖区间的两端，**在 New 里算一次**。
+	//
+	// ⚠️ 它们存在的理由是实测出来的：Covers 原来每次都线性扫一遍 days，
+	// 而 2026-09-09 那次改动把 Covers 放到了 DayOf / DayAt 的每一条路径上
+	// ⇒ 1500 个交易日的日历上，DayAt 从 310ns 变成 3322ns（约 11 倍），
+	// 而且**随日历长度线性增长**——17 年的日历会更糟。
+	//
+	// ⚠️ 而它们能被缓存，靠的是一个前提：**Calendar 在 New 之后不可变**。
+	// 那个前提现在没有任何东西守着（没有 setter，但也没有守卫）。
+	// ⇒ 哪天加了「往日历里补一天」这种方法，**这两个字段必须跟着更新**，
+	// 否则它们就成了一份会过期的抄件——正是本仓反复栽的那一类。
+	coverFrom tickflow.TradingDay
+	coverTo   tickflow.TradingDay
+	coverOK   bool // 注入的交易日里有没有落在 baseFrom 之后的
 }
 
 // New 构造一个 Calendar。
@@ -249,7 +264,18 @@ func New(tradingDays []tickflow.TradingDay) (*Calendar, error) {
 	for i, d := range out {
 		idx[d] = i
 	}
-	return &Calendar{days: out, index: idx}, nil
+	c := &Calendar{days: out, index: idx}
+	// 覆盖区间只算一次：注入列表与 baseFrom 的交集，两者在 New 之后都不再变。
+	for _, d := range out {
+		if d < baseFrom {
+			continue
+		}
+		if !c.coverOK {
+			c.coverFrom, c.coverOK = d, true
+		}
+		c.coverTo = d
+	}
+	return c, nil
 }
 
 // Days 返回注入的交易日（升序、去重）。
@@ -323,19 +349,12 @@ func (c *Calendar) coverageWindow(k tickflow.ProductKey) (lo, hi int64, err erro
 // 两个约束取交集：注入的交易日列表，与内置模板的生效起点 baseFrom。
 // 品种没收录 → ok=false（整个答不了）。
 func (c *Calendar) Covers(k tickflow.ProductKey) (from, to tickflow.TradingDay, ok bool) {
+	// ⚠️ 品种那一半必须每次都问：覆盖 = 注入区间 ∩ baseFrom ∩ 【本品种收录了没有】，
+	// 而只有前两者能预算。日期那一半在 New 里算好了（见 coverFrom/coverTo 的注释）。
 	if _, ok := template(k); !ok {
 		return 0, 0, false
 	}
-	for _, d := range c.days {
-		if d < baseFrom {
-			continue
-		}
-		if from == 0 {
-			from = d
-		}
-		to = d
-	}
-	return from, to, from != 0
+	return c.coverFrom, c.coverTo, c.coverOK
 }
 
 // DayOf 组装某个交易日的【实际】时段。
