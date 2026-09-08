@@ -690,6 +690,181 @@ func probeNightGap(ctx context.Context, md, tok string) {
 		longest, longFrom, longTo, note))
 }
 
+// probeNightHours 量「夜盘每天开到几点」，按年列出来。
+//
+// 碰两条「未验」：
+//
+//	design.md   `实际 > 标称` 那一侧未验（实测只覆盖 `实际 ≤ 标称`）
+//	contract.md 交易时段的历史变更表 —— 变更时点未测
+//
+// 判据：把每个自然日的夜盘标签取**最大**的那个（60m 网格，夜盘标 21:00/22:00/…），
+// 按年归拢成集合。**集合变了 = 时段变过**，而变的那一年是时点的上界（精度只到年）。
+//
+// 选 `ag`（白银）与 `cu`（铜）：它们的夜盘比 `rb` 长，**改动才有地方显形**；
+// `rb` 作对照 —— 它十年不该变。
+//
+// ⚠️ **射程**：60m 网格只能给到【小时】，`02:30` 这种半点收盘它看不出来，
+// 只会显示成最后一根 `02:00`。**要精确到分钟得用 1m，而那是八百多次请求。**
+// ⇒ 本探针回答的是「有没有变、大约哪一年」，**不是「几点几分」**。
+func probeNightHours(ctx context.Context, md, tok string) {
+	syms := []string{"KQ.m@SHFE.ag", "KQ.m@SHFE.cu", "KQ.m@SHFE.rb"}
+	var b strings.Builder
+	bad := 0
+	for si, sym := range syms {
+		all := map[string][]string{}
+		fails := 0
+		for back := 3900; back >= 0; back -= 240 {
+			m, err := minuteLabelsN(ctx, md, tok, sym, 60, 2000, back)
+			if err != nil {
+				fails++
+				continue
+			}
+			for d, ts := range m {
+				all[d] = append(all[d], ts...)
+			}
+		}
+		if fails > 2 || len(all) < 2000 {
+			fmt.Fprintf(&b, "%-14s 取数不足（%d 窗失败，%d 个自然日）—— 不报结论\n       ",
+				sym, fails, len(all))
+			bad++
+			continue
+		}
+		// 年 -> 该年出现过的夜盘收盘标签集合
+		byYear := map[string]map[string]bool{}
+		for d, ts := range all {
+			y := d[:4]
+			last := ""
+			for _, t := range ts {
+				if t >= "20:00" || t < "04:00" {
+					// 夜盘跨零点：把 00:00–03:59 排在 20:00–23:59 之后
+					key := t
+					if t < "04:00" {
+						key = "24" + t[2:]
+					}
+					if key > last {
+						last = key
+					}
+				}
+			}
+			if last == "" {
+				continue
+			}
+			if byYear[y] == nil {
+				byYear[y] = map[string]bool{}
+			}
+			byYear[y][last] = true
+		}
+		// 变了的话，把【最后一个旧形态的自然日】和【第一个新形态的自然日】找出来 ——
+		// 「哪一年变的」不够用：contract.md 那条未验问的是**变更时点**。
+		type dl struct {
+			d, last string
+		}
+		var seq []dl
+		for d, ts := range all {
+			last := ""
+			for _, t := range ts {
+				if t >= "20:00" || t < "04:00" {
+					key := t
+					if t < "04:00" {
+						key = "24" + t[2:]
+					}
+					if key > last {
+						last = key
+					}
+				}
+			}
+			if last != "" {
+				seq = append(seq, dl{d, last})
+			}
+		}
+		sort.Slice(seq, func(a, c int) bool { return seq[a].d < seq[c].d })
+		var edges []string
+		// 用「前 20 天的最大收盘」当形态，避开单日缺根造成的抖动
+		windowMax := func(i, n int) string {
+			m := ""
+			for j := i; j > i-n && j >= 0; j-- {
+				if seq[j].last > m {
+					m = seq[j].last
+				}
+			}
+			return m
+		}
+		for i := 20; i+20 < len(seq); i++ {
+			before, after := windowMax(i, 20), windowMax(i+20, 20)
+			if before != after && len(edges) < 6 {
+				// 20 日窗只把变更【括】在一个区间里。再往里收一次，收到【日】：
+				// 旧形态的最后一天 = 最后一个 last == before 的日子；
+				// 新形态的第一天   = 它之后第一个 last == after 的日子。
+				lastOld, firstNew := "", ""
+				for j := i; j <= i+20 && j < len(seq); j++ {
+					if seq[j].last == before {
+						lastOld = seq[j].d
+					}
+				}
+				for j := i; j <= i+20 && j < len(seq); j++ {
+					if seq[j].d > lastOld && seq[j].last == after {
+						firstNew = seq[j].d
+						break
+					}
+				}
+				edges = append(edges, fmt.Sprintf(
+					"旧形态最后一天 %s（最晚 %s）→ 新形态第一天 %s（最晚 %s）",
+					lastOld, before, firstNew, after))
+				i += 20
+			}
+		}
+		if len(edges) > 0 {
+			fmt.Fprintf(&b, "\n                 **变更时点**：%s", strings.Join(edges, " ／ "))
+		}
+		// 基线（2026-09-09 实测）：只有 rb 变过一次，而且就那一次。
+		// 没有断言的话，这个探针只是一份报告 —— **报告不会因为世界变了而红。**
+		wantEdges := 0
+		if sym == "KQ.m@SHFE.rb" {
+			wantEdges = 1
+			if len(edges) == 1 && !strings.Contains(edges[0], "2016-04-29") {
+				bad++
+				fmt.Fprintf(&b, "\n                 ⚠️ 变更时点与基线不符（基线：旧形态最后一天 2016-04-29"+
+					"→ 新形态第一天 2016-05-03）")
+			}
+		}
+		if len(edges) != wantEdges {
+			bad++
+			fmt.Fprintf(&b, "\n                 ⚠️ 检出 %d 处变更，基线是 %d 处 —— "+
+				"要么数据变了，要么交易所又改了时段，去看一眼", len(edges), wantEdges)
+		}
+
+		years := make([]string, 0, len(byYear))
+		for y := range byYear {
+			years = append(years, y)
+		}
+		sort.Strings(years)
+		fmt.Fprintf(&b, "%-14s ", sym)
+		prev := ""
+		for _, y := range years {
+			ks := make([]string, 0, len(byYear[y]))
+			for k := range byYear[y] {
+				ks = append(ks, k)
+			}
+			sort.Strings(ks)
+			cur := strings.Join(ks, ",")
+			mark := ""
+			if prev != "" && cur != prev {
+				mark = " ⇐变"
+			}
+			fmt.Fprintf(&b, "\n                 %s %s%s", y, cur, mark)
+			prev = cur
+		}
+		if si < len(syms)-1 {
+			fmt.Fprintf(&b, "\n       ")
+		}
+	}
+	st := "PASS"
+	if bad > 0 {
+		st = "FAIL"
+	}
+	report("shinny-night-hours", st, b.String())
+}
+
 func main() {
 	flag.StringVar(&only, "only", "", "只跑名字含该子串的探针，如 -only trading-day")
 	flag.Parse()
@@ -811,6 +986,9 @@ func main() {
 	}
 	if !skipped("shinny-night-gap") {
 		probeNightGap(ctx, md, tok)
+	}
+	if !skipped("shinny-night-hours") {
+		probeNightHours(ctx, md, tok)
 	}
 	if !skipped("shinny-trading-day-predicted") {
 		probeTradingDayPredicted(ctx, md, tok)
