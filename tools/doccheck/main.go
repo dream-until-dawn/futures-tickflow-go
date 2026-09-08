@@ -316,11 +316,110 @@ func fromDocs(dir string) (map[string]decl, error) {
 // 所以不整块解析，而是逐条尝试——给无体函数补一个体再解析，
 // 这样参数分组（`exch, instID string`）能由 go/parser 正确展开，
 // 而不是靠正则去猜。
+// valueName 从一行 `Name = …` / `Name Type = …` 里取出导出的标识符名。
+// 只认行首就是名字的形式；`x, y = …` 这种多名的返回空（本仓没有，出现了该单独想）。
+func valueName(t string) string {
+	f := strings.Fields(t)
+	if len(f) < 2 || strings.Contains(f[0], ",") {
+		return ""
+	}
+	if !isExported(f[0]) {
+		return ""
+	}
+	// 必须真的是一条声明：`Name =` 或 `Name Type =`
+	if f[1] != "=" && !(len(f) > 2 && f[2] == "=") {
+		return ""
+	}
+	return f[0]
+}
+
+// valueNameInBlock 用于 `var (` / `const (` 分组【内部】：行首是导出标识符就算一条声明，
+// 不要求有 `=`（iota 续行没有）。注释行与空行由调用方之外的判断挡掉。
+func valueNameInBlock(t string) string {
+	if t == "" || strings.HasPrefix(t, "//") {
+		return ""
+	}
+	f := strings.Fields(t)
+	if len(f) == 0 || strings.Contains(f[0], ",") || !isExported(f[0]) {
+		return ""
+	}
+	return f[0]
+}
+
+// litOf 取一行声明里 `=` 右边那个【字面量】，取不到就返回空串。
+//
+// ⚠️ 为什么要取值，不能只登记名字：
+// 第一版只登记名字，于是把文档里的 `SHFE = "SHFE"` 改成 `"SHFEX"` —— **全绿**。
+// 而对常量来说【值就是契约】：照着文档写 `SHFEX` 的人会得到一个查不到的交易所。
+//
+// 这和评审方当初找到的「类型只登记名字、字段不参与比对」是同一个形状：
+// **存在 ≠ 一致。** 只登记名字的守卫，挡的是改名，不是改值。
+//
+// 只认基本字面量（带引号的串、数字）：`iota`、函数调用、表达式一律返回空串 ⇒
+// 那些项只比名字。**这是有意的**——`time.FixedZone("CST", 8*3600)` 两边的写法
+// 可以合法地不同，硬比会变成假警报，而一条假警报教人忽略整个工具。
+func litOf(t string) string {
+	i := strings.Index(t, "=")
+	if i < 0 {
+		return ""
+	}
+	rhs := strings.TrimSpace(t[i+1:])
+	if j := strings.Index(rhs, "//"); j >= 0 { // 去掉行尾注释
+		rhs = strings.TrimSpace(rhs[:j])
+	}
+	if rhs == "" {
+		return ""
+	}
+	if rhs[0] == '"' || rhs[0] == '`' || (rhs[0] >= '0' && rhs[0] <= '9') ||
+		(rhs[0] == '-' && len(rhs) > 1 && rhs[1] >= '0' && rhs[1] <= '9') {
+		return rhs
+	}
+	return ""
+}
+
 func scanBlock(lines []string, file string, base int, out map[string]decl) {
+	// inValue 表示正处在 `var (` / `const (` 的分组里。
+	//
+	// ⚠️ 加这一路的原因（2026-09-08，评审方与我各验一次）：
+	// scanBlock 原来只认 func 与 type，于是**所有 var / const 声明都不进表**。
+	// 构造验证：把文档里的 ErrUncovered 改名 → doccheck 退出码 0，声明数一字未变。
+	// ⇒ ErrNotTradingDay / ErrClosed / ErrUncovered 从来没被比对过，
+	//   而它们正是 contract.md §5 那条破坏性变更的全部内容。
+	//
+	// 评审方把它的性质说准了：**「没有东西在检查它」不等于「它是错的」。**
+	// 他逐字比过那三个，今天是一致的 ⇒ 这是【逾期】，不是【告急】：
+	// 它没有藏错，只是藏错了也不会有人知道。
+	inValue := false
 	for i := 0; i < len(lines); i++ {
 		ln := lines[i]
 		t := strings.TrimSpace(ln)
 		where := fmt.Sprintf("%s:%d", file, base+i)
+
+		if inValue {
+			if t == ")" {
+				inValue = false
+				continue
+			}
+			// ⚠️ 分组【里面】的判据比外面松：iota 续行没有 `=`
+			//（`AggTradingAxis   // 交易时间轴`），而它同样是一条声明。
+			// 第一版只认带 `=` 的，于是每个 iota 块【只有第一个】进表——
+			// 那是「修了一半」的又一次，所以这里单独放宽。
+			if name := valueNameInBlock(t); name != "" {
+				put(out, decl{Name: name, Kind: "value", Sig: litOf(t), Src: where})
+			}
+			continue
+		}
+
+		switch {
+		case t == "var (" || t == "const (":
+			inValue = true
+			continue
+		case strings.HasPrefix(t, "var ") || strings.HasPrefix(t, "const "):
+			if name := valueName(strings.TrimSpace(t[strings.Index(t, " "):])); name != "" {
+				put(out, decl{Name: name, Kind: "value", Sig: litOf(t), Src: where})
+			}
+			continue
+		}
 
 		switch {
 		case strings.HasPrefix(t, "func "):
@@ -473,6 +572,32 @@ func fromSource(root string) (map[string]decl, error) {
 				where := fmt.Sprintf("%s:%d", rel, fset.Position(n.Pos()).Line)
 				out[name] = decl{Name: name, Sig: sigOf(fset, n.Type), Kind: kind, Src: where}
 			case *ast.GenDecl:
+				// var / const：两侧必须【同时】认，否则一侧多出一批、另一侧没有，
+				// 报告会立刻被一堆单向差异淹没。文档侧的那一路见 scanBlock。
+				if n.Tok == token.VAR || n.Tok == token.CONST {
+					for _, sp := range n.Specs {
+						vs, ok := sp.(*ast.ValueSpec)
+						if !ok {
+							continue
+						}
+						for k, id := range vs.Names {
+							if !isExported(id.Name) {
+								continue
+							}
+							// 只取基本字面量当 Sig，与文档侧 litOf 的口径一致；
+							// iota / 函数调用 / 表达式 ⇒ 空，那些项只比名字。
+							sig := ""
+							if k < len(vs.Values) {
+								if bl, ok := vs.Values[k].(*ast.BasicLit); ok {
+									sig = bl.Value
+								}
+							}
+							out[id.Name] = decl{Name: id.Name, Kind: "value", Sig: sig,
+								Src: fmt.Sprintf("%s:%d", rel, fset.Position(id.Pos()).Line)}
+						}
+					}
+					continue
+				}
 				if n.Tok != token.TYPE {
 					continue
 				}

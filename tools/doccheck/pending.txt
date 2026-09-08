@@ -58,6 +58,15 @@ Span.From       v0.2.0  同上
 Span.To         v0.2.0  同上
 Span.Bars       v0.2.0  写这一段时实际落盘的记录条数
 Span.Days       v0.2.0  这一段里至少有一根的交易日条数——缺了它，某天起点丢失会读成「确认没有」
+ErrSpanUnverified v0.2.0  存储：这一段还没走查过 ⇒ 答不了（瞬时，走一遍即可）
+ErrLegacyMeta     v0.2.0  存储：meta 版本未知且源不可重放 ⇒ 答不了（要一个显式决定）
+AggClockGrid      v0.4.0  AggRule 的成员：时钟网格
+AggTradingAxis    v0.4.0  AggRule 的成员：交易时间轴 + 相位
+NoAdjust          v0.5.0  AdjustMethod 的成员：不复权
+RatioBack         v0.5.0  AdjustMethod 的成员：后复权·比例
+RatioFwd          v0.5.0  AdjustMethod 的成员：前复权·比例
+DiffBack          v0.5.0  AdjustMethod 的成员：后复权·差值
+DiffFwd           v0.5.0  AdjustMethod 的成员：前复权·差值
 
 # ---- v0.4：深度分钟历史落地后，聚合口径才有意义 ----
 AggRule       v0.4.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**
