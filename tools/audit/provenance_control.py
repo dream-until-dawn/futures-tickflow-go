@@ -217,6 +217,28 @@ def m_chain_under_window(s):
     return s + "# 来历 2026-09-09 rules 100 自动：落在合流窗口里的一行\n"
 
 
+def m_chain_val_below_prior(s):
+    """C6：合流行的值低于【此前见过的最大值】。
+
+    把 276 改成 100 —— 此前已经见过 276，合流之后不可能反而只有 100。
+    （这一格同时也低于另一侧的 271，所以它打中的是「低于此前最大值」那条先判的分支。）
+    """
+    ln = _merge_line(s)
+    f = ln.split()
+    return _sub(s, ln, ln.replace(" rules %s 合流 " % f[4], " rules 100 合流 ", 1))
+
+
+def m_chain_val_below_other(s):
+    """C7：合流行的值低于【另一侧最大值】，而【不】低于此前最大值。
+
+    值留 276（= 此前最大值，不越那条界），把另一侧抬到 999 ⇒ 只越「低于另一侧」这一条。
+    分开打，是为了让这一格红的时候能指着一条分支说话。
+    """
+    ln = _merge_line(s)
+    f = ln.split()
+    return _sub(s, ln, ln.replace(" 合流 %s " % f[6], " 合流 999 ", 1))
+
+
 CASES = [
     ("0    基线：一个字不改",                                    m_baseline,   PASS),
     ("E1   只调低当前值（rules -1），不补来历",                    m_lower,      FAIL),
@@ -233,6 +255,8 @@ CASES = [
     ("C3   链-合流记录的另一侧最大值写成非数字",                    m_chain_bad_other,  FAIL, "TestHighWaterChain"),
     ("C4   链-追加一行低于 running max、又罩不住的来历",           m_chain_new_break,  FAIL, "TestHighWaterChain"),
     ("C5   链-追加一行【落在合流窗口里】的来历",                    m_chain_under_window, PASS, "TestHighWaterChain"),
+    ("C6   链-合流行的值低于【此前见过的最大值】",                   m_chain_val_below_prior, FAIL, "TestHighWaterChain"),
+    ("C7   链-合流行的值低于【另一侧最大值】（不越前一条界）",         m_chain_val_below_other, FAIL, "TestHighWaterChain"),
 ]
 
 NOTE = {

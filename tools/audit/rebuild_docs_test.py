@@ -122,11 +122,19 @@ def chainBreaks(lines):
             continue
         if len(f) >= 7 and f[5] == "合流":
             try:
-                allow[name] = int(f[6])
+                other = int(f[6])
             except ValueError:
                 breaks.append((i + 1, name, val, -1))
                 continue
-            run[name] = max(run.get(name, 0), val)
+            # 合流行【自己那个值】要自洽：它是合流之后的最大值，
+            # 所以既不能低于此前见过的最大值，也不能低于另一侧的最大值。
+            # 合流记录是这套机制里唯一【由人手写】的一行 —— 手写的那行最该自洽。
+            floor = max(run.get(name, 0), other)
+            if val < floor:
+                breaks.append((i + 1, name, val, floor))
+                continue
+            allow[name] = other
+            run[name] = val
             continue
         prev = run.get(name)
         if prev is not None and val < prev and not (name in allow and val <= allow[name]):
