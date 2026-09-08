@@ -122,6 +122,7 @@ python tools/probe/probe.py
 | 写一条新探针 | [tools/probe/README.md](tools/probe/README.md) |
 | 写一条断言 / 做破坏性验证 | [docs/design.md §14](docs/design.md) |
 | 改一份文档 | [docs/README.md](docs/README.md) |
+| 反驳 / 更正（别人的，或自己的） | [docs/README.md](docs/README.md) 末节 |
 | 送审 / 合并 / 打 tag | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | 复核一条已记录的测量 | [tools/audit/README.md](tools/audit/README.md) |
 | **学到一条新规矩，不知道它该落在哪** | [docs/method-landing.md](docs/method-landing.md) |
