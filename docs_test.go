@@ -489,6 +489,8 @@ var quotedRules = []struct {
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `和「唯一」同族：把「我处理过的范围」写成了「存在的范围」。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `这个目录存在的理由（2026-09-08 学到的，代价是同一段文档改了三次）：`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `有些格子不是审计漏了，是它已经无法被审计了——`},
+	{`tools/audit/README.md`, `## 现有脚本`, `它自己复制一份仓库（不带 .git / .env）在那儿动手，跑完删，所以跑它不会弄脏工作区。`},
+	{`tools/audit/README.md`, `## 现有脚本`, `一行标签与实际跑的不符的对照组，比缺这一行更糟——缺了是一处空白，`},
 	{`tools/audit/README.md`, `## 现有脚本`, `它跑出来的绿是【已知边界】，不是缺陷——那一类写在 docs/method-landing.md 第三类。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `用生成器自己的模式测生成器，得到的一定是满分——这个脚本存在就是为了绕开那一点。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `登记表不手敲：手敲的登记表会在你以为它覆盖住的地方漏掉东西`},
@@ -591,7 +593,7 @@ var carrierCensus = []struct {
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 138},
 	{`CONTRIBUTING.md`, 217},
-	{`tools/audit/README.md`, 64},
+	{`tools/audit/README.md`, 71},
 	{`docs/method-landing.md`, 163},
 }
 
