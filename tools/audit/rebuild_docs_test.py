@@ -246,17 +246,16 @@ def main():
     if grew:
         writeHighWater(hwLines, hw)
         print("高水位抬高：%s（表长大了，这是自动的）" % "，".join(grew))
-    anchorFloor, quotedFloor, censusFloor = hw["anchors"], hw["rules"], hw["census"]
-    guardsFloor = hw["guards"]
-    assert quotedFloor > 0 and censusFloor > 0 and anchorFloor > 0 and guardsFloor > 0, \
-        "下限是 0 —— 那等于没有下限"
+    # 下限本身不再写进生成物，但生成器仍然要为它把关：
+    # 一个 0 或负数的下限等于没有下限，而它会一路安静地生效。
+    for k in ("anchors", "rules", "census", "guards"):
+        assert hw[k] > 0, "high_water.txt 里 %s 是 %d —— 下限是 0 或负数" % (k, hw[k])
 
     body = (prefix + TPL_ANCHORS + rows + TPL_MID_A + TPL_QUOTED + quotes
             + TPL_MID_B + census + TPL_TAIL + TPL_GUARDS)
-    body = body.replace("__ANCHOR_FLOOR__", str(anchorFloor))
-    body = body.replace("__QUOTED_FLOOR__", str(quotedFloor))
-    body = body.replace("__CENSUS_FLOOR__", str(censusFloor))
-    body = body.replace("__GUARDS_FLOOR__", str(guardsFloor))
+    # ⚠️ 四个下限【不再】烘进生成物 —— 测试自己 go:embed 读 high_water.txt。
+    #    生成器仍然要读它（为了抬高水位），于是两边成了「两个读者读一份权威」，
+    #    而不是「两份拷贝」。理由与它的代价写在 TPL_HEAD 里。
     body = body.replace("__GUARD_NAMES__", guardTable)
     for ph in ("__ANCHOR_FLOOR__", "__QUOTED_FLOOR__", "__CENSUS_FLOOR__",
                "__GUARDS_FLOOR__", "__GUARD_NAMES__"):
@@ -320,12 +319,95 @@ TPL_HEAD = '''package tickflow
 // 只有一半是生成的。**
 
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
+
+// —— 下限从【文件】读，不再烘进这个文件 ——
+//
+// 起因（评审方 2026-09-08 实测，我复现过）：下限原来是生成器烘进来的字面量，
+// 于是手改这里的 49 / 228 而不动 tools/audit/high_water.txt ⇒ **全绿**。
+// **那是一份没有任何检查的第二拷贝**，而本仓杀过四次同形的东西。
+//
+// ⚠️ 我一度反对这个改法，理由是「Go 侧的解析会成为 readHighWater 的第二份实现」。
+// 评审方驳掉了，而他是对的——**要分清被复制的是什么**：
+//
+//	两份【拷贝】   两个【值】静默分叉，两边各自都自洽 —— 没有共同真源
+//	两个【读者】   读同一份权威，失效方式是对同一份字节【解释】不同 —— 有共同真源
+//
+// 本仓 carrierCensus 就是后者（Python 数 `**` 行写进表，Go 再数一遍来比），
+// 而它抓到过一次真 bug：阈值 16，Python 数字符、Go 数字节 ——
+// 见下面 ruleLines 那处 len([]rune(line)) > 16 的注释。
+//
+// ⚠️ **而他给的第一条代价，我不照抄。** 他写：
+//
+//	「解析歧义仍然可能，但它会表现为两边算出不同的数 ⇒ 能被发现」
+//
+// **那在 carrierCensus 那里成立，因为两边的产物被【摆在一起比过】。
+// 这里没有任何东西比它们**——Python 用自己的解析去抬高水位，Go 用自己的解析当下限，
+// 两个结果从不相遇。所以真实的形态是**不对称的**：
+//
+//	Go 读出一个【更大】的数 → 生成之后那次 gofmt/vet 立刻红 → 会被发现
+//	Go 读出一个【更小】的数 → 下限变松，全绿 → **不会被发现**
+//
+// ⇒ 所以这里的解析写成**严格**的：**任何读不懂的东西都是 Fatal，不是「跳过」。**
+// 把「悄悄读出一个更小的数」压到只剩「两边都成功、但对同一行解释不同」，
+// 而格式是「名字 数值」，那个缝已经窄到没有实际写法能落进去。
+// **这不是把洞堵上了，是把它缩到可以写下来的大小。**
+
+//go:embed tools/audit/high_water.txt
+var highWaterRaw string
+
+// highWater 解析高水位文件。判据必须与 tools/audit/rebuild_docs_test.py 的
+// readHighWater 一致，否则两个读者各说各的。
+//
+// **严格**：读不懂就 Fatal。理由见上面那段——宽松解析的失效方向是「下限变松」，
+// 而那一侧没有任何东西会发现。
+func highWater(t *testing.T) map[string]int {
+	t.Helper()
+	out := map[string]int{}
+	for i, raw := range strings.Split(highWaterRaw, "\\n") {
+		line := strings.TrimSpace(strings.TrimSuffix(raw, "\\r"))
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		f := strings.Fields(line)
+		if len(f) != 2 {
+			t.Fatalf("high_water.txt:%d 这一行读不懂：%q —— 格式是「名字 数值」", i+1, raw)
+		}
+		n, err := strconv.Atoi(f[1])
+		if err != nil {
+			t.Fatalf("high_water.txt:%d 的数值读不懂：%q", i+1, f[1])
+		}
+		if _, dup := out[f[0]]; dup {
+			t.Fatalf("high_water.txt:%d 重复的键 %q —— 两个值哪个算？", i+1, f[0])
+		}
+		out[f[0]] = n
+	}
+	if len(out) == 0 {
+		t.Fatal("high_water.txt 里一个数都没有 —— 那等于没有下限")
+	}
+	return out
+}
+
+// floorOf 取一个下限。缺键是 Fatal，不是 0 ——
+// **缺了下限就不该继续跑；把缺失读成 0，等于把「不知道该有多大」当成「它够大」。**
+func floorOf(t *testing.T, key string) int {
+	t.Helper()
+	n, ok := highWater(t)[key]
+	if !ok {
+		t.Fatalf("high_water.txt 里没有 %q 这一行 —— 缺了下限就不该继续跑", key)
+	}
+	if n <= 0 {
+		t.Fatalf("high_water.txt 里 %q 是 %d —— 下限是 0 或负数，那等于没有下限", key, n)
+	}
+	return n
+}
 '''
 
 TPL_ANCHORS = '''
@@ -422,7 +504,7 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 		}
 	}
 
-	if len(ruleAnchors) < __ANCHOR_FLOOR__ {
+	if floor := floorOf(t, "anchors"); len(ruleAnchors) < floor {
 		t.Fatalf("ruleAnchors 只有 %d 节，低于高水位 %d —— 这张表【缩水】了。"+
 			"下限是高水位（历来最大值），不是当前值的某个比例："+
 			"从被守的量派生出来的阈值在生成那一刻恒真，等于不设防。"+
@@ -432,7 +514,7 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
-			len(ruleAnchors), __ANCHOR_FLOOR__)
+			len(ruleAnchors), floor)
 	}
 	t.Logf("锚住 %d 节，其中 %d 节写明豁免", len(ruleAnchors), countExempt())
 }
@@ -600,7 +682,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 	}
-	if len(quotedRules) < __QUOTED_FLOOR__ {
+	if floor := floorOf(t, "rules"); len(quotedRules) < floor {
 		t.Fatalf("quotedRules 只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
 			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了什么。"+
@@ -610,7 +692,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
-			len(quotedRules), __QUOTED_FLOOR__)
+			len(quotedRules), floor)
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
 }
@@ -637,14 +719,14 @@ func TestCarrierCensus(t *testing.T) {
 				c.file, c.boldLines, n, n-c.boldLines)
 		}
 	}
-	if len(carrierCensus) < __CENSUS_FLOOR__ {
+	if floor := floorOf(t, "census"); len(carrierCensus) < floor {
 		t.Fatalf("普查表只有 %d 份文件，低于高水位 %d —— 少了载体。"+
 			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt。"+
 			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
-			len(carrierCensus), __CENSUS_FLOOR__)
+			len(carrierCensus), floor)
 	}
 }
 '''
@@ -753,7 +835,7 @@ func TestGuardsStillExist(t *testing.T) {
 				"  · 只是挪了个文件 ⇒ 那【不会】红，所以红就是真的没了", name)
 		}
 	}
-	if len(guardNames) < __GUARDS_FLOOR__ {
+	if floor := floorOf(t, "guards"); len(guardNames) < floor {
 		t.Fatalf("守卫名字表只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
 			"删守卫是显式动作 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了哪个。"+
@@ -761,7 +843,7 @@ func TestGuardsStillExist(t *testing.T) {
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
-			len(guardNames), __GUARDS_FLOOR__)
+			len(guardNames), floor)
 	}
 	t.Logf("登记 %d 个守卫名，全仓 %d 个测试函数里都在", len(guardNames), len(have))
 }
