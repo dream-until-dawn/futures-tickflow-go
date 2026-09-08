@@ -86,6 +86,7 @@ var only string
 // symsFlag 由 -syms 指定：临时覆盖 night-hours 的品种表（逗号分隔）。
 var symsFlag string
 var winFlag string
+var gridFlag int
 
 func skipped(name string) bool {
 	return only != "" && !strings.Contains(name, only)
@@ -1143,6 +1144,14 @@ func probeNightHours(ctx context.Context, md, tok string) {
 //	三、下限 120 个交易日 —— 变更检测两边各要一个 20 日窗，41 天在理论上就够，
 //	    但 41 天里一个节假日群就能把窗口打穿。**半年是给判据留的余量，不是拍的。**
 //
+// ⛔ **「下限」与「密铺」各答一半，缺一不可 —— 别以为密铺是加强、下限可以去掉**
+// （措辞按评审方 2026-09-09 的提法，他说得比我准）：
+//
+//	`fails <= 2`  只证明「**取到的**都成功」，**不证明「该取的都取了」**
+//	密铺跨度      回答的正是后者：拿到的天数密不密铺它自己的跨度
+//	下限 120      回答的是第三件事：**这段序列长到跑得动那个检测器吗**
+//	              —— 一段密铺得很好的 30 天，密铺判据会放行，而检测器在上面没有意义
+//
 // ⚠️ 它**不**回答「这个品种上市那天到今天有没有取全」——
 // 跨度是从**取到的**第一天算起的。真正漏掉最早那一段，这条判据看不见。
 // 要答那个得有上市日期，而本仓现在没有那份数据。
@@ -1210,7 +1219,7 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 		// 一窗 439 天，步长 400 留 39 天重叠 —— 重叠是为了让相邻两窗能接上，
 		// 不重叠的话中间掉一天都看不出来。
 		for back := 4000; back >= 0; back -= 400 {
-			mm, err := minuteLabelsN(ctx, md, tok, sym, 15, 10000, back)
+			mm, err := minuteLabelsN(ctx, md, tok, sym, gridFlag, 10000, back)
 			if err != nil {
 				fails++
 				continue
@@ -1388,7 +1397,7 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 		//
 		// ⚠️ 只对【默认参数】判。-syms / -win 是探索与对照用的，那时不判 ——
 		// 否则每次探索都会看见一个假红，而**假红教人忽略真红**。
-		if symsFlag == "" && winFlag == "day" {
+		if symsFlag == "" && winFlag == "day" && gridFlag == 15 {
 			for _, y := range years {
 				if len(byYear[y]) != 1 {
 					bad++
@@ -1426,6 +1435,7 @@ func main() {
 	flag.StringVar(&only, "only", "", "只跑名字含该子串的探针，如 -only trading-day")
 	flag.StringVar(&symsFlag, "syms", "", "临时覆盖 night-hours 的品种表，逗号分隔")
 	flag.StringVar(&winFlag, "win", "day", "day-segments 量哪一段：day（默认）或 night（对照组 B）")
+	flag.IntVar(&gridFlag, "grid", 15, "day-segments 用多少分钟的网格（默认 15；用 60 可复跑「为什么不是 60m」那一格）")
 	flag.Parse()
 
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
