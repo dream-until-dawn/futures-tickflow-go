@@ -452,7 +452,18 @@ func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, error) 
 			// cf 的夜盘时刻会因为邻日（cf 的前一天）在覆盖外而被判成答不了。
 			// 这一格由 TestCalendarContract_FirstDayNightSession_Red 顶着，
 			// 而它正是在这次改动里当场红给我看的。
-			continue
+			//
+			// ⛔ 而【只跳过理由覆盖得到的那两种】，别的原样抛出去。
+			// 上一版这里是无差别 `continue`，**理由只覆盖一种错，代码跳过全部**。
+			// 影响面今天是 0（评审方与我各数过一遍 DayOf 的返回口子：
+			// coversDay ⇒ ErrUncovered 这一支才可达），
+			// **而那不是留着它的理由**：一个被吞掉的未知错误会让 DayAt
+			// 落到函数尾部返回 ErrClosed —— **不知道，却给出了一个实质答案**，
+			// 和 Template 那一格同形，只是小一号。
+			if errors.Is(err, tickflow.ErrUncovered) || errors.Is(err, tickflow.ErrNotTradingDay) {
+				continue
+			}
+			return tickflow.Day{}, err
 		}
 		for _, s := range d.Sessions {
 			if s.Contains(ts) {
