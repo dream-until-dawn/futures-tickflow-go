@@ -168,12 +168,36 @@ func (s *Store) CommitSpan(cal tickflow.Calendar, k tickflow.ProductKey,
 	return s.writeMeta()
 }
 
+// writeMeta 把 `.meta` 写出去 —— **先写临时文件，再 rename 覆盖**。
+//
+// ⚠️ 为什么不直接 WriteFile（实测，2026-09-09）：
+// 直接写时，崩在写一半会留下**半份坏 JSON** ⇒ 下一次 Open 走 E1a（报错不猜）
+// ⇒ **整个 store 打不开**。
+//
+// 而 §6.1 自己写明了安全的失败方向：
+// 「先写数据后扩 coverage，崩溃留下的是【拉过却没记】⇒ 重拉一遍，**吵而不丢**」。
+// ⇒ rename 之后，崩在写一半留下的是**上一份好的 .meta**：
+// coverage 落后于数据，正是那个吵而不丢的方向。**直接写会把它变成硬失败。**
+//
+// ⛔ 而这一条【没有测试】，说清楚：
+// 「rename 是原子的」是文件系统的性质，**单元测试里没法真的崩在中间**。
+// 能测的只有「写完之后没有留下临时文件、目标仍然可解」——那两条测的不是原子性。
+// ⇒ 它靠的是一个**结构性论证**，不是一次观测。写在这儿，免得下一个人以为它被守着。
 func (s *Store) writeMeta() error {
 	b, err := EncodeMeta(s.meta)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(s.dir, "1m.meta"), b, 0o644)
+	final := filepath.Join(s.dir, "1m.meta")
+	tmp := final + ".tmp"
+	if err := os.WriteFile(tmp, b, 0o644); err != nil {
+		return err
+	}
+	if err := os.Rename(tmp, final); err != nil {
+		os.Remove(tmp) // 别把半成品留在目录里冒充别的东西
+		return err
+	}
+	return nil
 }
 
 // Verify 走查一段：**逐条读出来数**，再和 `.meta` 里那两个被写下去的计数比。

@@ -142,6 +142,41 @@ func TestInvariantA1b_GreenOnOpen(t *testing.T) {
 	}
 }
 
+// ───────── .meta 的写：能测的那两条（原子性本身测不了）─────────
+//
+// ⚠️ 这一对**不是**不变量表里的编号，所以它不叫 TestInvariantXxx。
+// 它测的是「写完之后目录干净、目标可解」——**而这两条都不是原子性**。
+// 原子性靠的是 rename 的结构性论证，写在 writeMeta 的注释里。
+// **把这两条读成「原子性被测了」，正是本仓反复栽的那一类。**
+
+func TestMetaWriteLeavesNoTemp(t *testing.T) {
+	s, cal, k := newStore(t)
+	if err := s.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200731, 2)}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.CommitSpan(cal, k,
+		tickflow.Span{From: 20200731, To: 20200731, Bars: 2, Days: 1}, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	ents, err := os.ReadDir(s.dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range ents {
+		if filepath.Ext(e.Name()) == ".tmp" {
+			t.Errorf("写完之后目录里还留着临时文件 %s —— 它会冒充别的东西", e.Name())
+		}
+	}
+	// 目标写完必须可解 —— 否则下一次 Open 直接走 E1a。
+	b, err := os.ReadFile(filepath.Join(s.dir, "1m.meta"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := DecodeMeta(b); err != nil {
+		t.Fatalf("写出去的 .meta 自己解不开：%v", err)
+	}
+}
+
 // ───────────────── C1：coverage 只能在数据落盘之后扩大 ─────────────────
 
 func TestInvariantC1_Red(t *testing.T) {
