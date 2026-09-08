@@ -556,6 +556,8 @@ var quotedRules = []struct {
 	{`docs/README.md`, `## 先说一句：**什么算一条「规矩」**`, `⚠️ 代价要写明：这条约定意味着「一条规矩没被守住」可以是`},
 	{`docs/README.md`, `## 先说一句：**什么算一条「规矩」**`, `作者没按约定写，而不只是「守卫漏了」。`},
 	{`docs/README.md`, `## 先说一句：**什么算一条「规矩」**`, `检查清单上因此多一句：我刚写的这条，是独立一行吗？`},
+	{`docs/README.md`, `### 1. **一处改正必须覆盖同一断言的全部载体**`, `我按他的方法真的数了一遍，才发现还有第五处——而那一处是【判定表】本身。`},
+	{`docs/README.md`, `### 1. **一处改正必须覆盖同一断言的全部载体**`, `改一处之前，先数「有几处在描述同一件事」——数不出来就不知道对完了没有。`},
 	{`docs/README.md`, `### 1. **一处改正必须覆盖同一断言的全部载体**`, `会被撞到的，正是照 contract.md 写代码的那个人。`},
 	{`docs/README.md`, `### 1. **一处改正必须覆盖同一断言的全部载体**`, `更正落在维护者那份、没落在使用者那份——`},
 	{`docs/README.md`, `### 1. **一处改正必须覆盖同一断言的全部载体**`, `信息在库里 ≠ 信息在他会看的地方。`},
@@ -764,7 +766,7 @@ var carrierCensus = []struct {
 	boldLines int
 }{
 	{`tools/probe/README.md`, 56},
-	{`docs/README.md`, 123},
+	{`docs/README.md`, 128},
 	{`CONTRIBUTING.md`, 131},
 	{`tools/audit/README.md`, 34},
 	{`docs/method-landing.md`, 160},
@@ -866,13 +868,13 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 	}
-	if len(quotedRules) < 205 {
+	if len(quotedRules) < 207 {
 		t.Fatalf("quotedRules 只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
 			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了什么。"+
 			"⚠️ 这一条挡的正是「删掉规矩 + 重生成 ⇒ 全绿」——"+
 			"上一版下限跟着当前条数走，那个组合是绿的。",
-			len(quotedRules), 205)
+			len(quotedRules), 207)
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
 }
