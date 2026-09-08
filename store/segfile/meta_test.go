@@ -9,7 +9,7 @@ import (
 	"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded"
 )
 
-// 本文件是 docs/design.md §6.1 那张不变量表的【片一】：9 条 × 2 侧 = 18 次。
+// 本文件是 docs/design.md §6.1 那张不变量表的【片一】：10 条 × 2 侧 = 20 次。
 //
 // 命名规则（表下面那条约束③要的）：TestInvariant<编号>_Red / _Green。
 //
@@ -24,17 +24,23 @@ import (
 //	B1 B2 B3 C1 C2 C3a   要 .dat，在片二
 //	C3b D2b              要 SyncReport / Source.Caps，两者都还不存在（见 pending.txt）
 //	                     ⇒ 挪到「做 Source 那一版」
-//	那条 go/ast 收集测试（断言编号集合恰好等于表里 17 个）在片二一并落。
+//	那条 go/ast 收集测试（断言编号集合恰好等于表里 18 个）在片二一并落。
 //	⚠️ 这句话的有效期【到片二为止】；片二若推迟，这段要重写，不能沿用。
 
-// —— 测试用日历。故意把周末排除在外，好让 A2 有真东西可测。——
+// —— 测试用日历。故意把周末排除在外，好让 A2 与 A1c 都有真东西可测。——
 //
-//	20200731 周五 · 20200803 周一   ← 中间隔着周末，而它们是【相邻交易日】
-//	20200804 周二                   ← 用它来造「中间隔着一个交易日」的反例
+//	20200731 周五 · 20200803 周一   ← 中间隔着周末，而它们是【相邻交易日】（A2）
+//	20200804 周二                   ← 造「中间隔着一个交易日」的反例（A2 的绿侧）
+//	…0807 周五 · 20200810 周一      ← 把 Covers 撑到 0810，于是 20200808（周六）
+//	                                   落在【覆盖之内】而不是交易日 —— A1c 要的正是这个形状
+//
+// ⚠️ 这一组日子是评审方那个假合并探针用的同一组。**端点选在覆盖之外，
+// 正确答案就变成「答不了」而不是「不是交易日」** —— 第一版 A1c_Red 就栽在这儿，
+// 而它红得对：**同一个端点在两种日历下分属两种「答不了」，这本身是 D1 的一次实证。**
 func testCalendar(t *testing.T) (tickflow.Calendar, tickflow.ProductKey) {
 	t.Helper()
 	cal, err := embedded.New([]tickflow.TradingDay{
-		20200731, 20200803, 20200804, 20200805, 20200806,
+		20200731, 20200803, 20200804, 20200805, 20200806, 20200807, 20200810,
 	})
 	if err != nil {
 		t.Fatalf("造测试日历失败：%v", err)
@@ -94,6 +100,60 @@ func TestInvariantA1b_Green(t *testing.T) {
 	good := []tickflow.Span{span(20200731, 20200803, 2, 2), span(20200804, 20200806, 3, 3)}
 	if err := ValidateCoverage(good); err != nil {
 		t.Fatalf("A1b 误伤：紧邻但不重叠的两段被判重叠：%v", err)
+	}
+}
+
+// ───────────── A1c：coverage 各段的 From/To 必须是交易日 ─────────────
+//
+// ⚠️ 这一条是拆 A1 时掉在地上的那半（「是【交易日】闭区间」），它一度没有编号，
+// 于是没人测它 —— 而它有实录后果：端点是周六时，A2 的相邻性判据会把两段假合并，
+// 让 coverage 凭空声称覆盖了一个谁都没声称过的交易日。
+
+func TestInvariantA1c_Red(t *testing.T) {
+	cal, k := testCalendar(t)
+	// 20200808 是周六，而它落在本日历的 Covers=[0731,0810] 之内
+	// ⇒ 「不是交易日」，不是「答不了」。这两段【升序且不重叠】—— 红了只可能是 A1c。
+	bad := []tickflow.Span{span(20200731, 20200803, 2, 2), span(20200808, 20200808, 1, 1)}
+	if err := ValidateCoverage(bad); err != nil {
+		t.Fatalf("这个 fixture 不该触发 A1a/A1b —— 那它证明不了 A1c：%v", err)
+	}
+	err := ValidateEndpoints(cal, k, bad)
+	if err == nil {
+		t.Fatal("A1c 没有响：端点 20200808 是周六，却被当成了合法的 coverage 端点")
+	}
+	if !errors.Is(err, errEndpointNotTradingDay) {
+		t.Fatalf("A1c 响了，但响的是别的判据：%v", err)
+	}
+	// 而这一条不响的后果，正是下面这个假合并（回归钉子）：
+	got, mErr := NormalizeCoverage(cal, k, []tickflow.Span{
+		span(20200805, 20200806, 20, 2),
+		span(20200808, 20200810, 30, 2),
+	})
+	if mErr == nil && len(got) == 1 {
+		t.Fatalf("假合并回来了：%+v —— 20200807 是交易日，两段谁都没声称过它", got[0])
+	}
+}
+
+func TestInvariantA1c_Green(t *testing.T) {
+	cal, k := testCalendar(t)
+	// 与 _Red 只差一件事：端点换成真的交易日。
+	good := []tickflow.Span{span(20200731, 20200803, 2, 2), span(20200805, 20200806, 2, 2)}
+	if err := ValidateEndpoints(cal, k, good); err != nil {
+		t.Fatalf("A1c 误伤：端点都是交易日，却被判不是：%v", err)
+	}
+	// ⚠️ 第二侧：日历【覆盖不到】不等于「不是交易日」（D1 那三种「答不了」要分得开）。
+	// 一份好 .meta 换了一份窄日历，不该被判成损坏。
+	narrow, err := embedded.New([]tickflow.TradingDay{20200805, 20200806})
+	if err != nil {
+		t.Fatalf("造窄日历失败：%v", err)
+	}
+	err = ValidateEndpoints(narrow, k, []tickflow.Span{span(20200731, 20200731, 1, 1)})
+	if errors.Is(err, errEndpointNotTradingDay) {
+		t.Fatalf("A1c 误伤：日历覆盖不到被读成了「不是交易日」—— "+
+			"那会让一份好 .meta 因为换了一份窄日历而被判成损坏：%v", err)
+	}
+	if !errors.Is(err, tickflow.ErrUncovered) {
+		t.Fatalf("A1c：日历覆盖不到时应当原样抛 ErrUncovered，实得 %v", err)
 	}
 }
 

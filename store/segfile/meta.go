@@ -9,12 +9,13 @@
 //
 //	A1a  coverage 各段按 From 升序
 //	A1b  coverage 各段互不重叠
+//	A1c  coverage 各段的 From/To 必须是交易日
 //	A2   相邻性按【交易日】算，不按自然日
 //	A3   format 用 *int：「没写」与「写了 0」分得开
 //	D1   三种「答不了」互相分得开
 //	D2a  format 缺失的判定取决于源的可重放性，不是常数
 //	E1a  无法解析时报错，不拿默认值顶上
-//	E1b  format 大于当前已知版本时报错
+//	E1b  format 不在已知版本集合内时报错
 //	F1   .meta 不得含任何由交易日历派生的字段
 package segfile
 
@@ -50,25 +51,31 @@ type Meta struct {
 // 测试与本包同包，用得到它们；对外的契约仍然只有根包那两个（ErrSpanUnverified / ErrLegacyMeta）。
 // 等 Store 接口那一版再决定哪些该升成公开契约。
 var (
-	errMetaUnreadable = errors.New("segfile: .meta 读不懂——报错，不猜")
-	errFutureFormat   = errors.New("segfile: .meta 的 format 超出当前已知版本——报错，不猜")
-	errUnknownFormat  = errors.New("segfile: .meta 声明了一个本版不认识的 format——报错，不猜")
-	errUnordered      = errors.New("segfile: coverage 未按 From 升序")
-	errOverlap        = errors.New("segfile: coverage 有重叠段")
+	errMetaUnreadable        = errors.New("segfile: .meta 读不懂——报错，不猜")
+	errFutureFormat          = errors.New("segfile: .meta 的 format 超出当前已知版本——报错，不猜")
+	errUnknownFormat         = errors.New("segfile: .meta 声明了一个本版不认识的 format——报错，不猜")
+	errUnordered             = errors.New("segfile: coverage 未按 From 升序")
+	errOverlap               = errors.New("segfile: coverage 有重叠段")
+	errEndpointNotTradingDay = errors.New("segfile: coverage 的端点不是交易日")
 )
 
 // DecodeMeta 把 `.meta` 的字节解成 Meta。
 //
 //	E1a  解析不了 ⇒ 报错，【不】返回一个空 Meta 顶上
-//	E1b  format 大于 FormatVersion ⇒ 报错，【不】照旧版语义读
+//	E1b  format 不在已知版本集合内 ⇒ 报错，【不】照旧版语义读
 //	A3   format 缺失时 Format 为 nil，与「写了 0」分得开；缺失【不是】错误，
 //	     它走 D2a（DecideLegacyMeta），因为那个判定需要「源可不可重放」这个本层没有的信息
 //
-// ⚠️ 一处【设计里没写】的情形，我在这里选了「报错不猜」并标出来：
-// §6.1 那张四行判定表覆盖的是「读不到/非法」「缺失」「> 已知」「== 1」，
-// **没有覆盖「声明了一个 <= 已知但不等于已知的版本」**（例如写着 0 或负数）。
-// 按本节第一原则（缺少验证不能悄悄变成一个肯定的答案），这里也报错。
-// 已作为设计缺口报给评审方；若判定改了，这一行跟着改。
+// ⚠️ 判定表原来是「> 已知 ⇒ 报错」，不覆盖「写着 0 或负数」那一支。
+// 我实现时撞到它并按第一原则选了「报错不猜」，报给评审方；他的判定是
+// **不加行，把那一支收口成全划分**：
+//
+//	format 不在【已知版本集合】内 ⇒ 报错，不猜
+//
+// 理由：「> 已知」与「0」不是两条性质，是同一条性质的两个输入
+// （第四列一句写得完 ⇒ 按粒度规则停）；而且已知集合将来变成 {1,2} 时这条不用再改。
+// ⇒ 落后的是文档那一行，不是实现 —— 下面两支合起来就是「不在集合内」。
+// 两个哨兵保留：错误信息更具体是好事。
 func DecodeMeta(b []byte) (*Meta, error) {
 	var m Meta
 	if err := json.Unmarshal(b, &m); err != nil {
@@ -113,6 +120,50 @@ func ValidateCoverage(spans []tickflow.Span) error {
 	return nil
 }
 
+// ValidateEndpoints 检查 A1c：coverage 各段的 From 与 To **必须是交易日**。
+//
+// ⚠️ 这一条是拆 A1 时【掉在地上】的那半：
+// 原来的 A1 是「coverage 是【交易日】闭区间的有序不重叠列表」，
+// 拆成 A1a（升序）／ A1b（不重叠）之后，「**是交易日**」没有拿到编号，于是没人测它。
+// 它可单独违反（升序、不重叠都成立而端点是周六），而且有实录后果（见 adjacentTradingDays）。
+//
+// ⚠️ 三种「答不了」在这里要分得开（D1）：
+// 那天不是交易日 ⇒ 这是 A1c 违规，是**坏 .meta**；
+// 日历覆盖不到   ⇒ 原样抛 ErrUncovered，那是**日历答不了**，不是 .meta 的错。
+// 把后者读成前者，会让一份好 .meta 因为换了一份窄日历而被判成损坏。
+func ValidateEndpoints(cal tickflow.Calendar, k tickflow.ProductKey, spans []tickflow.Span) error {
+	cf, ct, ok := cal.Covers(k)
+	for i, s := range spans {
+		for _, ep := range []struct {
+			name string
+			day  tickflow.TradingDay
+		}{{"From", s.From}, {"To", s.To}} {
+			// ⚠️ 先问【答得了吗】，再问【那天交易吗】——而且这一步在本层自己做，
+			// 不依赖实现的 DayOf 去归类。理由是实测出来的：
+			//
+			//	calendar/embedded 的 DayOf 与 Walk 对同一个日期归类不一致：
+			//	窄日历 Covers=[0805,0806] 时，0731 在 DayOf 是 ErrNotTradingDay，
+			//	在 Walk 是 ErrUncovered。Walk 比了 Covers，DayOf 只比了 baseFrom 与品种。
+			//
+			// 那是 calendar/embedded 的既有缺陷（已另案报告），
+			// **而把 D1 那条「三种答不了要分得开」建在一个会混淆它们的调用上，
+			// 等于把本层的正确性外包给了一个已知会错的地方。**
+			if !ok || ep.day < cf || ep.day > ct {
+				return fmt.Errorf("segfile: coverage[%d].%s = %s 落在日历覆盖之外"+
+					"——这是【答不了】，不是「这一段坏了」: %w", i, ep.name, ep.day, tickflow.ErrUncovered)
+			}
+			if _, err := cal.DayOf(k, ep.day); err != nil {
+				if errors.Is(err, tickflow.ErrNotTradingDay) {
+					return fmt.Errorf("%w: coverage[%d].%s = %s 不是交易日",
+						errEndpointNotTradingDay, i, ep.name, ep.day)
+				}
+				return err // 其余原样抛
+			}
+		}
+	}
+	return nil
+}
+
 // NormalizeCoverage 把【按交易日相邻】的相邻两段合成一段（A2）。
 //
 // ⚠️ 判据是交易日，不是自然日：`20200731`（周五）与 `20200803`（周一）之间
@@ -123,6 +174,9 @@ func ValidateCoverage(spans []tickflow.Span) error {
 // 日历答不了（ErrUncovered）就原样把错误抛出去——**不猜**。
 func NormalizeCoverage(cal tickflow.Calendar, k tickflow.ProductKey, spans []tickflow.Span) ([]tickflow.Span, error) {
 	if err := ValidateCoverage(spans); err != nil {
+		return nil, err
+	}
+	if err := ValidateEndpoints(cal, k, spans); err != nil {
 		return nil, err
 	}
 	if len(spans) < 2 {
@@ -147,20 +201,42 @@ func NormalizeCoverage(cal tickflow.Calendar, k tickflow.ProductKey, spans []tic
 }
 
 // adjacentTradingDays 回答「b 是不是 a 之后的下一个交易日」。
-// 判据来自日历的 Walk：走 [a,b]，中间不该有第三个交易日。
+//
+// 判据：走 [a,b]，走出来的交易日集合**恰好是 {a, b}**。
+//
+// ⛔ 上一版的判据是「[a,b] 里恰好有 2 个交易日」，而那个推理
+// **只在 a 与 b 都是交易日时才成立**——那个前提当时没有任何地方保证。
+// 评审方 2026-09-08 实测出的后果（我已复现）：
+//
+//	日历 …0806 0807 0810…      两段 [0805,0806] 与 [0808,0810]（0808 是周六）
+//	走 [0806,0808] ⇒ {0806, 0807} 也是 2 个 ⇒ 判成相邻 ⇒ 合并成 [0805,0810]
+//	⇒ **coverage 凭空声称覆盖了 20200807，而两段谁都没声称过它。**
+//
+// 那正是 §6.1 点名的最危险方向：**声称拉过而其实没有（静默漏数据且不会自愈）**。
+// 而它不需要崩溃、不需要竞态，**只需要一个 From 不是交易日的 .meta**。
+//
+// ⇒ 改成比对端点本身：first == a && last == b。
+// 它顺带也挡住「a 不是交易日」那一支（那时 first != a）。
+// ⚠️ 而根上的洞由 A1c 堵（端点必须是交易日）——这里是第二道，
+// **两道都要**：A1c 管「别让坏 .meta 进来」，这里管「就算进来了也别把它读成合并」。
 func adjacentTradingDays(cal tickflow.Calendar, k tickflow.ProductKey, a, b tickflow.TradingDay) (bool, error) {
 	if b <= a {
 		return false, nil
 	}
 	n := 0
-	err := cal.Walk(k, a, b, func(tickflow.Day) bool {
+	var first, last tickflow.TradingDay
+	err := cal.Walk(k, a, b, func(d tickflow.Day) bool {
 		n++
-		return n <= 2 // 只要数到第三个就可以停
+		if n == 1 {
+			first = d.Num
+		}
+		last = d.Num
+		return n <= 2 // 数到第三个就可以停
 	})
 	if err != nil {
 		return false, err
 	}
-	return n == 2, nil
+	return n == 2 && first == a && last == b, nil
 }
 
 // LegacyDecision 是 `format` 缺失时的处置。

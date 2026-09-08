@@ -1,8 +1,8 @@
-"""片一那 9 条不变量的【对照组】——把实现弄坏，看该红的那一条红不红。
+"""片一那 10 条不变量的【对照组】——把实现弄坏，看该红的那一条红不红。
 
 ## 为什么需要它
 
-`store/segfile/meta_test.go` 里 18 个测试全绿。**而全绿什么也不证明**：
+`store/segfile/meta_test.go` 里 20 个测试全绿。**而全绿什么也不证明**：
 一个把判据整段删掉的实现，只要测试没在看那一格，照样全绿。
 
     焊了对照组 ≠ 对照组在承重。**得拆一次，看它塌。**
@@ -89,6 +89,16 @@ MUTATIONS = [
 		}
 """, "")),
 
+    ("A1c", "TestInvariantA1c_Red", "让「端点不是交易日」放行", lambda w: sub(
+        w, META,
+        """				if errors.Is(err, tickflow.ErrNotTradingDay) {
+					return fmt.Errorf("%w: coverage[%d].%s = %s 不是交易日",
+						errEndpointNotTradingDay, i, ep.name, ep.day)
+				}""",
+        """				if errors.Is(err, tickflow.ErrNotTradingDay) {
+					continue // 人为弄坏：不是交易日也放行
+				}""")),
+
     ("A2", "TestInvariantA2_Red", "把相邻性改成【自然日】：要求 b == a+1", lambda w: sub(
         w, META,
         "	if b <= a {\n		return false, nil\n	}\n	n := 0",
@@ -153,7 +163,7 @@ def main():
 
         print("副本：%s（不带 .git / .env，跑完删）" % dst)
         print()
-        print("基线：不做任何突变，18 个测试应当全绿")
+        print("基线：不做任何突变，20 个测试应当全绿")
         base = subprocess.run(["go", "test", "-count=1", "./store/segfile/"],
                               cwd=dst, capture_output=True, timeout=300)
         if base.returncode != 0:
