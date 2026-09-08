@@ -26,3 +26,4 @@
 rules 228
 anchors 49
 census 5
+guards 10

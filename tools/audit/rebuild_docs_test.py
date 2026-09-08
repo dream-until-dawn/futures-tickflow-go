@@ -220,9 +220,22 @@ def main():
     #
     # ⇒ 高水位只涨不落；要合法缩小就得动手改 tools/audit/high_water.txt。
     #   理由与全仓一致：**删一条规矩应该是显式动作。**
+    # —— 守卫名字表 —— 登记名字，不登记数字（理由写在 TPL_GUARDS 的注释里）。
+    #
+    # 名字从【静态模板】+ 手写守卫文件里抽，不从盘上那份 docs_test.go 抽：
+    # 从盘上抽会让「上一次生成漏了谁」原样传下去 —— 那是「第二份拷贝」的又一种形态。
+    staticTpl = (TPL_HEAD + TPL_ANCHORS + TPL_MID_A + TPL_QUOTED
+                 + TPL_MID_B + TPL_TAIL + TPL_GUARDS)
+    guardsSrc = staticTpl + open(os.path.join(ROOT, "docs_guards_test.go"),
+                                 encoding="utf-8").read()
+    names = sorted(set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc)))
+    assert names, "一个守卫名都没抽到 —— 拒绝写空表"
+    guardTable = "\n".join("\t`%s`," % n for n in names)
+
     counts = {"rules": quotes.count("\n") + 1,
               "anchors": rows.count("\n") + 1,
-              "census": census.count("\n") + 1}
+              "census": census.count("\n") + 1,
+              "guards": len(names)}
     hw, hwLines = readHighWater()
     grew = []
     for k, n in counts.items():
@@ -234,15 +247,19 @@ def main():
         writeHighWater(hwLines, hw)
         print("高水位抬高：%s（表长大了，这是自动的）" % "，".join(grew))
     anchorFloor, quotedFloor, censusFloor = hw["anchors"], hw["rules"], hw["census"]
-    assert quotedFloor > 0 and censusFloor > 0 and anchorFloor > 0, \
+    guardsFloor = hw["guards"]
+    assert quotedFloor > 0 and censusFloor > 0 and anchorFloor > 0 and guardsFloor > 0, \
         "下限是 0 —— 那等于没有下限"
 
     body = (prefix + TPL_ANCHORS + rows + TPL_MID_A + TPL_QUOTED + quotes
-            + TPL_MID_B + census + TPL_TAIL)
+            + TPL_MID_B + census + TPL_TAIL + TPL_GUARDS)
     body = body.replace("__ANCHOR_FLOOR__", str(anchorFloor))
     body = body.replace("__QUOTED_FLOOR__", str(quotedFloor))
     body = body.replace("__CENSUS_FLOOR__", str(censusFloor))
-    for ph in ("__ANCHOR_FLOOR__", "__QUOTED_FLOOR__", "__CENSUS_FLOOR__"):
+    body = body.replace("__GUARDS_FLOOR__", str(guardsFloor))
+    body = body.replace("__GUARD_NAMES__", guardTable)
+    for ph in ("__ANCHOR_FLOOR__", "__QUOTED_FLOOR__", "__CENSUS_FLOOR__",
+               "__GUARDS_FLOOR__", "__GUARD_NAMES__"):
         assert ph not in body, "占位符 %s 没被换掉 —— 那会写出一个编译不过的文件" % ph
     open(TARGET, "w", encoding="utf-8", newline="\n").write(body)
 
@@ -280,8 +297,10 @@ def main():
         print("已%s，中间产物也清了 —— 盘上没有留半成品" % what)
         sys.exit(1)
 
-    print("docs_test.go 重建完成：锚点 %d 节 / 规矩 %d 条 / 普查 %d 份；gofmt 与 vet 均过"
-          % (rows.count("\n") + 1, quotes.count("\n") + 1, census.count("\n") + 1))
+    print("docs_test.go 重建完成：锚点 %d 节 / 规矩 %d 条 / 普查 %d 份 / 守卫 %d 个；"
+          "gofmt 与 vet 均过"
+          % (rows.count("\n") + 1, quotes.count("\n") + 1, census.count("\n") + 1,
+             len(names)))
 
 
 TPL_HEAD = '''package tickflow
@@ -302,6 +321,7 @@ TPL_HEAD = '''package tickflow
 
 import (
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -626,6 +646,103 @@ func TestCarrierCensus(t *testing.T) {
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
 			len(carrierCensus), __CENSUS_FLOOR__)
 	}
+}
+'''
+
+
+TPL_GUARDS = '''
+
+// —— 守卫名字表 ——
+//
+// 起因（评审方 2026-09-08 实测，我复现过）：拆分之后**没有任何东西在数守卫**。
+// 整份删掉 docs_guards_test.go ⇒ vet 0 / 三包 ok / doccheck 0，Test 函数 8 变 3，
+// 而 go test 说 ok。生成文件不引用手写文件里的任何符号，所以连编译都不断。
+//
+// ⚠️ 登记的是【名字】，不是【数字】。两个计数方案都被否掉，理由是它们各有偏：
+//
+//	只数 docs_guards_test.go 的 func Test  → 把守卫【挪到别的文件】读成删除
+//	数全仓的 func Test                     → 全仓 51 个（守卫 9 + 业务 42），
+//	                                         业务测试一涨，高水位就停在「历史最多测试数」上，
+//	                                         而合法删掉一个过时的业务测试会红
+//	                                         ⇒「一个会红的必过项迟早被加 || true」的标准候选
+//
+// **计数是代理量里最弱的一种：它连「少了哪一个」都说不出来。**
+// 而本仓第三次得到同一个答案——needle 从截断前缀改成整行、must 清单删掉、
+// 序数改成点名——**每次的结论都是「登记名字，别登记一个会漂的代理量」。**
+//
+// ⚠️ **这条检查是【单向】的，而且是有意的**：
+//
+//	查      登记过的名字，现在还在不在【任意一份 _test.go】里
+//	不查    存在的测试函数有没有被登记
+//
+// 双向会让每加一个业务测试都要重生成——**那正是「数全仓」那个方案的摩擦，
+// 只是换了个位置。**
+//
+// ⚠️ **单向的代价，写明**：一个【新加的】守卫在被生成器收进来之前不受保护。
+// 也就是说：写完新守卫、还没跑 rebuild 的那段时间里，删掉它没有任何东西会响。
+// **这是这个方案唯一的洞，它没有被堵上，只是被写下来了。**
+var guardNames = []string{
+__GUARD_NAMES__
+}
+
+// funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。
+var funcTestRe = regexp.MustCompile(`(?m)^func (Test[A-Za-z0-9_]*)\\(`)
+
+// TestGuardsStillExist 检查每一个登记过的守卫【还在仓库里】。
+//
+// 判据是「名字出现在任意一份 _test.go 里」，不是「在原来那份文件里」——
+// **挪个文件不算消失，删掉才算。**
+func TestGuardsStillExist(t *testing.T) {
+	have := map[string]string{}
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, "_test.go") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		for _, m := range funcTestRe.FindAllStringSubmatch(string(b), -1) {
+			have[m[1]] = p
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("走 _test.go 时出错：%v", err)
+	}
+	// 前提也要打印出来：不然「一个都没扫到」和「全都在」长得一样。
+	if len(have) == 0 {
+		t.Fatal("一个测试函数都没扫到 —— 这个守卫没在守任何东西")
+	}
+	for _, name := range guardNames {
+		if _, ok := have[name]; !ok {
+			t.Errorf("守卫 %s 【不见了】—— 它登记过，而现在任何一份 _test.go 里都没有。\\n"+
+				"  · 真的不再要它 ⇒ 删掉之后跑 tools/audit/rebuild_docs_test.py，"+
+				"并在提交信息里说为什么\\n"+
+				"  · 只是挪了个文件 ⇒ 那【不会】红，所以红就是真的没了", name)
+		}
+	}
+	if len(guardNames) < __GUARDS_FLOOR__ {
+		t.Fatalf("守卫名字表只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
+			"删守卫是显式动作 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
+			"并在提交信息里说删了哪个。"+
+			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
+			"先确认这个数【是怎么涨上去的】再决定调不调——"+
+			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
+			len(guardNames), __GUARDS_FLOOR__)
+	}
+	t.Logf("登记 %d 个守卫名，全仓 %d 个测试函数里都在", len(guardNames), len(have))
 }
 '''
 
