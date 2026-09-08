@@ -810,6 +810,7 @@ var guardNames = []string{
 	`TestGuardsStillExist`,
 	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
+	`TestHighWaterRuleAdjacency`,
 	`TestLandingCarriersStillCarry`,
 	`TestNoConflictMarkersInDocs`,
 	`TestNoDuplicateHeadingsInCarriers`,
