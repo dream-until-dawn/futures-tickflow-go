@@ -54,6 +54,9 @@ PASS, FAIL, BUILD, TIME = "PASS", "FAIL", "BUILD", "TIME"
 META = os.path.join("store", "segfile", "meta.go")
 STORE = "store.go"
 EMB = os.path.join("calendar", "embedded", "embedded.go")
+DAT = os.path.join("store", "segfile", "dat.go")
+ST = os.path.join("store", "segfile", "store.go")
+STEST = os.path.join("store", "segfile", "store_test.go")
 
 SEGFILE = "./store/segfile/"   # 片一那 10 条在这里
 ROOTPKG = "."                  # Calendar 契约那几条在根包（外部测试包）
@@ -144,6 +147,50 @@ MUTATIONS = [
         "	Coverage []tickflow.Span `json:\"coverage\"`",
         "	Coverage []tickflow.Span `json:\"coverage\"`\n\n	IsTradingDay bool `json:\"is_trading_day\"` // ← 人为弄坏：把日历的答案抄进来")),
 
+    # —— 片二那一组（store/segfile 的 .dat 层）——
+    ("B1", "TestInvariantB1_Red", SEGFILE, "Verify 不再比 days", lambda w: sub(
+        w, ST,
+        """	if days != span.Days {
+		return fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
+			"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
+			errDaysMismatch, days, span.Days)
+	}
+""", "")),
+
+    ("B2", "TestInvariantB2_Red", SEGFILE, "Verify 不再查记录是否越界", lambda w: sub(
+        w, ST,
+        """		if b.TradingDay < span.From || b.TradingDay > span.To {
+			return fmt.Errorf("%w: 第 %d 条记录是 %s，而本段是 [%s, %s]",
+				errRecordOutside, i, b.TradingDay, span.From, span.To)
+		}
+""", "")),
+
+    ("B3", "TestInvariantB3_Red", SEGFILE, "没走查过也照答", lambda w: sub(
+        w, ST,
+        "		if !s.verified[sp] {",
+        "		if false { // 人为弄坏：没走查过也照答")),
+
+    ("C1", "TestInvariantC1_Red", SEGFILE, "扩 coverage 前不核对数据已落盘", lambda w: sub(
+        w, ST,
+        "	if have < want {",
+        "	if false { // 人为弄坏：不核对落盘")),
+
+    ("C2", "TestInvariantC2_Red", SEGFILE, "上游没成功也允许扩", lambda w: sub(
+        w, ST,
+        "	if out != OutcomeComplete {",
+        "	if false { // 人为弄坏：不看 outcome")),
+
+    ("C3a", "TestInvariantC3a_Red", SEGFILE, "Open 时不截残尾", lambda w: sub(
+        w, DAT,
+        "	if ragged == 0 {",
+        "	if true { // 人为弄坏：一律当成没有残尾")),
+
+    ("表-编号", "TestInvariantCoverageMatchesTable", SEGFILE,
+     "删掉 B1 的 _Green 那一侧", lambda w: sub(
+        w, STEST,
+        """func TestInvariantB1_Green(t *testing.T) {""",
+        """func testInvariantB1_GreenRemoved(t *testing.T) {""")),
+
     # —— Calendar 契约那一组（根包外部测试包）——
     ("Cal-Template", "TestCalendarContract_OutsideCoverage_Red", ROOTPKG,
      "Template 方法不再判覆盖", lambda w: sub(
@@ -199,7 +246,7 @@ def main():
         shutil.copytree(ROOT, dst, ignore=ignore)
         assert not os.path.exists(os.path.join(dst, ".env")), "副本里不该有 .env"
         assert not os.path.exists(os.path.join(dst, ".git")), "副本里不该有 .git"
-        keep = {rel: open(os.path.join(dst, rel), "rb").read() for rel in (META, STORE, EMB)}
+        keep = {rel: open(os.path.join(dst, rel), "rb").read() for rel in (META, STORE, EMB, DAT, ST, STEST)}
 
         print("副本：%s（不带 .git / .env，跑完删）" % dst)
         print()
