@@ -407,7 +407,11 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 			"下限是高水位（历来最大值），不是当前值的某个比例："+
 			"从被守的量派生出来的阈值在生成那一刻恒真，等于不设防。"+
 			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
-			"并在提交信息里说删了什么。删规矩是显式动作。",
+			"并在提交信息里说删了什么。删规矩是显式动作。"+
+			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
+			"先确认这个数【是怎么涨上去的】再决定调不调——"+
+			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
 			len(ruleAnchors), __ANCHOR_FLOOR__)
 	}
 	t.Logf("锚住 %d 节，其中 %d 节写明豁免", len(ruleAnchors), countExempt())
@@ -581,7 +585,11 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了什么。"+
 			"⚠️ 这一条挡的正是「删掉规矩 + 重生成 ⇒ 全绿」——"+
-			"上一版下限跟着当前条数走，那个组合是绿的。",
+			"上一版下限跟着当前条数走，那个组合是绿的。"+
+			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
+			"先确认这个数【是怎么涨上去的】再决定调不调——"+
+			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
 			len(quotedRules), __QUOTED_FLOOR__)
 	}
 	t.Logf("登记了 %d 条规矩", len(quotedRules))
@@ -611,7 +619,11 @@ func TestCarrierCensus(t *testing.T) {
 	}
 	if len(carrierCensus) < __CENSUS_FLOOR__ {
 		t.Fatalf("普查表只有 %d 份文件，低于高水位 %d —— 少了载体。"+
-			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt",
+			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt。"+
+			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
+			"先确认这个数【是怎么涨上去的】再决定调不调——"+
+			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
 			len(carrierCensus), __CENSUS_FLOOR__)
 	}
 }

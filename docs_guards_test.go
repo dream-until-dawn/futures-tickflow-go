@@ -169,6 +169,84 @@ var carrierFiles = []string{
 	"docs/method-landing.md",
 }
 
+// TestNoConflictMarkersInDocs 禁掉 .md 里的合并冲突标记。
+//
+// 起因（评审方 2026-09-08 提出，我复现过）：`docs_test.go` 的生成器读的是这些 `.md`。
+// 而这条「生成物冲突时重造」的规矩，**使用现场就是解冲突**——那时载体自己也可能
+// 还带着标记。实测：两侧各留一条规矩 + 冲突标记，然后照规矩重造——
+//
+//	rebuild 退 0；两侧的规矩正文【都进了登记表】；
+//	标记本身【没进生成物】（它不是加粗行，被过滤掉了）；go test 全绿。
+//
+// ⇒ 得到一份自洽、全绿、把两侧内容一起烤进去的生成物，而生成物上看不出异常。
+//
+// ⚠️ 而真正把它从「另行送审」推成「必须做」的，是它的【延迟发作】那一面：
+// 冲突态重造会把 `high_water` 一起抬上去，而高水位**只涨不落**。于是后来
+// **正确地**解掉冲突再重造的那个人会红，提示还告诉他
+// 「动手把 high_water.txt 调低，**并在提交信息里说删了什么**」——
+// **而他什么都没删。照做，他得编一句删除说明。**
+//
+//	⇒ 这不是「假警报」那一类，是**「要求一个做对了的人写下一句假话」**那一类。
+//
+// 通则（比这一格重要）：
+//
+//	**一个只涨不落的东西，把它抬高的那个动作必须比它本身更可信。**
+//	high_water 自动抬高的条件是「重造成功」——于是每一次成功的重造都被当成可信的，
+//	包括跑在没解干净的载体上那一次。**单调机制会把错误固化成基线。**
+//
+// ⚠️ 这条守卫【只堵这一个入口】，和禁 HTML 注释那条一样：
+//   - 只扫 `.md`。**因为 `.md` 是标记能【静默】存活的地方**——
+//     `.go` / `.py` 里的标记编译不过，`pending.txt` 里的会被 loadPending 报「缺预定版本」。
+//   - 只认 git 的三种标记行首形态，不认别人自制的分隔符。
+//   - 它**不检查**载体内容对不对，只检查「有没有一次没解干净的合并留在这儿」。
+//
+// 成本：当前 9 份 `.md`，三种标记各命中 0 处；无一行是 setext 标题下划线（`=======`
+// 在 markdown 里也是 H1 下划线，本仓一律用 `#` 标题，所以这里不歧义）。
+// **现在是 0，所以零成本，而它堵的是最顺手的那个入口。**
+func TestNoConflictMarkersInDocs(t *testing.T) {
+	var scanned int
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, ".md") {
+			return nil
+		}
+		scanned++
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		for i, line := range strings.Split(string(b), "\n") {
+			line = strings.TrimSuffix(line, "\r")
+			if strings.HasPrefix(line, "<<<<<<<") ||
+				strings.HasPrefix(line, ">>>>>>>") ||
+				line == "=======" {
+				t.Errorf("%s:%d 有一行合并冲突标记：%q\n"+
+					"  先把载体解干净，再动生成物。顺序反了，重造会把两侧内容一起烤进去，"+
+					"而且退 0、全绿；还会把 high_water 抬到一个错的基线上",
+					p, i+1, line)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("走 .md 文件时出错：%v", err)
+	}
+	// 前提也要打印出来：不然「一个都没扫」和「全都干净」长得一样。
+	if scanned == 0 {
+		t.Fatal("一份 .md 都没扫到 —— 这个守卫没在守任何东西")
+	}
+	t.Logf("扫了 %d 份 .md，无冲突标记", scanned)
+}
+
 // TestCarriersHaveNoHTMLComments 禁掉载体里的 HTML 注释。
 //
 // 起因（评审方 2026-09-08 的攻击 A）：把一条【已登记】的规矩用 `<!-- -->` 包起来——
