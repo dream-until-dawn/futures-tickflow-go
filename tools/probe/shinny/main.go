@@ -83,6 +83,9 @@ var failed int
 // 代价不在耗时，在于**人会因此不跑**。
 var only string
 
+// symsFlag 由 -syms 指定：临时覆盖 night-hours 的品种表（逗号分隔）。
+var symsFlag string
+
 func skipped(name string) bool {
 	return only != "" && !strings.Contains(name, only)
 }
@@ -707,7 +710,13 @@ func probeNightGap(ctx context.Context, md, tok string) {
 // 只会显示成最后一根 `02:00`。**要精确到分钟得用 1m，而那是八百多次请求。**
 // ⇒ 本探针回答的是「有没有变、大约哪一年」，**不是「几点几分」**。
 func probeNightHours(ctx context.Context, md, tok string) {
+	// 默认只三个品种：这条探针每个品种要 17 次连接，**加品种就是加分钟**，
+	// 而一条跑起来嫌慢的探针，下场是没人跑。
+	// 要建「时段历史变更表」时用 -syms 临时铺开，结果记进 probe.md，别改默认值。
 	syms := []string{"KQ.m@SHFE.ag", "KQ.m@SHFE.cu", "KQ.m@SHFE.rb"}
+	if symsFlag != "" {
+		syms = strings.Split(symsFlag, ",")
+	}
 	var b strings.Builder
 	bad := 0
 	for si, sym := range syms {
@@ -813,26 +822,6 @@ func probeNightHours(ctx context.Context, md, tok string) {
 				i += 20
 			}
 		}
-		if len(edges) > 0 {
-			fmt.Fprintf(&b, "\n                 **变更时点**：%s", strings.Join(edges, " ／ "))
-		}
-		// 基线（2026-09-09 实测）：只有 rb 变过一次，而且就那一次。
-		// 没有断言的话，这个探针只是一份报告 —— **报告不会因为世界变了而红。**
-		wantEdges := 0
-		if sym == "KQ.m@SHFE.rb" {
-			wantEdges = 1
-			if len(edges) == 1 && !strings.Contains(edges[0], "2016-04-29") {
-				bad++
-				fmt.Fprintf(&b, "\n                 ⚠️ 变更时点与基线不符（基线：旧形态最后一天 2016-04-29"+
-					"→ 新形态第一天 2016-05-03）")
-			}
-		}
-		if len(edges) != wantEdges {
-			bad++
-			fmt.Fprintf(&b, "\n                 ⚠️ 检出 %d 处变更，基线是 %d 处 —— "+
-				"要么数据变了，要么交易所又改了时段，去看一眼", len(edges), wantEdges)
-		}
-
 		years := make([]string, 0, len(byYear))
 		for y := range byYear {
 			years = append(years, y)
@@ -854,6 +843,32 @@ func probeNightHours(ctx context.Context, md, tok string) {
 			fmt.Fprintf(&b, "\n                 %s %s%s", y, cur, mark)
 			prev = cur
 		}
+		if len(edges) > 0 {
+			fmt.Fprintf(&b, "\n                 **变更时点**：%s", strings.Join(edges, " ／ "))
+		}
+		// 基线（2026-09-09 实测）：只有 rb 变过一次，而且就那一次。
+		// 没有断言的话，这个探针只是一份报告 —— **报告不会因为世界变了而红。**
+		//
+		// ⚠️ 基线只对【默认品种表】成立。用 -syms 铺开去建表时不判 ——
+		// 否则每次探索都会看见一个假红，而**假红教人忽略真红**。
+		if symsFlag != "" {
+			continue
+		}
+		wantEdges := 0
+		if sym == "KQ.m@SHFE.rb" {
+			wantEdges = 1
+			if len(edges) == 1 && !strings.Contains(edges[0], "2016-04-29") {
+				bad++
+				fmt.Fprintf(&b, "\n                 ⚠️ 变更时点与基线不符（基线：旧形态最后一天 2016-04-29"+
+					"→ 新形态第一天 2016-05-03）")
+			}
+		}
+		if len(edges) != wantEdges {
+			bad++
+			fmt.Fprintf(&b, "\n                 ⚠️ 检出 %d 处变更，基线是 %d 处 —— "+
+				"要么数据变了，要么交易所又改了时段，去看一眼", len(edges), wantEdges)
+		}
+
 		if si < len(syms)-1 {
 			fmt.Fprintf(&b, "\n       ")
 		}
@@ -867,6 +882,7 @@ func probeNightHours(ctx context.Context, md, tok string) {
 
 func main() {
 	flag.StringVar(&only, "only", "", "只跑名字含该子串的探针，如 -only trading-day")
+	flag.StringVar(&symsFlag, "syms", "", "临时覆盖 night-hours 的品种表，逗号分隔")
 	flag.Parse()
 
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
