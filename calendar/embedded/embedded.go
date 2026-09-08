@@ -170,6 +170,18 @@ var cffexDay = map[string][]tickflow.Session{
 
 // Template 返回该品种的内置标称模板。
 // 未收录、或交易日早于生效起点时返回 ErrUncovered——**那是「答不了」，不是「没有交易」**。
+//
+// ⚠️ 它的覆盖判据【只有】品种与 baseFrom，**不含任何一份日历的注入区间** ——
+// 因为它是包级函数，手上没有 Calendar 实例。
+//
+// ⇒ 所以它比 `(*Calendar).Template` 【宽】，而那不是缺陷，是分工：
+//
+//	包级这个    答「**内置表**对这一天怎么说」   ← 探针拿标称模板去比交易所实际给的时段，用的就是它
+//	方法那个    答「**这份日历**答得了吗」       ← 它会先比 Covers（见 coversDay）
+//
+// ⛔ 2026-09-08 之前，方法那个是【直接转给这里】的 ——
+// **等于借用了「标称表怎么说」去回答「这份日历答得了吗」**，
+// 于是任何日历的未来日期都被答成「那天不交易」。来历与实测见 docs/contract.md §5。
 func Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, error) {
 	t, ok := template(k)
 	if !ok {
