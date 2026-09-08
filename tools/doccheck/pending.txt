@@ -57,13 +57,6 @@ Capabilities  v0.3.0  各源能力差异做成数据而不是散落在文档里
 SyncRequest   v0.3.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
 Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
 SyncReport    v0.3.0  带「请求区间 vs 日历覆盖区间」两行；Misaligned 扫 BarBound.Anomalous
-Span            v0.3.0  存储 .meta 里的一段 coverage：交易日闭区间 + Bars/Days 两个正面计数
-Span.From       v0.3.0  同上
-Span.To         v0.3.0  同上
-Span.Bars       v0.3.0  写这一段时实际落盘的记录条数
-Span.Days       v0.3.0  这一段里至少有一根的交易日条数——缺了它，某天起点丢失会读成「确认没有」
-ErrSpanUnverified v0.3.0  存储：这一段还没走查过 ⇒ 答不了（瞬时，走一遍即可）
-ErrLegacyMeta     v0.3.0  存储：meta 版本未知且源不可重放 ⇒ 答不了（要一个显式决定）
 AggClockGrid      v0.5.0  AggRule 的成员：时钟网格
 AggTradingAxis    v0.5.0  AggRule 的成员：交易时间轴 + 相位
 NoAdjust          v0.6.0  AdjustMethod 的成员：不复权
