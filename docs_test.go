@@ -574,7 +574,7 @@ var carrierCensus = []struct {
 	{`docs/README.md`, 128},
 	{`CONTRIBUTING.md`, 217},
 	{`tools/audit/README.md`, 44},
-	{`docs/method-landing.md`, 162},
+	{`docs/method-landing.md`, 163},
 }
 
 // sectionedRule 是一条规矩连同它所在的小节。
