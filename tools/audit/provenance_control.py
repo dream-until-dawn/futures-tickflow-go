@@ -39,6 +39,9 @@ import sys
 import tempfile
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+# stderr 也包 —— 断言消息与 SystemExit 走的是 stderr，
+# 而**一条读不懂的失败信息，和没有失败信息差不多**（2026-09-09 实测两次）。
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -59,14 +62,20 @@ def write(p, s):
     open(p, "w", encoding="utf-8", newline="\n").write(s)
 
 
-def guard(work):
-    """跑那条守卫，返回四态之一。"""
+def guard(work, name="TestHighWaterProvenance"):
+    """跑那条守卫，返回四态之一。
+
+    ⚠️ 收 name 是因为 high_water.txt 上现在有【两条】守卫：
+    `TestHighWaterProvenance`（当前值 vs 最后一行来历）与 `TestHighWaterChain`（链）。
+    一格变异只该由它针对的那一条来判 —— 让两条一起跑，
+    **一格会因为「另一条红了」而显示为红，而那不是这一格测到的东西。**
+    """
     v = subprocess.run(["go", "vet", "./..."], cwd=work, capture_output=True, timeout=300)
     if v.returncode != 0:
         return BUILD
     try:
         p = subprocess.run(
-            ["go", "test", "-run", "TestHighWaterProvenance", "-count=1", "."],
+            ["go", "test", "-run", name, "-count=1", "."],
             cwd=work, capture_output=True, timeout=300)
     except subprocess.TimeoutExpired:
         return TIME
@@ -154,6 +163,82 @@ def m_orphan_key(s):
     return s + "orphan 7\n"
 
 
+# ── 链检查（TestHighWaterChain）那几格 ──
+#
+# 现状（2026-09-09）：rules 那一列是 263 266 268 270 275 276 →【合流 276 合流 271】→ 271 → 277。
+# 也就是说仓库里**真的有**一条合流记录，所以这几格改的是它。
+
+def _merge_line(s):
+    """那一行合流记录。"""
+    for ln in s.splitlines():
+        f = ln.strip().split()
+        if len(f) >= 7 and f[0] == "#" and f[1] == "来历" and f[5] == "合流":
+            return ln
+    raise AssertionError("high_water.txt 里找不到合流记录 —— 这几格是冲着它去的")
+
+
+def m_chain_baseline(s):
+    return s
+
+
+def m_chain_kill_marker(s):
+    """C1：把「合流」两个字换掉 ⇒ 它退回成一条普通来历，271 那行就没人罩着了。"""
+    ln = _merge_line(s)
+    return _sub(s, ln, ln.replace(" 合流 ", " 说明 ", 1))
+
+
+def m_chain_drop(s):
+    """C2：整行删掉。"""
+    ln = _merge_line(s)
+    return _sub(s, ln + "\n", "")
+
+
+def m_chain_bad_other(s):
+    """C3：另一侧最大值写成非数字。"""
+    ln = _merge_line(s)
+    f = ln.split()
+    return _sub(s, ln, ln.replace(" 合流 %s " % f[6], " 合流 abc ", 1))
+
+
+def m_chain_new_break(s):
+    """C4：末尾追加一行【比 running max 低、也低不过合流罩着的范围】的来历。
+
+    模拟的是「又合并了一次，而没人写合流记录」。
+    值取 275：低于 rules 的 running max，又高于那条合流记录的 271 ⇒ 罩不住。
+    """
+    return s + "# 来历 2026-09-09 rules 275 自动：假装又合了一次，而没写合流记录\n"
+
+
+def m_chain_under_window(s):
+    """C5：末尾追加一行【落在合流窗口里】的来历（值 ≤ 另一侧最大值）。
+
+    期望【绿】—— 这是这条守卫写明的口子，见 CASES 下面的 NOTE。
+    """
+    return s + "# 来历 2026-09-09 rules 100 自动：落在合流窗口里的一行\n"
+
+
+def m_chain_val_below_prior(s):
+    """C6：合流行的值低于【此前见过的最大值】。
+
+    把 276 改成 100 —— 此前已经见过 276，合流之后不可能反而只有 100。
+    （这一格同时也低于另一侧的 271，所以它打中的是「低于此前最大值」那条先判的分支。）
+    """
+    ln = _merge_line(s)
+    f = ln.split()
+    return _sub(s, ln, ln.replace(" rules %s 合流 " % f[4], " rules 100 合流 ", 1))
+
+
+def m_chain_val_below_other(s):
+    """C7：合流行的值低于【另一侧最大值】，而【不】低于此前最大值。
+
+    值留 276（= 此前最大值，不越那条界），把另一侧抬到 999 ⇒ 只越「低于另一侧」这一条。
+    分开打，是为了让这一格红的时候能指着一条分支说话。
+    """
+    ln = _merge_line(s)
+    f = ln.split()
+    return _sub(s, ln, ln.replace(" 合流 %s " % f[6], " 合流 999 ", 1))
+
+
 CASES = [
     ("0    基线：一个字不改",                                    m_baseline,   PASS),
     ("E1   只调低当前值（rules -1），不补来历",                    m_lower,      FAIL),
@@ -164,6 +249,14 @@ CASES = [
     ("E4   来历行的值写成非数字",                                m_nonnumeric, FAIL),
     ("E6   子串像来历、字段不像的注释",                            m_lookalike,  PASS),
     ("E7   高水位多一个没有来历的名字",                            m_orphan_key, FAIL),
+    ("C0   链-基线：一个字不改",                                 m_chain_baseline,   PASS, "TestHighWaterChain"),
+    ("C1   链-把合流记录的「合流」二字换掉",                       m_chain_kill_marker, FAIL, "TestHighWaterChain"),
+    ("C2   链-整行删掉合流记录",                                 m_chain_drop,       FAIL, "TestHighWaterChain"),
+    ("C3   链-合流记录的另一侧最大值写成非数字",                    m_chain_bad_other,  FAIL, "TestHighWaterChain"),
+    ("C4   链-追加一行低于 running max、又罩不住的来历",           m_chain_new_break,  FAIL, "TestHighWaterChain"),
+    ("C5   链-追加一行【落在合流窗口里】的来历",                    m_chain_under_window, PASS, "TestHighWaterChain"),
+    ("C6   链-合流行的值低于【此前见过的最大值】",                   m_chain_val_below_prior, FAIL, "TestHighWaterChain"),
+    ("C7   链-合流行的值低于【另一侧最大值】（不越前一条界）",         m_chain_val_below_other, FAIL, "TestHighWaterChain"),
 ]
 
 NOTE = {
@@ -174,6 +267,14 @@ NOTE = {
           "       但要连同 docs_guards_test.go 里那段射程注释一起更新，别只改这里。",
     "E6": "⚠️ 这一格【期望绿】——两边的判据都按空白切开的字段读，不用子串，\n"
           "     所以那行讲格式的注释不会被误当成来历（第二个字段是 #）。",
+    "C5": "⚠️ 这一格【期望绿】——它是链检查写明的口子，不是漏网。\n"
+          "     一条合流记录声明了「另一侧最高到 271」，于是此后任何 ≤ 271 的行都被放行，\n"
+          "     **窗口不会关**。为什么不关：一次合并可能接进来好几行，其中一行若高过本侧，\n"
+          "     关窗就会把它后面【合法的】被接行判成断链 —— 那正是「把正确的行也标红」。\n"
+          "     ⇒ 代价：一条合流记录会长期许可低值行。补偿是另一条守卫：\n"
+          "       TestHighWaterProvenance 仍然钉死「最后一行来历 == 当前值」，\n"
+          "       所以一行落在窗口里的低值行【降不低高水位】，它只是没被解释。\n"
+          "     ⇒ 若哪天它变红，说明有人把窗口收窄了 —— 连同 Go 侧那段射程注释一起改。",
 }
 
 
@@ -192,12 +293,15 @@ def main():
         print("%-46s %-6s %-6s %s" % ("格", "期望", "实测", "判定"))
         print("-" * 76)
         bad = 0
-        for label, mutate, want in CASES:
+        for case in CASES:
+            # 第 4 个元素是【跑哪条守卫】，缺省是当前值那条。
+            label, mutate, want = case[0], case[1], case[2]
+            which = case[3] if len(case) > 3 else "TestHighWaterProvenance"
             # 每一格【都】先还原 —— 否则第 2 格量的是第 1 格的残骸。
             open(hw, "wb").write(orig)
             assert open(hw, "rb").read() == orig, "还原失败，停手"
             write(hw, mutate(read(hw)))
-            got = guard(dst)
+            got = guard(dst, which)
             ok = got == want
             bad += 0 if ok else 1
             print("%-46s %-6s %-6s %s" % (label, want, got, "✅" if ok else "❌ 不符"))

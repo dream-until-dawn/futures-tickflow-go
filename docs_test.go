@@ -820,11 +820,14 @@ var guardNames = []string{
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
+	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
+	`TestHighWaterRuleAdjacency`,
 	`TestLandingCarriersStillCarry`,
 	`TestNoConflictMarkersInDocs`,
 	`TestNoDuplicateHeadingsInCarriers`,
 	`TestNoOrphanedSentences`,
+	`TestScriptsWrapBothStreams`,
 }
 
 // funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。

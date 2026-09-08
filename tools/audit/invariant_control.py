@@ -44,6 +44,9 @@ import sys
 import tempfile
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+# stderr 也包 —— 断言消息与 SystemExit 走的是 stderr，
+# 而**一条读不懂的失败信息，和没有失败信息差不多**（2026-09-09 实测两次）。
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
