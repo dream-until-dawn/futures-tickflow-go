@@ -234,9 +234,29 @@ func TestNoOrphanedSentences(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		line := 1
-		for _, block := range strings.Split(string(b), "\n\n") {
+		// ⚠️ 两个【前提】，都是评审方 2026-09-08 量出来的，都一行：
+		//
+		// ① CRLF：`\r\n\r\n` 里两个 \n 中间隔着 \r，Split("\n\n") 切不开，
+		//    整份文件塌成一段 ⇒ 这份文件实际上只剩「全文括号总数配平」这么弱的检查，
+		//    **而且不报错，只是变弱**。今天 9 份 .md 全是 LF，条件不成立——
+		//    但这是 Windows 仓库，我自己在这棵树上被 CRLF 咬过一次。
+		// ② 行号：报出来的行号是这个守卫的【产品】（它让人去找另外半句），
+		//    报错了地方等于把人支到别处。
+		//
+		// 这两条守的都是【守卫自己的前提】，同「重名小节会让 R4 的修变弱」。
+		src := strings.ReplaceAll(string(b), "\r\n", "\n")
+		off := 0
+		for _, block := range strings.Split(src, "\n\n") {
 			checked++
+			// 行号按【这一段看得见的内容】算，不按段的起点算。
+			//
+			// 原来是 line += Count(block,"\n") + 2 —— 对，但对的是【段的起点】，
+			// 而段前若有落单的换行，起点落在空行上，读的人会在那一行找不到东西。
+			// 实测（评审方给的三种）：段间 1 空行 偏 0 / 2 空行 偏 1 / 3 空行 偏 0
+			// —— **偏移不是单调的，所以读的人也没法心算修正**。
+			lead := len(block) - len(strings.TrimLeft(block, "\n"))
+			line := strings.Count(src[:off+lead], "\n") + 1
+			off += len(block) + 2
 			for _, q := range pairs {
 				if strings.Count(block, q[0]) != strings.Count(block, q[1]) {
 					first := strings.TrimSpace(block)
@@ -255,7 +275,6 @@ func TestNoOrphanedSentences(t *testing.T) {
 					break
 				}
 			}
-			line += strings.Count(block, "\n") + 2
 		}
 		return nil
 	})
