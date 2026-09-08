@@ -612,6 +612,108 @@ func commentOutsideCode(line string) bool {
 	return false
 }
 
+// TestScriptsWrapBothStreams 抓「带中文的 Python 脚本没把两个流都包成 UTF-8」。
+//
+// 在这台机器上，Python 的 stdout/stderr 默认走系统代码页，
+// 于是**每一个中文字都是乱码**——而输出乱码最要命的地方是失败路径：
+//
+//	**一条读不懂的失败信息，和没有失败信息差不多。**
+//
+// # 为什么是守卫而不是一句约定
+//
+// 因为约定当晚就失效了，而且是**写约定的人自己**（2026-09-09）：
+//
+//	扫了一遍 tools/audit/*.py，补上 stderr，写进注释说「以后都要包」
+//	⇒ 同一晚，`tools/probe/probe.py` 被发现【连 stdout 都没包】，输出一直是乱码
+//	  —— 而本仓的规矩恰恰是「把探针输出贴进送审材料」
+//
+// ⇒ 评审方钉过的那句，这一格照抄：
+//
+//	**一条「必须有人写点东西」的规矩，只要缺了它就会红，那它就不是靠人记得，是机器要求。**
+//
+// # ⛔ 那次扫描漏掉它的原因，有两个，而它们是同一个
+//
+//	① 范围写成【目录】       只扫 tools/audit ⇒ tools/probe 在射程外
+//	② 范围写成【当前的样子】 只改「现在就有中文 assert 的」⇒ 今天没有、明天加一条的漏掉三份
+//
+//	**范围写成了「我现在看到的样子」，而不是「这条性质本身」。**
+//
+// 这是同一个形状在本仓的第四、第五次（前三次：普查表写「本节」、孤儿句守卫写 `.md`、
+// 守卫登记写死一个文件名）。**而这两次发生在【当天写完前三次之后】** ——
+// 所以它不是「没想到」，是**光想到不够**。
+//
+// # 判据只有一句
+//
+//	这份 .py 里有非 ASCII ⇒ stdout 与 stderr 两个流都要包。
+//
+// 不问它现在往哪儿写：**未捕获异常的 traceback 走 stderr，而它带得动文件名与字面量。**
+//
+// ⚠️ **射程**（照例写明它不比什么）：
+//
+//	抓的     .py 文件里有非 ASCII，而缺了两行包流里的任意一行
+//	不抓的   包了但写错了参数（例如 errors 不是 replace）——只比整行，不解析
+//	不抓的   Go / 其它语言的输出编码
+//	不抓的   「库模块被 import 时包流是副作用」这件事
+//
+// ⇒ 最后一条今天不成立，是量过的：**本仓 12 个 .py 没有一个被别的 .py import**，
+// 全是独立脚本。**哪天出现了库模块，这条判据要重想**——
+// 那时它会红，而**红在那儿正好是提醒**，不是误伤。
+func TestScriptsWrapBothStreams(t *testing.T) {
+	const (
+		wantOut = `sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")`
+		wantErr = `sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")`
+	)
+	var checked int
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, ".py") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		s := string(b)
+		if !strings.ContainsFunc(s, func(r rune) bool { return r > 127 }) {
+			return nil // 全 ASCII：包不包都不影响可读性
+		}
+		checked++
+		missing := []string{}
+		if !strings.Contains(s, wantOut) {
+			missing = append(missing, "stdout")
+		}
+		if !strings.Contains(s, wantErr) {
+			missing = append(missing, "stderr")
+		}
+		if len(missing) > 0 {
+			t.Errorf("%s 里有中文，但没包 %s。\n"+
+				"在 import 之后加上这两行（缺哪行加哪行）：\n"+
+				"  %s\n  %s\n"+
+				"⚠️ 不包的话，这个脚本【失败时】印出来的每个中文字都是乱码 ——\n"+
+				"   而失败路径正是最需要读懂的那一条。",
+				p, strings.Join(missing, " 与 "), wantOut, wantErr)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if checked < 10 {
+		t.Fatalf("只检查了 %d 份带中文的 .py —— 本仓有 12 份，"+
+			"这个数掉下来多半是 Walk 的起点或过滤条件被改坏了", checked)
+	}
+	t.Logf("检查了 %d 份带中文的 .py", checked)
+}
+
 // TestHighWaterChain 抓「来历这条链断了」。
 //
 // 起因是一次真的合并（`1f62620`）：两条分支各自抬过高水位，合并时来历行取**并集**，

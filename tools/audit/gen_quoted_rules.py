@@ -35,6 +35,7 @@ v3（本版）：表格行改判 `startswith("|")`；加粗行改成「行首加
 """
 import io, sys, re
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 FILES = ["tools/probe/README.md", "docs/README.md", "CONTRIBUTING.md",
          "tools/audit/README.md", "docs/method-landing.md"]

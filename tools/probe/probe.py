@@ -25,6 +25,11 @@ import urllib.request
 import urllib.error
 from datetime import date
 
+import io
+# stdout 与 stderr 都包 —— 断言消息与未捕获异常走 stderr，而**一条读不懂的失败信息，和没有失败信息差不多**。
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 SINA_REF = "https://finance.sina.com.cn"
 SINA_K = ("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
           "var%20_=/InnerFuturesNewService.")
