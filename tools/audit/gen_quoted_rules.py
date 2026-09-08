@@ -34,7 +34,20 @@ FILES = ["tools/probe/README.md", "docs/README.md", "CONTRIBUTING.md",
 
 BQ = chr(96)
 BS = chr(92)
-N = 26
+
+# 针 = strip 掉标记之后的【整行】，不是前缀。
+#
+# 曾经取前 26 字当针，而比对又是双向 HasPrefix ⇒ 一条已登记规矩，
+# 前 26 字之后的内容是自由的。评审方 2026-09-08 实证：把一条规矩的后半截
+# 改成意思相反的话，两张表都点头。我自己量过面：144 条里 93 条（65%）
+# 正文长于 needle，可自由改写的尾部合计 859 字。
+#
+# 而真正逼着它改的不是这个洞，是守卫【自己的报错文案】写着
+# 「改写就把 quotedRules 里那一行一起改」——那句在宣称它管改写，而它不管。
+#   ⇒ 要么把检查改成它宣称的样子，要么把宣称改成检查的样子。这里选前者。
+#
+# 代价：此后改任何一条规矩的措辞，都要重跑 tools/audit/rebuild_docs_test.py。
+# 取舍写在 docs/method-landing.md。
 
 
 def gq(x):
@@ -52,7 +65,7 @@ def is_rule(line):
     return line.startswith("**") and line.count("**") >= 2 and len(line) > 16
 
 
-rows, census, seen = [], [], set()
+rows, census = [], []
 for f in FILES:
     src = open(f, encoding="utf-8").read()
     n_bold = 0
@@ -65,14 +78,7 @@ for f in FILES:
         plain = re.sub(r'[*`>]', '', line).strip()
         if len(plain) < 12:
             continue
-        needle = plain[:N]
-        if (f, needle) in seen:
-            for k in range(N + 4, len(plain) + 1, 4):
-                needle = plain[:k]
-                if (f, needle) not in seen:
-                    break
-        seen.add((f, needle))
-        rows.append((f, needle))
+        rows.append((f, plain))   # 整行，不截断；重复行照实重复（比对按多重集）
     census.append((f, n_bold))
 
 open("quotes.gen", "w", encoding="utf-8", newline="\n").write(

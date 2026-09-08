@@ -275,7 +275,21 @@ func ruleLines(src string) []string {
 	return out
 }
 
-// TestEveryQuotedRuleIsRegistered 断言载体里的规矩【一条不多、一条不少】。
+// TestEveryQuotedRuleIsRegistered 断言载体里的规矩【逐字相同、一条不多、一条不少】。
+//
+// ⚠️ 比对是【整行相等】，不是前缀。
+//
+// 上一版针取前 26 字、比对用双向 HasPrefix ⇒ 一条已登记规矩，前 26 字之后的
+// 内容是自由的。评审方 2026-09-08 实证：把一条规矩的后半截改成意思相反的话，
+// 两张表都点头。量过面：144 条里 93 条（65%）正文长于 needle，尾部合计 859 字。
+//
+// 而逼着它改的不是这个洞，是这条测试【自己的报错文案】曾经写着
+// 「改写就把 quotedRules 里那一行一起改」——**那句在宣称它管改写，而它不管**。
+//
+//	要么把检查改成它宣称的样子，要么把宣称改成检查的样子。
+//
+// 这里选前者。代价是改任何一条规矩的措辞都要重跑生成器——取舍写在
+// docs/method-landing.md，那是评审方委派我判、并要求写下来的一格。
 func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 	byFile := map[string][]string{}
 	for _, q := range quotedRules {
@@ -287,37 +301,32 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			t.Errorf("%s 读不到：%v", file, err)
 			continue
 		}
-		actual := ruleLines(string(b))
+		// 多重集比对：同一行出现两次也要登记两次。
+		want := map[string]int{}
 		for _, n := range needles {
-			found := false
-			for _, a := range actual {
-				if strings.HasPrefix(a, n) {
-					found = true
-					break
-				}
-			}
-			if !found {
-				t.Errorf("%s 少了一条登记过的规矩：\\n  %q\\n"+
-					"  被删了还是被改写了？改写就重跑 tools/audit/rebuild_docs_test.py，"+
-					"删了就让它红着直到你确认那是有意的。\\n"+
-					"  这一格正是评审方 X2 打穿的那一格：按小节锚的守卫在这里不会响",
-					file, n)
+			want[n]++
+		}
+		got := map[string]int{}
+		for _, a := range ruleLines(string(b)) {
+			got[a]++
+		}
+		for n, c := range want {
+			if got[n] < c {
+				t.Errorf("%s 少了一条登记过的规矩（登记 %d 次，实际 %d 次）：\\n  %q\\n"+
+					"  它被【删掉】或【改过一个字】了。有意的话重跑 "+
+					"tools/audit/rebuild_docs_test.py；不是的话，"+
+					"这条规矩刚被静默改掉了。\\n"+
+					"  注意：这一层比的是【整行逐字相同】，改标点也会红——这是有意的",
+					file, c, got[n], n)
 			}
 		}
-		for _, a := range actual {
-			found := false
-			for _, n := range needles {
-				if strings.HasPrefix(a, n) {
-					found = true
-					break
-				}
-			}
-			if !found {
+		for a, c := range got {
+			if want[a] < c {
 				r := []rune(a)
-				if len(r) > 40 {
-					r = r[:40]
+				if len(r) > 44 {
+					r = r[:44]
 				}
-				t.Errorf("%s 多了一条没登记的规矩：\\n  %q…\\n"+
+				t.Errorf("%s 多了一条没登记的规矩（或某条被改写后的新样子）：\\n  %q…\\n"+
 					"  跑 tools/audit/rebuild_docs_test.py。\\n"+
 					"  不登记的后果不是现在出错，是【以后它被删掉时没有东西会响】",
 					file, string(r))
