@@ -101,13 +101,26 @@ def main():
             ok = False
             break
 
+    # ⚠️ 清理【中间产物】必须挂在两条路径上，不能只挂在成功那条。
+    #
+    # 原来 os.remove 在 sys.exit(1) 之后，于是失败时 rows/quotes/census.gen 三个都留在盘上，
+    # 而脚本正打印着「盘上没有留半成品」——目标文件还原对了，副作用没还原，
+    # 而那句话把两者说成了一件事（评审方 2026-09-08 造了一个 vet 失败量出来的）。
+    #
+    # 这就是「自述比实现宽」，这次在【失败路径】上，也就是没人会去看的地方。
+    for f in ("rows.gen", "quotes.gen", "census.gen"):
+        p = os.path.join(ROOT, f)
+        if os.path.exists(p):
+            os.remove(p)
+
     if not ok:                                     # ④ 任何一步失败就整份还原
         open(TARGET, "wb").write(original)
-        print("已把 docs_test.go 逐字节还原 —— 盘上没有留半成品")
+        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
+                     if os.path.exists(os.path.join(ROOT, f))]
+        assert not leftovers, "中间产物没清干净：%s" % leftovers
+        print("已把 docs_test.go 逐字节还原，中间产物也清了 —— 盘上没有留半成品")
         sys.exit(1)
 
-    for f in ("rows.gen", "quotes.gen", "census.gen"):
-        os.remove(os.path.join(ROOT, f))
     print("docs_test.go 重建完成：锚点 %d 节 / 规矩 %d 条 / 普查 %d 份；gofmt 与 vet 均过"
           % (rows.count("\n") + 1, quotes.count("\n") + 1, census.count("\n") + 1))
 

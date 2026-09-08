@@ -38,3 +38,8 @@ tools/probe/*.json
 # Python
 __pycache__/
 *.pyc
+
+# 生成的中间产物：登记表的唯一真源是 docs_test.go 里那三张表，
+# *.gen 只是 tools/audit/rebuild_docs_test.py 生成过程中的临时文件。
+# 提交它们等于给登记表造第二份拷贝——没人读、没人守，而它看起来权威。
+*.gen
