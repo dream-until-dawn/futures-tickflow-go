@@ -585,7 +585,13 @@ func probeGfexNoNight(ctx context.Context, md, tok string) {
 // ⚠️ **射程**：只量 `KQ.m@SHFE.rb` 一个品种，**是下界不是全市场**。
 // 别的品种夜盘时长不同，停夜盘的安排也可能不同。
 func probeNightGap(ctx context.Context, md, tok string) {
-	const sym = "KQ.m@SHFE.rb"
+	// 默认 rb；`-syms` 可以换（取第一个）。换品种的意义不在于「多量几个」——
+	// 这条判据对**夜盘跨零点**的品种不成立，而下面那道拦截正是为此而设。
+	// 不让它可换，那道拦截就永远没被行使过，而**没被行使过的拦截和没有拦截差不多**。
+	sym := "KQ.m@SHFE.rb"
+	if symsFlag != "" {
+		sym = strings.Split(symsFlag, ",")[0]
+	}
 	all := map[string][]string{}
 	fails := 0
 	// 从十年多以前往回走，每步 240 天，窗口 2000 根（约 288 天）⇒ 有重叠，不留缝。
@@ -629,6 +635,27 @@ func probeNightGap(ctx context.Context, md, tok string) {
 		return false
 	}
 
+	// 夜盘【跨零点】的品种，这个判据不成立：自然日 D 上的 00:00–01:00 那几根属于
+	// D 自己的夜盘（前一晚 21:00 开的），于是即使 D 晚上那一场没开，D 仍然「有夜盘的根」
+	// ⇒ 缺口被漏掉，而且**安静地**漏掉。换 ag/au/cu/zn/sc 来跑就是这种情况。
+	crossed := 0
+	for _, ts := range all {
+		for _, t := range ts {
+			if t >= "00:00" && t < "04:00" {
+				crossed++
+				break
+			}
+		}
+	}
+	if crossed > len(all)/10 {
+		report("shinny-night-gap", "FAIL", fmt.Sprintf(
+			"这个品种的夜盘【跨零点】（%d/%d 个自然日有 00:00–04:00 的根）——"+
+				"本判据对它不成立，会安静地漏掉缺口，不报结论。\n"+
+				"       只有夜盘收在零点之前的品种才能用这条（见 probe.md 6.9 的射程）",
+			crossed, len(all)))
+		return
+	}
+
 	var tdays []string
 	for _, d := range dates {
 		if hasDay(d) {
@@ -644,10 +671,20 @@ func probeNightGap(ctx context.Context, md, tok string) {
 
 	longest, longFrom, longTo := 0, "", ""
 	runs := map[int]int{} // 段长 -> 段数
+	// byYear 把每一段的起始交易日按年归拢。
+	// **聚合数分辨不了「检出漏了」和「期望算错了」，而日期能**（评审方 2026-09-09 要的）：
+	// 整条 SYN-7 的措辞靠「2..63 是空的」这个形状，而一个漏掉缺口的检出方法，
+	// 同样可能漏掉那些 2 天的段。
+	byYear := map[string][]string{}
 	cur, curFrom := 0, ""
 	closeRun := func(to string) {
 		if cur > 0 {
 			runs[cur]++
+			tag := curFrom
+			if cur > 1 {
+				tag = fmt.Sprintf("%s×%d", curFrom, cur)
+			}
+			byYear[curFrom[:4]] = append(byYear[curFrom[:4]], tag)
 			if cur > longest {
 				longest, longFrom, longTo = cur, curFrom, to
 			}
@@ -675,12 +712,24 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	for _, k := range lens {
 		fmt.Fprintf(&dist, "%d个交易日×%d段 ", k, runs[k])
 	}
+	ys := make([]string, 0, len(byYear))
+	for y := range byYear {
+		ys = append(ys, y)
+	}
+	sort.Strings(ys)
+	var perYear strings.Builder
+	for _, y := range ys {
+		sort.Strings(byYear[y])
+		fmt.Fprintf(&perYear, "\n       %s（%d 段）%s", y, len(byYear[y]),
+			strings.Join(byYear[y], " "))
+	}
 
 	// 基线：2026-09-09 实测。变了就该有人来看一眼 —— 这不是一条永远绿的断言。
 	const wantLongest, wantFrom, wantTo = 64, "2020-02-03", "2020-05-06"
 	st := "PASS"
 	note := ""
-	if longest != wantLongest || longFrom != wantFrom || longTo != wantTo {
+	// 基线只对默认品种成立；-syms 换过就不判（假红教人忽略真红）。
+	if symsFlag == "" && (longest != wantLongest || longFrom != wantFrom || longTo != wantTo) {
 		st = "FAIL"
 		note = fmt.Sprintf("\n       ⚠️ 与基线不符（基线 %d 个交易日 %s…%s，2026-09-09 实测）——"+
 			"要么数据变了，要么又发生了一次停夜盘，去看一眼",
@@ -688,9 +737,10 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	}
 	report("shinny-night-gap", st, fmt.Sprintf(
 		"交易日 %d 个（%s…%s）；无夜盘的连续段分布：%s\n"+
-			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s",
+			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
+			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
 		len(tdays), tdays[0], tdays[len(tdays)-1], dist.String(),
-		longest, longFrom, longTo, note))
+		longest, longFrom, longTo, note, perYear.String()))
 }
 
 // probeNightHours 量「夜盘每天开到几点」，按年列出来。
