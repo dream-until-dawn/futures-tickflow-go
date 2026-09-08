@@ -27,6 +27,9 @@ package tickflow
 // **与其给规矩加例外，不如把事实改成规矩说的那样。**
 
 import (
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -167,6 +170,108 @@ var carrierFiles = []string{
 	"CONTRIBUTING.md",
 	"tools/audit/README.md",
 	"docs/method-landing.md",
+}
+
+// TestGuardsDoNotSkipThemselves 禁止【已登记的守卫】跳过自己。
+//
+// 起因：`guardNames` 登记的是名字 ⇒ **存在 ≠ 一致**（见生成文件里那段「代价二」）。
+// 两种绕法都让名字留在原地：把函数体掏空，或者在开头加一句 Skip。
+// 前者只有对照组能看见；**后者是一个行首关键字，可以机械地堵掉**——
+// 评审方 2026-09-08 改判：他上一封否掉「加严」的理由（哈希函数体会让每次合法修改
+// 守卫都要重生成）**只管掏空那一种**，对 Skip 不成立。
+//
+// ⚠️ 而 Skip 这一种比掏空更隐蔽，**理由在自检命令本身**：
+//
+//	CONTRIBUTING 的自检是 `go test ./... -count=1`，**非 -v**
+//	⇒ 一个被 Skip 的守卫，输出里【连一个字节都不变】，三行照样全是 ok
+//	（掏空至少动了函数体，diff 里是一块；Skip 是加一行。）
+//
+// ⚠️ **判据用 go/ast，不用子串**，理由是一处【已经存在的假阳性】：
+// `docs_test.go` 里有两处 `t.Skip` 字样，**都是注释**——正是上一版为了记录这个盲点
+// 写下的那段解释。**一个朴素的子串禁令，会打中解释它自己的那段话。**
+// 用 parser 解析之后，注释天然不参与，**所以本文件和别处都可以放心地在散文里提它**。
+//
+//	⇒ 这一格是本仓「先量、再定判据」的第三次：禁 `<!--` 前数过 0、
+//	  禁冲突标记前数过 `||` 是 0，**而这次数出来不是 0，来源正是这条守卫自己的文档。**
+//
+// ⚠️ 射程（照例写明它不比什么）：
+//
+//	堵的     已登记守卫函数体内的 Skip / Skipf / SkipNow 调用
+//	不堵的   业务测试里的 Skip —— 那是合法的（比如需要外网），而它们不在 guardNames 里
+//	不堵的   把函数体掏空 —— 那是「代价二」的另一半，只有对照组能看见
+//	不堵的   在守卫【调用的辅助函数】里 Skip —— 只看守卫自己的函数体
+//
+// 范围不写成文件清单，而是「名字在 guardNames 里的函数，不管它在哪一份 _test.go」——
+// **和 TestGuardsStillExist 同一个判据**：挪个文件不算消失，也不该逃出这条守卫。
+func TestGuardsDoNotSkipThemselves(t *testing.T) {
+	want := map[string]bool{}
+	for _, n := range guardNames {
+		want[n] = true
+	}
+	if len(want) == 0 {
+		t.Fatal("guardNames 是空的 —— 这个守卫没在守任何东西")
+	}
+
+	seen := map[string]bool{}
+	fset := token.NewFileSet()
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, "_test.go") {
+			return nil
+		}
+		// 最后一个参数是 0：**不解析注释**。判据只看真的调用。
+		f, perr := parser.ParseFile(fset, p, nil, 0)
+		if perr != nil {
+			return perr
+		}
+		for _, d := range f.Decls {
+			fd, ok := d.(*ast.FuncDecl)
+			if !ok || fd.Body == nil || !want[fd.Name.Name] {
+				continue
+			}
+			seen[fd.Name.Name] = true
+			ast.Inspect(fd.Body, func(n ast.Node) bool {
+				call, ok := n.(*ast.CallExpr)
+				if !ok {
+					return true
+				}
+				sel, ok := call.Fun.(*ast.SelectorExpr)
+				if !ok {
+					return true
+				}
+				switch sel.Sel.Name {
+				case "Skip", "Skipf", "SkipNow":
+					t.Errorf("守卫 %s 在 %s:%d 调用了 %s —— 守卫不许跳过自己。\n"+
+						"  自检用的 go test ./... 是非 -v 的，被跳过的守卫在它眼里是 ok，"+
+						"输出连一个字节都不变\n"+
+						"  · 真的不该再守 ⇒ 删掉它，并跑 tools/audit/rebuild_docs_test.py\n"+
+						"  · 只是暂时不想红 ⇒ 那正是这条守卫要挡的东西",
+						fd.Name.Name, p, fset.Position(call.Pos()).Line, sel.Sel.Name)
+				}
+				return true
+			})
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("走 _test.go 时出错：%v", err)
+	}
+	// 前提也要打印出来：不然「一个守卫都没读到」和「全都干净」长得一样。
+	if len(seen) != len(want) {
+		t.Fatalf("只读到 %d 个已登记的守卫，登记的有 %d 个 —— "+
+			"这条守卫没覆盖到全部（缺失的那些由 TestGuardsStillExist 点名）",
+			len(seen), len(want))
+	}
+	t.Logf("查了 %d 个已登记的守卫，没有一个跳过自己", len(seen))
 }
 
 // conflictMarker 报告一行是不是 git 的合并冲突标记。

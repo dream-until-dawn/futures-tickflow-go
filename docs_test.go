@@ -751,6 +751,7 @@ var guardNames = []string{
 	`TestDocLinksResolve`,
 	`TestEveryQuotedRuleIsRegistered`,
 	`TestEveryRuleSectionHasAnAnchor`,
+	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
 	`TestLandingCarriersStillCarry`,
 	`TestNoConflictMarkersInDocs`,
