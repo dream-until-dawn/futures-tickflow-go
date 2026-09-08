@@ -170,6 +170,12 @@ MUTATIONS = [
         "		if !s.verified[sp] {",
         "		if false { // 人为弄坏：没走查过也照答")),
 
+    ("B3b", "TestInvariantB3_Green", SEGFILE,
+     "HasBars 拿整段的 Bars 当那一天的答案", lambda w: sub(
+        w, ST,
+        "		return s.dayHasRecords(day)",
+        "		return sp.Bars > 0, nil // 人为弄坏：拿整段的计数当那一天的答案")),
+
     ("C1", "TestInvariantC1_Red", SEGFILE, "扩 coverage 前不核对数据已落盘", lambda w: sub(
         w, ST,
         "	if have < want {",

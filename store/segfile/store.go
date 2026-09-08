@@ -231,7 +231,41 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 			return false, fmt.Errorf("%w: %s 落在 [%s, %s] 里，而这一段还没走查过",
 				tickflow.ErrSpanUnverified, day, sp.From, sp.To)
 		}
-		return sp.Bars > 0, nil
+		// ⛔ 这里【不能】用 sp.Bars > 0。
+		//
+		// 那两个计数说的是**这一段整体**对不对，§6.1 明写了它们的边界：
+		// **说不出是哪一天丢了**。拿 sp.Bars 去答「这一天有没有」，
+		// 等于把一个关于整段的事实当成了一个关于某一天的答案——
+		// 一段跨三天、只有第一天有根的 coverage，会对另外两天都答「有」。
+		//
+		// ⇒ 走一遍，找这一天的记录。**而「找不到」之所以能读成「确认没有」，
+		// 靠的是上面那一步：这一段【走查过】。** 没走查过时同样的缺席只意味着损坏。
+		return s.dayHasRecords(day)
 	}
 	return false, nil // 不在任何 coverage 里 ⇒ 没拉过，这不是「确认没有」
+}
+
+// dayHasRecords 走一遍 `.dat`，看这一天有没有记录。
+//
+// ⚠️ 它是 B2 那条判据的同一条：**和一次真正的枚举比，不和一个算出来的期望比。**
+func (s *Store) dayHasRecords(day tickflow.TradingDay) (bool, error) {
+	st, err := s.dat.Stat()
+	if err != nil {
+		return false, err
+	}
+	n := CountRecords(st.Size())
+	buf := make([]byte, RecordSize)
+	for i := int64(0); i < n; i++ {
+		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
+			return false, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
+		}
+		b, err := DecodeBar(buf)
+		if err != nil {
+			return false, err
+		}
+		if b.TradingDay == day {
+			return true, nil
+		}
+	}
+	return false, nil
 }
