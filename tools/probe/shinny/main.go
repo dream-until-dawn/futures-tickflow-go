@@ -651,10 +651,43 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			}
 		}
 	}
-	// ⚠️ 阈值取 10% 是有余量的，而**余量必须看得见**：rb 只在 2016-01-05…2016-05-02
-	// 那四个月夜盘跨零点（约 2.8%），离 10% 还远。这个数印在结论里，
-	// 免得哪天它悄悄爬到 9% 而没人知道 —— **一个没被印出来的余量，等于没有余量。**
+	// ⚠️ 阈值取 10% 是有余量的，而**余量必须看得见**。
+	// 但只印比例还不够 —— 评审方 2026-09-09 指出，**那是用错了统计量**：
+	//
+	//	rb 的 3% **不是散布在十年里的，是挤在一个连续的四个月里**
+	//	⇒ 在那四个月【内部】，这条判据不是「3% 不准」，是 **100% 不可用**
+	//
+	//	**一个按比例设的阈值，分不开「3% 散布在十年」和「3% 挤在一个季度」——
+	//	而后者是完全不同的风险：前者是噪声，后者是一段【整体失效的区间】。**
+	//
+	// ⇒ 所以真正的保障从来不是这个 10%（它只是让 rb 通过），
+	//   而是「那四个月里的假期被手工逐个排查过」。
+	//   ⇒ 两个数一起印：**全局比例**，和**最长连续跨零点区间**——
+	//     后者才是这条判据真正的失效尺度。
+	//
+	//	**一个没写明它是什么统计量的余量，印出来也还是没有余量。**
 	crossedPct := 100.0 * float64(crossed) / float64(len(all))
+	// ⛔ 第一版这里量的是「最长【连续】跨零点自然日」，而那个数是 **5** ——
+	// 不是因为窗口只有 5 天，是因为**周的节律**：周日不开夜盘 ⇒ 周一没有零点后的根
+	// ⇒ 每周必断一次。**那个统计量被一个和失效毫无关系的周期支配了。**
+	//
+	//	⇒ 要量的是「这条判据【不可用的那段区间】有多长」，
+	//	  而不是「跨零点的日子有没有挨在一起」。挨不挨在一起由周末决定。
+	//
+	// ⇒ 改量【首末跨零点日之间的跨度】里有多少个交易日 —— 那才是失效区间的长度。
+	crossFrom, crossTo := "", ""
+	for _, d := range dates {
+		for _, t := range all[d] {
+			if t >= "00:00" && t < "04:00" {
+				if crossFrom == "" {
+					crossFrom = d
+				}
+				crossTo = d
+				break
+			}
+		}
+	}
+	crossSpan := 0 // 在 tdays 建好之后再填（见下）
 	if crossed > len(all)/10 {
 		report("shinny-night-gap", "FAIL", fmt.Sprintf(
 			"这个品种的夜盘【跨零点】（%d/%d 个自然日有 00:00–04:00 的根）——"+
@@ -670,6 +703,13 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			tdays = append(tdays, d)
 		}
 	}
+	// 失效区间的跨度：首末跨零点日之间有多少个【交易日】。
+	for _, d := range tdays {
+		if crossFrom != "" && d >= crossFrom && d <= crossTo {
+			crossSpan++
+		}
+	}
+
 	// 对照组焊在里面：交易日太少 ⇒ 是取数塌了，不是市场变了。
 	if len(tdays) < 2000 {
 		report("shinny-night-gap", "FAIL",
@@ -771,14 +811,15 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	report("shinny-night-gap", st, fmt.Sprintf(
 		"交易日 %d 个（%s…%s），其中内置表覆盖得到的（2020-05-06 起）%d 个 = %.0f%%；\n"+
 			"       假如起点挪到 2019-12-11 ⇒ %d 个 = %.0f%%；挪到 2016-05-03 ⇒ %d 个 = %.0f%%\n"+
-			"       跨零点的自然日 %.1f%%（阈值 10%%）；无夜盘的连续段分布：%s\n"+
+			"       跨零点的自然日 %.1f%%（阈值 10%%），而它们**挤在 %s…%s 之间，跨 %d 个交易日** —— 那一段里这条判据【不可用】，不是「不准」\n"+
+			"       无夜盘的连续段分布：%s\n"+
 			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
 			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
 		len(tdays), tdays[0], tdays[len(tdays)-1],
 		covered, 100.0*float64(covered)/float64(len(tdays)),
 		wouldCover[0], 100.0*float64(wouldCover[0])/float64(len(tdays)),
 		wouldCover[1], 100.0*float64(wouldCover[1])/float64(len(tdays)),
-		crossedPct, dist.String(),
+		crossedPct, crossFrom, crossTo, crossSpan, dist.String(),
 		longest, longFrom, longTo, note, perYear.String()))
 }
 
