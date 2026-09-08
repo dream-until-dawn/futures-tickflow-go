@@ -569,3 +569,26 @@ func TestInvariantB3_Green(t *testing.T) {
 		t.Fatal("B3：没拉过的那天不该答「有」")
 	}
 }
+
+// TestAppendBarsRejectsZeroTradingDay 守「零值 TradingDay 在【写入口】被拦住」。
+//
+// 它守的不是「数据不会坏」，是**错误信息指得到真因**：
+// 零值记录落盘之后，走查会把它报成「谁的段都不属于 ⇒ 这才是真的损坏」——
+// 那句话指向文件，而真因是**源没填字段**。
+//
+// ⚠️ 对照组：把 AppendBars 里那个循环删掉，这条测试必须红。
+func TestAppendBarsRejectsZeroTradingDay(t *testing.T) {
+	s, _, _ := newStore(t)
+	bars := []tickflow.Bar{{Ts: 1, TsEnd: 2, TradingDay: 0}}
+	err := s.AppendBars(bars)
+	if err == nil {
+		t.Fatal("零值 TradingDay 被收下了 —— 它会在走查时被报成【文件损坏】，而那指不到真因")
+	}
+	if !errors.Is(err, errZeroTradingDay) {
+		t.Fatalf("报错了，但不是 errZeroTradingDay：%v", err)
+	}
+	// 而合法的那一侧不能被误伤
+	if err := s.AppendBars([]tickflow.Bar{{Ts: 1, TsEnd: 2, TradingDay: 20200806}}); err != nil {
+		t.Fatalf("合法记录被拦了：%v", err)
+	}
+}

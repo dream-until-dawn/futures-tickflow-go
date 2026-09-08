@@ -68,6 +68,7 @@ var (
 	errDaysMismatch   = errors.New("segfile: days 与走查数出来的对不上")
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
+	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
 )
 
 // Open 打开一个落盘目录。返回被截掉的残尾字节数（C3a，见 OpenDat）。
@@ -134,6 +135,32 @@ func (s *Store) Coverage() []tickflow.Span {
 func (s *Store) AppendBars(bars []tickflow.Bar) error {
 	if len(bars) == 0 {
 		return nil
+	}
+	// ⛔ 零值 TradingDay 在这里拦掉，而理由不是「防御性编程」。
+	//
+	// 评审方 2026-09-09 指出的那条因果，是这一格存在的全部原因：
+	//
+	//	他要来的 Verify 三分支修法，把 default 支的文案从含糊改成
+	//	「谁的段都不属于 ⇒ **这才是真的损坏**」
+	//	而零值 TradingDay **正好落进这一支**
+	//	⇒ 修之后那条错误信息更自信了，**而对这一支它说错了**：
+	//	  文件没坏，是**源没填字段**。
+	//
+	// ⇒ **一条被改得更自信的错误信息，在它说错的那一支上，比含糊时更贵。**
+	//
+	// 拦在写入口而不是走查，是因为这两者答的不是同一个问题：
+	//
+	//	走查时报   「这个文件里有一条谁的段都不属于的记录」—— 指向文件
+	//	写入时报   「你给我的第 i 条没填 TradingDay」      —— 指向调用方，也就是真因
+	//
+	// 无误伤面：交易日零值从来不是合法值（同 `Outcome` 零值不合法、`format` 用 `*int`
+	// 那一族）——**没有任何合法调用会传零值。**
+	for i, b := range bars {
+		if b.TradingDay == 0 {
+			return fmt.Errorf("%w: 第 %d 条（Ts=%d）—— "+
+				"多半是 Source 没填这个字段；它落盘之后会在走查时被报成【文件损坏】，"+
+				"而那条信息指不到真因", errZeroTradingDay, i, b.Ts)
+		}
 	}
 	buf := make([]byte, 0, len(bars)*RecordSize)
 	for _, b := range bars {
