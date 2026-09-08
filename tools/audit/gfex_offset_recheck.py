@@ -30,6 +30,7 @@ print("旧 75%% 绝对偏移 = %d ；今天 75%% = %d ；相差 %d 字节（窗�
       % (old75, new75, new75 - old75, W, 100 * (W - (new75 - old75)) / W))
 print()
 
+failed = 0
 for label, lo in (("旧表那一段(绝对偏移)", old75), ("今天的 75%", new75)):
     t0 = time.time()
     raw, _ = rng(lo, lo + W - 1)
@@ -39,6 +40,7 @@ for label, lo in (("旧表那一段(绝对偏移)", old75), ("今天的 75%", ne
     if len(raw) != W or not allx:
         print("%-22s ❌ 取数失败：%d 字节 / exchange_id %d 个 —— 不报计数"
               % (label, len(raw), len(allx)))
+        failed += 1          # 而且要传播出去：只 print 不影响退出码，等于没检查
         continue
     g = [m.start() for m in re.finditer(r'"exchange_id"\s*:\s*"GFEX"', txt)]
     cls = Counter()
@@ -49,3 +51,7 @@ for label, lo in (("旧表那一段(绝对偏移)", old75), ("今天的 75%", ne
           % (label, lo, len(raw), time.time()-t0, len(allx), dict(Counter(allx).most_common())))
     print("%-22s ⇒ GFEX %d 次  class %s" % ("", len(g), dict(cls)))
     print()
+
+if failed:
+    print("❌ 有 %d 个窗口取数失败 —— 这次的计数不构成证据" % failed)
+    sys.exit(1)

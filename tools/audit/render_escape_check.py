@@ -37,11 +37,27 @@ def trial(name, mutated):
     open(TARGET, "wb").write(raw)                      # 逐字节还原
     assert open(TARGET, "rb").read() == raw, "%s：还原没做干净" % name
     print("%-28s → %s" % (name, "🔴 有守卫响" if code != 0 else "🟢 全绿（守不住）"))
+    return code != 0
 
 
+# A2 / A3 全绿是【已知边界】，不是缺陷——所以它们不决定退出码。
 trial("A2 用 ``` 围栏包起来", lines[:i] + ["```"] + [lines[i]] + ["```"] + lines[i + 1:])
 trial("A3 行首加四个空格", lines[:i] + ["    " + lines[i]] + lines[i + 1:])
-trial("对照：真的删掉这一行", lines[:i] + lines[i + 1:])
+
+# —— 对照组必须承重 ——
+# 「A2/A3 全绿」和「所有守卫都坏了」在输出上长得一模一样。
+# 这一格以前只 print，退出码不受影响 ⇒ 守卫全坏时它会打印三个 🟢 然后 exit 0。
+# 评审方 2026-09-08 指出：**焊了对照组 ≠ 对照组在承重**，那是本仓已登记的规矩，
+# 而它在【隔壁那个脚本】立住了、在这里没有。
+control_fired = trial("对照：真的删掉这一行", lines[:i] + lines[i + 1:])
 
 code = subprocess.run(RUN, capture_output=True).returncode
-print("\n还原后自检：%s" % ("绿" if code == 0 else "❌ 红 —— 还原没做干净"))
+restored = code == 0
+print("\n还原后自检：%s" % ("绿" if restored else "❌ 红 —— 还原没做干净"))
+
+if not control_fired:
+    print("❌ 对照组没响 —— 上面那两个 🟢 不算数，先修守卫或修这个脚本")
+if not restored:
+    print("❌ 还原没做干净 —— 工作树现在是脏的，别拿这次结果当依据")
+if not (control_fired and restored):
+    sys.exit(1)          # 失败要传播：print 出来但退 0，等于没检查

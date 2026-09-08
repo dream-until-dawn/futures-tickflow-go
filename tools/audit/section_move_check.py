@@ -46,13 +46,28 @@ def trial(name, mutated):
     open(TARGET, "wb").write(raw)
     assert open(TARGET, "rb").read() == raw, "%s：还原没做干净" % name
     print("%-34s → %s" % (name, "🔴 有守卫响" if code != 0 else "🟢 全绿（守不住）"))
+    return code != 0
 
 
 moved = [l for k, l in enumerate(lines) if k != src_i]
 ins = dst_head - 1 if dst_head > src_i else dst_head
 moved = moved[:ins + 1] + [lines[src_i]] + moved[ins + 1:]
-trial("R4 整行挪到另一个小节底下", moved)
-trial("对照：真的删掉这一行", [l for k, l in enumerate(lines) if k != src_i])
+
+# 这个脚本断言的是「挪节【会】被抓到」——所以它必须红。
+r4_fired = trial("R4 整行挪到另一个小节底下", moved)
+# 对照组必须承重：否则「R4 红了」也可能只是守卫在对任何改动乱响。
+control_fired = trial("对照：真的删掉这一行",
+                      [l for k, l in enumerate(lines) if k != src_i])
 
 code = subprocess.run(RUN, capture_output=True).returncode
-print("\n还原后自检：%s" % ("绿" if code == 0 else "❌ 红 —— 还原没做干净"))
+restored = code == 0
+print("\n还原后自检：%s" % ("绿" if restored else "❌ 红 —— 还原没做干净"))
+
+if not r4_fired:
+    print("❌ 挪节【没有】被抓到 —— 登记项可能丢了「所属小节」那一维")
+if not control_fired:
+    print("❌ 对照组没响 —— 这套 harness 可能根本报不出红")
+if not restored:
+    print("❌ 还原没做干净 —— 工作树现在是脏的")
+if not (r4_fired and control_fired and restored):
+    sys.exit(1)          # 失败要传播：print 出来但退 0，等于没检查

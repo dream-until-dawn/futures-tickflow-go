@@ -66,11 +66,24 @@ for i in cidx:
 with open(CONTROL, "wb") as fh:
     fh.write(craw)
 
+restored = chk.returncode == 0
+control_ok = cgreen == len(cidx)
+
 print("扫了 %d 行（含 `**` 的行，最宽的网）" % total)
-print("还原后自检：%s" % ("绿" if chk.returncode == 0 else "❌ 红 —— 还原没做干净！"))
+print("还原后自检：%s" % ("绿" if restored else "❌ 红 —— 还原没做干净！"))
 print("对照组（删 docs/probe.md 三行，非载体，应当全绿）：%d/3 绿" % cgreen)
-if cgreen != len(cidx):
+if not control_ok:
     print("❌ 对照组不成立 —— 这个 harness 可能【根本报不出绿】，下面那个数不算数")
 print("没响的：%d 行\n" % len(silent))
 for f, n, l in silent:
     print("  %-26s :%-4d %s" % (f.split("/")[-1], n, l[:78]))
+
+# —— 失败要传播 ——
+# 这个脚本以前【只 print】：找到漏洞、对照组不成立、还原没做干净，退出码一律 0。
+# 而我一直在把它的输出当证据引用（「0 漏、对照组 3/3」）。
+# 评审方 2026-09-08 在隔壁那个脚本上指出同一件事：
+#   一条规矩在 A 文件立住、在 B 文件失效，比没立更值得一提。
+# 「一条被丢弃了输出的命令不能当依据」的镜像是：
+#   **一条退出码没有意义的命令，同样不能放进任何链子里。**
+if silent or not control_ok or not restored:
+    sys.exit(1)
