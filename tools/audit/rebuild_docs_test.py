@@ -242,9 +242,14 @@ TPL_QUOTED = '''
 //	                      一条是「加粗开头 + 后续文字」）
 //
 // 「什么算一条规矩」现已在 docs/README.md 开头声明，不再由这个模式默认决定。
+//
+// ⚠️ 登记项带【所属小节】（R4，评审方 2026-09-08）：原来只钉「这条规矩在这份文件里」，
+// 于是把整行挪到另一个 ## 底下，多重集不变 ⇒ 全绿。
+// 而**一条规矩的适用范围是它所在的小节给的**——挪节就是改适用范围。
 var quotedRules = []struct {
-	file   string
-	needle string
+	file    string
+	section string // 一字不差的标题行；文件开头那段用一个固定占位串
+	needle  string
 }{
 '''
 
@@ -275,13 +280,21 @@ var carrierCensus = []struct {
 TPL_TAIL = '''
 }
 
-// ruleLines 把一份 markdown 里所有「独立成句的规矩行」抠出来。
+// sectionedRule 是一条规矩连同它所在的小节。
+// 挪到别的小节底下就是另一件东西——适用范围是小节给的。
+type sectionedRule struct{ section, text string }
+
+// ruleLines 把一份 markdown 里所有「独立成句的规矩行」连同所属小节抠出来。
 // 判据必须和 tools/audit/gen_quoted_rules.py 的 is_rule 一致，否则两边各说各的。
-func ruleLines(src string) []string {
+func ruleLines(src string) []sectionedRule {
 	stripMark := strings.NewReplacer("*", "", "`", "", ">", "")
-	var out []string
+	section := "(文件开头，尚未进入任何小节)"
+	var out []sectionedRule
 	for _, raw := range strings.Split(src, "\\n") {
 		line := strings.TrimSpace(strings.TrimRight(raw, "\\r"))
+		if mdHeading.MatchString(line) {
+			section = line
+		}
 		if strings.HasPrefix(line, "|") { // 表格行：判据是【行首】，不是「含竖线」
 			continue
 		}
@@ -297,7 +310,7 @@ func ruleLines(src string) []string {
 		if len([]rune(plain)) < 12 {
 			continue
 		}
-		out = append(out, plain)
+		out = append(out, sectionedRule{section, plain})
 	}
 	return out
 }
@@ -318,45 +331,48 @@ func ruleLines(src string) []string {
 // 这里选前者。代价是改任何一条规矩的措辞都要重跑生成器——取舍写在
 // docs/method-landing.md，那是评审方委派我判、并要求写下来的一格。
 func TestEveryQuotedRuleIsRegistered(t *testing.T) {
-	byFile := map[string][]string{}
+	byFile := map[string][]sectionedRule{}
 	for _, q := range quotedRules {
-		byFile[q.file] = append(byFile[q.file], q.needle)
+		byFile[q.file] = append(byFile[q.file], sectionedRule{q.section, q.needle})
 	}
-	for file, needles := range byFile {
+	for file, want0 := range byFile {
 		b, err := os.ReadFile(file)
 		if err != nil {
 			t.Errorf("%s 读不到：%v", file, err)
 			continue
 		}
-		// 多重集比对：同一行出现两次也要登记两次。
-		want := map[string]int{}
-		for _, n := range needles {
-			want[n]++
+		// 多重集比对，键是【小节 + 整行】：同一行出现两次也要登记两次。
+		want := map[sectionedRule]int{}
+		for _, r := range want0 {
+			want[r]++
 		}
-		got := map[string]int{}
-		for _, a := range ruleLines(string(b)) {
-			got[a]++
+		got := map[sectionedRule]int{}
+		for _, r := range ruleLines(string(b)) {
+			got[r]++
 		}
-		for n, c := range want {
-			if got[n] < c {
-				t.Errorf("%s 少了一条登记过的规矩（登记 %d 次，实际 %d 次）：\\n  %q\\n"+
-					"  它被【删掉】或【改过一个字】了。有意的话重跑 "+
-					"tools/audit/rebuild_docs_test.py；不是的话，"+
-					"这条规矩刚被静默改掉了。\\n"+
-					"  注意：这一层比的是【整行逐字相同】，改标点也会红——这是有意的",
-					file, c, got[n], n)
+		for r, c := range want {
+			if got[r] < c {
+				t.Errorf("%s 少了一条登记过的规矩（登记 %d 次，实际 %d 次）：\\n"+
+					"  节：%s\\n  文：%q\\n"+
+					"  它被【删掉】、【改过一个字】、或【挪到别的小节】了。\\n"+
+					"  有意的话重跑 tools/audit/rebuild_docs_test.py；"+
+					"不是的话，这条规矩刚被静默改掉了。\\n"+
+					"  注意：这一层比的是【小节 + 整行逐字相同】，"+
+					"改标点会红、挪节也会红——都是有意的",
+					file, c, got[r], r.section, r.text)
 			}
 		}
-		for a, c := range got {
-			if want[a] < c {
-				r := []rune(a)
-				if len(r) > 44 {
-					r = r[:44]
+		for r, c := range got {
+			if want[r] < c {
+				x := []rune(r.text)
+				if len(x) > 44 {
+					x = x[:44]
 				}
-				t.Errorf("%s 多了一条没登记的规矩（或某条被改写后的新样子）：\\n  %q…\\n"+
+				t.Errorf("%s 多了一条没登记的规矩（或某条被改写/挪节之后的新样子）：\\n"+
+					"  节：%s\\n  文：%q…\\n"+
 					"  跑 tools/audit/rebuild_docs_test.py。\\n"+
 					"  不登记的后果不是现在出错，是【以后它被删掉时没有东西会响】",
-					file, string(r))
+					file, r.section, string(x))
 			}
 		}
 	}

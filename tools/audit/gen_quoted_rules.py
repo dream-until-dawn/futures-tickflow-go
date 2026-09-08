@@ -65,12 +65,23 @@ def is_rule(line):
     return line.startswith("**") and line.count("**") >= 2 and len(line) > 16
 
 
+HEAD = re.compile(r'^#{2,3} ')
+
 rows, census = [], []
 for f in FILES:
     src = open(f, encoding="utf-8").read()
     n_bold = 0
+    # R4（评审方 2026-09-08）：登记表原来只钉「这条规矩在这份文件里」，
+    # 没钉「它在哪一节下」——而**一条规矩的适用范围是它所在的小节给的**。
+    # 把整行挪到另一个 ## 底下，多重集不变 ⇒ 全绿。所以连小节一起登记。
+    section = "(文件开头，尚未进入任何小节)"
     for raw in src.splitlines():
         line = raw.strip()
+        if HEAD.match(line):
+            section = line
+            # ⚠️ 这里【不能】continue：普查数的判据是「含 ** 的行」，标题也算，
+            # 而 Go 那边就是这么数的。第一版在这里 continue 了，
+            # 于是普查数少了 39 —— 两边的判据当场分岔，是重建时 vet 前的对比发现的。
         if "**" in line:
             n_bold += 1              # 普查：不挑格式，含 ** 就算
         if not is_rule(line):
@@ -78,16 +89,16 @@ for f in FILES:
         plain = re.sub(r'[*`>]', '', line).strip()
         if len(plain) < 12:
             continue
-        rows.append((f, plain))   # 整行，不截断；重复行照实重复（比对按多重集）
+        rows.append((f, section, plain))   # 整行 + 所属小节；重复行照实重复
     census.append((f, n_bold))
 
 open("quotes.gen", "w", encoding="utf-8", newline="\n").write(
-    "\n".join("\t{%s, %s}," % (gq(f), gq(n)) for f, n in rows) + "\n")
+    "\n".join("\t{%s, %s, %s}," % (gq(f), gq(sec), gq(n)) for f, sec, n in rows) + "\n")
 open("census.gen", "w", encoding="utf-8", newline="\n").write(
     "\n".join("\t{%s, %d}," % (gq(f), n) for f, n in census) + "\n")
 
 per = {}
-for f, _ in rows:
+for f, _, _ in rows:
     per[f] = per.get(f, 0) + 1
 print("登记 %d 条规矩；普查（含 ** 的行）：" % len(rows))
 for f, n in census:
