@@ -196,6 +196,46 @@ func TestCarriersHaveNoHTMLComments(t *testing.T) {
 	}
 }
 
+// TestNoDuplicateHeadingsInCarriers 禁止同一份载体里出现两个同名小节。
+//
+// 起因（评审方 2026-09-08 挂的账）：R4 的修法是把「所属小节」并进登记键，
+// 而**那个键是小节的标题文本**。于是同一份文件里若有两个同名小节，
+// 一条规矩在它们之间挪动，键不变 ⇒ **R4 那个修在那两节之间静默变弱**。
+//
+// 这不是「守卫坏了」，是**守卫的一个前提**：小节标题在文件内唯一。
+// 前提没人守的时候，它迟早不成立——所以在这里守住它。
+//
+// 敢直接禁的理由和禁 HTML 注释一样：写这条时五份载体里重名小节共 0 个，
+// 零成本；而规矩文档里两个同名小节本来就会让读者分不清引用的是哪一节。
+func TestNoDuplicateHeadingsInCarriers(t *testing.T) {
+	for _, f := range carrierFiles {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Errorf("%s 读不到：%v", f, err)
+			continue
+		}
+		seen := map[string]int{}
+		for n, raw := range strings.Split(string(b), "\n") {
+			line := strings.TrimSpace(strings.TrimRight(raw, "\r"))
+			if !mdHeading.MatchString(line) {
+				continue
+			}
+			if first, dup := seen[line]; dup {
+				t.Errorf("%s 有两个同名小节：第 %d 行与第 %d 行\n  %s\n"+
+					"  登记表用【小节标题文本】当键，重名会让「规矩挪节」在这两节之间"+
+					"静默不被发现（R4 那个修在这里变弱）。\n"+
+					"  改一个标题即可——它们本来也会让读者分不清引用的是哪一节",
+					f, first, n+1, line)
+			} else {
+				seen[line] = n + 1
+			}
+		}
+	}
+	if len(carrierFiles) < 5 {
+		t.Fatalf("carrierFiles 只有 %d 份，载体不止这些", len(carrierFiles))
+	}
+}
+
 // commentOutsideCode 判断这一行是不是【真的】有 HTML 注释。
 //
 // 行内代码里的注释记号不是注释，是在【讲】注释——本仓的文档就得这么讲它。
@@ -471,6 +511,11 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `「后面几步跑完了」不等于「整条跑成了」。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `一条流水线要么 set -e，要么写成一个脚本，每步断言、失败即整份还原。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `一条规矩在 A 文件立住、在 B 文件失效，比没立更值得一提。`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `改写当然可见。 而他自己复盘出来的更难看：`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `挪动比改写更不可见（diff 里同一段文字出现两次，扫内容什么新东西都看不到），`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `他却拿这条理由去给更隐蔽的那个降级。`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `一个降级理由如果成立，会把你正在评审的这整套东西一起否掉，`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `那它就不是降级理由，是一个自毁的论证。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `最刺眼的形态：两个位置是同一个人在同一天写的。）`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `「一条被丢弃了输出的命令不能当依据」的镜像是：`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `一条【退出码没有意义】的命令，同样不能放进任何链子里。`},
@@ -565,6 +610,8 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `一个检查的报错文案，是它对外做出的承诺。承诺和实现不符时，`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `先坏的不是那个洞——是【读到文案的人以为那一格有人守】。`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `⇒ 要么把检查改成它宣称的样子，要么把宣称改成检查的样子，两者必须对上。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `⚠️ R4 的修有一个前提：小节标题在文件内唯一。`},
+	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `守住一个守卫的【前提】，和守住它要守的东西，是两件事。`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `② 成立（那是关于概率的），① 不成立：改写在 diff 里同样可见——`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `这一整套登记表就都不必存在了——上面每一种攻击在 diff 里都看得见。`},
 	{`docs/method-landing.md`, `### 覆盖面的机械定义，**以及它量错过一次**`, `此后改任何一条规矩的一个标点，测试都会红，必须重跑生成器。`},
@@ -608,9 +655,9 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 114},
-	{`CONTRIBUTING.md`, 111},
+	{`CONTRIBUTING.md`, 118},
 	{`tools/audit/README.md`, 34},
-	{`docs/method-landing.md`, 149},
+	{`docs/method-landing.md`, 152},
 }
 
 // sectionedRule 是一条规矩连同它所在的小节。

@@ -34,14 +34,21 @@ for f in FILES:
         raw = fh.read()
     lines = raw.decode("utf-8").split("\n")
     idx = [i for i, l in enumerate(lines) if "**" in l]
+    assert idx, "%s 里一行含 `**` 的都没有 —— 扫了个空，别把 0 当成「没漏」" % f
     for i in idx:
         total += 1
         cut = lines[:i] + lines[i + 1:]
+        body = "\n".join(cut).encode("utf-8")
+        # 第一类断言：这次变异【真的发生了】。
+        # 缺了它，「变异没做成」会被记成「守卫没响」——今天踩过四次。
+        assert body != raw, "%s:%d 变异没有改变文件内容" % (f, i + 1)
         with open(f, "wb") as fh:
-            fh.write("\n".join(cut).encode("utf-8"))
+            fh.write(body)
+        assert open(f, "rb").read() == body, "%s:%d 写盘没生效" % (f, i + 1)
         r = subprocess.run(RUN, capture_output=True)   # bytes：不解码，别让编码错误混进判据
         with open(f, "wb") as fh:          # 逐字节还原，不用 replace
             fh.write(raw)
+        assert open(f, "rb").read() == raw, "%s:%d 还原没做干净" % (f, i + 1)
         if r.returncode == 0:
             silent.append((f, i + 1, lines[i].strip()))
 
@@ -58,13 +65,17 @@ with open(CONTROL, "rb") as fh:
 clines = craw.decode("utf-8").split("\n")
 cgreen = 0
 cidx = [i for i, l in enumerate(clines) if "**" in l][:3]
+assert len(cidx) == 3, "对照组文件里含 `**` 的行不足 3 行 —— 对照组本身没建起来"
 for i in cidx:
+    cbody = "\n".join(clines[:i] + clines[i + 1:]).encode("utf-8")
+    assert cbody != craw, "对照组第 %d 次变异没有改变文件内容" % (i + 1)
     with open(CONTROL, "wb") as fh:
-        fh.write("\n".join(clines[:i] + clines[i + 1:]).encode("utf-8"))
+        fh.write(cbody)
     if subprocess.run(RUN, capture_output=True).returncode == 0:
         cgreen += 1
 with open(CONTROL, "wb") as fh:
     fh.write(craw)
+assert open(CONTROL, "rb").read() == craw, "对照组文件还原没做干净"
 
 restored = chk.returncode == 0
 control_ok = cgreen == len(cidx)
