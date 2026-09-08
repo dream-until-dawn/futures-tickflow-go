@@ -186,10 +186,7 @@ func TestInvariantA1b_GreenOnOpen(t *testing.T) {
 //
 // ⇒ **不是「不方便测」，是「要测就得为测试改生产接口」，而这笔交换这一格不值。**
 // （我给它加过一格突变，结果是 BUILD。查下去才发现就算编译得过也抓不到 ——
-//
-//	  **一个连编译都不过的突变，有时是在告诉你「你打的地方不在那条路上」。**）
-//
-//		查下去才发现就算编译得过它也抓不到。**BUILD 那一档这次是把注意力引到了对的地方。**）
+// **一个连编译都不过的突变，有时是在告诉你「你打的地方不在那条路上」。**）
 func TestMetaSurvivesCrashBeforeRename(t *testing.T) {
 	s, cal, k := newStore(t)
 	dir := s.dir
