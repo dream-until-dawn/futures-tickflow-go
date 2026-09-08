@@ -82,7 +82,7 @@ def markdown_files(ref=None):
             dirs[:] = [d for d in dirs if d not in SKIPDIRS]
             for fn in files:
                 if fn.endswith(".md"):
-                    out.append(os.path.join(root, fn).replace("\\", "/").lstrip("./"))
+                    out.append(os.path.relpath(os.path.join(root, fn), ".").replace("\\", "/"))
         return sorted(out)
     r = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref],
                        capture_output=True)
@@ -94,7 +94,22 @@ def markdown_files(ref=None):
 
 
 def section_bounds(lines, pattern):
-    """找 §6.1 的行区间 [start, end)。end 取【同级或更高级】的下一个标题。"""
+    """找 §6.1 的行区间 [start, end)，并把【两端那两行原文】一起返回。
+
+    ⛔ 为什么要把终止行也返回（评审方 2026-09-09 的 M2，我复现了）：
+
+        把 §6.1 【内部】一个 `####` 提成 `###`
+        ⇒ 之内 14→1、之外 4→17、**合计不变**、承重的「旧范围盖不到 39.1%」→ 95.7%
+        ⇒ 而自检**照常打绿**
+
+    成因是结构性的，不是没测到：`inside` 与 `outside` 对**任何** (s, e) 都是
+    design.md 命中行的一次不重不漏的划分 ⇒ 它们的和恒等于 design 的命中数
+    ⇒ **那条「分项之和 == 全文行数」的断言，不可能因为边界错而红。**
+
+        **一条恒真的断言，和一条不存在的断言，区别只在它让人以为有东西在守。**
+
+    ⇒ 所以边界必须自己变成一个【读数】，并且被断言。
+    """
     starts = [i for i, l in enumerate(lines) if re.match(pattern, l)]
     if not starts:
         raise SystemExit("找不到 §6.1 的标题（正则 %s）—— 标题改过就要改这里" % pattern)
@@ -102,13 +117,13 @@ def section_bounds(lines, pattern):
     level = len(lines[s]) - len(lines[s].lstrip("#"))
     for i in range(s + 1, len(lines)):
         if re.match(r"^#{1,%d} " % level, lines[i]):
-            return s, i
-    return s, len(lines)
+            return s, i, lines[s], lines[i]
+    return s, len(lines), lines[s], ""
 
 
 def census(ref=None):
     design = read(DESIGN, ref)
-    s, e = section_bounds(design, r"^#{2,4} .*6\.1")
+    s, e, head, tail = section_bounds(design, r"^#{2,4} .*6\.1")
 
     inside = [i + 1 for i in range(s, e) if NEEDLE in design[i]]
     outside = [i + 1 for i in range(len(design))
@@ -120,8 +135,8 @@ def census(ref=None):
         hits = [i + 1 for i, ln in enumerate(read(path, ref)) if NEEDLE in ln]
         if hits:
             others[path] = hits
-    return {"section": (s + 1, e), "inside": inside,
-            "outside": outside, "others": others}
+    return {"section": (s + 1, e), "head": head, "tail": tail,
+            "inside": inside, "outside": outside, "others": others}
 
 
 def main():
@@ -133,10 +148,15 @@ def main():
     where = ref if ref else "工作区"
     print("关于 `%s` 的断言 —— %s" % (NEEDLE, where))
     print("  design.md §6.1 = 行 %d..%d" % c["section"])
+    print("      起于  %s" % c["head"].strip()[:64])
+    print("      止于  %s" % (c["tail"].strip()[:64] or "（文件末尾）"))
     print("    §6.1 之内   %3d 行" % len(ins))
     print("    §6.1 之外   %3d 行   %s" % (len(out), out))
     for path, hits in sorted(others.items()):
-        print("  %-13s %3d 行   %s" % (os.path.basename(path), len(hits), hits))
+        # ⛔ 打全路径，不打 basename：本仓有【四个】README.md
+        # （根 / docs / tools/audit / tools/probe）⇒ basename 会打印出两行一模一样的东西，
+        # 而读的人照它打不开正确的文件。**范围按性质写对了，显示又把它塌回一个位置名。**
+        print("  %-24s %3d 行   %s" % (path, len(hits), hits))
     if not others:
         print("  其余 .md        0 行")
     print("  ── 合计       %3d 行" % total)
@@ -147,14 +167,38 @@ def main():
     if total:
         print("  旧范围（只看 §6.1）盖不到 %d 行，占 %.1f%%" % (missed, 100.0 * missed / total))
 
-    # 合计必须等于那条【文档里写着的】命令的输出 —— 两条路数出来不一样就是这里错了
+    # ⛔ 边界断言 —— 这一条才是承重的那条。
+    #
+    # 「旧范围盖不到 X%」是当初改范围的【理由】，而它完全由 §6.1 的两端决定。
+    # 把终止标题钉死：§6.1 之内哪天加了一个 `###`，这里当场红，
+    # 而红的人必须回来看一眼那个百分比还对不对。
+    #
+    # ⚠️ 这是一条「必须有人写点东西」的规矩：改了章节结构就得改这两行常量。
+    #    它**会**因为合法的重构而红 —— 那正是要它红的地方。
+    WANT_HEAD = "### 6.1 "
+    WANT_TAIL = "## 七、同步"
+    assert c["head"].startswith(WANT_HEAD), (
+        "§6.1 的标题变了：%r（期望以 %r 开头）—— 改了就把这里的常量一起改"
+        % (c["head"][:60], WANT_HEAD))
+    assert c["tail"].strip() == WANT_TAIL, (
+        "§6.1 的【终止标题】是 %r，而期望 %r。\n"
+        "  ⇒ 多半是 §6.1 之内新加了一个 `###`，于是这一节被截短了。\n"
+        "  ⇒ 而那会让「旧范围盖不到 X%%」这个【承重的数】悄悄改掉，合计却纹丝不动。\n"
+        "  ⇒ 确认新结构没问题之后，把 WANT_TAIL 改成新的终止标题。"
+        % (c["tail"].strip()[:60], WANT_TAIL))
+
+    # 分项之和 == 全文命中数。
+    # ⚠️ 措辞订正：原来写「出自同一次遍历」，而这里其实遍历了**两次**
+    # （census 一次、这里再一次）。真是同一次遍历的话，这条断言就是纯废话。
+    # 它的实际作用是：**两条各自独立的路数出同一个数。**
     allmd = []
     for path in markdown_files(ref):
         allmd += read(path, ref)
     plain = sum(1 for l in allmd if NEEDLE in l)
-    assert plain == total, ("分项加起来 %d，而 grep 全文数出 %d —— "
-                            "分项与合计出自同一次遍历，它们不该不等" % (total, plain))
-    print("  ✅ 分项之和 == 全文行数（%d）—— 两个数出自同一次遍历" % plain)
+    assert plain == total, ("分项加起来 %d，而全文数出 %d —— "
+                            "两条路数出来不一样，就是这里错了" % (total, plain))
+    print("  ✅ 分项之和 == 全文行数（%d）—— 两条【各自独立】的路数出同一个数" % plain)
+    print("  ✅ §6.1 的两端与记录一致（起 %r / 止 %r）" % (WANT_HEAD, WANT_TAIL))
 
 
 if __name__ == "__main__":
