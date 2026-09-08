@@ -291,6 +291,29 @@ func TestInvariantB3_Green(t *testing.T) {
 	if !has {
 		t.Fatal("B3：这一天有 2 根，却答成没有")
 	}
+
+	// ⛔ 而【段内另一天一根都没有】那一格，必须答「没有」。
+	//
+	// 这一格是补的：上一版这一对用的是【单日区间】，
+	// 而在单日区间上「整段有没有根」与「那一天有没有根」给出同一个答案
+	// ⇒ 两种实现在那个输入上**分不开**，于是一个「拿 sp.Bars 当那一天的答案」
+	// 的实现照样全绿。**一条不变量的射程，是由它的测试输入划的。**
+	s2, cal2, k2 := newStore(t)
+	if err := s2.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200731, 2)}); err != nil {
+		t.Fatal(err)
+	}
+	wide := tickflow.Span{From: 20200731, To: 20200803, Bars: 2, Days: 1}
+	if err := s2.CommitSpan(cal2, k2, wide, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	if err := s2.Verify(wide); err != nil {
+		t.Fatalf("走查失败：%v", err)
+	}
+	if has, err := s2.HasBars(20200803); err != nil || has {
+		t.Fatalf("B3：20200803 在这一段里、一根都没有、而这一段走查过了 "+
+			"⇒ 应当答【确认没有】。实得 has=%v err=%v"+
+			"\n（答「有」说明它拿的是整段的 Bars —— 那两个计数说不出是哪一天）", has, err)
+	}
 	// 而【不在任何 coverage 里】的那天是「没拉过」，不是「答不了」，也不是「确认没有」。
 	has, err = s.HasBars(20200806)
 	if err != nil {
