@@ -647,6 +647,10 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			}
 		}
 	}
+	// ⚠️ 阈值取 10% 是有余量的，而**余量必须看得见**：rb 只在 2016-01-05…2016-05-02
+	// 那四个月夜盘跨零点（约 2.8%），离 10% 还远。这个数印在结论里，
+	// 免得哪天它悄悄爬到 9% 而没人知道 —— **一个没被印出来的余量，等于没有余量。**
+	crossedPct := 100.0 * float64(crossed) / float64(len(all))
 	if crossed > len(all)/10 {
 		report("shinny-night-gap", "FAIL", fmt.Sprintf(
 			"这个品种的夜盘【跨零点】（%d/%d 个自然日有 00:00–04:00 的根）——"+
@@ -736,10 +740,10 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			wantLongest, wantFrom, wantTo)
 	}
 	report("shinny-night-gap", st, fmt.Sprintf(
-		"交易日 %d 个（%s…%s）；无夜盘的连续段分布：%s\n"+
+		"交易日 %d 个（%s…%s）；跨零点的自然日 %.1f%%（阈值 10%%）；无夜盘的连续段分布：%s\n"+
 			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
 			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
-		len(tdays), tdays[0], tdays[len(tdays)-1], dist.String(),
+		len(tdays), tdays[0], tdays[len(tdays)-1], crossedPct, dist.String(),
 		longest, longFrom, longTo, note, perYear.String()))
 }
 
