@@ -477,7 +477,6 @@ var quotedRules = []struct {
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `一个长期红着的检查，会慢慢变成背景。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `它今天是「一个未解决的问题」，一年后是「那个一直红的东西」。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `在仓库里长得一样，而在读者那里完全不同——前者告诉他「这条路查过了」，`},
-	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `而上一版的措辞让它看起来像漏改，那比它本身更糟：下一个人会去给它加一个假的判定。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `一条退出码没有意义的命令，不能放进任何链子里——`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `四个脚本曾经只 print 不退非零，评审方在其中一个上抓到，我按同一条把检查类过了一遍。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `⚠️ 上一版这里写的是「把全目录过了一遍」——那是假的：8 个里有 1 个（测量类）`},
@@ -588,7 +587,7 @@ var carrierCensus = []struct {
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 128},
 	{`CONTRIBUTING.md`, 217},
-	{`tools/audit/README.md`, 65},
+	{`tools/audit/README.md`, 64},
 	{`docs/method-landing.md`, 163},
 }
 
