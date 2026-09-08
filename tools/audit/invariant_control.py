@@ -1,4 +1,6 @@
-"""片一那 10 条不变量的【对照组】——把实现弄坏，看该红的那一条红不红。
+"""定点突变对照组 —— 把实现弄坏，看该红的那一条红不红。
+
+两组：`store/segfile` 的片一 10 条不变量，以及 `Calendar` 契约那几条。
 
 ## 为什么需要它
 
@@ -51,6 +53,10 @@ PASS, FAIL, BUILD, TIME = "PASS", "FAIL", "BUILD", "TIME"
 
 META = os.path.join("store", "segfile", "meta.go")
 STORE = "store.go"
+EMB = os.path.join("calendar", "embedded", "embedded.go")
+
+SEGFILE = "./store/segfile/"   # 片一那 10 条在这里
+ROOTPKG = "."                  # Calendar 契约那几条在根包（外部测试包）
 
 
 def ignore(_d, names):
@@ -66,14 +72,17 @@ def sub(work, rel, old, new):
     open(p, "w", encoding="utf-8", newline="\n").write(s.replace(old, new, 1))
 
 
-# ── 九次定点突变。每一条都写明【预期哪个测试失败】。──
+# ── 定点突变表。每一条写明【预期哪个测试失败】以及【在哪个包跑】。──
+#
+# ⚠️ 一个 harness、两组定义 —— 不为第二组新建脚本。
+#    本仓「第二份拷贝，今天一致明天分叉」已经栽过三次。
 #
 # ⚠️ F1 那一格预期失败的是 _Green 而不是 _Red：
 #    F1 的绊线【就是】_Green（真实字段集必须等于声明），
 #    而 _Red 测的是绊线这件仪器本身好不好使。**突变要打在绊线上，不是打在仪器自检上。**
 
 MUTATIONS = [
-    ("A1a", "TestInvariantA1a_Red", "把「升序」那一条判据删掉", lambda w: sub(
+    ("A1a", "TestInvariantA1a_Red", SEGFILE, "把「升序」那一条判据删掉", lambda w: sub(
         w, META,
         """		if s.From < prev.From {
 			return fmt.Errorf("%w: coverage[%d].From=%d 小于 coverage[%d].From=%d",
@@ -81,7 +90,7 @@ MUTATIONS = [
 		}
 """, "")),
 
-    ("A1b", "TestInvariantA1b_Red", "把「不重叠」那一条判据删掉", lambda w: sub(
+    ("A1b", "TestInvariantA1b_Red", SEGFILE, "把「不重叠」那一条判据删掉", lambda w: sub(
         w, META,
         """		if s.From <= prev.To {
 			return fmt.Errorf("%w: coverage[%d] 从 %d 起，而 coverage[%d] 到 %d 为止",
@@ -89,7 +98,7 @@ MUTATIONS = [
 		}
 """, "")),
 
-    ("A1c", "TestInvariantA1c_Red", "让「端点不是交易日」放行", lambda w: sub(
+    ("A1c", "TestInvariantA1c_Red", SEGFILE, "让「端点不是交易日」放行", lambda w: sub(
         w, META,
         """				if errors.Is(err, tickflow.ErrNotTradingDay) {
 					return fmt.Errorf("%w: coverage[%d].%s = %s 不是交易日",
@@ -99,50 +108,81 @@ MUTATIONS = [
 					continue // 人为弄坏：不是交易日也放行
 				}""")),
 
-    ("A2", "TestInvariantA2_Red", "把相邻性改成【自然日】：要求 b == a+1", lambda w: sub(
+    ("A2", "TestInvariantA2_Red", SEGFILE, "把相邻性改成【自然日】：要求 b == a+1", lambda w: sub(
         w, META,
         "	if b <= a {\n		return false, nil\n	}\n	n := 0",
         "	if b <= a {\n		return false, nil\n	}\n"
         "	if true {\n		return b == a+1, nil // 人为弄坏：按自然日判，不问日历\n	}\n	n := 0")),
 
-    ("A3", "TestInvariantA3_Red", "让写下来的 0 也算合法版本", lambda w: sub(
+    ("A3", "TestInvariantA3_Red", SEGFILE, "让写下来的 0 也算合法版本", lambda w: sub(
         w, META,
         "		case *m.Format != FormatVersion:", "		case *m.Format != FormatVersion && *m.Format != 0:")),
 
-    ("D1", "TestInvariantD1_Red", "让两个哨兵变成同一个值", lambda w: sub(
+    ("D1", "TestInvariantD1_Red", SEGFILE, "让两个哨兵变成同一个值", lambda w: sub(
         w, STORE,
         '	ErrLegacyMeta = errors.New("tickflow/store: meta 版本未知且源不可重放——需要一个显式决定")',
         '	ErrLegacyMeta = ErrSpanUnverified // 人为弄坏：两个「答不了」合并成一个')),
 
-    ("D2a", "TestInvariantD2a_Red", "把判定写成常数：一律作废重拉", lambda w: sub(
+    ("D2a", "TestInvariantD2a_Red", SEGFILE, "把判定写成常数：一律作废重拉", lambda w: sub(
         w, META,
         "	if replayable {\n		return LegacyDiscard, nil\n	}\n	return LegacyUnverified, tickflow.ErrLegacyMeta",
         "	return LegacyDiscard, nil // ← 人为弄坏：常数判定")),
 
-    ("E1a", "TestInvariantE1a_Red", "解析失败时返回一个空 Meta 顶上", lambda w: sub(
+    ("E1a", "TestInvariantE1a_Red", SEGFILE, "解析失败时返回一个空 Meta 顶上", lambda w: sub(
         w, META,
         '		return nil, fmt.Errorf("%w: %v", errMetaUnreadable, err)',
         "		return &Meta{}, nil // ← 人为弄坏：拿默认值顶上")),
 
-    ("E1b", "TestInvariantE1b_Red", "把「超前版本」那一条判据删掉", lambda w: sub(
+    ("E1b", "TestInvariantE1b_Red", SEGFILE, "把「超前版本」那一条判据删掉", lambda w: sub(
         w, META,
         """		case *m.Format > FormatVersion:
 			return nil, fmt.Errorf("%w: format=%d，本版只认到 %d", errFutureFormat, *m.Format, FormatVersion)
 """, "")),
 
-    ("F1", "TestInvariantF1_Green", "往 Meta 里加一个日历派生字段", lambda w: sub(
+    ("F1", "TestInvariantF1_Green", SEGFILE, "往 Meta 里加一个日历派生字段", lambda w: sub(
         w, META,
         "	Coverage []tickflow.Span `json:\"coverage\"`",
         "	Coverage []tickflow.Span `json:\"coverage\"`\n\n	IsTradingDay bool `json:\"is_trading_day\"` // ← 人为弄坏：把日历的答案抄进来")),
+
+    # —— Calendar 契约那一组（根包外部测试包）——
+    ("Cal-Template", "TestCalendarContract_OutsideCoverage_Red", ROOTPKG,
+     "Template 方法不再判覆盖", lambda w: sub(
+        w, EMB,
+        """	if err := c.coversDay(k, num); err != nil {
+		return tickflow.SessionTemplate{}, err
+	}
+	return Template(k, num)""",
+        "	return Template(k, num)")),
+
+    ("Cal-DayOf", "TestCalendarContract_OutsideCoverage_Red", ROOTPKG,
+     "DayOf 不再判覆盖", lambda w: sub(
+        w, EMB,
+        """	if err := c.coversDay(k, num); err != nil {
+		return tickflow.Day{}, err
+	}
+	t, err := Template(k, num)""",
+        "	t, err := Template(k, num)")),
+
+    ("Cal-DayAt", "TestCalendarContract_OutsideCoverage_Red", ROOTPKG,
+     "DayAt 不再判时间戳窗口", lambda w: sub(
+        w, EMB,
+        "	if ts < lo || ts >= hi { // 与 Session.Contains 同口径：半开区间",
+        "	if ts < lo && ts >= hi { // 人为弄坏：这个条件永不成立，等于不判窗口")),
+
+    ("Cal-Night", "TestCalendarContract_FirstDayNightSession_Red", ROOTPKG,
+     "覆盖下界改成 midnight(cf)", lambda w: sub(
+        w, EMB,
+        "	return first.Sessions[0].Start, last.Sessions[len(last.Sessions)-1].End, nil",
+        "	return midnight(cf), last.Sessions[len(last.Sessions)-1].End, nil // 人为弄坏：按午夜算")),
 ]
 
 
-def run_one(work, name):
+def run_one(work, name, pkg):
     v = subprocess.run(["go", "vet", "./..."], cwd=work, capture_output=True, timeout=300)
     if v.returncode != 0:
         return BUILD
     try:
-        p = subprocess.run(["go", "test", "-run", "^" + name + "$", "-count=1", "./store/segfile/"],
+        p = subprocess.run(["go", "test", "-run", "^" + name + "$", "-count=1", pkg],
                            cwd=work, capture_output=True, timeout=300)
     except subprocess.TimeoutExpired:
         return TIME
@@ -159,12 +199,12 @@ def main():
         shutil.copytree(ROOT, dst, ignore=ignore)
         assert not os.path.exists(os.path.join(dst, ".env")), "副本里不该有 .env"
         assert not os.path.exists(os.path.join(dst, ".git")), "副本里不该有 .git"
-        keep = {rel: open(os.path.join(dst, rel), "rb").read() for rel in (META, STORE)}
+        keep = {rel: open(os.path.join(dst, rel), "rb").read() for rel in (META, STORE, EMB)}
 
         print("副本：%s（不带 .git / .env，跑完删）" % dst)
         print()
-        print("基线：不做任何突变，20 个测试应当全绿")
-        base = subprocess.run(["go", "test", "-count=1", "./store/segfile/"],
+        print("基线：不做任何突变，全仓测试应当全绿")
+        base = subprocess.run(["go", "test", "-count=1", "./..."],
                               cwd=dst, capture_output=True, timeout=300)
         if base.returncode != 0:
             print((base.stdout + base.stderr).decode("utf-8", "replace")[:800])
@@ -175,11 +215,11 @@ def main():
         print("%-5s %-26s %-24s %-6s %s" % ("编号", "突变", "预期失败的测试", "实测", "判定"))
         print("-" * 92)
         bad = 0
-        for nid, target, desc, mutate in MUTATIONS:
+        for nid, target, pkg, desc, mutate in MUTATIONS:
             for rel, b in keep.items():          # 每一格都先还原
                 open(os.path.join(dst, rel), "wb").write(b)
             mutate(dst)
-            got = run_one(dst, target)
+            got = run_one(dst, target, pkg)
             ok = got == FAIL                     # 弄坏了，那个测试就该红
             bad += 0 if ok else 1
             print("%-5s %-26s %-24s %-6s %s" % (nid, desc, target, got,

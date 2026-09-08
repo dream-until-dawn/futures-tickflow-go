@@ -170,6 +170,18 @@ var cffexDay = map[string][]tickflow.Session{
 
 // Template 返回该品种的内置标称模板。
 // 未收录、或交易日早于生效起点时返回 ErrUncovered——**那是「答不了」，不是「没有交易」**。
+//
+// ⚠️ 它的覆盖判据【只有】品种与 baseFrom，**不含任何一份日历的注入区间** ——
+// 因为它是包级函数，手上没有 Calendar 实例。
+//
+// ⇒ 所以它比 `(*Calendar).Template` 【宽】，而那不是缺陷，是分工：
+//
+//	包级这个    答「**内置表**对这一天怎么说」   ← 探针拿标称模板去比交易所实际给的时段，用的就是它
+//	方法那个    答「**这份日历**答得了吗」       ← 它会先比 Covers（见 coversDay）
+//
+// ⛔ 2026-09-08 之前，方法那个是【直接转给这里】的 ——
+// **等于借用了「标称表怎么说」去回答「这份日历答得了吗」**，
+// 于是任何日历的未来日期都被答成「那天不交易」。来历与实测见 docs/contract.md §5。
 func Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, error) {
 	t, ok := template(k)
 	if !ok {
@@ -221,6 +233,21 @@ func Products() []tickflow.ProductKey {
 type Calendar struct {
 	days  []tickflow.TradingDay // 升序、去重
 	index map[tickflow.TradingDay]int
+
+	// coverFrom / coverTo 是覆盖区间的两端，**在 New 里算一次**。
+	//
+	// ⚠️ 它们存在的理由是实测出来的：Covers 原来每次都线性扫一遍 days，
+	// 而 2026-09-09 那次改动把 Covers 放到了 DayOf / DayAt 的每一条路径上
+	// ⇒ 1500 个交易日的日历上，DayAt 从 310ns 变成 3322ns（约 11 倍），
+	// 而且**随日历长度线性增长**——17 年的日历会更糟。
+	//
+	// ⚠️ 而它们能被缓存，靠的是一个前提：**Calendar 在 New 之后不可变**。
+	// 那个前提现在没有任何东西守着（没有 setter，但也没有守卫）。
+	// ⇒ 哪天加了「往日历里补一天」这种方法，**这两个字段必须跟着更新**，
+	// 否则它们就成了一份会过期的抄件——正是本仓反复栽的那一类。
+	coverFrom tickflow.TradingDay
+	coverTo   tickflow.TradingDay
+	coverOK   bool // 注入的交易日里有没有落在 baseFrom 之后的
 }
 
 // New 构造一个 Calendar。
@@ -249,7 +276,18 @@ func New(tradingDays []tickflow.TradingDay) (*Calendar, error) {
 	for i, d := range out {
 		idx[d] = i
 	}
-	return &Calendar{days: out, index: idx}, nil
+	c := &Calendar{days: out, index: idx}
+	// 覆盖区间只算一次：注入列表与 baseFrom 的交集，两者在 New 之后都不再变。
+	for _, d := range out {
+		if d < baseFrom {
+			continue
+		}
+		if !c.coverOK {
+			c.coverFrom, c.coverOK = d, true
+		}
+		c.coverTo = d
+	}
+	return c, nil
 }
 
 // Days 返回注入的交易日（升序、去重）。
@@ -259,7 +297,63 @@ func (c *Calendar) Days() []tickflow.TradingDay {
 
 // Template 见包级 Template。
 func (c *Calendar) Template(k tickflow.ProductKey, num tickflow.TradingDay) (tickflow.SessionTemplate, error) {
+	// ⛔ 不能直接转给包级 Template：它的覆盖判据比本日历的 Covers 宽（见 coversDay）。
+	// 上一版就是直接转的，于是对一个覆盖不到的日期【成功返回一份模板】——
+	// **那比返回一个错误值更坏：它给的是一个能被拿去算相位的结构体。**
+	if err := c.coversDay(k, num); err != nil {
+		return tickflow.SessionTemplate{}, err
+	}
 	return Template(k, num)
+}
+
+// coversDay 报告 num 在不在本日历对 k 的【覆盖区间】内。
+//
+// ⚠️ 这一步存在的理由，是它当初【不存在】造成的后果（2026-09-08 实测，见 contract.md §5）：
+// DayOf 第一步问包级 Template「答得了吗」——**顺序是对的，而它问错了人**：
+// Template 的覆盖判据只有品种与 baseFrom，**不含注入的交易日区间**，
+// 而 Covers 才是两者的交集。⇒ **一个比 Covers 宽的判据，被当成了 Covers 用。**
+// 后果：任何日历的「未来日期」都会被答成「那天不交易」，
+// 而「明天开不开市」正是 calendar.go 明写着「答不了，去看交易所公告」的那一格。
+func (c *Calendar) coversDay(k tickflow.ProductKey, num tickflow.TradingDay) error {
+	cf, ct, ok := c.Covers(k)
+	if !ok {
+		return fmt.Errorf("embedded: 未收录品种 %s.%s: %w",
+			k.Exchange, k.Product, tickflow.ErrUncovered)
+	}
+	if num < cf || num > ct {
+		return fmt.Errorf(
+			"embedded: 问的是 %s，而本日历只覆盖 [%s, %s]"+
+				"——这是【答不了】，不是「那天不交易」: %w",
+			num, cf, ct, tickflow.ErrUncovered)
+	}
+	return nil
+}
+
+// coverageWindow 是覆盖区间在【时间戳】上的样子：半开区间 [lo, hi)，与 Session.Contains 同口径。
+//
+// ⛔ 下界【不能】自己算 midnight(cf)：有夜盘的品种，cf 那天的第一段挂在
+// **上一个交易日的自然日**上，于是 Sessions[0].Start 可能【早于】midnight(cf)。
+// 按午夜算，一个真属于 cf 的夜盘时刻会被判成 ErrUncovered。
+// **这正是「交易日 ≠ 自然日」在时间戳侧的同一个形状**（评审方 2026-09-08 指出）。
+func (c *Calendar) coverageWindow(k tickflow.ProductKey) (lo, hi int64, err error) {
+	cf, ct, ok := c.Covers(k)
+	if !ok {
+		return 0, 0, fmt.Errorf("embedded: 未收录品种 %s.%s: %w",
+			k.Exchange, k.Product, tickflow.ErrUncovered)
+	}
+	first, err := c.DayOf(k, cf)
+	if err != nil {
+		return 0, 0, err
+	}
+	last, err := c.DayOf(k, ct)
+	if err != nil {
+		return 0, 0, err
+	}
+	if len(first.Sessions) == 0 || len(last.Sessions) == 0 {
+		return 0, 0, fmt.Errorf("embedded: %s.%s 的覆盖端点没有任何时段（实现自相矛盾）: %w",
+			k.Exchange, k.Product, tickflow.ErrUncovered)
+	}
+	return first.Sessions[0].Start, last.Sessions[len(last.Sessions)-1].End, nil
 }
 
 // Covers 报告本日历对该品种能回答的交易日闭区间。
@@ -267,19 +361,12 @@ func (c *Calendar) Template(k tickflow.ProductKey, num tickflow.TradingDay) (tic
 // 两个约束取交集：注入的交易日列表，与内置模板的生效起点 baseFrom。
 // 品种没收录 → ok=false（整个答不了）。
 func (c *Calendar) Covers(k tickflow.ProductKey) (from, to tickflow.TradingDay, ok bool) {
+	// ⚠️ 品种那一半必须每次都问：覆盖 = 注入区间 ∩ baseFrom ∩ 【本品种收录了没有】，
+	// 而只有前两者能预算。日期那一半在 New 里算好了（见 coverFrom/coverTo 的注释）。
 	if _, ok := template(k); !ok {
 		return 0, 0, false
 	}
-	for _, d := range c.days {
-		if d < baseFrom {
-			continue
-		}
-		if from == 0 {
-			from = d
-		}
-		to = d
-	}
-	return from, to, from != 0
+	return c.coverFrom, c.coverTo, c.coverOK
 }
 
 // DayOf 组装某个交易日的【实际】时段。
@@ -294,6 +381,12 @@ func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickfl
 	// 反过来的话，一个覆盖不到的日期会因为不在 index 里而被报成
 	// ErrNotTradingDay——**又把「答不了」说成了「没有交易」**，
 	// 只是换了个更像模像样的说法。
+	//
+	// ⛔ 上一版这里【只】问了包级 Template，而它的判据比 Covers 宽 ⇒ 顺序对、人问错了。
+	// 实测后果与来历见 coversDay 与 contract.md §5。
+	if err := c.coversDay(k, num); err != nil {
+		return tickflow.Day{}, err
+	}
 	t, err := Template(k, num)
 	if err != nil {
 		return tickflow.Day{}, err
@@ -320,6 +413,23 @@ func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickfl
 // DayAt 返回包含 ts 的交易日。
 // 休市 → ErrClosed；覆盖不到 → ErrUncovered。
 func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, error) {
+	// ⚠️ 能力问题优先于内容问题：「我答得了吗」必须在「答案是什么」之前定。
+	// ErrClosed 是一个【实质答案】（那天有市，只是那一刻没在交易）——
+	// 在不知道的时候给出实质答案，和 Template 那一格是同一个错，只是说法更像样。
+	//
+	// ⛔ 上一版没有这一步：一个落在时段内、但属于覆盖之外某一天的时刻，
+	// 会被答成 ErrClosed（实测：+1 天 / +365 天两次都是）。
+	lo, hi, err := c.coverageWindow(k)
+	if err != nil {
+		return tickflow.Day{}, err
+	}
+	if ts < lo || ts >= hi { // 与 Session.Contains 同口径：半开区间
+		return tickflow.Day{}, fmt.Errorf(
+			"embedded: %s 落在本日历的覆盖之外——这是【答不了】，不是「那一刻没在交易」: %w",
+			time.UnixMilli(ts).In(tickflow.CST).Format("2006-01-02 15:04"),
+			tickflow.ErrUncovered)
+	}
+
 	// 夜盘最多往前挂一个交易日，所以只需看当天与下一个交易日。
 	i := sort.Search(len(c.days), func(i int) bool {
 		return midnight(c.days[i]) > ts
@@ -330,10 +440,18 @@ func (c *Calendar) DayAt(k tickflow.ProductKey, ts int64) (tickflow.Day, error) 
 		}
 		d, err := c.DayOf(k, c.days[j])
 		if err != nil {
-			// 覆盖不到就直说，别把它降级成「这一刻没在交易」
-			if errors.Is(err, tickflow.ErrUncovered) {
-				return tickflow.Day{}, err
-			}
+			// ⚠️ 这里【跳过】而不是抛出，包括 ErrUncovered。
+			//
+			// 「答不答得了」已经由上面那个 coverageWindow 判完了；
+			// 到了这一层，职责只剩「这个时刻归哪一天」，而邻日可能本来就在覆盖之外
+			// —— 注入列表里排在 cf 之前的那些日子就是（它们只用来给 cf 的夜盘定基准）。
+			//
+			// ⚠️ 原来这里是【抛】的，而那句「覆盖不到就直说」当时是对的：
+			// 那时 DayOf 从不对覆盖内的日子报 ErrUncovered，抛出来的必定是真的答不了。
+			// **给 DayOf 加了覆盖判定之后，同一行代码的含义就变了** ——
+			// cf 的夜盘时刻会因为邻日（cf 的前一天）在覆盖外而被判成答不了。
+			// 这一格由 TestCalendarContract_FirstDayNightSession_Red 顶着，
+			// 而它正是在这次改动里当场红给我看的。
 			continue
 		}
 		for _, s := range d.Sessions {

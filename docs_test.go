@@ -496,6 +496,7 @@ var quotedRules = []struct {
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `和「唯一」同族：把「我处理过的范围」写成了「存在的范围」。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `这个目录存在的理由（2026-09-08 学到的，代价是同一段文档改了三次）：`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `有些格子不是审计漏了，是它已经无法被审计了——`},
+	{`tools/audit/README.md`, `## 现有脚本`, `一个 harness、两组定义 —— 不为第二组新建脚本（本仓「第二份拷贝」已经栽过三次）。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `而「它们是绿的」和「它们在跑」是两件事。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `它自己复制一份仓库（不带 .git / .env）在那儿动手，跑完删，所以跑它不会弄脏工作区。`},
 	{`tools/audit/README.md`, `## 现有脚本`, `一行标签与实际跑的不符的对照组，比缺这一行更糟——缺了是一处空白，`},
@@ -601,7 +602,7 @@ var carrierCensus = []struct {
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
 	{`CONTRIBUTING.md`, 225},
-	{`tools/audit/README.md`, 75},
+	{`tools/audit/README.md`, 80},
 	{`docs/method-landing.md`, 163},
 }
 
