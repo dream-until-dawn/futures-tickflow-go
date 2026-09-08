@@ -242,6 +242,10 @@ def main():
     # 从盘上抽会让「上一次生成漏了谁」原样传下去 —— 那是「第二份拷贝」的又一种形态。
     staticTpl = (TPL_HEAD + TPL_ANCHORS + TPL_MID_A + TPL_QUOTED
                  + TPL_MID_B + TPL_TAIL + TPL_GUARDS)
+    # ⛔ 而这一行是【两个位置】，不是一个性质：包里的守卫它看不见。
+    #   实测 2026-09-09：删掉 store/segfile/coverage_test.go 的 TestFifthColumnNamesExist
+    #   ⇒ vet 过 / 四包全绿 / 这里仍然数出同一个守卫数。**没有任何东西响。**
+    #   那个包里现在有 2 条这样的守卫，为什么不改成按性质抽——理由写在那个文件头。
     guardsSrc = staticTpl + open(os.path.join(ROOT, "docs_guards_test.go"),
                                  encoding="utf-8").read()
     names = sorted(set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc)))
