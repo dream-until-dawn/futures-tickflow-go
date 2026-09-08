@@ -350,6 +350,9 @@ var quotedRules = []struct {
 	{`docs/README.md`, `没有一个字是假的，而整体是一个未被支持的断言。`},
 	{`docs/README.md`, `有些格子不是审计漏了，是它已经无法被审计了——`},
 	{`docs/README.md`, `而记录当时【怎么量的】，本来可以让它可审。`},
+	{`docs/README.md`, `不是发明了一个错误，是把一个错误的强度提高了一档。`},
+	{`docs/README.md`, `传播一条解释之前，先问：这条是我验的，还是我读来的？`},
+	{`docs/README.md`, `改写的那一下，出处就没了。`},
 	{`docs/README.md`, `重新量能验证「是什么」，验证不了「在哪」——如果「在`},
 	{`docs/README.md`, `「我的数据分不开这两种解释」是一句关于【我手上这批数`},
 	{`docs/README.md`, `不是关于【这个问题】的话。说它之前必须先问：再取一次`},
@@ -399,6 +402,12 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `我发明了那个模式，却没把它用在自己刚建的这套东西上。`},
 	{`docs/method-landing.md`, `「它有一个机械定义」这句话本身，也可能是一个「看起来`},
 	{`docs/method-landing.md`, `定义要和文件里实际用的格式对齐，而那要数一遍，不是想`},
+	{`docs/method-landing.md`, `模式识别型的守卫，覆盖面 = 那个模式；而模式是人写`},
+	{`docs/method-landing.md`, `这不是这一版没做好，是这类守卫的固有形状。证据就在本`},
+	{`docs/method-landing.md`, `我为覆盖面写的第一个模式漏掉了 11 条，而发现它靠`},
+	{`docs/method-landing.md`, `不是靠读那个模式。模式自己不会告诉你它漏了什么。`},
+	{`docs/method-landing.md`, `⇒ 所以这类守卫的正确读法是：它保证的是「符合这个模`},
+	{`docs/method-landing.md`, `不是「规矩没被删」。 两句话的差就是模式的边界，而那`},
 	{`docs/method-landing.md`, `上表那三个 ❌ 是这张表最诚实的部分。`},
 }
 
