@@ -808,6 +808,7 @@ var guardNames = []string{
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
+	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
 	`TestLandingCarriersStillCarry`,
 	`TestNoConflictMarkersInDocs`,

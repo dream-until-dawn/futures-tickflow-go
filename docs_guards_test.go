@@ -612,6 +612,115 @@ func commentOutsideCode(line string) bool {
 	return false
 }
 
+// TestHighWaterChain 抓「来历这条链断了」。
+//
+// 起因是一次真的合并（`1f62620`）：两条分支各自抬过高水位，合并时来历行取**并集**，
+// 于是并集里的值**不再单调**——`rules` 走到 `263 266 268 270 275 276` 之后冒出一个 `271`。
+//
+//	**那不是错，那是另一条分支的历史被接了进来。**
+//
+// ⛔ 而在这条守卫之前，**没有任何东西看得见它**：`TestHighWaterProvenance` 只比
+// 「最后一行来历」和「当前值」，中间怎么走它不看。
+//
+// # 判据是 running max，不是「和上一行比」
+//
+// 两者在 `1f62620` 上给出不同的读数（2026-09-09 实测）：
+//
+//	和上一行比    2 处（`271` 那行，和它后面的 `277` 那行）
+//	running max   1 处（只有 `271` 那行）
+//
+// 取后者，理由是**`277` 那一行没有错**：真实的最大值就是 `276`，从 276 抬到 277 是对的。
+//
+//	**一条会把正确的行也标红的规则，会教人忽略它。**
+//
+// # 合流记录：一条「必须有人写点东西」的规矩
+//
+//	# 来历 <日期> <名字> <值> 合流 <另一侧的最大值> <说明>
+//
+// 它放宽随后那些行：该名字下值不超过「另一侧最大值」的，是被接进来的历史。
+// **两个正式字段**（第 6 个是 `合流`，第 7 个是数），不靠说明文字里的括号去猜——
+// 括号是散文，而这条链是要被机器走的。
+//
+// ⚠️ **射程**（照例写明它不比什么）：
+//
+//	抓的     值低于此前见过的最大值，而没有合流记录罩着
+//	不抓的   合流记录里的数**是不是真的**——它挡的是「忘了说」，不是「说了假话」
+//	不抓的   来历行的**说明文字**对不对；那是散文，没有守卫
+//	不抓的   合流之后又出现的、比另一侧最大值还小的行——它会被同一条合流记录放行
+//
+// ⇒ 最后一条是有意留的口子，**而「为什么不收窄」比「有个口子」值钱**：
+//
+//	收窄的办法是【下一次真正抬高时关窗】。而一次合并可能接进来好几行，
+//	其中一行若高过本侧，关窗就会把它后面【合法的】被接行判成断链 ——
+//	那正是上面刚否掉的「把正确的行也标红」。
+//
+// ⇒ 代价：一条合流记录会**长期**许可低值行。而它有一条补偿，写在这儿免得读者高估这个洞：
+//
+//	`TestHighWaterProvenance` 仍然钉死「最后一行来历 == 当前值」
+//	⇒ 一行落在窗口里的低值行**降不低高水位**，它只是【没被解释】。
+//
+// 对照组 `tools/audit/provenance_control.py` 的 `C5` 格就是它，**期望绿**。
+//
+// ⚠️ 这条规则在 `tools/audit/rebuild_docs_test.py` 的 `chainBreaks` 里**还有一份**。
+// 两份是有意的（一份在写盘前拦，一份拦绕过 rebuild 的那条路），
+// **而它们会分岔，分岔本身没有守卫**——照实写在这儿。
+func TestHighWaterChain(t *testing.T) {
+	type seen struct {
+		max   int
+		allow int
+		hasA  bool
+	}
+	st := map[string]*seen{}
+	var lines int
+	for i, raw := range strings.Split(highWaterRaw, "\n") {
+		f := strings.Fields(raw)
+		if len(f) < 5 || f[0] != "#" || f[1] != "来历" {
+			continue
+		}
+		name := f[3]
+		val, err := strconv.Atoi(f[4])
+		if err != nil {
+			continue // 字段读不懂由 TestHighWaterProvenance 去报，这里不重复报
+		}
+		lines++
+		s := st[name]
+		if s == nil {
+			s = &seen{}
+			st[name] = s
+		}
+		if len(f) >= 7 && f[5] == "合流" {
+			other, err := strconv.Atoi(f[6])
+			if err != nil {
+				t.Errorf("high_water.txt:%d 合流记录的「另一侧最大值」读不懂：%q\n"+
+					"格式是「# 来历 <日期> <名字> <值> 合流 <另一侧的最大值> <说明>」",
+					i+1, f[6])
+				continue
+			}
+			s.allow, s.hasA = other, true
+			if val > s.max {
+				s.max = val
+			}
+			continue
+		}
+		if val < s.max && !(s.hasA && val <= s.allow) {
+			t.Errorf("high_water.txt:%d 链断了：%q = %d，而此前已经见过 %d。\n"+
+				"两种成因，两种改法：\n"+
+				"  ① 合并把另一条分支的来历接了进来 ⇒ 在【被接进来那一行之前】插一行合流记录：\n"+
+				"       # 来历 <日期> <名字> <值> 合流 <另一侧的最大值> <说明>\n"+
+				"  ② 有人手动把某个数改小了却没说 ⇒ 补一行来历，写明为什么\n"+
+				"⚠️ 插入是【只增】：别去改已有的那些行，diff 里不该出现减号。",
+				i+1, name, val, s.max)
+		}
+		if val > s.max {
+			s.max = val
+		}
+	}
+	if lines == 0 {
+		t.Fatal("一行来历都没读到 —— 这条守卫没在守任何东西")
+	}
+	t.Logf("走过 %d 行来历，%d 个名字", lines, len(st))
+}
+
 // TestHighWaterProvenance 守 tools/audit/high_water.txt 里的【来历】行。
 //
 // 为什么它必须存在：`rebuild_docs_test.py` 抬高水位时会自动追加一行来历，

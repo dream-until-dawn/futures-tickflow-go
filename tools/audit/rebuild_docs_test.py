@@ -29,6 +29,9 @@ import subprocess
 import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+# stderr 也包 —— 断言消息与 SystemExit 走的是 stderr，
+# 而**一条读不懂的失败信息，和没有失败信息差不多**（2026-09-09 实测两次）。
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -87,6 +90,76 @@ def provOf(line):
         except ValueError:
             return None
     return None
+
+
+MERGE_FORMAT = "# 来历 <日期> <名字> <值> 合流 <另一侧的最大值> <说明>"
+
+
+def chainBreaks(lines):
+    """按 running max 走一遍来历，返回断链处 [(行号, 名字, 值, 此前见过的最大值)]。
+
+    ⚠️ 判据是 **running max**，不是「和上一行比」。两者在 main 上读数不同
+    （和上一行比 2 处，running max 1 处），取后者的理由写在 high_water.txt 里：
+    **一条会把正确的行也标红的规则，会教人忽略它。**
+
+    合流行（第 6 个字段是 `合流`，第 7 个是另一侧的最大值）不参与比较，
+    而是**放宽随后那些行**：值不超过「另一侧最大值」的，是被接进来的历史。
+
+    ⚠️ 这条规则在 docs_guards_test.go 的 TestHighWaterChain 里【还有一份】。
+    两份是有意的，不是遗漏：
+        这一份要在【写盘之前】拦住追加 —— 守卫拦不住，它跑的时候已经写完了；
+        那一份要拦住【绕过 rebuild 直接改文件】的那条路 —— 这一份看不见。
+    ⇒ 代价是它们会分岔。两边都造了突变对照组，而**分岔本身没有守卫**，照实写在这儿。
+    """
+    run, allow, breaks = {}, {}, []
+    for i, raw in enumerate(lines):
+        f = raw.split()
+        if len(f) < 5 or f[0] != "#" or f[1] != "来历":
+            continue
+        try:
+            name, val = f[3], int(f[4])
+        except ValueError:
+            continue
+        if len(f) >= 7 and f[5] == "合流":
+            try:
+                allow[name] = int(f[6])
+            except ValueError:
+                breaks.append((i + 1, name, val, -1))
+                continue
+            run[name] = max(run.get(name, 0), val)
+            continue
+        prev = run.get(name)
+        if prev is not None and val < prev and not (name in allow and val <= allow[name]):
+            breaks.append((i + 1, name, val, prev))
+        run[name] = max(prev if prev is not None else 0, val)
+    return breaks
+
+
+def refuseIfChainBroken(lines):
+    """链断着就【不写】，并把要求的格式印出来 —— 报错而不说要什么，等于没要求。"""
+    breaks = chainBreaks(lines)
+    if not breaks:
+        return
+    print("", file=sys.stderr)
+    print("⛔ 拒绝追加来历：tools/audit/high_water.txt 的链是断的。", file=sys.stderr)
+    for ln, name, val, prev in breaks:
+        print("   第 %d 行  %s = %d，而此前已经见过 %d" % (ln, name, val, prev),
+              file=sys.stderr)
+    print("", file=sys.stderr)
+    print("   往一条断链上继续追加，只会让「这个数从哪来」这个问题更答不了。",
+          file=sys.stderr)
+    print("", file=sys.stderr)
+    print("   两种成因，两种改法：", file=sys.stderr)
+    print("     ① 合并把另一条分支的来历接了进来 ⇒ 在【被接进来那一行之前】插一行合流记录：",
+          file=sys.stderr)
+    print("          %s" % MERGE_FORMAT, file=sys.stderr)
+    print("        <值> 填合流之后的最大值，<另一侧的最大值> 填被接进来那一侧的最高点。",
+          file=sys.stderr)
+    print("     ② 有人手动把某个数改小了却没说 ⇒ 补一行来历，写明为什么。", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("   ⚠️ 插入是【只增】：不要去改已有的那些行，diff 里不该出现减号。",
+          file=sys.stderr)
+    raise SystemExit(1)
 
 
 def restore(original):
@@ -261,6 +334,9 @@ def main():
             grew.append((k, hw[k], n))
             hw[k] = n
     if grew:
+        # ⛔ 先看链断没断 —— 断着就不追加（评审方 2026-09-09 定的甲''）。
+        #    往一条断链上追加，等于给一个答不了的问题再添一行。
+        refuseIfChainBroken(hwLines)
         # 来历：抬多少、什么时候、因为什么，由【做这件事的那一趟】自己写下来。
         # 手写的来历没有守卫，而一个假的来历比没有来历更危险（评审方 2026-09-08）。
         before = [ln for ln in hwLines if provOf(ln)]
