@@ -89,8 +89,25 @@ def main():
     for name, blob in (("rows", rows), ("quotes", quotes), ("census", census)):
         assert blob.strip(), "%s.gen 是空的 —— 生成器没产出东西，拒绝写空表" % name
 
+    # 下限跟表一起生成（理由见 gen_quoted_rules.py 里那段）：
+    # 手写在 Go 里的下限会【随规模自动变松】——这是这套守卫里唯一
+    # 「什么都不做也会变弱」的一处，评审方 2026-09-08 量出来的。
+    floors = open(os.path.join(ROOT, "floors.gen"), encoding="utf-8").read().split()
+    assert len(floors) == 2, "floors.gen 格式不对：%r" % floors
+    quotedFloor, censusFloor = int(floors[0]), int(floors[1])
+    # 锚点表的下限这里算：三张表要么都生成下限，要么都别生成——
+    # 只生成两张会留下第三张继续随规模变松，而它读起来和另外两张一样「已经处理过」。
+    anchorFloor = int((rows.count("\n") + 1) * 0.9)
+    assert quotedFloor > 0 and censusFloor > 0 and anchorFloor > 0, \
+        "下限生成成了 0 —— 那等于没有下限"
+
     body = (prefix + TPL_ANCHORS + rows + TPL_MID_A + TPL_QUOTED + quotes
             + TPL_MID_B + census + TPL_TAIL)
+    body = body.replace("__ANCHOR_FLOOR__", str(anchorFloor))
+    body = body.replace("__QUOTED_FLOOR__", str(quotedFloor))
+    body = body.replace("__CENSUS_FLOOR__", str(censusFloor))
+    for ph in ("__ANCHOR_FLOOR__", "__QUOTED_FLOOR__", "__CENSUS_FLOOR__"):
+        assert ph not in body, "占位符 %s 没被换掉 —— 那会写出一个编译不过的文件" % ph
     open(TARGET, "w", encoding="utf-8", newline="\n").write(body)
 
     ok = True
@@ -108,14 +125,14 @@ def main():
     # 而那句话把两者说成了一件事（评审方 2026-09-08 造了一个 vet 失败量出来的）。
     #
     # 这就是「自述比实现宽」，这次在【失败路径】上，也就是没人会去看的地方。
-    for f in ("rows.gen", "quotes.gen", "census.gen"):
+    for f in ("rows.gen", "quotes.gen", "census.gen", "floors.gen"):
         p = os.path.join(ROOT, f)
         if os.path.exists(p):
             os.remove(p)
 
     if not ok:                                     # ④ 任何一步失败就整份还原
         open(TARGET, "wb").write(original)
-        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
+        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen", "floors.gen")
                      if os.path.exists(os.path.join(ROOT, f))]
         assert not leftovers, "中间产物没清干净：%s" % leftovers
         print("已把 docs_test.go 逐字节还原，中间产物也清了 —— 盘上没有留半成品")
@@ -219,7 +236,7 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 		}
 	}
 
-	if len(ruleAnchors) < 20 {
+	if len(ruleAnchors) < __ANCHOR_FLOOR__ {
 		t.Fatalf("ruleAnchors 只有 %d 条，不像覆盖了五份载体——"+
 			"先确认这张表没被清空，再谈它有没有全过", len(ruleAnchors))
 	}
@@ -389,7 +406,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 	}
-	if len(quotedRules) < 60 {
+	if len(quotedRules) < __QUOTED_FLOOR__ {
 		t.Fatalf("quotedRules 只有 %d 条，不像覆盖了五份载体 —— 先确认这张表没被清空",
 			len(quotedRules))
 	}
@@ -418,7 +435,7 @@ func TestCarrierCensus(t *testing.T) {
 				c.file, c.boldLines, n, n-c.boldLines)
 		}
 	}
-	if len(carrierCensus) < 5 {
+	if len(carrierCensus) < __CENSUS_FLOOR__ {
 		t.Fatalf("普查表只有 %d 份文件，载体不止这些", len(carrierCensus))
 	}
 }

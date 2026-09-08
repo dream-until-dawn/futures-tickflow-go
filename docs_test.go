@@ -490,7 +490,7 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 		}
 	}
 
-	if len(ruleAnchors) < 20 {
+	if len(ruleAnchors) < 42 {
 		t.Fatalf("ruleAnchors 只有 %d 条，不像覆盖了五份载体——"+
 			"先确认这张表没被清空，再谈它有没有全过", len(ruleAnchors))
 	}
@@ -601,6 +601,7 @@ var quotedRules = []struct {
 	{`docs/README.md`, `## 置信度：三级，**别悄悄升格**`, `一句 caveat 若同时解释掉好几个不一致，先别信它。`},
 	{`docs/README.md`, `## 置信度：三级，**别悄悄升格**`, `同理：一句听起来像结论的话，即便内容没错，也会让人停止追问它的依据。`},
 	{`CONTRIBUTING.md`, `(文件开头，尚未进入任何小节)`, `他的独立性正是他的价值，本仓不替他规定。`},
+	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `它把「这一版做了几件事」变成一个【要看的东西】，而不是一个【要记得问的问题】。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `一条被丢弃了输出的命令，不能拿来当「已完成」的依据。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `要么留输出，要么事后用一条独立命令查状态。`},
 	{`CONTRIBUTING.md`, `## 一、送审要给三样，缺一退回`, `截断那一步报 substring not found，而后面几步照跑——往一个残缺的文件上又接了两张表，`},
@@ -647,6 +648,8 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `### 发现「批准的 SHA ≠ 要合并的 SHA」时，**停下来问**`, `我为它写了一行解释，说明我心里知道它需要解释——需要解释的合并，就是需要问一句的合并。`},
 	{`CONTRIBUTING.md`, `### 发现「批准的 SHA ≠ 要合并的 SHA」时，**停下来问**`, `你正在为一个动作写解释，这件事本身就是那个动作需要被批准的证据。`},
 	{`CONTRIBUTING.md`, `## 五、并行分支：**同一文件上都有改动，就串成线**`, `分别评 A、分别评 B，不等于评了 A+B。 合并后的那份文件是第三个产物，`},
+	{`CONTRIBUTING.md`, `## 五、并行分支：**同一文件上都有改动，就串成线**`, `rebase 才是它们第一次碰面。`},
+	{`CONTRIBUTING.md`, `## 五、并行分支：**同一文件上都有改动，就串成线**`, `守卫是按【树】跑的，不是按【改动】跑的。 一个分支开出去之后，`},
 	{`CONTRIBUTING.md`, `### 会在打 tag 那一刻失败的守卫，**打之前先空跑一次**`, `空跑不是为了看它退不退非零，是为了【读它说了什么】。`},
 	{`CONTRIBUTING.md`, `### 会在打 tag 那一刻失败的守卫，**打之前先空跑一次**`, `一条只在未来才执行的分支，它既没被执行过，也没被读过；`},
 	{`CONTRIBUTING.md`, `### 会在打 tag 那一刻失败的守卫，**打之前先空跑一次**`, `空跑解决前者，读输出解决后者——而只做前者会让你以为两者都解决了。`},
@@ -751,7 +754,7 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 123},
-	{`CONTRIBUTING.md`, 118},
+	{`CONTRIBUTING.md`, 131},
 	{`tools/audit/README.md`, 34},
 	{`docs/method-landing.md`, 152},
 }
@@ -852,7 +855,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			}
 		}
 	}
-	if len(quotedRules) < 60 {
+	if len(quotedRules) < 178 {
 		t.Fatalf("quotedRules 只有 %d 条，不像覆盖了五份载体 —— 先确认这张表没被清空",
 			len(quotedRules))
 	}
