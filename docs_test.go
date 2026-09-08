@@ -474,6 +474,9 @@ var quotedRules = []struct {
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `为什么不把它接进送审自检（CONTRIBUTING.md 那条命令）：`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `一条红着而没人跑的检查，和没有这条检查的区别，只在读者的印象里。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `这样「它是红的」这件事，不需要有人去跑它才知道。`},
+	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `一个长期红着的检查，会慢慢变成背景。`},
+	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `它今天是「一个未解决的问题」，一年后是「那个一直红的东西」。`},
+	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `在仓库里长得一样，而在读者那里完全不同——前者告诉他「这条路查过了」，`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `而上一版的措辞让它看起来像漏改，那比它本身更糟：下一个人会去给它加一个假的判定。`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `一条退出码没有意义的命令，不能放进任何链子里——`},
 	{`tools/audit/README.md`, "### ⛔ 而 `gfex_caliber_check.py` 现在是【红的】——这是记账，不是待办", `四个脚本曾经只 print 不退非零，评审方在其中一个上抓到，我按同一条把检查类过了一遍。`},
@@ -585,7 +588,7 @@ var carrierCensus = []struct {
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 128},
 	{`CONTRIBUTING.md`, 217},
-	{`tools/audit/README.md`, 60},
+	{`tools/audit/README.md`, 65},
 	{`docs/method-landing.md`, 163},
 }
 
