@@ -42,7 +42,9 @@ import (
 var absent = map[string]string{
 	"C3b": "截断要进 SyncReport.TruncatedTails —— 而 `SyncReport` 还不存在" +
 		"（上哪儿看：`tools/doccheck/pending.txt` 里 SyncReport 那一行）",
-	"D2b": "两种结果都进 SyncReport（LegacyMetaDiscarded / LegacyMetaUnverified）—— 同上",
+	"D2b": "两种结果都进 SyncReport（LegacyMetaDiscarded / LegacyMetaUnverified）—— " +
+		"**与 C3b 同因：`SyncReport` 还不存在**" +
+		"（上哪儿看：`tools/doccheck/pending.txt` 里 SyncReport 那一行）",
 	"A4": "`.meta` 要存 `recordSize` 并与本版记录长比对 —— 而 `Meta` 结构体里" +
 		"**还没有这个字段**（上哪儿看：`Meta`）。" +
 		"它和 A3 同一个入口（`DecodeMeta`），补字段那一格一起做，" +
@@ -237,4 +239,71 @@ func TestInvariantCoverageMatchesTable(t *testing.T) {
 				"⇒ 多半是那张表改了而这份清单没跟着改。", id, reason)
 		}
 	}
+}
+
+// fifthColName 从「入口与守卫」那一列里抓形如 `A1a_Red` / `B2_Green` 的守卫名。
+var fifthColName = regexp.MustCompile(`([A-Z][0-9]+[a-z]?)_(Red|Green)`)
+
+// TestFifthColumnNamesExist 断言：表第五列里提到的每个 `XX_Red` / `XX_Green`，
+// **在本包里真的是一个测试函数**。
+//
+// ⛔ 为什么必须有它（评审方 2026-09-09 抓到的一处，我核过）：
+//
+//	design.md 的 A4 第五列  「读：`DecodeMeta`→**`A4_Red`**／写：…」 ⇒ 读起来像【已经守住了】
+//	coverage_test.go        `A4` 在 `absent` 里                    ⇒ 【今天还没做】
+//	包里实际                 `TestInvariantA4_Red` **不存在**        ⇒ 事实
+//	（全树 grep `A4_Red` 唯一命中是上面那段讲正则的注释）
+//
+// 而另外三条是对的：`C3b` / `D2b` / `G1` 的第五列都写着「**空 —— …尚不存在**」。
+// **只有 A4 填了一个不存在的名字。**
+//
+// ⇒ 这正是本仓自己写过两遍的那条判据：
+//
+//	**第五列写着一个守卫的名字，而那个守卫没被登记、或者从来没红过 ——
+//	那一格填了，比空着更糟：空着说「还没做」，填错了说「已经守住了」。**
+//
+// ⚠️ 而【整个第五列原来是一列「只写不读」的字段】：
+// `TestInvariantCoverageMatchesTable` 只比编号三方，从不读第五列；
+// `guardNames` 与 `doccheck` 也都不管它 ⇒ **写什么都没有任何东西会红。**
+// 这和 `high_water.txt` 里 `自` 那一格同形，**而这一列更贵**：
+// `自` 写错只是记错一个前值，**第五列写错是在说「已经守住了」。**
+//
+// ⚠️ 射程：
+//
+//	查的   第五列里形如 `XX_Red` / `XX_Green` 的名字，在本包里是不是真的函数
+//	不查的 第五列里的**散文**对不对（例如「写：`EncodeMeta` 一律写本版 `format`」）
+//	不查的 那个函数是不是真的守着那条不变量 —— 那是对照组的活（invariant_control）
+func TestFifthColumnNamesExist(t *testing.T) {
+	p := filepath.Join("..", "..", "docs", "design.md")
+	b, err := os.ReadFile(p)
+	if err != nil {
+		t.Fatalf("读不到 %s：%v", p, err)
+	}
+	have := testIDs(t)
+	var checked int
+	for _, ln := range strings.Split(string(b), "\n") {
+		if !tableRow.MatchString(ln) {
+			continue
+		}
+		cols := strings.Split(ln, "|")
+		if len(cols) < 6 {
+			continue
+		}
+		id := strings.TrimSpace(cols[1])
+		for _, m := range fifthColName.FindAllStringSubmatch(cols[5], -1) {
+			checked++
+			if !have[m[1]][m[2]] {
+				t.Errorf("design.md 的 %s 第五列写着 %s_%s，"+
+					"而本包里**没有** TestInvariant%s_%s。\n"+
+					"  ⇒ 第五列填了一个不存在的守卫名，读起来像【已经守住了】。\n"+
+					"  ⇒ 还没做就写成「**空 —— <凭什么还没做>**」，和 C3b / D2b / G1 同形。",
+					id, m[1], m[2], m[1], m[2])
+			}
+		}
+	}
+	if checked == 0 {
+		t.Fatal("第五列里一个守卫名都没抓到 —— 要么列没了，要么正则不认得它的形状。" +
+			"这时【不能】当成通过")
+	}
+	t.Logf("查了第五列里的 %d 个守卫名", checked)
 }
