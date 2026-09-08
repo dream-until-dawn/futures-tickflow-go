@@ -709,6 +709,18 @@ func probeNightGap(ctx context.Context, md, tok string) {
 // ⚠️ **射程**：60m 网格只能给到【小时】，`02:30` 这种半点收盘它看不出来，
 // 只会显示成最后一根 `02:00`。**要精确到分钟得用 1m，而那是八百多次请求。**
 // ⇒ 本探针回答的是「有没有变、大约哪一年」，**不是「几点几分」**。
+// atoi 把 "HH" 转成数字；非法输入返回 0（调用方只喂两位数字）。
+func atoi(s string) int {
+	n := 0
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return 0
+		}
+		n = n*10 + int(r-'0')
+	}
+	return n
+}
+
 func probeNightHours(ctx context.Context, md, tok string) {
 	// 默认只三个品种：这条探针每个品种要 17 次连接，**加品种就是加分钟**，
 	// 而一条跑起来嫌慢的探针，下场是没人跑。
@@ -748,7 +760,10 @@ func probeNightHours(ctx context.Context, md, tok string) {
 					// 夜盘跨零点：把 00:00–03:59 排在 20:00–23:59 之后
 					key := t
 					if t < "04:00" {
-						key = "24" + t[2:]
+						// ⛔ 跨零点要把【小时】加 24，不能只换前缀：
+						// 原来写 "24"+t[2:]，于是 01:00 与 02:00 都变成 "24:00"
+						// —— 「夜盘到底开到几点」被这一行悄悄抹平，而输出看着正常。
+						key = fmt.Sprintf("%02d%s", 24+atoi(t[:2]), t[2:])
 					}
 					if key > last {
 						last = key
@@ -775,7 +790,10 @@ func probeNightHours(ctx context.Context, md, tok string) {
 				if t >= "20:00" || t < "04:00" {
 					key := t
 					if t < "04:00" {
-						key = "24" + t[2:]
+						// ⛔ 跨零点要把【小时】加 24，不能只换前缀：
+						// 原来写 "24"+t[2:]，于是 01:00 与 02:00 都变成 "24:00"
+						// —— 「夜盘到底开到几点」被这一行悄悄抹平，而输出看着正常。
+						key = fmt.Sprintf("%02d%s", 24+atoi(t[:2]), t[2:])
 					}
 					if key > last {
 						last = key
