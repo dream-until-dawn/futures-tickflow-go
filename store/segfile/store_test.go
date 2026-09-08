@@ -149,6 +149,58 @@ func TestInvariantA1b_GreenOnOpen(t *testing.T) {
 // 原子性靠的是 rename 的结构性论证，写在 writeMeta 的注释里。
 // **把这两条读成「原子性被测了」，正是本仓反复栽的那一类。**
 
+// TestMetaSurvivesCrashBeforeRename 测的是【失败路径】。
+//
+// ⚠️ 我原来写「原子性只能靠结构性论证」——那句话罩得太宽。
+// 评审方指出并跑通了可测的那一半：
+//
+//	**「崩在中间」测不了，「中间状态是安全的」测得了** —— 而后者正是 temp+rename 在这里的全部用处。
+//
+// ⇒ 上面那条 LeavesNoTemp 测的是**成功路径**；这一条测的才是这一格存在的理由。
+// 真正「崩在写的那一瞬间」仍然是声明的边界 —— **而结构性论证现在只罩那一小块，不罩整格。**
+//
+// ⛔ 而这一条【没有定点突变对照组，并且不可能有】—— 写清楚，别让人以为漏了：
+//
+//	它手工构造「好的 final + 半截的 tmp」再调 Open，**全程不经过 writeMeta**。
+//	⇒ 它测的是「**Open 容不容得下这个中间态**」，
+//	  不是「**writeMeta 会不会产生这个中间态**」。
+//	⇒ 所以把 writeMeta 改回直接写目标，这条测试照样绿 —— 它本来就没在看那一侧。
+//
+// **两者之间那一环（「writeMeta 产生的中间态恰好是这一个」）仍然是结构性论证。**
+// 这一格的诚实说法是：**测到的是一半，另一半靠读代码。**
+// （我给它加过一格突变，结果是 BUILD ——
+//
+//	查下去才发现就算编译得过它也抓不到。**BUILD 那一档这次是把注意力引到了对的地方。**）
+func TestMetaSurvivesCrashBeforeRename(t *testing.T) {
+	s, cal, k := newStore(t)
+	dir := s.dir
+	if err := s.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200731, 2)}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.CommitSpan(cal, k,
+		tickflow.Span{From: 20200731, To: 20200731, Bars: 2, Days: 1}, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	s.Close()
+
+	good, err := os.ReadFile(filepath.Join(dir, "1m.meta"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	// 崩在 rename 之前的样子：临时文件半截，目标没动。
+	if err := os.WriteFile(filepath.Join(dir, "1m.meta.tmp"), good[:len(good)/2], 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s2, _, err := Open(dir)
+	if err != nil {
+		t.Fatalf("崩在 rename 之前，上一份好的 .meta 应当还能打开，实得 %v", err)
+	}
+	defer s2.Close()
+	if len(s2.Coverage()) != 1 {
+		t.Fatalf("上一份好的 coverage 应当原样在，实得 %v", s2.Coverage())
+	}
+}
+
 func TestMetaWriteLeavesNoTemp(t *testing.T) {
 	s, cal, k := newStore(t)
 	if err := s.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200731, 2)}); err != nil {
@@ -244,6 +296,102 @@ func TestInvariantC2_Green(t *testing.T) {
 	}
 	if err := s.CommitSpan(cal, k, tickflow.Span{From: 20200731, To: 20200731, Bars: 2, Days: 1}, OutcomeComplete); err != nil {
 		t.Fatalf("C2 误伤：完整成功的响应被拒：%v", err)
+	}
+}
+
+// ───────── 输入的第一维：段数 ≥ 2 ─────────
+//
+// ⚠️ 这一组是补的，而它补的不是一条不变量，是**一个输入维度**。
+//
+// 上一版 B1/B2/B3 的每一个用例都只有【一段】—— 21 格突变全塌、四包全绿，
+// 而两个功能级缺陷活着（Verify 走整个文件 / HasBars 按段答）。
+// 评审方是从「为什么 21 格全绿」到达同一处的，我是从「我为什么没发现」到达的。
+//
+// > **突变对照组证明的是「这些测试在真的守着」，不是「这些测试覆盖了输入空间」。**
+// > 每条不变量的红/绿之外，还要问：**这条的输入空间有几维，我固定了哪几维。**
+//
+// ⇒ 这一组把「段数」这一维从 1 放开到 2。
+
+// twoSpanStore 造一个【两段不相邻】的库：0731 一段、0806 一段，中间隔着交易日。
+func twoSpanStore(t *testing.T) (*Store, []tickflow.Span) {
+	t.Helper()
+	s, cal, k := newStore(t)
+	a := tickflow.Span{From: 20200731, To: 20200731, Bars: 2, Days: 1}
+	if err := s.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200731, 2)}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.CommitSpan(cal, k, a, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	b := tickflow.Span{From: 20200806, To: 20200806, Bars: 1, Days: 1}
+	if err := s.AppendBars([]tickflow.Bar{bar(20200806, 3)}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.CommitSpan(cal, k, b, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Coverage()) != 2 {
+		t.Fatalf("这一格要的是【两段】，实得 %v —— 若它们被合并了，这一维就没放开", s.Coverage())
+	}
+	return s, []tickflow.Span{a, b}
+}
+
+func TestMultiSpanVerify(t *testing.T) {
+	s, spans := twoSpanStore(t)
+	// 两段各自走查都必须过 —— 别的段的记录是【别的段的】，不是损坏。
+	for i, sp := range spans {
+		if err := s.Verify(sp); err != nil {
+			t.Fatalf("第 %d 段走查失败：%v"+
+				"\n（上一版这里必报 errRecordOutside ⇒ 任何有缺口的序列都通不过，"+
+				"而那正是同步中的常态；更坏的是它把一个【健康的库】报成【损坏】）", i, err)
+		}
+	}
+}
+
+func TestMultiSpanHasBars(t *testing.T) {
+	s, spans := twoSpanStore(t)
+	for _, sp := range spans {
+		if err := s.Verify(sp); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, c := range []struct {
+		day  tickflow.TradingDay
+		want bool
+		why  string
+	}{
+		{20200731, true, "第一段里，有 2 根"},
+		{20200806, true, "第二段里，有 1 根"},
+		{20200803, false, "两段【之间】，不在任何 coverage 里 ⇒ 没拉过，不是「确认没有」"},
+	} {
+		got, err := s.HasBars(c.day)
+		if err != nil {
+			t.Errorf("HasBars(%s) 报错：%v（%s）", c.day, err, c.why)
+			continue
+		}
+		if got != c.want {
+			t.Errorf("HasBars(%s) = %v，应当 %v（%s）", c.day, got, c.want, c.why)
+		}
+	}
+}
+
+func TestMultiSpanTrulyOrphanRecordIsCorruption(t *testing.T) {
+	// 而「谁的段都不属于」仍然必须是损坏 —— 否则上面那一改就把 B2 也放松了。
+	s, cal, k := newStore(t)
+	if err := s.AppendBars([]tickflow.Bar{bar(20200731, 1), bar(20200806, 2)}); err != nil {
+		t.Fatal(err)
+	}
+	sp := tickflow.Span{From: 20200731, To: 20200731, Bars: 1, Days: 1}
+	if err := s.CommitSpan(cal, k, sp, OutcomeComplete); err != nil {
+		t.Fatal(err)
+	}
+	// 20200806 不在任何一段里 ⇒ 它是孤儿记录。
+	err := s.Verify(sp)
+	if err == nil {
+		t.Fatal("一条不属于任何 coverage 段的记录被放过了 —— 那是真的损坏")
+	}
+	if !errors.Is(err, errRecordOutside) {
+		t.Fatalf("响了，但响的是别的判据：%v", err)
 	}
 }
 

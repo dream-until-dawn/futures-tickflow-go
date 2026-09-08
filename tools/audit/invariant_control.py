@@ -157,13 +157,14 @@ MUTATIONS = [
 	}
 """, "")),
 
-    ("B2", "TestInvariantB2_Red", SEGFILE, "Verify 不再查记录是否越界", lambda w: sub(
+    ("B2", "TestInvariantB2_Red", SEGFILE, "Verify 放过「谁的段都不属于」的记录", lambda w: sub(
         w, ST,
-        """		if b.TradingDay < span.From || b.TradingDay > span.To {
-			return fmt.Errorf("%w: 第 %d 条记录是 %s，而本段是 [%s, %s]",
-				errRecordOutside, i, b.TradingDay, span.From, span.To)
-		}
-""", "")),
+        """		default:
+			// 谁的段都不属于 ⇒ 这才是真的损坏。
+			return fmt.Errorf("%w: 第 %d 条记录是 %s，而它不落在任何一段 coverage 里",
+				errRecordOutside, i, b.TradingDay)""",
+        """		default:
+			// 人为弄坏：孤儿记录也放过""")),
 
     ("B3", "TestInvariantB3_Red", SEGFILE, "没走查过也照答", lambda w: sub(
         w, ST,
@@ -178,6 +179,12 @@ MUTATIONS = [
 			return nil, 0, fmt.Errorf("segfile: %s 里的 coverage 结构不合法: %w", dir, verr)
 		}
 """, "")),
+
+    ("多段-Verify", "TestMultiSpanVerify", SEGFILE,
+     "别段的记录也当成损坏（回到旧写法）", lambda w: sub(
+        w, ST,
+        "		case s.dayInAnySpan(b.TradingDay):",
+        "		case false: // 人为弄坏：别段的记录不再放过")),
 
     ("B3b", "TestInvariantB3_Green", SEGFILE,
      "HasBars 拿整段的 Bars 当那一天的答案", lambda w: sub(

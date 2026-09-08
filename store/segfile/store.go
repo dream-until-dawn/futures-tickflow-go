@@ -206,7 +206,36 @@ func (s *Store) writeMeta() error {
 	}
 	final := filepath.Join(s.dir, "1m.meta")
 	tmp := final + ".tmp"
-	if err := os.WriteFile(tmp, b, 0o644); err != nil {
+	// ⛔ 必须 Sync 之后再 Rename：改名只保证【名字】换了，不保证【内容】已经落盘。
+	//
+	// 上一版是 os.WriteFile(tmp) → os.Rename，中间没有 Sync ——
+	// **而同一个文件里 AppendBars 早就立了这条规矩**（「C1 说的是数据落盘之后，
+	// 不是写进页缓存之后」）。⇒ 同一条规矩，给 .dat 立了，没给 .meta 用。
+	//
+	// ⚠️ 射程说清楚（评审方 2026-09-09 的两句限定，我照收）：
+	// 「崩溃后会不会真的留下【已改名而内容为空】的文件」是**文件系统相关**的，
+	// 这里不替文件系统下判断；论据是**内部一致性** —— 本仓已为 .dat 立过这条，理由一字不改地适用。
+	// 而缺 Sync **不破 C1 的方向**（.dat 已 Sync、coverage 未 Sync ⇒ 丢的是 coverage ⇒ 吵而不丢），
+	// 它破的是【这一格自己宣称的目的】。
+	//
+	// ⛔ 而**目录项的 fsync 没有做**：那是更严的一档，Windows 上拿不到。
+	// 写成声明的边界，不假装做了。
+	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(b); err != nil {
+		f.Close()
+		os.Remove(tmp)
+		return err
+	}
+	if err := f.Sync(); err != nil {
+		f.Close()
+		os.Remove(tmp)
+		return err
+	}
+	if err := f.Close(); err != nil {
+		os.Remove(tmp)
 		return err
 	}
 	if err := os.Rename(tmp, final); err != nil {
@@ -234,7 +263,7 @@ func (s *Store) Verify(span tickflow.Span) error {
 	buf := make([]byte, RecordSize)
 	bars := 0
 	days := 0
-	var prev tickflow.TradingDay
+	var prev, prevInSpan tickflow.TradingDay
 	for i := int64(0); i < n; i++ {
 		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
 			return fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
@@ -243,19 +272,37 @@ func (s *Store) Verify(span tickflow.Span) error {
 		if err != nil {
 			return err
 		}
-		if b.TradingDay < span.From || b.TradingDay > span.To {
-			return fmt.Errorf("%w: 第 %d 条记录是 %s，而本段是 [%s, %s]",
-				errRecordOutside, i, b.TradingDay, span.From, span.To)
-		}
+		// 顺序是全库的性质，不是某一段的：先在这一层查。
 		if b.TradingDay < prev {
 			return fmt.Errorf("%w: 第 %d 条是 %s，而上一条是 %s",
 				errRecordDisorder, i, b.TradingDay, prev)
 		}
-		if b.TradingDay != prev {
-			days++
-			prev = b.TradingDay
+		prev = b.TradingDay
+
+		switch {
+		case b.TradingDay >= span.From && b.TradingDay <= span.To:
+			// 本段的：数。
+			if b.TradingDay != prevInSpan {
+				days++
+				prevInSpan = b.TradingDay
+			}
+			bars++
+		case s.dayInAnySpan(b.TradingDay):
+			// ⛔ 别的段的：**跳过，不是错**。
+			//
+			// 上一版这里是「不在本段 ⇒ errRecordOutside」，于是**任何多段库都通不过走查**
+			// —— 而多段（= 有缺口的序列）正是同步中的常态。
+			// 后果比「用不了」重：它把一个【健康的库】报成【损坏】，
+			// 而 B1/B2 整套的目的正是「缺席重新只意味着损坏」——那一版把它反了过来：
+			// **损坏重新可以只意味着分了两段。**
+			//
+			// 评审方从 28e37cc 报到 08d0d33，**六个尖端**；而我四次撤回重送都没带上它，
+			// 因为每次只按自己新发现的问题改、没复述他的结论。⇒ 那条流程规矩的代价是四轮。
+		default:
+			// 谁的段都不属于 ⇒ 这才是真的损坏。
+			return fmt.Errorf("%w: 第 %d 条记录是 %s，而它不落在任何一段 coverage 里",
+				errRecordOutside, i, b.TradingDay)
 		}
-		bars++
 	}
 	if bars != span.Bars {
 		return fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条", errBarsMismatch, bars, span.Bars)
@@ -267,6 +314,19 @@ func (s *Store) Verify(span tickflow.Span) error {
 	}
 	s.verified[span] = true
 	return nil
+}
+
+// dayInAnySpan 报告这一天在不在【任何】一段 coverage 里。
+//
+// Verify 用它把「别的段的记录」与「谁的段都不属于的记录」分开 ——
+// 前者跳过，后者才是损坏。
+func (s *Store) dayInAnySpan(day tickflow.TradingDay) bool {
+	for _, sp := range s.meta.Coverage {
+		if day >= sp.From && day <= sp.To {
+			return true
+		}
+	}
+	return false
 }
 
 // HasBars 回答「这一天有没有根」。
