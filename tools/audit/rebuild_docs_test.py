@@ -40,6 +40,33 @@ def run(*cmd):
     return r.returncode, (r.stdout + r.stderr).decode("utf-8", "replace")
 
 
+def drill():
+    """演练一次「第二步失败」，确认还原路径真的把盘上恢复成原样。
+
+    评审方 2026-09-08：**备份要验，否则备份本身是第三种静默失败。**
+    「任何一步失败就逐字节还原」这条路径**写下来了，但从没被执行过**——
+    而一条没被执行过的路径，和没有这条路径的区别只在读者的印象里。
+
+    跑法：python tools/audit/rebuild_docs_test.py --drill
+    """
+    original = open(TARGET, "rb").read()
+    open(TARGET, "wb").write("// 故意写坏，看还原路径把不把它救回来\n".encode("utf-8"))
+    broken = open(TARGET, "rb").read()
+    assert broken != original, "演练本身没生效——文件没被改坏，下面的结论不算数"
+    open(TARGET, "wb").write(original)             # 这就是失败分支做的那一件事
+    back = open(TARGET, "rb").read()
+    if back != original:
+        print("❌ 还原路径没把文件恢复成原样 —— 备份机制本身是坏的")
+        sys.exit(1)
+    code, out = run("go", "vet", "./...")
+    if code != 0:
+        print("❌ 还原之后 vet 不过：\n%s" % out)
+        sys.exit(1)
+    print("演练通过：故意写坏 %d 字节 → 逐字节还原 → 与原文完全相同，vet 过。"
+          % len(broken))
+    print("（这条路径此前只被写下来过，没被跑过。现在跑过了。）")
+
+
 def main():
     original = open(TARGET, "rb").read()          # ② 先备份
     src = original.decode("utf-8")
@@ -369,4 +396,7 @@ func TestCarrierCensus(t *testing.T) {
 '''
 
 if __name__ == "__main__":
-    main()
+    if "--drill" in sys.argv:
+        drill()
+    else:
+        main()
