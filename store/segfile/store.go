@@ -16,6 +16,22 @@ import (
 // ⚠️ 缺席的：C3b（截断要进 SyncReport）与 D2b（两种结果都进 SyncReport）——
 // `SyncReport` 还不存在（tools/doccheck/pending.txt）⇒ 挪到「做 Source 那一版」。
 // **它们是整条缺席，不是测了一半。**
+//
+// ⛔ 还有三处【范围边界】，写在这儿免得被读成通用实现：
+//
+//	一、周期写死成 1m（`1m.dat` / `1m.meta`）。
+//	    而 design.md §六 的目录布局里，一个合约目录下会有多个周期（`1m.dat` / `1d.dat`…）。
+//	    ⇒ 本类型现在是【一个合约的一个周期】，不是「一个合约目录」。
+//	    要支持多周期，Open 得收一个周期参数 —— 那是接口形状的变更，等 Store 接口定型时一起做。
+//	二、没有锁。布局里那个 `.lock` 本版一个字都没碰
+//	    ⇒ **两个进程同时开同一个目录，本类型不会拦。**
+//	    而 B3 那个 `verified` 正是进程内状态：别的进程改了 .meta，这边的走查结论就过期了，
+//	    **而它不会知道**。
+//	三、Store 接口本身还没定型。design.md 列的是
+//	    `Append` / `Merge` / `Iter` / `Range` / `Meta` / `AddCoverage` / `Series` / `Close`，
+//	    本类型只实现了落盘格式那几条不变量要用到的部分。
+//
+// **这三条都不是缺陷，是没做；写下来是为了让「没做」和「做漏了」分得开。**
 type Store struct {
 	dir string
 	dat *os.File
