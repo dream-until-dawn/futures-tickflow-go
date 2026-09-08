@@ -387,6 +387,10 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `评审对象必须是个不动的靶子。`},
 	{`CONTRIBUTING.md`, `批的 SHA 不等于当时的 tip——那时他批的是一`},
 	{`CONTRIBUTING.md`, `规则的字面满足了，目的没满足。`},
+	{`CONTRIBUTING.md`, `他已经评完了，并且判了不通过——我们只是消息交叉。`},
+	{`CONTRIBUTING.md`, `「评审方还没开始看」不是送审方能确立的事实，因此它不`},
+	{`CONTRIBUTING.md`, `冻结之后要动，唯一安全的做法是问一句——那个前提只有`},
+	{`CONTRIBUTING.md`, `不是「你的解释不算数」，是【你用来解释的那个事实，你`},
 	{`CONTRIBUTING.md`, `「我建议你做 X」不等于「X 已放行」——建议是输入`},
 	{`CONTRIBUTING.md`, `送审方打算做而清单上没有的，动手【之前】问，不是做完`},
 	{`CONTRIBUTING.md`, `「事后主动说」和「事前确认」不是一回事——前者让错误`},
@@ -408,6 +412,11 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `那一刻他手边打开的是哪个文件？规矩就写在那个文件里。`},
 	{`docs/method-landing.md`, `第 5 行是这张表的样板：doccheck 不是把规`},
 	{`docs/method-landing.md`, `能写进工具输出的，就别写进文档。`},
+	{`docs/method-landing.md`, `第一条的两个实例，双方各一（2026-09-08）：`},
+	{`docs/method-landing.md`, `我在消息里写「这一层没有『哪句被锚住』，是全部」，而`},
+	{`docs/method-landing.md`, `评审方在消息里写「（原表 85，口径差）」——那句从`},
+	{`docs/method-landing.md`, `所以没有任何机制会碰它，而它正是他转手一个未验解释的`},
+	{`docs/method-landing.md`, `⇒ 两次都是：文档里守着射程，消息里松了一档，而松的`},
 	{`docs/method-landing.md`, `⚠️ 原本这里有第六条「编造一个拆解没有机械守卫」，`},
 	{`docs/method-landing.md`, `tools/audit/ 那条规矩就是那道闸门的一半`},
 	{`docs/method-landing.md`, `若不是探针输出，产生它的脚本要落盘。一个数字若有脚本`},
@@ -439,6 +448,8 @@ var quotedRules = []struct {
 	{`docs/method-landing.md`, `实测漏掉的两条都是加粗行，落在我认为已经覆盖的格式里`},
 	{`docs/method-landing.md`, `一个低估的残留比不写残留更糟：它给出的边界，让人以为`},
 	{`docs/method-landing.md`, `不管那条规矩长什么样。两张表因不同原因失效：`},
+	{`docs/method-landing.md`, `⚠️ 那个行数是快照，不是常量——这几份文件一改它就`},
+	{`docs/method-landing.md`, `记它是为了「当时扫了多少」，不是为了拿来比对；要现在`},
 	{`docs/method-landing.md`, `有些行根本不在登记表里。       ← 16 个字`},
 	{`docs/method-landing.md`, `同一个阈值 16，两边的单位不同。 于是登记表少一条`},
 	{`docs/method-landing.md`, `两处「必须一致」的判据写在两种语言里，一致性就得自己`},
@@ -476,9 +487,9 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 88},
-	{`CONTRIBUTING.md`, 74},
+	{`CONTRIBUTING.md`, 79},
 	{`tools/audit/README.md`, 21},
-	{`docs/method-landing.md`, 100},
+	{`docs/method-landing.md`, 108},
 }
 
 // ruleLines 把一份 markdown 里所有「独立成句的规矩行」抠出来。
