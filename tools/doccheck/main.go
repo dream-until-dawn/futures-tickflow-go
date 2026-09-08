@@ -183,7 +183,7 @@ func compare(docDecls, srcDecls map[string]decl, pending map[string]string,
 	// 就是「报告说的是真的」。
 	for name, v := range pending {
 		if _, done := srcDecls[name]; done {
-			// 欠条已经兑现：v0.2 把 Source 写出来了，这一行该删了。
+			// 欠条已经兑现：v0.3 把 Source 写出来了，这一行该删了。
 			// 这【不是】守卫坏了，也不是「设计如此的红」——
 			// 它是版本收尾动作里漏了一步，红得其所。
 			f.paid = append(f.paid, fmt.Sprintf(
@@ -237,7 +237,7 @@ func (f findings) render() string {
 		// 【已实现】时才触发，而白名单里的类型没有源码可比——
 		// 所以这些项的字段与签名**当前不受任何检查**。
 		//
-		// 实测代价：v0.2/v0.5 设计里三处把 TradingDay 写成 int32，
+		// 实测代价：v0.3/v0.6 设计里三处把 TradingDay 写成 int32，
 		// 与本工具在 Bar.TradingDay 上抓到的是同一族，而它们在这里活了下来。
 		//
 		// 盲区是**必然的**——白名单存在的理由就是「源码里还没有」，那就必然没得比。
@@ -846,12 +846,12 @@ func scanStruct(name string, lines []string, i int, file string, base int,
 
 // whitelisted 查白名单，并让【字段继承所属类型的欠条】。
 //
-// `SyncRequest` 记着 v0.2.0 尚未实现，那么 `SyncRequest.Force` 当然也还不存在——
+// `SyncRequest` 记着 v0.3.0 尚未实现，那么 `SyncRequest.Force` 当然也还不存在——
 // 逼着为每个字段单写一行，白名单会从 13 行涨到 40 行，
 // 而**一张没人愿意读的表和没有这张表是一回事**。
 //
 // 继承来的欠条同样带着那个版本，所以「预定版本一打 tag 就 FAIL」照旧生效：
-// v0.2.0 落地时，SyncRequest 的字段会和 SyncRequest 本身一起到期。
+// v0.3.0 落地时，SyncRequest 的字段会和 SyncRequest 本身一起到期。
 func whitelisted(pending map[string]string, name string) (string, bool) {
 	if v, ok := pending[name]; ok {
 		return v, true

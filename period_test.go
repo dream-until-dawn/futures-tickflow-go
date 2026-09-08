@@ -585,10 +585,10 @@ func TestNightRemainderStillMergesWhenTemplateMatches(t *testing.T) {
 //	沪银日盘一直给 09:30/10:45/13:45/14:45/15:00，而实际已是 10:00/11:15/14:15/15:00。
 //	每一根都错 30 分钟，永远，静默。
 //
-// 区分需要【序列】（连续 N 个交易日 actual == 0），那是 v0.2 Syncer 的层级，
+// 区分需要【序列】（连续 N 个交易日 actual == 0），那是 v0.3 Syncer 的层级，
 // 不是 Day 的——所以边界划在这里是对的，洞是它的代价，代价要记账。
 //
-// 这条断言的是**错误行为**：v0.2 补上序列级检测后它会变红，
+// 这条断言的是**错误行为**：v0.3 补上序列级检测后它会变红，
 // 那时请一并更新 Day.TemplateMismatch 的文档与 contract.md 那一行风险。
 func TestKnownDefect_PermanentNightCancellationLooksLikeHoliday(t *testing.T) {
 	// 交易所永久取消了沪银夜盘，而内置模板仍写着 330
@@ -596,7 +596,7 @@ func TestKnownDefect_PermanentNightCancellationLooksLikeHoliday(t *testing.T) {
 
 	if _, actual, bad := d.TemplateMismatch(tmplAG); bad || actual != 0 {
 		t.Fatalf("按当前设计，实际=0 不算矛盾（得到 actual=%d mismatch=%v）；"+
-			"若这是 v0.2 序列级检测修好的结果，"+
+			"若这是 v0.3 序列级检测修好的结果，"+
 			"请一并更新 Day.TemplateMismatch 的文档与 contract.md 的风险行",
 			actual, bad)
 	}

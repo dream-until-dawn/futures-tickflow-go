@@ -210,7 +210,7 @@ type Calendar interface {
 // **不可分辨**。后者是真的模板过期，而它会让本函数永远返回 false、
 // Phase 继续按陈旧的标称算——沪银日盘网格一直给 09:30/10:45/13:45/14:45/15:00，
 // 而实际已经是 10:00/11:15/14:15/15:00：**每一根都错 30 分钟，永远，静默。**
-// 区分需要【序列】（连续 N 个交易日 actual == 0），那是 v0.2 Syncer 的层级。
+// 区分需要【序列】（连续 N 个交易日 actual == 0），那是 v0.3 Syncer 的层级。
 // 由 TestKnownDefect_PermanentNightCancellationLooksLikeHoliday 钉住。
 //
 // 返回 nominal / actual 是让上层能把差异写进报告，而不是只知道「有问题」。

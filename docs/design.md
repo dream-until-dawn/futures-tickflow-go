@@ -221,7 +221,7 @@ type Calendar interface {
 > `bool` 的 `!ok`、`error` 的 `err != nil`、枚举的 `!= Found`，
 > 每种类型都自带一个「一把全吞」的惯用法。**装得下是必要条件，分得开才是目的。**
 >
-> 时机取「现在」而不是「v0.2 一起改」：`Calendar` 当时零个消费者，
+> 时机取「现在」而不是「v0.3 一起改」：`Calendar` 当时零个消费者，
 > 而 `Syncer` 正是那个会把 bug 写进去的消费者——**现在改，那个 bug 根本没机会被写出来**。
 > 依据是 contract.md 第五节已公布的政策：v0.x API 会变，v1.x 才是对外契约。
 
@@ -259,7 +259,7 @@ type BarBound struct {
     Full bool
     // Anomalous 表示【这个交易日】的标称模板与实际时段矛盾，即模板过期。
     // 它是交易日一级的事实，所以那天的每一根都带；判据见 Day.TemplateMismatch。
-    // 上层（v0.2 的 SyncReport.Misaligned）扫这一位就能报。
+    // 上层（v0.3 的 SyncReport.Misaligned）扫这一位就能报。
     Anomalous bool
 }
 
@@ -912,7 +912,7 @@ var (
     // 「这一天是不是确认没有」。补救：走一遍（第二档）。瞬时，自动可解。
     ErrSpanUnverified = errors.New("tickflow/store: 这一段还没走查过——答不了，不是「没有」")
 
-    // ErrLegacyMeta .meta 没有 format 字段（v0.2 之前写的），而这个源不可重放，
+    // ErrLegacyMeta .meta 没有 format 字段（v0.3 之前写的），而这个源不可重放，
     // 所以 coverage 既不能当「已拉过」也不能当「没拉过」。补救：一个显式决定。
     ErrLegacyMeta = errors.New("tickflow/store: meta 版本未知且源不可重放——需要一个显式决定")
 )
@@ -1108,7 +1108,7 @@ type Span struct {
 | `.meta` 的状态 | 判定 | 为什么 |
 |---|---|---|
 | 读不到 / 不是合法 JSON | **报错，不猜** | 连「它说了什么」都不知道，任何猜测都是编的 |
-| `format` **缺失**（`nil`） | **整份 coverage 作废，全区间按「没拉过」** | 这是 v0.2 之前写的文件。**它可能有另一种 coverage 语义** |
+| `format` **缺失**（`nil`） | **整份 coverage 作废，全区间按「没拉过」** | 这是 v0.3 之前写的文件。**它可能有另一种 coverage 语义** |
 | `format` > 当前已知 | **报错，不猜** | 未来版本写的，语义未知 |
 | `format` == 1 | 按上面读 | |
 
@@ -1135,7 +1135,7 @@ type Span struct {
 | **不可重放**（新浪分钟：1023 根硬顶） | coverage **不作废**，整份标 `unverified`，**报告并停** | 作废在这里换不来任何东西：重拉取不回那段，只会永远重试。而**丢掉那些区间是不可逆的** |
 
 > **「可不可重放」正是 `Source.Caps` / `Capabilities` 要表达的东西**
-> （`pending.txt` 里 v0.2 那批已经登记了这两个标识符）。
+> （`pending.txt` 里 v0.3 那批已经登记了这两个标识符）。
 > ⇒ 这一格**不靠我猜代价，靠源自己声明能力**。
 
 ⚠️ 而 `unverified` 的语义要写死，否则它就是第二个 `bool`：
@@ -1237,7 +1237,7 @@ type SyncRequest struct {
 > 而第二行填的是「永远重拉」——那是把**「不是交易日」错认成「没拉过」**的后果，
 > **方向反了**。把「拉过确认没有」当成「不是交易日」其实无害（本来就该跳过）。
 >
-> 这一格要紧，因为**这张表是 v0.2 分类逻辑的规格书**：
+> 这一格要紧，因为**这张表是 v0.3 分类逻辑的规格书**：
 > 照着它实现的人会去防一个方向，而表里那一格指的是另一个方向。
 > ⇒ **一个统一的列头，会把每行各不相同的方向抹平成一个。**
 > 这和「一个数字盖住三件事」是同一个形状，只是发生在表头上。
@@ -1943,13 +1943,14 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
 | v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ `v0.1.0` |
-| v0.2 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 设计中 |
-| v0.3 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
-| v0.4 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
-| v0.5 | `continuous`——换月、复权、接缝 | 待办 |
-| v0.6 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |
-| v0.7 | `Feed` / `View` / 多周期 | 待办 |
-| v0.8 | 实时：`shinnysource` 的推送通道 + `Feed.Push` | 待办 |
+| v0.2 | `Calendar` 接口收口（`(X, bool)` → `(X, error)` + `Covers`）／`calendar/embedded` 修一处**已随 `v0.1.0` 发布**的真 bug（国债日盘 09:15 → 09:30）／探针与 `tools/audit/` 仪器加固 | ✅ `v0.2.0` |
+| v0.3 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 设计中 |
+| v0.4 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
+| v0.5 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
+| v0.6 | `continuous`——换月、复权、接缝 | 待办 |
+| v0.7 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |
+| v0.8 | `Feed` / `View` / 多周期 | 待办 |
+| v0.9 | 实时：`shinnysource` 的推送通道 + `Feed.Push` | 待办 |
 | v1.0 | API 收口、真实数据端到端验收 | 待办 |
 
 **v0.1 先做时间模型，不是先做拉取。** 因为「一根 K 线是否已完结」这个问题
@@ -1963,13 +1964,13 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 > 两个版本之后才交付的组件**。
 >
 > 改法是把 `calendar/embedded`（从天勤导出的时段表快照 + 交易日列表，
-> 带生效区间）提到 v0.1。`calendar/derived` 留在 v0.3，它的价值是
+> 带生效区间）提到 v0.1。`calendar/derived` 留在 v0.4，它的价值是
 > **覆盖内置表的历史盲区**（现在可行了——天勤有 10 年 1m 数据，
 > 每日实际时段可以逐日反推），而不是「第一个能用的实现」。
 >
 > 这条是评审提出来的。**排期上的依赖倒置很难自己看出来**，因为每一行
 > 单独看都合理，只有把「【那一档】的验收标准」和「【再下一档】才有的东西」摆在一起才现形。
 
-**v0.4 的深度分钟提前到 `continuous` 之前**：换月规则要按持仓量判主力，
+**v0.5 的深度分钟提前到 `continuous` 之前**：换月规则要按持仓量判主力，
 而持仓量的日频数据新浪就有——但复权后的序列要拿分钟级去验证接缝，
 所以先把深度数据落库更顺。
