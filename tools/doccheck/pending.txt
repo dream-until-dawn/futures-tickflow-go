@@ -53,6 +53,11 @@ Capabilities  v0.2.0  各源能力差异做成数据而不是散落在文档里
 SyncRequest   v0.2.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
 Syncer.Sync   v0.2.0  按交易日记 coverage，只拉缺失区间
 SyncReport    v0.2.0  带「请求区间 vs 日历覆盖区间」两行；Misaligned 扫 BarBound.Anomalous
+Span            v0.2.0  存储 .meta 里的一段 coverage：交易日闭区间 + Bars/Days 两个正面计数
+Span.From       v0.2.0  同上
+Span.To         v0.2.0  同上
+Span.Bars       v0.2.0  写这一段时实际落盘的记录条数
+Span.Days       v0.2.0  这一段里至少有一根的交易日条数——缺了它，某天起点丢失会读成「确认没有」
 
 # ---- v0.4：深度分钟历史落地后，聚合口径才有意义 ----
 AggRule       v0.4.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**
