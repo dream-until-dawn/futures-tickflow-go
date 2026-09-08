@@ -73,31 +73,112 @@ def writeHighWater(lines, hw):
     open(HIGH_WATER, "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
 
 
+def restore(original):
+    """把盘上恢复成动手之前的样子，返回一句话说明【走的是哪一条路径】。
+
+    ⚠️ 这是【唯一】一份还原实现：main() 的失败路径和 drill() 都调它。
+
+    为什么必须只有一份（评审方 2026-09-08 定的性，我复现过）：
+    上一版 drill() 把主流程那一行【抄】了一份，注释还写着「这就是失败分支做的那一件事」——
+    **一段注释说「这就是那一件事」，就是在承认这里有第二份拷贝。**
+    后果：主流程为了让「删掉能不能造回来」那条判据跑得起来，加了 `original is None` 分支，
+    而演练到不了那儿——`rm docs_test.go && rebuild --drill` 直接 FileNotFoundError。
+    **演练认证的射程缩了一半，而它的输出一个字没变。**
+
+    ⇒ 处置不是补那一个洞，是让「演练与主流程漂移」在结构上不成立：
+      还原只有一份，新分支加在哪儿，演练都在它里面。
+      这是本仓杀「第二份拷贝」的第四次（前三次：.gen 删掉、半生成的 docs_test.go 拆开、
+      派生出来的下限换成高水位）。
+
+    返回值本身也是那条规矩的一部分：**输出要写明走了哪一条**，
+    否则下一次射程变了，还是只能靠人记得去问。
+    """
+    if original is None:
+        # 这次跑之前文件【本来就不存在】。那时「还原」= 把它删掉，
+        # 而不是写一个 None 进去——否则失败路径自己会崩，
+        # 而崩在还原步骤上，等于盘上留着半成品。
+        if os.path.exists(TARGET):
+            os.remove(TARGET)
+        return "把 docs_test.go 删掉了（它本来就不存在）"
+    open(TARGET, "wb").write(original)
+    return "把 docs_test.go 逐字节还原了"
+
+
 def drill():
-    """演练一次「第二步失败」，确认还原路径真的把盘上恢复成原样。
+    """演练还原路径，**把 restore() 入参的取值空间走遍**，并写明每次走的是哪一条。
 
     评审方 2026-09-08：**备份要验，否则备份本身是第三种静默失败。**
     「任何一步失败就逐字节还原」这条路径**写下来了，但从没被执行过**——
     而一条没被执行过的路径，和没有这条路径的区别只在读者的印象里。
 
+    ⚠️ 为什么按【入参的取值空间】枚举，而不是按一张「分支清单」：
+    手写清单会过期，本仓刚在 must 上验过一次（3 个名字对 5 个守卫）。
+    而 `restore(original)` 的入参只有两种取值形状——`None` 与 `bytes`——
+    **两种都走，就是走遍了它的定义域**，不是走遍了某人记得的那几条。
+    这是本仓那条「先数这个值要区分几种情况」用在【参数】上。
+
+    ⚠️ 而这一格仍然比不了的：如果将来 restore() 的行为不再只由 `original` 决定
+    （比如引进第二个参数、或依赖某个全局状态），这个枚举就不再是定义域了。
+    **写在这儿，是因为它比不了——不是因为它不重要。**
+
     跑法：python tools/audit/rebuild_docs_test.py --drill
     """
-    original = open(TARGET, "rb").read()
+    # 演练需要一份基线。文件不在【不是崩的理由，是一个前提】——
+    # 上一版在这儿直接 FileNotFoundError，而那看起来像工具坏了，不像「你还没造它」。
+    if not os.path.exists(TARGET):
+        print("❌ 演练需要 docs_test.go 先存在（它是基线）。"
+              "先跑一次不带 --drill 的重建，再来演练。")
+        sys.exit(1)
+    start = open(TARGET, "rb").read()               # 演练结束时必须回到这一份
+
+    # —— 取值一：original 是 bytes（文件在，被写坏）——
     open(TARGET, "wb").write("// 故意写坏，看还原路径把不把它救回来\n".encode("utf-8"))
     broken = open(TARGET, "rb").read()
-    assert broken != original, "演练本身没生效——文件没被改坏，下面的结论不算数"
-    open(TARGET, "wb").write(original)             # 这就是失败分支做的那一件事
-    back = open(TARGET, "rb").read()
-    if back != original:
+    assert broken != start, "演练本身没生效——文件没被改坏，下面的结论不算数"
+    what1 = restore(start)
+    if open(TARGET, "rb").read() != start:
+        # ⚠️ 收尾【不走 restore】：它刚被判定是坏的。
+        # 一个实验的收尾如果依赖它刚证明为坏的那个东西，收尾本身就不可信。
+        # 实测过后果：上一稿在这里直接 sys.exit(1)，盘上留着被截断的 docs_test.go。
+        open(TARGET, "wb").write(start)
         print("❌ 还原路径没把文件恢复成原样 —— 备份机制本身是坏的")
+        print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
         sys.exit(1)
+    print("  取值一 original=bytes：写坏 %d 字节 → %s → 逐字节相同" % (len(broken), what1))
+
+    # —— 取值二：original 是 None（文件本来就不存在）——
+    # 这一支是「删掉它能不能一模一样地造回来」那条判据走的路。
+    # 上一版演练【到不了这儿】：它第一行就无条件 open()，文件不在就崩在那儿。
+    # ⚠️ 真实场景不是「文件不在、什么也没发生」，而是：
+    #   文件本来不存在 → 生成器写了一份出来 → 后面某步失败 → 还原要把这份【新写的】删掉。
+    # 所以这里必须先把它造出来，restore(None) 才有活干。
+    #
+    # 这一格是【对照组抓出来的】：上一稿写成「先 os.remove 再 restore(None)」，
+    # 于是 None 分支整个包在 `if os.path.exists` 里根本没执行——
+    # 把那一支改成「写个空文件」而不是删掉，演练照样绿、退 0。
+    # **一个不执行被测代码的演练，和没有这个演练一样。**
+    os.remove(TARGET)
+    open(TARGET, "wb").write(b"// pretend the generator just wrote this\n")
+    what2 = restore(None)
+    if os.path.exists(TARGET):
+        # ⚠️ 与取值一同样的收尾：绕过 restore 直接写回。
+        # 上一稿只给取值一加了这条，取值二没加 —— 于是它红是红了，
+        # 却把 docs_test.go 留成一个空文件，污染了紧跟着跑的下一个实验。
+        # **一个洞被修一半，往往不是疏忽，是「修」这个动作本身让人觉得那一格已经处理过了。**
+        open(TARGET, "wb").write(start)
+        print("❌ original=None 时还原路径没把生成器写出来的那一份删掉")
+        print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
+        sys.exit(1)
+    print("  取值二 original=None ：生成器写了一份 → %s → 盘上确实没有它" % what2)
+
+    open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
+    assert open(TARGET, "rb").read() == start, "演练没把盘上还原成开跑前那一份"
+
     code, out = run("go", "vet", "./...")
     if code != 0:
-        print("❌ 还原之后 vet 不过：\n%s" % out)
+        print("❌ 演练之后 vet 不过：\n%s" % out)
         sys.exit(1)
-    print("演练通过：故意写坏 %d 字节 → 逐字节还原 → 与原文完全相同，vet 过。"
-          % len(broken))
-    print("（这条路径此前只被写下来过，没被跑过。现在跑过了。）")
+    print("演练通过：restore() 的两种入参取值各走了一次，盘上回到开跑前那一份，vet 过。")
 
 
 def main():
@@ -186,16 +267,10 @@ def main():
             os.remove(p)
 
     if not ok:                                     # ④ 任何一步失败就整份还原
-        # original 为 None 表示这次跑之前文件【本来就不存在】（「删掉能不能造回来」那条判据）。
-        # 那时「还原」= 把它删掉，而不是写一个 None 进去 —— 否则失败路径自己会崩，
-        # 而崩在还原步骤上，等于盘上留着半成品。
-        if original is None:
-            if os.path.exists(TARGET):
-                os.remove(TARGET)
-            what = "把 docs_test.go 删掉了（它本来就不存在）"
-        else:
-            open(TARGET, "wb").write(original)
-            what = "把 docs_test.go 逐字节还原了"
+        # 还原只有【一份实现】，drill() 调的是同一个 restore()。
+        # 上一版这里是主流程自己写一遍、drill() 抄一遍 —— 于是这里加了
+        # `original is None` 分支之后，演练到不了那儿而输出照旧说「演练通过」。
+        what = restore(original)
         leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
                      if os.path.exists(os.path.join(ROOT, f))]
         assert not leftovers, "中间产物没清干净：%s" % leftovers
