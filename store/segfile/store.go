@@ -72,6 +72,22 @@ func Open(dir string) (s *Store, truncated int64, err error) {
 			f.Close()
 			return nil, 0, derr
 		}
+		// ⛔ 读进来的 coverage 也要过 A1a/A1b —— 不变量在【两个入口】都要设卡。
+		//
+		// 此前它们只在 CommitSpan（写）那一侧执行，于是一份手改的、
+		// 或别的版本/工具写的 .meta【进得来】：实测一份乱序 + 重叠 + 端点非交易日的
+		// coverage 被 Open 悄悄收下。
+		// ⇒ 按本节第一原则（读不懂就报错，不猜）：结构不合法就不收。
+		//
+		// ⚠️ 而 A1c（端点必须是交易日）**在这里查不了**：它要日历，而 Open 没有。
+		// 这是一个【被声明的边界】，不是遗漏：A1c 仍然只在 CommitSpan 那一侧执行。
+		// ⇒ 一份端点非交易日的 .meta 仍然进得来，直到有人拿着日历去动它。
+		// 要在这里也堵上，得让 Open 收一个 Calendar —— 那是接口形状的变更，
+		// 已提给评审方定，本版不擅自改。
+		if verr := ValidateCoverage(m.Coverage); verr != nil {
+			f.Close()
+			return nil, 0, fmt.Errorf("segfile: %s 里的 coverage 结构不合法: %w", dir, verr)
+		}
 		st.meta = *m
 	case os.IsNotExist(err):
 		v := FormatVersion

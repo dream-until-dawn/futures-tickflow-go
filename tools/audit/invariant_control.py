@@ -170,6 +170,15 @@ MUTATIONS = [
         "		if !s.verified[sp] {",
         "		if false { // 人为弄坏：没走查过也照答")),
 
+    ("A1b-读", "TestInvariantA1b_RedOnOpen", SEGFILE,
+     "Open 不再校验读进来的 coverage", lambda w: sub(
+        w, ST,
+        """		if verr := ValidateCoverage(m.Coverage); verr != nil {
+			f.Close()
+			return nil, 0, fmt.Errorf("segfile: %s 里的 coverage 结构不合法: %w", dir, verr)
+		}
+""", "")),
+
     ("B3b", "TestInvariantB3_Green", SEGFILE,
      "HasBars 拿整段的 Bars 当那一天的答案", lambda w: sub(
         w, ST,

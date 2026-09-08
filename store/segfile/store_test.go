@@ -95,6 +95,53 @@ func TestInvariantC3a_Green(t *testing.T) {
 	}
 }
 
+// ───────── A1a/A1b 的【第二个入口】：Open 读进来的 coverage 也要过 ─────────
+//
+// ⚠️ 这不是新不变量，是同一条不变量的另一个入口。
+// 它们此前只在 CommitSpan（写）那一侧执行 ⇒ 一份手改的 .meta 进得来。
+//
+// ⚠️ A1c（端点是交易日）**不在这一格**：它要日历，而 Open 没有。
+// 那是一个被声明的边界，写在 Open 的注释里。
+
+func TestInvariantA1b_RedOnOpen(t *testing.T) {
+	dir := t.TempDir()
+	// 有序但重叠 —— 所以红了只可能是 A1b。
+	bad := `{"format":1,"coverage":[` +
+		`{"from":20200731,"to":20200804,"bars":3,"days":3},` +
+		`{"from":20200803,"to":20200806,"bars":3,"days":3}]}`
+	if err := os.WriteFile(filepath.Join(dir, "1m.meta"), []byte(bad), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s, _, err := Open(dir)
+	if err == nil {
+		s.Close()
+		t.Fatal("A1b 在读那一侧没有响：Open 收下了一份重叠的 coverage" +
+			"\n（不变量只在写那一侧设卡 ⇒ 手改的 .meta 进得来）")
+	}
+	if !errors.Is(err, errOverlap) {
+		t.Fatalf("响了，但响的是别的判据：%v", err)
+	}
+}
+
+func TestInvariantA1b_GreenOnOpen(t *testing.T) {
+	dir := t.TempDir()
+	// 与 _Red 只差第二段的起点：挪到前一段结束之后就不重叠了。
+	good := `{"format":1,"coverage":[` +
+		`{"from":20200731,"to":20200803,"bars":2,"days":2},` +
+		`{"from":20200804,"to":20200806,"bars":3,"days":3}]}`
+	if err := os.WriteFile(filepath.Join(dir, "1m.meta"), []byte(good), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s, _, err := Open(dir)
+	if err != nil {
+		t.Fatalf("A1b 在读那一侧误伤：合法的 coverage 被 Open 拒了：%v", err)
+	}
+	defer s.Close()
+	if len(s.Coverage()) != 2 {
+		t.Fatalf("Open 读出来的 coverage 应当有 2 段，实得 %v", s.Coverage())
+	}
+}
+
 // ───────────────── C1：coverage 只能在数据落盘之后扩大 ─────────────────
 
 func TestInvariantC1_Red(t *testing.T) {
