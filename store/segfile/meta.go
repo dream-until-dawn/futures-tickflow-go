@@ -92,6 +92,20 @@ func DecodeMeta(b []byte) (*Meta, error) {
 	return &m, nil
 }
 
+// EncodeMeta 把 Meta 写成 `.meta` 的字节。
+//
+// ⚠️ 写出去的 format 一律取 FormatVersion，**不沿用读进来的那个**：
+// 本版能写出来的只有本版的格式。沿用读进来的值，等于用一个旧版本号
+// 给一份新版本写的内容背书 —— 而下一个读者会照那个旧语义去解。
+func EncodeMeta(m Meta) ([]byte, error) {
+	v := FormatVersion
+	m.Format = &v
+	if m.Coverage == nil {
+		m.Coverage = []tickflow.Span{}
+	}
+	return json.MarshalIndent(m, "", "  ")
+}
+
 // ValidateCoverage 检查 A1a（升序）与 A1b（不重叠）。
 //
 // 这两条【不需要日历】：升序与重叠都是交易日编号上的算术。
