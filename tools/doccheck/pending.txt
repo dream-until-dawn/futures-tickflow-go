@@ -16,7 +16,7 @@
 # doccheck 的字段比对只在类型【已实现】时才触发（源码里找不到就走白名单分支）。
 # 于是白名单里的类型，其字段从不被拿去和源码比——**它们本来也没有源码可比**。
 #
-# 代价是真实的：v0.2 设计里 `SyncRequest.From/To`、v0.5 的 `RollRule.Pick`、
+# 代价是真实的：v0.3 设计里 `SyncRequest.From/To`、v0.6 的 `RollRule.Pick`、
 # `Roll.Day` 三处都把 `TradingDay` 写成了 `int32`——**和 doccheck 在
 # `Bar.TradingDay` 上抓到的是同一族错误**，而它们在这里活了下来，
 # 因为守卫够不到还没实现的那一半。
@@ -49,7 +49,7 @@
 # 否则暴露时刻就是你已经没得选的那一刻（v0.0.0 那次「批的 commit ≠ 打 tag 的
 # commit」就是在打完之后才暴露的）。
 
-# ---- v0.2：拉取 / 存储 / 同步 ----
+# ---- v0.3：拉取 / 存储 / 同步 ----
 Source        v0.3.0  Source 接口
 Source.Bars   v0.3.0  拉 K 线
 Source.Caps   v0.3.0  能力查询；深度按 (ProductKey, Period) 给，不能只按 Period
@@ -72,10 +72,10 @@ RatioFwd          v0.6.0  AdjustMethod 的成员：前复权·比例
 DiffBack          v0.6.0  AdjustMethod 的成员：后复权·差值
 DiffFwd           v0.6.0  AdjustMethod 的成员：前复权·差值
 
-# ---- v0.4：深度分钟历史落地后，聚合口径才有意义 ----
+# ---- v0.5：深度分钟历史落地后，聚合口径才有意义 ----
 AggRule       v0.5.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**
 
-# ---- v0.5：主力连续 ----
+# ---- v0.6：主力连续 ----
 ContinuousSpec v0.6.0  换月规则 + 复权方式
 RollRule       v0.6.0  换月规则接口
 RollRule.Pick  v0.6.0  在候选合约里选主力
