@@ -673,6 +673,31 @@ func probeNightGap(ctx context.Context, md, tok string) {
 		return
 	}
 
+	// 内置时段表自 2020-05-06 生效（calendar/embedded 的 baseFrom）。
+	// 这一行量的是：**本库的目标深度里，有多少落在日历【答得了】的那一侧。**
+	// 它不是这条探针的主结论，但它是一个别处拿不到的数：
+	// 目标深度由数据源决定（2016-01-04），而覆盖由内置表决定（2020-05-06）——
+	// **两者之间那一段，Walk 一律给 ErrUncovered。**
+	covered := 0
+	for _, d := range tdays {
+		if d >= "2020-05-06" {
+			covered++
+		}
+	}
+	// 顺带算两个【假如】：把生效起点往前挪到这两个日子，覆盖面各是多少。
+	// 这两个日子不是随便挑的，它们是 6.10 量出来的最后两次时段变更：
+	//   2019-12-11  最后一次变更（CZCE）之后 ⇒ 那之后的时段全都等于今天
+	//   2016-05-03  SHFE 那次变更之后 ⇒ 再往前就要第二段模板了
+	// **把「能往前挪」变成一个数，而不是一句「原则上可以」。**
+	var wouldCover [2]int
+	for i, from := range [2]string{"2019-12-11", "2016-05-03"} {
+		for _, d := range tdays {
+			if d >= from {
+				wouldCover[i]++
+			}
+		}
+	}
+
 	longest, longFrom, longTo := 0, "", ""
 	runs := map[int]int{} // 段长 -> 段数
 	// byYear 把每一段的起始交易日按年归拢。
@@ -740,10 +765,16 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			wantLongest, wantFrom, wantTo)
 	}
 	report("shinny-night-gap", st, fmt.Sprintf(
-		"交易日 %d 个（%s…%s）；跨零点的自然日 %.1f%%（阈值 10%%）；无夜盘的连续段分布：%s\n"+
+		"交易日 %d 个（%s…%s），其中内置表覆盖得到的（2020-05-06 起）%d 个 = %.0f%%；\n"+
+			"       假如起点挪到 2019-12-11 ⇒ %d 个 = %.0f%%；挪到 2016-05-03 ⇒ %d 个 = %.0f%%\n"+
+			"       跨零点的自然日 %.1f%%（阈值 10%%）；无夜盘的连续段分布：%s\n"+
 			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
 			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
-		len(tdays), tdays[0], tdays[len(tdays)-1], crossedPct, dist.String(),
+		len(tdays), tdays[0], tdays[len(tdays)-1],
+		covered, 100.0*float64(covered)/float64(len(tdays)),
+		wouldCover[0], 100.0*float64(wouldCover[0])/float64(len(tdays)),
+		wouldCover[1], 100.0*float64(wouldCover[1])/float64(len(tdays)),
+		crossedPct, dist.String(),
 		longest, longFrom, longTo, note, perYear.String()))
 }
 
