@@ -896,9 +896,13 @@ func probeNightHours(ctx context.Context, md, tok string) {
 				all[d] = append(all[d], ts...)
 			}
 		}
-		if fails > 2 || len(all) < 2000 {
-			fmt.Fprintf(&b, "%-14s 取数不足（%d 窗失败，%d 个自然日）—— 不报结论\n       ",
-				sym, fails, len(all))
+		gotDays := make([]string, 0, len(all))
+		for d := range all {
+			gotDays = append(gotDays, d)
+		}
+		sort.Strings(gotDays)
+		if ok, why := enoughDays(gotDays, fails); !ok {
+			fmt.Fprintf(&b, "%-14s 取数不足：%s —— 不报结论\n       ", sym, why)
 			bad++
 			continue
 		}
@@ -1118,6 +1122,53 @@ func probeNightHours(ctx context.Context, md, tok string) {
 //
 //	旧形态最后一天 2020-07-17（周五）→ 新形态第一天 2020-07-20（周一）**，T 与 TF 同日。
 //
+// enoughDays 判断「取到的数够不够下结论」，并在不够时给出**说得出理由**的一句话。
+//
+// ⛔ 原来两条探针写的都是 `len(all) < 2000` —— 一个**绝对天数**。
+// 它想问的是「有没有取全」，而这两件事只在【十岁以上的品种】上等价。
+// 2026-09-09 实测，三个品种被它挡在门外：
+//
+//	KQ.m@GFEX.si    900 天   **0 窗失败**   ⇒ 被拒
+//	KQ.m@GFEX.lc    761 天   **0 窗失败**   ⇒ 被拒
+//	KQ.m@SHFE.ss   1990 天   **0 窗失败**   ⇒ 被拒（差 10 天）
+//
+// **`0 窗失败` 就是取全了的证据** —— 这三个只是比十年年轻。
+// ⇒ 「够不够」被写成了一个位置（2000），而不是性质。**本仓反复撞的那个形状。**
+//
+// 新判据三条：
+//
+//	一、取数没失败：fails <= 2
+//	二、拿到的天数**密铺它自己的跨度**：len >= 0.85 × 跨度 × 5/7
+//	    （5/7 是「一周五个交易日」的粗估；0.85 给节假日与停牌留余量）
+//	三、下限 120 个交易日 —— 变更检测两边各要一个 20 日窗，41 天在理论上就够，
+//	    但 41 天里一个节假日群就能把窗口打穿。**半年是给判据留的余量，不是拍的。**
+//
+// ⚠️ 它**不**回答「这个品种上市那天到今天有没有取全」——
+// 跨度是从**取到的**第一天算起的。真正漏掉最早那一段，这条判据看不见。
+// 要答那个得有上市日期，而本仓现在没有那份数据。
+func enoughDays(days []string, fails int) (bool, string) {
+	if fails > 2 {
+		return false, fmt.Sprintf("取数失败 %d 窗", fails)
+	}
+	if len(days) < 120 {
+		return false, fmt.Sprintf("只有 %d 个交易日，不足 120 —— 变更检测两边各要一个 20 日窗，"+
+			"太短了判据自己会抖", len(days))
+	}
+	first, last := days[0], days[len(days)-1]
+	t0, e0 := time.Parse("2006-01-02", first)
+	t1, e1 := time.Parse("2006-01-02", last)
+	if e0 != nil || e1 != nil {
+		return false, "日期解析失败：" + first + ".." + last
+	}
+	span := int(t1.Sub(t0).Hours()/24) + 1
+	want := int(float64(span) * 5.0 / 7.0 * 0.85)
+	if len(days) < want {
+		return false, fmt.Sprintf("%s..%s 跨 %d 个自然日，按一周五天至少该有 %d 个交易日，"+
+			"实到 %d —— **中间有洞**", first, last, span, want, len(days))
+	}
+	return true, ""
+}
+
 // wantDayShape 是 2026-09-09 实测到的日盘形态（15m 网格）。
 //
 // ⛔ **`10:15` 不在里面，而它的缺席就是这条探针的全部判据** ——
@@ -1168,9 +1219,13 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 				all[d] = append(all[d], ts...)
 			}
 		}
-		if fails > 2 || len(all) < 2000 {
-			fmt.Fprintf(&b, "%-14s 取数不足（%d 窗失败，%d 个自然日）—— 不报结论\n       ",
-				sym, fails, len(all))
+		gotDays := make([]string, 0, len(all))
+		for d := range all {
+			gotDays = append(gotDays, d)
+		}
+		sort.Strings(gotDays)
+		if ok, why := enoughDays(gotDays, fails); !ok {
+			fmt.Fprintf(&b, "%-14s 取数不足：%s —— 不报结论\n       ", sym, why)
 			bad++
 			continue
 		}
