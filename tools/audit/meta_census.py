@@ -30,15 +30,23 @@
 
 ⚠️ **射程**（照例写明它不比什么）：
 
-    数的     两份文档里【出现 `.meta` 字样】的行
+    数的     **全仓所有 .md** 里【出现 `.meta` 字样】的行
     不数的   没写 `.meta` 但确实在讲这个格式的行（例如只说「元数据文件」）
     不数的   代码与测试里的断言 —— 那一侧由 doccheck 与 §6.1 的收集测试管
+
+⛔ **这里原来写的是「两份文档」，而那是【范围写成位置】** —— 和它自己要治的那个毛病同形。
+2026-09-09 改成按性质划（全仓 `.md`）。**换范围之后一个数都没变**：
+在 `1f62620` / `e9c4885` / `c79cb59` / `2bd29be` 四个点上各数了一遍，
+`.meta` 都只出现在 `docs/design.md` 与 `docs/contract.md` 里。
+
+    **一次不改变读数的换范围，是最便宜的一次 —— 等到它开始改变读数，说明已经漏过了。**
 
 ⇒ **这个数是一个下界，不是全集。** 它的用途是「改格式之前逐行过一遍」，
 不是「证明没有别的地方在讲这件事」。
 """
 
 import io
+import os
 import re
 import subprocess
 import sys
@@ -49,8 +57,8 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 NEEDLE = ".meta"
-DESIGN = "docs/design.md"
-CONTRACT = "docs/contract.md"
+DESIGN = "docs/design.md"   # §6.1 在这一份里，所以它单独拆「之内 / 之外」
+SKIPDIRS = {".git", "__pycache__", "node_modules"}
 
 
 def read(path, ref=None):
@@ -62,6 +70,27 @@ def read(path, ref=None):
     if out.returncode != 0:
         raise SystemExit("读不到 %s:%s —— %s" % (ref, path, out.stderr.decode("utf-8", "replace").strip()))
     return out.stdout.decode("utf-8").split("\n")
+
+
+def markdown_files(ref=None):
+    """全仓 .md 的路径。工作区走 os.walk，历史点走 git ls-tree ——
+    **两条路都必须给出同一套判据**，否则「按 SHA 数」和「按工作区数」会悄悄不是一回事。
+    """
+    if ref is None:
+        out = []
+        for root, dirs, files in os.walk("."):
+            dirs[:] = [d for d in dirs if d not in SKIPDIRS]
+            for fn in files:
+                if fn.endswith(".md"):
+                    out.append(os.path.join(root, fn).replace("\\", "/").lstrip("./"))
+        return sorted(out)
+    r = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref],
+                       capture_output=True)
+    if r.returncode != 0:
+        raise SystemExit("列不出 %s 的文件 —— %s"
+                         % (ref, r.stderr.decode("utf-8", "replace").strip()))
+    return sorted(l for l in r.stdout.decode("utf-8").split(chr(10))
+                  if l.endswith(".md"))
 
 
 def section_bounds(lines, pattern):
@@ -79,39 +108,50 @@ def section_bounds(lines, pattern):
 
 def census(ref=None):
     design = read(DESIGN, ref)
-    contract = read(CONTRACT, ref)
     s, e = section_bounds(design, r"^#{2,4} .*6\.1")
 
     inside = [i + 1 for i in range(s, e) if NEEDLE in design[i]]
     outside = [i + 1 for i in range(len(design))
                if NEEDLE in design[i] and not (s <= i < e)]
-    other = [i + 1 for i in range(len(contract)) if NEEDLE in contract[i]]
+    others = {}
+    for path in markdown_files(ref):
+        if path == DESIGN:
+            continue
+        hits = [i + 1 for i, ln in enumerate(read(path, ref)) if NEEDLE in ln]
+        if hits:
+            others[path] = hits
     return {"section": (s + 1, e), "inside": inside,
-            "outside": outside, "contract": other}
+            "outside": outside, "others": others}
 
 
 def main():
     ref = sys.argv[1] if len(sys.argv) > 1 else None
     c = census(ref)
-    ins, out, con = c["inside"], c["outside"], c["contract"]
-    total = len(ins) + len(out) + len(con)
+    ins, out, others = c["inside"], c["outside"], c["others"]
+    total = len(ins) + len(out) + sum(len(v) for v in others.values())
 
     where = ref if ref else "工作区"
     print("关于 `%s` 的断言 —— %s" % (NEEDLE, where))
     print("  design.md §6.1 = 行 %d..%d" % c["section"])
     print("    §6.1 之内   %3d 行" % len(ins))
     print("    §6.1 之外   %3d 行   %s" % (len(out), out))
-    print("  contract.md   %3d 行   %s" % (len(con), con))
+    for path, hits in sorted(others.items()):
+        print("  %-13s %3d 行   %s" % (os.path.basename(path), len(hits), hits))
+    if not others:
+        print("  其余 .md        0 行")
     print("  ── 合计       %3d 行" % total)
 
     # 旧范围（「本节」）盖不到的那部分 —— 这是当初改范围的【理由】，
     # 所以它也必须出自同一次遍历，不能另外手算。
-    missed = len(out) + len(con)
+    missed = len(out) + sum(len(v) for v in others.values())
     if total:
         print("  旧范围（只看 §6.1）盖不到 %d 行，占 %.1f%%" % (missed, 100.0 * missed / total))
 
     # 合计必须等于那条【文档里写着的】命令的输出 —— 两条路数出来不一样就是这里错了
-    plain = sum(1 for l in read(DESIGN, ref) + read(CONTRACT, ref) if NEEDLE in l)
+    allmd = []
+    for path in markdown_files(ref):
+        allmd += read(path, ref)
+    plain = sum(1 for l in allmd if NEEDLE in l)
     assert plain == total, ("分项加起来 %d，而 grep 全文数出 %d —— "
                             "分项与合计出自同一次遍历，它们不该不等" % (total, plain))
     print("  ✅ 分项之和 == 全文行数（%d）—— 两个数出自同一次遍历" % plain)
