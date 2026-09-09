@@ -1045,6 +1045,93 @@ func TestHighWaterProvenance(t *testing.T) {
 //	守的   规矩块的**最后一行**必须紧挨着第一条 `# 来历`
 //	不守的 那条规矩的**内容**对不对（在一种并集顺序里机器分不出来，见文件里那张 2×2）
 //	不守的 解冲突的人有没有真的读它
+//
+// TestMergeRecordPrecedesWhatItLicenses 断言：每条合流记录都出现在**它要许可的那一行之前**。
+//
+// # 这条守卫的来历，比它本身值钱
+//
+// 2026-09-09 我在 gfex 那一格手写第一条合流记录时**放错了位置** —— 把它放在两条分叉行
+// 【之后】。测试全绿，而它其实什么都没做：
+//
+//	把来历行顺序倒过来测   有记录 ⇒ **FAIL**   无记录 ⇒ FAIL   ← **一模一样**
+//
+// 因为赦免是**读到那一行才生效**的，而它排在被许可的那一行后面 —— 那一刻它还不存在。
+//
+//	⇒ **一条排在被许可行【之后】的合流记录是惰性的：
+//	  它读起来像保护，而在需要它的那一刻还不存在。**
+//
+// # 判据为什么是【位置】，不是【有没有许可到东西】
+//
+// 评审方先提的判据是「一条 `合流 X` 之后必须还存在值低于记录时最大值的同名行，
+// 否则它是惰性的」。**那条被证伪了，反例是我这条记录本身**：
+//
+//	把它整个删掉 ⇒ **四个包全绿** ⇒ 它今天没有许可任何东西
+//	⇒ 按那条判据它会被判成惰性，**而它是对的、必须留**
+//	  （它只在「来历行顺序倒过来」那一种情形里起作用，而那取决于谁先合）
+//
+// ⇒ 换成**位置**判据（评审方给的替代版，我核过正反两向）：
+//
+//	一条 `合流 X` 记录，必须出现在【同名、值等于 X 的那一行】之前。
+//
+// 关键差别：**它不问「许没许可到东西」，只问「站没站对地方」** ——
+// 所以**休眠但正确**的记录照样通过，而「排在被许可行之后」那种放法照样被抓。
+//
+// ⚠️ 射程，两条：
+//
+//	一、它**不**回答「赦免该不该永久」。那是 high_water.txt 里记的语义②/③，
+//	  是一个真的设计决定，不是这条守卫的活。**两件事，两条守卫，别混。**
+//	二、它假设「记录要许可的那一行，值恰好等于 X」。X 是另一侧的最大值，
+//	  今天两条记录都成立；**若哪天那一行被别的改动挪走或改值，这条会误报** ——
+//	  而误报的处置是回来看一眼，不是把守卫删掉。
+func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
+	lines := strings.Split(highWaterRaw, "\n")
+	type prov struct {
+		i    int
+		name string
+		val  int
+	}
+	var all []prov
+	for i, raw := range lines {
+		f := strings.Fields(raw)
+		if len(f) < 5 || f[0] != "#" || f[1] != "来历" {
+			continue
+		}
+		if v, err := strconv.Atoi(f[4]); err == nil {
+			all = append(all, prov{i, f[3], v})
+		}
+	}
+	seen := 0
+	for i, raw := range lines {
+		f := strings.Fields(raw)
+		if len(f) < 7 || f[0] != "#" || f[1] != "来历" || f[5] != "合流" {
+			continue
+		}
+		other, err := strconv.Atoi(f[6])
+		if err != nil {
+			continue // 格式本身由 TestHighWaterChain 管，这里不重复报
+		}
+		seen++
+		ok := false
+		for _, p := range all {
+			if p.i > i && p.name == f[3] && p.val == other {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			t.Errorf("high_water.txt:%d 这条合流记录站错了地方：它写着「合流 %d」，"+
+				"而【它之后】没有任何一行是 `%s` 且值为 %d。\n"+
+				"  ⇒ 赦免是**读到这一行才生效**的；它要许可的那一行在它【前面】，"+
+				"那一刻这条记录还不存在 ⇒ **它是惰性的**。\n"+
+				"  ⇒ 处置：把这一行挪到那一行【之前】（不是改它的数）。",
+				i+1, other, f[3], other)
+		}
+	}
+	if seen == 0 {
+		t.Fatal("一条合流记录都没扫到 —— 这条守卫没在守任何东西（它的前提是文件里有合流记录）")
+	}
+}
+
 func TestHighWaterRuleAdjacency(t *testing.T) {
 	lines := strings.Split(highWaterRaw, "\n")
 	first := -1
