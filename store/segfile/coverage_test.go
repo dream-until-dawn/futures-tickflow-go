@@ -99,10 +99,17 @@ var absent = map[string]string{
 //	⇒ 这两件事是【一格】，被切到了两条分支上。而它不需要靠人记得：
 //	  合并的那一刻，A4 会让这条测试红，红的信息里就写着要补什么。
 //	  **一条跨分支的约束，分支上的绿灯看不见它 —— 看得见的是合并。**
-// ⛔ 本文件里的两条守卫【都没有被登记】—— 删掉它们不会有任何东西响。
+// ⛔ 本文件里的**三条**守卫【都没有被登记】—— 删掉它们不会有任何东西响。
 //
-//	TestInvariantCoverageMatchesTable  经 tableIDs 读 design.md
-//	TestFifthColumnNamesExist          直接读 design.md
+//	TestInvariantCoverageMatchesTable            经 tableIDs 读 design.md
+//	TestFifthColumnNamesExist                    直接读 design.md
+//	TestIDPatternAcceptsShapesTheTableDoesNotYetHave  **不读任何文档**（合成用例）
+//
+// ⚠️ 第三条是 2026-09-09 后加的，而它当场推翻了下面那个数法：
+// 我数「哪些是没登记的守卫」时用的代理判据是**「函数体里真去读仓内文档」**，
+// 而这一条**一个文件都不读** —— 它守的是那两条守卫赖以工作的【正则】。
+// ⇒ **一条按我自己的判据数不出来的守卫，我自己刚刚写了一条。**
+//   这是「是不是一条守卫没有可机器判的判据」最直接的一个证据。
 //
 // 实测（2026-09-09，整个删掉 TestFifthColumnNamesExist 跟着跑一遍，不是推理）：
 // go vet 过、四个包全绿、生成器重跑后仍然打印「守卫 12 个」—— **一个都没响。**
@@ -131,6 +138,77 @@ var (
 	tableRow = regexp.MustCompile(`^\| ([A-Z][0-9]+[a-z]?) \|`)
 	testName = regexp.MustCompile(`^TestInvariant([A-Z][0-9]+[a-z]?)_(Red|Green)$`)
 )
+
+// TestIDPatternAcceptsShapesTheTableDoesNotYetHave 守上面那三个正则的**放宽**部分。
+//
+// # 为什么要一条【合成】的测试
+//
+// 这三个正则被放宽过两次，每次都是因为一次真实的漏检：
+//
+//	[A-F] → [A-Z]    G1 原来被**一声不响**地漏掉（cf22a46）
+//	[0-9] → [0-9]+   同一个失效方式，在数字那一位上（58b42e1）
+//
+// 2026-09-09 我把三个成分**分开**改窄回去，一次只动一个，量出来：
+//
+//	[A-Z]   改窄 ⇒ **红**（`G1` 在 absent 里，`[A-F]` 容不下它）
+//	[a-z]?  拿掉 ⇒ **红**（`A1a` / `A1b` 撑着）
+//	[0-9]+  改窄 ⇒ **全绿** ← **只有这一个没有对照组**
+//
+// ⇒ 因为今天表里的编号**全是一位数**。
+// **一个没有用例去走的放宽，和没有放宽，机器分不出来** ——
+// 而它的失效方式恰恰是「一声不响地漏掉」，也就是本仓在 `G1` 上已经吃过一次的那一种。
+//
+// ⚠️ 所以这条测试**故意用表里不存在的编号**。它不读 design.md：
+// 要等表里真出现 `A10` 才有对照组，就等于要先漏检一次才肯装守卫。
+//
+// ⚠️ 它的射程：只管**正则收不收**，不管收进来之后那一套对不对。
+// 表里真加了两位数编号，`tableIDs` 的连续性断言会不会跟着成立，这条测试不答。
+func TestIDPatternAcceptsShapesTheTableDoesNotYetHave(t *testing.T) {
+	for _, c := range []struct{ row, want string }{
+		{"| A10 | 两位数 |", "A10"},  // ← 今天表里没有：数字那一位的放宽全靠它
+		{"| Z1 | 字母尾端 |", "Z1"},   // ← 今天表里没有：字母那一段的上界
+		{"| A1a | 真实存在 |", "A1a"}, // ← 表里有，放这儿是为了让三条并排读
+	} {
+		m := tableRow.FindStringSubmatch(c.row)
+		if m == nil {
+			t.Errorf("tableRow 认不出 %q —— 这一行会被**一声不响**地跳过，"+
+				"而那正是 G1 当年的漏法", c.row)
+			continue
+		}
+		if m[1] != c.want {
+			t.Errorf("tableRow 从 %q 里取到 %q，要 %q", c.row, m[1], c.want)
+		}
+	}
+	for _, c := range []struct{ fn, want string }{
+		{"TestInvariantA10_Red", "A10"},
+		{"TestInvariantZ1_Green", "Z1"},
+		{"TestInvariantA1a_Red", "A1a"},
+	} {
+		m := testName.FindStringSubmatch(c.fn)
+		if m == nil {
+			t.Errorf("testName 认不出 %q —— 这个测试会被算成【不是不变量测试】，"+
+				"于是那条编号看起来【没人认领】", c.fn)
+			continue
+		}
+		if m[1] != c.want {
+			t.Errorf("testName 从 %q 里取到 %q，要 %q", c.fn, m[1], c.want)
+		}
+	}
+	for _, c := range []struct{ col, want string }{
+		{"读：`X`→`A10_Red`", "A10"},
+		{"读：`X`→`Z1_Green`", "Z1"},
+		{"读：`X`→`A1a_Red`", "A1a"},
+	} {
+		m := fifthColName.FindStringSubmatch(c.col)
+		if m == nil {
+			t.Errorf("fifthColName 认不出 %q —— 第五列写了个假名字也查不出来", c.col)
+			continue
+		}
+		if m[1] != c.want {
+			t.Errorf("fifthColName 从 %q 里取到 %q，要 %q", c.col, m[1], c.want)
+		}
+	}
+}
 
 // tableIDs 从 design.md 那张表里现读编号集合。
 func tableIDs(t *testing.T) map[string]bool {
