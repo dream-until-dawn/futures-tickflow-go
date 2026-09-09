@@ -2023,5 +2023,68 @@ func TestRootErrorSentinelsAreDisposed(t *testing.T) {
 				"  ⇒ 删掉它。留着会让下一个人以为那一格还有东西守着", n)
 		}
 	}
+
+	// ⛔ **到期条件：`GapKind` 一旦落成 Go 常量，本表的比对对象要换成它。**
+	//
+	// 今天 disposition 的【值】是一句散文（「缺口第三类 GapNotTrading —— …」），
+	// 而 `GapNotTrading` 那批名字现在只活在 docs/design.md 与 pending.txt 里。
+	// ⇒ 于是这张表**守住了键，守不住值**：写错一个类别名，没有任何东西会响。
+	//
+	// ⚠️ 评审方 2026-09-09 建议在旁边写一句到期条件。**我把它写成了一个【检查】** ——
+	// 理由是 pending.txt 抬头那条：**不靠人自觉去清理，靠时间推着清；**
+	// 一句写在注释里的到期条件，和一句写在风险表里的话下场一样。
+	//
+	// ⚠️ 而它与上面「不为自定义错误类型扩判据」那一格**不矛盾**，两者的区别要说清：
+	//
+	//	那一格   对象是【一整类还不存在的东西】（任何实现 error 的类型）⇒ 守着空集，红不了
+	//	这一格   对象是【一个具名的、已排期的、必然会来的东西】（GapKind，v0.3 Syncer）
+	//	         ⇒ 它不是"守空集"，是**一张带到期日的欠条**，与 pending.txt 同形
+	for _, n := range rootTypeNames(t) {
+		if n == "GapKind" {
+			t.Errorf("`GapKind` 已经落成 Go 常量了 ⇒ 本表的比对对象该换成它。\n" +
+				"  现在 errorSentinelDisposition 的【值】是散文，类别名只活在文档里 ⇒ 键有守卫、值没有。\n" +
+				"  ⇒ 改成：从每条值里抽出 Gap 常量名，断言它在根包的 GapKind 常量集合里。\n" +
+				"  ⇒ 这条红是【设计如此】的到期，不是回归 —— 改完它就该消失")
+		}
+	}
+
 	t.Logf("根包 %d 个错误哨兵，处置全部登记：%s", len(found), strings.Join(found, " "))
+}
+
+// rootTypeNames 扫根包源码里所有包级类型名（非测试文件）。
+// 只给上面那条到期检查用 —— 它要判的是「某个类型出现了没有」。
+func rootTypeNames(t *testing.T) []string {
+	t.Helper()
+	ents, err := os.ReadDir(".")
+	if err != nil {
+		t.Fatalf("读目录：%v", err)
+	}
+	fset := token.NewFileSet()
+	var out []string
+	for _, e := range ents {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".go") ||
+			strings.HasSuffix(e.Name(), "_test.go") {
+			continue
+		}
+		f, err := parser.ParseFile(fset, e.Name(), nil, 0)
+		if err != nil {
+			t.Fatalf("解析 %s：%v", e.Name(), err)
+		}
+		if f.Name.Name != "tickflow" {
+			continue
+		}
+		for _, d := range f.Decls {
+			gd, ok := d.(*ast.GenDecl)
+			if !ok || gd.Tok != token.TYPE {
+				continue
+			}
+			for _, s := range gd.Specs {
+				if ts, ok := s.(*ast.TypeSpec); ok {
+					out = append(out, ts.Name.Name)
+				}
+			}
+		}
+	}
+	sort.Strings(out)
+	return out
 }
