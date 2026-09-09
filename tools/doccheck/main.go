@@ -157,18 +157,32 @@ func main() {
 // 这类失败自动化天然抓不住，除非把**期望的输出文本**也写进断言。
 type findings struct {
 	docN, srcN, wlN int
-	missing         []string
-	mismatch        []string
-	staleWL         []string
-	orphan          []string
-	paid            []string
-	conflicts       []string
-	used            map[string]bool
-	direct          int
+
+	// empty 是【底线】：一侧一处声明都没读到。
+	//
+	// 它不和别的类别同族——别的类别说「我比过了，结论是这个」，
+	// 而这一条说「我什么都没比」。合成一句就是本仓记过的那副面孔：
+	// **空输出 ⇒ 假 PASS**。实测 2026-09-09：
+	//
+	//	仓库根          文档 134 · 源码 204 · 白名单 18  ⇒「一致。」exit 0
+	//	tools/doccheck  文档 0   · 源码 0   · 白名单 0   ⇒「一致。」exit 0
+	//
+	// **同一句话、同一个退出码，而后者一个字节都没读到。**
+	// ⇒ 一个跑错目录的 CI 步骤会全程绿灯，而它守的正是文档与源码的一致。
+	empty []string
+
+	missing   []string
+	mismatch  []string
+	staleWL   []string
+	orphan    []string
+	paid      []string
+	conflicts []string
+	used      map[string]bool
+	direct    int
 }
 
 func (f findings) count() int {
-	return len(f.missing) + len(f.mismatch) + len(f.staleWL) +
+	return len(f.empty) + len(f.missing) + len(f.mismatch) + len(f.staleWL) +
 		len(f.orphan) + len(f.paid) + len(f.conflicts)
 }
 
@@ -178,6 +192,22 @@ func compare(docDecls, srcDecls map[string]decl, pending map[string]string,
 	f := findings{
 		docN: len(docDecls), srcN: len(srcDecls), wlN: len(pending),
 		conflicts: conflicts, used: map[string]bool{},
+	}
+	// 底线：读到 0 处，不许走到「一致」那一支。
+	//
+	// ⚠️ 两侧【分开报】，因为成因不同、下一步动作也不同：
+	// 文档侧空多半是路径（跑错目录、docs/ 改名、Glob 模式改坏）；
+	// 源码侧空多半是遍历规则（跳目录的判据把该走的也跳了、导出判定改坏）。
+	// 合成一条，报告就把读的人指向错误的方向——同⑱ 那一格。
+	if f.docN == 0 {
+		f.empty = append(f.empty, "文档侧【一处声明都没读到】——"+
+			"docs/*.md 里的 go 围栏一个都没扫到。\n"+
+			"      最可能的原因是【跑的目录不对】：本工具要在仓库根跑，或用 -root 指到根。")
+	}
+	if f.srcN == 0 {
+		f.empty = append(f.empty, "源码侧【一处声明都没读到】——"+
+			"根下没有走到任何带导出声明的 .go。\n"+
+			"      要么 -root 指错了，要么 fromSource 的跳目录判据把该走的也跳了。")
 	}
 	for _, d := range sorted(docDecls) {
 		s, ok := srcDecls[d.Name]
@@ -248,6 +278,7 @@ func (f findings) render() string {
 		}
 		fmt.Fprintln(&b)
 	}
+	sec("⛔ 什么都没读到（这【不是】一致）", f.empty)
 	sec("源码里找不到，且不在白名单", f.missing)
 	sec("名字在、【签名不同】", f.mismatch)
 	sec("白名单已过期（预定版本已打 tag）", f.staleWL)
@@ -278,6 +309,7 @@ func (f findings) render() string {
 	}
 	fmt.Fprintf(&b, "%d 处不一致。\n", f.count())
 	b.WriteString("按类别处置：\n" +
+		"  什么都没读到   → 跑的目录不对（要在仓库根跑，或 -root 指到根）；它【不是】一致，别照「一致」读\n" +
 		"  源码里找不到   → 实现它，或改文档，或写进 pending.txt 并注明预定版本\n" +
 		"  签名不同       → 改源码或改文档，让两边一致\n" +
 		"  白名单已过期   → 那个版本到了而实现没做完：做完它，或推迟预定版本并说明\n" +

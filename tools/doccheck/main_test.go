@@ -236,6 +236,7 @@ func TestReportWording(t *testing.T) {
 // 等于报了一半**。
 func TestReportListsAnActionForEveryCategory(t *testing.T) {
 	f := findings{
+		empty:     []string{"g"},
 		missing:   []string{"a"},
 		mismatch:  []string{"b"},
 		staleWL:   []string{"c"},
@@ -246,6 +247,10 @@ func TestReportListsAnActionForEveryCategory(t *testing.T) {
 	}
 	got := f.render()
 	for _, pair := range [][2]string{
+		// ⚠️ 第一列要挑一个【只出现在小节标题里】的串。
+		// 「什么都没读到」同时是处置行的前缀 ⇒ 拿它当第一列，
+		// 小节整个不打印这条断言也照样绿（okMark 那一格的同族）。
+		{"⛔ 什么都没读到（这【不是】一致）", "什么都没读到   →"},
 		{"源码里找不到，且不在白名单", "源码里找不到   →"},
 		{"名字在、【签名不同】", "签名不同       →"},
 		{"白名单已过期", "白名单已过期   →"},
@@ -260,8 +265,8 @@ func TestReportListsAnActionForEveryCategory(t *testing.T) {
 			t.Errorf("类别 %q 报得出来，但收尾提示里没有它的处置动作", pair[0])
 		}
 	}
-	if f.count() != 6 {
-		t.Errorf("count() = %d，期望 6", f.count())
+	if f.count() != 7 {
+		t.Errorf("count() = %d，期望 7", f.count())
 	}
 }
 
@@ -278,5 +283,55 @@ func TestFromDocsIsIdempotent(t *testing.T) {
 	if first != second {
 		t.Errorf("同样的输入跑两次结论不同：第一次 %d 处、第二次 %d 处——"+
 			"包级状态在跨调用累积", first, second)
+	}
+}
+
+// TestReadingNothingIsNotAgreement 复现 2026-09-09 那次假 PASS。
+//
+// 在 tools/doccheck/ 里跑（而不是仓库根），两侧都读到 0 处，
+// 而报告与仓库根那次成功【同一句话、同一个退出码】：
+//
+//	仓库根          文档 134 · 源码 204 · 白名单 18  ⇒「一致。」exit 0
+//	tools/doccheck  文档 0   · 源码 0   · 白名单 0   ⇒「一致。」exit 0
+//
+// ⇒ 一个 cd 错地方的 CI 步骤会全程绿灯，而它守的正是文档与源码的一致。
+// 这是本仓记过的第一副面孔：**空输出 ⇒ 假 PASS**。
+func TestReadingNothingIsNotAgreement(t *testing.T) {
+	// 一个既没有 docs/、也没有带导出声明的 .go 的根 —— 正是跑错目录时的样子。
+	root := t.TempDir()
+
+	docDecls, err := fromDocs(filepath.Join(root, "docs"))
+	if err != nil {
+		t.Fatalf("fromDocs 对着不存在的目录是【无错地】返回空的——"+
+			"正是这一点让假 PASS 成立；它要是改成报错，这条测试就该换成断言那个错：%v", err)
+	}
+	srcDecls, err := fromSource(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// ⚠️ 先验前提。这个 fixture 要的就是「两侧都空」——
+	// 前提不成立的话，下面那几条断言【什么也没验】，而它们照样会绿。
+	if len(docDecls) != 0 || len(srcDecls) != 0 {
+		t.Fatalf("这个 fixture 要的是两侧都空，实得 文档 %d 处 / 源码 %d 处——"+
+			"不是断言错了，是前提没成立", len(docDecls), len(srcDecls))
+	}
+
+	res := compare(docDecls, srcDecls, nil, nil, func(string) bool { return false })
+	got := res.render()
+
+	if strings.Contains(got, okMark) {
+		t.Errorf("两侧读到 0 处，报告却打了 %q——空输出被读成了「全部一致」\n%s", okMark, got)
+	}
+	if res.count() == 0 {
+		t.Errorf("count() = 0 ⇒ main 会 exit 0，跑错目录的 CI 步骤全程绿灯\n%s", got)
+	}
+	// 两侧【分开报】：成因不同、下一步动作也不同，合成一条会把人指向错方向。
+	for _, want := range []string{
+		"文档侧【一处声明都没读到】",
+		"源码侧【一处声明都没读到】",
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("报告里少了 %q\n%s", want, got)
+		}
 	}
 }
