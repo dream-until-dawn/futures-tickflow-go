@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 )
 
 // 本文件对应 docs/design.md §五 的 `source.go`：Source 接口与它的契约层。
@@ -22,13 +21,13 @@ import (
 // Period 是「周期」这个概念的统一名字，**密封**：只有本包里的
 // IntradayPeriod 与 CalendarPeriod 实现它，靠 isPeriod 这个不可导出方法封口。
 //
-// 为什么要密封（design.md §五）：Capabilities.Depth 拿它做 map 键，
+// 为什么要密封（design.md §五）：Capabilities.Since 拿它做 map 键，
 // 而一个只要求 String() 的开放接口，**任何带 String() 的类型都能塞进来**——
 // 包括 time.Duration。密封之后「周期」在类型层面就是穷举的两种，
 // 新增一种必须改本包，而改本包会撞上 TestPeriodIsSealed。
 //
 // ⛔ **实现者必须【可比较】** —— 这是一条硬要求，不是建议：
-// `Capabilities.Depth` 拿 Period 当 map 键，`Supports` 用 `==`。
+// `Capabilities.Since` 拿 Period 当 map 键，`Supports` 用 `==`。
 // 一个带切片/映射/函数字段的实现者**编译期一声不响**，
 // 到运行期才 `panic: hash of unhashable type`。
 //
@@ -44,14 +43,14 @@ import (
 //
 //	type X struct { IntradayPeriod; legs []string }   // 满足 Period，编译通过
 //	periodImplementors 扫到的  [CalendarPeriod IntradayPeriod]   ⇒ **没有 X**
-//	当 Depth 的键               panic: hash of unhashable type
+//	当 Since 的键               panic: hash of unhashable type
 //
 //	⚠️ 成因值得记：**AST 扫的是「谁【声明】了 isPeriod」，而接口要的是「谁【满足】它」。**
 //	嵌入让这两个集合分开 —— **守卫扫的是【语法】，而契约管的是【类型】，低了一层。**
 //
 // （评审方 2026-09-09 构造出来的，登记⑧；无到期日，目前只写文档不设机械拦截。）
 // 这一条是评审方 2026-09-09 用对照组实测出来的：一个带 []string 字段的
-// 实现者放进 Depth ⇒ 当场 panic。
+// 实现者放进 Since ⇒ 当场 panic。
 //
 // ⚠️ 它只承诺「能报出自己的名字」，**不承诺两种周期能互换使用**：
 // IntradayPeriod.Bars(tmpl, day) 与 CalendarPeriod.Group(days) 签名不同，
@@ -129,11 +128,27 @@ func (r BarRequest) Validate() error {
 // 按周期问的话，Syncer 会拿 RB0 的深度去向 AG0 要数据，
 // 拿回 4.8 个月，然后把差额记成「拉过，确认没有」——**而且静默**。
 type Capabilities struct {
-	Periods   []Period                 // 支持哪些周期
-	MaxBars   int                      // 单次最多给多少根（新浪 1023，且【无法翻页】）
-	Depth     map[Period]time.Duration // 该品种各周期能回溯多久
-	HasSettle bool                     // 是否给结算价
-	HasOI     bool                     // 是否给持仓量
+	Periods []Period // 支持哪些周期
+	MaxBars int      // 单次最多给多少根（新浪 1023，且【无法翻页】）
+
+	// Since 是【绝对起点】：该源在这个品种的这个周期上，最早给得出哪个交易日。
+	//
+	// ⛔ 这里原本是 `Depth map[Period]time.Duration`（「能回溯多久」），
+	// **而那个形状是错的，第一次实现就撞上了**（登记⑪）：
+	//
+	//	真实约束是一个【日期】—— 新浪合约级日线约从 2018-05 起有数据；
+	//	而「能回溯多久」是一个**随时间增长的量** ⇒ 写成常量它明天就偏一天。
+	//
+	// ⚠️ 而换成 TradingDay 还多买到一样东西：**零值可辨。**
+	//
+	//	time.Duration(0)  「不知道」与「一天都给不了」**长得一模一样**
+	//	TradingDay(0)     `Valid()` 为假 ⇒ **忘了填这件事本身可以被查出来**
+	//
+	// ⇒ 换形状的理由不是「新的更好听」，是**旧的把「没填」藏了起来**。
+	Since map[Period]TradingDay
+
+	HasSettle bool // 是否给结算价
+	HasOI     bool // 是否给持仓量
 	Realtime  bool
 }
 
@@ -149,19 +164,32 @@ func (c Capabilities) Supports(p Period) bool {
 
 // Validate 检查这份能力声明自己自洽不自洽。
 //
-// ⛔ 只有一条，而它挡的是一个具体的静默失败：
-// **Periods 里有、Depth 里没有的周期，深度读出来是零值。**
-// 零值 time.Duration 是 0，而 0 在「能回溯多久」这个语境里
-// 和「不知道」长得一模一样 —— Syncer 拿到 0 会认为一天都拉不了，
-// 或者（更坏）实现方随手把「不知道」写成不填，于是它变成「拉不了」。
+// ⛔ 两条，都挡具体的静默失败：
 //
-// ⇒ 不知道就显式填 0 并在源的文档里说明，别靠不填。
+//	一、Periods 里有、Since 里没有 ⇒ 读出来是零值，而**没填这件事必须能被查出来**
+//	二、Since 里的值不是一个合法交易日 ⇒ 同上，只是错得更明显
+//
+// ⚠️ 这两条在旧形状（`Depth map[Period]time.Duration`）下**第二条根本写不出来**：
+// 任何 Duration 都是「合法」的，包括 0。**换成 TradingDay 之后它才有话可说。**
+//
+// ⛔ 而 MaxBars 那一格【仍然】不可分辨（登记⑫）：
+// `0` 同时是「没有观察到硬顶」和「一根都给不了」。
+// 本次不一并改，理由是它们**不是同一个毛病**：
+// Since 那一格是「没填被藏起来」，而 MaxBars 那一格是「两个真实语义共用一个值」——
+// 后者要么加一个 bool，要么换成指针，**两种都会让每个源多写一行样板**，
+// 而它今天挡不住任何已知的错（本源不给分钟线，日线上没有硬顶）。
+// **写下来，不顺手带过。**
 func (c Capabilities) Validate() error {
 	var errs []error
 	for _, p := range c.Periods {
-		if _, ok := c.Depth[p]; !ok {
-			errs = append(errs, fmt.Errorf("周期 %s 在 Periods 里但不在 Depth 里——"+
-				"深度会读成 0，而 0 和「不知道」在这里长得一样", p))
+		d, ok := c.Since[p]
+		if !ok {
+			errs = append(errs, fmt.Errorf("周期 %s 在 Periods 里但不在 Since 里——"+
+				"读出来会是零值，而「忘了填」和「真的从那天起」必须分得开", p))
+			continue
+		}
+		if !d.Valid() {
+			errs = append(errs, fmt.Errorf("周期 %s 的 Since=%d 不是一个合法交易日", p, int32(d)))
 		}
 	}
 	if c.MaxBars < 0 {

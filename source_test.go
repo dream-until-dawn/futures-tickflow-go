@@ -117,7 +117,7 @@ func periodImplementors(t *testing.T) []string {
 //
 // 加一种周期时它会红 —— **而这一次是真的会**：左边那份是从源码扫出来的。
 // 红了之后要做的不是把名字补进表，是先确认这几处都想过新的那一种：
-// Capabilities.Depth 的键、各源的 Caps、以及聚合口径。
+// Capabilities.Since 的键、各源的 Caps、以及聚合口径。
 func TestPeriodImplementorsAreEnumerated(t *testing.T) {
 	found := periodImplementors(t)
 	if len(found) == 0 {
@@ -132,7 +132,7 @@ func TestPeriodImplementorsAreEnumerated(t *testing.T) {
 	if !reflect.DeepEqual(found, registered) {
 		t.Fatalf("Period 的实现者与 periodSamples 对不上。\n"+
 			"  源码里扫到：%v\n  periodSamples 登记：%v\n"+
-			"  ⇒ 新增一种周期时，先确认 Capabilities.Depth 的键、各源的 Caps、"+
+			"  ⇒ 新增一种周期时，先确认 Capabilities.Since 的键、各源的 Caps、"+
 			"以及聚合口径都想过它，再补这张表。", found, registered)
 	}
 	t.Logf("源码里扫到 %d 种实现者：%v", len(found), found)
@@ -140,14 +140,14 @@ func TestPeriodImplementorsAreEnumerated(t *testing.T) {
 
 // TestPeriodImplementorsAreComparable 查一条**原本没写下来**的不变量。
 //
-// ⛔ `Period` 要求实现者【可比较】：`Capabilities.Depth` 拿它当 map 键，
+// ⛔ `Period` 要求实现者【可比较】：`Capabilities.Since` 拿它当 map 键，
 // `Supports` 用 `==`。而不可比较的实现者**编译期一声不响**，
 // 到运行期才 `panic: hash of unhashable type`。
 //
 // ⚠️ **密封挡不住它** —— 密封挡的是包外，而不可比较的类型可以从包【内】加进来。
 // 今天没炸，是因为恰好只有 `struct{min int}` 与 `int` 两种，两种都可比较：
 // **又是一个碰巧成立的性质替一句声明背书。**
-// （评审方 2026-09-09 实测：一个带 []string 字段的实现者放进 Depth ⇒ 当场 panic。）
+// （评审方 2026-09-09 实测：一个带 []string 字段的实现者放进 Since ⇒ 当场 panic。）
 func TestPeriodImplementorsAreComparable(t *testing.T) {
 	if len(periodSamples) == 0 {
 		t.Fatal("periodSamples 是空的 —— 这条在空集上恒绿")
@@ -155,7 +155,7 @@ func TestPeriodImplementorsAreComparable(t *testing.T) {
 	for name, p := range periodSamples {
 		rt := reflect.TypeOf(p)
 		if !rt.Comparable() {
-			t.Errorf("%s 不可比较 ⇒ 放进 Capabilities.Depth 会在运行期 "+
+			t.Errorf("%s 不可比较 ⇒ 放进 Capabilities.Since 会在运行期 "+
 				"panic: hash of unhashable type，而编译期一声不响", name)
 			continue
 		}
@@ -225,7 +225,7 @@ func TestCapabilitiesValidate(t *testing.T) {
 	good := Capabilities{
 		Periods: []Period{m1, d1},
 		MaxBars: 1023,
-		Depth:   map[Period]time.Duration{m1: 90 * 24 * time.Hour, d1: 17 * 365 * 24 * time.Hour},
+		Since:   map[Period]TradingDay{m1: 20200506, d1: 20090327},
 	}
 	if err := good.Validate(); err != nil {
 		t.Fatalf("干净的能力声明应当通过，却报：%v", err)
@@ -237,14 +237,28 @@ func TestCapabilitiesValidate(t *testing.T) {
 		t.Fatalf("Supports 认出了一个不在 Periods 里的周期 ⇒ 它恒真，等于没有")
 	}
 
-	t.Run("Periods 里有而 Depth 里没有", func(t *testing.T) {
+	t.Run("Periods 里有而 Since 里没有", func(t *testing.T) {
 		bad := good
-		bad.Depth = map[Period]time.Duration{m1: 90 * 24 * time.Hour} // 少了 d1
+		bad.Since = map[Period]TradingDay{m1: 20200506} // 少了 d1
 		err := bad.Validate()
 		if err == nil {
-			t.Fatal("少一条深度应当被拦下——深度会读成 0，而 0 和「不知道」长得一样")
+			t.Fatal("少一条起点应当被拦下——读出来会是零值，而「忘了填」必须查得出来")
 		}
-		if !strings.Contains(err.Error(), "不在 Depth 里") {
+		if !strings.Contains(err.Error(), "不在 Since 里") {
+			t.Fatalf("红了，但报的不是那一条：%v", err)
+		}
+	})
+
+	// 这一条在旧形状（Depth map[Period]time.Duration）下【根本写不出来】：
+	// 任何 Duration 都是「合法」的，包括 0。换成 TradingDay 之后它才有话可说。
+	t.Run("Since 里的值不是合法交易日", func(t *testing.T) {
+		bad := good
+		bad.Since = map[Period]TradingDay{m1: 20200506, d1: 0}
+		err := bad.Validate()
+		if err == nil {
+			t.Fatal("零值起点应当被拦下 —— 这正是换成 TradingDay 买到的那一格")
+		}
+		if !strings.Contains(err.Error(), "不是一个合法交易日") {
 			t.Fatalf("红了，但报的不是那一条：%v", err)
 		}
 	})

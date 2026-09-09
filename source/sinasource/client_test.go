@@ -200,8 +200,86 @@ func TestIntradayIsRejected(t *testing.T) {
 	req.Period = tickflow.MustIntraday(1)
 
 	if _, err := c.Bars(context.Background(), req); err == nil ||
-		!strings.Contains(err.Error(), "只给日线") {
+		!strings.Contains(err.Error(), "不支持周期") {
 		t.Fatalf("分钟线应当被明确拒绝（新浪 1023 硬顶、深度走天勤），得到 %v", err)
+	}
+	if fs.gotSymbol != "" {
+		t.Errorf("被拒的请求不该发出去，而服务端收到了 symbol=%q", fs.gotSymbol)
+	}
+}
+
+// TestCapsAndBarsAgreeOnPeriods 是登记⑭ 的处置：**把两处副本变成一处定义 ＋ 一条 ⟺ 断言。**
+//
+// ⛔ 原来 Bars 里一份周期闸、Caps 里一份 Periods、两条测试各自钉在【测试里的第三份字面量】上，
+// 没有任何一处由另一处推出来。评审方 2026-09-09 的对照组：
+// **让 Bars 也收 Weekly 而 Caps 不变 ⇒ 一条测试都不红**（我复现过 rc=0）。
+//
+// ⇒ 这一条对一组候选周期逐个断言：**Caps().Supports(p) ⟺ Bars 不因周期而拒绝**。
+// 加第三种周期时，只要两边不一致，它就会红。
+func TestCapsAndBarsAgreeOnPeriods(t *testing.T) {
+	fs := newFixtureServer(t)
+	c := newTestClient(t, fs)
+	k := rbReq().Symbol.ProductKey()
+	caps := c.Caps(k)
+
+	candidates := []tickflow.Period{
+		tickflow.Daily, tickflow.Weekly, tickflow.Monthly,
+		tickflow.MustIntraday(1), tickflow.MustIntraday(5), tickflow.MustIntraday(60),
+	}
+	supported, rejected := 0, 0
+	for _, p := range candidates {
+		req := rbReq()
+		req.Period = p
+		_, err := c.Bars(context.Background(), req)
+		byPeriod := err != nil && strings.Contains(err.Error(), "不支持周期")
+
+		// ⚠️ 断言的是【Caps 与真能力】，不是【Caps 与那道闸】。
+		//
+		// 只比「闸放不放行」会留一个洞：往 Caps 里多加一个周期，闸就放行了，
+		// 而请求会在更后面（AssembleDaily）失败 —— ⟺ 仍然成立，**而这个源在说谎**。
+		// ⇒ 所以支持的那一侧要求【整条路走通】，不只是「没被闸挡住」。
+		switch {
+		case caps.Supports(p) && err != nil:
+			t.Errorf("Caps 说支持 %s，而 Bars 拿不到数据：%v"+
+				"  ⇒ 声称的能力必须真的给得出来，不只是「没被那道闸挡住」", p, err)
+		case !caps.Supports(p) && !byPeriod:
+			t.Errorf("Caps 没说支持 %s，而 Bars 没有因周期拒绝它（err=%v）——"+
+				"**这正是那次静默分叉的形状**", p, err)
+		}
+		if caps.Supports(p) {
+			supported++
+		} else {
+			rejected++
+		}
+	}
+	// 两侧都要有样本，否则这条断言在退化的集合上恒真。
+	if supported == 0 || rejected == 0 {
+		t.Fatalf("候选集退化了：支持 %d 个 / 拒绝 %d 个 —— 两侧都得有，"+
+			"否则 ⟺ 只验到了一半", supported, rejected)
+	}
+	t.Logf("候选 %d 个：支持 %d / 因周期拒绝 %d，两侧一致", len(candidates), supported, rejected)
+}
+
+// TestMainContinuousIsRejectedAsUnsupported 是登记⑮ 的处置。
+//
+// ⛔ 不拦的话：YearMon=0 ⇒ SinaSymbol 给 "RB0000" ⇒ 新浪答 null
+// ⇒ ErrUnknownSymbol「新浪不认识这个合约」。
+// **想要主连的人拿到的是「这个合约不存在」，而真相是「本源不做主连」。**
+func TestMainContinuousIsRejectedAsUnsupported(t *testing.T) {
+	fs := newFixtureServer(t)
+	c := newTestClient(t, fs)
+	req := rbReq()
+	req.Symbol.YearMon = 0
+
+	_, err := c.Bars(context.Background(), req)
+	if err == nil {
+		t.Fatal("YearMon=0（主连）应当被拒")
+	}
+	if errors.Is(err, ErrUnknownSymbol) {
+		t.Fatalf("被报成「合约不存在」了 —— 这正是⑮ 要分开的那两件事：%v", err)
+	}
+	if !strings.Contains(err.Error(), "主力连续") {
+		t.Fatalf("拒绝理由应当点明是主连，得到：%v", err)
 	}
 	if fs.gotSymbol != "" {
 		t.Errorf("被拒的请求不该发出去，而服务端收到了 symbol=%q", fs.gotSymbol)
@@ -278,17 +356,28 @@ func TestCapsIsSelfConsistent(t *testing.T) {
 		if caps.Realtime {
 			t.Errorf("%s 的 Caps 声称有实时 —— 新浪实时接口自 2024-07-17 冻结，本包不接", k)
 		}
+		// Since 是【绝对起点】：它必须是一个合法交易日，而不是零值。
+		// 这一格在旧形状（Duration）下查不出来 —— 任何 Duration 都「合法」，包括 0。
+		if since, ok := caps.Since[tickflow.Daily]; !ok || !since.Valid() {
+			t.Errorf("%s 的 Caps 没给出合法的日线起点：ok=%v since=%d", k, ok, int32(since))
+		}
 	}
 }
 
 // —— 五、真网：默认不跑 ——
 
-// TestLiveDailyAgainstSina 打真接口。**默认跳过**，靠环境变量开。
+// TestProbe_LiveDailyAgainstSina 是一个【探针】，不是一条【测试】。
 //
-// ⚠️ 它不进常规回归，理由是本仓那条：一个依赖外网的测试**会因为与被测代码无关的原因红**，
-// 而那种红最终会让人给整条测试加跳过。
-// ⇒ 要跑：`SINASOURCE_LIVE=1 go test ./source/sinasource/ -run Live -v`
-func TestLiveDailyAgainstSina(t *testing.T) {
+// ⛔ 这个区分不是措辞，它决定该拿哪条规矩衡量它（评审方 2026-09-09 指出）：
+//
+//	测试  断言【本库的行为】     ⇒ 必过；一个会红的必过项迟早被加 `|| true`
+//	探针  断言【外部世界现在什么样】⇒ **本来就不在必过集合里**，默认跳过是它的正常形态
+//
+// ⚠️ 我此前拿「测试」的判据去衡量它，于是在两条方向相反的规矩之间摇摆 ——
+// **摇摆不是规矩冲突，是它被放进了错的那一栏。**
+//
+// ⇒ 要跑：`SINASOURCE_LIVE=1 go test ./source/sinasource/ -run Probe -v`
+func TestProbe_LiveDailyAgainstSina(t *testing.T) {
 	if os.Getenv("SINASOURCE_LIVE") == "" {
 		t.Skip("未设 SINASOURCE_LIVE=1，跳过真网测试")
 	}

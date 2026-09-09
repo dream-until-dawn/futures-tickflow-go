@@ -118,9 +118,28 @@ func (c *Client) Bars(ctx context.Context, req tickflow.BarRequest) ([]tickflow.
 	if err := req.Validate(); err != nil {
 		return nil, fmt.Errorf("sinasource: 请求不合法：%w", err)
 	}
-	if req.Period != tickflow.Daily {
-		return nil, fmt.Errorf("sinasource: 本源这一版只给日线，收到周期 %s"+
-			"（分钟线在新浪有 1023 根硬顶且无法翻页，深度走天勤——见 probe.md 坑一）", req.Period)
+	// ⑮ 主连：显式拒绝，别让它走到「合约不存在」。
+	//
+	// ⛔ 不拦的话：Symbol{SHFE,"rb",YearMon:0} ⇒ SinaSymbol 给 "RB0000"
+	// ⇒ 新浪答 null ⇒ ErrUnknownSymbol「**新浪不认识这个合约**」。
+	// 于是想要主连的人拿到的答案是「这个合约不存在」，而真相是「**本源不做主连**」。
+	// **文档里分开了，运行时没分开** —— 和 null≠[]、ErrCalendarGap≠没数据同族。
+	if req.Symbol.YearMon == 0 {
+		return nil, fmt.Errorf("sinasource: %s.%s 看起来是主力连续（YearMon=0），"+
+			"而**本源只做具体合约**——主连在 tickflow.Symbol 里还没有表示形态。"+
+			"这不是「该合约不存在」", req.Symbol.Exchange, req.Symbol.Product)
+	}
+
+	// ⑭ 周期闸【从 Caps 取】，不再各写一份。
+	//
+	// ⛔ 原来 Bars 里一份、Caps 里一份、两条测试各自钉在测试里的第三份字面量上，
+	// **没有任何一处由另一处推出来** —— 实测：让 Bars 也收 Weekly 而 Caps 不变，
+	// **一条测试都不红**（评审方 2026-09-09 的对照组，我复现过）。
+	// ⇒ 现在只剩一处定义：Caps().Periods。
+	if caps := c.Caps(req.Symbol.ProductKey()); !caps.Supports(req.Period) {
+		return nil, fmt.Errorf("sinasource: 本源在 %s 上不支持周期 %s，只支持 %v"+
+			"（分钟线在新浪有 1023 根硬顶且无法翻页，深度走天勤——见 probe.md 坑一）",
+			req.Symbol.ProductKey(), req.Period, caps.Periods)
 	}
 	body, err := c.fetchDaily(ctx, SinaSymbol(req.Symbol))
 	if err != nil {
@@ -158,18 +177,20 @@ func (c *Client) fetchDaily(ctx context.Context, sym string) ([]byte, error) {
 
 // —— Caps ——
 
-// dailyDepthFloor 是【合约级】日线在新浪上能回溯到多久。
+// dailySince 是【合约级】日线在新浪上最早给得出的交易日。
 //
-// ⛔ **这个数的形态是错的，而类型逼着我给一个 Duration。**
+// probe.md 2026-09-07 实测：合约级日线约从 **2018-05** 起有数据
+// （主连口径更深，回到 2009-03-27，而主连本源不做 —— 见包注释）。
 //
-//	真实约束是一个【绝对起点】：probe.md 2026-09-07 实测，合约级日线约从 2018-05 起有数据。
-//	而 Capabilities.Depth 要的是「能回溯多久」——**一个随时间增长的量**。
-//	⇒ 写成常量，它明天就偏一天；写成「从现在往回算」，它又假装每个合约都有这么长。
+// ⚠️ **它是产品类的下界，不是对某一份合约的承诺**：
+// 对具体合约，真正的下限是**它自己的上市日**
+// （本包 fixture：RB2610 首日 2025-10-16、TA2701 首日 2026-01-19 —— 差了三个月）。
+// ⇒ 所以 Syncer 拿它当「不必再往前问」的界，而不是「这里一定有数据」。
 //
-// ⚠️ 而对【具体合约】来说，真正的下限是**它自己的上市日**，不是这个数
-// （本包 fixture：RB2610 首日 2025-10-16，TA2701 首日 2026-01-19 —— 差了三个月）。
-// ⇒ 所以这个值是**产品类的下界，不是对某一份合约的承诺**。**登记⑪。**
-const dailyDepthFloor = 7*365*24*time.Hour + 180*24*time.Hour // ≈7.5 年
+// ✅ 登记⑪ **已消**：这个值原本是 `time.Duration`（「能回溯多久」），
+// 那个形状随时间漂移，且零值与「忘了填」不可分辨。
+// 换成 TradingDay 之后，**忘了填会被 Capabilities.Validate 当场查出来**。
+const dailySince = tickflow.TradingDay(20180501)
 
 // Caps 实现 tickflow.Source。
 //
@@ -190,7 +211,7 @@ func (c *Client) Caps(k tickflow.ProductKey) tickflow.Capabilities {
 	return tickflow.Capabilities{
 		Periods:   []tickflow.Period{tickflow.Daily},
 		MaxBars:   0,
-		Depth:     map[tickflow.Period]time.Duration{tickflow.Daily: dailyDepthFloor},
+		Since:     map[tickflow.Period]tickflow.TradingDay{tickflow.Daily: dailySince},
 		HasSettle: k.Exchange != tickflow.CFFEX,
 		HasOI:     true,
 		Realtime:  false, // probe.md 第三节：新浪实时接口自 2024-07-17 冻结，本包不接

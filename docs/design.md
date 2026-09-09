@@ -664,7 +664,7 @@ type Period interface {
 }
 ```
 
-> **为什么要密封**：`Capabilities.Depth` 用它做 map 键，
+> **为什么要密封**：`Capabilities.Since` 用它做 map 键，
 > 而一个只要求 `String()` 的开放接口，任何带 `String()` 的类型都能塞进来——
 > 包括 `time.Duration`。密封之后「周期」这个概念在类型层面就是**穷举的两种**，
 > 新增一种必须改本包，改本包就会撞上这里的测试。
@@ -689,7 +689,7 @@ func (s Source) Caps(k ProductKey) Capabilities
 type Capabilities struct {
     Periods   []Period // 支持哪些周期
     MaxBars   int      // 单次/总共最多能给多少根（新浪是 1023，且【无法翻页】）
-    Depth     map[Period]time.Duration // 【该品种】各周期能回溯多久
+    Since     map[Period]TradingDay // 【该品种】各周期**最早给得出哪个交易日**
     HasSettle bool     // 是否给结算价
     HasOI     bool     // 是否给持仓量
     Realtime  bool
@@ -706,6 +706,20 @@ type Capabilities struct {
 > 而且**静默**：coverage 一旦这么记下，那段就永远不再重拉。
 >
 > 评审 D1 指出的。
+
+> ⛔ **而它第二次改形状：`Depth map[Period]time.Duration` → `Since map[Period]TradingDay`。**
+>
+> 第一次改的是【键】（按品种问，不只按周期）；这一次改的是【值】：
+>
+>	真实约束是一个**绝对日期**（新浪合约级日线约从 2018-05 起）；
+>	而「能回溯多久」是一个**随时间增长的量** ⇒ 写成常量它明天就偏一天。
+>
+> ⚠️ 而换成 `TradingDay` 还多买到一样东西：**零值可辨**。
+> `time.Duration(0)` 里「不知道」和「一天都给不了」长得一模一样；
+> `TradingDay(0)` 的 `Valid()` 为假 ⇒ **忘了填这件事本身能被 `Validate` 查出来**。
+> ⇒ **换形状的理由不是「新的更好听」，是旧的把「没填」藏了起来。**
+>
+> 这一格是**第一个实现**（`sinasource`）撞出来的 —— 设计稿上它看不出问题。
 
 姊妹项目没有这一层，因为它只有一个源。本库有三个，且**它们的能力差异很大**
 （新浪日线 17 年 / 分钟线 3 周；天勤要账户；中金所只有日线）。
@@ -1848,7 +1862,7 @@ contract.md 的风险行」。
 | SRC-6 | `Bar.TsEnd` **必须填** | §五 实现约定 | 留零值 ⇒ 上层拿零值去算周期边界，`Misaligned` 整体报警 | |
 | SRC-7 | `Bar.TradingDay` **必须填** | §五 实现约定 | 留零值 ⇒ 写入这一侧**一个字都不查**，零值记录照样落盘 | 写：`AppendBars` 开头拒收零值→`TestAppendBarsRejectsZeroTradingDay`（在 `feat/v0.3-slice2`）|
 | SRC-8 | `Ts` 是**开盘时刻**，不是上游给的收盘时刻 | §五 实现约定 | 直接用上游标签 ⇒ 每根偏一个周期，**只有两个源接在一起才看得出来** | |
-| SRC-9 | `Capabilities.Depth` 按 `(ProductKey, Period)` 给 | §五 `Capabilities` | 只按 `Period` ⇒ 按 `RB0` 的深度向 `AG0` 要，差额被记成「确认没有」而静默 | |
+| SRC-9 | `Capabilities.Since` 按 `(ProductKey, Period)` 给 | §五 `Capabilities` | 只按 `Period` ⇒ 按 `RB0` 的深度向 `AG0` 要，差额被记成「确认没有」而静默 | |
 | SRC-10 | 自然日口径在**入口处**转成交易日 | §五 天勤约束四 | 不转 ⇒ 两个源的数据接在一起**整体错位一天，且不报错** | |
 | SRC-11 | `client_secret` 由使用者**显式提供** | §五 天勤约束一 | 库里带默认值 ⇒ 替使用者做了一个**合规**决定，而他们不知道自己在用谁的身份 | |
 | SRC-12 | 行情地址取自**名称服务**的 `mdurl` | §五 天勤约束二 | 写死域名 ⇒ 实测猜不出来，且对方按账户与负载返回不同地址 | |

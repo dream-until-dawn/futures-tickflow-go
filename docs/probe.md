@@ -310,7 +310,7 @@ curl -s -H "Referer: https://finance.sina.com.cn" "https://stock2.finance.sina.c
 > 吃过完全一样的亏（表里少了一列 `bar`，被两个下游仓照抄）。
 > 这次是少了一列**品种**。
 >
-> 对设计的影响是具体的：`Capabilities.Depth` **不能以 `Period` 为键**，
+> 对设计的影响是具体的：`Capabilities.Since`（当时叫 `Depth`）**不能以 `Period` 为键**，
 > 深度是 `(ProductKey, Period)` 的属性。见 design.md 第五节。
 >
 > 另外值得记一句：窗口最短的正好是 `au`/`ag`/`sc`，也就是
