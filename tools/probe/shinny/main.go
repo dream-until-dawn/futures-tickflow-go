@@ -611,9 +611,22 @@ func probeNightGap(ctx context.Context, md, tok string) {
 			all[d] = append(all[d], ts...)
 		}
 	}
-	if fails > 2 {
+	// ⛔ **这个早退不是冗余，它承担的是【次序】** —— 别把它删掉换成后面那次 `enoughDays`。
+	//
+	// 评审方 2026-09-09 提过「删掉早退、统一走 enoughDays」，理由是那个阈值写了两处。
+	// **问题是真的，而那个解法会引入一个更坏的失败**：本函数在早退与 `enoughDays`
+	// 之间还有一道**跨零点拦截**（`crossed > len(all)/10`），它自己会 `report` 并 `return`。
+	//
+	//	取数大面积失败 ⇒ `all` 稀疏 ⇒ 那两个数都来自同一份稀疏数据
+	//	⇒ 拦截可能先响，而它报的是「**这个品种的夜盘跨零点**」
+	//	⇒ **「取不到」被报成「跨零点」** —— 本仓那条「取不到和不存在长得一样」的又一个形状，
+	//	  而且是我们亲手造的。
+	//
+	// ⇒ 所以次序保留，而**两处实现那个真问题用共用常量解**（见 maxFetchFails）。
+	if fails > maxFetchFails {
 		report("shinny-night-gap", "FAIL",
-			fmt.Sprintf("十七窗里有 %d 窗取数失败 —— 缺口会把「无夜盘」造出来，不报结论", fails))
+			fmt.Sprintf("十七窗里有 %d 窗取数失败（上限 %d）—— 缺口会把「无夜盘」造出来，不报结论",
+				fails, maxFetchFails))
 		return
 	}
 
@@ -1069,14 +1082,24 @@ func probeNightHours(ctx context.Context, md, tok string) {
 	//	  判据要【两半齐全】才数得对。**
 	//	  另外四处（`probeGridIsClockGrid` / `probeGfexNoNight` /
 	//	  `probeTradingDayPredicted` / `main`）没有跳过条件 —— **它们的 PASS 是对的，别一起改。**
+	// ⛔ 用 `switch` 而不是两条顺序的 `if`：**让「FAIL 压过 SKIP」由【结构】保证，
+	// 而不是由【语句顺序】保证**（评审方 2026-09-09 提的，我认）。
+	//
+	// 上一版是 `if symsFlag != ""{SKIP}` 后面跟 `if bad > 0{FAIL}` —— 行为对，
+	// 而它对得**只因为后者写在后面**。哪天有人把「先判失败」挪到前面（那是个很自然的重构），
+	// **SKIP 会静悄悄压过 FAIL，而不会有任何东西红** ——
+	// 因为**这段是探针代码，不进 `go test`**，它当时的全部保护就是行末那句注释。
+	//
+	//	⇒ **一条不再需要解释的规则，才算真的落地。**
+	//	  （同一形状本仓已经吃过一次：`high_water.txt` 的来历行「谁在前」决定链检查红不红。）
 	st := "PASS"
-	if symsFlag != "" {
+	switch {
+	case bad > 0:
+		st = "FAIL"
+	case symsFlag != "":
 		st = "SKIP"
 		fmt.Fprintf(&b, "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— "+
 			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。要判基线请去掉 -syms。")
-	}
-	if bad > 0 {
-		st = "FAIL" // FAIL 压过 SKIP：取数不足是真失败，换没换品种都一样
 	}
 	report("shinny-night-hours", st, b.String())
 }
@@ -1163,9 +1186,19 @@ func probeNightHours(ctx context.Context, md, tok string) {
 // ⚠️ 它**不**回答「这个品种上市那天到今天有没有取全」——
 // 跨度是从**取到的**第一天算起的。真正漏掉最早那一段，这条判据看不见。
 // 要答那个得有上市日期，而本仓现在没有那份数据。
+// maxFetchFails 是「取数失败几窗就不报结论」的上限。
+//
+// ⛔ 抽成常量不是为了好看：这个数**原来写了两处**（`probeNightGap` 的早退、`enoughDays` 里），
+// 而 `probeNightGap` 早退在前 ⇒ **`enoughDays` 的那一处从这条路根本走不到**。
+// ⇒ 后果不是今天的错（两处值相同），是明天的：
+// **有人改 `enoughDays` 的阈值，`probeNightGap` 会保持旧行为，而钉住它的测试不会响。**
+// （评审方 2026-09-09 查出来的；他建议删早退，而那个删法会让「取不到」被报成「跨零点」——
+// 理由写在那个早退旁边。**问题是他的，解法换了一个。**）
+const maxFetchFails = 2
+
 func enoughDays(days []string, fails int) (bool, string) {
-	if fails > 2 {
-		return false, fmt.Sprintf("取数失败 %d 窗", fails)
+	if fails > maxFetchFails {
+		return false, fmt.Sprintf("取数失败 %d 窗（上限 %d）", fails, maxFetchFails)
 	}
 	if len(days) < 120 {
 		return false, fmt.Sprintf("只有 %d 个交易日，不足 120 —— 变更检测两边各要一个 20 日窗，"+
