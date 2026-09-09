@@ -23,7 +23,8 @@
 | `store/segfile` | ✅ 已完工——833 行，43 个测试函数。⚠️ 三处范围边界写在 `store/segfile/store.go` 头部 |
 | `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
 | `source/sinasource` | ✅ **日线链路已通**：HTTP → JSONP → 行 → `Bar`，实现 `tickflow.Source`（`Bars` / `Caps`）。⚠️ **只做日线、只做具体合约**（主连在 `Symbol` 里表达不出来）；分钟线不做（1023 硬顶且无法翻页，深度走天勤） |
-| `source/cffexsource` · `source/shinnysource` | ❌ **尚未开始** |
+| `source/cffexsource` | 🚧 **解析层已落**：日行情 XML → 期货行（期权已过滤）。fixture 是 2026-09-09 取回的真实响应（714 条 / 期货 28 / 期权 686）。**组装成 Bar 与 HTTP 拉取未做** |
+| `source/shinnysource` | ❌ **尚未开始**（v0.5） |
 | `Syncer` · `refdata` · `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
 
 ⇒ 「能力」一节里指向 `source/` `refdata/` `continuous/` `indicator/` 的行**都还是承诺**；
@@ -99,7 +100,7 @@ var CST = time.FixedZone("CST", 8*3600)
 | 涨跌停 / 保证金的**模拟** | `refdata` 给参数，怎么用是回测引擎的事 |
 | 交易决策 / 仓位核算 | 下游的事 |
 | **新浪实时行情** | **已冻结两年**（见风险表第一行），接了就是静默错误 |
-| **中金所品种基于新浪结算价的逐日盯市** | 新浪对 IF/IH/IC/T/TF/TS **系统性不给结算价**（98.6%/88.1%，持续至今）。走 `cffexsource` |
+| **中金所品种基于新浪结算价的逐日盯市** | 新浪对中金所**全部八个品种**（IF/IH/IC/**IM**/T/TF/TS/**TL**）**系统性不给结算价**。2026-09-09 复测四个：`IF2609` 156/156、`IM2609` 156/156、`T2612` 122/122、`TL2612` 122/122 **全部为 0**。走 `cffexsource` |
 | 上期 / 大商 / 郑商官方直连 | 实测被 WAF 挡（412），绕过要无头浏览器 |
 | 多进程并发**写** | 一个命名空间一个写者，第二个拿 `ErrLocked`。并发**读**支持 |
 
