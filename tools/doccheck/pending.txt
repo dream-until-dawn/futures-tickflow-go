@@ -51,6 +51,15 @@
 
 # ---- v0.3：拉取 / 存储 / 同步 ----
 SyncRequest   v0.3.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
+Gap           v0.3.0  一段交易日闭区间 + 它属于哪一类；用区间不用逐日列表（逐日=约 2700 行噪声）
+GapKind       v0.3.0  缺口的【六】类；零值不合法。四类改六类的理由见 design.md 七之零冲突七
+GapNeverFetched    v0.3.0  第一类：没拉过（真值来自 coverage）
+GapConfirmedEmpty  v0.3.0  第二类：拉过、确认没有（coverage 的两个计数【且走查过】）
+GapNotTrading      v0.3.0  第三类：不是交易日（日历 ErrNotTradingDay）
+GapCalendarUnknown v0.3.0  第四类：日历答不了（ErrUncovered）——不是「没有交易」
+GapStoreUnverified v0.3.0  第五类：存储答不了·未走查（ErrSpanUnverified）——瞬时、走一遍就行
+GapStoreLegacy     v0.3.0  第六类：存储答不了·旧格式（ErrLegacyMeta）——**必须问人**，机器不许替他答
+BatchDaysUnbounded v0.3.0  Capabilities.BatchDays 的具名「不必切」；写成 0 会和「忘了填」不可分辨（登记⑫）
 Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
 SyncReport    v0.3.0  带「请求区间 vs 日历覆盖区间」两行；Misaligned 扫 BarBound.Anomalous
 NightAbsent   v0.3.0  连续无夜盘那一段（Days/From/To）；只报不判 —— 实测分布 1×52 段 / 64×1 段，中间空，见 probe.md 6.9
