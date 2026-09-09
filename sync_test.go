@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -20,15 +21,42 @@ import (
 // 【调用方注入的那一个】Pacer」——而一个写死的实现（无论写死成什么）
 // 都不会碰到这个计数器。
 type countingPacer struct {
-	mu sync.Mutex
-	n  int
+	mu  sync.Mutex
+	n   int
+	log *eventLog // 可选：记「闸门」与「请求」的先后
 }
 
 func (p *countingPacer) Wait(ctx context.Context) error {
 	p.mu.Lock()
 	p.n++
 	p.mu.Unlock()
+	if p.log != nil {
+		p.log.add("W")
+	}
 	return ctx.Err()
+}
+
+// eventLog 记「闸门」(W) 与「对端收到请求」(R) 的**先后**。
+//
+// 🔴 **它存在的理由是一处被评审方打中的射程**（2026-09-09，我独立复现：
+// 把 `pacing.transport.RoundTrip` 里的 `Wait` 挪到 `next.RoundTrip` 【之后】
+// ⇒ 根包与 pacing 两个包**一共 0 红**）。
+//
+//	「次数相等」证得了【被调用】，**证不了【在请求之前】被调用** ——
+//	而一个「先发请求、再等」的闸门，请求照样满速出去。
+//
+// ⇒ 计数是一个**多重集**断言，顺序是一个**序列**断言；
+// **前者天然看不见后者**，而闸门这件事的全部内容就在后者里。
+type eventLog struct {
+	mu sync.Mutex
+	s  []string
+}
+
+func (l *eventLog) add(e string) { l.mu.Lock(); l.s = append(l.s, e); l.mu.Unlock() }
+func (l *eventLog) seq() string {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return strings.Join(l.s, "")
 }
 
 func (p *countingPacer) count() int {
@@ -133,6 +161,9 @@ func newHarnessWithStore(t *testing.T, p pacing.Pacer, batch, failN int, st *fak
 	h := &harness{hits: &int32Counter{}, store: st}
 	h.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h.hits.inc()
+		if cp, ok := p.(*countingPacer); ok && cp.log != nil {
+			cp.log.add("R")
+		}
 		w.Write([]byte("ok"))
 	}))
 	t.Cleanup(h.srv.Close)
@@ -471,5 +502,47 @@ func TestTimeoutZeroIsRefusedAndNoTimeoutIsNamed(t *testing.T) {
 	}
 	if got != 0 {
 		t.Errorf("写了 NoTimeout，而源拿到的 client 超时是 %v", got)
+	}
+}
+
+// TestPacerIsConsultedBeforeEachRequest 闸门必须在请求**之前**被问 —— 顺序，不是次数。
+//
+// 🔴 **这一条补的是评审方 2026-09-09 打中的射程，我独立复现过**：
+// 把 `pacing.transport.RoundTrip` 里的 `Wait` 挪到 `next.RoundTrip` 之后
+// ⇒ 根包与 pacing 两个包**一共 0 红** —— 计数一模一样，而闸门形同虚设。
+//
+// ⛔ **计数是一个【多重集】断言，顺序是一个【序列】断言；前者天然看不见后者。**
+// 而闸门这件事的全部内容就在后者里：先发请求再等，请求照样满速出去。
+//
+// ⚠️ 而「它今天会不会出事」是另一句话（评审方一并量了，我认）：
+// `Sync` 是顺序调用，挪到后面时相邻两次请求之间仍然隔着 d，
+// **它真会伤人的条件是同一个 transport 上有并发请求**。
+// ⇒ 所以这是一处**射程缺口**，不是一个**风险** —— 两者要分开说。
+// ⛔ 而我仍然现在就补，理由是：**一条「等到并发那天再补」的断言，
+// 要靠人在那一天记得它** —— 而它现在就写得出来，成本是一个字符串。
+//
+// ⚠️ 一处我自己的读数与评审方不同，一并写下（我读 `fixed.Wait` 推的，未实测计时）：
+// 他写「差别只在首次不等、末次多等一次」，而按 `next` 的零值推，
+// **前两次请求之间没有间隔**（第一次 Wait 在请求之后才把 next 推到 +d）——
+// 也就是每次同步开头有一个 2 连发。**结论（不判必改）不变，而那句描述要更准一格。**
+func TestPacerIsConsultedBeforeEachRequest(t *testing.T) {
+	p := &countingPacer{log: &eventLog{}}
+	h := newHarness(t, p, 1, 0)
+
+	if _, err := h.syn.Sync(context.Background(), req(0), 0); err != nil {
+		t.Fatalf("同步不该出错：%v", err)
+	}
+
+	got := p.log.seq()
+	// 基线：确实发生过 —— 空串会让下面那条判断恒真。
+	if got == "" {
+		t.Fatal("既没有闸门也没有请求 —— 基线没成立，这一条什么也不证明")
+	}
+	want := strings.Repeat("WR", h.hits.get())
+	if got != want {
+		t.Errorf("闸门与请求的先后是 %q，期望 %q\n"+
+			"  W=闸门被问  R=对端收到请求\n"+
+			"  ⇒ 出现 \"RW\" 说明【先发请求再等】——那样的闸门拦不住任何东西，\n"+
+			"    而它的【调用次数】和正确实现一模一样", got, want)
 	}
 }
