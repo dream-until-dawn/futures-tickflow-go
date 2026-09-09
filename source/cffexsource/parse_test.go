@@ -257,9 +257,13 @@ func TestNonNumericIsAnError(t *testing.T) {
 
 // TestZeroSettleIsNotMappedHere 钉住一条【明确不做】。
 //
-// bar.go 里 `s==0 ⇒ NaN` 那条映射**不在本包做**：本包只报告「XML 里写的是什么」，
-// 把「0 是不是缺失」的判断留给知道语境的组装层。
+// bar.go 里 `s==0 ⇒ NaN` 那条映射**不在本包做**：本包只报告 XML 里写的是什么，
+// 把「0 该不该当成缺失」的处置留给知道语境的组装层。
 // ⇒ 有人把那个映射搬进来时，这条会红，并逼他先想清楚该在哪一层做。
+//
+// ⚠️ **射程：它分辨不了「写了 0」与「整个字段空白」** —— 把下面那个 `0` 换成空白，
+// 它照样绿（登记⑳）。**它守的是「本包不做映射」，不是「本包分得清那两者」。**
+// 后一件由 TestNoBlankSettlementInFutures 的到期条件盯着。
 func TestZeroSettleIsNotMappedHere(t *testing.T) {
 	x := "<?xml version=\"1.0\"?><dailydatas><dailydata>" +
 		"<instrumentid>IC2609</instrumentid><tradingday>20260908</tradingday>" +
@@ -271,4 +275,46 @@ func TestZeroSettleIsNotMappedHere(t *testing.T) {
 	if rows[0].Settle != 0 {
 		t.Fatalf("本包不做 0→NaN 的映射（那是组装层的事），得到 %v", rows[0].Settle)
 	}
+}
+
+// TestNoBlankSettlementInFutures 是登记⑳ 的【到期条件】，不是一条普通断言。
+//
+// ⛔ 本包把「字段空白」和「写了 0」抹成同一个 0（parseNum 那段有对照组）。
+// 今天这件事没有后果，理由是**真实数据里期货结算价一个空白都没有** ——
+// 而那是一条【读数】，不是一条保证。
+//
+// ⇒ 所以这条测试盯的是那个读数：**哪天真实 fixture 里出现空白的期货结算价，它就红**，
+// 那时才需要决定用 *float64 还是并列一个「哪些字段是空白」的集合。
+// ⇒ **不是「以后记得看」，是「出现那一天会有东西响」。**
+//
+// ⚠️ 它在【原始字节】上判空白，**不经过 ParseDaily** —— 经过它就什么都看不见了，
+// 那正是这条缺陷本身。
+func TestNoBlankSettlementInFutures(t *testing.T) {
+	raw := string(read(t, "daily_20260908.xml"))
+	item := regexp.MustCompile(`(?s)<dailydata>(.*?)</dailydata>`)
+	field := func(b, k string) string {
+		m := regexp.MustCompile(`(?s)<` + k + `>(.*?)</` + k + `>`).FindStringSubmatch(b)
+		if m == nil {
+			return ""
+		}
+		return strings.TrimSpace(m[1])
+	}
+	futures, blank := 0, 0
+	for _, m := range item.FindAllStringSubmatch(raw, -1) {
+		id := field(m[1], "instrumentid")
+		if id == "" || strings.Contains(id, "-") { // 期权：判据写死，不借道 IsOption
+			continue
+		}
+		futures++
+		if field(m[1], "settlementprice") == "" || field(m[1], "presettlementprice") == "" {
+			blank++
+			t.Errorf("%s 的结算价或昨结算是【空白】—— 登记⑳ 的到期条件到了："+
+				"本包会把它读成 0，而 0 与「真的是 0」不可分辨。"+
+				"⇒ 现在要决定：*float64，还是并列一个「哪些字段是空白」的集合。", id)
+		}
+	}
+	if futures == 0 {
+		t.Fatal("一条期货都没扫到 —— 这条在空集上恒绿，先修判据")
+	}
+	t.Logf("期货 %d 条，结算价空白 %d 条（到期条件未触发）", futures, blank)
 }
