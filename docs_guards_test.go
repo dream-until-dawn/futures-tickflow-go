@@ -203,6 +203,16 @@ var carrierFiles = []string{
 //	不堵的   把函数体掏空 —— 那是「代价二」的另一半，只有对照组能看见
 //	不堵的   在守卫【调用的辅助函数】里 Skip —— 只看守卫自己的函数体
 //
+// ⚠️ **登记⑰：它还【顺带】守住了一件没被承诺的事 —— 全部 `_test.go` 语法可解析。**
+//
+// 2026-09-09 实例：一次写坏的补丁让 `source/sinasource/client_test.go` 出现
+// `string literal not terminated`，**而是这条守卫当场报出来的**（它必须先 parse 才能找函数体）。
+//
+//	⛔ **副作用型覆盖是真的覆盖，而它没有被承诺**：
+//	把这里的 go/parser 换成正则扫，那一下就没了，**且不会有任何东西提示**。
+//	⇒ 写在这里不是为了承诺它，是**让改它的人知道自己在退什么保** ——
+//	  一份没人知道的保险，退保时也不会有人发现。
+//
 // 范围不写成文件清单，而是「名字在 guardNames 里的函数，不管它在哪一份 _test.go」——
 // **和 TestGuardsStillExist 同一个判据**：挪个文件不算消失，也不该逃出这条守卫。
 func TestGuardsDoNotSkipThemselves(t *testing.T) {
