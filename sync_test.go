@@ -66,21 +66,37 @@ func (s *httpSource) Caps(ProductKey) Capabilities {
 		Since: map[Period]TradingDay{Daily: 20200101}, BatchDays: s.batch}
 }
 
-// fakeStore 只记下被调了什么，不做任何落盘。
+// fakeStore 只记下被调了什么，不做任何落盘。**每一格都可配**，
+// 因为丙三之三那几条（C3b / D2b / SYN-6）测的正是「库告诉编排什么」。
 type fakeStore struct {
 	appended int
 	spans    []Span
+
+	openState  OpenState
+	coverage   []Span
+	verifyErr  error
+	discarded  int
+	verified   []Span
+	hasBarsSet map[TradingDay]bool
 }
 
-func (s *fakeStore) Coverage() []Span                 { return nil }
-func (s *fakeStore) HasBars(TradingDay) (bool, error) { return false, nil }
-func (s *fakeStore) AppendBars(b []Bar) error         { s.appended += len(b); return nil }
-func (s *fakeStore) Verify(Span) error                { return nil }
-func (s *fakeStore) OpenState() OpenState             { return OpenState{} }
-func (s *fakeStore) DiscardCoverage() error           { return nil }
-func (s *fakeStore) Close() error                     { return nil }
+func (s *fakeStore) Coverage() []Span { return append([]Span(nil), s.coverage...) }
+func (s *fakeStore) HasBars(d TradingDay) (bool, error) {
+	return s.hasBarsSet[d], nil
+}
+func (s *fakeStore) AppendBars(b []Bar) error { s.appended += len(b); return nil }
+func (s *fakeStore) Verify(sp Span) error     { s.verified = append(s.verified, sp); return s.verifyErr }
+func (s *fakeStore) OpenState() OpenState     { return s.openState }
+func (s *fakeStore) DiscardCoverage() error   { s.discarded++; s.coverage = nil; return nil }
+func (s *fakeStore) Close() error             { return nil }
+
+// CommitSpan 记下这一段，**并且扩 coverage** ——
+// ⛔ 上一版只记 spans 不动 coverage，于是 `planGaps` 里那张
+// 「哪些段本次走查过」的表**一格都匹配不上**：查表恒为 false，等于死代码，
+// 而所有断言照绿。**一个和真实现【行为不同】的桩，会让被测代码的一整段静默失效。**
 func (s *fakeStore) CommitSpan(_ Calendar, _ ProductKey, sp Span, _ Outcome) error {
 	s.spans = append(s.spans, sp)
+	s.coverage = append(s.coverage, sp)
 	return nil
 }
 
@@ -108,8 +124,12 @@ func (c *int32Counter) get() int {
 }
 
 func newHarness(t *testing.T, p pacing.Pacer, batch, failN int) *harness {
+	return newHarnessWithStore(t, p, batch, failN, &fakeStore{})
+}
+
+func newHarnessWithStore(t *testing.T, p pacing.Pacer, batch, failN int, st *fakeStore) *harness {
 	t.Helper()
-	h := &harness{hits: &int32Counter{}, store: &fakeStore{}}
+	h := &harness{hits: &int32Counter{}, store: st}
 	h.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h.hits.inc()
 		w.Write([]byte("ok"))

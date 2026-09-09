@@ -191,6 +191,13 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 	rep.Requested = [2]TradingDay{req.From, to}
 
+	// —— C3b / D2b：打开这个库时发现的事，在这里留声并处置 ——
+	// ⛔ 放在拉取【之前】：D2b 的一支要作废 coverage，另一支要停 ——
+	// 两者都必须在「按 coverage 决定拉什么」之前发生。
+	if err := s.disposeOpenState(req, &rep); err != nil {
+		return rep, err
+	}
+
 	cf, ct, ok := s.cal.Covers(k)
 	rep.CoversOK = ok
 	if !ok {
@@ -221,12 +228,135 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 
 	chunks := chunkDays(days, s.src.Caps(k).BatchDays)
-	halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
+	touched, syncedDays, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
 	rep.Halt = halt
+
+	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
+	// 一次中止之后的库比跑完之后的库更需要被走查，而不是更不需要。
+	verified := s.verifyTouched(touched, &rep)
+	if gerr := s.planGaps(k, req.From, to, verified, &rep); gerr != nil && ferr == nil {
+		ferr = gerr
+	}
+	s.scanNight(k, syncedDays, &rep)
+
 	if ferr != nil {
 		return rep, ferr
 	}
 	return rep, nil
+}
+
+// disposeOpenState 是 C3b 与 D2b：**打开这个库时发现的事，本层处置不了，编排处置。**
+func (s *Syncer) disposeOpenState(req SyncRequest, rep *SyncReport) error {
+	st := s.store.OpenState()
+
+	// C3b：截了不留声 ⇒ 与「本来没事」同形。
+	if st.TruncatedTail > 0 {
+		rep.TruncatedTails = append(rep.TruncatedTails,
+			fmt.Sprintf("打开库时截掉了 %d 字节残尾（C3a）——"+
+				"截断本身已经处理好了，留这一条是为了让它和「本来没事」分得开", st.TruncatedTail))
+	}
+	if !st.LegacyMeta {
+		return nil
+	}
+
+	// D2b：两种处置都要进报告。而判定要「可不可重放」——见下。
+	cov := s.store.Coverage()
+	if len(cov) == 0 {
+		// ⚠️ 没有 coverage 就没有「语义未知的 coverage」要处置 ——
+		// 这一支到不了 D2a。写下来免得下一个人去补一个不会被走到的分支。
+		return nil
+	}
+	dec, err := DecideLegacyMeta(s.replayable(req, cov))
+	switch dec {
+	case LegacyDiscard:
+		if derr := s.store.DiscardCoverage(); derr != nil {
+			return fmt.Errorf("tickflow: 旧 .meta 判为作废重拉，而作废失败: %w", derr)
+		}
+		rep.LegacyMetaDiscarded = append(rep.LegacyMetaDiscarded,
+			fmt.Sprintf(".meta 没有 format 且这个源重放得了 %s 起的历史 ⇒ "+
+				"已作废 %d 段 coverage，全区间按「没拉过」重拉", cov[0].From, len(cov)))
+		return nil
+	default:
+		rep.LegacyMetaUnverified = append(rep.LegacyMetaUnverified,
+			fmt.Sprintf(".meta 没有 format 而这个源重放不了 %s 起的历史 ⇒ "+
+				"coverage【不】作废（作废换不来任何东西，而丢掉那些区间不可逆）；"+
+				"要一个显式决定（Force 或人工确认）", cov[0].From))
+		return err
+	}
+}
+
+// replayable 回答「这个源能不能把【那一段】重新给一遍」。
+//
+// ⛔ **它不是源的性质，是【源 × 这一段】的性质**（丙三冲突三）：
+// 一个源可以对 2024 年可重放、对 2016 年不可重放，而 `Since` 说的正是那条界线。
+// ⇒ 设计里原本写「只有编排经 `Caps` 知道『源可不可重放』」，而 `Caps` **没有那个字段** ——
+// 那句话被抄了四遍，一处也没被核过。
+//
+// ⚠️ `Since` 缺失或非法时取 **false**（＝不可重放 ⇒ 要人确认）。判据是那条：
+// **给一个取值定级，取它最哑的那个后果。**
+// 取 true 最哑的后果是**把一段取不回来的历史作废掉，而那不可逆**；
+// 取 false 最哑的后果是**多问一次人**。
+func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
+	since, ok := s.src.Caps(req.Symbol.ProductKey()).Since[req.Period]
+	if !ok || !since.Valid() {
+		return false
+	}
+	return since <= cov[0].From
+}
+
+// verifyTouched 是 SYN-6：**结束时走查本次碰过的段。**
+//
+// ⛔ 不走查 ⇒ 冷序列的损坏**发现时间没有上界**：一段写下去之后没有人再读它，
+// 坏了也要等到有人来取那段数据的那一天才知道 —— 而那可能是几个月后。
+//
+// 返回「走查过且没问题」的那些段，给缺口分类当输入（B3：**没走查过的时候，
+// 那两个计数什么也不意味着**）。
+func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) map[Span]bool {
+	okSpans := map[Span]bool{}
+	for _, sp := range touched {
+		if err := s.store.Verify(sp); err != nil {
+			rep.TruncatedTails = append(rep.TruncatedTails,
+				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, err))
+			continue
+		}
+		okSpans[sp] = true
+	}
+	return okSpans
+}
+
+// planGaps 把 coverage 翻成六类缺口。
+//
+// ⚠️ 没被本次走查过的段一律带 ErrSpanUnverified —— 那是 B3 的直接落法：
+// **「没走查过」不许悄悄变成一个肯定的「确认没有」。**
+func (s *Syncer) planGaps(k ProductKey, from, to TradingDay, verified map[Span]bool, rep *SyncReport) error {
+	var cov []SpanStatus
+	for _, sp := range s.store.Coverage() {
+		st := SpanStatus{Span: sp}
+		if !verified[sp] {
+			st.Err = ErrSpanUnverified
+		}
+		cov = append(cov, st)
+	}
+	gaps, err := PlanGaps(s.cal, k, from, to, cov, s.store.HasBars)
+	if err != nil {
+		return fmt.Errorf("tickflow: 分类缺口失败: %w", err)
+	}
+	rep.Gaps = gaps
+	return nil
+}
+
+// scanNight 填 NightAbsentRun / NightAbsentOK（SYN-7）。
+//
+// ⚠️ 「不适用」与「适用但没找到」在 `Days == 0` 上不可分辨，所以那个 bool 不可省。
+func (s *Syncer) scanNight(k ProductKey, days []TradingDay, rep *SyncReport) {
+	if len(days) == 0 {
+		return
+	}
+	run, ok, err := ScanNightAbsent(s.cal, k, days)
+	if err != nil {
+		return // 夜盘那一格答不了时不报告 —— 它是给人看的提示，不是判断
+	}
+	rep.NightAbsentRun, rep.NightAbsentOK = run, ok
 }
 
 // tradingDays 用 `Walk` 收一段里的交易日。
@@ -287,15 +417,17 @@ func chunkDays(days []TradingDay, batch int) [][]TradingDay {
 //	二  **本函数今天短到读得完，所以不给它加 AST 守卫**（守卫本身的维护成本高过它挡住的）。
 //	    ⇒ **这个判断在函数长起来的那天要重做。**
 func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
-	chunks [][]TradingDay, rep *SyncReport) (HaltReason, error) {
+	chunks [][]TradingDay, rep *SyncReport) ([]Span, []TradingDay, HaltReason, error) {
 
 	consecutive := 0
 	var synced [2]TradingDay
+	var touched []Span
+	var syncedDays []TradingDay
 
 	for _, chunk := range chunks {
 		if err := ctx.Err(); err != nil {
 			rep.Synced = synced
-			return HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
+			return touched, syncedDays, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
 		}
 		br := BarRequest{Symbol: req.Symbol, Period: req.Period,
 			From: chunk[0], To: chunk[len(chunk)-1]}
@@ -310,7 +442,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 			// ⇒ 「K 的零值是安全的」这句话，真值取决于**这一个符号**。
 			if consecutive > req.MaxConsecutiveFails {
 				rep.Synced = synced
-				return HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
+				return touched, syncedDays, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
 					"停在 %s；最后一次: %v",
 					ErrBudgetExhausted, consecutive, req.MaxConsecutiveFails, chunk[0], err)
 			}
@@ -320,23 +452,38 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 
 		if err := s.store.AppendBars(bars); err != nil {
 			rep.Synced = synced
-			return HaltBudget, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, HaltBudget, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
 		}
 		span := Span{From: chunk[0], To: chunk[len(chunk)-1],
 			Bars: len(bars), Days: distinctDays(bars)}
 		if err := s.store.CommitSpan(s.cal, k, span, OutcomeComplete); err != nil {
 			rep.Synced = synced
-			return HaltBudget, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, HaltBudget, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
 		}
 
 		rep.Bars += len(bars)
+		touched = append(touched, span)
+		syncedDays = append(syncedDays, chunk...)
 		if synced[0] == 0 {
 			synced[0] = chunk[0]
 		}
 		synced[1] = chunk[len(chunk)-1]
+
+		// SYN-2 / SYN-5：对不上网格的【根数】与可疑的【交易日】。
+		//
+		// ⚠️ 只有日内周期有网格 —— `Daily` 是 CalendarPeriod，问它「第几根」没有意义。
+		// **不适用与「适用但没找到」在 Misaligned == 0 上不可分辨**，所以这里
+		// 用类型断言把「不适用」摘出去，而不是让它悄悄贡献一个 0。
+		if ip, isIntraday := req.Period.(IntradayPeriod); isIntraday {
+			mis, anom, err := ScanBars(s.cal, k, ip, bars)
+			if err == nil {
+				rep.Misaligned += mis
+				rep.AnomalousDays = append(rep.AnomalousDays, anom...)
+			}
+		}
 	}
 	rep.Synced = synced
-	return HaltDone, nil
+	return touched, syncedDays, HaltDone, nil
 }
 
 // distinctDays 数这一批根覆盖了几个【交易日】。`Span.Days` 要它。

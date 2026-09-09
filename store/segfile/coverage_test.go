@@ -40,18 +40,13 @@ import (
 // ⚠️ 这份清单是**有有效期**的：它记的是「今天为什么还没做」，
 // 而那个理由一旦不成立，这里就必须跟着改。**别沿用。**
 var absent = map[string]string{
-	// ⚠️ 这两条的理由【换过一次】，而旧理由从丙一起就是假的：
-	// 原来写「`SyncReport` 还不存在」，而它丙一就落地了。
-	// ⇒ 本清单自己那条规矩（理由不成立就必须跟着改）**第一次真的被兑现**——
-	// 而它是被「顺手 grep 一遍那句话」抓到的，不是被任何守卫抓到的。
-	// **一个写成条件的缺席理由，到期时不会有人通知你。**
-	"C3b": "截断要进 SyncReport.TruncatedTails —— 通道已通（`Store.OpenState`），" +
-		"缺的是【读它的那一头】：`Sync` 本体还不存在" +
-		"（上哪儿看：根包有没有 `func (*Syncer) Sync`）",
-	"D2b": "两种结果都进 SyncReport（LegacyMetaDiscarded / LegacyMetaUnverified）—— " +
-		"**与 C3b 同因**：判定与通道都已就位" +
-		"（`tickflow.DecideLegacyMeta` ＋ `Store.OpenState().LegacyMeta`），" +
-		"缺的仍是读它的那一头（上哪儿看：根包有没有 `func (*Syncer) Sync`）",
+	// ✅ **C3b / D2b 已于丙三之三落地，两条一并从这张表里删掉。**
+	//
+	// ⚠️ 而它们的缺席理由【换过一次，而旧的那句从丙一起就是假的】：
+	// 原来写「`SyncReport` 还不存在」，而它丙一就落地了 ——
+	// 本清单自己那条规矩（理由一旦不成立就必须跟着改）**兑现过一次**，
+	// 而抓到它的是一次顺手的 grep，**不是任何守卫**。
+	// ⇒ **一个写成条件的缺席理由，到期时不会有人通知你。**
 	"A4": "`.meta` 要存 `recordSize` 并与本版记录长比对 —— 而 `Meta` 结构体里" +
 		"**还没有这个字段**（上哪儿看：`Meta`）。" +
 		"它和 A3 同一个入口（`DecodeMeta`），补字段那一格一起做，" +
@@ -60,6 +55,29 @@ var absent = map[string]string{
 		"**参数还没有被传进来**（上哪儿看：`func Open` 的签名）。" +
 		"⚠️ 比对这件事**就在这一层**（segfile 的 `Open`），缺的是它的【输入】；" +
 		"参数从哪来由「目录命名规则」那一节定，那一格还没做。",
+}
+
+// elsewhere 是【守卫在别的包里】的编号 —— 每一条要写明**在哪**。
+//
+// ⛔ **它与 absent 必须分开，因为两者的处置【相反】**：
+//
+//	absent     这一条今天没有守卫 ⇒ 处置是【补一对 _Red/_Green】
+//	elsewhere  它有守卫，只是不在本包 ⇒ 处置是【去那儿看】
+//
+// 合成一格的后果很具体：一个已经被守着的编号会被记成待办，
+// 而下一个人「修」它的方式，是在**错的那个包里**再写一份重复的测试。
+//
+// 🔴 **而这一格是被 C3b / D2b 逼出来的，理由正是本仓记过的那条**：
+// **「射程写成位置，就照不到搬走的那份。」**
+// 这张覆盖表的射程是【本包】，而 C3b / D2b 这两条不变量**跨了包**：
+// 通道在本包（`Store.OpenState`），而**接线与判断在根包**（只有编排知道
+// 「源可不可重放」）。⇒ 一条跨包的不变量，本来就不该由一个按包划的表来判缺席。
+var elsewhere = map[string]string{
+	"C3b": "通道在本包（`Store.OpenState` / `openstate_test.go`），" +
+		"而【接线与断言】在根包：`Syncer.disposeOpenState` / `TestC3bTruncatedTailReachesTheReport`",
+	"D2b": "同 C3b：本包只交出 `OpenState().LegacyMeta`；" +
+		"判定要「源可不可重放」，那是 `Caps` 那一头的信息 ⇒ 处置在根包：" +
+		"`TestD2bBothDispositionsReachTheReport`（两支各一格）",
 }
 
 // ⚠️ 上面四条为什么都写成【条件】而不是【版本标签】（评审方 2026-09-09 撤回了他自己
@@ -371,6 +389,13 @@ func TestInvariantCoverageMatchesTable(t *testing.T) {
 			}
 			continue
 		}
+		if _, ok := elsewhere[id]; ok {
+			// 守卫在别的包 ⇒ 本表不判它缺席。
+			// ⚠️ 本表**不去核那个别处是不是真的有** —— 那要跨包读源码，
+			// 而一个自己也要被守的守卫不划算。**这一格的价值上界写在这儿**：
+			// 它挡的是「忘了说它在哪」，挡不住「说了个假地址」。
+			continue
+		}
 		sides, has := got[id]
 		if !has {
 			missing = append(missing, id)
@@ -385,6 +410,18 @@ func TestInvariantCoverageMatchesTable(t *testing.T) {
 			extra = append(extra, id+"（测试里有，而 design.md 那张表里没有）")
 		}
 	}
+	// ⛔ 两张表不许重叠：一个编号要么「今天没有守卫」，要么「守卫在别处」，
+	// 不可能两者都是。同时登记 ⇒ 其中一条一定是陈的。
+	for id := range elsewhere {
+		if _, dup := absent[id]; dup {
+			t.Errorf("%s 同时登记在 absent 与 elsewhere 里 —— 两者处置相反，"+
+				"同时为真说不通；其中一条是陈的", id)
+		}
+		if !want[id] {
+			t.Errorf("elsewhere 里的 %s 在 design.md 那张表里没有 —— 幽灵项，删掉它", id)
+		}
+	}
+
 	sort.Strings(missing)
 	sort.Strings(extra)
 	sort.Strings(oneSided)

@@ -1026,10 +1026,10 @@ e9c4885（改完这一节之后） 24 行 = 15 + 4 + 5
 | C1 | `coverage` 只能在**数据落盘之后**扩大 | 写入顺序 一 | 先扩后写 ⇒ 崩溃留下「声称拉过而其实没有」 | 写：`CommitSpan` 核 `.dat` 记录数→`C1_Red` |
 | C2 | 上游出错时**不许**扩 `coverage` | 写入顺序 二 | 把空响应/超时当成「确认没有」 | 写：`CommitSpan` 看 `Outcome`→`C2_Red` |
 | C3a | `Open` 时按「长度 % 记录长」**检出并截断**残尾 | 写入顺序 三 | 不截 ⇒ 下次追加落在半截记录后面 | 开：`OpenDat`→`C3a_Red` |
-| C3b | 截断**必须留声**：进 `SyncReport.TruncatedTails` | 写入顺序 三 | 截了不留声 ⇒ 与「本来没事」同形 | **空 —— `SyncReport` 尚不存在**（`pending.txt:59`），整条缺席，挪到「做 Source 那一版」 |
+| C3b | 截断**必须留声**：进 `SyncReport.TruncatedTails` | 写入顺序 三 | 截了不留声 ⇒ 与「本来没事」同形 | 通道：`Store.OpenState`→`TestOpenStateCarriesTruncatedTail` ／ 接线：`Syncer.disposeOpenState`→`TestC3bTruncatedTailReachesTheReport` |
 | D1 | 三种「答不了」必须**互相分得开** | 那张三行的「答不了」表 | 让 `ErrLegacyMeta` 复用 `ErrSpanUnverified` ⇒ 补救动作被合并 | 全局：`D1_Red` 比三个哨兵两两不互 `Is` |
 | D2a | `format` 缺失的判定**取决于源的可重放性，不是常数** | 「取决于这个源能不能重放」那一格 | 写成常数判定（无论哪种源都作废）⇒ 不可重放的源永远重试（**实录失败：第一版的理由错在一个没写出来的前提上**） | 判定：`DecideLegacyMeta`→`D2a_Red` |
-| D2b | 两种结果**都要进** `SyncReport`（`LegacyMetaDiscarded` / `LegacyMetaUnverified`） | 同上一格 | 判对了却不留声 ⇒ 自愈动作与「本来没事」同形 | **空 —— `SyncReport` 尚不存在**，同 C3b |
+| D2b | 两种结果**都要进** `SyncReport`（`LegacyMetaDiscarded` / `LegacyMetaUnverified`） | 同上一格 | 判对了却不留声 ⇒ 自愈动作与「本来没事」同形 | 通道：`Store.OpenState`→`TestOpenStateDistinguishesLegacyFromFresh` ／ 接线：`Syncer.disposeOpenState`→`TestD2bBothDispositionsReachTheReport`（两支各一格）／ 判据：`Syncer.replayable`→`TestReplayableIsAboutTheRangeNotTheSource` |
 | E1a | `.meta` **无法解析时报错**，不拿一个默认值顶上 | 那张四行判定表 第一行 | 对坏 JSON 填一个空 `coverage` 当默认 | 读：`DecodeMeta`→`E1a_Red` |
 | E1b | `format` **不在已知版本集合内时报错**，不照旧版语义读 | 那张四行判定表 第三行 | 对一个不认识的 `format` 「尽力而为」地按 v1 读 | 读：`DecodeMeta`→`E1b_Red` |
 | F1 | `.meta` **不得含任何由交易日历派生的字段** | 「先划清」那一格 | 加一个 `isTradingDay` ⇒ 把日历的答案抄进存储，抄件会过期而不报错 | 结构：`F1_Green` 那道绊线（字段集）／ 语义：**空 —— 机器判不了「是不是日历派生」，绊线只保证【加字段这件事会被看见】** |
