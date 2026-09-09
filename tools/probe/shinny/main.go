@@ -802,7 +802,28 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	st := "PASS"
 	note := ""
 	// 基线只对默认品种成立；-syms 换过就不判（假红教人忽略真红）。
-	if symsFlag == "" && (longest != wantLongest || longFrom != wantFrom || longTo != wantTo) {
+	//
+	// ⛔ **而「不判」那一支必须报 SKIP，不能报 PASS**（评审方 2026-09-09 抓到）：
+	//
+	//	默认（rb）              拦截过 ⇒ 基线断言跑了      ⇒ PASS/FAIL **有意义**
+	//	-syms <跨零点品种>      拦截 FAIL 早退             ⇒ 有意义
+	//	-syms <非跨零点品种>    拦截过、基线断言**被跳过** ⇒ 原来报 PASS，**而什么都没断言**
+	//
+	// ⇒ 判据是本仓自己写过的那条，只是换个方向用：
+	//
+	//	**没被行使过的拦截，和没有拦截差不多。**
+	//	⇒ **一个没有断言在跑的 PASS，和没跑差不多 —— 而它比没跑更贵：
+	//	  它进报告，读起来像通过。**
+	//
+	// ⚠️ 「换了品种就不判基线」这个决定本身是对的，没有动它。**改的只是那一支的标签。**
+	// 而这个改动真正买到的东西是：**改完之后，本函数的 `PASS` 只剩一个含义**
+	//（此前它混着「断言过了」和「压根没断言」两种）。
+	if symsFlag != "" {
+		st = "SKIP"
+		note = "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— " +
+			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。" +
+			"要判基线请去掉 -syms。"
+	} else if longest != wantLongest || longFrom != wantFrom || longTo != wantTo {
 		st = "FAIL"
 		note = fmt.Sprintf("\n       ⚠️ 与基线不符（基线 %d 个交易日 %s…%s，2026-09-09 实测）——"+
 			"要么数据变了，要么又发生了一次停夜盘，去看一眼",
