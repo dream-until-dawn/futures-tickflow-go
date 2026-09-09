@@ -1270,6 +1270,24 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 			seq = append(seq, ds{d, strings.Join(ks, " ")})
 		}
 		sort.Slice(seq, func(a, c int) bool { return seq[a].d < seq[c].d })
+		// ⛔ **窗口里一根都没有 ⇒ 这里原来直接 `seq[0]` 越界 panic**
+		// （2026-09-09 实测：`-syms KQ.m@GFEX.ps -win night` ⇒
+		//  `panic: index out of range [0] with length 0`）。
+		//
+		// 而它不是「取数失败」：`enoughDays` 已经过了，413 个交易日都在手上 ——
+		// **是【窗口筛完】之后空的。** 这两件事必须分开说，否则报出来的原因是错的。
+		//
+		// ⇒ 一个探针**崩掉**比报错更糟：它连「我答不了」都说不出来。
+		//   本仓那条「取不到和不存在长得一样」，在这儿的形状是**取到了、而窗口里没有**。
+		if len(seq) == 0 {
+			fmt.Fprintf(&b, "%-14s **在所选窗口（-win %s）里一根都没有** —— "+
+				"取数是成功的（%d 个自然日），是**窗口筛完之后空的**。\n"+
+				"       ⇒ 对 `-win night`：这多半意味着**该品种没有夜盘**"+
+				"（GFEX 三个品种都没有）；对 `-win day`：那是异常，去看一眼。\n       ",
+				sym, winFlag, len(all))
+			bad++
+			continue
+		}
 		// 20 日窗并集
 		windowUnion := func(i, n int) string {
 			set := map[string]bool{}
@@ -1432,9 +1450,29 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 			fmt.Fprintf(&b, "\n       ")
 		}
 	}
+	// ⛔ **没有断言在跑的那一次，不能叫 PASS**（评审方 2026-09-09 在 probeNightGap 上
+	// 提的同一条，而**这里有三个开关**：`-syms` / `-win` / `-grid`，任意一个非默认，
+	// 上面那段基线判定就整段跳过）。
+	//
+	//	判据一句话：**这一次运行有没有断言在跑？没有就不能叫 PASS。**
+	//
+	// ⚠️ 而 `bad > 0` 要压过 SKIP：**取数不足是真失败，换没换品种都一样。**
+	// 次序因此是 **FAIL > SKIP > PASS**。
+	//
+	// ⛔ 记一笔：**这个缺陷正是我在 `probeNightGap` 里刚修完的那一个，
+	// 而我自己的探针里原样有一份 —— 同一个文件、同一趟。**
+	// 「修了看得见的那一半」在这儿的形状是：
+	// **我照着别人的代码改，没有回头看我照它写出来的那份。**
 	st := "PASS"
-	if bad > 0 {
+	skipped := symsFlag != "" || winFlag != "day" || gridFlag != 15
+	switch {
+	case bad > 0:
 		st = "FAIL"
+	case skipped:
+		st = "SKIP"
+		fmt.Fprintf(&b, "\n       ⚠️ **换过参数（-syms / -win / -grid 之一），基线断言未运行**"+
+			" —— 本行的结论只是「取到的数长这样」，**不是「与基线相符」**。"+
+			"要判基线请三个开关全部用默认值。")
 	}
 	report("shinny-day-segments", st, b.String())
 }
