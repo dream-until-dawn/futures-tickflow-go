@@ -406,3 +406,52 @@ func TestKnownDefect_EmbeddedCannotSeeSuspendedNight(t *testing.T) {
 			"请一并更新 DayOf 文档与 contract.md", got)
 	}
 }
+
+// TestCrossMidnightRoster 把「哪些品种的夜盘跨零点」钉成一条【离线】断言。
+//
+// 为什么要有它（评审方 2026-09-09 抓到的一次实例）：
+// 我改掉一处会抹平读数的归一化之后，回去重跑「可能被藏住的那一档」，
+// **而那份名单是凭印象列的：我跑了 5 个，实际有 10 个。**
+// 漏掉的 `al ni pb sn ss` 全是 SHFE 有色，**和我跑过的 cu / zn 同一档（240 分）**。
+//
+//	⇒ 而完整名单**完全离线可得**，就在下面这张 map 里：21:00 起算，`N > 180` 即跨零点。
+//	  **「要重跑哪一档」不是凭感觉挑的，是可以【先算出来再去跑】的。**
+//
+// ⇒ 这条测试的作用不是守 `productNight` 的值，是守那份**名单**：
+// 品种表一变，名单跟着变，**而变了就必须有人回来看一眼谁要重测**。
+//
+// ⚠️ 射程：它只回答「按内置标称时长，谁跨零点」。
+// **它不回答那些品种的行情取不取得到数** —— 实测 `SHFE.ss` 只有 1990 个自然日
+// （2019 年才上市），探针对它拒答。**「跨零点的全部品种」和「能取到数的那几个」是两句话。**
+func TestCrossMidnightRoster(t *testing.T) {
+	const nightStart = 21 * 60 // 21:00，分钟
+	want := map[string]bool{
+		"SHFE.au": true, "SHFE.ag": true, "INE.sc": true, // 330 分，收 02:30
+		"SHFE.cu": true, "SHFE.al": true, "SHFE.zn": true, // 240 分，收 01:00
+		"SHFE.pb": true, "SHFE.ni": true, "SHFE.sn": true,
+		"SHFE.ss": true,
+	}
+	got := map[string]bool{}
+	for k, n := range productNight {
+		if nightStart+n > 24*60 {
+			got[k.Exchange+"."+k.Product] = true
+		}
+	}
+	for k := range got {
+		if !want[k] {
+			t.Errorf("%s 的夜盘跨零点，而它不在记录的名单里。\n"+
+				"⇒ 加进 want，并回去想一遍：**有没有哪个按品种做的测量，"+
+				"需要把它补测一遍？**（本仓栽过一次：名单凭印象列，10 个跑了 5 个）", k)
+		}
+	}
+	for k := range want {
+		if !got[k] {
+			t.Errorf("%s 记在名单里，而按 productNight 它的夜盘【不】跨零点。\n"+
+				"⇒ 要么它的标称时长改了（那名单要更新），要么这一行本来就不该在", k)
+		}
+	}
+	if len(got) != len(want) {
+		t.Fatalf("跨零点品种 %d 个，记录的名单 %d 个", len(got), len(want))
+	}
+	t.Logf("跨零点品种 %d 个（占 productNight 的 %d 个）", len(got), len(productNight))
+}

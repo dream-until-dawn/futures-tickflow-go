@@ -83,6 +83,11 @@ var failed int
 // 代价不在耗时，在于**人会因此不跑**。
 var only string
 
+// symsFlag 由 -syms 指定：临时覆盖 night-hours 的品种表（逗号分隔）。
+var symsFlag string
+var winFlag string
+var gridFlag int
+
 func skipped(name string) bool {
 	return only != "" && !strings.Contains(name, only)
 }
@@ -559,8 +564,924 @@ func probeGfexNoNight(ctx context.Context, md, tok string) {
 	report("shinny-gfex-no-night", st, b.String())
 }
 
+// probeNightGap 量「有夜盘的品种，连续多少个交易日【没有】夜盘」。
+//
+// 起因：`docs/design.md` §七 五 用「连续 N 个交易日 actual == 0」判模板过期，
+// 而 N 写着**未验**，注解是「长假最长多少个连续交易日无夜盘，要从历史数据量」。
+//
+// # 口径（先定义被数的东西，再挑量法）
+//
+//	交易日 T     该自然日上日盘（09:00–15:00）至少 3 根
+//	T 的夜盘     落在【上一个交易日那个自然日】20:00–次日 04:00 里的根
+//	             —— 中国期货夜盘 21:00 开，属于【下一个】交易日
+//	actual == 0  那个区间一根都没有
+//
+// # 为什么用 60m 而不是 1m
+//
+//	rb 每天 345 根 1m ⇒ 一窗 2000 根盖 5.8 天 ⇒ 十年约 450 次请求
+//	60m 每天 7 根     ⇒ 一窗盖约 280 个交易日 ⇒ 十年十七次
+//
+// ⚠️ 345 的出处是本仓自己的 `nominalDayMinutes`（`345 = 225 + 120`）。
+// **上一版这里写的是 465，而那个数没有出处** —— 而它所在的正是「为什么用 60m」
+// 这个【方法选择的前提】。⇒ 一个没有出处的数，不该出现在一个前提里。
+//
+// 而 60m 能不能用，是先验过的：天勤的 60m **是时钟对齐的**，
+// 夜盘就标在 `21:00` / `22:00`（新浪不是，见 `probe.md` 坑三之四）。
+//
+// ⚠️ **射程**：只量 `KQ.m@SHFE.rb` 一个品种，**是下界不是全市场**。
+// 别的品种夜盘时长不同，停夜盘的安排也可能不同。
+func probeNightGap(ctx context.Context, md, tok string) {
+	// 默认 rb；`-syms` 可以换（取第一个）。换品种的意义不在于「多量几个」——
+	// 这条判据对**夜盘跨零点**的品种不成立，而下面那道拦截正是为此而设。
+	// 不让它可换，那道拦截就永远没被行使过，而**没被行使过的拦截和没有拦截差不多**。
+	sym := "KQ.m@SHFE.rb"
+	if symsFlag != "" {
+		sym = strings.Split(symsFlag, ",")[0]
+	}
+	all := map[string][]string{}
+	fails := 0
+	// 从十年多以前往回走，每步 240 天，窗口 2000 根（约 288 天）⇒ 有重叠，不留缝。
+	for back := 3900; back >= 0; back -= 240 {
+		m, err := minuteLabelsN(ctx, md, tok, sym, 60, 2000, back)
+		if err != nil {
+			fails++
+			continue
+		}
+		for d, ts := range m {
+			all[d] = append(all[d], ts...)
+		}
+	}
+	if fails > 2 {
+		report("shinny-night-gap", "FAIL",
+			fmt.Sprintf("十七窗里有 %d 窗取数失败 —— 缺口会把「无夜盘」造出来，不报结论", fails))
+		return
+	}
+
+	dates := make([]string, 0, len(all))
+	for d := range all {
+		dates = append(dates, d)
+	}
+	sort.Strings(dates)
+
+	hasDay := func(d string) bool {
+		n := 0
+		for _, t := range all[d] {
+			if t >= "09:00" && t < "15:00" {
+				n++
+			}
+		}
+		return n >= 3
+	}
+	hasNight := func(d string) bool {
+		for _, t := range all[d] {
+			if t >= "20:00" || t < "04:00" {
+				return true
+			}
+		}
+		return false
+	}
+
+	// 夜盘【跨零点】的品种，这个判据不成立：自然日 D 上的 00:00–01:00 那几根属于
+	// D 自己的夜盘（前一晚 21:00 开的），于是即使 D 晚上那一场没开，D 仍然「有夜盘的根」
+	// ⇒ 缺口被漏掉，而且**安静地**漏掉。换 ag/au/cu/zn/sc 来跑就是这种情况。
+	crossed := 0
+	for _, ts := range all {
+		for _, t := range ts {
+			if t >= "00:00" && t < "04:00" {
+				crossed++
+				break
+			}
+		}
+	}
+	// ⚠️ 阈值取 10% 是有余量的，而**余量必须看得见**。
+	// 但只印比例还不够 —— 评审方 2026-09-09 指出，**那是用错了统计量**：
+	//
+	//	rb 的 3% **不是散布在十年里的，是挤在一个连续的四个月里**
+	//	⇒ 在那四个月【内部】，这条判据不是「3% 不准」，是 **100% 不可用**
+	//
+	//	**一个按比例设的阈值，分不开「3% 散布在十年」和「3% 挤在一个季度」——
+	//	而后者是完全不同的风险：前者是噪声，后者是一段【整体失效的区间】。**
+	//
+	// ⇒ 所以真正的保障从来不是这个 10%（它只是让 rb 通过），
+	//   而是「那四个月里的假期被手工逐个排查过」。
+	//   ⇒ 两个数一起印：**全局比例**，和**最长连续跨零点区间**——
+	//     后者才是这条判据真正的失效尺度。
+	//
+	//	**一个没写明它是什么统计量的余量，印出来也还是没有余量。**
+	crossedPct := 100.0 * float64(crossed) / float64(len(all))
+	// ⛔ 第一版这里量的是「最长【连续】跨零点自然日」，而那个数是 **5** ——
+	// 不是因为窗口只有 5 天，是因为**周的节律**：周日不开夜盘 ⇒ 周一没有零点后的根
+	// ⇒ 每周必断一次。**那个统计量被一个和失效毫无关系的周期支配了。**
+	//
+	//	⇒ 要量的是「这条判据【不可用的那段区间】有多长」，
+	//	  而不是「跨零点的日子有没有挨在一起」。挨不挨在一起由周末决定。
+	//
+	// ⇒ 改量【首末跨零点日之间的跨度】里有多少个交易日 —— 那才是失效区间的长度。
+	crossFrom, crossTo := "", ""
+	for _, d := range dates {
+		for _, t := range all[d] {
+			if t >= "00:00" && t < "04:00" {
+				if crossFrom == "" {
+					crossFrom = d
+				}
+				crossTo = d
+				break
+			}
+		}
+	}
+	crossSpan := 0 // 在 tdays 建好之后再填（见下）
+	if crossed > len(all)/10 {
+		report("shinny-night-gap", "FAIL", fmt.Sprintf(
+			"这个品种的夜盘【跨零点】（%d/%d 个自然日有 00:00–04:00 的根）——"+
+				"本判据对它不成立，会安静地漏掉缺口，不报结论。\n"+
+				"       只有夜盘收在零点之前的品种才能用这条（见 probe.md 6.9 的射程）",
+			crossed, len(all)))
+		return
+	}
+
+	var tdays []string
+	for _, d := range dates {
+		if hasDay(d) {
+			tdays = append(tdays, d)
+		}
+	}
+	// 失效区间的跨度：首末跨零点日之间有多少个【交易日】。
+	for _, d := range tdays {
+		if crossFrom != "" && d >= crossFrom && d <= crossTo {
+			crossSpan++
+		}
+	}
+
+	// 对照组焊在里面：交易日不够 ⇒ 是取数塌了，不是市场变了。
+	//
+	// ⛔ 这里原来也是 `len(tdays) < 2000` —— 和另外两条探针同一个错。
+	// **而我上一趟改那两条时【漏了这一处】，因为我扫的是字面串 `len(all) < 2000`，
+	// 而这里的变量叫 `tdays`。**（评审方 2026-09-09 读这条分支时点出来的。）
+	// ⇒ 判据又一次写成了「它现在长什么样」，而不是性质 —— 本仓反复撞的那个形状，
+	//   这次撞在**我自己修那个形状的那一趟里**。
+	sortedT := append([]string{}, tdays...)
+	sort.Strings(sortedT)
+	if ok, why := enoughDays(sortedT, fails); !ok {
+		report("shinny-night-gap", "FAIL",
+			fmt.Sprintf("取数不足：%s —— 判据或取数有问题，不报结论", why))
+		return
+	}
+
+	// 内置时段表自 2020-05-06 生效（calendar/embedded 的 baseFrom）。
+	// 这一行量的是：**本库的目标深度里，有多少落在日历【答得了】的那一侧。**
+	// 它不是这条探针的主结论，但它是一个别处拿不到的数：
+	// 目标深度由数据源决定（2016-01-04），而覆盖由内置表决定（2020-05-06）——
+	// **两者之间那一段，Walk 一律给 ErrUncovered。**
+	covered := 0
+	for _, d := range tdays {
+		if d >= "2020-05-06" {
+			covered++
+		}
+	}
+	// 顺带算两个【假如】：把生效起点往前挪到这两个日子，覆盖面各是多少。
+	// 这两个日子不是随便挑的，它们是 6.10 量出来的最后两次时段变更：
+	//   2019-12-11  最后一次变更（CZCE）之后 ⇒ 那之后的时段全都等于今天
+	//   2016-05-03  SHFE 那次变更之后 ⇒ 再往前就要第二段模板了
+	// **把「能往前挪」变成一个数，而不是一句「原则上可以」。**
+	var wouldCover [2]int
+	for i, from := range [2]string{"2019-12-11", "2016-05-03"} {
+		for _, d := range tdays {
+			if d >= from {
+				wouldCover[i]++
+			}
+		}
+	}
+
+	longest, longFrom, longTo := 0, "", ""
+	runs := map[int]int{} // 段长 -> 段数
+	// byYear 把每一段的起始交易日按年归拢。
+	// **聚合数分辨不了「检出漏了」和「期望算错了」，而日期能**（评审方 2026-09-09 要的）：
+	// 整条 SYN-7 的措辞靠「2..63 是空的」这个形状，而一个漏掉缺口的检出方法，
+	// 同样可能漏掉那些 2 天的段。
+	byYear := map[string][]string{}
+	cur, curFrom := 0, ""
+	closeRun := func(to string) {
+		if cur > 0 {
+			runs[cur]++
+			tag := curFrom
+			if cur > 1 {
+				tag = fmt.Sprintf("%s×%d", curFrom, cur)
+			}
+			byYear[curFrom[:4]] = append(byYear[curFrom[:4]], tag)
+			if cur > longest {
+				longest, longFrom, longTo = cur, curFrom, to
+			}
+		}
+		cur = 0
+	}
+	for i := 1; i < len(tdays); i++ {
+		if !hasNight(tdays[i-1]) {
+			if cur == 0 {
+				curFrom = tdays[i]
+			}
+			cur++
+		} else {
+			closeRun(tdays[i-1])
+		}
+	}
+	closeRun(tdays[len(tdays)-1])
+
+	lens := make([]int, 0, len(runs))
+	for k := range runs {
+		lens = append(lens, k)
+	}
+	sort.Ints(lens)
+	var dist strings.Builder
+	for _, k := range lens {
+		fmt.Fprintf(&dist, "%d个交易日×%d段 ", k, runs[k])
+	}
+	ys := make([]string, 0, len(byYear))
+	for y := range byYear {
+		ys = append(ys, y)
+	}
+	sort.Strings(ys)
+	var perYear strings.Builder
+	for _, y := range ys {
+		sort.Strings(byYear[y])
+		fmt.Fprintf(&perYear, "\n       %s（%d 段）%s", y, len(byYear[y]),
+			strings.Join(byYear[y], " "))
+	}
+
+	// 基线：2026-09-09 实测。变了就该有人来看一眼 —— 这不是一条永远绿的断言。
+	const wantLongest, wantFrom, wantTo = 64, "2020-02-03", "2020-05-06"
+	st := "PASS"
+	note := ""
+	// 基线只对默认品种成立；-syms 换过就不判（假红教人忽略真红）。
+	//
+	// ⛔ **而「不判」那一支必须报 SKIP，不能报 PASS**（评审方 2026-09-09 抓到）：
+	//
+	//	默认（rb）              拦截过 ⇒ 基线断言跑了      ⇒ PASS/FAIL **有意义**
+	//	-syms <跨零点品种>      拦截 FAIL 早退             ⇒ 有意义
+	//	-syms <非跨零点品种>    拦截过、基线断言**被跳过** ⇒ 原来报 PASS，**而什么都没断言**
+	//
+	// ⇒ 判据是本仓自己写过的那条，只是换个方向用：
+	//
+	//	**没被行使过的拦截，和没有拦截差不多。**
+	//	⇒ **一个没有断言在跑的 PASS，和没跑差不多 —— 而它比没跑更贵：
+	//	  它进报告，读起来像通过。**
+	//
+	// ⚠️ 「换了品种就不判基线」这个决定本身是对的，没有动它。**改的只是那一支的标签。**
+	// 而这个改动真正买到的东西是：**改完之后，本函数的 `PASS` 只剩一个含义**
+	//（此前它混着「断言过了」和「压根没断言」两种）。
+	if symsFlag != "" {
+		st = "SKIP"
+		note = "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— " +
+			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。" +
+			"要判基线请去掉 -syms。"
+	} else if longest != wantLongest || longFrom != wantFrom || longTo != wantTo {
+		st = "FAIL"
+		note = fmt.Sprintf("\n       ⚠️ 与基线不符（基线 %d 个交易日 %s…%s，2026-09-09 实测）——"+
+			"要么数据变了，要么又发生了一次停夜盘，去看一眼",
+			wantLongest, wantFrom, wantTo)
+	}
+	report("shinny-night-gap", st, fmt.Sprintf(
+		"交易日 %d 个（%s…%s），其中内置表覆盖得到的（2020-05-06 起）%d 个 = %.0f%%；\n"+
+			"       假如起点挪到 2019-12-11 ⇒ %d 个 = %.0f%%；挪到 2016-05-03 ⇒ %d 个 = %.0f%%\n"+
+			"       跨零点的自然日 %.1f%%（阈值 10%%），而它们**挤在 %s…%s 之间，跨 %d 个交易日** —— 那一段里这条判据【不可用】，不是「不准」\n"+
+			"       无夜盘的连续段分布：%s\n"+
+			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
+			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
+		len(tdays), tdays[0], tdays[len(tdays)-1],
+		covered, 100.0*float64(covered)/float64(len(tdays)),
+		wouldCover[0], 100.0*float64(wouldCover[0])/float64(len(tdays)),
+		wouldCover[1], 100.0*float64(wouldCover[1])/float64(len(tdays)),
+		crossedPct, crossFrom, crossTo, crossSpan, dist.String(),
+		longest, longFrom, longTo, note, perYear.String()))
+}
+
+// probeNightHours 量「夜盘每天开到几点」，按年列出来。
+//
+// 碰两条「未验」：
+//
+//	design.md   `实际 > 标称` 那一侧未验（实测只覆盖 `实际 ≤ 标称`）
+//	contract.md 交易时段的历史变更表 —— 变更时点未测
+//
+// 判据：把每个自然日的夜盘标签取**最大**的那个（60m 网格，夜盘标 21:00/22:00/…），
+// 按年归拢成集合。**集合变了 = 时段变过**，而变的那一年是时点的上界（精度只到年）。
+//
+// 选 `ag`（白银）与 `cu`（铜）：它们的夜盘比 `rb` 长，**改动才有地方显形**；
+// `rb` 作对照 —— 它十年不该变。
+//
+// ⚠️ **射程**：60m 网格只能给到【小时】，`02:30` 这种半点收盘它看不出来，
+// 只会显示成最后一根 `02:00`。**要精确到分钟得用 1m，而那是八百多次请求。**
+// ⇒ 本探针回答的是「有没有变、大约哪一年」，**不是「几点几分」**。
+// atoi 把 "HH" 转成数字；非法输入返回 0（调用方只喂两位数字）。
+func atoi(s string) int {
+	n := 0
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return 0
+		}
+		n = n*10 + int(r-'0')
+	}
+	return n
+}
+
+func probeNightHours(ctx context.Context, md, tok string) {
+	// 默认只三个品种：这条探针每个品种要 17 次连接，**加品种就是加分钟**，
+	// 而一条跑起来嫌慢的探针，下场是没人跑。
+	// 要建「时段历史变更表」时用 -syms 临时铺开，结果记进 probe.md，别改默认值。
+	syms := []string{"KQ.m@SHFE.ag", "KQ.m@SHFE.cu", "KQ.m@SHFE.rb"}
+	if symsFlag != "" {
+		syms = strings.Split(symsFlag, ",")
+	}
+	var b strings.Builder
+	bad := 0
+	for si, sym := range syms {
+		all := map[string][]string{}
+		fails := 0
+		for back := 3900; back >= 0; back -= 240 {
+			m, err := minuteLabelsN(ctx, md, tok, sym, 60, 2000, back)
+			if err != nil {
+				fails++
+				continue
+			}
+			for d, ts := range m {
+				all[d] = append(all[d], ts...)
+			}
+		}
+		gotDays := make([]string, 0, len(all))
+		for d := range all {
+			gotDays = append(gotDays, d)
+		}
+		sort.Strings(gotDays)
+		if ok, why := enoughDays(gotDays, fails); !ok {
+			fmt.Fprintf(&b, "%-14s 取数不足：%s —— 不报结论\n       ", sym, why)
+			bad++
+			continue
+		}
+		// 年 -> 该年出现过的夜盘收盘标签集合
+		byYear := map[string]map[string]bool{}
+		for d, ts := range all {
+			y := d[:4]
+			last := ""
+			for _, t := range ts {
+				if t >= "20:00" || t < "04:00" {
+					// 夜盘跨零点：把 00:00–03:59 排在 20:00–23:59 之后
+					key := t
+					if t < "04:00" {
+						// ⛔ 跨零点要把【小时】加 24，不能只换前缀：
+						// 原来写 "24"+t[2:]，于是 01:00 与 02:00 都变成 "24:00"
+						// —— 「夜盘到底开到几点」被这一行悄悄抹平，而输出看着正常。
+						key = fmt.Sprintf("%02d%s", 24+atoi(t[:2]), t[2:])
+					}
+					if key > last {
+						last = key
+					}
+				}
+			}
+			if last == "" {
+				continue
+			}
+			if byYear[y] == nil {
+				byYear[y] = map[string]bool{}
+			}
+			byYear[y][last] = true
+		}
+		// 变了的话，把【最后一个旧形态的自然日】和【第一个新形态的自然日】找出来 ——
+		// 「哪一年变的」不够用：contract.md 那条未验问的是**变更时点**。
+		type dl struct {
+			d, last string
+		}
+		var seq []dl
+		for d, ts := range all {
+			last := ""
+			for _, t := range ts {
+				if t >= "20:00" || t < "04:00" {
+					key := t
+					if t < "04:00" {
+						// ⛔ 跨零点要把【小时】加 24，不能只换前缀：
+						// 原来写 "24"+t[2:]，于是 01:00 与 02:00 都变成 "24:00"
+						// —— 「夜盘到底开到几点」被这一行悄悄抹平，而输出看着正常。
+						key = fmt.Sprintf("%02d%s", 24+atoi(t[:2]), t[2:])
+					}
+					if key > last {
+						last = key
+					}
+				}
+			}
+			if last != "" {
+				seq = append(seq, dl{d, last})
+			}
+		}
+		sort.Slice(seq, func(a, c int) bool { return seq[a].d < seq[c].d })
+		var edges []string
+		// 用「前 20 天的最大收盘」当形态，避开单日缺根造成的抖动
+		windowMax := func(i, n int) string {
+			m := ""
+			for j := i; j > i-n && j >= 0; j-- {
+				if seq[j].last > m {
+					m = seq[j].last
+				}
+			}
+			return m
+		}
+		for i := 20; i+20 < len(seq); i++ {
+			before, after := windowMax(i, 20), windowMax(i+20, 20)
+			if before != after && len(edges) < 6 {
+				// 20 日窗只把变更【括】在一个区间里。再往里收一次，收到【日】：
+				// 旧形态的最后一天 = 最后一个 last == before 的日子；
+				// 新形态的第一天   = 它之后第一个 last == after 的日子。
+				lastOld, firstNew := "", ""
+				for j := i; j <= i+20 && j < len(seq); j++ {
+					if seq[j].last == before {
+						lastOld = seq[j].d
+					}
+				}
+				for j := i; j <= i+20 && j < len(seq); j++ {
+					if seq[j].d > lastOld && seq[j].last == after {
+						firstNew = seq[j].d
+						break
+					}
+				}
+				edges = append(edges, fmt.Sprintf(
+					"旧形态最后一天 %s（最晚 %s）→ 新形态第一天 %s（最晚 %s）",
+					lastOld, before, firstNew, after))
+				i += 20
+			}
+		}
+		years := make([]string, 0, len(byYear))
+		for y := range byYear {
+			years = append(years, y)
+		}
+		sort.Strings(years)
+		fmt.Fprintf(&b, "%-14s ", sym)
+		prev := ""
+		for _, y := range years {
+			ks := make([]string, 0, len(byYear[y]))
+			for k := range byYear[y] {
+				ks = append(ks, k)
+			}
+			sort.Strings(ks)
+			cur := strings.Join(ks, ",")
+			mark := ""
+			if prev != "" && cur != prev {
+				mark = " ⇐变"
+			}
+			fmt.Fprintf(&b, "\n                 %s %s%s", y, cur, mark)
+			prev = cur
+		}
+		if len(edges) > 0 {
+			fmt.Fprintf(&b, "\n                 **变更时点**：%s", strings.Join(edges, " ／ "))
+		}
+		// 基线（2026-09-09 实测）：只有 rb 变过一次，而且就那一次。
+		// 没有断言的话，这个探针只是一份报告 —— **报告不会因为世界变了而红。**
+		//
+		// ⚠️ 基线只对【默认品种表】成立。用 -syms 铺开去建表时不判 ——
+		// 否则每次探索都会看见一个假红，而**假红教人忽略真红**。
+		if symsFlag != "" {
+			continue
+		}
+		wantEdges := 0
+		if sym == "KQ.m@SHFE.rb" {
+			wantEdges = 1
+			if len(edges) == 1 && !strings.Contains(edges[0], "2016-04-29") {
+				bad++
+				fmt.Fprintf(&b, "\n                 ⚠️ 变更时点与基线不符（基线：旧形态最后一天 2016-04-29"+
+					"→ 新形态第一天 2016-05-03）")
+			}
+		}
+		if len(edges) != wantEdges {
+			bad++
+			fmt.Fprintf(&b, "\n                 ⚠️ 检出 %d 处变更，基线是 %d 处 —— "+
+				"要么数据变了，要么交易所又改了时段，去看一眼", len(edges), wantEdges)
+		}
+
+		if si < len(syms)-1 {
+			fmt.Fprintf(&b, "\n       ")
+		}
+	}
+	// ⛔ **没有断言在跑的那一次，不能叫 PASS** —— 与 `probeNightGap` / `probeDaySegments`
+	// 同一条。本函数的跳过条件是循环里那句 `if symsFlag != "" { continue }`。
+	//
+	// ⚠️ 这一处是**第三个**实例，而它是靠一次「按骨架扫」找出来的（2026-09-09）：
+	//
+	//	只扫骨架 `st := "PASS"`            ⇒ 全仓 **7** 处（多）
+	//	凭印象点名                          ⇒ **2** 处（少）
+	//	骨架 ＋「函数体里有跳过断言的条件」 ⇒ **3** 处 ← 真数
+	//
+	//	⇒ **一个模式类缺陷，扫它的骨架会多收，凭印象点名会漏收；
+	//	  判据要【两半齐全】才数得对。**
+	//	  另外四处（`probeGridIsClockGrid` / `probeGfexNoNight` /
+	//	  `probeTradingDayPredicted` / `main`）没有跳过条件 —— **它们的 PASS 是对的，别一起改。**
+	st := "PASS"
+	if symsFlag != "" {
+		st = "SKIP"
+		fmt.Fprintf(&b, "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— "+
+			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。要判基线请去掉 -syms。")
+	}
+	if bad > 0 {
+		st = "FAIL" // FAIL 压过 SKIP：取数不足是真失败，换没换品种都一样
+	}
+	report("shinny-night-hours", st, b.String())
+}
+
+// probeDaySegments 量「**日盘**的分段结构有没有变过」，按年列出来。
+//
+// 碰的那条「未验」写在 calendar/embedded/embedded.go 里：
+//
+//	6.10 那张变更表给的是【边界日期】，不是【模板】。它测的是「最晚一根」
+//	⇒ 能重建**夜盘尾端**，**而它对【日盘分段】一言未发**。
+//	「日盘这十年没变过」是一个**没有被那次测量覆盖的前提**。
+//
+// 判据：把每个自然日落在 [04:00, 20:00) 的标签集合当作「日盘形态」，
+// 取 20 日窗的**并集**当作那一段时间的形态；**并集变了 = 日盘分段变过**。
+//
+// ⛔ 为什么是【并集】而不是逐日比：这条量的失效方式是**少根**（那一格没成交、
+// 窗口断在中间、主连换月），而少根只会让集合**变小，永远不会变大**。
+// 并集对「少根」免疫，对「多出一段 / 少掉一段」不免疫 —— 而后者正是要测的东西。
+//
+// ⛔ **网格必须比 60m 细，这一条是量出来的、不是想出来的**（2026-09-09）：
+//
+//	60m 日盘 = [09:00 10:00 11:00 13:00 14:00]        ← 上午休息不产生任何标签差异
+//	15m 日盘 = [09:00 09:15 09:30 09:45 10:00 __ 10:30 10:45 11:00 11:15
+//	            13:30 13:45 14:00 14:15 14:30 14:45]  ← **10:15 的缺席就是那道休息**
+//
+// 日盘有一道 **10:15–10:30 的上午休息**。**用 60m 去测日盘分段，
+// 等于拿一把看不见那道缝的尺子去量那道缝** —— 它会一直报「没变」，而且永远是对的。
+//
+// ⚠️ **射程**：15m 看得见 15 分钟的边界，看不见 10:20 这种。
+// 要更细得用 5m（rb 每日 ~68 根，width 10000 ⇒ 一窗 ~147 天 ⇒ 十年 ~27 窗，**做得起**）。
+// 今天不做的理由是：**已知的分段边界全部落在 :15 / :30 上**，5m 只对未知的更细变更有用。
+// ⇒ 本探针答的是「按 15 分钟看，日盘分段变没变」，**不是「按分钟看」**。
+//
+// ⚠️ **view_width 的上限也是量出来的**：10000 可以，12000 **直接断连**
+// （`failed to read frame header: EOF`），**不是一个干净的报错**。
+// ⇒ 这正是本文件反复写的那条：**取不到和不存在长得一样。**
+// 超上限的 width 会走进 `fails++` 那一支，读起来像「这一段没有数据」。
+//
+// ⚠️ 顺带一条读数，留给以后：夜盘那条探针用的是 width=2000（一窗 88 天，十年 17 窗）。
+// **上限是 10000（一窗 439 天）—— 同样的覆盖 4 窗就够。** 那条分支现在冻着，不动它。
+// ⛔ **一个「十一年全同」的结果，长得和「测坏了」一模一样。**
+// 所以这条探针有三个对照组，结果记在 docs/probe.md 6.12：
+//
+//	A 形态灵敏度   CFFEX.IF ⇒ 10:15 在它那里是【有】的（中金所没有上午休息）
+//	               ⇒ 判据整个压在这一个标签上，而它在两个真实品种上给出相反答案
+//	B 时间灵敏度   -win night 指向夜盘 ⇒ 检出 rb 那次变更，落点与 6.10 用 60m
+//	               独立定死的 2016-04-29 → 2016-05-03 一致
+//	C 断言会不会红 默认表换成 CFFEX.T ⇒ FAIL，三个分支全响；
+//	               基线里加上 10:15 ⇒ FAIL；还原 ⇒ PASS
+//
+// ⇒ 顺带定死了一个仓里一直没有日期的变更：**国债起点 09:15 → 09:30，
+//
+//	旧形态最后一天 2020-07-17（周五）→ 新形态第一天 2020-07-20（周一）**，T 与 TF 同日。
+//
+// enoughDays 判断「取到的数够不够下结论」，并在不够时给出**说得出理由**的一句话。
+//
+// ⛔ 原来**三条**探针写的都是这个形状（`len(all) < 2000` / `len(tdays) < 2000`）—— 一个**绝对天数**。
+// 它想问的是「有没有取全」，而这两件事只在【十岁以上的品种】上等价。
+// 2026-09-09 实测，三个品种被它挡在门外：
+//
+//	KQ.m@GFEX.si    900 天   **0 窗失败**   ⇒ 被拒
+//	KQ.m@GFEX.lc    761 天   **0 窗失败**   ⇒ 被拒
+//	KQ.m@SHFE.ss   1990 天   **0 窗失败**   ⇒ 被拒（差 10 天）
+//
+// **`0 窗失败` 就是取全了的证据** —— 这三个只是比十年年轻。
+// ⇒ 「够不够」被写成了一个位置（2000），而不是性质。**本仓反复撞的那个形状。**
+//
+// 新判据三条：
+//
+//	一、取数没失败：fails <= 2
+//	二、拿到的天数**密铺它自己的跨度**：len >= 0.85 × 跨度 × 5/7
+//	    （5/7 是「一周五个交易日」的粗估；0.85 给节假日与停牌留余量）
+//	三、下限 120 个交易日 —— 变更检测两边各要一个 20 日窗，41 天在理论上就够，
+//	    但 41 天里一个节假日群就能把窗口打穿。**半年是给判据留的余量，不是拍的。**
+//
+// ⛔ **「下限」与「密铺」各答一半，缺一不可 —— 别以为密铺是加强、下限可以去掉**
+// （措辞按评审方 2026-09-09 的提法，他说得比我准）：
+//
+//	`fails <= 2`  只证明「**取到的**都成功」，**不证明「该取的都取了」**
+//	密铺跨度      回答的正是后者：拿到的天数密不密铺它自己的跨度
+//	下限 120      回答的是第三件事：**这段序列长到跑得动那个检测器吗**
+//	              —— 一段密铺得很好的 30 天，密铺判据会放行，而检测器在上面没有意义
+//
+// ⚠️ 它**不**回答「这个品种上市那天到今天有没有取全」——
+// 跨度是从**取到的**第一天算起的。真正漏掉最早那一段，这条判据看不见。
+// 要答那个得有上市日期，而本仓现在没有那份数据。
+func enoughDays(days []string, fails int) (bool, string) {
+	if fails > 2 {
+		return false, fmt.Sprintf("取数失败 %d 窗", fails)
+	}
+	if len(days) < 120 {
+		return false, fmt.Sprintf("只有 %d 个交易日，不足 120 —— 变更检测两边各要一个 20 日窗，"+
+			"太短了判据自己会抖", len(days))
+	}
+	first, last := days[0], days[len(days)-1]
+	t0, e0 := time.Parse("2006-01-02", first)
+	t1, e1 := time.Parse("2006-01-02", last)
+	if e0 != nil || e1 != nil {
+		return false, "日期解析失败：" + first + ".." + last
+	}
+	span := int(t1.Sub(t0).Hours()/24) + 1
+	want := int(float64(span) * 5.0 / 7.0 * 0.85)
+	if len(days) < want {
+		return false, fmt.Sprintf("%s..%s 跨 %d 个自然日，按一周五天至少该有 %d 个交易日，"+
+			"实到 %d —— **中间有洞**", first, last, span, want, len(days))
+	}
+	return true, ""
+}
+
+// wantDayShape 是 2026-09-09 实测到的日盘形态（15m 网格）。
+//
+// ⛔ **`10:15` 不在里面，而它的缺席就是这条探针的全部判据** ——
+// 那是 10:15–10:30 的上午休息。写死这一串的意义在于：
+// **少一个标签、多一个标签，都会有人被叫回来看一眼。**
+const wantDayShape = "09:00 09:15 09:30 09:45 10:00 10:30 10:45 11:00 11:15 " +
+	"13:30 13:45 14:00 14:15 14:30 14:45"
+
+func probeDaySegments(ctx context.Context, md, tok string) {
+	// 三个交易所各一个主连：日盘分段是不是各所同步变，这条探针自己答不了，
+	// 但**分开列**至少让「只有一家变了」显形。
+	syms := []string{"KQ.m@SHFE.rb", "KQ.m@DCE.i", "KQ.m@CZCE.MA"}
+	if symsFlag != "" {
+		syms = strings.Split(symsFlag, ",")
+	}
+	// 对照组 B：同一套聚合代码指向【夜盘】。夜盘里 rb 在 2016-05-03 变过一次，
+	// 那个日期是 probeNightHours 用 60m 网格独立定死的 ——
+	// **拿一个答案已知的数据集去问这套代码，才知道它到底会不会响。**
+	//
+	// ⚠️ 夜盘跨零点，但这里比的是【集合的相等】不是大小，所以不需要 24+ 那套换算。
+	inWin := func(t string) bool { return t >= "04:00" && t < "20:00" }
+	if winFlag == "night" {
+		inWin = func(t string) bool { return t >= "20:00" || t < "04:00" }
+	}
+	// ⛔ **-win night 的输出里有一个真实的假象，看见了别当成时段**：
+	// 本探针按【自然日】归拢，而夜盘跨零点 ——
+	// 21:00 开的那一夜，00:xx 那几根落在**第二个自然日**上。
+	// ⇒ 变更点那一行的「变更后」集合里会残留 00:00–00:45，
+	//   而它们来自**变更前那些夜晚的后半段**，不是变更后的时段。
+	// 证据就在同一份输出里：2017 年起整年一根 00:xx 都没有。
+	//
+	// **日盘不跨零点，所以默认模式没有这个问题** ——
+	// 这也是为什么这条限定只写在这儿，不写进 day 那一支的结论里。
+	var b strings.Builder
+	bad := 0
+	for si, sym := range syms {
+		all := map[string][]string{}
+		fails := 0
+		// 一窗 439 天，步长 400 留 39 天重叠 —— 重叠是为了让相邻两窗能接上，
+		// 不重叠的话中间掉一天都看不出来。
+		for back := 4000; back >= 0; back -= 400 {
+			mm, err := minuteLabelsN(ctx, md, tok, sym, gridFlag, 10000, back)
+			if err != nil {
+				fails++
+				continue
+			}
+			for d, ts := range mm {
+				all[d] = append(all[d], ts...)
+			}
+		}
+		gotDays := make([]string, 0, len(all))
+		for d := range all {
+			gotDays = append(gotDays, d)
+		}
+		sort.Strings(gotDays)
+		if ok, why := enoughDays(gotDays, fails); !ok {
+			fmt.Fprintf(&b, "%-14s 取数不足：%s —— 不报结论\n       ", sym, why)
+			bad++
+			continue
+		}
+		// 每个自然日 -> 日盘标签集合（排序去重）
+		type ds struct {
+			d, shape string
+		}
+		var seq []ds
+		byYear := map[string]map[string]bool{}
+		for d, ts := range all {
+			set := map[string]bool{}
+			for _, t := range ts {
+				if inWin(t) {
+					set[t] = true
+				}
+			}
+			if len(set) == 0 {
+				continue
+			}
+			ks := make([]string, 0, len(set))
+			for k := range set {
+				ks = append(ks, k)
+			}
+			sort.Strings(ks)
+			seq = append(seq, ds{d, strings.Join(ks, " ")})
+		}
+		sort.Slice(seq, func(a, c int) bool { return seq[a].d < seq[c].d })
+		// ⛔ **窗口里一根都没有 ⇒ 这里原来直接 `seq[0]` 越界 panic**
+		// （2026-09-09 实测：`-syms KQ.m@GFEX.ps -win night` ⇒
+		//  `panic: index out of range [0] with length 0`）。
+		//
+		// 而它不是「取数失败」：`enoughDays` 已经过了，413 个交易日都在手上 ——
+		// **是【窗口筛完】之后空的。** 这两件事必须分开说，否则报出来的原因是错的。
+		//
+		// ⇒ 一个探针**崩掉**比报错更糟：它连「我答不了」都说不出来。
+		//   本仓那条「取不到和不存在长得一样」，在这儿的形状是**取到了、而窗口里没有**。
+		if len(seq) == 0 {
+			fmt.Fprintf(&b, "%-14s **在所选窗口（-win %s）里一根都没有** —— "+
+				"取数是成功的（%d 个自然日），是**窗口筛完之后空的**。\n"+
+				"       ⇒ 对 `-win night`：这多半意味着**该品种没有夜盘**"+
+				"（GFEX 三个品种都没有）；对 `-win day`：那是异常，去看一眼。\n       ",
+				sym, winFlag, len(all))
+			bad++
+			continue
+		}
+		// 20 日窗并集
+		windowUnion := func(i, n int) string {
+			set := map[string]bool{}
+			for j := i; j > i-n && j >= 0; j-- {
+				for _, t := range strings.Fields(seq[j].shape) {
+					set[t] = true
+				}
+			}
+			ks := make([]string, 0, len(set))
+			for k := range set {
+				ks = append(ks, k)
+			}
+			sort.Strings(ks)
+			return strings.Join(ks, " ")
+		}
+		for i := 20; i+20 < len(seq); i++ {
+			by := seq[i].d[:4]
+			if byYear[by] == nil {
+				byYear[by] = map[string]bool{}
+			}
+			byYear[by][windowUnion(i, 20)] = true
+		}
+		var edges []string
+		for i := 20; i+20 < len(seq); i++ {
+			before, after := windowUnion(i, 20), windowUnion(i+20, 20)
+			if before != after && len(edges) < 6 {
+				// ⛔ 这里报的是**区间**，不是一个日子。
+				// 判据是「前 20 日的并集 ≠ 后 20 日的并集」，
+				// 而后一个窗盖的是 (i, i+20]，所以变更只能被括在这两个日子【之间】。
+				// 写成「X 附近」会被下一个人读成「就是 X 那天」——
+				// **本仓反复撞的那个形状：把射程写成一个位置。**
+				hi := i + 20
+				if hi >= len(seq) {
+					hi = len(seq) - 1
+				}
+				// 20 日窗只把变更【括】在 (seq[i].d, seq[hi].d] 里。再往里收一次，收到【日】——
+				// 和 probeNightHours 同一个做法。判据用**消失的那批标签**：
+				//
+				//	lost = before \ after ⇒ 最后一个还出现 lost 的日子 = 旧形态最后一天
+				//	（纯新增的情况反过来用 gained，见下面那一支）
+				//
+				// ⚠️ 它对「少根」不免疫：旧形态里偶尔掉一根 lost 标签没关系（取的是**最后**一个），
+				// 但新形态里要是冒出一根 lost 标签，lastOld 会被拖到那天去。
+				// **这一条只在 (i, hi] 这 20 天里找，所以拖不远** —— 而拖了也看得见：
+				// 收窄后的日期会贴在区间右端。
+				inSet := func(shape string, s map[string]bool) bool {
+					for _, t := range strings.Fields(shape) {
+						if s[t] {
+							return true
+						}
+					}
+					return false
+				}
+				diff := func(x, y string) map[string]bool {
+					in := map[string]bool{}
+					for _, t := range strings.Fields(y) {
+						in[t] = true
+					}
+					out := map[string]bool{}
+					for _, t := range strings.Fields(x) {
+						if !in[t] {
+							out[t] = true
+						}
+					}
+					return out
+				}
+				lost, gained := diff(before, after), diff(after, before)
+				lastOld, firstNew := "", ""
+				switch {
+				case len(lost) > 0:
+					for j := i; j <= hi; j++ {
+						if inSet(seq[j].shape, lost) {
+							lastOld = seq[j].d
+						}
+					}
+					for j := i; j <= hi; j++ {
+						if seq[j].d > lastOld {
+							firstNew = seq[j].d
+							break
+						}
+					}
+				case len(gained) > 0:
+					for j := i; j <= hi; j++ {
+						if inSet(seq[j].shape, gained) {
+							firstNew = seq[j].d
+							break
+						}
+					}
+					for j := i; j <= hi; j++ {
+						if firstNew != "" && seq[j].d < firstNew {
+							lastOld = seq[j].d
+						}
+					}
+				}
+				narrow := ""
+				if lastOld != "" && firstNew != "" {
+					narrow = fmt.Sprintf("**旧形态最后一天 %s → 新形态第一天 %s**；",
+						lastOld, firstNew)
+				}
+				edges = append(edges, fmt.Sprintf("%s括在 (%s, %s] 内：[%s] → [%s]",
+					narrow, seq[i].d, seq[hi].d, before, after))
+				i += 20
+			}
+		}
+		years := make([]string, 0, len(byYear))
+		for y := range byYear {
+			years = append(years, y)
+		}
+		sort.Strings(years)
+		fmt.Fprintf(&b, "%-14s %d 个自然日 %s..%s", sym, len(seq), seq[0].d, seq[len(seq)-1].d)
+		prev := ""
+		for _, y := range years {
+			ks := make([]string, 0, len(byYear[y]))
+			for k := range byYear[y] {
+				ks = append(ks, k)
+			}
+			sort.Strings(ks)
+			cur := strings.Join(ks, " ／ ")
+			mark := ""
+			if prev != "" && cur != prev {
+				mark = " ⇐变"
+			}
+			fmt.Fprintf(&b, "\n                 %s %s%s", y, cur, mark)
+			prev = cur
+		}
+		if len(edges) > 0 {
+			for _, e := range edges {
+				fmt.Fprintf(&b, "\n                 **变更**：%s", e)
+			}
+		}
+		// 基线（2026-09-09 实测：三个交易所各一个主连，各 2595 个自然日
+		// 2016-01-05..2026-09-08）——**十一年一个形态，一处变更都没有。**
+		//
+		// ⚠️ 只对【默认参数】判。-syms / -win 是探索与对照用的，那时不判 ——
+		// 否则每次探索都会看见一个假红，而**假红教人忽略真红**。
+		if symsFlag == "" && winFlag == "day" && gridFlag == 15 {
+			for _, y := range years {
+				if len(byYear[y]) != 1 {
+					bad++
+					fmt.Fprintf(&b, "\n                 ⚠️ %s 年出现了 %d 种日盘形态，基线是 1 种",
+						y, len(byYear[y]))
+					continue
+				}
+				for k := range byYear[y] {
+					if k != wantDayShape {
+						bad++
+						fmt.Fprintf(&b, "\n                 ⚠️ %s 年的日盘形态与基线不符"+
+							"\n                    实测 [%s]\n                    基线 [%s]",
+							y, k, wantDayShape)
+					}
+				}
+			}
+			if len(edges) != 0 {
+				bad++
+				fmt.Fprintf(&b, "\n                 ⚠️ 检出 %d 处日盘分段变更，基线是 0 处 —— "+
+					"要么交易所改了日盘，要么这条探针的取数变了，去看一眼", len(edges))
+			}
+		}
+		if si < len(syms)-1 {
+			fmt.Fprintf(&b, "\n       ")
+		}
+	}
+	// ⛔ **没有断言在跑的那一次，不能叫 PASS**（评审方 2026-09-09 在 probeNightGap 上
+	// 提的同一条，而**这里有三个开关**：`-syms` / `-win` / `-grid`，任意一个非默认，
+	// 上面那段基线判定就整段跳过）。
+	//
+	//	判据一句话：**这一次运行有没有断言在跑？没有就不能叫 PASS。**
+	//
+	// ⚠️ 而 `bad > 0` 要压过 SKIP：**取数不足是真失败，换没换品种都一样。**
+	// 次序因此是 **FAIL > SKIP > PASS**。
+	//
+	// ⛔ 记一笔：**这个缺陷正是我在 `probeNightGap` 里刚修完的那一个，
+	// 而我自己的探针里原样有一份 —— 同一个文件、同一趟。**
+	// 「修了看得见的那一半」在这儿的形状是：
+	// **我照着别人的代码改，没有回头看我照它写出来的那份。**
+	st := "PASS"
+	skipped := symsFlag != "" || winFlag != "day" || gridFlag != 15
+	switch {
+	case bad > 0:
+		st = "FAIL"
+	case skipped:
+		st = "SKIP"
+		fmt.Fprintf(&b, "\n       ⚠️ **换过参数（-syms / -win / -grid 之一），基线断言未运行**"+
+			" —— 本行的结论只是「取到的数长这样」，**不是「与基线相符」**。"+
+			"要判基线请三个开关全部用默认值。")
+	}
+	report("shinny-day-segments", st, b.String())
+}
+
 func main() {
 	flag.StringVar(&only, "only", "", "只跑名字含该子串的探针，如 -only trading-day")
+	flag.StringVar(&symsFlag, "syms", "", "临时覆盖 night-hours 的品种表，逗号分隔")
+	flag.StringVar(&winFlag, "win", "day", "day-segments 量哪一段：day（默认）或 night（对照组 B）")
+	flag.IntVar(&gridFlag, "grid", 15, "day-segments 用多少分钟的网格（默认 15；用 60 可复跑「为什么不是 60m」那一格）")
 	flag.Parse()
 
 	fmt.Println("天勤行情网关探针 — 基线见 docs/probe.md 第六节")
@@ -677,6 +1598,15 @@ func main() {
 	}
 	if !skipped("shinny-gfex-no-night") {
 		probeGfexNoNight(ctx, md, tok)
+	}
+	if !skipped("shinny-night-gap") {
+		probeNightGap(ctx, md, tok)
+	}
+	if !skipped("shinny-night-hours") {
+		probeNightHours(ctx, md, tok)
+	}
+	if !skipped("shinny-day-segments") {
+		probeDaySegments(ctx, md, tok)
 	}
 	if !skipped("shinny-trading-day-predicted") {
 		probeTradingDayPredicted(ctx, md, tok)
