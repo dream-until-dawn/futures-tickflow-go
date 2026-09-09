@@ -68,12 +68,24 @@ var testKey = ProductKey{Exchange: "SHFE", Product: "rb"}
 // TestPlanGapsEachInputTriggersExactlyOneKind 六类各一条输入，而断言是
 // **「各只触发一条、且六条互不相同、且并集就是六类」**。
 //
-// ⛔ 只断言「六条输入都过了」不够，那和「六条输入触发了同一类」**绿得一模一样**
-// （评审方 2026-09-09 预告的那一问）。所以这里三条断言缺一不可：
+// ⛔ 三条断言缺一不可，**而它们守的不是同一个东西** ——
+// 这一格的理由上一版写错了，改在这里（评审方 2026-09-09 指出，我读代码复核一致）：
 //
-//	一  每条输入 ⇒ 恰好 1 个 Gap，且 Kind 等于期望   ← 挡「一条输入触发了两类」
-//	二  六条的 Kind 互不相同                          ← 挡「两条输入触发了同一类」
-//	三  并集 == 六类全集                              ← 挡「少了一类而表里凑数」
+//	一  每条输入 ⇒ **恰好 1 段** 且 Kind == 期望     ← 守【实现】
+//	二  六条的【期望】两两不同                        ← 守【期望表】
+//	三  六条的【期望】并集 == 六类全集                ← 守【期望表】
+//
+// ⚠️ 上一版给二写的理由是「挡『两条输入触发了同一类』」——**推不成立**：
+// 那种失败【第一条就挡住了】（B 那条的 Kind 断言会当场红）。
+// 而且二、三读的是 c.want，**根本没看实现返回了什么**。
+//
+// ⇒ 二、三真正挡的是**期望表自己退化**：
+// 有人看见 B 红了，把 B 的期望改成 A 的那一类「让它过」⇒ 两条 per-input 都绿，
+// **而六类不再覆盖六类**。同族是本仓 TestCapsAndBarsAgreeOnPeriods 那句
+// 「候选集退化了：支持 %d / 拒绝 %d —— 两侧都得有」。
+//
+// ⇒ 判据（值得单记）：**一条断言的价值，要按【它挡住的那个失败长什么样】来写** ——
+// **理由写错了，下一个人删它的时候会以为删的是冗余。**
 func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 	type tc struct {
 		name    string
@@ -115,8 +127,10 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 			}
 		})
 		if prev, dup := got[c.want]; dup {
-			t.Errorf("两条输入触发了【同一类】%s：%q 与 %q\n"+
-				"  ⇒ 这正是「六条都过了」与「六条各触发一类」的差别", c.want, prev, c.name)
+			t.Errorf("两条用例把【期望】写成了同一类 %s：%q 与 %q\n"+
+				"  ⇒ 这不是实现出错（那由上面的 Kind 断言挡），是【期望表退化了】：\n"+
+				"     有人把一条红了的用例的期望改成另一类「让它过」，\n"+
+				"     于是每条 per-input 都绿，而六类不再覆盖六类", c.want, prev, c.name)
 		}
 		got[c.want] = c.name
 	}
@@ -125,11 +139,11 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
 	for _, k := range all {
 		if _, ok := got[k]; !ok {
-			t.Errorf("%s 一条输入都没触发到 —— 六类里少了一类", k)
+			t.Errorf("%s 没有任何一条用例【期望】它 —— 六类里少了一类的覆盖", k)
 		}
 	}
 	if len(got) != len(all) {
-		t.Errorf("触发到 %d 类，而六类全集是 %d 类", len(got), len(all))
+		t.Errorf("期望里出现了 %d 类，而六类全集是 %d 类", len(got), len(all))
 	}
 }
 
