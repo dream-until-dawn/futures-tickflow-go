@@ -23,7 +23,7 @@
 | `store/segfile` | ✅ 已完工——833 行，43 个测试函数。⚠️ 三处范围边界写在 `store/segfile/store.go` 头部 |
 | `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
 | `source/sinasource` | ✅ **日线链路已通**：HTTP → JSONP → 行 → `Bar`，实现 `tickflow.Source`（`Bars` / `Caps`）。⚠️ **只做日线、只做具体合约**（主连在 `Symbol` 里表达不出来）；分钟线不做（1023 硬顶且无法翻页，深度走天勤） |
-| `source/cffexsource` | 🚧 **解析层已落**：日行情 XML → 期货行（期权已过滤）。fixture 是 2026-09-09 取回的真实响应（714 条 / 期货 28 / 期权 686）。**组装成 Bar 与 HTTP 拉取未做** |
+| `source/cffexsource` | 🚧 **解析层 ＋ 组装层已落**：日行情 XML → 期货行 → `Bar`（一天一根）。结算价 0 在组装层映射成 NaN；XML 自带的 `tradingday` 与日历交叉核对。**HTTP 拉取与 `Source` 接口实现未做** |
 | `source/shinnysource` | ❌ **尚未开始**（v0.5） |
 | `Syncer` · `refdata` · `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
 
