@@ -197,7 +197,15 @@ func req(k int) SyncRequest {
 
 // ───────── 必做一：无闸门的 Client 不得进源 —— 四级阶梯的【第四级】 ─────────
 
-// TestSyncerRoutesEveryRequestThroughTheInjectedPacer 是本片最强的那条断言。
+// TestEveryRequestThroughOurClientIsGated 是本片最强的那条断言。
+//
+// 🔴 **它原名 `TestSyncerRoutesEveryRequestThroughTheInjectedPacer`，而那个名字过头了**
+// （评审方 2026-09-09 指出，我实测确认）：**存在一类 request 不经过** ——
+// 一个「收下 client 又丢掉」的源，它的请求一次都不走这里。
+// ⇒ 名字收窄成「经过【我们那个 client】的请求都被闸住」，那是它真正证得了的。
+// 而「源有没有用我们那个 client」由 `TestGateBypassLeavesANote` 守。
+// ⇒ 判据：**一个名字里的「every」，要能说清 every 的【定义域】** ——
+// 说不清的时候，它承诺的比断言证得的多。
 //
 // ⛔ **四级阶梯**（前三级各自被什么绕过去，写在这儿而不是靠下一个人重新发现）：
 //
@@ -213,7 +221,7 @@ func req(k int) SyncRequest {
 //
 // ⚠️ 这里用「注入的实例被问过几次」而不是用两个不同的 `d` 量时间，
 // 是因为它同时更强、且**不量墙钟**（墙钟测试会因机器负载偶发红，而偶发红迟早被加 skip）。
-func TestSyncerRoutesEveryRequestThroughTheInjectedPacer(t *testing.T) {
+func TestEveryRequestThroughOurClientIsGated(t *testing.T) {
 	p := &countingPacer{}
 	other := &countingPacer{} // 第二个实例：它【没有】被注入
 	h := newHarness(t, p, 1, 0)
@@ -545,4 +553,86 @@ func TestPacerIsConsultedBeforeEachRequest(t *testing.T) {
 			"  ⇒ 出现 \"RW\" 说明【先发请求再等】——那样的闸门拦不住任何东西，\n"+
 			"    而它的【调用次数】和正确实现一模一样", got, want)
 	}
+}
+
+// TestGateBypassLeavesANote 一个「收下 client 又丢掉」的工厂，必须**出声**。
+//
+// 🔴 **这一条接住的是一个假绿**（评审方 2026-09-09 造，我独立复现，读数逐字一致）：
+//
+//	对端收到 5 次请求 · Bars=5 · 注入的闸门被问 **0** 次 · 没有超时
+//	而报告 **Complete() == true**，留声 **0** 条
+//
+// ⇒ 设计里那句残余射程（「调用方仍可以在自己的 lambda 里无视收到的那个 client」）
+// **说的是真的，而它漏了后半句：那样做【报告不会提】。**
+// ⇒ 判据：**一个「堵不住」的洞，至少要让它出声** —— 堵不住和不留声是两件事，
+// 而我上一版把它们当成了一件。
+//
+// ⚠️ 两个已知端都验：守规矩的工厂**不许**被误报，丢掉 client 的工厂**必须**被报。
+// 少了前者，一个「无论如何都报一条」的实现也会绿。
+func TestGateBypassLeavesANote(t *testing.T) {
+	newSyncer := func(t *testing.T, discard bool) (*Syncer, *int32Counter, *countingPacer) {
+		t.Helper()
+		hits := &int32Counter{}
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			hits.inc()
+			w.Write([]byte("ok"))
+		}))
+		t.Cleanup(srv.Close)
+		p := &countingPacer{}
+		syn, err := NewSyncer(SyncerConfig{
+			Calendar: week(), Store: &fakeStore{}, Pacer: p, Timeout: 30 * time.Second,
+			NewSource: func(c *http.Client) Source {
+				if discard {
+					c = &http.Client{} // 收下，丢掉，自己造一个裸的
+				}
+				return &httpSource{c: c, url: srv.URL, batch: 1}
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return syn, hits, p
+	}
+
+	t.Run("守规矩的工厂 ⇒ 不报", func(t *testing.T) {
+		syn, hits, p := newSyncer(t, false)
+		rep, err := syn.Sync(context.Background(), req(0), 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if hits.get() == 0 {
+			t.Fatal("对端一次请求都没收到 —— 基线没成立")
+		}
+		if p.count() == 0 {
+			t.Fatal("闸门一次都没被问 —— 基线没成立（守规矩那一侧本该走闸门）")
+		}
+		if len(rep.UngatedSource) != 0 {
+			t.Errorf("守规矩的工厂被报了 %d 条 —— 误报", len(rep.UngatedSource))
+		}
+		if !rep.Complete() {
+			t.Errorf("守规矩的一次同步却不 Complete：%s", rep)
+		}
+	})
+
+	t.Run("丢掉 client 的工厂 ⇒ 必须报", func(t *testing.T) {
+		syn, hits, p := newSyncer(t, true)
+		rep, err := syn.Sync(context.Background(), req(0), 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		// 前提：请求确实发出去了，而闸门确实一次没被用 —— 这正是那个假绿的形状。
+		if hits.get() == 0 {
+			t.Fatal("对端一次请求都没收到 —— 前提没成立")
+		}
+		if p.count() != 0 {
+			t.Fatalf("闸门被问了 %d 次 —— 前提没成立（这一格要的就是绕过去）", p.count())
+		}
+		if len(rep.UngatedSource) == 0 {
+			t.Error("源绕开了我们的 client，请求满速出去，而报告一个字都没说")
+		}
+		if rep.Complete() {
+			t.Error("这次同步既没有限流也没有超时，而报告说 Complete() —— " +
+				"而下游读的正是这一位")
+		}
+	})
 }

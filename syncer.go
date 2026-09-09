@@ -115,6 +115,15 @@ type SyncReport struct {
 	LegacyMetaDiscarded  []string
 	LegacyMetaUnverified []string
 
+	// UngatedSource 非空时说：这次同步向源要过数据，而【我们装的限流闸门一次都没被用到】。
+	//
+	// 🔴 它接住的是一个**假绿**（评审方 2026-09-09 造，我复现读数一致）：
+	// 一个「收下 client、原样丢掉、自己造一个裸 client」的 `SourceFactory` ——
+	// 对端收到 5 次请求、Bars=5、闸门被问 0 次，**而报告说 Complete()**。
+	// ⇒ 设计里那句残余射程（「调用方仍可以无视它」）为真，**而它漏了后半句：
+	// 那样做报告不会提。** 堵不住和不留声是两件事。
+	UngatedSource []string
+
 	// Halt 是【这次同步为什么停下来】。零值 HaltUnknown ⇒ 留声（见 HaltReason）。
 	//
 	// ⛔ 它进这个结构体、而不是只当循环里的一个局部变量，是评审方 2026-09-09
@@ -161,6 +170,7 @@ type SyncReport struct {
 func (r SyncReport) Complete() bool {
 	_, halted := r.Halt.note()
 	return !halted &&
+		len(r.UngatedSource) == 0 &&
 		len(r.TruncatedTails) == 0 &&
 		len(r.LegacyMetaDiscarded) == 0 &&
 		len(r.LegacyMetaUnverified) == 0 &&

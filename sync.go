@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/source/pacing"
@@ -30,6 +31,37 @@ import (
 // 而那与「忘了配」不是一回事 —— 它是写在调用方自己代码里、**看得见的一个动作**。
 // **堵不住，但它不再是默认值** —— 而必做一防的正是默认值。
 type SourceFactory func(*http.Client) Source
+
+// gateCounter 数「经过我们那个闸门的请求」有多少次。
+//
+// 🔴 **它存在的理由是一处【假绿】**（评审方 2026-09-09 造，我独立复现，读数一致）：
+// 一个「收下 client、原样丢掉、自己造一个裸 client」的 `SourceFactory` ——
+//
+//	对端收到 5 次请求 · Bars=5 · **注入的闸门被问 0 次** · 没有超时
+//	而报告 **Complete() == true**，留声 0 条
+//
+// ⇒ 设计里那句残余射程（「调用方仍可以无视收到的那个 client」）**说的是真的，
+// 而它漏了后半句：那样做【报告不会提】。**
+// ⇒ 判据：**一个「堵不住」的洞，至少要让它【出声】** ——
+// 堵不住和不留声是两件事，而我上一版把它们当成了一件。
+type gateCounter struct {
+	next http.RoundTripper
+	mu   sync.Mutex
+	n    int
+}
+
+func (g *gateCounter) RoundTrip(r *http.Request) (*http.Response, error) {
+	g.mu.Lock()
+	g.n++
+	g.mu.Unlock()
+	return g.next.RoundTrip(r)
+}
+
+func (g *gateCounter) count() int {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	return g.n
+}
 
 // HaltReason 是同步循环**为什么停下来**。
 //
@@ -128,6 +160,22 @@ type SyncerConfig struct {
 	// 而那个理由仍然成立（**便利构造函数顺手塞默认值 = 替使用者做了一个他不知道的决定**）。
 	// ⇒ 决定被搬到了这一层，就在这一层要一个显式的答案。
 	//
+	// ⛔ **而「每一次上游请求的超时」这句话【字面不成立】** ——
+	// 它是**等待＋请求的总预算**（评审方 2026-09-09 提，我独立实测，读数如下）：
+	//
+	//	对照 A  不限流 + 200ms 超时，连发两次   ⇒ 都成功（服务器够快）
+	//	B0      闸门 1s + 200ms（闸门不用等）   ⇒ 1ms 成功（闸门本身不坏）
+	//	B1      闸门 1s + 200ms（闸门要等 1s）  ⇒ **200ms 失败，请求根本没发出去**
+	//	        err = pacing: 等待被取消：context deadline exceeded
+	//
+	// ⇒ **落地要求：`Timeout` 必须大于限流间隔**，否则第二次请求起一律超时。
+	// ⚠️ 而构造时**判不了**这一条：`Pacer` 接口只有 `Wait(ctx)`，**问不出它的间隔**
+	//（评审方核过才提，我复核一致）⇒ 它只能写在这儿，不能变成一条检查。
+	// ✅ 而它**不是假绿**：真撞上时 `Halt=预算耗尽`、`Complete()=false` —— 它出声。
+	//
+	// ⚠️ 附带一格：Go 自己给的错误文本是 `while awaiting headers` ——
+	// **它指向上游，而上游从来没有被联系过。** 这一句会把查问题的人带偏。
+	//
 	// 真的不想要超时，写 `NoTimeout` —— 同 `NoPacing()` / `BatchDaysUnbounded`：
 	// **不消灭那个选择，而是逼它变成一个写得出来、看得见的动作。**
 	Timeout time.Duration
@@ -145,6 +193,9 @@ type Syncer struct {
 	cal   Calendar
 	store Store
 	src   Source
+
+	// gate 数「经过我们那个 http.Client 的请求」。见 gateCounter。
+	gate *gateCounter
 }
 
 // NewSyncer 造一个 Syncer，**并在这里把闸门装上**。
@@ -182,12 +233,16 @@ func NewSyncer(cfg SyncerConfig) (*Syncer, error) {
 			"0 说不清是「想好了」还是「忘了」，而忘了填的后果是"+
 			"【挂住的请求不产生错误，于是失败预算永远不会触发】", cfg.Timeout)
 	}
+	// ⛔ 计数器装在【交出去之前】—— 交出去之后就没有我们的位置了。
+	gate := &gateCounter{next: c.Transport}
+	c.Transport = gate
+
 	src := cfg.NewSource(c)
 	if src == nil {
 		return nil, errors.New("tickflow: NewSource 返回了 nil——" +
 			"而一个 nil 的 Source 会在第一次调用时 panic，那比现在报错晚得多")
 	}
-	return &Syncer{cal: cfg.Calendar, store: cfg.Store, src: src}, nil
+	return &Syncer{cal: cfg.Calendar, store: cfg.Store, src: src, gate: gate}, nil
 }
 
 // Sync 把 `req` 那一段同步进库，并交出一份报告。
@@ -269,8 +324,25 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 
 	chunks := chunkDays(days, s.src.Caps(k).BatchDays)
-	touched, syncedDays, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
+	gateBefore := s.gate.count()
+	touched, syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
 	rep.Halt = halt
+
+	// ⛔ **闸门有没有被用到** —— 这一格接住的是那个【假绿】：
+	// 一个「收下 client 又丢掉」的工厂，请求照发、报告照说 Complete()。
+	//
+	// ⚠️ 判据故意写得窄：**只在「向源要过数据、而闸门一次都没被用到」时出声。**
+	// 少一次不报（源可以自己合并请求），一次不报才报 —— 而 0 是那个可判的边界。
+	//
+	// ⚠️ **声明的射程**：它假定源是走 HTTP 的。一个从缓存/本地文件答题的源
+	// 会被误报 —— 而本仓今天两个源都只走 HTTP，且 `SourceFactory` 收的就是
+	// `*http.Client`（一个不发 HTTP 的源没有理由接受它）。**写下来，不假装通用。**
+	if attempts > 0 && s.gate.count() == gateBefore {
+		rep.UngatedSource = append(rep.UngatedSource,
+			fmt.Sprintf("向源要过 %d 次数据，而【我们装的限流闸门一次都没被用到】——"+
+				"这个源多半没有用交给它的那个 http.Client；"+
+				"那意味着这次同步既没有限流也没有超时", attempts))
+	}
 
 	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
 	// 一次中止之后的库比跑完之后的库更需要被走查，而不是更不需要。
@@ -468,9 +540,10 @@ func chunkDays(days []TradingDay, batch int) [][]TradingDay {
 //	二  **本函数今天短到读得完，所以不给它加 AST 守卫**（守卫本身的维护成本高过它挡住的）。
 //	    ⇒ **这个判断在函数长起来的那天要重做。**
 func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
-	chunks [][]TradingDay, rep *SyncReport) ([]Span, []TradingDay, HaltReason, error) {
+	chunks [][]TradingDay, rep *SyncReport) ([]Span, []TradingDay, int, HaltReason, error) {
 
 	consecutive := 0
+	attempts := 0
 	var synced [2]TradingDay
 	var touched []Span
 	var syncedDays []TradingDay
@@ -478,10 +551,11 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 	for _, chunk := range chunks {
 		if err := ctx.Err(); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
+			return touched, syncedDays, attempts, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
 		}
 		br := BarRequest{Symbol: req.Symbol, Period: req.Period,
 			From: chunk[0], To: chunk[len(chunk)-1]}
+		attempts++
 		bars, err := s.src.Bars(ctx, br)
 		if err != nil {
 			consecutive++
@@ -493,7 +567,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 			// ⇒ 「K 的零值是安全的」这句话，真值取决于**这一个符号**。
 			if consecutive > req.MaxConsecutiveFails {
 				rep.Synced = synced
-				return touched, syncedDays, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
+				return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
 					"停在 %s；最后一次: %v",
 					ErrBudgetExhausted, consecutive, req.MaxConsecutiveFails, chunk[0], err)
 			}
@@ -503,13 +577,13 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 
 		if err := s.store.AppendBars(bars); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, HaltBudget, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
 		}
 		span := Span{From: chunk[0], To: chunk[len(chunk)-1],
 			Bars: len(bars), Days: distinctDays(bars)}
 		if err := s.store.CommitSpan(s.cal, k, span, OutcomeComplete); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, HaltBudget, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
 		}
 
 		rep.Bars += len(bars)
@@ -534,7 +608,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 		}
 	}
 	rep.Synced = synced
-	return touched, syncedDays, HaltDone, nil
+	return touched, syncedDays, attempts, HaltDone, nil
 }
 
 // distinctDays 数这一批根覆盖了几个【交易日】。`Span.Days` 要它。
