@@ -31,28 +31,65 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 	}
 }
 
-// TestReportCompleteIgnoresGapsOnPurpose 缺口**不参与** `Complete()`，而这是写死的决定。
+// TestReportCompleteIsInvariantUnderGaps 缺口**不参与** `Complete()`，而这是写死的决定。
 //
 // ⛔ 缺口不是异常，是**结果**：一次正常的同步本来就会报出「不是交易日」「拉过确认没有」。
 // 而把六类折成一个 bool，正是⑱ 那一格 ——
 // **第五类「走一遍就行」与第六类「必须问人」处置完全不同，合成一位就把刚分开的两者又粘回去。**
 //
-// ⇒ 这一条把那个决定钉住：**有人哪天「顺手」让 Complete() 也看 Gaps，它会红。**
-func TestReportCompleteIgnoresGapsOnPurpose(t *testing.T) {
+// 🔴 **上一版这一条【被绕过去了，两次】**（评审方 2026-09-09 造的，我精确复现）：
+//
+//	绕法一  「有【多日】缺口就翻脸」 ⇒ 上一版 fixture 六段**全是单日** ⇒ **绿**
+//	绕法二  「缺口多于 6 段就翻脸」   ⇒ 上一版 fixture **恰好 6 段**   ⇒ **绿**
+//	对照    「len(Gaps) == 0」（显然那版）⇒ 红 —— 它只挡得住显然那版
+//
+// ⇒ **它钉住的是「在那一个 fixture 的形状上不看 Gaps」，不是「从不看 Gaps」。**
+// 而两个绕法各自钻的是那个 fixture 的一个**维度**（跨度 / 段数）——
+// **一个具体 fixture 天生在每一维上都取了一个值，而断言只在那些值上成立。**
+//
+// ⇒ 改成【不变性】：其它字段固定，让 Gaps 在**段数 · 跨度 · 类别**三维上变，
+// 断言 `Complete()` **一动不动**。
+// ⚠️ **而它仍然是一个样本** —— 不变性只在下面这几个形状上被验过。
+func TestReportCompleteIsInvariantUnderGaps(t *testing.T) {
 	all := []GapKind{GapNeverFetched, GapConfirmedEmpty, GapNotTrading,
 		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
-	r := SyncReport{}
+	sixKinds := make([]Gap, 0, len(all))
 	for i, k := range all {
 		d := TradingDay(20200801 + i)
-		r.Gaps = append(r.Gaps, Gap{From: d, To: d, Kind: k})
+		sixKinds = append(sixKinds, Gap{From: d, To: d, Kind: k})
 	}
-	if len(r.Gaps) != 6 {
-		t.Fatalf("这一条要六类都在，实得 %d —— 前提没成立", len(r.Gaps))
+	var seven []Gap
+	for i := 0; i < 7; i++ {
+		d := TradingDay(20200801 + i)
+		seven = append(seven, Gap{From: d, To: d, Kind: GapNeverFetched})
 	}
-	if !r.Complete() {
-		t.Error("六类缺口都在，而 Complete() 变成了 false ——\n" +
-			"  ⇒ 缺口是【结果】不是异常；要按缺口判断请读 Gaps，\n" +
-			"     而把六类折成一位会把「走一遍就行」和「必须问人」粘回去")
+
+	shapes := []struct {
+		name string
+		gs   []Gap
+	}{
+		{"没有缺口", nil},
+		{"单日一段", []Gap{{20200801, 20200801, GapNeverFetched}}},
+		{"多日一段（绕法一钻的那一维）", []Gap{{20200801, 20200831, GapNeverFetched}}},
+		{"七段（绕法二钻的那一维）", seven},
+		{"六类各一（类别那一维）", sixKinds},
+	}
+
+	// 两组基底：一组本该 Complete、一组本该不 Complete ——
+	// ⛔ 只用前者的话，「Complete() 恒真」也会通过这一条。
+	for _, base := range []SyncReport{
+		{},
+		{Misaligned: 1},
+	} {
+		want := base.Complete()
+		for _, s := range shapes {
+			r := base
+			r.Gaps = s.gs
+			if got := r.Complete(); got != want {
+				t.Errorf("基底 Complete()=%v，而挂上「%s」之后变成 %v\n"+
+					"  ⇒ Complete() 跟着 Gaps 动了，而它本该不看 Gaps", want, s.name, got)
+			}
+		}
 	}
 }
 

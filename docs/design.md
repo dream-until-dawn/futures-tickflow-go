@@ -2857,6 +2857,12 @@ ScanNightAbsent（SYN-7 / 8 / 9）
 
 `segfile` 实到的（含包级 `Open`）：
 
+> ⚠️ **下面这个 ```go 围栏里是【裸方法清单】，doccheck 完全看不见它**
+> （它只把方法归给某个 `type X …{}` 块 —— 2026-09-09 实测：`design.md` 里含 `HasBars` 的
+> `go` 围栏共 **3 个**，而只有 `type Store interface {…}` 那个被收）。
+> ⇒ **它看起来像 Go、在 go 围栏里，而改坏它一声不响。**
+> 留着它是因为「实到的方法」这件事要给人看；**写下这一句，是因为「像被守着」比「没被守着」更坏。**
+
 ```go
 Open(dir string) (*Store, int64, error)   // 第二个返回值 = 被截掉的残尾字节数（C3a）
 Close() error

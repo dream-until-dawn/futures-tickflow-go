@@ -169,6 +169,7 @@ var ruleAnchors = []struct {
 	{`CONTRIBUTING.md`, `### 会在打 tag 那一刻失败的守卫，**打之前先空跑一次**`, `打 tag 这个动作本身可能让检查变红。`, ``},
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `不对。那天不该红；红了就是有一步没做`, ``},
 	{`CONTRIBUTING.md`, `## 七、合并 / 删除**之后**，回头用一条独立命令核对`, "别用 `&&` 串两步", ``},
+	{`CONTRIBUTING.md`, "### 往文档里加一个声明之前，先 `grep` 那个裸名字在几个包里存在", `谁最后被走到谁赢`, ``},
 	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", "` 原样打出来是噪声。", ``},
 	{`CONTRIBUTING.md`, `## 八、没问题的时候要**明说没问题**`, `规则就失去信息量`, ``},
 	{`CONTRIBUTING.md`, `## 合并：生成物不合，重造；来历不取一侧，取并集`, `每并完一条分支，必须跑这三步`, ``},
@@ -484,6 +485,9 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `不对。那天不该红；红了就是有一步没做（实现完了要删 pending.txt 那几行）。`},
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `提前解释一个红色，和给检查加 || true，最终下场一样：没人再读它。`},
 	{`CONTRIBUTING.md`, `## 七、合并 / 删除**之后**，回头用一条独立命令核对`, `remotes/origin/ 不是远端状态，是「上次 fetch 时的远端状态」。`},
+	{`CONTRIBUTING.md`, "### 往文档里加一个声明之前，先 `grep` 那个裸名字在几个包里存在", `⛔ 任何一个哪天进了文档，比对就静默地由走序决定，而不会有任何东西响。`},
+	{`CONTRIBUTING.md`, "### 往文档里加一个声明之前，先 `grep` 那个裸名字在几个包里存在", `⇒ 激活它的动作是「补文档」 —— 一次完全正常的进展。`},
+	{`CONTRIBUTING.md`, "### 往文档里加一个声明之前，先 `grep` 那个裸名字在几个包里存在", `一条不依赖工具的判据，不会随工具的版本失效 ——`},
 	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `例外只有两种，而且理由不同（合成一种就会被用错）：`},
 	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `0 次 —— 6 处命中全是人重写过的。没有一次是原样粘过去的。`},
 	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `先赋给变量、后打印的消息看不见（实测：main.go:947 与 1202 是同一句话，`},
@@ -639,7 +643,7 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
-	{`CONTRIBUTING.md`, 277},
+	{`CONTRIBUTING.md`, 287},
 	{`tools/audit/README.md`, 99},
 	{`docs/method-landing.md`, 163},
 }
