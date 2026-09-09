@@ -34,6 +34,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -1764,6 +1765,15 @@ func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
 	//	fmt.Sprintf               6 处     ⇒ 「先拼好、后打印」那一族里，它是抓得住的一半
 	//
 	// ⇒ 判据不是「这是不是一个打印函数」，是【这个字串会不会被人读到】。
+	//
+	// ⛔ **而命中 0 的动词【不该】被清理掉 —— 它和幽灵豁免方向【正好相反】**
+	// （评审方 2026-09-09；写在这儿是因为下一个人最可能「顺手清理没命中的动词」）：
+	//
+	//	幽灵【豁免】      留着 ⇒ **静默加宽规矩**   ⇒ 该报（下面那条自净检查干的就是这个）
+	//	命中 0 的【动词】  留着 ⇒ **预置射程**       ⇒ **不该报**
+	//
+	// ⇒ 判据：**给一张表加自净检查之前，先问「这张表长大是危险还是安全」。**
+	// 豁免表长大 = 规矩变松；动词表长大 = 射程变宽。**方向反了就别把那一手抄过来。**
 	printCall := regexp.MustCompile(
 		`\b(t\.(Errorf|Fatalf|Logf|Error|Fatal|Skipf)` +
 			`|fmt\.(Printf|Println|Fprintf|Sprintf|Errorf)` +
@@ -1874,4 +1884,125 @@ func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
 		}
 	}
 	t.Logf("扫过 %d 个 .go 里的 %d 个调用，豁免 %d 条全部命中", files, spans, len(emphasisExempt))
+}
+
+// ⚠️ **这是一条【代码】守卫，却住在一份叫 docs_guards 的文件里** —— 写下理由，
+// 免得下一个人「顺手归位」把它搬走：
+//
+//	生成器抽 guardNames 的来源是 `staticTpl + docs_guards_test.go`，**那是一个【位置】**
+//	⇒ 放进别的 _test.go：它【不会进 guardNames】，**删掉它不会有任何东西响**
+//	⇒ 本文件下方那条约定写得很死：**手写守卫一律写进 docs_guards_test.go**
+//
+// 我第一版正是放在了 `errors_test.go` 里（读起来更整齐），
+// **而那一版是一条没有登记的守卫** —— 量了一遍 guardNames 的来源才发现。
+// ⇒ **「按文件名归类」在这里和「被守住」冲突，取后者。**
+
+// —— 根包的错误哨兵集合 ——
+//
+// 这一条守的不是「哨兵对不对」，是**「这个集合有没有变大」**。
+//
+// ⛔ 它的由来是一句验不了的话（design.md 七之零，2026-09-09）：
+// `Syncer` 的缺口分类要穷举「一天可能得到哪些答案」，而**穷举性是【接口】的性质**——
+// `Store` 接口还不存在 ⇒ 那句「一共就这六类」**今天无处可验**。
+//
+//	⇒ 判据（评审方给的形式）：**穷举性验不了的时候，退一步验「集合有没有变大」。**
+//	  后者今天就能做，因为那几个哨兵**全都住在根包**。
+//
+// ⚠️ 而这条守卫真正要逼出来的**不是名字，是一个决定**：
+// 加一个哨兵 ⇒ 必须回答「**它在缺口分类里落在哪一格**」——
+// 第几类缺口？还是那个不封闭的兜底（「坏了」）？
+// **不回答就红。** 因为一个新哨兵最容易的下场，是被折进某个已有的分支里。
+//
+// 体例照 `periodImplementors` 那一手：**左边扫源码，右边手写**，两半各补对方的盲区。
+var errorSentinelDisposition = map[string]string{
+	"ErrNotTradingDay":  "缺口第三类 GapNotTrading —— 日历知道，而那天不交易",
+	"ErrUncovered":      "缺口第四类 GapCalendarUnknown —— 日历【答不了】，不是「没有交易」",
+	"ErrSpanUnverified": "缺口第五类 GapStoreUnverified —— 存储答不了·未走查；瞬时，走一遍就行",
+	"ErrLegacyMeta":     "缺口第六类 GapStoreLegacy —— 存储答不了·旧格式；**必须问人**",
+
+	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
+	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
+	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。
+	"ErrClosed": "不进缺口分类 —— 它是【时刻】级的答案，而缺口是【交易日】级的",
+}
+
+// rootErrorSentinels 扫【根包的源码】，找出所有包级、导出、名字以 Err 开头的哨兵。
+//
+// 判据按性质划，不按文件：包内任何地方加一个，它都看得见。
+// 范围排除 _test.go —— 测试里的哨兵不是对外契约。
+func rootErrorSentinels(t *testing.T) []string {
+	t.Helper()
+	ents, err := os.ReadDir(".")
+	if err != nil {
+		t.Fatalf("读目录：%v", err)
+	}
+	fset := token.NewFileSet()
+	var out []string
+	files := 0
+	for _, e := range ents {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".go") ||
+			strings.HasSuffix(e.Name(), "_test.go") {
+			continue
+		}
+		f, err := parser.ParseFile(fset, e.Name(), nil, 0)
+		if err != nil {
+			t.Fatalf("解析 %s：%v", e.Name(), err)
+		}
+		if f.Name.Name != "tickflow" {
+			continue
+		}
+		files++
+		for _, d := range f.Decls {
+			gd, ok := d.(*ast.GenDecl)
+			if !ok || gd.Tok != token.VAR {
+				continue
+			}
+			for _, s := range gd.Specs {
+				vs, ok := s.(*ast.ValueSpec)
+				if !ok {
+					continue
+				}
+				for _, n := range vs.Names {
+					if strings.HasPrefix(n.Name, "Err") && n.IsExported() {
+						out = append(out, n.Name)
+					}
+				}
+			}
+		}
+	}
+	// ⛔ 底线：一个文件都没解析到 ⇒ 这条在空集上恒绿。
+	// 与 tools/doccheck 那一格同族：**读到 0 不许读成「干净」。**
+	if files == 0 {
+		t.Fatal("一个本包 .go 都没解析到 —— 这条在空集上恒绿，先修判据")
+	}
+	sort.Strings(out)
+	return out
+}
+
+// TestRootErrorSentinelsAreDisposed 盯住「根包的错误哨兵集合没有悄悄变大」。
+//
+// ⚠️ 它**不能**代替「缺口一共就这几类」那句话 —— 那句要等 `Store` 接口定型。
+// 这一条只保证：**集合变了，有人会知道**。两者的关系写在文件头。
+func TestRootErrorSentinelsAreDisposed(t *testing.T) {
+	found := rootErrorSentinels(t)
+	if len(found) == 0 {
+		t.Fatal("根包一个 Err* 哨兵都没扫到 —— 要么它们搬走了，要么判据打偏了")
+	}
+	have := map[string]bool{}
+	for _, n := range found {
+		have[n] = true
+		if _, ok := errorSentinelDisposition[n]; !ok {
+			t.Errorf("根包新增了一个错误哨兵而没有写它的处置：%s\n"+
+				"  ⇒ 在 errorSentinelDisposition 里加一行，回答【它在缺口分类里落在哪一格】：\n"+
+				"     是第几类缺口？还是那个不封闭的兜底（读坏了）？还是不属于这个分类？\n"+
+				"  ⇒ 别只补名字 —— 一个新哨兵最容易的下场，是被折进某个已有的分支里", n)
+		}
+	}
+	for n := range errorSentinelDisposition {
+		if !have[n] {
+			t.Errorf("errorSentinelDisposition 里有一条【幽灵项】：%s 在根包源码里已经没有了\n"+
+				"  ⇒ 删掉它。留着会让下一个人以为那一格还有东西守着", n)
+		}
+	}
+	t.Logf("根包 %d 个错误哨兵，处置全部登记：%s", len(found), strings.Join(found, " "))
 }

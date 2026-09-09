@@ -888,6 +888,7 @@ var guardNames = []string{
 	`TestNoDuplicateHeadingsInCarriers`,
 	`TestNoMarkdownEmphasisInPrintedMessages`,
 	`TestNoOrphanedSentences`,
+	`TestRootErrorSentinelsAreDisposed`,
 	`TestScriptsWrapBothStreams`,
 	`TestStatusClaimsMatchRepo`,
 }
