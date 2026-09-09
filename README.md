@@ -2,8 +2,10 @@
 
 中国期货的行情数据层：拉取、持久化、算指标，并向回测引擎提供可步进的多周期视图。
 
-> **状态：设计阶段。两轮探针已完成，代码尚未开始。**
-> 现在能读的是三份文档，见下。
+> **状态：`v0.2.0` 已发布。时间模型与落盘层已可用，拉取尚未开始。**
+> 已实现：`Bar` / `Symbol` / `Period` / `Calendar` 接口 · `calendar/embedded` · `store/segfile`。
+> 未开始：`Source`（新浪 / 天勤 / 中金所）· `Syncer` · `continuous` · `indicator` · `Feed`。
+> 排期见 [design.md 十五](docs/design.md)，逐条能力与置信度见 [contract.md](docs/contract.md)。
 
 ---
 

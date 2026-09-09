@@ -1431,3 +1431,230 @@ func TestHighWaterRuleAdjacency(t *testing.T) {
 	t.Logf("合并规矩在第 %d 行，来历块首行在第 %d 行 —— 相隔 %d 行（上限 %d）",
 		found+1, first+1, first-found-1, ctx)
 }
+
+// —— 状态断言：文档说的「还没做」，必须和仓库里量得到的事实一致 ——
+//
+// 起因（2026-09-09）：README、contract.md §〇、design.md 排期表**三处**都写着
+// 「代码尚未开始 / 设计中」，而那时 `v0.1.0` 与 `v0.2.0` 早已发布、库代码两千余行。
+//
+//	这个仓库有一百多个测试在守【文档里的规矩】，
+//	**却没有一个在守【文档对自己的状态描述】。**
+//
+// ⇒ 而状态句正是最容易过期的一类：它在写下的那一刻为真，
+// 之后**每一次交付都在削弱它，而没有任何一次交付会经过它。**
+// （同族见 memory 里那条「状态声明伪装成记账」——读起来像记账，所以没人问它要证据。）
+
+// libraryGoFiles 返回【库代码】的文件数与总行数。
+//
+// 范围按【性质】划，不按目录清单划：**非 `_test.go`、且不在 `tools/` 下的 `.go`**。
+// 这两条讲的都是「这个文件属于哪一层」，不是「它现在放在哪个目录」——
+// 所以新增一个包不用改这条守卫，而把库代码搬进 `tools/` 会被算成不是库（那也是对的）。
+func libraryGoFiles(t *testing.T) (files, lines int) {
+	t.Helper()
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if info.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		q := filepath.ToSlash(p)
+		if !strings.HasSuffix(q, ".go") || strings.HasSuffix(q, "_test.go") {
+			return nil
+		}
+		if strings.HasPrefix(q, "tools/") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		files++
+		lines += strings.Count(string(b), "\n") + 1
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("遍历仓库失败：%v", err)
+	}
+	return files, lines
+}
+
+// noCodeYetClaims 是【整仓级】的「还没有代码」措辞，登记在这里。
+//
+// ⚠️ 为什么是清单而不是模式：这三条是**实际出现过并且实际过期了**的原话。
+// 一个新发明的说法（「尚在纸面上」之类）不在射程内 —— 写下来，别假装它在。
+var noCodeYetClaims = []string{
+	"任何一行库代码",
+	"代码尚未开始",
+	"一条都还不存在",
+}
+
+// hasLibraryGo 判断一个路径下（含子目录）有没有【非测试】的 `.go`。
+// 路径本身就是一个 `.go` 文件时，直接看它是不是测试文件。
+func hasLibraryGo(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	if !info.IsDir() {
+		return strings.HasSuffix(path, ".go") && !strings.HasSuffix(path, "_test.go")
+	}
+	found := false
+	_ = filepath.Walk(path, func(p string, fi os.FileInfo, err error) error {
+		if err != nil || fi.IsDir() {
+			return nil
+		}
+		q := filepath.ToSlash(p)
+		if strings.HasSuffix(q, ".go") && !strings.HasSuffix(q, "_test.go") {
+			found = true
+		}
+		return nil
+	})
+	return found
+}
+
+var backtickPath = regexp.MustCompile("`([^`]+)`")
+
+// TestStatusClaimsMatchRepo 守两条，都只认【表格行】，不认散文。
+//
+// ⚠️ 「只认表格行」不是取巧，是**一处已经存在的假阳性**逼出来的：
+// contract.md §〇 现在有一段专门解释「它曾经写着『任何一行库代码 ❌ 尚未开始』」——
+// **一个朴素的子串禁令，会打中解释它自己的那段话。**
+// 而过期的那一条当时【是一个表格行】，解释是散文 ⇒ 行首 `|` 把两者分得干净。
+// （同一个形状在 `TestGuardsDoNotSkipThemselves` 里出现过：那次用 go/ast 把注释排除掉。）
+//
+//	一、整仓级：任何 `.md` 的表格行里，不得出现 noCodeYetClaims 里的措辞
+//	           —— 除非库代码真的是 0。
+//	二、包级：  contract.md §〇 状态表里【含斜杠的反引号路径】，
+//	           标 ✅ ⇒ 那条路径下必须有非测试 `.go`；标 ❌ ⇒ 必须没有。
+//
+// ⚠️ 射程（照例写明它不比什么）：
+//
+//	堵的     表格行里的整仓级「还没有代码」措辞；§〇 里【带路径】的 ✅/❌ 行
+//	不堵的   散文里的同类说法 —— 结构上分不开，见上面那处假阳性
+//	不堵的   不含斜杠的 token（`Syncer` `Feed` `refdata`）——它们是类型名或未定形状，
+//	         「存在」在文件系统上没有对应物；要堵得先给它们一个可测量的定义
+//	不堵的   ✅ 行上的**行数/测试数**（833 行、43 个测试）—— 那是数，会自己变旧，
+//	         而给每个数配一台机器的代价大于它挡住的错。**写下来，别假装它被守着。**
+func TestStatusClaimsMatchRepo(t *testing.T) {
+	files, lines := libraryGoFiles(t)
+
+	// 先验守卫自己的前提：库代码为 0 时规则一恒真 ⇒ 这条守卫会变成一个不可能红的断言。
+	if files == 0 {
+		t.Fatalf("量到 0 个库代码文件 —— 要么判据打偏了，要么这个仓库真的空了。\n"+
+			"  两种情况下这条守卫的规则一都【结构上不可能红】，所以它必须自己先报出来。\n"+
+			"  （判据：非 _test.go、且不在 tools/ 下的 .go；量得 files=%d lines=%d）", files, lines)
+	}
+
+	// ── 规则一：整仓级 ──
+	var mdFiles []string
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if info.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if strings.HasSuffix(p, ".md") {
+			mdFiles = append(mdFiles, filepath.ToSlash(p))
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("遍历 .md 失败：%v", err)
+	}
+	if len(mdFiles) == 0 {
+		t.Fatal("一份 .md 都没扫到 —— 规则一在空集上恒绿，先修判据")
+	}
+
+	rows := 0
+	for _, f := range mdFiles {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatalf("读 %s：%v", f, err)
+		}
+		for i, ln := range strings.Split(string(b), "\n") {
+			if !strings.HasPrefix(strings.TrimSpace(ln), "|") {
+				continue
+			}
+			rows++
+			for _, claim := range noCodeYetClaims {
+				if strings.Contains(ln, claim) {
+					t.Errorf("%s:%d 的表格行里写着「%s」，\n"+
+						"  而仓库里量到 %d 个库代码文件、%d 行。\n"+
+						"  ⇒ 这句状态断言过期了。要么改它，要么这条守卫的判据错了。\n"+
+						"  行：%s", f, i+1, claim, files, lines, strings.TrimSpace(ln))
+				}
+			}
+		}
+	}
+	if rows == 0 {
+		t.Fatal("一行表格都没扫到 —— 规则一在空集上恒绿，先修判据")
+	}
+
+	// ── 规则二：contract.md §〇 里带路径的 ✅ / ❌ ──
+	b, err := os.ReadFile(filepath.Join("docs", "contract.md"))
+	if err != nil {
+		t.Fatalf("读 docs/contract.md：%v", err)
+	}
+	all := strings.Split(string(b), "\n")
+	lo, hi := -1, len(all)
+	for i, ln := range all {
+		if lo < 0 && strings.HasPrefix(ln, "## 〇") {
+			lo = i
+			continue
+		}
+		if lo >= 0 && strings.HasPrefix(ln, "## ") {
+			hi = i
+			break
+		}
+	}
+	if lo < 0 {
+		t.Fatal("docs/contract.md 里找不到 `## 〇` 那一节 —— 规则二无处可扫，恒绿")
+	}
+
+	checked := 0
+	for i := lo; i < hi; i++ {
+		ln := all[i]
+		if !strings.HasPrefix(strings.TrimSpace(ln), "|") {
+			continue
+		}
+		done := strings.Contains(ln, "✅")
+		notYet := strings.Contains(ln, "❌")
+		if done == notYet { // 两个都有或都没有 ⇒ 不是一条状态行
+			continue
+		}
+		for _, m := range backtickPath.FindAllStringSubmatch(ln, -1) {
+			raw := m[1]
+			// ⚠️ 先判斜杠、再剥通配 —— 顺序反了的话 `source/*` 剥成 `source`，
+			// 就会被下面这条「不含斜杠 ⇒ 射程之外」判出去，**而它恰恰是最该核的一行**。
+			// 这个洞是对照组抓到的：把 `source/*` 标成 ✅，守卫不红。
+			if !strings.Contains(raw, "/") {
+				continue // 射程之外：见上面那条说明
+			}
+			tok := strings.TrimSuffix(raw, "/*")
+			checked++
+			exists := hasLibraryGo(tok)
+			if done && !exists {
+				t.Errorf("docs/contract.md:%d 把 `%s` 标成 ✅，"+
+					"而那条路径下没有任何非测试 .go。\n  行：%s", i+1, tok, strings.TrimSpace(ln))
+			}
+			if notYet && exists {
+				t.Errorf("docs/contract.md:%d 把 `%s` 标成 ❌【尚未开始】，"+
+					"而那条路径下已经有非测试 .go 了。\n  行：%s", i+1, tok, strings.TrimSpace(ln))
+			}
+		}
+	}
+	if checked == 0 {
+		t.Fatal("§〇 里一条带路径的状态行都没扫到 —— 规则二在空集上恒绿，先修判据")
+	}
+
+	t.Logf("库代码 %d 文件 / %d 行；扫过 %d 个 .md 的 %d 行表格；§〇 里核了 %d 条带路径的状态",
+		files, lines, len(mdFiles), rows, checked)
+}
