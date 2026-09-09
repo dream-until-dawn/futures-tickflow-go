@@ -10,18 +10,32 @@ import (
 //
 // ⛔ 只测「全空 ⇒ true」是不够的：那和「Complete() 恒返回 true」**绿得一模一样**。
 func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
-	if !(SyncReport{}).Complete() {
-		t.Fatal("零值报告应当是 Complete —— 前提没成立，后面几条什么也没验")
+	// ⚠️ **这一行的前提【翻过一次】，而翻的是【前提】不是断言**（丙三之二）：
+	// 上一版写的是 `SyncReport{}.Complete()` 应当为真。
+	// 而 `Halt` 落进报告之后，零值 = HaltUnknown = 「没有记录为什么停」⇒ 留声。
+	// ⇒ 现在的「一份干净的报告」必须显式说出它跑完了。
+	base := SyncReport{Halt: HaltDone}
+	if !base.Complete() {
+		t.Fatal("跑完且无痕迹的报告应当是 Complete —— 前提没成立，后面几条什么也没验")
 	}
 	for _, c := range []struct {
 		name string
 		r    SyncReport
 	}{
-		{"截断留声", SyncReport{TruncatedTails: []string{"1m.dat: 33 字节"}}},
-		{"旧 meta 作废", SyncReport{LegacyMetaDiscarded: []string{"rb/1m"}}},
-		{"旧 meta 标记", SyncReport{LegacyMetaUnverified: []string{"rb/1m"}}},
-		{"对不上网格的根", SyncReport{Misaligned: 1}},
-		{"可疑交易日", SyncReport{AnomalousDays: []TradingDay{20200807}}},
+		// ⚠️ 每一格都【显式】写上 Halt，不靠一个「名字以中止开头就不改」的判别。
+		// 🔴 上一版就是那么写的（`c.name[:2] != "中止"`），而 Go 的字符串下标是
+		// **按字节**的：「中止」在 UTF-8 里是 6 字节 ⇒ 那个条件恒真
+		// ⇒ 它把三条中止用例的 Halt 全改成了 HaltDone，**正好废掉它们要测的那件事**。
+		// ⇒ 判据：**测试内部的小聪明出错时，结果是【绿】不是红** ——
+		// 所以用例表里宁可重复，也别在里面放条件。
+		{"截断留声", SyncReport{Halt: HaltDone, TruncatedTails: []string{"1m.dat: 33 字节"}}},
+		{"旧 meta 作废", SyncReport{Halt: HaltDone, LegacyMetaDiscarded: []string{"rb/1m"}}},
+		{"旧 meta 标记", SyncReport{Halt: HaltDone, LegacyMetaUnverified: []string{"rb/1m"}}},
+		{"对不上网格的根", SyncReport{Halt: HaltDone, Misaligned: 1}},
+		{"可疑交易日", SyncReport{Halt: HaltDone, AnomalousDays: []TradingDay{20200807}}},
+		{"中止：预算耗尽", SyncReport{Halt: HaltBudget}},
+		{"中止：被取消", SyncReport{Halt: HaltContext}},
+		{"中止：没记录理由（零值）", SyncReport{Halt: HaltUnknown}},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			if c.r.Complete() {
@@ -76,11 +90,24 @@ func TestReportCompleteIsInvariantUnderGaps(t *testing.T) {
 	}
 
 	// 两组基底：一组本该 Complete、一组本该不 Complete ——
-	// ⛔ 只用前者的话，「Complete() 恒真」也会通过这一条。
+	// ⛔ 只用前者的话，「Complete() 恒真」也会通过这一条
+	//（评审方 2026-09-09 实测：只留 {} ＋ Complete 恒真 ⇒ **0 红**）。
+	//
+	// 🔴 **而这两行【被改过一次，因为 Halt 落地时它们塌成了一组】**：
+	// 上一版是 `{}` 与 `{Misaligned: 1}`，而 `Halt` 进来之后 `{}` 也不 Complete 了
+	// ⇒ 两组基底同值 ⇒ **那个「前提」当场失效，而这条测试仍然是绿的**。
+	// ⇒ 判据：**一条断言的前提写在别的字段上时，改那个字段要回头重量这里** ——
+	// 前提失效不会让测试变红，它只会让测试**不再证明任何东西**。
 	for _, base := range []SyncReport{
-		{},
-		{Misaligned: 1},
+		{Halt: HaltDone},
+		{Halt: HaltDone, Misaligned: 1},
 	} {
+		// 前提当场自检：两组基底必须给出【不同】的 Complete()。
+		// 不写这一句的话，下一次同样的塌陷仍然是静默的。
+		if (SyncReport{Halt: HaltDone}).Complete() == (SyncReport{Halt: HaltDone, Misaligned: 1}).Complete() {
+			t.Fatal("两组基底的 Complete() 相同 —— 这条不变性测试的前提没成立，" +
+				"它现在什么也不证明")
+		}
 		want := base.Complete()
 		for _, s := range shapes {
 			r := base

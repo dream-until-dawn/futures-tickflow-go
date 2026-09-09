@@ -114,6 +114,14 @@ type SyncReport struct {
 	// 判对了却不留声 ⇒ 自愈动作与「本来没事」同形。
 	LegacyMetaDiscarded  []string
 	LegacyMetaUnverified []string
+
+	// Halt 是【这次同步为什么停下来】。零值 HaltUnknown ⇒ 留声（见 HaltReason）。
+	//
+	// ⛔ 它进这个结构体、而不是只当循环里的一个局部变量，是评审方 2026-09-09
+	// 钉的条件，而理由是一条**具体的路径**：
+	// `Sync` 早退时返回 `SyncReport{}` —— 局部变量在那条路上**根本不参与**。
+	// ⇒ 落在报告上，那份零值报告才带得上「没有记录理由」这件事。
+	Halt HaltReason
 }
 
 // Complete 报「这一次同步有没有留下【需要人看一眼】的痕迹」。
@@ -139,8 +147,21 @@ type SyncReport struct {
 //	而把六类折成一个 bool，正是⑱ 那一格：**第五类「走一遍就行」与第六类「必须问人」
 //	处置完全不同，合成一位就把刚分开的两者又粘回去了**
 //	⇒ 要按缺口判断，读 Gaps；本方法只回答【过程有没有留下痕迹】
+//
+// ⛔ **而「没同步完」现在【是】一种痕迹（丙三之二）** —— 它经 `Halt` 进来，
+// **不是**靠比较 `Synced` 与 `Requested`。两条路的差别要写死：
+//
+//	比 Synced vs Requested  请求超出 Covers() 时 Synced 天然更短 ——
+//	                        那是【结果】不是异常 ⇒ 一比就产生假警报
+//	读 Halt                 它记的是【为什么停】—— 与「范围天然更短」分得开
+//
+// ⇒ 一般式（评审方 2026-09-09）：**当一个「总状态」漏报了某件事，
+// 先问那件事有没有【留声】—— 补留声比放宽总状态安全：
+// 留声是加一个事实，放宽是改一个定义。**
 func (r SyncReport) Complete() bool {
-	return len(r.TruncatedTails) == 0 &&
+	_, halted := r.Halt.note()
+	return !halted &&
+		len(r.TruncatedTails) == 0 &&
 		len(r.LegacyMetaDiscarded) == 0 &&
 		len(r.LegacyMetaUnverified) == 0 &&
 		r.Misaligned == 0 &&
@@ -156,6 +177,10 @@ func (r SyncReport) String() string {
 	}
 	s += fmt.Sprintf("，同步 %s..%s，%d 根，%d 段缺口",
 		r.Synced[0], r.Synced[1], r.Bars, len(r.Gaps))
+	if note, halted := r.Halt.note(); halted {
+		s += "，停因：" + r.Halt.String()
+		_ = note
+	}
 	if !r.Complete() {
 		s += "（有留下痕迹，见明细）"
 	}

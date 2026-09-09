@@ -1929,6 +1929,18 @@ var errorSentinelDisposition = map[string]sentinelDisposition{
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
 	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。
 	"ErrClosed": {0, "不进缺口分类 —— 它是【时刻】级的答案，而缺口是【交易日】级的"},
+
+	// ⚠️ ErrBudgetExhausted 同样【不进缺口分类】，而理由与 ErrClosed 不同，
+	// 所以写成两句，不合并：
+	//
+	//	ErrClosed          维度不同（时刻 vs 交易日）
+	//	ErrBudgetExhausted **层级不同** —— 它回答「这次同步为什么停」，
+	//	                   而缺口分类回答「这一天要不要拉」
+	//
+	// ⇒ 预算耗尽之后，没拉到的那些天仍然是 GapNeverFetched ——
+	// 而那一格由【它们不在任何 Span 里】给出，**不由这个错误给出**。
+	// **一次中止不改变任何一天的可答性，它只是让我们不再去问。**
+	"ErrBudgetExhausted": {0, "不进缺口分类 —— 它回答「为什么停」，不回答「这一天要不要拉」"},
 }
 
 // gapKindsNotFromSentinel 是【不由任何哨兵映射来】的那几类。

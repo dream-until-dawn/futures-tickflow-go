@@ -86,8 +86,6 @@
 # commit」就是在打完之后才暴露的）。
 
 # ---- v0.3：拉取 / 存储 / 同步 ----
-Syncer        v0.3.0  丙三：编排本体；构造必须收一个 Pacer（不接受调用方直接塞 *http.Client）
-Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
 AggClockGrid      v0.5.0  AggRule 的成员：时钟网格
 AggTradingAxis    v0.5.0  AggRule 的成员：交易时间轴 + 相位
 NoAdjust          v0.6.0  AdjustMethod 的成员：不复权

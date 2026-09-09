@@ -1918,8 +1918,14 @@ type Gap struct {
 
 
 ```go
-func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (SyncReport, error)
+func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncReport, error)
 ```
+
+⚠️ **这一处与 §七之十一 那一处是同一个签名的两份拷贝** —— 而它们曾经不一致
+（丙三之二实测：doccheck 报「文档内部同一标识符声明了两次且不一致」并退 1）。
+⇒ 而这一格的教训不在「改回来」，在**它是怎么被发现的**：
+两份拷贝在【都不进围栏】的那段时间里可以自由漂移，**第一份进围栏的那一刻，第二份才第一次被拿去比。**
+> **一份没有被任何东西比对的拷贝，不会告诉你它已经漂了。**
 
 ```go
 type SyncRequest struct {
@@ -3029,9 +3035,24 @@ D2b     旧 `.meta` 的两种处置都要进报告 —— 而 `DecideLegacyMeta`
 #### 丙三的四条【必做】—— 三条是评审钉死的，一条是我自己翻出来的
 
 ```go
-type Syncer struct{ /* cal · src · store · pacer 等，见实现 */ }
-func (s *Syncer) Sync(ctx context.Context, req SyncRequest) (SyncReport, error)
+type Syncer struct{ /* cal · src · store，见实现 */ }
+func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncReport, error)
 ```
+
+⚠️ **`now` 那一格是丙三之二加的，而它是被 doccheck 逼出来的一次对表**：
+上一版签名没有它，实现里有 —— 把这一段挪进 `go` 围栏的当下，doccheck 立刻报
+「名字在、签名不同」并退 1。**围栏之外的那一版做不到这一点，而它已经在那儿躺了一整片。**
+
+⇒ 而改的是【文档】不是代码，理由本仓判过两次并写下了：
+
+```
+CheckBars(req, bars, now)        「由调用方给，不在内部取 time.Now()」
+ClipToLastClosed(cal, k, to, now) 同上
+```
+> **一个内部取时钟的函数没法被测试固定住，于是它自己变成一个「今天绿明天红」的东西 ——
+> 而那种东西迟早会被人加个跳过。**
+⇒ `Sync` 要 `now` 正是为了把 `To == 0` 交给 `ClipToLastClosed` 回答（SYN-1），
+**同一条理由原样适用**。
 
 ##### ⛔ 必做一：**不得把一个没有闸门的 `http.Client` 交给源**，且要能被突变打红
 
@@ -3135,14 +3156,15 @@ D2b     旧 `.meta` 的两种处置都要进报告 —— 而 `DecideLegacyMeta`
 
 ⇒ 改落地形式（**要求不变，形状变**）：`Syncer` 收一个**造源的函数**，而那个函数**收** client：
 
-```
+```go
 // SourceFactory 造一个源，而它【收】一个已经装好闸门的 http.Client。
 type SourceFactory func(*http.Client) Source
 ```
 
-⚠️ 这一段**不进 `go` 围栏**，理由是本节自己定过的那条：
-还没落地的声明进了围栏，doccheck 会把它读成一处「源码里找不到」的不一致 ——
-而那**不是**一处不一致，是一张还没到期的欠条。**丙三之二落地那天它才挪进围栏。**
+✅ **这张欠条已于丙三之二到期兑现** —— 它落进了 `sync.go`，所以这一段**进了 `go` 围栏**，
+从此它的签名受 doccheck 比对。
+⚠️ 而「到期看得见」这件事本身要能被验：把这里的 `*http.Client` 改成 `http.Client`
+⇒ doccheck 当场报「签名不同」并退 1（实测）。**围栏之外的那一版做不到这一点。**
 
 ⇒ 这比原写法**硬一格**，理由是它取消了那个选择：
 调用方没法「塞一个 client 进来」，它只能**接**一个。
@@ -3238,7 +3260,7 @@ replayable := caps.Since[period].Valid() && caps.Since[period] <= 覆盖里最�
 ⇒ 判据：**新立一条命名规矩时，当场把本节已经写下的旧写法扫一遍** ——
 规矩是向前生效的，而文字是已经在那儿的。
 
-```
+```go
 // OpenState 是【打开这个库时发现的、需要编排处置的事】。
 //
 // ⚠️ 两格放在一个结构体里，是因为它们同轴：都在 Open 那一刻被发现，
