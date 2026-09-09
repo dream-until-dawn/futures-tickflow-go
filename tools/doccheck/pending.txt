@@ -50,10 +50,6 @@
 # commit」就是在打完之后才暴露的）。
 
 # ---- v0.3：拉取 / 存储 / 同步 ----
-Source        v0.3.0  Source 接口
-Source.Bars   v0.3.0  拉 K 线
-Source.Caps   v0.3.0  能力查询；深度按 (ProductKey, Period) 给，不能只按 Period
-Capabilities  v0.3.0  各源能力差异做成数据而不是散落在文档里
 SyncRequest   v0.3.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
 Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
 SyncReport    v0.3.0  带「请求区间 vs 日历覆盖区间」两行；Misaligned 扫 BarBound.Anomalous
