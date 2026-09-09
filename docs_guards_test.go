@@ -1705,12 +1705,12 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 // 知道「全绿」覆盖不到哪里。
 var emphasisExempt = []struct{ file, needle, why string }{
 	{
-		"docs_test.go", "的行数：登记 %d，实际 %d",
+		"docs_test.go", "含 `**` 的行数",
 		"这条消息在【谈论 `**` 本身】：它报的就是载体里含 `**` 的行数。" +
 			"把它清掉，这条守卫就没法说出自己在数什么",
 	},
 	{
-		"store/segfile/coverage_test.go", "空 —— <凭什么还没做>",
+		"store/segfile/coverage_test.go", "**空 —— <凭什么还没做>**",
 		"这对 `**` 是【被引用的模板】的一部分：design.md 第五列实际就写成 " +
 			"`**空 —— …**`（2026-09-09 实测 6 处）。清掉它，这条消息" +
 			"就在教人写一个【错的】模板 —— 而这一格原来的判据里没有",
@@ -1813,14 +1813,25 @@ func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
 				i = j
 				continue
 			}
-			exempt := false
+			// ⛔ 豁免要和规矩【同粒度】。
+			//
+			// 上一版是 `Contains(whole, needle) ⇒ 整段放行`，而 whole 是【整个调用】：
+			// 一个 t.Errorf 里有两处 `**`，豁免命中其中一处，**另一处一起被放行**。
+			// 实测（评审方 2026-09-09 造的对照组，我复现一致）：
+			// 把 coverage_test.go 那条真违规单独退回违规写法 ⇒ 守卫 **ok，一个字没报**
+			// —— 而那一处正是【这颗提交自己手工清掉的】。
+			//
+			// ⇒ 改成【先删再查】：把豁免的原文（连它自己那对 `**`）从 whole 里去掉，
+			// 剩下的还有 `**` 就照报。
+			// **一条粗一格的豁免，是按【容器】开的口子，不是按【那一处】开的。**
+			rest := whole
 			for n, e := range emphasisExempt {
-				if strings.HasSuffix(rel, e.file) && strings.Contains(whole, e.needle) {
-					used[n], exempt = true, true
-					break
+				if strings.HasSuffix(rel, e.file) && strings.Contains(rest, e.needle) {
+					used[n] = true
+					rest = strings.ReplaceAll(rest, e.needle, "")
 				}
 			}
-			if !exempt {
+			if strings.Contains(rest, "**") {
 				t.Errorf("%s:%d 这条消息里有 Markdown 的粗体标记（两个星号）——"+
 					"终端不渲染它，原样打出来是噪声。\n  %s\n"+
 					"  ⇒ 要强调用【】；真的必须留（在谈论这个标记本身，"+
@@ -1841,6 +1852,17 @@ func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
 	if files == 0 || spans == 0 {
 		t.Fatalf("扫过 %d 个 .go、%d 个调用——【读到 0 不是通过】："+
 			"要么 Walk 的起点不对，要么 printCall 认不出它的形状", files, spans)
+	}
+
+	// ⛔ 豁免的原文里【必须自己带着那两个星号】——否则「先删再查」删不掉任何东西，
+	// 这条豁免就是一个**一声不响的空操作**：它在表里、它命中、而它什么也没豁免。
+	// （上一版的两条 needle 都不带 `**`，靠的是「命中就整段放行」那个粗粒度；
+	// 粒度修好之后，不带 `**` 的 needle 会安静地失效 —— 所以这一条要和它同时落地。）
+	for _, e := range emphasisExempt {
+		if !strings.Contains(e.needle, "**") {
+			t.Errorf("emphasisExempt 的 needle 里【没有】那两个星号：%s / %q\n"+
+				"  ⇒ 先删再查删不掉东西 ⇒ 这条豁免是空操作，而它看起来在工作", e.file, e.needle)
+		}
 	}
 
 	// 幽灵豁免：一条豁免不再命中任何东西，就该删。
