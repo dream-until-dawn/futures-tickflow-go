@@ -131,6 +131,20 @@ func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus,
 	if from > to {
 		return nil, fmt.Errorf("tickflow: PlanGaps 的区间反了：from=%s 晚于 to=%s", from, to)
 	}
+	// ⛔ 端点必须是一个**真实存在的日子**，而 Valid() 只做粗筛（它自己写明了这一点）。
+	//
+	// 为什么这一层非查不可：**本层按自然日铺开**，而 natNext 会把不存在的日子
+	// 归一化掉 —— 实测 `natNext(20200230) = 2020-03-02` ⇒ **真实的 2020-03-01
+	// 一次都没被分类，而输出里还带着一个「2020-02-30」流进报告**。
+	// ⇒ 那是「静默漏掉一天」，本仓最怕的那一族。
+	// （评审方 2026-09-09 登记为「不拦」，我判它该拦：垃圾进可以，**静默跳过不行**。）
+	for _, e := range [2]TradingDay{from, to} {
+		if !isRealDate(e) {
+			return nil, fmt.Errorf("tickflow: PlanGaps 的端点 %s 不是一个真实存在的日子"+
+				"——Valid() 只做粗筛，而本层按自然日铺开：一个不存在的端点会让"+
+				"natNext 归一化时【跳过】一个真实的日子，且没有任何东西会响", e)
+		}
+	}
 
 	// 一、先问日历能回答哪一段 —— **求交必须在最前**。
 	//
@@ -238,6 +252,16 @@ func classifyTradingDay(d TradingDay, cov []SpanStatus, hasBars func(TradingDay)
 // 后者只有日历答得了，本包一个字都不猜。
 func natNext(d TradingDay) TradingDay { return shiftDays(d, 1) }
 func natPrev(d TradingDay) TradingDay { return shiftDays(d, -1) }
+
+// isRealDate 判「这个 YYYYMMDD 是不是一个真实存在的日子」。
+//
+// 判据是**往返**：time.Date 会把 2020-02-30 归一化成 2020-03-01，
+// 于是回读的 Day() 不再是 30 ⇒ 认得出来。
+func isRealDate(d TradingDay) bool {
+	y, m, day := d.Split()
+	t := time.Date(y, time.Month(m), day, 0, 0, 0, 0, time.UTC)
+	return t.Year() == y && int(t.Month()) == m && t.Day() == day
+}
 
 func shiftDays(d TradingDay, n int) TradingDay {
 	y, m, day := d.Split()

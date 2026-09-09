@@ -148,8 +148,29 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 }
 
 // checkShape 断言的是【对任何输入都成立】的那几条，不是某几条样例。
-func checkShape(t *testing.T, from, to TradingDay, gaps []Gap) {
+//
+// ⛔ 它收 hasBars，是为了守住第三条性质：**有数据的天不许落进任何一段**。
+// 那一条此前**没有任何守卫**（评审方 2026-09-09 用突变量出来的，我复现一致）：
+//
+//	突变  把合并条件里的 `out[n-1].To == natPrev(d)` 去掉（同类就合，不管隔没隔天）
+//	⇒ **全仓 0 条红**
+//	而行为实测已经变了：「确认没有·有数据·确认没有」从 2 段变成
+//	**1 段 2020-01-06..08 拉过确认没有** —— 它**吞掉了 01-07，而那天有数据**
+//
+// ⇒ 那是本仓分类法里最坏的一格：**一个「拉过、确认没有」的区间跨过了一个有数据的日子。**
+// ⇒ 成因是方向：对照组 C 测的是「该合的没合」，**「不该合的合了」这一半没有测** ——
+// 与当年 ErrSinaDisagreesWithCalendar「只查一向」同形。
+func checkShape(t *testing.T, from, to TradingDay, gaps []Gap, hasBars func(TradingDay) (bool, error)) {
 	t.Helper()
+	for _, g := range gaps {
+		for d := g.From; d <= g.To; d = natNext(d) {
+			has, err := hasBars(d)
+			if err == nil && has {
+				t.Errorf("段 %s 里包含了 %s，而那天【有数据】——\n"+
+					"  ⇒ 有数据的天必须断开前后的段，不许被吞进任何一段", g, d)
+			}
+		}
+	}
 	for i, g := range gaps {
 		if g.From > g.To {
 			t.Errorf("第 %d 段首尾反了：%s", i, g)
@@ -190,7 +211,7 @@ func TestPlanGapsPartitionsTheRange(t *testing.T) {
 	if err != nil {
 		t.Fatalf("不该出错：%v", err)
 	}
-	checkShape(t, 20200103, 20200113, gaps)
+	checkShape(t, 20200103, 20200113, gaps, has)
 
 	want := []Gap{
 		{20200103, 20200105, GapCalendarUnknown},
@@ -215,6 +236,40 @@ func TestPlanGapsPartitionsTheRange(t *testing.T) {
 	}
 }
 
+// TestPlanGapsDoesNotSwallowADayWithData 有数据的天必须【断开】前后的段。
+//
+// ⛔ **这一条要的输入是「同类·有数据·同类」，而不是随便一个跨类的区间** ——
+// 我第一版补了断言（checkShape 收 hasBars）却没补输入，于是评审方那个突变
+// （去掉合并条件里的自然日相邻）**仍然全绿**：
+//
+//	TestPlanGapsPartitionsTheRange 里 01-06 有数据，可它两侧是【不同类】
+//	（日历答不了 / 拉过确认没有）⇒ 本来就不会合 ⇒ **那条断言一次都没被走到**
+//
+// ⇒ 这正是评审方给的那条方法，而我先只学了一半：
+// **突变后输出没变，先别下结论 —— 问「我这个输入走到那一行了吗」；
+// 造输入要从【那一行的成立条件】倒推，不要从典型场景正推。**
+func TestPlanGapsDoesNotSwallowADayWithData(t *testing.T) {
+	cal := week()
+	cov := []SpanStatus{{Span: Span{From: 20200106, To: 20200110}}}
+	has := func(d TradingDay) (bool, error) { return d == 20200107, nil }
+
+	gaps, err := PlanGaps(cal, testKey, 20200106, 20200108, cov, has)
+	if err != nil {
+		t.Fatalf("不该出错：%v", err)
+	}
+	checkShape(t, 20200106, 20200108, gaps, has)
+
+	want := []Gap{
+		{20200106, 20200106, GapConfirmedEmpty},
+		{20200108, 20200108, GapConfirmedEmpty},
+	}
+	if len(gaps) != 2 || gaps[0] != want[0] || gaps[1] != want[1] {
+		t.Fatalf("期望 %v，实得 %v\n"+
+			"  ⇒ 合成 1 段 = 一个【拉过、确认没有】的区间跨过了一个【有数据】的日子，\n"+
+			"     那是本仓分类法里最坏的一格", want, gaps)
+	}
+}
+
 // TestPlanGapsMergesOnlyWithinAKind 相邻同类要合，不同类绝不合。
 func TestPlanGapsMergesOnlyWithinAKind(t *testing.T) {
 	cal := week()
@@ -223,7 +278,7 @@ func TestPlanGapsMergesOnlyWithinAKind(t *testing.T) {
 	if err != nil {
 		t.Fatalf("不该出错：%v", err)
 	}
-	checkShape(t, 20200106, 20200112, gaps)
+	checkShape(t, 20200106, 20200112, gaps, always(false))
 	want := []Gap{
 		{20200106, 20200110, GapNeverFetched},
 		{20200111, 20200112, GapNotTrading},
@@ -320,6 +375,15 @@ func TestPlanGapsRejectsBadInput(t *testing.T) {
 		}},
 		{"区间不合法", func() ([]Gap, error) {
 			return PlanGaps(week(), testKey, 0, 20200110, nil, always(true))
+		}},
+		// ⛔ 2020-02-30 不存在。Valid() 只做粗筛会放行它，而本层按自然日铺开：
+		// natNext(20200230) = 2020-03-02 ⇒ **真实的 2020-03-01 一次都没被分类**，
+		// 而输出里还带着一个「2020-02-30」流进报告。**静默跳过一天。**
+		{"端点是个不存在的日子（2 月 30）", func() ([]Gap, error) {
+			return PlanGaps(week(), testKey, 20200230, 20200302, nil, always(true))
+		}},
+		{"末端是个不存在的日子", func() ([]Gap, error) {
+			return PlanGaps(week(), testKey, 20200106, 20200631, nil, always(true))
 		}},
 	} {
 		t.Run(c.name, func(t *testing.T) {
