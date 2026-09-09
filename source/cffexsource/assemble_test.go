@@ -268,3 +268,29 @@ func TestTradingDayFormatIsNotNormalized(t *testing.T) {
 		t.Errorf("格式对而日子不对，应当报 ErrTradingDayMismatch，得到 %v", err)
 	}
 }
+
+// TestMissingTradingDayIsNotASkip 是登记㉓ 的对照组。
+//
+// ⛔ 上一版写的是 `if row.TradingDay != "" { ...检查... }` ——
+// 那个 `!= ""` 是**这道检查的关闭开关，而开关在上游手里**：
+//
+//	实测（旧码）：TradingDay="" ⇒ **found=true, err=nil，Bar 照样产出**
+//
+// ⚠️ 而此前**没有任何一条测试用过空串** —— 这正是它能一直静默的原因：
+// 所有用例都填了交易日，于是那个开关从来没有被拨到「关」的那一侧。
+// ⇒ 教训（评审方给的）：**看一道检查，先找它的【关闭条件】，再看它的【判断逻辑】** ——
+// 「判错」和「不判」的输出都是 err == nil。
+func TestMissingTradingDayIsNotASkip(t *testing.T) {
+	sym := icSym()
+	day := testDay(t, sym.ProductKey(), 20260908)
+	rows := []SettleRow{{InstrumentID: "IC2609", TradingDay: "", Close: 1, Settle: 1}}
+
+	bar, found, err := AssembleDay(rows, day, sym, nowAfter)
+	if !errors.Is(err, ErrTradingDayFormat) {
+		t.Fatalf("上游少给 <tradingday> 也是「上游变了」，应当报 ErrTradingDayFormat；"+
+			"得到 found=%v err=%v bar=%+v", found, err, bar)
+	}
+	if found {
+		t.Error("报错的同时还报 found=true")
+	}
+}

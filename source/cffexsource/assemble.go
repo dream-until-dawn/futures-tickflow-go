@@ -105,16 +105,29 @@ func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now in
 	// 上一版用一个「剥掉所有非数字字符」的比较器，实测它把
 	// `2026-09-08 (revised)` 与 `x2026y09z08` 都读成 `20260908` ——
 	// **检查比它的用途宽**（评审方 2026-09-09 指出，我复现一致）。
-	if row.TradingDay != "" {
-		if !isEightDigits(row.TradingDay) {
-			return zero, false, fmt.Errorf("%w：%s 自报 %q——"+
-				"本源一直给 8 位纯数字（实测 714 条皆是），格式变了要人看一眼",
-				ErrTradingDayFormat, want, row.TradingDay)
-		}
-		if row.TradingDay != strconv.Itoa(int(day.Num)) {
-			return zero, false, fmt.Errorf("%w：%s 自报 %q，而日历给的是 %s",
-				ErrTradingDayMismatch, want, row.TradingDay, day.Num)
-		}
+	//
+	// ⛔ **登记㉓：这里【不能】写成 `if row.TradingDay != "" { ... }`。**
+	// 上一版就是那样，而那个 `!= ""` 是**这道检查的关闭开关，且开关在上游手里**：
+	//
+	//	实测：TradingDay="" ⇒ **found=true, err=nil，Bar 照样产出** —— 检查整个不做
+	//
+	// ⚠️ 而同一段注释写着「上游变了正是这道检查要报的事」——
+	// **上游把这一格删掉，也是「上游变了」。**
+	// ⇒ 空串走 isEightDigits 会失败 ⇒ 落到 ErrTradingDayFormat，这是对的：
+	// **少一格和改一格，都该有人看一眼。**
+	//
+	// （评审方 2026-09-09 发现。他同时点出我上一版为什么会漏：
+	// **我量的是这道检查【判得对不对】，没量它【会不会不判】** ——
+	// 而两者的输出都是 err == nil。⇒ **看一道检查，先找它的关闭条件，再看它的判断逻辑。**）
+	if !isEightDigits(row.TradingDay) {
+		return zero, false, fmt.Errorf("%w：%s 自报 %q——"+
+			"本仓 fixture 714 条皆 8 位（**1 天快照，独立观测数是 1 不是 714**），"+
+			"少一格或换个格式都要人看一眼",
+			ErrTradingDayFormat, want, row.TradingDay)
+	}
+	if row.TradingDay != strconv.Itoa(int(day.Num)) {
+		return zero, false, fmt.Errorf("%w：%s 自报 %q，而日历给的是 %s",
+			ErrTradingDayMismatch, want, row.TradingDay, day.Num)
 	}
 
 	ts := day.Sessions[0].Start
