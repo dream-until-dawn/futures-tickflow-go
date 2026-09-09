@@ -1042,9 +1042,27 @@ func probeNightHours(ctx context.Context, md, tok string) {
 			fmt.Fprintf(&b, "\n       ")
 		}
 	}
+	// ⛔ **没有断言在跑的那一次，不能叫 PASS** —— 与 `probeNightGap` / `probeDaySegments`
+	// 同一条。本函数的跳过条件是循环里那句 `if symsFlag != "" { continue }`。
+	//
+	// ⚠️ 这一处是**第三个**实例，而它是靠一次「按骨架扫」找出来的（2026-09-09）：
+	//
+	//	只扫骨架 `st := "PASS"`            ⇒ 全仓 **7** 处（多）
+	//	凭印象点名                          ⇒ **2** 处（少）
+	//	骨架 ＋「函数体里有跳过断言的条件」 ⇒ **3** 处 ← 真数
+	//
+	//	⇒ **一个模式类缺陷，扫它的骨架会多收，凭印象点名会漏收；
+	//	  判据要【两半齐全】才数得对。**
+	//	  另外四处（`probeGridIsClockGrid` / `probeGfexNoNight` /
+	//	  `probeTradingDayPredicted` / `main`）没有跳过条件 —— **它们的 PASS 是对的，别一起改。**
 	st := "PASS"
+	if symsFlag != "" {
+		st = "SKIP"
+		fmt.Fprintf(&b, "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— "+
+			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。要判基线请去掉 -syms。")
+	}
 	if bad > 0 {
-		st = "FAIL"
+		st = "FAIL" // FAIL 压过 SKIP：取数不足是真失败，换没换品种都一样
 	}
 	report("shinny-night-hours", st, b.String())
 }
