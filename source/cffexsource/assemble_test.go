@@ -230,3 +230,41 @@ func TestPreSettleIsDroppedOnPurpose(t *testing.T) {
 	_ = bar
 	t.Logf("%d 条行带昨结算，而 tickflow.Bar 里没有这个字段 ⇒ 全部丢弃（登记㉑）", withPre)
 }
+
+// TestTradingDayFormatIsNotNormalized 是必改那一格的对照组。
+//
+// ⛔ 上一版用「剥掉所有非数字字符」做归一化，于是这道交叉核对**比它的用途宽**：
+//
+//	"2026-09-08 (revised)"  被读成 "20260908" ⇒ **静默通过**
+//	"x2026y09z08"           同上
+//
+// ⚠️ 而两侧【不是同源】：右边是本仓的 TradingDay，**左边是中金所给的**。
+// 归一化等于替上游的格式变化做决定 —— **而上游变了正是这道检查要报的事。**
+// ⇒ 现在要求上游那侧恰好 8 位纯数字，否则报 ErrTradingDayFormat（与「不一致」分开）。
+func TestTradingDayFormatIsNotNormalized(t *testing.T) {
+	sym := icSym()
+	day := testDay(t, sym.ProductKey(), 20260908)
+	mk := func(td string) error {
+		rows := []SettleRow{{InstrumentID: "IC2609", TradingDay: td, Close: 1, Settle: 1}}
+		_, _, err := AssembleDay(rows, day, sym, nowAfter)
+		return err
+	}
+
+	// 正例：8 位纯数字且相等 ⇒ 通过
+	if err := mk("20260908"); err != nil {
+		t.Fatalf("8 位纯数字且相等应当通过：%v", err)
+	}
+
+	// 上一版会静默通过的那几种，现在必须报【格式】而不是【不一致】
+	for _, bad := range []string{"2026-09-08", "2026/09/08", "2026-09-08 (revised)", "x2026y09z08", "2026090"} {
+		err := mk(bad)
+		if !errors.Is(err, ErrTradingDayFormat) {
+			t.Errorf("上游给 %q 应当报 ErrTradingDayFormat，得到 %v", bad, err)
+		}
+	}
+
+	// 而【格式对、日子不对】仍然报「不一致」—— 两者必须分开
+	if err := mk("20260907"); !errors.Is(err, ErrTradingDayMismatch) {
+		t.Errorf("格式对而日子不对，应当报 ErrTradingDayMismatch，得到 %v", err)
+	}
+}

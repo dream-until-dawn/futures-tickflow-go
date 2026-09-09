@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strconv"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 )
@@ -36,6 +37,14 @@ var ErrNotCFFEX = errors.New("cffexsource: 这个源只覆盖中金所（CFFEX�
 // **两种都要人看，所以不吞。**
 var ErrTradingDayMismatch = errors.New("cffexsource: XML 自报的交易日与日历给的那一天不一致")
 
+// ErrTradingDayFormat 上游那一侧的交易日不是 8 位纯数字。
+//
+// ⛔ 与 ErrTradingDayMismatch **分开**，因为处置不同：
+// 不一致 ⇒ 可能取错了日期的文件，或者日历注入错了；
+// **格式变了 ⇒ 是上游改了，而那不是「哪一天」的问题。**
+// ⇒ 合成一个的话，错误消息会把读的人指向错误的方向（同⑱ 那一格的教训）。
+var ErrTradingDayFormat = errors.New("cffexsource: 上游自报的交易日不是 8 位纯数字")
+
 // AssembleDay 把一天的行配上那一天的日历，组装出【一根】日线。
 //
 // found 为 false 表示**那一天的文件里没有这个合约**。它可能是：
@@ -44,6 +53,16 @@ var ErrTradingDayMismatch = errors.New("cffexsource: XML 自报的交易日与�
 //	⛔ **本层分不出这三者** —— 与 sinasource 那边的「丙格」同族（登记⑨）：
 //	  「日历说是交易日，而数据里没有这一行」在输出上是一个【缺席】，
 //	  而缺席也可能是别的原因。**处置在 Syncer 那一层，本层只如实报 found=false。**
+//
+//	⛔ **登记㉒（评审方补的，比只写「三合一」有用）：这三者【不对称】。**
+//
+//	  未上市    ⇒ 上市日之前**永远不该重试**   ← 可由合约的上市日推出来
+//	  已到期    ⇒ 到期日之后**永远不该重试**   ← 可由到期日推出来
+//	  那天真没有 ⇒ **可能该重试**              ← **只有这一个是真正不可知的**
+//
+//	⇒ 所以 Syncer 那一片要做的**不是「把三者分开」**，是
+//	  **「用上市/到期日把前两者减掉，剩下的才交给⑨ 的按日遍历」**。
+//	  （上市/到期日在 refdata 那一层，v0.4。）
 //
 // now 用来判完结，**由调用方给，不在内部取 time.Now()**（同 CheckBars 那条理由）。
 func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now int64) (tickflow.Bar, bool, error) {
@@ -77,10 +96,25 @@ func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now in
 	}
 
 	// 一手交叉核对：XML 自报的交易日 vs 日历给的那一天。
-	if row.TradingDay != "" &&
-		normalizeDay(row.TradingDay) != normalizeDay(day.Num.String()) {
-		return zero, false, fmt.Errorf("%w：%s 自报 %q，而日历给的是 %s",
-			ErrTradingDayMismatch, want, row.TradingDay, day.Num)
+	//
+	// ⛔ **两侧【不是同源】**：右边是本仓的 TradingDay，
+	// **左边是中金所给的**（fixture 只是它的一份快照，线上还会再拉）。
+	// ⇒ 所以这里不做任何「归一化」——**归一化会把上游的变化一并抹掉，
+	// 而上游变了正是这道检查要报的事**。
+	//
+	// 上一版用一个「剥掉所有非数字字符」的比较器，实测它把
+	// `2026-09-08 (revised)` 与 `x2026y09z08` 都读成 `20260908` ——
+	// **检查比它的用途宽**（评审方 2026-09-09 指出，我复现一致）。
+	if row.TradingDay != "" {
+		if !isEightDigits(row.TradingDay) {
+			return zero, false, fmt.Errorf("%w：%s 自报 %q——"+
+				"本源一直给 8 位纯数字（实测 714 条皆是），格式变了要人看一眼",
+				ErrTradingDayFormat, want, row.TradingDay)
+		}
+		if row.TradingDay != strconv.Itoa(int(day.Num)) {
+			return zero, false, fmt.Errorf("%w：%s 自报 %q，而日历给的是 %s",
+				ErrTradingDayMismatch, want, row.TradingDay, day.Num)
+		}
 	}
 
 	ts := day.Sessions[0].Start
@@ -102,6 +136,9 @@ func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now in
 		OpenInterest: row.OpenInterest,
 		Settle:       settleOrNaN(row.Settle),
 		Flags:        tickflow.FlagSrcExchange,
+		// ⛔ row.PreSettle（昨结算）**到这里被丢掉** —— tickflow.Bar 里没有这一格，
+		// 而下游正是拿它推涨跌停。登记㉑：要用它得先改 Bar，那是公开类型的变更。
+		// （记录同时在 TestPreSettleIsDroppedOnPurpose；写在这儿是因为**丢弃发生在这一行**。）
 	}, true, nil
 }
 
@@ -122,16 +159,17 @@ func settleOrNaN(v float64) float64 {
 	return v
 }
 
-// normalizeDay 把 "20260908" 与 "2026-09-08" 归到同一形态。
+// isEightDigits 判据写死成「恰好 8 位、全是数字」。
 //
-// XML 实测给的是 `20260908`，而 `TradingDay.String()` 给的是 `2026-09-08` ——
-// **两个都在本仓里，而它们不能直接比。**
-func normalizeDay(s string) string {
-	out := make([]byte, 0, len(s))
-	for i := 0; i < len(s); i++ {
-		if s[i] >= '0' && s[i] <= '9' {
-			out = append(out, s[i])
+// ⚠️ **不放宽**：放宽等于替上游的格式变化做决定，而那正是上面那道检查要报的事。
+func isEightDigits(s string) bool {
+	if len(s) != 8 {
+		return false
+	}
+	for i := 0; i < 8; i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
 		}
 	}
-	return string(out)
+	return true
 }
