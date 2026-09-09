@@ -39,6 +39,17 @@ import (
 //
 // ⇒ 由 TestPeriodImplementorsAreComparable 查，而「有没有新增实现者」
 // 由 TestPeriodImplementorsAreEnumerated 扫源码查（不是靠一张手写名单）。
+//
+// ⛔ **不要靠【嵌入】已有实现来获得 isPeriod。** 那样两条守卫都看不见它：
+//
+//	type X struct { IntradayPeriod; legs []string }   // 满足 Period，编译通过
+//	periodImplementors 扫到的  [CalendarPeriod IntradayPeriod]   ⇒ **没有 X**
+//	当 Depth 的键               panic: hash of unhashable type
+//
+//	⚠️ 成因值得记：**AST 扫的是「谁【声明】了 isPeriod」，而接口要的是「谁【满足】它」。**
+//	嵌入让这两个集合分开 —— **守卫扫的是【语法】，而契约管的是【类型】，低了一层。**
+//
+// （评审方 2026-09-09 构造出来的，登记⑧；无到期日，目前只写文档不设机械拦截。）
 // 这一条是评审方 2026-09-09 用对照组实测出来的：一个带 []string 字段的
 // 实现者放进 Depth ⇒ 当场 panic。
 //

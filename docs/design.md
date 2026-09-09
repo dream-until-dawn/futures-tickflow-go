@@ -2674,7 +2674,7 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
 | v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ `v0.1.0` |
 | v0.2 | `Calendar` 接口收口（`(X, bool)` → `(X, error)` + `Covers`）／`calendar/embedded` 修一处**已随 `v0.1.0` 发布**的真 bug（国债日盘 09:15 → 09:30）／探针与 `tools/audit/` 仪器加固 | ✅ `v0.2.0` |
-| v0.3 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 🚧 进行中：`Store`(segfile) ✅ 已完工（833 行 / 43 测试）；`Source` 契约层 ✅ ＋ `sinasource` 解析层 🚧；`cffexsource` 与 `Syncer` 未开始 |
+| v0.3 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | 🚧 进行中：`Store`(segfile) ✅ 已完工（833 行 / 43 测试）；`Source` 契约层 ✅ ＋ `sinasource` 解析 ＋ 组装 🚧（HTTP 未做）；`cffexsource` 与 `Syncer` 未开始 |
 | v0.4 | `refdata`(天勤) + `calendar/derived`（从日线反推，**替换**内置表） | 待办 |
 | v0.5 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**） | 待办 |
 | v0.6 | `continuous`——换月、复权、接缝 | 待办 |
