@@ -1,7 +1,12 @@
 package tickflow
 
 import (
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"os"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -42,20 +47,130 @@ func TestPeriodIsSealed(t *testing.T) {
 	t.Logf("封口方法是 %s（不可导出）", sealed)
 }
 
-// TestPeriodImplementorsAreExactlyTwo 盯住「穷举的两种」这句话。
+// periodSamples 是【每种周期一个实例】。
 //
-// 密封的价值是「周期在类型层面是穷举的」——而那句话只有在
-// **有人加第三种时会有东西响**的前提下才成立。这条就是那个东西。
-// 加一种周期时它会红，红了之后要做的是：确认 Capabilities.Depth、
-// 各源的 Caps、以及聚合口径都想过这一种，然后改这里的数。
-func TestPeriodImplementorsAreExactlyTwo(t *testing.T) {
-	var got []string
-	for _, p := range []Period{MustIntraday(1), CalendarPeriod(0)} {
-		got = append(got, reflect.TypeOf(p).Name())
+// 它是手写的，而它**不会悄悄变旧**：下面 TestPeriodImplementorsAreEnumerated
+// 拿【源码里真正实现了封口方法的类型】来核这张表的键。
+// 两半各补对方的盲区：
+//
+//	扫源码那半    抓「加了一种周期而没登记」——它枚举的是性质，不是我写下的名字
+//	这张表那半    给出【实例】，才拿得到 reflect.Type 去查可比较性
+//
+// 上一版没有前一半：它 range 一个手写的 []Period 再和另一个手写的 []string 比，
+// **两张表同一只手、同一个文件** ⇒ 加第三种时一个字都不会变。
+// 而它的注释写着「加一种周期时它会红」——**那句是假的**。
+// 评审方 2026-09-09 用对照组实测：包内加一个第三种 ⇒ 它照样 PASS。
+// ⇒ 那是本仓记过的 `assert plain == total` 那一族：**一个不可能红的断言。**
+var periodSamples = map[string]Period{
+	"IntradayPeriod": MustIntraday(1),
+	"CalendarPeriod": CalendarPeriod(0),
+}
+
+// periodImplementors 扫【本包的源码】，找出所有带封口方法 isPeriod 的类型。
+//
+// 判据按性质划：**「有 isPeriod 方法」就是「实现了 Period」**，
+// 这正是密封那句话本身的定义，不是一份我另外维护的名单。
+// 范围是本目录下所有 .go（含 _test.go）—— 包内任何地方加一种，它都看得见。
+func periodImplementors(t *testing.T) []string {
+	t.Helper()
+	ents, err := os.ReadDir(".")
+	if err != nil {
+		t.Fatalf("读目录：%v", err)
 	}
-	want := []string{"IntradayPeriod", "CalendarPeriod"}
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("Period 的实现类型变了：得到 %v，登记的是 %v", got, want)
+	fset := token.NewFileSet()
+	var out []string
+	files := 0
+	for _, e := range ents {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".go") {
+			continue
+		}
+		f, err := parser.ParseFile(fset, e.Name(), nil, 0)
+		if err != nil {
+			t.Fatalf("解析 %s：%v", e.Name(), err)
+		}
+		if f.Name.Name != "tickflow" {
+			continue // 外部测试包（tickflow_test）不算本包
+		}
+		files++
+		for _, d := range f.Decls {
+			fn, ok := d.(*ast.FuncDecl)
+			if !ok || fn.Recv == nil || len(fn.Recv.List) == 0 || fn.Name.Name != "isPeriod" {
+				continue
+			}
+			typ := fn.Recv.List[0].Type
+			if star, ok := typ.(*ast.StarExpr); ok {
+				typ = star.X
+			}
+			if id, ok := typ.(*ast.Ident); ok {
+				out = append(out, id.Name)
+			}
+		}
+	}
+	if files == 0 {
+		t.Fatal("一个本包 .go 都没解析到 —— 这条在空集上恒绿，先修判据")
+	}
+	sort.Strings(out)
+	return out
+}
+
+// TestPeriodImplementorsAreEnumerated 盯住「周期在类型层面是穷举的」这句话。
+//
+// 加一种周期时它会红 —— **而这一次是真的会**：左边那份是从源码扫出来的。
+// 红了之后要做的不是把名字补进表，是先确认这几处都想过新的那一种：
+// Capabilities.Depth 的键、各源的 Caps、以及聚合口径。
+func TestPeriodImplementorsAreEnumerated(t *testing.T) {
+	found := periodImplementors(t)
+	if len(found) == 0 {
+		t.Fatal("源码里一个 isPeriod 方法都没扫到 —— 封口没了，或者判据打偏了")
+	}
+	registered := make([]string, 0, len(periodSamples))
+	for k := range periodSamples {
+		registered = append(registered, k)
+	}
+	sort.Strings(registered)
+
+	if !reflect.DeepEqual(found, registered) {
+		t.Fatalf("Period 的实现者与 periodSamples 对不上。\n"+
+			"  源码里扫到：%v\n  periodSamples 登记：%v\n"+
+			"  ⇒ 新增一种周期时，先确认 Capabilities.Depth 的键、各源的 Caps、"+
+			"以及聚合口径都想过它，再补这张表。", found, registered)
+	}
+	t.Logf("源码里扫到 %d 种实现者：%v", len(found), found)
+}
+
+// TestPeriodImplementorsAreComparable 查一条**原本没写下来**的不变量。
+//
+// ⛔ `Period` 要求实现者【可比较】：`Capabilities.Depth` 拿它当 map 键，
+// `Supports` 用 `==`。而不可比较的实现者**编译期一声不响**，
+// 到运行期才 `panic: hash of unhashable type`。
+//
+// ⚠️ **密封挡不住它** —— 密封挡的是包外，而不可比较的类型可以从包【内】加进来。
+// 今天没炸，是因为恰好只有 `struct{min int}` 与 `int` 两种，两种都可比较：
+// **又是一个碰巧成立的性质替一句声明背书。**
+// （评审方 2026-09-09 实测：一个带 []string 字段的实现者放进 Depth ⇒ 当场 panic。）
+func TestPeriodImplementorsAreComparable(t *testing.T) {
+	if len(periodSamples) == 0 {
+		t.Fatal("periodSamples 是空的 —— 这条在空集上恒绿")
+	}
+	for name, p := range periodSamples {
+		rt := reflect.TypeOf(p)
+		if !rt.Comparable() {
+			t.Errorf("%s 不可比较 ⇒ 放进 Capabilities.Depth 会在运行期 "+
+				"panic: hash of unhashable type，而编译期一声不响", name)
+			continue
+		}
+		// 不只查类型，连 map 键这条真实用法一起走一遍 ——
+		// Comparable() 是【类型】的性质，而 panic 发生在【使用】那一刻。
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Errorf("%s 当 map 键时 panic：%v", name, r)
+				}
+			}()
+			m := map[Period]time.Duration{}
+			m[p] = time.Hour
+			_ = m[p]
+		}()
 	}
 }
 

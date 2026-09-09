@@ -27,6 +27,21 @@ import (
 // 包括 time.Duration。密封之后「周期」在类型层面就是穷举的两种，
 // 新增一种必须改本包，而改本包会撞上 TestPeriodIsSealed。
 //
+// ⛔ **实现者必须【可比较】** —— 这是一条硬要求，不是建议：
+// `Capabilities.Depth` 拿 Period 当 map 键，`Supports` 用 `==`。
+// 一个带切片/映射/函数字段的实现者**编译期一声不响**，
+// 到运行期才 `panic: hash of unhashable type`。
+//
+//	⚠️ **密封挡不住这一条。** 密封挡的是包外，
+//	而不可比较的类型可以从包【内】加进来。
+//	今天没炸，是因为恰好只有 `struct{min int}` 与 `int` 两种，两种都可比较 ——
+//	**一个碰巧成立的性质，替一句声明背了书。**
+//
+// ⇒ 由 TestPeriodImplementorsAreComparable 查，而「有没有新增实现者」
+// 由 TestPeriodImplementorsAreEnumerated 扫源码查（不是靠一张手写名单）。
+// 这一条是评审方 2026-09-09 用对照组实测出来的：一个带 []string 字段的
+// 实现者放进 Depth ⇒ 当场 panic。
+//
 // ⚠️ 它只承诺「能报出自己的名字」，**不承诺两种周期能互换使用**：
 // IntradayPeriod.Bars(tmpl, day) 与 CalendarPeriod.Group(days) 签名不同，
 // 那是真实的差异，不是没抽象好。把它们硬凑成一个方法，只会让调用方
