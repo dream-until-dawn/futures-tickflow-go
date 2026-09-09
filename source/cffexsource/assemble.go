@@ -121,7 +121,7 @@ func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now in
 	// 而两者的输出都是 err == nil。⇒ **看一道检查，先找它的关闭条件，再看它的判断逻辑。**）
 	if !isEightDigits(row.TradingDay) {
 		return zero, false, fmt.Errorf("%w：%s 自报 %q——"+
-			"本仓 fixture 714 条皆 8 位（**1 天快照，独立观测数是 1 不是 714**），"+
+			"本仓 fixture 714 条皆 8 位，而那是 1 天快照——独立观测数是 1，不是 714；"+
 			"少一格或换个格式都要人看一眼",
 			ErrTradingDayFormat, want, row.TradingDay)
 	}

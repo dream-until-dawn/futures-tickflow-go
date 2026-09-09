@@ -126,7 +126,7 @@ func (c *Client) Bars(ctx context.Context, req tickflow.BarRequest) ([]tickflow.
 	// **文档里分开了，运行时没分开** —— 和 null≠[]、ErrCalendarGap≠没数据同族。
 	if req.Symbol.YearMon == 0 {
 		return nil, fmt.Errorf("sinasource: %s.%s 看起来是主力连续（YearMon=0），"+
-			"而**本源只做具体合约**——主连在 tickflow.Symbol 里还没有表示形态。"+
+			"而本源只做具体合约——主连在 tickflow.Symbol 里还没有表示形态。"+
 			"这不是「该合约不存在」", req.Symbol.Exchange, req.Symbol.Product)
 	}
 
@@ -166,7 +166,7 @@ func (c *Client) fetchDaily(ctx context.Context, sym string) ([]byte, error) {
 	defer rs.Body.Close()
 	if rs.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("sinasource: %s 返回 HTTP %d——"+
-			"**不当成「没有数据」**：那会被 coverage 记成「拉过、确认没有」", sym, rs.StatusCode)
+			"不当成「没有数据」：那会被 coverage 记成「拉过、确认没有」", sym, rs.StatusCode)
 	}
 	b, err := io.ReadAll(rs.Body)
 	if err != nil {

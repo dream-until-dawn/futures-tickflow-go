@@ -321,3 +321,47 @@ func TestNoBlankSettlementInFutures(t *testing.T) {
 	}
 	t.Logf("期货 %d 条，结算价空白 %d 条（到期条件未触发）", futures, blank)
 }
+
+// TestMissingTradingDayIsAnErrorInParse 补的是**真实调用路径上**那一道闸。
+//
+// ⛔ 上一轮我给 AssembleDay 的空串检查补了测试，而评审方实测指出：
+//
+//	assemble.go 的那道闸  有测试，**而它 0 个非测试调用方**
+//	parse.go 的这道闸     **没有测试**，而它是真实管线上唯一挡着的那一道
+//	（对照组：把它整段拆掉 ⇒ 全包仍然全绿）
+//
+// ⇒ 判据：**补测试之前先问「真实调用路径上，第一道挡住它的闸是哪一道」** ——
+// 补在那一道上，不是补在【讨论发生】的那一道上。
+//
+// ⚠️ 而更难看的是它的沉默：**测试的位置本身就是一句关于「哪里危险」的断言**，
+// A 有测试而 B 没有，会让下一个人以为这条路已经守住了。
+// **显式的断言会被审、被反驳；沉默的断言只会被继承。**
+func TestMissingTradingDayIsAnErrorInParse(t *testing.T) {
+	mk := func(td string) []byte {
+		return []byte(`<?xml version="1.0"?><dailydatas><dailydata>` +
+			`<instrumentid>IC2609</instrumentid>` + td +
+			`<closeprice>1</closeprice><settlementprice>1</settlementprice>` +
+			`</dailydata></dailydatas>`)
+	}
+	// 三种形态，实测它们同归一路（TrimSpace 之后都是空）
+	for _, c := range []struct{ name, td string }{
+		{"空元素", "<tradingday></tradingday>"},
+		{"缺标签", ""},
+		{"纯空白", "<tradingday>   </tradingday>"},
+	} {
+		rows, err := ParseDaily(mk(c.td))
+		if err == nil {
+			t.Errorf("%s：少了交易日却通过了，拿到 %d 行——"+
+				"这一格是真实管线上唯一挡着的那道闸", c.name, len(rows))
+			continue
+		}
+		if !strings.Contains(err.Error(), "tradingday") {
+			t.Errorf("%s：红了，但报的不是那一条：%v", c.name, err)
+		}
+	}
+	// 对照：正常一行必须过，否则上面三条在「什么都不通过」上恒真
+	rows, err := ParseDaily(mk("<tradingday>20260908</tradingday>"))
+	if err != nil || len(rows) != 1 {
+		t.Fatalf("正常一行应当通过：rows=%d err=%v", len(rows), err)
+	}
+}
