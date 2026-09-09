@@ -14,8 +14,8 @@ import (
 // 本文件承的是不变量 B1 B2 B3 C1 C2 C3a（编号见 docs/design.md §6.1 那张表）。
 //
 // ⚠️ 缺席的：C3b（截断要进 SyncReport）与 D2b（两种结果都进 SyncReport）——
-// `SyncReport` 还不存在（tools/doccheck/pending.txt）⇒ 挪到「做 Source 那一版」。
-// **它们是整条缺席，不是测了一半。**
+// **通道已由丙三之一打通**（`OpenState` / `DiscardCoverage`），缺的是读它的那一头。
+// **它们仍是整条缺席，不是测了一半。**
 //
 // ⛔ 还有三处【范围边界】，写在这儿免得被读成通用实现：
 //
@@ -37,6 +37,14 @@ type Store struct {
 	dat *os.File
 
 	meta Meta
+
+	// truncated / legacyMeta 是 Open 那一刻的两个读数，供 OpenState 报出去。
+	//
+	// ⛔ 它们【本层处置不了】：截断要进 SyncReport.TruncatedTails（C3b），
+	// 而 .meta 缺 format 的处置取决于「源可不可重放」（D2a）——
+	// 那两样都只有编排知道。⇒ 存下来，等编排来问。
+	truncated  int64
+	legacyMeta bool
 
 	// verified 记「这一段【走查过】没有」。B3 要它：**没走查过的时候，
 	// 那两个计数什么也不意味着**，不许回答「拉过，确认没有」。
@@ -93,7 +101,7 @@ func Open(dir string) (s *Store, truncated int64, err error) {
 	if err != nil {
 		return nil, 0, err
 	}
-	st := &Store{dir: dir, dat: f, verified: map[tickflow.Span]bool{}}
+	st := &Store{dir: dir, dat: f, truncated: truncated, verified: map[tickflow.Span]bool{}}
 	b, err := os.ReadFile(filepath.Join(dir, "1m.meta"))
 	switch {
 	case err == nil:
@@ -119,9 +127,15 @@ func Open(dir string) (s *Store, truncated int64, err error) {
 			return nil, 0, fmt.Errorf("segfile: %s 里的 coverage 结构不合法: %w", dir, verr)
 		}
 		st.meta = *m
+		// A3：format 缺失时 Format 为 nil，与「写了 0」分得开。
+		// ⇒ 这一格就是 D2a 的入口条件；处置不在这一层。
+		st.legacyMeta = m.Format == nil
 	case os.IsNotExist(err):
 		v := FormatVersion
 		st.meta = Meta{Format: &v}
+		// ⛔ 【没有 .meta】不是【旧 .meta】—— 前者是一个新库，
+		// 后者是一份 v0.3 之前写的、语义未知的 coverage。
+		// 合成一格会让每一个新目录都去走 D2a，而那条路要人做决定。
 	default:
 		f.Close()
 		return nil, 0, err
@@ -424,4 +438,33 @@ func (s *Store) dayHasRecords(day tickflow.TradingDay) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+// OpenState 报打开这一份库时发现的两件事（C3b / D2b 的输入）。
+//
+// ⚠️ 这两格都是 `Open` 那一刻的读数，**此后不再变** ——
+// 它们记的是「打开时的世界」，不是「现在的世界」。
+// 写下来是因为下一个人会想在这儿加第三格，而那一格未必也有这个性质。
+func (s *Store) OpenState() tickflow.OpenState {
+	return tickflow.OpenState{
+		TruncatedTail: s.truncated,
+		LegacyMeta:    s.legacyMeta,
+	}
+}
+
+// DiscardCoverage 把 coverage 整个作废，全区间按「没拉过」（LegacyDiscard 那一支）。
+//
+// ⛔ **`verified` 也必须一起清掉，而这一格差点被漏掉。**
+// coverage 清空而 `verified` 留着，会留下一批「指向已经不存在的 Span」的走查记录；
+// 它们今天查不出来（键是 Span 值，对不上就当没走查过 ⇒ 落在安全的那一侧），
+// **而那是巧合，不是设计** —— 键的形状一变，那批陈旧记录就会开始回答问题。
+//
+// ⚠️ 它**不落盘 `.dat`**：作废的是「声称拉过」这件事，不是数据。
+// 旧记录留在 `.dat` 里，重拉时按 AppendBars 追加 ——
+// 这与 D2a 那句「重拉能把语义未知的旧记录换成语义已知的新记录」是一致的：
+// 换的是【语义的来源】（coverage 由新版写入），不是把字节删掉。
+func (s *Store) DiscardCoverage() error {
+	s.meta.Coverage = nil
+	s.verified = map[tickflow.Span]bool{}
+	return s.writeMeta()
 }

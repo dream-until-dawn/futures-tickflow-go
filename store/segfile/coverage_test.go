@@ -40,11 +40,18 @@ import (
 // ⚠️ 这份清单是**有有效期**的：它记的是「今天为什么还没做」，
 // 而那个理由一旦不成立，这里就必须跟着改。**别沿用。**
 var absent = map[string]string{
-	"C3b": "截断要进 SyncReport.TruncatedTails —— 而 `SyncReport` 还不存在" +
-		"（上哪儿看：`tools/doccheck/pending.txt` 里 SyncReport 那一行）",
+	// ⚠️ 这两条的理由【换过一次】，而旧理由从丙一起就是假的：
+	// 原来写「`SyncReport` 还不存在」，而它丙一就落地了。
+	// ⇒ 本清单自己那条规矩（理由不成立就必须跟着改）**第一次真的被兑现**——
+	// 而它是被「顺手 grep 一遍那句话」抓到的，不是被任何守卫抓到的。
+	// **一个写成条件的缺席理由，到期时不会有人通知你。**
+	"C3b": "截断要进 SyncReport.TruncatedTails —— 通道已通（`Store.OpenState`），" +
+		"缺的是【读它的那一头】：`Sync` 本体还不存在" +
+		"（上哪儿看：根包有没有 `func (*Syncer) Sync`）",
 	"D2b": "两种结果都进 SyncReport（LegacyMetaDiscarded / LegacyMetaUnverified）—— " +
-		"**与 C3b 同因：`SyncReport` 还不存在**" +
-		"（上哪儿看：`tools/doccheck/pending.txt` 里 SyncReport 那一行）",
+		"**与 C3b 同因**：判定与通道都已就位" +
+		"（`tickflow.DecideLegacyMeta` ＋ `Store.OpenState().LegacyMeta`），" +
+		"缺的仍是读它的那一头（上哪儿看：根包有没有 `func (*Syncer) Sync`）",
 	"A4": "`.meta` 要存 `recordSize` 并与本版记录长比对 —— 而 `Meta` 结构体里" +
 		"**还没有这个字段**（上哪儿看：`Meta`）。" +
 		"它和 A3 同一个入口（`DecodeMeta`），补字段那一格一起做，" +

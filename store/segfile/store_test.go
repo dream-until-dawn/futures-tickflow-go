@@ -15,7 +15,8 @@ import (
 //	C1 落盘之后才扩 coverage  C2 上游出错不许扩       C3a Open 时截残尾
 //
 // ⚠️ 本版仍然缺席的：C3b（截断要进 SyncReport）、D2b（两种结果都进 SyncReport）
-// —— SyncReport 不存在，挪到「做 Source 那一版」。**整条缺席，不是测了一半。**
+// —— 通道已通（见 openstate_test.go），缺的是【读它的那一头】。
+// **整条缺席，不是测了一半。**
 
 func bar(day tickflow.TradingDay, ts int64) tickflow.Bar {
 	return tickflow.Bar{Ts: ts, TsEnd: ts + 60000, TradingDay: day, Close: 1.5}

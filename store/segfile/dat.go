@@ -94,8 +94,8 @@ func TailCheck(size int64) (records int64, ragged int64) {
 //
 // ⚠️ 截断必须留声：本函数把截掉多少字节返回出去。
 // **自愈动作必须留声，否则它和「本来就没事」长得一样。**
-// ⇒ 而「留声要进 `SyncReport.TruncatedTails`」是 C3b，`SyncReport` 还不存在
-// （见 tools/doccheck/pending.txt）⇒ **C3b 不在本版**，本函数只负责把它交出去。
+// ⇒ 而「留声要进 `SyncReport.TruncatedTails`」是 C3b。本函数只负责把这个数交出去；
+// 它现在经 `Store.OpenState()` 到得了编排（丙三之一），**而读它的那一头还没写**。
 func OpenDat(path string) (f *os.File, truncated int64, err error) {
 	f, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {

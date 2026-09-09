@@ -253,35 +253,33 @@ func adjacentTradingDays(cal tickflow.Calendar, k tickflow.ProductKey, a, b tick
 	return n == 2 && first == a && last == b, nil
 }
 
-// LegacyDecision 是 `format` 缺失时的处置。
-type LegacyDecision int
+// —— D2a 的判定已【上移到根包】。这里只留别名，旧调用方不必改。——
+//
+// ⛔ 上移的理由不是整理，是实测出来的一处结构错位（design.md 丙三之零冲突二）：
+// 判定需要「源可不可重放」⇒ 只有编排经 `Caps` 知道；编排在根包；
+// **而根包 import 本包是 import cycle。**
+// ⇒ 它此前「生产侧零调用方」**不是「还没接线」，是「接不上」** ——
+// 而那两者处置相反：前者接上就行，后者要动结构。
+//
+// ⇒ 判据：**量出「零调用方」之后，要再问一句「那个调用者【能不能】调到它」** ——
+// 否则会把一处结构错位记成一件待办，而待办会被排期，错位不会自己好。
+//
+// ⚠️ 与 `Outcome` 那一格同样的处置、同样的理由：它是**契约的一部分**，
+// 留在实现包里，别的实现就不受它约束。
+type LegacyDecision = tickflow.LegacyDecision
 
 const (
 	// LegacyDiscard 源可重放 ⇒ coverage 作废，全区间按「没拉过」，重拉。
-	// 吵，但会收敛；而重拉能把语义未知的旧记录换成语义已知的新记录。
-	LegacyDiscard LegacyDecision = iota + 1
-
+	LegacyDiscard = tickflow.LegacyDiscard
 	// LegacyUnverified 源不可重放 ⇒ coverage【不】作废，整份标 unverified，报告并停。
-	// 作废在这里换不来任何东西：重拉取不回那段，只会永远重试，
-	// 而丢掉那些区间是不可逆的。
-	LegacyUnverified
+	LegacyUnverified = tickflow.LegacyUnverified
 )
 
-// DecideLegacyMeta 是 D2a：`format` 缺失时怎么办，**取决于这个源能不能重放**。
+// DecideLegacyMeta 是 D2a。实现在根包，这里只转发。
 //
-// ⚠️ 它【不是常数】。这一条是被一次实录失败逼出来的：第一版把它写成
-// 「一律作废重拉」，而那个理由错在一个没写出来的前提上——**它假定自愈可用**。
-// 源不可重放时，自愈从来就不在选项里。
-//
-// 不可重放那一支返回根包的 ErrLegacyMeta：它要的是**一个显式决定**（Force 或人工确认），
-// 而不是一个自动动作。
-//
-// ⚠️ 射程：本函数只给出「判定」。**两种结果都要进 SyncReport** 是 D2b，
-// 而 SyncReport 还不存在（见 tools/doccheck/pending.txt）⇒ D2b 不在本版，
-// 挪到「做 Source 那一版」。**本版没有把 D2 测成半条：D2a 整条测完，D2b 整条缺席。**
+// ⚠️ 写成【转发函数】而不是 `var DecideLegacyMeta = tickflow.DecideLegacyMeta`：
+// 后者是一个变量，**谁都可以在运行期把它换掉** —— 而这是一条判定规则，
+// 不是一个可配置项。
 func DecideLegacyMeta(replayable bool) (LegacyDecision, error) {
-	if replayable {
-		return LegacyDiscard, nil
-	}
-	return LegacyUnverified, tickflow.ErrLegacyMeta
+	return tickflow.DecideLegacyMeta(replayable)
 }
