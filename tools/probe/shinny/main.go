@@ -712,10 +712,18 @@ func probeNightGap(ctx context.Context, md, tok string) {
 		}
 	}
 
-	// 对照组焊在里面：交易日太少 ⇒ 是取数塌了，不是市场变了。
-	if len(tdays) < 2000 {
+	// 对照组焊在里面：交易日不够 ⇒ 是取数塌了，不是市场变了。
+	//
+	// ⛔ 这里原来也是 `len(tdays) < 2000` —— 和另外两条探针同一个错。
+	// **而我上一趟改那两条时【漏了这一处】，因为我扫的是字面串 `len(all) < 2000`，
+	// 而这里的变量叫 `tdays`。**（评审方 2026-09-09 读这条分支时点出来的。）
+	// ⇒ 判据又一次写成了「它现在长什么样」，而不是性质 —— 本仓反复撞的那个形状，
+	//   这次撞在**我自己修那个形状的那一趟里**。
+	sortedT := append([]string{}, tdays...)
+	sort.Strings(sortedT)
+	if ok, why := enoughDays(sortedT, fails); !ok {
 		report("shinny-night-gap", "FAIL",
-			fmt.Sprintf("只认出 %d 个交易日（期望 2000+）—— 判据或取数有问题，不报结论", len(tdays)))
+			fmt.Sprintf("取数不足：%s —— 判据或取数有问题，不报结论", why))
 		return
 	}
 
@@ -1125,7 +1133,7 @@ func probeNightHours(ctx context.Context, md, tok string) {
 //
 // enoughDays 判断「取到的数够不够下结论」，并在不够时给出**说得出理由**的一句话。
 //
-// ⛔ 原来两条探针写的都是 `len(all) < 2000` —— 一个**绝对天数**。
+// ⛔ 原来**三条**探针写的都是这个形状（`len(all) < 2000` / `len(tdays) < 2000`）—— 一个**绝对天数**。
 // 它想问的是「有没有取全」，而这两件事只在【十岁以上的品种】上等价。
 // 2026-09-09 实测，三个品种被它挡在门外：
 //
