@@ -1625,7 +1625,11 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 		if !strings.HasPrefix(strings.TrimSpace(ln), "|") {
 			continue
 		}
-		done := strings.Contains(ln, "✅")
+		// 🚧「进行中」也算【已经有东西了】——不然写一个 🚧 就能绕过这条守卫，
+		// 而那正是本仓驳回过的那种「按名字生效的洞」，只是换成了按符号。
+		// （这一条是守卫上线当天自己撞出来的：source/ 从「没有」变成「有一半」，
+		//  而表里当时只有 ✅/❌ 两格可选。）
+		done := strings.Contains(ln, "✅") || strings.Contains(ln, "🚧")
 		notYet := strings.Contains(ln, "❌")
 		if done == notYet { // 两个都有或都没有 ⇒ 不是一条状态行
 			continue

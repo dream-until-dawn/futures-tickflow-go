@@ -21,7 +21,9 @@
 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 | ✅ `v0.1.0`（`v0.2.0` 收口）——915 行，45 个测试函数 |
 | `calendar/embedded` | ✅ `v0.1.0`，`v0.2.0` 修一处**已随 v0.1.0 发布**的真 bug——689 行，14 个测试函数 |
 | `store/segfile` | ✅ 已完工——833 行，43 个测试函数。⚠️ 三处范围边界写在 `store/segfile/store.go` 头部 |
-| `source/*`（新浪 / 天勤 / 中金所） | ❌ **尚未开始** |
+| `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
+| `source/sinasource` | 🚧 **解析层已落**：日线 JSONP → 行，fixture 是 2026-09-09 取回的真实响应；**组装成 Bar（要日历）与 HTTP 拉取未做** |
+| `source/cffexsource` · `source/shinnysource` | ❌ **尚未开始** |
 | `Syncer` · `refdata` · `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
 
 ⇒ 「能力」一节里指向 `source/` `refdata/` `continuous/` `indicator/` 的行**都还是承诺**；
