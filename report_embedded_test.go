@@ -27,6 +27,17 @@ func actualNight(t *testing.T, cal tickflow.Calendar, k tickflow.ProductKey, n t
 
 // TestNightArtifactFollowsCoversFrom SYN-9 的证据：**假象跟着 `Covers().from` 走。**
 //
+// ⛔ **本条测的是【日历这个前提】，不是 `ScanNightAbsent` 的用法** ——
+// 它一次都没调那个函数，它直接问日历（`DayOf` / `Template` / `TemplateMismatch`）。
+// ⇒ 「`ScanNightAbsent` 有没有真的去问 `Covers()`」由 report_test.go 里那三条守着
+// （实测：把 `cf, _, _ := Covers` 改成取第二个返回值 ⇒ **红 3 条**）。
+//
+// ⚠️ 写这一句的理由是评审方 2026-09-09 隔离突变时撞到的：
+// 他把「排除 cf」写死成「排除某个常量」⇒ **0 条红**，去读代码才明白本条根本不调它。
+// ⇒ 判据：**一条测试的射程，要按它【调了谁】来读，不按它的名字读。**
+// 名字里带着函数名而并不调用它时，**必须在顶上写明它测的是什么** ——
+// 否则下一个人会以为那条不变量的守卫在这里。
+//
 // ⛔ **两份日历，两个起点** —— 这是这条测试成立的关键：
 // 一份日历只能证明「08-06 那天 actual=0」，**证不了它是【因为它是覆盖首日】**。
 // 换个起点再看一次，假象跟着移，才排除了「就是那一天特殊」。
