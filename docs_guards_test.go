@@ -27,6 +27,7 @@ package tickflow
 // **与其给规矩加例外，不如把事实改成规矩说的那样。**
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -1101,8 +1102,27 @@ func TestHighWaterProvenance(t *testing.T) {
 // ⇒ ⑥ 是这组里最值得留的一格：**判据是「同名 ＋ 值等于 X ＋ 在它之后」三件事，
 //
 //	少任何一件都不算满足。** 只按「值等于 X」找，会被另一个计数器的同值行骗过去。
-func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
-	lines := strings.Split(highWaterRaw, "\n")
+//
+// mergeRecordViolations 是上面那条判据的**本体**：吃一组行，吐出违规描述。
+//
+// ⛔ **抽成纯函数不是重构洁癖，是因为原来那版【一个条件都没在行使】**
+// （评审方 2026-09-09 实测，我自己复现了）：
+//
+//	判据是三件事：`p.i > i`（在它之后）＋ `p.name == f[3]`（同名）＋ `p.val == other`（值等于 X）
+//	把它们**逐个删掉**，再跑 `high_water.txt` ⇒ **三次全绿，真文件一次都抓不住。**
+//	因为今天的文件只有两条记录、都站对 —— **它一个条件都没被行使过。**
+//
+// ⇒ 而本仓自己那句判语在这儿原样适用：**没被行使过的拦截，和没有拦截差不多。**
+//
+//	**实测过 ≠ 有对照组。**
+//	前者是「那一天它是对的」，后者是「明天有人改坏它会红」。
+//	那七种形状原来只写在注释里 —— 测过一次，然后被 `diff` 还原掉了。
+//
+// ⇒ 所以判据搬进纯函数，七种形状变成**表驱动用例**（`TestMergeRecordCriterion`），
+// 从此**每次 `go test` 都跑**；而守卫本身只负责把真文件喂进来。
+//
+// 返回：违规描述（每条一行）＋ **扫到的合流记录条数**（前提检查用）。
+func mergeRecordViolations(lines []string) (violations []string, records int) {
 	type prov struct {
 		i    int
 		name string
@@ -1118,7 +1138,6 @@ func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
 			all = append(all, prov{i, f[3], v})
 		}
 	}
-	seen := 0
 	for i, raw := range lines {
 		f := strings.Fields(raw)
 		if len(f) < 7 || f[0] != "#" || f[1] != "来历" || f[5] != "合流" {
@@ -1128,7 +1147,7 @@ func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
 		if err != nil {
 			continue // 格式本身由 TestHighWaterChain 管，这里不重复报
 		}
-		seen++
+		records++
 		ok := false
 		for _, p := range all {
 			if p.i > i && p.name == f[3] && p.val == other {
@@ -1137,16 +1156,86 @@ func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
 			}
 		}
 		if !ok {
-			t.Errorf("high_water.txt:%d 这条合流记录站错了地方：它写着「合流 %d」，"+
-				"而【它之后】没有任何一行是 `%s` 且值为 %d。\n"+
-				"  ⇒ 赦免是**读到这一行才生效**的；它要许可的那一行在它【前面】，"+
-				"那一刻这条记录还不存在 ⇒ **它是惰性的**。\n"+
-				"  ⇒ 处置：把这一行挪到那一行【之前】（不是改它的数）。",
-				i+1, other, f[3], other)
+			violations = append(violations, fmt.Sprintf(
+				"第 %d 行这条合流记录站错了地方：它写着「合流 %d」，"+
+					"而【它之后】没有任何一行是 `%s` 且值为 %d。\n"+
+					"  ⇒ 赦免是**读到这一行才生效**的；它要许可的那一行在它【前面】，"+
+					"那一刻这条记录还不存在 ⇒ **它是惰性的**。\n"+
+					"  ⇒ 处置：把这一行挪到那一行【之前】（不是改它的数）。",
+				i+1, other, f[3], other))
 		}
 	}
-	if seen == 0 {
+	return violations, records
+}
+
+func TestMergeRecordPrecedesWhatItLicenses(t *testing.T) {
+	v, n := mergeRecordViolations(strings.Split(highWaterRaw, "\n"))
+	for _, s := range v {
+		t.Errorf("high_water.txt:%s", s)
+	}
+	if n == 0 {
 		t.Fatal("一条合流记录都没扫到 —— 这条守卫没在守任何东西（它的前提是文件里有合流记录）")
+	}
+}
+
+// TestMergeRecordCriterion 是上面那条判据的对照组，**常驻**。
+//
+// ⚠️ 用例里的行全部是**字面写死的**，不从 `high_water.txt` 派生 ——
+// 否则真文件一变，这些用例就跟着变，那就又回到「实测过一次」那种状态。
+func TestMergeRecordCriterion(t *testing.T) {
+	rec := func(name string, val, x int) string {
+		return fmt.Sprintf("# 来历 2026-09-09 %s %d 合流 %d 说明", name, val, x)
+	}
+	val := func(name string, v int) string {
+		return fmt.Sprintf("# 来历 2026-09-09 %s %d 自动：说明", name, v)
+	}
+	cases := []struct {
+		name  string
+		lines []string
+		want  int // 期望的违规条数
+	}{
+		{"① 一条，站对（已知为真的那一格）",
+			[]string{rec("rules", 300, 271), val("rules", 271)}, 0},
+		{"② 同名三条，各自都在自己的值行之前",
+			[]string{rec("rules", 400, 310), val("rules", 310),
+				rec("rules", 410, 320), val("rules", 320),
+				rec("rules", 420, 330), val("rules", 330)}, 0},
+		{"③ 同名三条，中间那条排到它的值行之后",
+			[]string{rec("rules", 400, 310), val("rules", 310),
+				val("rules", 320), rec("rules", 410, 320),
+				rec("rules", 420, 330), val("rules", 330)}, 1},
+		{"④ 两个不同名字各一条，其中一条站错",
+			[]string{rec("anchors", 400, 310), val("anchors", 310),
+				val("census", 320), rec("census", 410, 320)}, 1},
+		{"⑤a 同名两条、X 相同，值行在两条之后",
+			[]string{rec("rules", 400, 310), rec("rules", 410, 310), val("rules", 310)}, 0},
+		{"⑤b 同名两条、X 相同，值行在两条之前",
+			[]string{val("rules", 310), rec("rules", 400, 310), rec("rules", 410, 310)}, 2},
+		{"⑥ 值行的【名字不同】—— 不该被当成满足",
+			[]string{rec("rules", 400, 310), val("census", 310)}, 1},
+		{"⑦ 没有合流记录 ⇒ 零违规，而 records 也是 0（前提检查归守卫）",
+			[]string{val("rules", 310), val("rules", 320)}, 0},
+	}
+	for _, c := range cases {
+		v, n := mergeRecordViolations(c.lines)
+		if len(v) != c.want {
+			t.Errorf("%s：违规 %d 条，要 %d 条\n  实得：%v", c.name, len(v), c.want, v)
+		}
+		if c.want > 0 && n == 0 {
+			t.Errorf("%s：判出了违规，而扫到的记录数却是 0 —— 计数与判据对不上", c.name)
+		}
+	}
+	// ⛔ 前提：这张表自己必须**同时覆盖两侧**。只有「该过」的用例，等于把门拆了。
+	pass, fail := 0, 0
+	for _, c := range cases {
+		if c.want == 0 {
+			pass++
+		} else {
+			fail++
+		}
+	}
+	if pass == 0 || fail == 0 {
+		t.Fatalf("这张表只有一侧的用例（该过 %d ／ 该拒 %d）—— 单侧的表不是对照组", pass, fail)
 	}
 }
 

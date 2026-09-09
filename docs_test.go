@@ -844,6 +844,7 @@ var guardNames = []string{
 	`TestHighWaterProvenance`,
 	`TestHighWaterRuleAdjacency`,
 	`TestLandingCarriersStillCarry`,
+	`TestMergeRecordCriterion`,
 	`TestMergeRecordPrecedesWhatItLicenses`,
 	`TestNoConflictMarkersInDocs`,
 	`TestNoDuplicateHeadingsInCarriers`,
