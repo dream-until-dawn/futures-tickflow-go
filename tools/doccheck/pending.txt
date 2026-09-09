@@ -86,7 +86,6 @@
 # commit」就是在打完之后才暴露的）。
 
 # ---- v0.3：拉取 / 存储 / 同步 ----
-BatchDaysUnbounded v0.3.0  Capabilities.BatchDays 的具名「不必切」；写成 0 会和「忘了填」不可分辨（登记⑫）
 Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
 AggClockGrid      v0.5.0  AggRule 的成员：时钟网格
 AggTradingAxis    v0.5.0  AggRule 的成员：交易时间轴 + 相位

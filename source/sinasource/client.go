@@ -226,8 +226,11 @@ const dailySince = tickflow.TradingDay(20180501)
 // （新浪的 1023 硬顶是【分钟线】的，本源这一版不给分钟线。）**登记⑫。**
 func (c *Client) Caps(k tickflow.ProductKey) tickflow.Capabilities {
 	return tickflow.Capabilities{
-		Periods:   []tickflow.Period{tickflow.Daily},
-		MaxBars:   0,
+		Periods: []tickflow.Period{tickflow.Daily},
+		MaxBars: 0,
+		// 一次请求 = 一个合约的【全部历史】⇒ 区间对本源不构成代价。
+		// ⛔ 切成一天一块的话，回补要 2671 次「拉全部历史」——**不是浪费，是不可用**。
+		BatchDays: tickflow.BatchDaysUnbounded,
 		Since:     map[tickflow.Period]tickflow.TradingDay{tickflow.Daily: dailySince},
 		HasSettle: k.Exchange != tickflow.CFFEX,
 		HasOI:     true,

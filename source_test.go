@@ -223,9 +223,10 @@ func TestBarRequestValidate(t *testing.T) {
 func TestCapabilitiesValidate(t *testing.T) {
 	m1, d1 := MustIntraday(1), CalendarPeriod(1)
 	good := Capabilities{
-		Periods: []Period{m1, d1},
-		MaxBars: 1023,
-		Since:   map[Period]TradingDay{m1: 20200506, d1: 20090327},
+		Periods:   []Period{m1, d1},
+		MaxBars:   1023,
+		BatchDays: BatchDaysUnbounded,
+		Since:     map[Period]TradingDay{m1: 20200506, d1: 20090327},
 	}
 	if err := good.Validate(); err != nil {
 		t.Fatalf("干净的能力声明应当通过，却报：%v", err)
@@ -266,6 +267,30 @@ func TestCapabilitiesValidate(t *testing.T) {
 	t.Run("MaxBars 负数", func(t *testing.T) {
 		bad := good
 		bad.MaxBars = -1
+		// ⛔ BatchDays 的零值必须被拒 —— 它说不清是「想好了」还是「忘了」（登记⑫ 同族）。
+		//
+		// ⚠️ 而这一格是【实现时撞出来的】：加上这个字段之后，
+		// **两个真实源的 Caps 当场变红**（cffexsource / sinasource 各一条）——
+		// 那正好证明 Validate() 真的作用在它们身上，而不只是作用在这个 fixture 上。
+		for _, c := range []struct {
+			name string
+			v    int
+		}{{"零值", 0}, {"负数但不是那个具名常量", -2}} {
+			bad := good
+			bad.BatchDays = c.v
+			if err := bad.Validate(); err == nil || !strings.Contains(err.Error(), "BatchDays") {
+				t.Errorf("BatchDays=%s（%d）应当被拒，实得 %v", c.name, c.v, err)
+			}
+		}
+		// 对照：两种合法形态都要通过 —— 否则上面那条可能是「BatchDays 恒被拒」。
+		for _, v := range []int{1, 5, BatchDaysUnbounded} {
+			okc := good
+			okc.BatchDays = v
+			if err := okc.Validate(); err != nil {
+				t.Errorf("BatchDays=%d 是合法形态，却被拒：%v", v, err)
+			}
+		}
+
 		if err := bad.Validate(); err == nil || !strings.Contains(err.Error(), "MaxBars=-1") {
 			t.Fatalf("期望报 MaxBars 负数，得到：%v", err)
 		}

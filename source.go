@@ -120,6 +120,12 @@ func (r BarRequest) Validate() error {
 
 // —— Capabilities ——
 
+// BatchDaysUnbounded 表示「区间对这个源不构成代价，整段一次拿」。
+//
+// ⛔ 它是一个**具名常量**而不是 0，理由见 Capabilities.BatchDays：
+// **一个具名常量说「我想好了」，一个 0 说不清是「想好了」还是「忘了」。**
+const BatchDaysUnbounded = -1
+
 // Capabilities 报告一个源【在某个品种上】的能力与边界。
 //
 // ⚠️ 深度必须按品种问，不能只按周期。新浪的 1023 是【根数】上限，
@@ -146,6 +152,21 @@ type Capabilities struct {
 	//
 	// ⇒ 换形状的理由不是「新的更好听」，是**旧的把「没填」藏了起来**。
 	Since map[Period]TradingDay
+
+	// BatchDays 是这个源【一次请求最好覆盖多少个交易日】。
+	//
+	//	sinasource   一次请求 = 一个合约的全部历史 ⇒ BatchDaysUnbounded
+	//	cffexsource  一次请求 = 一天的全部合约     ⇒ 1
+	//
+	// ⛔ **为什么它是【源的性质】而不是调用方的偏好** —— 跨源的默认值不存在：
+	//
+	//	切成一天一块  对 sinasource 是 2671 次「拉全部历史」⇒ **不是浪费，是不可用**
+	//	不切          对 cffexsource 是一次失败丢 2671 天
+	//
+	// ⛔ **零值不合法**。登记⑫ 那一格的教训：`MaxBars: 0` 同时是「没有硬顶」
+	// 和「一根都给不了」，两者不可分辨 ⇒ **忘了填查不出来**。
+	// 这里把「不必切」写成一个【具名常量】，就是为了让它和「忘了填」分得开。
+	BatchDays int
 
 	HasSettle bool // 是否给结算价
 	HasOI     bool // 是否给持仓量
@@ -194,6 +215,14 @@ func (c Capabilities) Validate() error {
 	}
 	if c.MaxBars < 0 {
 		errs = append(errs, fmt.Errorf("MaxBars=%d 是负数", c.MaxBars))
+	}
+	// ⛔ BatchDays 只有两种合法形态：正数，或那个【具名】的「不必切」。
+	// 0 不合法 —— 它说不清是「想好了」还是「忘了」（登记⑫ 同族）。
+	if c.BatchDays != BatchDaysUnbounded && c.BatchDays < 1 {
+		errs = append(errs, fmt.Errorf("BatchDays=%d 不合法——"+
+			"要么给一个正数（一次请求覆盖几个交易日），"+
+			"要么写 BatchDaysUnbounded（区间对这个源不构成代价）；"+
+			"0 说不清是「想好了」还是「忘了」", c.BatchDays))
 	}
 	return errors.Join(errs...)
 }
