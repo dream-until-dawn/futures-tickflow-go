@@ -807,7 +807,7 @@ func probeNightGap(ctx context.Context, md, tok string) {
 		report("shinny-night-gap", "FAIL", fmt.Sprintf(
 			"这个品种的夜盘【跨零点】（%d/%d 个自然日有 00:00–04:00 的根；取数失败 %d 窗）——"+
 				"本判据对它不成立，会安静地漏掉缺口，不报结论。\n"+
-				"       ⚠️ 分母是**取到的**天数：失败窗越多，这个比例越虚高（见早退那一段的算术）。\n"+
+				"       ⚠️ 分母是【取到的】天数：失败窗越多，这个比例越虚高（见早退那一段的算术）。\n"+
 				"       只有夜盘收在零点之前的品种才能用这条（见 probe.md 6.9 的射程）",
 			crossed, len(all), fails))
 		return
@@ -944,8 +944,8 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	//（此前它混着「断言过了」和「压根没断言」两种）。
 	if symsFlag != "" {
 		st = "SKIP"
-		note = "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— " +
-			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。" +
+		note = "\n       ⚠️ 【换过品种（-syms），基线断言未运行】 —— " +
+			"本行的结论只是「取到的数长这样」，【不是「与基线相符」】。" +
 			"要判基线请去掉 -syms。"
 	} else if longest != wantLongest || longFrom != wantFrom || longTo != wantTo {
 		st = "FAIL"
@@ -956,7 +956,7 @@ func probeNightGap(ctx context.Context, md, tok string) {
 	report("shinny-night-gap", st, fmt.Sprintf(
 		"交易日 %d 个（%s…%s），其中内置表覆盖得到的（2020-05-06 起）%d 个 = %.0f%%；\n"+
 			"       假如起点挪到 2019-12-11 ⇒ %d 个 = %.0f%%；挪到 2016-05-03 ⇒ %d 个 = %.0f%%\n"+
-			"       跨零点的自然日 %.1f%%（阈值 10%%），而它们**挤在 %s…%s 之间，跨 %d 个交易日** —— 那一段里这条判据【不可用】，不是「不准」\n"+
+			"       跨零点的自然日 %.1f%%（阈值 10%%），而它们【挤在 %s…%s 之间，跨 %d 个交易日】 —— 那一段里这条判据【不可用】，不是「不准」\n"+
 			"       无夜盘的连续段分布：%s\n"+
 			"       最长 = %d 个交易日（%s … %s）—— 那是 2020 年的政策性停夜盘，不是长假%s"+
 			"\n       ── 每一段的起始交易日，按年（给人看的，不参与判定）──%s",
@@ -1141,7 +1141,7 @@ func probeNightHours(ctx context.Context, md, tok string) {
 			prev = cur
 		}
 		if len(edges) > 0 {
-			fmt.Fprintf(&b, "\n                 **变更时点**：%s", strings.Join(edges, " ／ "))
+			fmt.Fprintf(&b, "\n                 【变更时点】：%s", strings.Join(edges, " ／ "))
 		}
 		// 基线（2026-09-09 实测）：只有 rb 变过一次，而且就那一次。
 		// 没有断言的话，这个探针只是一份报告 —— **报告不会因为世界变了而红。**
@@ -1199,8 +1199,8 @@ func probeNightHours(ctx context.Context, md, tok string) {
 		st = "FAIL"
 	case symsFlag != "":
 		st = "SKIP"
-		fmt.Fprintf(&b, "\n       ⚠️ **换过品种（-syms），基线断言未运行** —— "+
-			"本行的结论只是「取到的数长这样」，**不是「与基线相符」**。要判基线请去掉 -syms。")
+		fmt.Fprintf(&b, "\n       ⚠️ 【换过品种（-syms），基线断言未运行】 —— "+
+			"本行的结论只是「取到的数长这样」，【不是「与基线相符」】。要判基线请去掉 -syms。")
 	}
 	report("shinny-night-hours", st, b.String())
 }
@@ -1374,7 +1374,7 @@ func enoughDays(days []string, fails int) (bool, string) {
 	want := int(float64(span) * 5.0 / 7.0 * 0.85)
 	if len(days) < want {
 		return false, fmt.Sprintf("%s..%s 跨 %d 个自然日，按一周五天至少该有 %d 个交易日，"+
-			"实到 %d —— **中间有洞**", first, last, span, want, len(days))
+			"实到 %d —— 【中间有洞】", first, last, span, want, len(days))
 	}
 	return true, ""
 }
@@ -1473,9 +1473,9 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 		// ⇒ 一个探针**崩掉**比报错更糟：它连「我答不了」都说不出来。
 		//   本仓那条「取不到和不存在长得一样」，在这儿的形状是**取到了、而窗口里没有**。
 		if len(seq) == 0 {
-			fmt.Fprintf(&b, "%-14s **在所选窗口（-win %s）里一根都没有** —— "+
-				"取数是成功的（%d 个自然日），是**窗口筛完之后空的**。\n"+
-				"       ⇒ 对 `-win night`：这多半意味着**该品种没有夜盘**"+
+			fmt.Fprintf(&b, "%-14s 【在所选窗口（-win %s）里一根都没有】 —— "+
+				"取数是成功的（%d 个自然日），是【窗口筛完之后空的】。\n"+
+				"       ⇒ 对 `-win night`：这多半意味着【该品种没有夜盘】"+
 				"（GFEX 三个品种都没有）；对 `-win day`：那是异常，去看一眼。\n       ",
 				sym, winFlag, len(all))
 			bad++
@@ -1577,7 +1577,7 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 				}
 				narrow := ""
 				if lastOld != "" && firstNew != "" {
-					narrow = fmt.Sprintf("**旧形态最后一天 %s → 新形态第一天 %s**；",
+					narrow = fmt.Sprintf("【旧形态最后一天 %s → 新形态第一天 %s】；",
 						lastOld, firstNew)
 				}
 				edges = append(edges, fmt.Sprintf("%s括在 (%s, %s] 内：[%s] → [%s]",
@@ -1608,7 +1608,7 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 		}
 		if len(edges) > 0 {
 			for _, e := range edges {
-				fmt.Fprintf(&b, "\n                 **变更**：%s", e)
+				fmt.Fprintf(&b, "\n                 【变更】：%s", e)
 			}
 		}
 		// 基线（2026-09-09 实测：三个交易所各一个主连，各 2595 个自然日
@@ -1663,8 +1663,8 @@ func probeDaySegments(ctx context.Context, md, tok string) {
 		st = "FAIL"
 	case skipped:
 		st = "SKIP"
-		fmt.Fprintf(&b, "\n       ⚠️ **换过参数（-syms / -win / -grid 之一），基线断言未运行**"+
-			" —— 本行的结论只是「取到的数长这样」，**不是「与基线相符」**。"+
+		fmt.Fprintf(&b, "\n       ⚠️ 【换过参数（-syms / -win / -grid 之一），基线断言未运行】"+
+			" —— 本行的结论只是「取到的数长这样」，【不是「与基线相符」】。"+
 			"要判基线请三个开关全部用默认值。")
 	}
 	report("shinny-day-segments", st, b.String())
@@ -1816,7 +1816,7 @@ func main() {
 		os.Exit(1)
 	}
 	if only != "" {
-		fmt.Printf("含 %q 的探针与记录一致；**其余未跑，不代表通过**\n", only)
+		fmt.Printf("含 %q 的探针与记录一致；【其余未跑，不代表通过】\n", only)
 		return
 	}
 	fmt.Println("全部与 docs/probe.md 第六节的记录一致")

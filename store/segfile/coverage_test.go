@@ -458,7 +458,7 @@ func TestFifthColumnNamesExist(t *testing.T) {
 			checked++
 			if !have[m[1]][m[2]] {
 				t.Errorf("design.md 的 %s 第五列写着 %s_%s，"+
-					"而本包里**没有** TestInvariant%s_%s。\n"+
+					"而本包里【没有】 TestInvariant%s_%s。\n"+
 					"  ⇒ 第五列填了一个不存在的守卫名，读起来像【已经守住了】。\n"+
 					"  ⇒ 还没做就写成「**空 —— <凭什么还没做>**」，和 C3b / D2b / G1 同形。",
 					id, m[1], m[2], m[1], m[2])

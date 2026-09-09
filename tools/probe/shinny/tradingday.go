@@ -368,7 +368,7 @@ func probeTradingDayPredicted(ctx context.Context, md, tok string) {
 		if concl == "不确定" {
 			concl = leg2
 		}
-		fmt.Fprintf(&b, "       ⇒ **结论：%s**\n", concl)
+		fmt.Fprintf(&b, "       ⇒ 【结论：%s】\n", concl)
 		if concl == "预知" {
 			b.WriteString("       ⇒ 「last_id < trading_day_end_id ⇒ 未完结」成立，" +
 				"且上游直接给出交易日的 bar-id 边界。\n")

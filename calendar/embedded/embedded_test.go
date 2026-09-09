@@ -440,8 +440,8 @@ func TestCrossMidnightRoster(t *testing.T) {
 	for k := range got {
 		if !want[k] {
 			t.Errorf("%s 的夜盘跨零点，而它不在记录的名单里。\n"+
-				"⇒ 加进 want，并回去想一遍：**有没有哪个按品种做的测量，"+
-				"需要把它补测一遍？**（本仓栽过一次：名单凭印象列，10 个跑了 5 个）", k)
+				"⇒ 加进 want，并回去想一遍：【有没有哪个按品种做的测量，"+
+				"需要把它补测一遍】？（本仓栽过一次：名单凭印象列，10 个跑了 5 个）", k)
 		}
 	}
 	for k := range want {

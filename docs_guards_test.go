@@ -1180,8 +1180,8 @@ func mergeRecordViolations(lines []string) (violations []string, records int) {
 			violations = append(violations, fmt.Sprintf(
 				"第 %d 行这条合流记录站错了地方：它写着「合流 %d」，"+
 					"而【它之后】没有任何一行是 `%s` 且值为 %d。\n"+
-					"  ⇒ 赦免是**读到这一行才生效**的；它要许可的那一行在它【前面】，"+
-					"那一刻这条记录还不存在 ⇒ **它是惰性的**。\n"+
+					"  ⇒ 赦免是【读到这一行才生效】的；它要许可的那一行在它【前面】，"+
+					"那一刻这条记录还不存在 ⇒ 【它是惰性的】。\n"+
 					"  ⇒ 处置：把这一行挪到那一行【之前】（不是改它的数）。",
 				i+1, other, f[3], other))
 		}
@@ -1434,7 +1434,7 @@ func TestHighWaterRuleAdjacency(t *testing.T) {
 			"  来历块首行是第 %d 行；它上面那 %d 行是：\n    %s\n"+
 			"  ⇒ 多半是有人往【规矩与来历块之间】插了东西。\n"+
 			"  ⇒ 那条规矩靠位置起作用：合并冲突的 hunk 只带 %d 行上下文，"+
-			"**插进来就是把它挤出那个人的视野**。\n"+
+			"【插进来就是把它挤出那个人的视野】。\n"+
 			"  ⇒ 要加解释就加在规矩【之上】，别加在它和来历块之间。",
 			ctx, first+1, ctx, strings.Join(lines[lo:first], "\n    "), ctx)
 	}
@@ -1671,4 +1671,185 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 
 	t.Logf("库代码 %d 文件 / %d 行；扫过 %d 个 .md 的 %d 行表格；§〇 里核了 %d 条带路径的状态",
 		files, lines, len(mdFiles), rows, checked)
+}
+
+// —— 印出来的消息里不许有 Markdown 的 `**` ——
+//
+// 这条规矩 2026-09-09 被【执行过两次、写下来零次】：
+// 一次是评审方扫出两处，一次是我重扫又清掉两处。**而它至今没有守卫**，
+// 于是第三次照样会长出来 —— 本仓自己的话：**记成事实的规矩不会被想起。**
+//
+// 判据（从那次提交里取回来的，不是凭印象重编）：
+//
+//	会被打印        必要条件：在 Errorf/Fatalf/Logf/Printf 一类调用里
+//	被当成什么读    还要问这一句 —— 终端不渲染 Markdown，`**` 原样打出来是噪声
+//
+// ⛔ **而例外有两格，且【理由不同】，所以分开写、各带一句话**：
+// 合成一个清单会让下一个人以为它们是同一种豁免。
+//
+// ⚠️ 上一次扫这件事的分类器**只看单行**，于是跨行拼接的调用整个隐形
+// （实测：单行判据得 1 处，跨行判据得 10 处 —— 差的 9 处全在续行上）。
+// **本测试按括号配平找整个调用**，这一格就是它存在的第一个理由。
+//
+// ⛔ **而本测试自己也有一个射程洞，写下来免得被当成「已经守住了」**：
+// 它只看【打印调用括号里】的字面量。**先赋给变量、后打印的消息，它看不见。**
+//
+//	tools/probe/shinny/main.go:947  note = "…**换过品种…**…"  ⇒ 本测试【不报】
+//	tools/probe/shinny/main.go:1202 同一句话直接进 Fprintf     ⇒ 本测试【报】
+//
+// **同一句话，两个写法，一个被守一个不被守。** 947 那处是我在修 1202 时
+// 手工撞见的（替换命中数是 2 而不是 1），不是它报出来的。
+// ⇒ 没有把射程扩到「全部字面量」，是因为那一版量过：docs_test.go 里有
+// **265 处规矩文本数据**会一起进来，而它们不是消息。
+// **两种射程都不对，而这一种的错法是【漏报】** —— 写在这儿，好让下一个人
+// 知道「全绿」覆盖不到哪里。
+var emphasisExempt = []struct{ file, needle, why string }{
+	{
+		"docs_test.go", "的行数：登记 %d，实际 %d",
+		"这条消息在【谈论 `**` 本身】：它报的就是载体里含 `**` 的行数。" +
+			"把它清掉，这条守卫就没法说出自己在数什么",
+	},
+	{
+		"store/segfile/coverage_test.go", "空 —— <凭什么还没做>",
+		"这对 `**` 是【被引用的模板】的一部分：design.md 第五列实际就写成 " +
+			"`**空 —— …**`（2026-09-09 实测 6 处）。清掉它，这条消息" +
+			"就在教人写一个【错的】模板 —— 而这一格原来的判据里没有",
+	},
+}
+
+// splitGoLine 把一行 Go 源码切成【代码】与【字面量】两半。
+//
+// 两半各有用处，而**用错哪一半，就各出一种错**——两种都是实测出来的：
+//
+//	代码半   数括号用。字面量里的 "(" 不能算：
+//	         `fmt.Sprintf("%s括在 (%s, %s] 内…")` 只有左括号 ⇒ 配平永远不收敛
+//	         ⇒ span 一路吃到下一个 ")"，把它后面【40 行注释】读成了这条消息的一部分
+//	         ⇒ 报出 8 处，其中 5 处是注释里的 `**`（假指控）
+//	字面量半 找 `**` 用。注释里的 `**` 是本仓的行文体例，**不该报** ——
+//	         而按整行找的话，紧跟在调用后面的注释会被算进去
+//
+// ⇒ **一个「整行」的判据同时犯了这两个错，而它们指向相反的方向**
+// （一个多报、一个会少报）。分成两半之后，两边各自只回答自己那一问。
+func splitGoLine(s string) (code, lits string) {
+	r := []rune(s)
+	var c, l []rune
+	for i := 0; i < len(r); i++ {
+		if r[i] == '/' && i+1 < len(r) && r[i+1] == '/' {
+			break // 行注释：两半都到此为止
+		}
+		if r[i] == '"' || r[i] == '`' {
+			q := r[i]
+			for i++; i < len(r); i++ {
+				if q == '"' && r[i] == rune(92) { // 反斜杠转义，跳过下一个字符
+					i++
+					continue
+				}
+				if r[i] == q {
+					break
+				}
+				l = append(l, r[i])
+			}
+			continue
+		}
+		c = append(c, r[i])
+	}
+	return string(c), string(l)
+}
+
+// TestNoMarkdownEmphasisInPrintedMessages 见上。
+func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
+	// ⚠️ 动词表是量出来的，不是列出来的（2026-09-09 全仓实测）：
+	//
+	//	errors.New / fmt.Errorf   各 0 处  ⇒ 加进来【今天不花钱】，而它们的字串照样会被读到
+	//	fmt.Sprintf               6 处     ⇒ 「先拼好、后打印」那一族里，它是抓得住的一半
+	//
+	// ⇒ 判据不是「这是不是一个打印函数」，是【这个字串会不会被人读到】。
+	printCall := regexp.MustCompile(
+		`\b(t\.(Errorf|Fatalf|Logf|Error|Fatal|Skipf)` +
+			`|fmt\.(Printf|Println|Fprintf|Sprintf|Errorf)` +
+			`|errors\.New)\(`)
+
+	files, spans, used := 0, 0, map[int]bool{}
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if b := filepath.Base(p); b == ".git" || b == "testdata" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, ".go") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		files++
+		rel := filepath.ToSlash(p)
+		lines := strings.Split(string(b), "\n")
+		for i := 0; i < len(lines); i++ {
+			code, _ := splitGoLine(lines[i])
+			if !printCall.MatchString(code) {
+				continue
+			}
+			// 按括号配平找整个调用 —— 跨行拼接的消息全在这里面。
+			// **数的是代码半**，理由见 splitGoLine。
+			depth, j := 0, i
+			var lits []string
+			for ; j < len(lines); j++ {
+				c, l := splitGoLine(lines[j])
+				depth += strings.Count(c, "(") - strings.Count(c, ")")
+				lits = append(lits, l)
+				if depth <= 0 {
+					break
+				}
+			}
+			spans++
+			whole := strings.Join(lits, "\n")
+			if !strings.Contains(whole, "**") {
+				i = j
+				continue
+			}
+			exempt := false
+			for n, e := range emphasisExempt {
+				if strings.HasSuffix(rel, e.file) && strings.Contains(whole, e.needle) {
+					used[n], exempt = true, true
+					break
+				}
+			}
+			if !exempt {
+				t.Errorf("%s:%d 这条消息里有 Markdown 的粗体标记（两个星号）——"+
+					"终端不渲染它，原样打出来是噪声。\n  %s\n"+
+					"  ⇒ 要强调用【】；真的必须留（在谈论这个标记本身，"+
+					"或在引用一段会被 Markdown 渲染的模板）⇒ 加进 emphasisExempt，"+
+					"并写清【是哪一种】",
+					rel, i+1, strings.TrimSpace(lines[i]))
+			}
+			i = j
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// ⛔ 底线：什么都没扫到，不许读成「干净」。
+	// 与 tools/doccheck 那一格同族（空输出 ⇒ 假 PASS）。
+	if files == 0 || spans == 0 {
+		t.Fatalf("扫过 %d 个 .go、%d 个调用——【读到 0 不是通过】："+
+			"要么 Walk 的起点不对，要么 printCall 认不出它的形状", files, spans)
+	}
+
+	// 幽灵豁免：一条豁免不再命中任何东西，就该删。
+	// 留着它会静默加宽这条规矩 —— 同 ruleAnchors 的幽灵项那一格。
+	for n, e := range emphasisExempt {
+		if !used[n] {
+			t.Errorf("emphasisExempt 里有一条【幽灵项】：%s / %q 已经不匹配任何消息了。\n"+
+				"  ⇒ 删掉它。留着等于给这条规矩开一个没有对象的口子", e.file, e.needle)
+		}
+	}
+	t.Logf("扫过 %d 个 .go 里的 %d 个调用，豁免 %d 条全部命中", files, spans, len(emphasisExempt))
 }

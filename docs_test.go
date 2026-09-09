@@ -169,6 +169,7 @@ var ruleAnchors = []struct {
 	{`CONTRIBUTING.md`, `### 会在打 tag 那一刻失败的守卫，**打之前先空跑一次**`, `打 tag 这个动作本身可能让检查变红。`, ``},
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `不对。那天不该红；红了就是有一步没做`, ``},
 	{`CONTRIBUTING.md`, `## 七、合并 / 删除**之后**，回头用一条独立命令核对`, "别用 `&&` 串两步", ``},
+	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", "` 原样打出来是噪声。", ``},
 	{`CONTRIBUTING.md`, `## 八、没问题的时候要**明说没问题**`, `规则就失去信息量`, ``},
 	{`CONTRIBUTING.md`, `## 合并：生成物不合，重造；来历不取一侧，取并集`, `每并完一条分支，必须跑这三步`, ``},
 	{`CONTRIBUTING.md`, `### 三类文件，三种解法 —— 而它们【不一样】`, `来历行取并集、保序`, ``},
@@ -259,7 +260,7 @@ func TestEveryRuleSectionHasAnAnchor(t *testing.T) {
 			"从被守的量派生出来的阈值在生成那一刻恒真，等于不设防。"+
 			"真的删掉了规矩 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了什么。删规矩是显式动作。"+
-			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"⚠️ 还有第二种成因：高水位可能是在一次【不干净的重造】里被抬高的"+
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
@@ -483,6 +484,9 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `不对。那天不该红；红了就是有一步没做（实现完了要删 pending.txt 那几行）。`},
 	{`CONTRIBUTING.md`, `### 不要提前给一个红色发通行证`, `提前解释一个红色，和给检查加 || true，最终下场一样：没人再读它。`},
 	{`CONTRIBUTING.md`, `## 七、合并 / 删除**之后**，回头用一条独立命令核对`, `remotes/origin/ 不是远端状态，是「上次 fetch 时的远端状态」。`},
+	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `例外只有两种，而且理由不同（合成一种就会被用错）：`},
+	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `0 次 —— 6 处命中全是人重写过的。没有一次是原样粘过去的。`},
+	{`CONTRIBUTING.md`, "### 打印出来的消息里不写 Markdown 的 `**`", `先赋给变量、后打印的消息看不见（实测：main.go:947 与 1202 是同一句话，`},
 	{`CONTRIBUTING.md`, `## 合并：生成物不合，重造；来历不取一侧，取并集`, `每并完一条分支，必须跑这三步（2026-09-09 立，双方各试并过一次）：`},
 	{`CONTRIBUTING.md`, `### 三类文件，三种解法 —— 而它们【不一样】`, `⛔ high_water.txt 的来历行【绝不能取一侧】。`},
 	{`CONTRIBUTING.md`, `### 三类文件，三种解法 —— 而它们【不一样】`, `两条分支各自追加过来历，取任一侧就会丢掉另一侧的历史——`},
@@ -635,7 +639,7 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
-	{`CONTRIBUTING.md`, 266},
+	{`CONTRIBUTING.md`, 277},
 	{`tools/audit/README.md`, 99},
 	{`docs/method-landing.md`, 163},
 }
@@ -742,7 +746,7 @@ func TestEveryQuotedRuleIsRegistered(t *testing.T) {
 			"并在提交信息里说删了什么。"+
 			"⚠️ 这一条挡的正是「删掉规矩 + 重生成 ⇒ 全绿」——"+
 			"上一版下限跟着当前条数走，那个组合是绿的。"+
-			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"⚠️ 还有第二种成因：高水位可能是在一次【不干净的重造】里被抬高的"+
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
@@ -776,7 +780,7 @@ func TestCarrierCensus(t *testing.T) {
 	if floor := floorOf(t, "census"); len(carrierCensus) < floor {
 		t.Fatalf("普查表只有 %d 份文件，低于高水位 %d —— 少了载体。"+
 			"真的不再守某一份 ⇒ 动手调 tools/audit/high_water.txt。"+
-			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"⚠️ 还有第二种成因：高水位可能是在一次【不干净的重造】里被抬高的"+
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
@@ -882,6 +886,7 @@ var guardNames = []string{
 	`TestMergeRecordPrecedesWhatItLicenses`,
 	`TestNoConflictMarkersInDocs`,
 	`TestNoDuplicateHeadingsInCarriers`,
+	`TestNoMarkdownEmphasisInPrintedMessages`,
 	`TestNoOrphanedSentences`,
 	`TestScriptsWrapBothStreams`,
 	`TestStatusClaimsMatchRepo`,
@@ -938,7 +943,7 @@ func TestGuardsStillExist(t *testing.T) {
 		t.Fatalf("守卫名字表只有 %d 条，低于高水位 %d —— 这张表【缩水】了。"+
 			"删守卫是显式动作 ⇒ 动手把 tools/audit/high_water.txt 里那一行调低，"+
 			"并在提交信息里说删了哪个。"+
-			"⚠️ 还有第二种成因：**高水位可能是在一次【不干净的重造】里被抬高的**"+
+			"⚠️ 还有第二种成因：高水位可能是在一次【不干净的重造】里被抬高的"+
 			"（例如载体还带着合并冲突标记就重造，两侧内容一起进表）。"+
 			"先确认这个数【是怎么涨上去的】再决定调不调——"+
 			"如果你什么都没删，那就【不要】写删除说明，去查那次抬高。",
