@@ -1914,16 +1914,32 @@ func TestNoMarkdownEmphasisInPrintedMessages(t *testing.T) {
 // **不回答就红。** 因为一个新哨兵最容易的下场，是被折进某个已有的分支里。
 //
 // 体例照 `periodImplementors` 那一手：**左边扫源码，右边手写**，两半各补对方的盲区。
-var errorSentinelDisposition = map[string]string{
-	"ErrNotTradingDay":  "缺口第三类 GapNotTrading —— 日历知道，而那天不交易",
-	"ErrUncovered":      "缺口第四类 GapCalendarUnknown —— 日历【答不了】，不是「没有交易」",
-	"ErrSpanUnverified": "缺口第五类 GapStoreUnverified —— 存储答不了·未走查；瞬时，走一遍就行",
-	"ErrLegacyMeta":     "缺口第六类 GapStoreLegacy —— 存储答不了·旧格式；**必须问人**",
+type sentinelDisposition struct {
+	Kind GapKind // 0 = 这个哨兵【不进缺口分类】
+	Why  string
+}
+
+var errorSentinelDisposition = map[string]sentinelDisposition{
+	"ErrNotTradingDay":  {GapNotTrading, "日历知道，而那天不交易"},
+	"ErrUncovered":      {GapCalendarUnknown, "日历【答不了】，不是「没有交易」"},
+	"ErrSpanUnverified": {GapStoreUnverified, "存储答不了·未走查；瞬时，走一遍就行"},
+	"ErrLegacyMeta":     {GapStoreLegacy, "存储答不了·旧格式；必须问人"},
 
 	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
 	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。
-	"ErrClosed": "不进缺口分类 —— 它是【时刻】级的答案，而缺口是【交易日】级的",
+	"ErrClosed": {0, "不进缺口分类 —— 它是【时刻】级的答案，而缺口是【交易日】级的"},
+}
+
+// gapKindsNotFromSentinel 是【不由任何哨兵映射来】的那几类。
+//
+// 它们的真值来自 coverage 的「在不在某个 Span 里」，那不是一个错误值。
+// ⇒ 登记在这儿，是为了让下面那条断言能说出一句完整的话：
+// **每一个 GapKind，要么由某个哨兵映射来，要么在这张表里** ——
+// 于是**加第七类时，必须先回答它属于哪一边**。
+var gapKindsNotFromSentinel = map[GapKind]string{
+	GapNeverFetched:   "这一天不在任何 Span 里 —— 是一个【缺席】，不是一个错误值",
+	GapConfirmedEmpty: "在某 Span 里、那一段走查过、而 .dat 里没有它 —— 同样是缺席",
 }
 
 // rootErrorSentinels 扫【根包的源码】，找出所有包级、导出、名字以 Err 开头的哨兵。
@@ -2024,36 +2040,104 @@ func TestRootErrorSentinelsAreDisposed(t *testing.T) {
 		}
 	}
 
-	// ⛔ **到期条件：`GapKind` 一旦落成 Go 常量，本表的比对对象要换成它。**
+	// ⛔ **到期条件已兑现（2026-09-09）：`GapKind` 落成了 Go 常量，比对对象换过来了。**
 	//
-	// 今天 disposition 的【值】是一句散文（「缺口第三类 GapNotTrading —— …」），
-	// 而 `GapNotTrading` 那批名字现在只活在 docs/design.md 与 pending.txt 里。
-	// ⇒ 于是这张表**守住了键，守不住值**：写错一个类别名，没有任何东西会响。
+	// 上一版这里是一条【到期检查】：`GapKind` 一出现就报「该换比对对象了」。
+	// 它按设计开了口，而这一格记录它是**被解决**的，不是被绕过的：
 	//
-	// ⚠️ 评审方 2026-09-09 建议在旁边写一句到期条件。**我把它写成了一个【检查】** ——
-	// 理由是 pending.txt 抬头那条：**不靠人自觉去清理，靠时间推着清；**
-	// 一句写在注释里的到期条件，和一句写在风险表里的话下场一样。
+	//	上一版  disposition 的值是【散文】（「缺口第三类 GapNotTrading —— …」）
+	//	        ⇒ 类别名只活在文档里 ⇒ **键有守卫、值没有**：写错一个名字不会有东西响
+	//	这一版  值是【类型化的 Go 常量】 ⇒ **改名或删掉一个 GapKind，这个文件编译不过**
+	//	        ⇒ 比「抽出名字再比字符串」强一格：它不是一条断言，是编译期
 	//
-	// ⚠️ 而它与上面「不为自定义错误类型扩判据」那一格**不矛盾**，两者的区别要说清：
-	//
-	//	那一格   对象是【一整类还不存在的东西】（任何实现 error 的类型）⇒ 守着空集，红不了
-	//	这一格   对象是【一个具名的、已排期的、必然会来的东西】（GapKind，v0.3 Syncer）
-	//	         ⇒ 它不是"守空集"，是**一张带到期日的欠条**，与 pending.txt 同形
-	for _, n := range rootTypeNames(t) {
-		if n == "GapKind" {
-			t.Errorf("`GapKind` 已经落成 Go 常量了 ⇒ 本表的比对对象该换成它。\n" +
-				"  现在 errorSentinelDisposition 的【值】是散文，类别名只活在文档里 ⇒ 键有守卫、值没有。\n" +
-				"  ⇒ 改成：从每条值里抽出 Gap 常量名，断言它在根包的 GapKind 常量集合里。\n" +
-				"  ⇒ 这条红是【设计如此】的到期，不是回归 —— 改完它就该消失")
-		}
-	}
+	// ⚠️ 而下面这条断言管的是另一半 —— 不是「名字对不对」，是**「一类都没漏」**：
+	// 每一个 GapKind 常量，要么由某个哨兵映射来，要么登记在 gapKindsNotFromSentinel 里。
+	// ⇒ **加第七类时，必须先回答它属于哪一边。不回答就红。**
+	checkGapKindsAreDisposed(t)
 
 	t.Logf("根包 %d 个错误哨兵，处置全部登记：%s", len(found), strings.Join(found, " "))
 }
 
-// rootTypeNames 扫根包源码里所有包级类型名（非测试文件）。
-// 只给上面那条到期检查用 —— 它要判的是「某个类型出现了没有」。
-func rootTypeNames(t *testing.T) []string {
+// gapKindNames 是【每个 GapKind 常量一个实例】。
+//
+// 它是手写的，而它**不会悄悄变旧**：checkGapKindsAreDisposed 拿
+// 【源码里真正声明的常量名】来核这张表的键。体例照 periodSamples 那一手：
+//
+//	扫源码那半  抓「加了一类而没登记」——它枚举的是性质，不是我写下的名字
+//	这张表那半  给出【值】，才做得了「哪一类被哪个哨兵指着」这个比对
+var gapKindNames = map[string]GapKind{
+	"GapNeverFetched":    GapNeverFetched,
+	"GapConfirmedEmpty":  GapConfirmedEmpty,
+	"GapNotTrading":      GapNotTrading,
+	"GapCalendarUnknown": GapCalendarUnknown,
+	"GapStoreUnverified": GapStoreUnverified,
+	"GapStoreLegacy":     GapStoreLegacy,
+}
+
+func checkGapKindsAreDisposed(t *testing.T) {
+	t.Helper()
+
+	// 一、源码里声明了哪些 GapKind 常量 —— 与手写那张表逐名对。
+	found := rootGapKindNames(t)
+	if len(found) == 0 {
+		t.Fatal("根包一个 GapKind 常量都没扫到 —— 要么它们搬走了，要么判据打偏了")
+	}
+	for _, n := range found {
+		if _, ok := gapKindNames[n]; !ok {
+			t.Errorf("源码里新增了一类缺口 %s，而 gapKindNames 里没有它\n"+
+				"  ⇒ 先补进那张表，然后回答下面那一问：它从哪来", n)
+		}
+	}
+	for n := range gapKindNames {
+		if !containsStr(found, n) {
+			t.Errorf("gapKindNames 里有一条【幽灵项】：%s 在根包源码里已经没有了", n)
+		}
+	}
+
+	// 二、每一类要么由哨兵映射来，要么登记为「不由哨兵来」。
+	fromSentinel := map[GapKind]string{}
+	for n, d := range errorSentinelDisposition {
+		if d.Kind == 0 {
+			continue
+		}
+		if prev, dup := fromSentinel[d.Kind]; dup {
+			t.Errorf("%s 与 %s 两个哨兵指向【同一类】%s\n"+
+				"  ⇒ 那意味着两种「答不了」被折成了一格，而它们的处置未必相同", prev, n, d.Kind)
+		}
+		fromSentinel[d.Kind] = n
+	}
+	for name, k := range gapKindNames {
+		_, bySentinel := fromSentinel[k]
+		_, byAbsence := gapKindsNotFromSentinel[k]
+		if bySentinel && byAbsence {
+			t.Errorf("%s 既登记为「不由哨兵来」，又被哨兵 %s 指着 —— 两张表说了相反的话",
+				name, fromSentinel[k])
+		}
+		if !bySentinel && !byAbsence {
+			t.Errorf("缺口 %s 没说它【从哪来】：\n"+
+				"  ⇒ 由某个哨兵映射来 ⇒ 写进 errorSentinelDisposition 的那一条\n"+
+				"  ⇒ 不由哨兵来（真值是一个【缺席】）⇒ 写进 gapKindsNotFromSentinel\n"+
+				"  ⇒ 别只加常量：一个新类别最容易的下场，是被折进某个已有的分支里", name)
+		}
+	}
+	t.Logf("缺口 %d 类：%d 类由哨兵映射来，%d 类真值是一个缺席",
+		len(gapKindNames), len(fromSentinel), len(gapKindsNotFromSentinel))
+}
+
+func containsStr(ss []string, s string) bool {
+	for _, x := range ss {
+		if x == s {
+			return true
+		}
+	}
+	return false
+}
+
+// rootGapKindNames 扫根包源码里所有【类型是 GapKind 的包级常量】的名字。
+//
+// ⚠️ 判据认的是 `const ( X GapKind = … )` 这种带类型的 const 块：
+// 同一个块里后续没写类型的行**沿用前一行的类型**（Go 的 iota 惯例），本函数照这条读。
+func rootGapKindNames(t *testing.T) []string {
 	t.Helper()
 	ents, err := os.ReadDir(".")
 	if err != nil {
@@ -2075,12 +2159,23 @@ func rootTypeNames(t *testing.T) []string {
 		}
 		for _, d := range f.Decls {
 			gd, ok := d.(*ast.GenDecl)
-			if !ok || gd.Tok != token.TYPE {
+			if !ok || gd.Tok != token.CONST {
 				continue
 			}
+			typed := false
 			for _, s := range gd.Specs {
-				if ts, ok := s.(*ast.TypeSpec); ok {
-					out = append(out, ts.Name.Name)
+				vs, ok := s.(*ast.ValueSpec)
+				if !ok {
+					continue
+				}
+				if id, isIdent := vs.Type.(*ast.Ident); isIdent {
+					typed = id.Name == "GapKind"
+				}
+				if !typed {
+					continue
+				}
+				for _, n := range vs.Names {
+					out = append(out, n.Name)
 				}
 			}
 		}

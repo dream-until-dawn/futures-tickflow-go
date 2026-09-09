@@ -1,0 +1,246 @@
+package tickflow
+
+import (
+	"errors"
+	"fmt"
+	"time"
+)
+
+// 本文件是 v0.3 同步层的【甲】：缺口分类器。对应 docs/design.md §七之九。
+//
+// ⛔ **它是纯函数**：日历、coverage、以及「这一天有没有根」全部由参数给，
+// 内部不取时钟、不碰网络、不开文件。
+// ⇒ 这是它能排在 `Store` 接口【之前】的全部理由 —— 它的五个输入
+// （`Span` / 两个存储哨兵 / 两个日历哨兵）都住在本包，`Store` 接口定型推不翻它。
+
+// GapKind 是缺口的六类。**零值不合法** —— 忘了填的调用方会当场被拒，
+// 而不是拿到六类里的某一个（同 segfile.Outcome 那条理由）。
+//
+// ⚠️ 而零值在【本包内部】另有一个用处：`classifyTradingDay` 用它表示
+// 「这一天有数据，不是缺口」。**那是一个不出包的哨兵**，不是第七类 ——
+// 它出不了 `PlanGaps`，因为那一支根本不生成 `Gap`。
+type GapKind int
+
+const (
+	// GapNeverFetched 没拉过。真值来自 coverage（这一天不在任何 Span 里）。
+	//
+	// **最危险的错认**：当成「拉过确认没有」⇒ 静默漏数据，且不会自愈。
+	GapNeverFetched GapKind = iota + 1
+
+	// GapConfirmedEmpty 拉过，确认没有。真值来自 coverage【且那一段走查过】。
+	//
+	// 最危险的错认：当成「没拉过」⇒ 每次都重拉一段确实没有的区间（吵，但不丢数据）。
+	GapConfirmedEmpty
+
+	// GapNotTrading 不是交易日。真值来自日历。
+	//
+	// ⚠️ 它是【被 Walk 跳过的那些天】，不是 Walk 报出来的东西 ——
+	// 所以本层拿【自然日区间】与【Walk 走过的天】相减才得到它。
+	// 而这正是⑨ 那一格的形状：**「日历说有、数据没给」与「日历本来就没说有」，
+	// 在一个只看回调的循环里长得一样。**
+	GapNotTrading
+
+	// GapCalendarUnknown 日历答不了（品种没收录，或日期在 Covers 之外）。
+	//
+	// **最危险的错认**：当成「不是交易日」⇒ 静默跳过整段历史。
+	//
+	// ⚠️ **只有这一类的端点是【自然日】，不是交易日** —— 日历答不了那一段，
+	// 「哪天是交易日」在那里没有答案。这条非对称是那一类的定义带来的，别去「统一」它。
+	GapCalendarUnknown
+
+	// GapStoreUnverified 存储答不了：这一段还没走查过（ErrSpanUnverified）。
+	// **瞬时、自动可解** —— 走一遍就行，不必问人。
+	//
+	// 最危险的错认：当成「拉过确认没有」⇒ 把「没验过」升级成一个肯定的答案。
+	GapStoreUnverified
+
+	// GapStoreLegacy 存储答不了：.meta 版本未知且源不可重放（ErrLegacyMeta）。
+	// **需要一个显式决定** —— 必须问人，机器不许替他答。
+	//
+	// 最危险的错认：与上一类合并 ⇒「走一遍就好」被用在一个需要人拍板的格子上。
+	GapStoreLegacy
+)
+
+func (k GapKind) String() string {
+	switch k {
+	case GapNeverFetched:
+		return "没拉过"
+	case GapConfirmedEmpty:
+		return "拉过确认没有"
+	case GapNotTrading:
+		return "不是交易日"
+	case GapCalendarUnknown:
+		return "日历答不了"
+	case GapStoreUnverified:
+		return "存储答不了·未走查"
+	case GapStoreLegacy:
+		return "存储答不了·旧格式"
+	}
+	return fmt.Sprintf("GapKind(%d)", int(k))
+}
+
+// Gap 是一段闭区间加上它属于哪一类。
+//
+// ⚠️ 用区间而不是逐日列表：一段十一年的「日历答不了」列成逐日，
+// 是约 2700 行噪声 —— **一份全是噪声的告警等于没有告警**。
+type Gap struct {
+	From, To TradingDay
+	Kind     GapKind
+}
+
+func (g Gap) String() string {
+	if g.From == g.To {
+		return fmt.Sprintf("%s %s", g.From, g.Kind)
+	}
+	return fmt.Sprintf("%s..%s %s", g.From, g.To, g.Kind)
+}
+
+// SpanStatus 是【存储对一段 coverage 的答复】：这一段在哪，以及它答不答得了。
+//
+// ⛔ 把 Span 与它的可答性放在一起，是因为**分开传就一定会错位**：
+// 两个切片、两套下标，而错位之后每一天的类别都变了，且没有任何东西会响。
+type SpanStatus struct {
+	Span Span
+
+	// Err 是这一段的可答性：nil / ErrSpanUnverified / ErrLegacyMeta。
+	//
+	// ⚠️ **别的错误值一律当成「坏了」** —— 中止，不折进缺口。见 PlanGaps 的兜底。
+	Err error
+}
+
+// PlanGaps 把请求区间按【六类缺口】分好。签名与用法见 docs/design.md §七之九。
+//
+// 返回的是请求区间在【自然日】上的分段：**不重叠、有序、相邻且同类必已合并**。
+// 有数据的那些天不出现在结果里（它们不是缺口），所以结果是一个
+// **「除去有数据的天」之后的划分**，不是一个覆盖全区间的划分。
+//
+// ⛔ hasBars 或 coverage 报出一个本层认不出的错误 ⇒ **整段中止并返回它**。
+// 「坏了」不是「答不了」：一个要中止，一个要报成缺口然后继续，
+// 而两者在 `(bool, error)` 上长得一模一样（登记：冲突八）。
+func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) ([]Gap, error) {
+	if cal == nil {
+		return nil, errors.New("tickflow: PlanGaps 需要一个日历——第三、第四类的真值只有它给得出")
+	}
+	if hasBars == nil {
+		return nil, errors.New("tickflow: PlanGaps 需要 hasBars——" +
+			"没有它就分不出「拉过，确认没有」和「有数据」，而那两者的处置相反")
+	}
+	if !from.Valid() || !to.Valid() {
+		return nil, fmt.Errorf("tickflow: PlanGaps 的区间不合法：from=%d to=%d", int32(from), int32(to))
+	}
+	if from > to {
+		return nil, fmt.Errorf("tickflow: PlanGaps 的区间反了：from=%s 晚于 to=%s", from, to)
+	}
+
+	// 一、先问日历能回答哪一段 —— **求交必须在最前**。
+	//
+	// 放在后面的话，越界那几天会先被 coverage 判成「没拉过」——
+	// 而「没拉过」会让调用方去重拉一段**日历根本答不了**的区间。
+	cf, ct, covered := cal.Covers(k)
+	lo, hi := from, to
+	if covered {
+		if lo < cf {
+			lo = cf
+		}
+		if hi > ct {
+			hi = ct
+		}
+	}
+	inter := covered && lo <= hi
+
+	// 二、交集内逐个【交易日】分类。Walk 只把交易日交给回调 ——
+	// 所以「不是交易日」在它的输出里是一个【缺席】，要靠下面第三步相减才得到。
+	seen := make(map[TradingDay]GapKind)
+	if inter {
+		var werr error
+		if err := cal.Walk(k, lo, hi, func(d Day) bool {
+			kd, e := classifyTradingDay(d.Num, cov, hasBars)
+			if e != nil {
+				werr = e
+				return false
+			}
+			seen[d.Num] = kd // kd == 0 表示「有数据，不是缺口」
+			return true
+		}); err != nil {
+			return nil, fmt.Errorf("tickflow: PlanGaps 遍历交易日失败：%w", err)
+		}
+		if werr != nil {
+			return nil, werr
+		}
+	}
+
+	// 三、按自然日铺开，逐日定类，相邻同类合成一段。
+	//
+	// ⚠️ 相邻性按【自然日】算，不按交易日 —— 按交易日的话，周末两侧的
+	// 「没拉过」会合成一段，而那一段会**盖住**中间那个「不是交易日」⇒ 两类重叠。
+	// **噪声可以靠筛，重叠不能靠筛。**
+	var out []Gap
+	for d := from; d <= to; d = natNext(d) {
+		var kd GapKind
+		switch {
+		case !inter || d < lo || d > hi:
+			kd = GapCalendarUnknown
+		default:
+			var ok bool
+			kd, ok = seen[d]
+			if !ok {
+				kd = GapNotTrading // Walk 没走到 ⇒ 那天不交易
+			}
+		}
+		if kd == 0 {
+			continue // 有数据：不是缺口，而且它【断开】前后的段
+		}
+		if n := len(out); n > 0 && out[n-1].Kind == kd && out[n-1].To == natPrev(d) {
+			out[n-1].To = d
+			continue
+		}
+		out = append(out, Gap{From: d, To: d, Kind: kd})
+	}
+	return out, nil
+}
+
+// classifyTradingDay 回答「这一个交易日属于哪一类」。
+// 返回 0 表示**有数据，不是缺口**（那是一个不出包的哨兵，见 GapKind 的注释）。
+func classifyTradingDay(d TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) (GapKind, error) {
+	for _, s := range cov {
+		if d < s.Span.From || d > s.Span.To {
+			continue
+		}
+		switch {
+		case errors.Is(s.Err, ErrSpanUnverified):
+			return GapStoreUnverified, nil
+		case errors.Is(s.Err, ErrLegacyMeta):
+			return GapStoreLegacy, nil
+		case s.Err != nil:
+			// ⛔ 兜底：这一维【不封闭】。「坏了」不是「答不了」——
+			// 认不出的错误一律中止，不折进任何一类缺口。
+			return 0, fmt.Errorf("tickflow: coverage 段 [%s, %s] 报了一个本层认不出的错误"+
+				"——这是【坏了】，不是【答不了】，所以中止而不是报成缺口：%w",
+				s.Span.From, s.Span.To, s.Err)
+		}
+		has, err := hasBars(d)
+		if err != nil {
+			return 0, fmt.Errorf("tickflow: 问 %s 有没有根时出错——这是【坏了】，"+
+				"中止而不是报成「拉过，确认没有」：%w", d, err)
+		}
+		if has {
+			return 0, nil
+		}
+		return GapConfirmedEmpty, nil
+	}
+	return GapNeverFetched, nil
+}
+
+// natNext / natPrev 是【自然日】的后一天 / 前一天。
+//
+// ⛔ 不能直接对 TradingDay 加减 1：它是 YYYYMMDD，`20200101-1` 会得到 `20200100`。
+// ⚠️ 而这两个函数**只用来铺开区间与判相邻**，不用来判「哪天交易」——
+// 后者只有日历答得了，本包一个字都不猜。
+func natNext(d TradingDay) TradingDay { return shiftDays(d, 1) }
+func natPrev(d TradingDay) TradingDay { return shiftDays(d, -1) }
+
+func shiftDays(d TradingDay, n int) TradingDay {
+	y, m, day := d.Split()
+	t := time.Date(y, time.Month(m), day, 0, 0, 0, 0, time.UTC).AddDate(0, 0, n)
+	return TradingDay(t.Year()*10000 + int(t.Month())*100 + t.Day())
+}
