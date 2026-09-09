@@ -229,7 +229,7 @@ func TestIDPatternAcceptsShapesTheTableDoesNotYetHave(t *testing.T) {
 	} {
 		m := tableRow.FindStringSubmatch(c.row)
 		if m == nil {
-			t.Errorf("tableRow 认不出 %q —— 这一行会被**一声不响**地跳过，"+
+			t.Errorf("tableRow 认不出 %q —— 这一行会被一声不响地跳过，"+
 				"而那正是 G1 当年的漏法", c.row)
 			continue
 		}

@@ -124,7 +124,7 @@ func TestSettleZeroIsTheProductNotTheParser(t *testing.T) {
 	tt, ttAll := nonZero("daily_T2612.jsonp")
 
 	if rb != rbAll || rb == 0 {
-		t.Fatalf("RB2610 应当 %d 根全都读得出非零结算价，实得 %d ⇒ **解析器坏了**，"+
+		t.Fatalf("RB2610 应当 %d 根全都读得出非零结算价，实得 %d ⇒ 解析器坏了，"+
 			"下面那条「中金所全 0」就不能说明任何事", rbAll, rb)
 	}
 	if ta != taAll || ta == 0 {

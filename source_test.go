@@ -41,7 +41,7 @@ func TestPeriodIsSealed(t *testing.T) {
 		}
 	}
 	if sealed == "" {
-		t.Fatalf("Period 没有不可导出的方法 ⇒ **包外任何带 String() 的类型都能实现它**，"+
+		t.Fatalf("Period 没有不可导出的方法 ⇒ 包外任何带 String() 的类型都能实现它，"+
 			"包括 time.Duration。现有方法：%d 个", rt.NumMethod())
 	}
 	t.Logf("封口方法是 %s（不可导出）", sealed)

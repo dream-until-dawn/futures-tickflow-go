@@ -44,7 +44,11 @@ func newDayServer(t *testing.T) *dayServer {
 		// 默认：把那份真实响应的交易日改写成 URL 里那一天，
 		// 好让「XML 自报的交易日」与日历对得上（那道交叉核对是活的）。
 		day := dayFromPath(r.URL.Path)
-		_, _ = w.Write([]byte(strings.ReplaceAll(string(real), "20260908", day)))
+		// 替换**整段元素**，不是替换那个日期串：
+		// 实测 fixture 里 "20260908" 共 714 处、全部在 <tradingday> 里 ⇒ 今天两种写法等价，
+		// **而那是被【数据】保证的，不是被【写法】保证的** —— 换一份 fixture 就可能不再等价。
+		_, _ = w.Write([]byte(strings.ReplaceAll(string(real),
+			"<tradingday>20260908</tradingday>", "<tradingday>"+day+"</tradingday>")))
 	}))
 	t.Cleanup(ds.Close)
 	return ds
@@ -305,4 +309,48 @@ func TestProbe_LiveCFFEXArchive(t *testing.T) {
 		t.Fatal("真网数据没有结算价 —— 本源存在的理由没了")
 	}
 	t.Logf("真网：IC2609 %s 结=%v", bars[0].TradingDay, bars[0].Settle)
+}
+
+// TestSinceIsArchiveLevelAndKnowinglyWrongForLateProducts 钉住登记㉔ 的【射程】。
+//
+// ⛔ 它断言的是「八个品种拿到同一个值」—— **而那正是缺陷本身，不是它被修好了。**
+// 名字里写着 KnowinglyWrong，因为**绿色测试是被【按名字】读的**：
+// 输出里只剩一行名字，说明写得再全也在摘要之外。
+//
+//	Capabilities.Since 的契约是【按品种】给（source.go）
+//	而本源给的是【存档级】下界：2016-01-04 那天只有 IC/IF/IH/T/TF 五个品种
+//	⇒ 对 IM / TS / TL，这个值**早于它们上市**
+//
+// ⚠️ 而它在本源上的代价不是「差一点」：一天一个请求 ⇒
+// 照它回补一个后上市的品种是**几千次请求换 0 根，且 err == nil**（⑨×⑯ 的落地）。
+//
+// ⇒ 修好它需要【上市日】= refdata（v0.4）。那一天到了，这条测试会红，
+// 而**红了之后要做的是把它改成「按品种各不相同」，并关掉㉔**。
+func TestSinceIsArchiveLevelAndKnowinglyWrongForLateProducts(t *testing.T) {
+	ds := newDayServer(t)
+	c := newTestClient(t, ds, []tickflow.TradingDay{20260908})
+
+	// 2016-01-04 那天真实存在的五个（本包 client.go 的注释与探针读数）
+	early := []string{"IC", "IF", "IH", "T", "TF"}
+	// 后上市的三个 —— 对它们，这个 Since 是明知的错
+	late := []string{"IM", "TS", "TL"}
+
+	seen := map[tickflow.TradingDay]int{}
+	for _, prod := range append(append([]string{}, early...), late...) {
+		k := tickflow.ProductKey{Exchange: tickflow.CFFEX, Product: prod}
+		since, ok := c.Caps(k).Since[tickflow.Daily]
+		if !ok || !since.Valid() {
+			t.Fatalf("%s 没给出合法起点", prod)
+		}
+		seen[since]++
+	}
+	if len(seen) != 1 {
+		t.Fatalf("Since 已经按品种分开了（%d 个不同的值）——"+
+			"若这是有意的，请把这条测试改成逐品种断言，并关掉登记㉔：%v", len(seen), seen)
+	}
+	if n := seen[cffexSince]; n != len(early)+len(late) {
+		t.Fatalf("八个品种应当都拿到存档级下界 %s，实得 %d 个", cffexSince, n)
+	}
+	t.Logf("八个品种同拿 %s —— 其中 %v 三个【早于上市】，这是登记㉔ 的已知缺陷",
+		cffexSince, late)
 }

@@ -244,7 +244,7 @@ func TestCapsAndBarsAgreeOnPeriods(t *testing.T) {
 				"  ⇒ 声称的能力必须真的给得出来，不只是「没被那道闸挡住」", p, err)
 		case !caps.Supports(p) && !byPeriod:
 			t.Errorf("Caps 没说支持 %s，而 Bars 没有因周期拒绝它（err=%v）——"+
-				"**这正是那次静默分叉的形状**", p, err)
+				"这正是那次静默分叉的形状", p, err)
 		}
 		if caps.Supports(p) {
 			supported++
