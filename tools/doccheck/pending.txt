@@ -89,11 +89,7 @@
 SyncRequest   v0.3.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
 BatchDaysUnbounded v0.3.0  Capabilities.BatchDays 的具名「不必切」；写成 0 会和「忘了填」不可分辨（登记⑫）
 Syncer.Sync   v0.3.0  按交易日记 coverage，只拉缺失区间
-ClipToLastClosed v0.3.0  乙：末端截到最后一根已收盘的（SYN-1）；第二个返回值不可省——「截到 0」与「截到某天」不可分辨
-ScanBars        v0.3.0  乙：Misaligned 扫 BarBound.Anomalous（SYN-2）＋ AnomalousDays 记交易日（SYN-5）
-ScanNightAbsent v0.3.0  乙：连续无夜盘那一段（SYN-7/8/9）；只报不判；排除 Covers().from 那一天；第二个返回值 = 这个品种适不适用（标称夜盘>0）——「不适用」与「适用但没找到」在 Days=0 上不可分辨
 SyncReport    v0.3.0  带「请求区间 vs 日历覆盖区间」两行；Misaligned 扫 BarBound.Anomalous
-NightAbsent   v0.3.0  连续无夜盘那一段（Days/From/To）；只报不判 —— 实测分布 1×52 段 / 64×1 段，中间空，见 probe.md 6.9
 AggClockGrid      v0.5.0  AggRule 的成员：时钟网格
 AggTradingAxis    v0.5.0  AggRule 的成员：交易时间轴 + 相位
 NoAdjust          v0.6.0  AdjustMethod 的成员：不复权
