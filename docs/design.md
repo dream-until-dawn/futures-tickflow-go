@@ -2513,6 +2513,95 @@ const BatchDaysUnbounded = -1
 **写下来是为了让「没做」和「做漏了」分得开** —— 丙全绿时，
 **不许说「v0.3 端到端通了」**。
 
+### 七之九、甲：`PlanGaps` —— 六类缺口的分类器，**纯函数**
+
+```go
+// SpanStatus 是【存储对一段 coverage 的答复】：这一段在哪，以及它答不答得了。
+//
+// ⛔ 把 Span 与它的可答性放在一起，是因为**分开传就一定会错位**：
+// 两个切片、两套下标，而错位之后每一天的类别都变了，且没有任何东西会响。
+type SpanStatus struct {
+	Span Span
+
+	// Err 是这一段的可答性。nil / ErrSpanUnverified / ErrLegacyMeta。
+	//
+	// ⚠️ **别的错误值一律当成「坏了」** —— 见 PlanGaps 的兜底那一段。
+	Err error
+}
+```
+
+```go
+// PlanGaps 把请求区间按【六类缺口】分好。
+//
+// ⛔ **纯函数**：日历、coverage、以及「这一天有没有根」全部由参数给，
+// 内部不取时钟、不碰网络、不开文件。
+// ⇒ 这是甲能排在 `Store` 接口【之前】的全部理由（见七之八）。
+//
+// hasBars 回答「这一天在 .dat 里有没有记录」。它是一个参数而不是一个接口，
+// 理由是**测试要能一行造出六类里的任何一类**；实现方把 `Store.HasBars` 包一层即可。
+func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) ([]Gap, error)
+```
+
+⛔ **这个签名在文档里写成【一行】，而那不是排版偏好** ——
+`doccheck` 的 `parseFunc` 只认单行签名：写成折行的形式，**它一处都收不到**
+（2026-09-09 实测：折行版 `-list` 里 `PlanGaps` 命中 **0**，`SpanStatus` 三项照常收到）。
+⇒ 于是那个声明会**既不在守卫视野里、也不在白名单里** —— 与 `Gap` 那次同族：
+**声明真的存在，而登记看不见它。**
+⇒ 处置取「让它被守住」而不是「让它好看」（同 `docs_guards_test.go` 那条守卫的选址）；
+**而 `doccheck` 认不认折行签名，是它自己的一个洞，记在这里，不在本片修。**
+
+#### 它按七之零那棵划分树走，而**顺序是判据的一部分**
+
+```
+一  先与 Covers() 求交
+     交集之外 ⇒ GapCalendarUnknown（冲突五的处置：不让 Walk 炸，而是把它列出来）
+     ⛔ 求交必须在最前面：放后面的话，越界那几天会先被 coverage 判成「没拉过」
+二  交集内逐日走 Walk
+     Walk 只遍历交易日 ⇒ **第三类是「被跳过的那些天」，不是它报出来的东西**
+     ⇒ 所以要拿【自然日区间】与【Walk 走过的天】相减才得到 GapNotTrading
+三  每个交易日，按 coverage 定位
+     不在任何 Span 内           ⇒ GapNeverFetched
+     在某 Span 内且 Err != nil  ⇒ 按哨兵分：ErrSpanUnverified / ErrLegacyMeta
+     在某 Span 内且 Err == nil  ⇒ 问 hasBars
+                                    有 ⇒ 不是缺口
+                                    没有 ⇒ GapConfirmedEmpty
+四  hasBars 返回的错误【不是缺口】⇒ **整段中止并返回它**（兜底，见冲突八）
+```
+
+⛔ **第二步那句「相减」是这一层最容易写错的地方，写死在这里：**
+
+> `Calendar.Walk` **只把交易日交给回调**。于是「不是交易日」在它的输出里是一个**缺席**，
+> 而本层要报的是一个**区间**。
+> ⇒ 必须拿区间与「走过的天」相减 —— **而这正是⑨ 那一格的形状**：
+> **「日历说有、数据没给」与「日历本来就没说有」，在一个只看回调的循环里长得一样。**
+
+#### 六类各一条能单独触发它的输入（这是甲的验收标准，不是测试清单）
+
+```
+GapNeverFetched     日历覆盖内的交易日 · cov 为空                      ⇒ 第一类
+GapConfirmedEmpty   同上 · cov 覆盖该日且 Err==nil · hasBars 给 false  ⇒ 第二类
+GapNotTrading       区间里夹一个非交易日（Walk 跳过它）                 ⇒ 第三类
+GapCalendarUnknown  请求区间的一端落在 Covers() 之外                    ⇒ 第四类
+GapStoreUnverified  cov 覆盖该日 · Err = ErrSpanUnverified             ⇒ 第五类
+GapStoreLegacy      cov 覆盖该日 · Err = ErrLegacyMeta                 ⇒ 第六类
+兜底                hasBars 返回一个不是上述哨兵的错误                  ⇒ **返回 error，不返回缺口**
+```
+
+> ⚠️ **「各一条能单独触发」是【必要】不是【充分】**：它保证六类各自可达，
+> **不保证分类器把边界划对**。边界要另外造 —— 相邻两类的**交界样本**，
+> 例如「Span 恰好覆盖到 to 的前一天」「区间恰好等于 Covers()」。
+> ⇒ 这一句写在这里，是因为「六类各一条、全绿」读起来非常像「分类器对了」。
+
+#### 甲**不做**的三件事，写下来让「没做」和「做漏了」分得开
+
+```
+一  不判「这一天要不要重试」—— 那是 ㉒ 的减法（未上市/已到期由上市日、到期日减掉），
+     而上市日在 refdata（v0.4）。甲只报「它属于哪一类」。
+二  不合并相邻的同类缺口。合并是【报告】的事，而合并会把「连续 N 天」这个
+     ⑨ 要用的形状抹掉 —— 谁需要谁自己合。
+三  不碰限流、不碰分块、不发任何请求。那些在丙。
+```
+
 ---
 
 ## 八、主力连续与换月拼接：本库相对姊妹项目最大的增量

@@ -88,6 +88,8 @@
 # ---- v0.3：拉取 / 存储 / 同步 ----
 SyncRequest   v0.3.0  同步请求；Force 用于重拉被固化成「确认无数据」的抖动
 Gap           v0.3.0  一段交易日闭区间 + 它属于哪一类；用区间不用逐日列表（逐日=约 2700 行噪声）
+SpanStatus    v0.3.0  存储对一段 coverage 的答复：Span + 它答不答得了（nil/ErrSpanUnverified/ErrLegacyMeta）
+PlanGaps      v0.3.0  甲：六类缺口的分类器，**纯函数**（日历/coverage/hasBars 全由参数给）
 GapKind       v0.3.0  缺口的【六】类；零值不合法。四类改六类的理由见 design.md 七之零冲突七
 GapNeverFetched    v0.3.0  第一类：没拉过（真值来自 coverage）
 GapConfirmedEmpty  v0.3.0  第二类：拉过、确认没有（coverage 的两个计数【且走查过】）
