@@ -327,6 +327,13 @@ def main():
     #   实测 2026-09-09：删掉 store/segfile/coverage_test.go 的 TestFifthColumnNamesExist
     #   ⇒ vet 过 / 四包全绿 / 这里仍然数出同一个守卫数。**没有任何东西响。**
     #   那个包里现在有 3 条这样的守卫，为什么不改成按性质抽——理由写在那个文件头。
+    # ⛔ 而「没有判据」只对【推断】成立：`// guard:` 这种【声明】是可机器判的。
+    #   ⚠️ 更要紧的一条：**全仓收集的机器这个文件里已经有了** ——
+    #   遍历全仓 *_test.go 的机器有【两台】：TestGuardsStillExist（os.ReadFile）与
+    #   TestGuardsDoNotSkipThemselves（parser.ParseFile）。⚠️ 两台都是【消费】
+    #   guardNames 的，**不产生**它 —— 遍历现成，产生登记表那一步仍只有一处，
+    #   而登记只从这一行的两个位置抽。**同一张表，一头按性质、一头按位置。**
+    #   ⇒ 缺的不是收集，是「哪些 func Test 算守卫」这个定义。单独一格再做。
     guardsSrc = staticTpl + open(os.path.join(ROOT, "docs_guards_test.go"),
                                  encoding="utf-8").read()
     names = sorted(set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc)))
