@@ -1930,6 +1930,25 @@ var errorSentinelDisposition = map[string]string{
 //
 // 判据按性质划，不按文件：包内任何地方加一个，它都看得见。
 // 范围排除 _test.go —— 测试里的哨兵不是对外契约。
+//
+// ⛔ **射程：它认的是【var 声明】＋ 名字以 `Err` 开头 ＋ 导出。三样都要。**
+// 走 go/ast 的 GenDecl/ValueSpec ⇒ `var ErrX = …` 与 `var ( ErrX = … )` **两种写法都逮得到**。
+// **而照不到的是【自定义错误类型】** —— 一个 `func (e xxxError) Error() string`
+// 同样是这个包对外交出的一种「答不了/出错了」，而它：
+//
+//	不是 var          ⇒ 判据的第一样就不满足
+//	不必叫 Err 开头   ⇒ Go 的惯例恰恰是 `XxxError`，**第二样也不满足**
+//
+// 今天不花钱（2026-09-09 实测，两条独立的路）：
+//
+//	根包 `func (…) Error() string`  **0 处**  ⇒ 没有自定义错误类型
+//	`func Err…` / `type Err…`       各 **0 处**
+//	`go doc -all .` 抽出的 Err*     **5 个**，与本扫描器逐名相同
+//
+// ⚠️ **不扩判据，只写下射程** —— 理由是本仓那条：**沉默的断言只会被继承。**
+// 扩到「所有实现 error 的东西」要另做一套（认接口，不认名字），
+// 而今天它的对象是空集：**一条守着空集的判据，红不了，也证明不了什么。**
+// ⇒ 真出现第一个自定义错误类型那天，这段话就是那时该读的东西。
 func rootErrorSentinels(t *testing.T) []string {
 	t.Helper()
 	ents, err := os.ReadDir(".")
