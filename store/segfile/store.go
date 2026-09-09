@@ -52,13 +52,16 @@ type Store struct {
 // 而不是拿到 false 或 true 里的某一个。
 // 「问了但没问成」和「问了，确认没有」在返回值上可以长得很像
 // （空数组 / 错误 / 超时后的空响应），所以这件事必须由调用方**说出来**。
-type Outcome int
+// ⛔ **2026-09-09 挪到根包**（`tickflow.Outcome`），这里只留别名。
+// 理由不是搬家的便利：**「零值不合法」是接口契约的一部分** ——
+// 留在实现包里，别的 `Store` 实现就不受它约束，而 C2 正是靠它成立。
+type Outcome = tickflow.Outcome
 
 const (
 	// OutcomeComplete 上游【完整成功】。只有它允许扩 coverage。
-	OutcomeComplete Outcome = iota + 1
+	OutcomeComplete = tickflow.OutcomeComplete
 	// OutcomeFailed 出错、超时、或响应不完整。落盘可以，扩 coverage 不行。
-	OutcomeFailed
+	OutcomeFailed = tickflow.OutcomeFailed
 )
 
 var (
@@ -70,6 +73,16 @@ var (
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
 )
+
+// ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
+//
+// 这不是一条测试，是**编译期** —— 接口与实现哪天对不上，`go build` 当场不过。
+// 而那个接口正是**按本类型实到的方法反推**出来的（design.md 七之零冲突三）：
+// 这一行的作用是**把那次「反推」钉住**，免得两边各自漂。
+//
+// ⚠️ 它同时是那句「Open 不进接口」的对照物：`Open` 是包级函数，
+// **本断言不要求它** —— 若哪天有人把构造塞进接口，这一行会当场红。
+var _ tickflow.Store = (*Store)(nil)
 
 // Open 打开一个落盘目录。返回被截掉的残尾字节数（C3a，见 OpenDat）。
 func Open(dir string) (s *Store, truncated int64, err error) {

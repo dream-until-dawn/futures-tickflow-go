@@ -2024,7 +2024,7 @@ type SyncReport struct {
     // 不是「有多少根带了这一位」。给日期，直接可行动。
     AnomalousDays []TradingDay
 
-    Gaps []Gap // 四类，见上
+    Gaps []Gap // **六类**，见上（2026-09-09 由四类改六类：存储侧两个「答不了」原来一格都没有）
 
     // NightAbsentRun 是本次同步里【连续无夜盘的交易日】那一段，给人看的，不下判断。
     //
@@ -2032,6 +2032,19 @@ type SyncReport struct {
     // 在发生的时候是同一件事，区别只在【后来会不会恢复】，而报告写下来的那一刻还没有「后来」。
     // 阈值取 2 不是拍的：十年实测的分布是 1×52 段、64×1 段，**2 到 63 一次都没出现过**。
     NightAbsentRun NightAbsent
+
+    // NightAbsentOK 说这个品种【适不适用】那条检查（标称夜盘是否 > 0）。
+    // ⛔ 不可省：「不适用」与「适用但没找到」在 NightAbsentRun.Days == 0 上不可分辨。
+    NightAbsentOK bool
+
+    // —— 下面三格是 C3b / D2b 的落声处。——
+    // ⛔ 它们此前**在这个声明里根本不存在**（2026-09-09 实测：各 0 处），
+    // 而 §6.1 的 C3b / D2b 明写着「必须进 SyncReport」。
+    // ⚠️ 那不是「守卫看不见它」，是**文档要求的字段在文档自己的声明里不存在** ——
+    // 两个诊断的症状一模一样（登记表里都是 0），**而处置相反**：前者补登记，后者补声明。
+    TruncatedTails       []string // C3b：哪些库开的时候截掉了残尾
+    LegacyMetaDiscarded  []string // D2b：作废了哪些
+    LegacyMetaUnverified []string // D2b：标了哪些
 }
 
 // NightAbsent 是「连续无夜盘」的那一段。**具名，不用匿名内嵌结构体** ——
@@ -2854,16 +2867,26 @@ Verify(span Span) error
 HasBars(day TradingDay) (bool, error)
 ```
 
-⇒ 接口取其中**编排真的会调**的那些，**不多不少**（方法集如下）：
+⇒ 接口取其中**编排真的会调**的那些，**不多不少**：
 
+```go
+type Store interface {
+	Coverage() []Span
+	HasBars(day TradingDay) (bool, error)
+	AppendBars(bars []Bar) error
+	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
+	Verify(span Span) error
+	Close() error
+}
 ```
-Coverage()   []Span
-HasBars(day TradingDay)                              (bool, error)
-AppendBars(bars []Bar)                               error
-CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome)  error
-Verify(span Span)                                    error
-Close()                                              error
-```
+
+✅ **这张欠条已于丙一到期兑现**（接口落进根包 `store.go`），所以它现在进了 `go` 围栏。
+⛔ 而**它被守住靠的不止是「进了围栏」**，还有一条更硬的：
+`store/segfile` 里写了一行 **编译期断言** `var _ tickflow.Store = (*Store)(nil)` ——
+接口与实现哪天对不上，**`go build` 当场不过**。
+> ⇒ 那一行的作用是**把「按实现反推接口」这次反推钉住**，免得两边各自漂；
+> 而它同时是「`Open` 不进接口」的对照物：`Open` 是包级函数，**断言不要求它** ——
+> 若哪天有人把构造塞进接口，那一行会当场红。
 
 ⛔ **这一段【故意不写成 `go` 围栏】，而理由是刚量出来的一个 doccheck 缺陷：**
 
@@ -2883,8 +2906,45 @@ doccheck 的键是【裸名字】（`Store.Verify`），**不带包**
 那时根包声明会赢，比对才有意义。
 ⚠️ 而「不进围栏」的代价照旧写明（同 `PlanGaps` 那一格）：**它现在不在守卫视野里。**
 **这是一张带到期条件的欠条，到期条件是「丙一落地」。**
+
+✅ **而这张欠条已于丙一到期兑现，并且【到期看得见】**（实测）：
+```
+把文档里 Store 的一个方法签名改一处   ⇒ doccheck **exit 1**
+把 SyncReport 的一个字段类型改一处    ⇒ doccheck **exit 1**
+（到期之前这两处都在围栏之外 ⇒ 改了它一声不响）
+```
+> ⇒ 「到期」不是一句宣布，是**一个能被突变打红的状态**。
+
 ⇒ 而 doccheck 那个缺陷本身**不在这一片修**：它要么按包分键，要么在比对时剥掉包限定符
 （`[]Bar` vs `[]tickflow.Bar` 那 5 处差的**只有限定符**）——两条都是它自己的事。
+
+⛔ **而修它未必要「按包分键」那么大 —— 评审方 2026-09-09 找到一处不对称，我复核成立：**
+
+```
+文档侧  scanBlock / scanStruct 走 put()，而 **put 里有同名冲突检测**（⇒「文档内部矛盾」那一类）
+源码侧  fromSource **直接 `out[name] = decl{…}`，一个字的检测都没有**
+⇒ **这台机器工具里已经有了，只装在一侧。**
+```
+⇒ 先把源码侧也走 `put()`，它立刻会把跨包同名报出来。**记在这里，让下一个人少走一圈。**
+
+⚠️ **今天的实况（双方各量一次，读数一致）：跨包同名 10 处，而只有 1 处在被比对。**
+
+```
+活的   Calendar（根包 | calendar/embedded）—— 今天正确，**而它靠 calendar < calendar.go 这个字典序**
+潜伏   另 9 处（Client · Client.Bars · Client.Caps · Option · ParseDaily ·
+       WithBaseURL / WithClock / WithHTTPClient 在 cffexsource | sinasource；New 在三个包）
+       源码 map 里确实互相覆盖，**只是文档没声明它们**
+       ⇒ **任何一个哪天进了文档，比对就静默地由走序决定** —— 与⑯ 同形：
+         潜伏，被一次正常的进展激活，而激活它的动作是「补文档」
+```
+
+⛔ **而这张欠条【到期之后】仍然靠同一个运气**（评审方指出，我认）：
+「根包声明会赢」成立，靠的是 `store`(目录) < `store.go`(文件) 这个字典序。
+> ⇒ **「赢」这件事本身就是这一节要报的那个缺陷。**
+> **到期之后比对有意义，而它依赖 `store.go` 排在 `store/` 之后 ——
+> 这一条是那个缺陷的【另一面】，不是它的解决。**
+⇒ 真正解决它的是上面那条「源码侧也走 `put()`」；在那之前，
+**这里的绿灯是一个【有条件的绿灯】，而条件写在这一段里。**
 
 ⛔ **`Outcome` 今天住在 `segfile` 里，而接口在根包 ⇒ 它要挪上来。**
 这不是搬家的便利问题：**`Outcome` 零值不合法**这条性质是接口契约的一部分
