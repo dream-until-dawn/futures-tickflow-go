@@ -439,6 +439,27 @@ func valueNameInBlock(t string) string {
 // 只认基本字面量（带引号的串、数字）：`iota`、函数调用、表达式一律返回空串 ⇒
 // 那些项只比名字。**这是有意的**——`time.FixedZone("CST", 8*3600)` 两边的写法
 // 可以合法地不同，硬比会变成假警报，而一条假警报教人忽略整个工具。
+// litValue 取一个 const/var 的字面量值当 Sig，**与文档侧 litOf 同口径**。
+//
+// 认两种形态：基本字面量（`3` / `"a"`），以及**带负号的**基本字面量（`-1`）——
+// 后者在 AST 里是 `UnaryExpr{Op: SUB}`，而 litOf 那一侧是按字符串判的，天然认得它。
+func litValue(vals []ast.Expr, k int) string {
+	if k >= len(vals) {
+		return ""
+	}
+	switch v := vals[k].(type) {
+	case *ast.BasicLit:
+		return v.Value
+	case *ast.UnaryExpr:
+		if v.Op == token.SUB {
+			if bl, ok := v.X.(*ast.BasicLit); ok {
+				return "-" + bl.Value
+			}
+		}
+	}
+	return ""
+}
+
 func litOf(t string) string {
 	i := strings.Index(t, "=")
 	if i < 0 {
@@ -667,12 +688,15 @@ func fromSource(root string) (map[string]decl, error) {
 							}
 							// 只取基本字面量当 Sig，与文档侧 litOf 的口径一致；
 							// iota / 函数调用 / 表达式 ⇒ 空，那些项只比名字。
-							sig := ""
-							if k < len(vs.Values) {
-								if bl, ok := vs.Values[k].(*ast.BasicLit); ok {
-									sig = bl.Value
-								}
-							}
+							//
+							// ⛔ **而「与 litOf 口径一致」这句话，2026-09-09 之前是【假的】**：
+							// `litOf` 明写着接受前导 `-`（`rhs[0] == '-' && rhs[1] 是数字`），
+							// 而这里只认 `*ast.BasicLit` —— **`-1` 在 AST 里是 UnaryExpr，不是 BasicLit**。
+							// ⇒ 实测：`const BatchDaysUnbounded = -1`
+							//    文档侧给 `-1`、源码侧给空 ⇒ 报一处**假的**「签名不同」。
+							// ⇒ 判据：**一句「与 X 口径一致」的注释，本身是一条待验断言** ——
+							//    而它读起来像一句说明，所以没人去验。
+							sig := litValue(vs.Values, k)
 							out[id.Name] = decl{Name: id.Name, Kind: "value", Sig: sig,
 								Src: fmt.Sprintf("%s:%d", rel, fset.Position(id.Pos()).Line)}
 						}

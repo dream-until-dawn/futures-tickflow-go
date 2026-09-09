@@ -205,6 +205,24 @@ func TestReportWording(t *testing.T) {
 			want: []string{"【文档内部】同一标识符声明了两次且不一致", "S.Caps"},
 		},
 		{
+			// ⛔ 负数常量：**两侧口径必须一致**。
+			// 源码侧原来只认 *ast.BasicLit，而 `-1` 在 AST 里是 UnaryExpr ⇒ 给空；
+			// 文档侧 litOf 明写着接受前导 `-` ⇒ 给 "-1" ⇒ **一处假的「签名不同」**。
+			// 而源码侧那句注释当时写着「与文档侧 litOf 的口径一致」—— 它是假的。
+			name:    "负数常量两侧口径一致（曾经假报「签名不同」）",
+			doc:     md("const BatchDaysUnbounded = -1"),
+			src:     "const BatchDaysUnbounded = -1",
+			want:    []string{okMark},
+			notWant: []string{"签名不同", "BatchDaysUnbounded"},
+		},
+		{
+			// 对照：负数常量**真的不一致**时仍然要报 —— 否则上一条也可能是「它不再比负数了」。
+			name: "负数常量真的不同，仍要报",
+			doc:  md("const BatchDaysUnbounded = -1"),
+			src:  "const BatchDaysUnbounded = -2",
+			want: []string{"名字在、【签名不同】", "BatchDaysUnbounded", "文档: -1", "源码: -2"},
+		},
+		{
 			name:    "源码里找不到、又不在白名单",
 			doc:     md("type Ghost struct {\n    A int\n}"),
 			src:     "type X int",
