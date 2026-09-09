@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/source/pacing"
 )
@@ -108,7 +109,36 @@ type SyncerConfig struct {
 	// 真的不想限流，写 `pacing.NoPacing()`：
 	// **一个具名的「我不限流」是一个看得见的选择，一个 nil 不是。**
 	Pacer pacing.Pacer
+
+	// Timeout 是每一次上游请求的超时。**必填**，零值被拒。
+	//
+	// 🔴 **这一格是 SourceFactory 顺手拿走的，而第一版把它丢了**
+	//（评审方 2026-09-09 问「超时归谁定」，我去量，发现的不是一个空位，是一次静默回退）：
+	//
+	//	两个源自己的默认   &http.Client{Timeout: 30 * time.Second}
+	//	pacing.Client()    &http.Client{Transport: rt}   ← Timeout 零值 = 【没有超时】
+	//	WithHTTPClient     c.http = h                    ← 整个替换，不是合并
+	//	⇒ 走 SourceFactory 这条路，那 30 秒被【静默拿掉了】
+	//
+	// ⛔ **而它链到失败预算**：`MaxConsecutiveFails` 数的是【错误】，
+	// 而一个挂住的请求不产生错误 —— 它只是不返回。
+	// ⇒ **没有超时的话，那个预算有一整类失败接不住**，而那一类恰恰是最长的那种。
+	//
+	// ⚠️ 不在 `pacing` 那一层补默认值：它明写了「不设超时默认——超时是调用方的事」，
+	// 而那个理由仍然成立（**便利构造函数顺手塞默认值 = 替使用者做了一个他不知道的决定**）。
+	// ⇒ 决定被搬到了这一层，就在这一层要一个显式的答案。
+	//
+	// 真的不想要超时，写 `NoTimeout` —— 同 `NoPacing()` / `BatchDaysUnbounded`：
+	// **不消灭那个选择，而是逼它变成一个写得出来、看得见的动作。**
+	Timeout time.Duration
 }
+
+// NoTimeout 是**具名的**「我不要超时」。
+//
+// ⚠️ 它存在的全部理由是让那个决定看得见：没有它，「不要超时」只能靠传 0 来表达，
+// 而那与「忘了填」不可分辨 —— 而这两者最哑的后果差得很远：
+// 想好了不要超时的人知道自己在等什么；忘了填的人会看着同步挂住而不知道为什么。
+const NoTimeout time.Duration = -1
 
 // Syncer 把一个源同步进一个库。
 type Syncer struct {
@@ -140,6 +170,17 @@ func NewSyncer(cfg SyncerConfig) (*Syncer, error) {
 	c, err := pacing.Client(cfg.Pacer)
 	if err != nil {
 		return nil, fmt.Errorf("tickflow: NewSyncer 装不上限流闸门: %w", err)
+	}
+	switch {
+	case cfg.Timeout == NoTimeout:
+		// 具名的「我不要超时」⇒ 保持 http.Client 的零值语义。
+	case cfg.Timeout > 0:
+		c.Timeout = cfg.Timeout
+	default:
+		return nil, fmt.Errorf("tickflow: NewSyncer 的 Timeout=%v 不合法——"+
+			"必须给一个正的超时，或写 NoTimeout；"+
+			"0 说不清是「想好了」还是「忘了」，而忘了填的后果是"+
+			"【挂住的请求不产生错误，于是失败预算永远不会触发】", cfg.Timeout)
 	}
 	src := cfg.NewSource(c)
 	if src == nil {
@@ -291,6 +332,16 @@ func (s *Syncer) disposeOpenState(req SyncRequest, rep *SyncReport) error {
 // 一个源可以对 2024 年可重放、对 2016 年不可重放，而 `Since` 说的正是那条界线。
 // ⇒ 设计里原本写「只有编排经 `Caps` 知道『源可不可重放』」，而 `Caps` **没有那个字段** ——
 // 那句话被抄了四遍，一处也没被核过。
+//
+// ⚠️ **而 `Since` 在这里是一个【代理指标】，不是定义**（评审方 2026-09-09 指出，我认）：
+//
+//	Since 说的是   「这个源最早给得出哪一天」
+//	我们要问的是   「那一段现在还能不能重新取回来」
+//
+// **两者今天大概率同向，而那是一个经验相关，不是等价。** 写下来，
+// 免得下一个人把这行推导读成定义 —— 一旦哪个源出现「给得出那一天、但那一段取不回来」
+// （下架、改口径、需要付费重放），这一格就要换判据，**而它不会自己报错**。
+// ⇒ 换判据的入口就是这个函数：它是【唯一】算 replayable 的地方（本包 grep 可证）。
 //
 // ⚠️ `Since` 缺失或非法时取 **false**（＝不可重放 ⇒ 要人确认）。判据是那条：
 // **给一个取值定级，取它最哑的那个后果。**

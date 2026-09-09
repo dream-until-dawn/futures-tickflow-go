@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/source/pacing"
 )
@@ -140,6 +141,7 @@ func newHarnessWithStore(t *testing.T, p pacing.Pacer, batch, failN int, st *fak
 		Calendar: week(),
 		Store:    h.store,
 		Pacer:    p,
+		Timeout:  30 * time.Second,
 		NewSource: func(c *http.Client) Source {
 			h.src = &httpSource{c: c, url: h.srv.URL, batch: batch, failN: failN}
 			return h.src
@@ -216,6 +218,7 @@ func TestSyncerRefusesWithoutAPacer(t *testing.T) {
 	_, err := NewSyncer(SyncerConfig{
 		Calendar:  week(),
 		Store:     &fakeStore{},
+		Timeout:   30 * time.Second,
 		NewSource: func(*http.Client) Source { return &httpSource{} },
 	})
 	if !errors.Is(err, pacing.ErrNoPacer) {
@@ -224,6 +227,7 @@ func TestSyncerRefusesWithoutAPacer(t *testing.T) {
 	// 对照：给了就该成 —— 否则上面那条也可能是「它对谁都报错」。
 	if _, err := NewSyncer(SyncerConfig{
 		Calendar: week(), Store: &fakeStore{}, Pacer: pacing.NoPacing(),
+		Timeout:   30 * time.Second,
 		NewSource: func(*http.Client) Source { return &httpSource{} },
 	}); err != nil {
 		t.Fatalf("给了 NoPacing() 应当成功，实得 %v", err)
@@ -401,5 +405,71 @@ func TestChunkDaysFollowsTheSourcesBatchDays(t *testing.T) {
 	}
 	if chunkDays(nil, 1) != nil {
 		t.Error("空输入应当切成 nil")
+	}
+}
+
+// TestTimeoutReachesTheSourcesClient 超时必须【到得了源】，且是调用方给的那一个。
+//
+// 🔴 **这一格是 SourceFactory 顺手拿走的，而第一版把它丢了。**
+// 评审方 2026-09-09 只问了一句「超时归谁定」，我去量，发现的不是一个空位：
+//
+//	两个源自己的默认   &http.Client{Timeout: 30 * time.Second}
+//	pacing.Client()    &http.Client{Transport: rt}   ← Timeout 零值 = 没有超时
+//	WithHTTPClient     c.http = h                    ← 整个替换，不是合并
+//	⇒ 走 SourceFactory 这条路，那 30 秒被【静默拿掉了】
+//
+// ⛔ 而它不是「少了个保险」：`MaxConsecutiveFails` 数的是【错误】，
+// 而一个挂住的请求不产生错误 —— **没有超时，那个预算有一整类失败接不住。**
+//
+// ⚠️ 断言用【两个不同的注入值】，同必做一那条阶梯：
+// 一个值挡不住「恰好写死成那个值」，两个不同的值挡得住任何常量。
+func TestTimeoutReachesTheSourcesClient(t *testing.T) {
+	for _, want := range []time.Duration{7 * time.Second, 43 * time.Second} {
+		t.Run(want.String(), func(t *testing.T) {
+			var got time.Duration
+			if _, err := NewSyncer(SyncerConfig{
+				Calendar: week(), Store: &fakeStore{}, Pacer: pacing.NoPacing(),
+				Timeout: want,
+				NewSource: func(c *http.Client) Source {
+					got = c.Timeout
+					return &httpSource{c: c}
+				},
+			}); err != nil {
+				t.Fatal(err)
+			}
+			if got != want {
+				t.Errorf("源拿到的 client 超时是 %v，而调用方给的是 %v", got, want)
+			}
+		})
+	}
+}
+
+// TestTimeoutZeroIsRefusedAndNoTimeoutIsNamed 零值被拒，而「我不要超时」要写出来。
+//
+// ⚠️ 判据是那条：**给一个取值定级，取它最哑的那个后果。**
+// `http.Client{Timeout: 0}` 就是「永不超时」——
+// 想好了不要超时的人知道自己在等什么；忘了填的人会看着同步挂住而不知道为什么。
+func TestTimeoutZeroIsRefusedAndNoTimeoutIsNamed(t *testing.T) {
+	mk := func(d time.Duration) (time.Duration, error) {
+		var got time.Duration
+		_, err := NewSyncer(SyncerConfig{
+			Calendar: week(), Store: &fakeStore{}, Pacer: pacing.NoPacing(), Timeout: d,
+			NewSource: func(c *http.Client) Source { got = c.Timeout; return &httpSource{c: c} },
+		})
+		return got, err
+	}
+	if _, err := mk(0); err == nil {
+		t.Error("Timeout 零值应当被拒 —— 它是「永不超时」，而那让失败预算接不住挂起")
+	}
+	if _, err := mk(-5 * time.Second); err == nil {
+		t.Error("负的超时（NoTimeout 之外）应当被拒")
+	}
+	// 具名的那一个：收下，且真的不设超时。
+	got, err := mk(NoTimeout)
+	if err != nil {
+		t.Fatalf("NoTimeout 应当被收下，实得 %v", err)
+	}
+	if got != 0 {
+		t.Errorf("写了 NoTimeout，而源拿到的 client 超时是 %v", got)
 	}
 }
