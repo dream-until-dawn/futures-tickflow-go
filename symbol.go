@@ -43,7 +43,17 @@ var czceThreeDigit = map[string]bool{CZCE: true}
 type Symbol struct {
 	Exchange string
 	Product  string
-	YearMon  int // 四位，如 2701
+	// YearMon 是四位【年月】，如 2701 ＝ 2027 年 1 月。
+	//
+	// ⛔ **年只有两位 ⇒ 本类型只表达得了 2000..2099。**
+	// `Expiry()` 是 `2000 + YearMon/100` —— 出了这一段，构造它的人拿到的是一个
+	// **静默折叠**的值：1999 ⇒ 2099 · 1990 ⇒ 2090 · 2100 ⇒ 2000 · 2101 ⇒ 2001。
+	// ⚠️ 而 `newSymbol` **接不住**它（它只校月份，不校年）。
+	//
+	// 🔴 这一句 2026-09-10 才被写下来：`refdata/shinnyref` 造 Symbol 时
+	// 放行了 1990..2999，五个段外的值全部产生了静默错值（评审方构造、我复现）。
+	// ⇒ **凡是从「年 + 月」造 Symbol 的地方，都要先把年卡在 2000..2099 并【拒绝】而不是折。**
+	YearMon int
 }
 
 // String 返回规范形式：CZCE.TA2701。四位年月，无歧义。
