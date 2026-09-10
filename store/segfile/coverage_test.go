@@ -264,6 +264,7 @@ var (
 //
 // ⚠️ 它的射程：只管**正则收不收**，不管收进来之后那一套对不对。
 // 表里真加了两位数编号，`tableIDs` 的连续性断言会不会跟着成立，这条测试不答。
+// guard: 编号正则的射程 —— 它收不收表里今天还没出现的形状。
 func TestIDPatternAcceptsShapesTheTableDoesNotYetHave(t *testing.T) {
 	for _, c := range []struct{ row, want string }{
 		{"| A10 | 两位数 |", "A10"},  // ← 今天表里没有：数字那一位的放宽全靠它
@@ -395,6 +396,7 @@ func testIDs(t *testing.T) map[string]map[string]bool {
 	return got
 }
 
+// guard: design.md §6.1 那张不变量表与本包测试的对应关系（编号集合现读，不写死）。
 func TestInvariantCoverageMatchesTable(t *testing.T) {
 	want := tableIDs(t)
 	got := testIDs(t)
@@ -505,6 +507,8 @@ var fifthColName = regexp.MustCompile(`([A-Z][0-9]+[a-z]?)_(Red|Green)`)
 //	查的   第五列里形如 `XX_Red` / `XX_Green` 的名字，在本包里是不是真的函数
 //	不查的 第五列里的**散文**对不对（例如「写：`EncodeMeta` 一律写本版 `format`」）
 //	不查的 那个函数是不是真的守着那条不变量 —— 那是对照组的活（invariant_control）
+//
+// guard: 那张表第五列里点名的函数，在本包里是不是真的存在。
 func TestFifthColumnNamesExist(t *testing.T) {
 	p := filepath.Join("..", "..", "docs", "design.md")
 	b, err := os.ReadFile(p)
