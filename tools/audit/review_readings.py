@@ -19,7 +19,8 @@
    它保证不了你【贴进信里的时候】HEAD 还是它。⇒ 出数时把 HEAD 全长一并打出来，
    收信方可以用那一行去核。
 
-跑法：python tools/audit/review_readings.py [main]
+跑法：python tools/audit/review_readings.py [main]           出送审读数
+      python tools/audit/review_readings.py --verify-merge [rev]  核一次真合并干不干净
 """
 import datetime
 import io
@@ -83,7 +84,57 @@ def git(*args):
     return p.stdout.strip()
 
 
+def verify_merge(rev):
+    """核一次【真合并】是不是干净的。
+
+    ⛔ 它存在的理由是一个洞，2026-09-10 评审方在**他自己的门禁检查**上打出来的，
+    而我这边也有同一个（我每次并完都打印父数，**却只是打印，没有断言**）：
+
+        `git show --format='' <X> | wc -l` 在一个**单亲提交**上印的是
+        **那颗提交自己的 diff**，不是「合并自身的 diff」
+
+    🔴 **两个数长得一模一样（都是「行数」），而含义完全不同** ——
+    他那次读到 32 行并按门禁读成「不干净」，而真相是那根本不是一次合并
+    （`git merge` 原样回了 "Already up to date."，因为 main 在两批测量之间动了）。
+
+    ⇒ 所以顺序是**先父数、后行数**：**父数 ≠ 2 时，那个行数没有真值。**
+
+    ⚠️ 而本模式**不要求工作区干净** —— 它读的是历史，不是工作树；
+    这一条与出数那一模式的射程不同，写在这儿免得被读成疏忽。
+    """
+    parents = git("rev-list", "--parents", "-n1", rev).split()
+    n = len(parents) - 1
+    print("提交            %s" % parents[0])
+    print("父数            %d" % n)
+    if n != 2:
+        print("")
+        print("REFUSE: 这不是一次【两个父】的合并 —— 那么「合并自身的 diff」这个量没有真值。")
+        print("（在单亲提交上，git show 印的是那颗提交自己的改动，"
+              "而它与「合并塞进了什么」长得一模一样，都是一个行数。）")
+        return 2
+    for p in parents[1:]:
+        print("父              %s" % p)
+    lines = git("show", "--format=", rev).split("\n")
+    nl = 0 if lines == [""] else len(lines)
+    print("合并自身 diff   %d 行" % nl)
+    if nl != 0:
+        print("")
+        print("REFUSE: 这次合并引入了【两个父都没有的内容】（冲突解决 / evil merge）。")
+        print("⇒ 门禁要的是「批的和落地的是同一颗」，而这一行让它不再成立。")
+        return 2
+    print("")
+    print("✅ 干净：父数 2 ＋ 合并自身 0 行 ⇒ 两个父的内容原样落地，没有夹带。")
+    return 0
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--verify-merge":
+        rev = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
+        try:
+            return verify_merge(rev)
+        except GitFailed as e:
+            print("REFUSE: git %s -> exit %d" % (" ".join(e.args_), e.code))
+            return 2
     try:
         return _main()
     except GitFailed as e:
