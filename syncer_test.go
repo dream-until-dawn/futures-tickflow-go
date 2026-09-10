@@ -2,6 +2,7 @@ package tickflow
 
 import (
 	"encoding/json"
+	"math/rand"
 	"testing"
 )
 
@@ -165,4 +166,88 @@ func TestSyncRequestZeroToIsAQuestionNotAnAnswer(t *testing.T) {
 	if !r.From.Valid() {
 		t.Error("From 必填，而它应当是合法的")
 	}
+}
+
+// randomGaps 造一份随机缺口：段数、跨度、类别、总天数、顺序**全随机**。
+func randomGaps(rnd *rand.Rand) []Gap {
+	kinds := []GapKind{GapNeverFetched, GapConfirmedEmpty, GapNotTrading,
+		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
+	n := rnd.Intn(13) // 0..12 段 —— 含 0，也含「多于 6」
+	gs := make([]Gap, 0, n)
+	for i := 0; i < n; i++ {
+		from := TradingDay(20200101 + rnd.Intn(10000))
+		gs = append(gs, Gap{
+			From: from,
+			To:   from + TradingDay(rnd.Intn(60)), // 跨度 0..59
+			Kind: kinds[rnd.Intn(len(kinds))],     // 类别可重复 —— 绕法三钻的正是这一维
+		})
+	}
+	return gs
+}
+
+// TestReportCompleteIsInvariantUnderRandomGaps ⑤：把上面那条不变性**随机化**。
+//
+// 🔴 **它补的是手挑形状的天花板**：上面那条用五个手挑的形状，
+// 而评审方两轮里一共钻穿了它**四次**，每次钻的都是一个不同的维度 ——
+//
+//	绕法一 跨度（那五个形状里最长的是多日一段）
+//	绕法二 段数（恰好 7）
+//	绕法三 **同一类别出现两次**（五个形状里没有一个含 2× GapStoreLegacy）
+//	绕法四 缺口覆盖的总天数（形状里最大恰好 31）
+//
+// ⇒ 根子是那句：**一个具体 fixture 天生在每一维上都取了一个值，
+// 而断言只在那些值上成立。** 手挑形状永远补不完维度 —— 因为维度不是有限枚举的。
+//
+// ⇒ 随机化**一次盖住那四维**（段数 0..12 · 跨度 0..59 · 类别可重复 · 起点随机）。
+// ⚠️ 而它**不取代**上面那条：手挑的那几个形状说清了「我们在意哪些边界」，
+// 随机的这条说清「不止那几个」。**两条都留。**
+//
+// ⚠️ 种子写死，理由是**失败必须可复现** —— 一条「每次随机、红了查不出为什么」
+// 的测试，迟早会被人加个 skip（本仓已记过那个下场）。
+func TestReportCompleteIsInvariantUnderRandomGaps(t *testing.T) {
+	const seed = 20260910
+	rnd := rand.New(rand.NewSource(seed))
+
+	// 前提自检：两组基底必须给出不同的 Complete()（同上面那条）。
+	a := SyncReport{Halt: HaltDone}
+	b := SyncReport{Halt: HaltDone, Misaligned: 1}
+	if a.Complete() == b.Complete() {
+		t.Fatal("两组基底的 Complete() 相同 —— 前提没成立，这条测试什么也不证明")
+	}
+
+	const rounds = 500
+	var maxSegs, maxSpan, maxDays int
+	for i := 0; i < rounds; i++ {
+		gs := randomGaps(rnd)
+		if len(gs) > maxSegs {
+			maxSegs = len(gs)
+		}
+		days := 0
+		for _, g := range gs {
+			if s := int(g.To - g.From); s > maxSpan {
+				maxSpan = s
+			}
+			days += int(g.To-g.From) + 1
+		}
+		if days > maxDays {
+			maxDays = days
+		}
+		for _, base := range []SyncReport{a, b} {
+			r := base
+			r.Gaps = gs
+			if got := r.Complete(); got != base.Complete() {
+				t.Fatalf("第 %d 轮（seed=%d）：基底 Complete()=%v，挂上 %d 段缺口之后变成 %v\n"+
+					"  缺口：%v\n  ⇒ Complete() 跟着 Gaps 动了，而它本该不看 Gaps",
+					i, seed, base.Complete(), len(gs), got, gs)
+			}
+		}
+	}
+	// ⛔ **基线：随机化必须真的走到过那几个边界** ——
+	// 一份「每轮都生成 0 段」的随机器会让这 500 轮**全部空转**，而它照样绿。
+	if maxSegs < 7 || maxSpan < 10 || maxDays < 32 {
+		t.Fatalf("%d 轮里最大段数=%d 最大跨度=%d 最大总天数=%d ——"+
+			"没有走到评审方钻过的那几维（段数>6 · 多日 · 总天数>31），"+
+			"这时【不能】当成通过", rounds, maxSegs, maxSpan, maxDays)
+	}
+	t.Logf("%d 轮：最大段数=%d 最大跨度=%d 最大总天数=%d", rounds, maxSegs, maxSpan, maxDays)
 }
