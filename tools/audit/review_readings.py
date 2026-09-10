@@ -22,6 +22,8 @@
 跑法：python tools/audit/review_readings.py [main]           出送审读数
       python tools/audit/review_readings.py --verify-merge [rev]  核一次真合并干不干净
         退出码：0 干净 · **3 有冲突⇒必须有人读一遍** · 2 拒绝出结论
+      ⚠️ 任何以 `-` 开头而不是 `--verify-merge` 的参数（**在任何位置**）一律拒绝；
+         多余的参数也拒绝 —— 静默忽略它和静默忽略一个打错的旗标是同一件事。
 """
 import datetime
 import io
@@ -272,7 +274,54 @@ def verify_merge(rev):
     return 0
 
 
+# 本脚本认得的全部旗标。**只有这一份名单**，别在别处再抄一份。
+_FLAGS = ("--verify-merge",)
+
+
+def check_argv(argv):
+    """把每一个参数都过一遍：**认得的旗标只许出现在第 1 位，其余位置不许以 `-` 开头**。
+
+    返回 None 表示放行；否则返回一句拒绝理由。
+
+    ⛔ 它存在的理由是同一条规矩今天露出的**第三个面**（评审方 2026-09-10 量出来的）：
+
+        我上一颗给 `argv[1]` 装了「不认识的旗标就拒」，理由是
+        `-x` 会被 git 自己兜住，**而报文指向 `git merge-base`，把人引向错误的地方**。
+        ⇒ 而 `--verify-merge **-x**` 原样存在：
+          `REFUSE: git rev-list --parents -n1 -x -> exit 129` —— **同一个形态，换了个位置**。
+
+    🔴 **一条规矩只覆盖【它被写下的那个位置】** ——
+    它不向后覆盖旧的（已记）、不向前继承新写的（已记）、
+    **也不横向覆盖同一支程序里的另一个参数**（这一面是今天新的）。
+
+    ⇒ 所以处置**不是再抄一份判据到 `argv[2]` 上** —— 那样第四个位置出现时还会漏。
+    ⇒ 是把它提到**一个覆盖全部参数的地方**，并让名单只有一份（`_FLAGS`）。
+    ⚠️ 而「多余的参数」也一并拒：**静默忽略一个我没打算给的参数，
+    和静默忽略一个我打错的旗标，是同一件事。**
+    """
+    for i, a in enumerate(argv[1:], start=1):
+        if a in _FLAGS:
+            if i != 1:
+                return "旗标 %s 只能出现在第一个参数的位置（这里是第 %d 个）" % (a, i)
+            continue
+        if a.startswith("-"):
+            return ("不认识的旗标 %s —— 本脚本只认 %s。\n"
+                    "（若你确信它存在，那么手上这份【不是】带它的那个版本：\n"
+                    "  用 `grep -c 'def verify_merge' <本文件>` 当场问一次。）"
+                    % (a, " ".join(_FLAGS)))
+    if len(argv) > 3 or (len(argv) == 3 and argv[1] not in _FLAGS):
+        return ("多了用不上的参数：%s —— 本脚本最多接『一个旗标 ＋ 一个 rev』"
+                "或『一个 base_ref』。\n"
+                "（静默忽略一个多余的参数，和静默忽略一个打错的旗标，是同一件事。）"
+                % " ".join(argv[1:]))
+    return None
+
+
 def main():
+    bad = check_argv(sys.argv)
+    if bad:
+        print("REFUSE: " + bad)
+        return 2
     if len(sys.argv) > 1 and sys.argv[1] == "--verify-merge":
         rev = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
         try:
@@ -314,11 +363,10 @@ def _main():
     #
     # 🔴 **一个方向正确的拒绝，仍然可以把人指向错误的地方。**
     # ⇒ 而放宽是安全的：**一个能用的 base_ref 不可能以 `-` 开头**（git 自己就会把它当选项）。
-    if len(sys.argv) > 1 and sys.argv[1].startswith("-"):
-        print("REFUSE: 不认识的旗标 %s —— 本脚本只认 --verify-merge。" % sys.argv[1])
-        print("（若你确信它存在，那么手上这份【不是】带它的那个版本：")
-        print("  用 `grep -c 'def verify_merge' <本文件>` 当场问一次。）")
-        return 2
+    #
+    # ⇒ 而这道判据**已经不在这儿了** —— 它提到了 `check_argv()`，一次覆盖全部参数。
+    # 🔴 理由见那个函数的说明：**原来这一份只覆盖 `argv[1]`，而同一个形态在 `argv[2]` 上原样存在**
+    # （`--verify-merge -x`）⇒ **再抄一份到 argv[2] 上，第四个位置出现时还会漏。**
     base_ref = sys.argv[1] if len(sys.argv) > 1 else "main"
 
     dirty = git("status", "--porcelain")
