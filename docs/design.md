@@ -60,7 +60,10 @@ futures-tickflow-go/
 ├── calendar/
 │   ├── embedded/        内置：标称时段模板（带生效区间）+ 交易日表
 │   └── derived/         从【分钟线】反推逐日实际时段（日线只定交易日）
-├── refdata/             合约参考数据接口（乘数/最小变动价/到期日）
+├── refdata/             合约参考数据【实现包】（乘数/最小变动价/到期日/交易时段表）
+│                        ⚠️ 2026-09-10 验过：本仓今天【没有任何一处】用它
+│                        ⇒ **不定接口**，交出具体类型；抽接口的触发写成当场可求值的：
+│                        「出现第一个 import refdata/shinnyref 的包」（今天 0 个）
 │   └── shinnyref/       天勤 openmd symbols 实现
 ├── source/
 │   ├── sinasource/      新浪：日线 17 年 + 分钟线 1023 根

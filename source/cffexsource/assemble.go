@@ -62,7 +62,10 @@ var ErrTradingDayFormat = errors.New("cffexsource: 上游自报的交易日不�
 //
 //	⇒ 所以 Syncer 那一片要做的**不是「把三者分开」**，是
 //	  **「用上市/到期日把前两者减掉，剩下的才交给⑨ 的按日遍历」**。
-//	  （上市/到期日在 refdata 那一层，v0.4。）
+//	  ⛔ 【2026-09-10 更正】此处原来把【两个日期】都指向了那一层 ——
+//	  **到期日成立，上市日不成立**：全量实测天勤 openmd 的 47 个字段里没有上市日
+//	  （docs/probe.md「复核 v5」那一节）。替代出处也在那一节（中金所 XML 逐日列合约，
+//	  带对照组），**而它的二分前提未验，所以只写在探针文档里、不进任何接口。**
 //
 // now 用来判完结，**由调用方给，不在内部取 time.Now()**（同 CheckBars 那条理由）。
 func AssembleDay(rows []SettleRow, day tickflow.Day, sym tickflow.Symbol, now int64) (tickflow.Bar, bool, error) {
