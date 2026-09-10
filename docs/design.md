@@ -63,7 +63,9 @@ futures-tickflow-go/
 ├── refdata/             合约参考数据【实现包】（乘数/最小变动价/到期日/交易时段表）
 │                        ⚠️ 2026-09-10 验过：本仓今天【没有任何一处】用它
 │                        ⇒ **不定接口**，交出具体类型；抽接口的触发写成当场可求值的：
-│                        「出现第一个 import refdata/shinnyref 的包」（今天 0 个）
+│                        「出现第一个 import refdata/shinnyref 的包」
+│                        ⇒ 求值法与当前读数**不写在这里**，在 `TestRefdataExpiryConditionNotYetDue`
+│                        （**到期那天它自己红** —— 而一个带时刻的读数只会旧）
 │   └── shinnyref/       天勤 openmd symbols 实现
 ├── source/
 │   ├── sinasource/      新浪：日线 17 年 + 分钟线 1023 根
