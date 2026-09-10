@@ -6,11 +6,8 @@ import (
 	"context"
 	"errors"
 	"io"
-	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 )
 
 // TestCloseDoesNotBlameStreamForCallerCancel 是【必改】那一格：**谁造成的**。
@@ -32,34 +29,7 @@ import (
 // ⚠️ 射程：`readErr` 不封闭 ⇒ **只能兜底不能枚举** ⇒ 默认仍落 errStreamBroken
 // （保守方向：宁可多说一次「该重取」）；而 ctx 那两个是封闭且判得了的，单独摘出去。
 func TestCloseDoesNotBlameStreamForCallerCancel(t *testing.T) {
-	var buf bytes.Buffer
-	zw := gzip.NewWriter(&buf)
-	if _, err := zw.Write([]byte(strings.Repeat("Z", 4<<20))); err != nil {
-		t.Fatal(err)
-	}
-	if err := zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	body := buf.Bytes()
-
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Encoding", "gzip")
-		fl, _ := w.(http.Flusher)
-		for i := 0; i < len(body); i += 512 {
-			end := i + 512
-			if end > len(body) {
-				end = len(body)
-			}
-			if _, err := w.Write(body[i:end]); err != nil {
-				return
-			}
-			if fl != nil {
-				fl.Flush()
-			}
-			time.Sleep(time.Millisecond)
-		}
-	}))
-	defer srv.Close()
+	srv := slowServer(t, 400000)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	rc, err := Fetch(ctx, srv.Client(), srv.URL)

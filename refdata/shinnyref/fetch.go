@@ -123,7 +123,7 @@ func Fetch(ctx context.Context, client *http.Client, url string) (io.ReadCloser,
 		resp.Body.Close()
 		return nil, fmt.Errorf("shinnyref: 响应说它是 gzip，而它不是: %w", err)
 	}
-	return &bodyReader{zr: zr, raw: resp.Body}, nil
+	return &bodyReader{zr: zr, raw: resp.Body, ctx: ctx}, nil
 }
 
 // bodyReader 关的时候把两层都关掉。
@@ -207,6 +207,43 @@ type bodyReader struct {
 	// 哪一侧先看见都算 `errStreamBroken`。（评审方判「zerr 那支从不单独说话」，
 	// 而这一格是它的反例 —— 所以修法是**合并**，不是删除。）
 	readErr error
+	// ctx 是**调用方交给 `Fetch` 的那个**，而 ctxErrAtFail 是
+	// **`Read` 第一次失败【那一刻】它的状态**。
+	//
+	// ⛔ 它们存在的理由是第三条必改（评审方 2026-09-10 打出来，我复现）：
+	// `context.DeadlineExceeded` **不只来自调用方的 ctx** —— `http.Client{Timeout}`
+	// 也给出它，而那是一个**传输层**超时，处置恰恰是【重取】。
+	// ⇒ 只按哨兵分，会把一次传输超时判成「调用方自己中止 ⇒ 不必重取」
+	// ⇒ **一次静默的不重试**，而这个方向比反过来贵。
+	//
+	// ⚠️ 而 Go 自己那句错误文本就拒绝区分这两者：
+	// `context deadline exceeded (Client.Timeout **or** context cancellation while reading body)`
+	// ⇒ 「再挑一个哨兵」这条路走不通。
+	//
+	// ⭐ 判别符是**问调用方那个 ctx 自己**（三端各喂一次，两人各量一遍，逐格一致）：
+	//
+	//	A `client.Timeout`      Is(DeadlineExceeded)=true  · **ctx.Err()=nil**
+	//	B 调用方 cancel          Is(Canceled)=true          · ctx.Err()=context canceled
+	//	C 调用方 WithTimeout      Is(DeadlineExceeded)=true  · ctx.Err()=deadline exceeded
+	//
+	// ⇒ `errors.Is` 在 A 与 C 上给同一个答案，**而 `ctx.Err()` 分得开**。
+	//
+	// ⛔ **而它必须在【Read 失败那一刻】问，不能等到 `Close` 里问** ——
+	// 否则「读出错之后、Close 之前调用方才 cancel」会被误判成「中止」，
+	// 而那是一次真断流。（评审方把这一格单列为「他没量的」，这里把它关掉。）
+	ctx          context.Context
+	ctxErrAtFail error
+}
+
+// ctxErr 问调用方那个 ctx 的状态。
+//
+// ⚠️ nil 安全：测试里会直接构造 `bodyReader`（不经过 `Fetch`）⇒ 那时没有 ctx，
+// 而「没有 ctx」的正确读法是**没有人中止过**。
+func (b *bodyReader) ctxErr() error {
+	if b.ctx == nil {
+		return nil
+	}
+	return b.ctx.Err()
 }
 
 func (b *bodyReader) Read(p []byte) (int, error) {
@@ -230,6 +267,8 @@ func (b *bodyReader) Read(p []byte) (int, error) {
 		// 不是本层的；**换一个不黏的内层，第一个才是有信息的那个。**
 		if b.readErr == nil {
 			b.readErr = err
+			// ⚠️ 在**这一刻**问，理由见 ctxErrAtFail 上面那段。
+			b.ctxErrAtFail = b.ctxErr()
 		}
 	}
 	return n, err
@@ -296,9 +335,10 @@ func (b *bodyReader) Close() error {
 	// 而 **ctx 那两个是封闭且判得了的** ⇒ 单独摘出去。
 	// ⚠️ 实测：`context.Canceled` **两个来源都会出现**（`Read` 与 `zr.Close()` 各量到一次）
 	// ⇒ 判据要看合并之后的那一个，不能只看 readErr。
-	e := b.readErr
+	e, ctxErr := b.readErr, b.ctxErrAtFail
 	if e == nil {
-		e = zerr
+		// 只有 zr.Close() 那一侧说话时，没有「失败那一刻」可问 ⇒ 退而问现在。
+		e, ctxErr = zerr, b.ctxErr()
 	}
 	// ⚠️ `rerr` 不再被丢掉 —— 见 `Close` 说明末尾那一段。
 	join := func(err error) error {
@@ -308,7 +348,10 @@ func (b *bodyReader) Close() error {
 		return err
 	}
 	switch {
-	case errors.Is(e, context.Canceled) || errors.Is(e, context.DeadlineExceeded):
+	// ⛔ **两个条件都要**：哨兵对得上 **且** 调用方那个 ctx 自己确实 done 了。
+	// 少了后半句，`client.Timeout`（传输层超时）会被判成「调用方中止」⇒ 静默不重试。
+	case ctxErr != nil &&
+		(errors.Is(e, context.Canceled) || errors.Is(e, context.DeadlineExceeded)):
 		// 调用方自己放手 ⇒ 与「读到一半 return」同一侧：**流没坏，只是没验过**。
 		return join(fmt.Errorf("%w：%v（调用方自己中止的 ⇒【不必】重取；"+
 			"而这份数据有没有问题，本层答不了）", errNotReadToEOF, e))
