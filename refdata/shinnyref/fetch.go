@@ -21,6 +21,15 @@ var (
 	// errNotReadToEOF 是「这份下载没被读到头」——**不是数据坏了，是【没验过】**。
 	// 两者要分得开：前者可以重试，后者是调用方自己的选择。
 	errNotReadToEOF = errors.New("shinnyref: 这份下载没有被读到 EOF——完整性没有被校验")
+	// errStreamBroken 是「读到底了，而校验失败了」——**和上面那条是相反的两件事**。
+	//
+	// ⛔ 它是被逼出来的：原来这两种情况**共用上面那一个哨兵**，
+	// 于是一份 CRC 坏掉的下载会被报成「你没读完、校验没发生」——**两句都假**。
+	// ⇒ 分开的判据不是措辞，是**处置不同**：
+	//
+	//	errNotReadToEOF ⇒ 调用方自己的选择（中止）⇒ **不必重取**
+	//	errStreamBroken ⇒ 这份数据是坏的        ⇒ **该重取**
+	errStreamBroken = errors.New("shinnyref: 这份下载读到底了，而完整性校验失败了")
 	errBadStatus    = errors.New("shinnyref: 取数返回了一个非 200 的状态")
 	errRangeAsked   = errors.New("shinnyref: 这个端点上 Range 与 gzip 互斥——本函数不接受 Range")
 )
@@ -165,12 +174,49 @@ type bodyReader struct {
 	// **两句都是假的** —— 缺的那一格在**小**的那一头（明文 0），而我们两个**只往大的方向铺档位**。
 	// ⇒ **铺档位要两个方向都铺，而「更大」是默认想到的那个方向。**
 	sawEOF bool
+	// readErr 记「读的过程中出过一个【不是 EOF】的错误」。
+	//
+	// ⛔ 没有它的话，`Close` 把两件完全不同的事说成同一句话（评审方 2026-09-10 打出来）：
+	//
+	//	调用方提前放手        ⇒ 「你没读完」为真，「校验没发生」也为真
+	//	**流本身坏了**（CRC 错 / ISIZE 错 / 尾巴被截）
+	//	                     ⇒ 调用方**读到底了**，**校验发生了并且失败了**
+	//	                        ⇒ 那句「你没读完、校验没发生」**两句都假**
+	//
+	// 实测（本机 go1.26.1，明文 30 字节，三种坏法并排）：
+	//
+	//	完整          最后一次 Read=(30, EOF)                  · zr.Close()=nil
+	//	CRC 翻一位     最后一次 Read=(30, gzip: invalid checksum) · zr.Close()=**nil**
+	//	ISIZE 翻一位   最后一次 Read=(30, gzip: invalid checksum) · zr.Close()=**nil**
+	//	砍掉末尾 8B    最后一次 Read=(30, unexpected EOF)         · zr.Close()=**nil**
+	//
+	// 🔴 三种坏法**都不走 `zr.Close()` 那一支**（它一律返回 nil）——
+	// 所以下面那个「zerr != nil」分支**接不住它们**，它只对【流中段就断了】那种成立。
+	readErr error
 }
 
 func (b *bodyReader) Read(p []byte) (int, error) {
 	n, err := b.zr.Read(p)
-	if err == io.EOF {
+	switch {
+	case err == io.EOF:
 		b.sawEOF = true
+	case err != nil:
+		// ⚠️ 只记**第一个**。
+		//
+		// ⛔ 而「记第一个」与「记最后一个」在**今天的内层上是等价的** ——
+		// 这不是我猜的，是量的（突变「改成记最后一个」⇒ **0 红**，于是我去量了它）：
+		//
+		//	CRC 翻一位  ⇒ 第 1..5 次 Read 都是 `gzip: invalid checksum`
+		//	砍掉末尾 8B ⇒ 第 1..5 次 Read 都是 `unexpected EOF`
+		//	⇒ **`gzip.Reader` 的错误是【黏】的：后续每一次都原样回同一个。**
+		//
+		// ⇒ 所以那个突变活着是**正确的**，不是一个缺口 —— 单列在这儿，
+		// 免得下一个人看见「0 红」以为这里少一条测试。
+		// ⚠️ 而仍然选「第一个」的理由是**射程**：这条等价性是 `gzip.Reader` 的性质，
+		// 不是本层的；**换一个不黏的内层，第一个才是有信息的那个。**
+		if b.readErr == nil {
+			b.readErr = err
+		}
 	}
 	return n, err
 }
@@ -182,13 +228,29 @@ func (b *bodyReader) Read(p []byte) (int, error) {
 // 中止的人自己知道为什么中止，而 `defer Close()` 不看返回值的人本来也没在读它。
 //
 // ⚠️ 到期条件（与本包哨兵那条同源，见 contract.go 包注释）：
-// 今天包外调用方 **0** 个 ⇒ 改 Close 的返回值是免费的；
-// **等有了第一个包外调用方，这就是一次破坏性变更** ⇒ 要改就趁现在。
+// **在出现第一个包外调用方之前**，改 Close 的返回值是免费的；有了就是破坏性变更。
+// ⇒ 当前读数**不写在这里** —— 它由 `TestRefdataExpiryConditionNotYetDue` 当场求，
+// 而**到期那天它自己红**。（一个带时刻的读数只会旧；这一行只写命题与指针。）
+//
+// ⛔ **【2026-09-10 更正】此处原来只有一个失败出口，而它把两件事说成同一句话。**
+// 详见 `readErr` 上面那段：**流坏掉时调用方是读到底了的，校验也发生了** ——
+// 而原来那句留声说「你没读完、校验没发生」，**两句都假**。
+// ⇒ 本仓那条（我自己写的）在这里被打了一次：
+// **会误报的留声，措辞里不要含成因 —— 读数错一格，成因错两格。**
+// 这里读数（Close 该报错）是对的，而成因整整错了两格。
 func (b *bodyReader) Close() error {
 	zerr := b.zr.Close()
 	rerr := b.raw.Close()
+	// ⚠️ 这一支只对【流中段就断了】成立（deflate 自己没结束）——
+	// CRC / ISIZE / 截尾三种坏法都不走这里，见 readErr 那段读数。
 	if zerr != nil {
 		return fmt.Errorf("shinnyref: gzip 流没有完整结束（截断？）: %w", zerr)
+	}
+	// ⛔ 顺序要紧：**先问「流坏没坏」，再问「读完没读完」** ——
+	// 反过来的话，一份坏掉的下载会被报成「你没读完」，而那是假的。
+	if b.readErr != nil {
+		return fmt.Errorf("%w：%v（【这份下载读到底了，完整性校验发生了、而且失败了】——"+
+			"该重取，不是调用方少读了）", errStreamBroken, b.readErr)
 	}
 	if !b.sawEOF {
 		return fmt.Errorf("%w（读到这里就放手了 ⇒ gzip 的 CRC 与长度校验【没有发生】，"+
