@@ -19,7 +19,9 @@
    它保证不了你【贴进信里的时候】HEAD 还是它。⇒ 出数时把 HEAD 全长一并打出来，
    收信方可以用那一行去核。
 
-跑法：python tools/audit/review_readings.py [main]
+跑法：python tools/audit/review_readings.py [main]           出送审读数
+      python tools/audit/review_readings.py --verify-merge [rev]  核一次真合并干不干净
+        退出码：0 干净 · **3 有冲突⇒必须有人读一遍** · 2 拒绝出结论
 """
 import datetime
 import io
@@ -83,7 +85,154 @@ def git(*args):
     return p.stdout.strip()
 
 
+def git_raw(*args):
+    """跑一条 git，**把 (退出码, stdout, stderr) 原样交回来，不抛**。
+
+    ⛔ 它和上面那个 `git()` 是**故意分开的两个**，而分开的理由是一句判据：
+    **`git()` 的契约是「非 0 就抛」，因为它的每一个调用者都把非 0 当成故障。**
+    而 `merge-tree` 不是 —— 它用**非 0 退出表达一个正常的结论**（这次有冲突）。
+    ⇒ 拿 `git()` 去调它，会把一个结论读成一次故障；
+      而给 `git()` 加一个「这次不要抛」的开关，等于让每个调用点都能关掉那道闸门。
+    🔴 **一道闸门只要有开关，最终就会被打开。** ⇒ 宁可两个函数。
+    """
+    p = subprocess.run(("git",) + args, capture_output=True)
+    return (p.returncode,
+            p.stdout.decode("utf-8", "replace").strip(),
+            p.stderr.decode("utf-8", "replace").strip())
+
+
+def _is_oid(s):
+    """40 位十六进制（本仓是 sha1 仓；sha256 仓会是 64 位，那时这里要放宽）。"""
+    return len(s) == 40 and all(c in "0123456789abcdef" for c in s)
+
+
+def verify_merge(rev):
+    """核一次【真合并】是不是干净的。
+
+    门禁要的那句话是：**「批过的，和落地的，是同一个东西。」**
+    快进时它自动成立；而合并提交是**唯一**能让它不成立的地方。
+
+    ⛔ **【2026-09-10 升级】此前用的判据是「`git show --format='' <合并>` 必须 0 行」，
+    而那条判据【两个方向都会错】。** 评审方造对照组打出来，我另造一组独立复现：
+
+        场景                          老判据              新判据
+        真·不相交·全自动               0 行  ✅            树相等 ✅
+        **两边改同一块·全自动**        **8 行 ⇒ 判成脏**   树相等 ✅
+        evil merge（夹带一行）         11 行 ⇒ 拒 ✅        树不等 ⇒ 拒 ✅
+        **`-s ours`（丢掉一个父）**    **0 行 ⇒ 判成干净**  树不等 ⇒ 拒 ✅
+        **真冲突用 `-X ours` 解**      **0 行 ⇒ 判成干净**  冲突 ⇒ 要人读 ✅
+        真冲突·人手解                  14 行               冲突 ⇒ 要人读 ✅
+
+    🔴 **假红**：`--cc` 只显示「与**所有**父都不同」的 hunk，而两边改同一块时，
+    交织出来的结果**本来就与两个父都不同** ⇒
+    **「引入了两个父都没有的内容」≠「有人夹带」。**
+
+    🔴 **假绿（更重）**：`-s ours` / `-X ours` 会让一个父的内容**整个不落地**，
+    而每一处结果都等于某一个父 ⇒ `--cc` 一行都不显示 ⇒ 老门禁判它**干净**。
+    ⇒ **那正是门禁存在的理由被完整绕过的那一格。**
+
+    ⇒ 新判据问的是**正确的那个问题**：**「git 自己会不会产出这一棵树？」**
+
+        mt = git merge-tree --write-tree <父1> <父2>      与  <合并>^{tree}  比
+
+    相等 ⇒ 没有人在合并当中动过手；不等 ⇒ 有人动过（**夹带或丢弃**）；
+    而 `merge-tree` 报冲突时**两边都不判** —— 它精确地挑出「必须有人读一遍」那一类。
+
+    ⚠️ 三条写下来的射程：
+      · 要 **git >= 2.38**（`--write-tree` 是那时加的）——
+        而这里**不去解析版本号**，判的是「它出没出树」：**量能力，不量标签**。
+      · **章鱼合并（父数 > 2）在本判据下没有定义**（merge-tree 只吃两个父）
+        ⇒ 第一段拒绝，而理由写成「本判据只覆盖两父合并」，**不是「它不干净」**。
+      · `--write-tree` 会**往对象库里写树对象**（游离对象，`gc` 会收）——
+        本模式因此不是纯只读的，写在这儿免得下一个人以为它没有副作用。
+
+    ⚠️ 而本模式**不要求工作区干净** —— 它读的是历史，不是工作树；
+    这一条与出数那一模式的射程不同，写在这儿免得被读成疏忽。
+
+    ⚠️ 六次历史合并（42508fa 4aa53c0 55456af 0d0c0b4 7a74083 53e7cb6）新旧判据都过 ——
+    🔴 **而没被咬到的原因要写下来：那六次的 hunk 都不相交，也没人用过 `-s ours`。
+    不是判据强，是【输入没走到那两格】。**
+    """
+    parents = git("rev-list", "--parents", "-n1", rev).split()
+    n = len(parents) - 1
+    print("提交            %s" % parents[0])
+    print("父数            %d" % n)
+
+    # ── 第一段：父数 ──
+    if n != 2:
+        print("")
+        print("REFUSE: 本判据只覆盖【两父合并】，而这一颗有 %d 个父。" % n)
+        print("（单亲：git show 印的是那颗自己的改动，与「合并塞进了什么」同型而不同义。）")
+        print("（章鱼：git merge-tree 只吃两个父 ⇒ 这里【没有定义】，不是「不干净」。）")
+        return 2
+    p1, p2 = parents[1], parents[2]
+    print("父              %s" % p1)
+    print("父              %s" % p2)
+
+    # ⚠️ 这一行**只是展示，不再是判据**。它留着的唯一理由是：
+    # 旧门禁按它做过六次判断，把它并排印出来，读信的人能看见新旧两条是否同调。
+    lines = git("show", "--format=", rev).split("\n")
+    nl = 0 if lines == [""] else len(lines)
+    print("合并自身 diff   %d 行  ⚠️ 仅供展示，**不是判据**（两个方向都会错，见本函数说明）" % nl)
+
+    # ── 第二段：让 git 自己重做一次机械合并 ──
+    code, out, err = git_raw("merge-tree", "--write-tree", p1, p2)
+    first = out.split("\n")[0].strip() if out else ""
+
+    # ⛔ 先判「这条命令有没有产出一棵树」，再判它的退出码 —— 顺序不能反。
+    # 实测（本机 git 2.45.0.windows.1，2026-09-10）：
+    #     真冲突      exit=1   stdout 首行 = 一个 oid
+    #     坏 ref      exit=1   stdout **空**
+    # 🔴 **两者退出码一模一样** ⇒ 只看退出码会把「工具自己失败」读成「这次是人手解的」。
+    # ⇒ 判据是**「它出没出树」**，退出码只用来分「干净 / 冲突」。
+    if not _is_oid(first):
+        print("")
+        print("REFUSE: git merge-tree 没有产出一棵树 ⇒ **本次不出结论**（exit=%d）。" % code)
+        if err:
+            print("        stderr: %s" % err.split("\n")[0])
+        print("⚠️ 若报的是不认识 --write-tree：本判据要 **git >= 2.38**。")
+        print("（而这里判的是【它出没出树】不是【版本号是多少】——"
+              "量能力比量标签硬：版本对而功能被裁掉的构建也会在这儿被拦住。）")
+        return 2
+
+    if code == 1:
+        print("机械合并        **有冲突** ⇒ 这一颗必然是【人手或非默认策略】解出来的")
+        print("")
+        print("需要有人读一遍：本判据到此为止 —— **它不判干净，也不判脏**。")
+        print("（`-X ours` / `-X theirs` / 手工编辑都会落在这一格，"
+              "而它们的共同点是：那次合并的内容【不是 git 自己算出来的】。）")
+        return 3
+    if code != 0:
+        print("")
+        print("REFUSE: merge-tree 出了树却又非 0/1 退出（exit=%d）⇒ 本次不出结论。" % code)
+        return 2
+
+    got = git("rev-parse", rev + "^{tree}")
+    print("机械合并树      %s" % first)
+    print("这颗合并的树    %s" % got)
+    if first != got:
+        print("")
+        print("REFUSE: 两棵树不同 ⇒ **有人在这次合并当中动过手**。")
+        print("⇒ 两个方向都落在这儿，而它们看起来相反：")
+        print("   夹带（evil merge）—— 塞进了两个父都没有的内容")
+        print("   丢弃（-s ours 之类）—— 某个父的内容【整个没落地】")
+        print("🔴 而后者正是门禁存在的理由被绕过的那一格：")
+        print("   「批过的那颗分支内容一行都没进来」，而它没有冲突、没有报错。")
+        return 2
+
+    print("")
+    print("✅ 干净：父数 2 ＋ **git 自己会产出同一棵树** ⇒ 没有人在合并当中动过手。")
+    return 0
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--verify-merge":
+        rev = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
+        try:
+            return verify_merge(rev)
+        except GitFailed as e:
+            print("REFUSE: git %s -> exit %d" % (" ".join(e.args_), e.code))
+            return 2
     try:
         return _main()
     except GitFailed as e:
@@ -148,7 +297,8 @@ def _main():
     print("merge-base      %s" % mb)
     print("%s..尖  %s   ·   尖..%s  %s   ⇒  %s"
           % (base_ref, ahead, base_ref, behind,
-             "快进" if behind == "0" else "分岔 ⇒ 并时是真合并，记得核那次合并自身的 diff 是 0 行"))
+             "快进" if behind == "0" else
+             "分岔 ⇒ 并时是真合并 ⇒ 并完跑 `--verify-merge <那颗合并>`"))
     # ⚠️ 印【量到的那个值】，不印一个打上去的 0（评审方提，我收）——
     # 这个脚本的题目正是「读数要来自它自己的定义式」，而这一行原来是个字面量。
     # ⇒ 它与上面那道闸门用的是**同一次读数**，所以两者不可能互相矛盾。
