@@ -265,6 +265,10 @@ func TestReportCompleteIsInvariantUnderRandomGaps(t *testing.T) {
 	t.Logf("%d 轮：最大段数=%d 最大跨度=%d 最大总天数=%d", rounds, maxSegs, maxSpan, maxDays)
 }
 
+// intProbes 是喂给整数型字段的候选值。**报文里会原样印出来**，
+// 好让「没找到」保持是一个【读数】（我试过这几个），而不是一句【成因】（它不产生痕迹）。
+var intProbes = []int64{1, 2, 3, 4}
+
 // candidates 给一个字段造【若干个】非零值，用来问「动它会不会产生痕迹」。
 //
 // 🔴 **它返回的是一组值，不是一个 —— 这一格是被自己的守卫当场抓到的**：
@@ -280,9 +284,11 @@ func candidates(f reflect.Value) ([]reflect.Value, bool) {
 	t := f.Type()
 	switch t.Kind() {
 	case reflect.Int, reflect.Int32, reflect.Int64:
-		// 1..4：枚举型字段的「干净值」常常是 1，只喂 1 会把它读成「不参与」。
+		// intProbes：枚举型字段的「干净值」常常是 1，只喂 1 会把它读成「不参与」。
+		// ⚠️ 它是一个**魔法范围**，而报文里会把它原样印出来 ——
+		// 这样「没找到」读起来才是一个读数，不是一句成因。
 		var out []reflect.Value
-		for _, n := range []int64{1, 2, 3, 4} {
+		for _, n := range intProbes {
 			out = append(out, reflect.ValueOf(n).Convert(t))
 		}
 		return out, true
@@ -397,7 +403,18 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 			}
 		}
 		if !hit {
-			t.Errorf("covered 里登记了 %s，而它【不再产生痕迹】—— 幽灵项，删掉它", name)
+			// ⛔ **报文只说【读数】，不说【成因】，也不给动作**（评审方 2026-09-10 提，我认）：
+			// 上一版写的是「而它【不再产生痕迹】—— 幽灵项，删掉它」，
+			// 而本函数实际知道的只是「**我试过的那几个取值里**没有一个产生痕迹」。
+			//
+			// 🔴 而它比一句普通的未验成因**多错一格：它还给出了一个动作**。
+			// ⇒ `1..4` 是一个魔法范围，今天够用只因为 `HaltReason` 的留声值恰好落在 2、3；
+			// 一个痕迹值都 >= 5 的未来枚举，会让上一版**建议你删掉一条真的登记**。
+			//
+			// > **一条基于未验成因的【建议】，比一条未验的【陈述】多错一格。**
+			t.Errorf("covered 里登记了 %s，而【我试过的取值 %v 里没有一个产生痕迹】"+
+				"（若它的痕迹值落在这几个之外，该扩的是 candidates，不是删登记；"+
+				"确认它真的不再产生痕迹了，才把它从 covered 删掉）", name, intProbes)
 		}
 	}
 	// ⛔ 基线：不能一格都没找到（那时上面每一条都会「通过」）。
@@ -405,6 +422,18 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 		t.Fatal("一个会产生痕迹的字段都没找到 —— 多半是 nonZero 造不出值了；" +
 			"这时【不能】当成通过")
 	}
-	t.Logf("会产生痕迹的字段 %d 个：%v；跳过（造不出非零值）%d 个：%v",
-		len(found), found, len(skipped), skipped)
+	// ⛔ **`skipped` 的条数也是一个要盯的数**（评审方 2026-09-10 提）：
+	// `candidates` 造不出值的字段会**静默地**落进这一栏 ——
+	// 而那时这条守卫对它是瞎的，**却仍然全绿**。
+	// ⇒ 今天是 0。它一旦不是 0，两条出路，二选一：
+	//	一 扩 `candidates`，让它造得出那个类型的值
+	//	二 那个字段确实不可能产生痕迹 ⇒ 在这里写明是哪一个、凭什么
+	// **而「让它留在 skipped 里不管」不是出路** —— 那是让守卫悄悄变松。
+	if len(skipped) != 0 {
+		t.Errorf("有 %d 个字段造不出探针值，被跳过了：%v"+
+			"（这条守卫对它们是瞎的，而它仍然会全绿 —— 扩 candidates，或在这儿写明凭什么跳过）",
+			len(skipped), skipped)
+	}
+	t.Logf("会产生痕迹的字段 %d 个：%v；跳过 %d 个（整数候选值 %v）",
+		len(found), found, len(skipped), intProbes)
 }
