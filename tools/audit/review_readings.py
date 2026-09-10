@@ -14,11 +14,14 @@
   工作区脏 ⇒ 你即将送审的那颗，和你正在量的这棵树，不是同一个东西。
 
 ⚠️ 而它有一条写下来的射程：**它只保证「这些数取自 HEAD 这一刻」** ——
+   而其中【分支尖之外】那一栏漂得更快：**它由别人的动作改变，我什么都不做它也会变**
+   ⇒ 所以那一栏单独带一个时刻。
    它保证不了你【贴进信里的时候】HEAD 还是它。⇒ 出数时把 HEAD 全长一并打出来，
    收信方可以用那一行去核。
 
 跑法：python tools/audit/review_readings.py [main]
 """
+import datetime
 import io
 import subprocess
 import sys
@@ -117,7 +120,18 @@ def _main():
     print("")
 
     # 分支尖之外还有没有别的
-    print("分支尖之外（本地 heads ＋ 远端跟踪，逐条 rev-list --count %s..它）：" % base_ref)
+    # ⛔ 这一栏带时刻，而上面那几栏不带 —— 因为它们的【成因】不同（评审方 2026-09-10 提，我收）：
+    #
+    #   分支尖 / merge-base / porcelain   由**我自己**的动作改变 ⇒ 我不动它就不变
+    #   分支尖之外                        由**别人**的动作改变 ⇒ **我什么都不做它也会变**
+    #
+    # ⇒ 同本仓索引里那条：**当前值由对方的动作改变，而任何触发条件都必然迟对方一步。**
+    # 📎 实录：这一栏第一次真用就报出一条我不知道的 ref（评审方 worktree 的本地分支），
+    #    而我发信时它已经被删了 —— **报告为真，只是发信时已不是当前值。**
+    #    ⇒ 印一个时刻，让收信方一眼看出「这一栏是那一刻的」。
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    print("分支尖之外（本地 heads ＋ 远端跟踪，逐条 rev-list --count %s..它）"
+          "  —— 这一栏由【别人】的动作改变，读于 %s：" % (base_ref, now))
     refs = git("for-each-ref", "--format=%(refname)", "refs/heads", "refs/remotes").split("\n")
     other = []
     for r in refs:
