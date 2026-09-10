@@ -3,6 +3,7 @@ package segfile
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
@@ -192,5 +193,91 @@ func TestOpenRefusesUnstorablePeriod(t *testing.T) {
 				t.Fatalf("Open 报了错，而目录里留下了 %v —— 一个拼不出名字的周期不该落任何东西", names)
 			}
 		})
+	}
+}
+
+// TestMigrationInstructionTerminates 执行的是【上面那句报错里写给人的处置】本身。
+//
+// ⛔ 它的由来是一条必改（评审方 2026-09-10）：原来那句写的是
+// 「确认周期、把文件改成对应的名字、再重开」——**照做走不通**：
+// 改完名重开，第二堵墙是 `format=1，本版只认 2`，而那句报错**不带任何处置**。
+//
+// 🔴 判据：**一句处置是一个关于系统的断言，而它可以为假** ——
+// 「写得不够全」和「它承诺了一个不终止的过程」不是一回事，后者是缺陷。
+// ⇒ 而它的量法就是这条测试：**你写了一个过程，那就把它执行一遍。**
+//
+// ⚠️ 这条测试与那句报文之间只有一个【粗】的连接：下面断言报文提到 "format"。
+// 粗是故意的（本仓那条：判别符不能比被判别的东西更细），
+// 而它挡得住「有人把第三步从报文里删掉」这一种。
+func TestMigrationInstructionTerminates(t *testing.T) {
+	dir := t.TempDir()
+	cal, k := testCalendar(t)
+
+	// 造一份【旧版留下的】库：名字是写死的 1m.*，而里面其实是日线。
+	r := EncodeBar(bar(20200731, 1))
+	if err := os.WriteFile(filepath.Join(dir, "1m.dat"), r[:], 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "1m.meta"),
+		[]byte(`{"format":1,"coverage":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, _, err := Open(dir, tickflow.Daily)
+	if err == nil {
+		t.Fatal("前提不成立，本格作废：旧库还在旁边而 Open 收下了")
+	}
+	// ⛔ 这里原来写的是 strings.Contains(err.Error(), "format")，而它【空转】——
+	// 实测：把整段处置从报文里删光，这条断言照样绿。
+	// 成因：外层错误包着 DecodeMeta 自己那句，而那句本身就含 "format"。
+	// 🔴 一条建在【包装后的整串】上的文本断言，测不到【外层自己写了什么】。
+	// ⇒ 换成一个只有这段处置才有的词。它仍然是【粗】的代理，
+	//   而真正承重的是下面那几步：这条测试把那个过程执行了一遍。
+	if !strings.Contains(err.Error(), "三步") {
+		t.Fatalf("报文里没有那段【走得完的处置】——照它做的人会停在第二堵墙上：%v", err)
+	}
+
+	// —— 照那三步做 ——
+	// 一 确认周期：这份数据是日线（本测试知道，因为是它造的）
+	// 二 改名
+	if err := os.Rename(filepath.Join(dir, "1m.dat"), filepath.Join(dir, "1d.dat")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Rename(filepath.Join(dir, "1m.meta"), filepath.Join(dir, "1d.meta")); err != nil {
+		t.Fatal(err)
+	}
+	// 三 把 format 从 1 改成 2
+	b, rerr := os.ReadFile(filepath.Join(dir, "1d.meta"))
+	if rerr != nil {
+		t.Fatal(rerr)
+	}
+	bumped := strings.Replace(string(b), `"format":1`, `"format":2`, 1)
+	if bumped == string(b) {
+		t.Fatal("前提不成立，本格作废：.meta 里没有找到要改的那个 format")
+	}
+	if err := os.WriteFile(filepath.Join(dir, "1d.meta"), []byte(bumped), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// —— 过程该在这里终止 ——
+	s, truncated, err := Open(dir, tickflow.Daily)
+	if err != nil {
+		t.Fatalf("照那三步做完，仍然打不开 —— 那句处置承诺了一个不终止的过程：\n%v", err)
+	}
+	defer s.Close()
+	if truncated != 0 {
+		t.Fatalf("迁移之后报了残尾 %d 字节 —— 那份数据被动过了", truncated)
+	}
+
+	// 而数据还在：那一根根走查得过。
+	if err := s.AppendBars(nil); err != nil {
+		t.Fatalf("AppendBars(nil)：%v", err)
+	}
+	if err := s.CommitSpan(cal, k,
+		tickflow.Span{From: 20200731, To: 20200731, Bars: 1, Days: 1}, OutcomeComplete); err != nil {
+		t.Fatalf("迁移之后提交那一段失败 —— 数据没跟过来：%v", err)
+	}
+	if err := s.Verify(tickflow.Span{From: 20200731, To: 20200731, Bars: 1, Days: 1}); err != nil {
+		t.Fatalf("迁移之后走查失败：%v", err)
 	}
 }

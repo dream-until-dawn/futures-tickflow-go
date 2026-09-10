@@ -2,6 +2,7 @@ package tickflow
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -62,29 +63,64 @@ func TestPeriodDirNameIsCaseInsensitivelyUnique(t *testing.T) {
 	}
 }
 
+// calendarPeriodsByAsking 把【已知的日历周期】**问出来**，而不是抄一份名单。
+//
+// ⛔ 抄名单是这条守卫上一版的坏法，而它有实测：日历侧写死成 Daily/Weekly/Monthly，
+// 于是加一个 Quarterly 并给它 "3m"（**正是这条守卫要挡的那种撞法**）⇒ 全仓 0 红。
+// 评审方 2026-09-10 构造，我复现过：突变施加后 `go test ./...` 红 0 条。
+// 🔴 **新成员根本不进来 —— 一条列成员的守卫，射程就是那张名单。**
+//
+// ⇒ 改成向 PeriodDirName 问：它对未知取值报错 ⇒ **不报错的那些就是已知集合**。
+// ⚠️ 而这里【不能】走到第一个错就停：成员未必从 0 起连续
+// （`Quarterly CalendarPeriod = 10` 是合法写法）⇒ 扫一段区间，收下所有不报错的。
+func calendarPeriodsByAsking() map[CalendarPeriod]string {
+	out := map[CalendarPeriod]string{}
+	for n := -16; n <= 255; n++ {
+		if name, err := PeriodDirName(CalendarPeriod(n)); err == nil {
+			out[CalendarPeriod(n)] = name
+		}
+	}
+	return out
+}
+
 // TestPeriodDirNameFamiliesAreDisjointByShape 钉的是【结构不相交】，不是「我检查过」。
 //
-// 「我检查过没重复」会随新成员失效；结构性质不会。
-// 日内名永远是「十进制数字 + m」，日历名永远是那三个词。
+// 「我检查过没重复」会随新成员失效；结构性质不会 —— **而前提是这条守卫看得见新成员**，
+// 那正是 calendarPeriodsByAsking 存在的理由。
 func TestPeriodDirNameFamiliesAreDisjointByShape(t *testing.T) {
-	cal := map[string]bool{}
-	for _, p := range []CalendarPeriod{Daily, Weekly, Monthly} {
-		n, err := PeriodDirName(p)
-		if err != nil {
-			t.Fatalf("PeriodDirName(%v)：%v", p, err)
+	cal := calendarPeriodsByAsking()
+
+	// 前提自检（防空转）：若 PeriodDirName 对所有输入都报错，下面那条断言会【绿着空转】。
+	for _, want := range []CalendarPeriod{Daily, Weekly, Monthly} {
+		if _, ok := cal[want]; !ok {
+			t.Fatalf("前提不成立，本格作废：连 %v 都没被问出来——"+
+				"PeriodDirName 可能对所有输入都在报错，那样下面那条断言是空转的", want)
 		}
-		cal[strings.ToLower(n)] = true
 	}
-	// 扫一大片日内周期，没有一个可以落进日历那一族。
+	t.Logf("问出来的日历周期 %d 个：%v", len(cal), cal)
+
+	intraday := regexp.MustCompile(`^[0-9]+m$`)
+	for p, name := range cal {
+		if intraday.MatchString(strings.ToLower(name)) {
+			t.Fatalf("日历周期 %v 的落盘名 %q 匹配了【日内形状】^[0-9]+m$\n"+
+				"⇒ 两族不再不相交：它会和某个 Intraday(n) 同名，而大小写也不救", p, name)
+		}
+	}
+
+	// 反向：日内那一族必须【全部】落在那个形状里，且不落进日历名集合。
+	byName := map[string]bool{}
+	for _, n := range cal {
+		byName[strings.ToLower(n)] = true
+	}
 	for n := 1; n <= 1440; n++ {
 		got, err := PeriodDirName(MustIntraday(n))
 		if err != nil {
 			t.Fatalf("PeriodDirName(Intraday(%d))：%v", n, err)
 		}
-		if !strings.HasSuffix(got, "m") || got != fmt.Sprintf("%dm", n) {
-			t.Fatalf("日内名跑出了「数字+m」这个形状：Intraday(%d) ⇒ %q", n, got)
+		if !intraday.MatchString(got) {
+			t.Fatalf("日内名跑出了 ^[0-9]+m$ 这个形状：Intraday(%d) ⇒ %q", n, got)
 		}
-		if cal[strings.ToLower(got)] {
+		if byName[strings.ToLower(got)] {
 			t.Fatalf("日内 Intraday(%d) 的落盘名 %q 落进了日历那一族 ⇒ 两族不再不相交", n, got)
 		}
 	}
