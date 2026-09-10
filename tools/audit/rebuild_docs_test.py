@@ -95,6 +95,51 @@ def provOf(line):
 MERGE_FORMAT = "# 来历 <日期> <名字> <值> 合流 <另一侧的最大值> <说明>"
 
 
+def guardNamesOnDisk():
+    """读【还没被覆盖的】那份 docs_test.go 里的 guardNames。
+
+    ⛔ 它存在的理由是一次【两条机制同时瞎】（评审方 2026-09-10 量到，送审方报了另一半）：
+
+        一、来历行【文本相同】⇒ 同一天、从同一个数起跳的两次不同抬高
+           在文本上不可区分 ⇒ git 把它们合成一行 ⇒ 那次分叉不可见
+        二、rebase【改写历史】⇒ 根本没有并集可看
+
+      两条的失败方向一样（**事后查不出曾经分叉过**），成因不同，而它们同时瞎。
+
+    🔴 而第一条直接打在这个文件自己声明的用途上：`TestGuardsStillExist` 的报文写着
+    「先确认这个数【是怎么涨上去的】再决定调不调」—— **而来历行答不了这个问题**：
+    它只说「涨了」，不说「涨的是谁」。
+
+    ⇒ 处置：把【本次新增的名字】写进来历行。收益是两条：
+      ① 同一天的两次抬高**文本不同 ⇒ 变成真冲突 ⇒ 必须有人看**
+      ② 「怎么涨上去的」第一次**答得了**
+
+    ⚠️ 而它只对 `guards` 成立 —— `rules` / `anchors` / `census` 这三个计数
+    今天仍然只说「涨了」。**写下来，不假装这一格已经补齐。**
+    """
+    try:
+        text = open(TARGET, encoding="utf-8").read()
+    except FileNotFoundError:
+        return None            # 第一次生成：没有旧表可比，不是错
+    head = "var guardNames = []string{"
+    i = text.find(head)
+    if i < 0:
+        return None            # 旧文件里没有这张表（格式变过）⇒ 说不出差集，如实返回
+    out = []
+    for ln in text[i + len(head):].split("\n"):
+        s = ln.strip()
+        if s == "}":
+            break
+        if s.startswith("`") and s.endswith("`,"):
+            out.append(s[1:-2])
+    # ⛔ 表头在、条目 0 条 ⇒ 那是【解析失败】，不是「旧表是空的」
+    # （旧表不可能为空：guards 的下限已经被断言 > 0）。
+    # 🔴 而两者的后果差得很远：当成「空表」的话，差集 = **全部名字**
+    # ⇒ 来历行会把整张表列出来 —— **一份全错的证据，而它不出声。**
+    # ⇒ 按本仓那条：**一个【产出证据】的工具，失败方向必须是「不出证据」。**
+    return out or None
+
+
 def chainBreaks(lines):
     """按 running max 走一遍来历，返回断链处 [(行号, 名字, 值, 此前见过的最大值)]。
 
@@ -449,12 +494,44 @@ def main():
         # 手写的来历没有守卫，而一个假的来历比没有来历更危险（评审方 2026-09-08）。
         before = [ln for ln in hwLines if provOf(ln)]
         today = datetime.date.today().isoformat()
+        # 本次新增的守卫名字 —— 它让【同一天、同一个前值】的两次抬高在文本上分得开。
+        # ⚠️ 要在覆盖 TARGET 之前读，而写盘在本段之后 ⇒ 此刻盘上还是旧那份。
+        addedGuards = None
+        guardsGrew = any(k == "guards" for k, _, _ in grew)
+        if guardsGrew:
+            oldNames = guardNamesOnDisk()
+            if oldNames is None:
+                # ⛔ 说不出的时候，**在证据里说「说不出」**，别只是不说。
+                # 静默降级会让这道防线安静地消失，而下一个读来历行的人
+                # 分不出「那次没有分叉」和「那次我没看出来」——
+                # 本仓那条：**外形不携带状态，需要的是一次求值，不是一次阅读。**
+                print("⚠️ guards 抬高了，而盘上旧 guardNames 解析不出来 ⇒ "
+                      "来历行里记「说不出」；先看 guardNamesOnDisk 与生成格式是不是漂开了。",
+                      file=sys.stderr)
+            else:
+                addedGuards = [n for n in names if n not in set(oldNames)]
+                # ⛔ 「表长大了却说不出新增的是谁」是一个自相矛盾的状态 —— 拒绝，别写一行空话。
+                assert addedGuards, (
+                    "guards 从 %d 涨到 %d，而与盘上旧表求差得到 0 个新名字 —— "
+                    "这两件事不能同真。多半是 guardNamesOnDisk 的解析与生成格式漂开了；"
+                    "先修解析，别改被测方。" % (hw["guards"] - len(grew), len(names)))
         for k, old, new in grew:
             # `自 <前值>` 是【正式字段】，不是说明文字的一部分：
             # 两行都声称从同一个前值来 ⇒ 那是一次分叉，而分叉与并集的顺序无关。
             # （括号里那个 `%d -> %d` 留着给人读；机器读的是 `自` 后面那个。）
-            hwLines.append("# 来历 %s %s %d 自 %d 自动：重造时表长大（%d -> %d）"
-                           % (today, k, new, old, old, new))
+            #
+            # ⚠️ 名字追加在【说明】那一段的末尾，不新增字段：
+            # 两侧的解析器（本文件的 provOf 与 docs_guards_test.go 的
+            # TestHighWaterProvenance）都只读 f[0..4] 与 f[5] 那个判别位，
+            # 行尾多出来的字对它们透明。**这是特意选的落法** ——
+            # 加一个正式字段会同时改两个解析器，而那正是本文件警告过
+            # 「`自` 与 `合流` 抢同一个槽位」那一格的成因。
+            note = ""
+            if k == "guards":
+                note = ("；本次新增：" + " ".join(addedGuards) if addedGuards
+                        else "；本次新增：【说不出——旧表解析未命中，见 guardNamesOnDisk】")
+            hwLines.append("# 来历 %s %s %d 自 %d 自动：重造时表长大（%d -> %d）%s"
+                           % (today, k, new, old, old, new, note))
         writeHighWater(hwLines, hw)
         # 只增不改：已有的来历行必须原样、原序地还在前面。
         #
