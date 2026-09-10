@@ -903,6 +903,7 @@ var guardNames = []string{
 	`TestReviewReadingsRefusesStrayFlags`,
 	`TestRootErrorSentinelsAreDisposed`,
 	`TestScriptsWrapBothStreams`,
+	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
 }
 

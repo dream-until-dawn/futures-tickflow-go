@@ -1,6 +1,12 @@
 package tickflow_test
 
 import (
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
@@ -43,21 +49,29 @@ import (
 // ⚠️ 而「早报会被当成噪音」那条本仓规矩（**一个长期误报的告警最终会关掉它自己**）
 // **在这里不适用**：甲只在「有人新加一个日内源」时才响，
 // 那是**罕见且总是值得看一眼**的事件。挑早报的前提是误报率低，这里满足。
+//
+// —— ⛔ 判据枚举【封闭】的那一侧，而不是「是不是 IntradayPeriod」——
+//
+// 第一版写的是 `p.(tickflow.IntradayPeriod)` —— 一个**具体类型断言**。
+// 而本仓的两侧封闭性不对称（评审方 2026-09-10 指出，我复量）：
+//
+//	CalendarPeriod  Daily / Weekly / Monthly 一个 const 块 ⇒ **封闭**
+//	IntradayPeriod  一个 struct，而「日内」这一侧**不封闭**
+//
+// ⇒ 第一版枚举的正是**不封闭**的那一侧。
+//
+// ⚠️ 而风险的射程要收窄：`Period` 是**密封接口**（`source.go`，`isPeriod()` 不导出）
+// ⇒ **包外无法实现** ⇒ 不是「任何人都能加一个类型」。
+// 🔴 **而收窄之后它更值得改**：在 `tickflow` 包内新增一个周期类型，
+// **正是「日内落库」那天要做的事** —— 也就是这条到期条件该响的那一刻。
+//
+// 两法在今天所有取值上一致（Daily/Weekly/Monthly ⇒ 都判「没到期」；1m ⇒ 都判「到期」），
+// **只在那个未来的新类型上分岔**：按具体类型判会**漏掉**它。
+// ⇒ 所以判据反过来写：**不在 Daily/Weekly/Monthly 里就红。**
+// ⚠️ 代价一并说：`CalendarPeriod` 那个 const 块变长时（例如将来加 `Quarterly`）要跟着改
+// —— 而那会**红**，不会静默。**两边都要人动手，差别在哪一边是静默的。**
 func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
-	cal := testCalendarForCaps(t)
-
-	// ⚠️ 这张表是**手写**的 —— 本仓今天没有「所有源」的注册表。
-	// ⇒ 于是它有一个已知的失败方向：**新加一个源而忘了加进这张表**，
-	//   这条测试**不会响**。这一句写在这儿，因为它就是这条测试的射程边界。
-	//   （而它比原来那句「读 source/ 下各源的声明」强一格：那一条连表都没有。）
-	sources := []struct {
-		name string
-		caps func(tickflow.ProductKey) tickflow.Capabilities
-	}{
-		{"sinasource", newSinaForCaps(t, cal).Caps},
-		{"cffexsource", newCffexForCaps(t, cal).Caps},
-	}
-
+	sources := sourcesUnderTest(t)
 	products := embedded.Products()
 	// 前提自检：尺子不能是空转的 —— 没有品种时下面的循环一格都不跑，而它照样绿。
 	if len(products) == 0 {
@@ -74,8 +88,10 @@ func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
 			for _, p := range s.caps(k).Periods {
 				sawAny = true
 				checked++
-				if _, isIntraday := p.(tickflow.IntradayPeriod); isIntraday {
-					t.Fatalf("源 %s 对 %v 声明了日内周期 %v —— "+
+				// ⛔ 判据枚举的是**封闭**的那一侧，而不是「是不是 IntradayPeriod」。
+				// 理由见函数注释末尾那一段。
+				if p != tickflow.Daily && p != tickflow.Weekly && p != tickflow.Monthly {
+					t.Fatalf("源 %s 对 %v 声明了一个【不是日历周期】的周期 %v —— "+
 						"【㉒ 那条到期条件到期了】。\n"+
 						"处置不是把这条测试改掉，是：\n"+
 						"  一、去看 HasBars 的 O(天数 × 根数)：日内落库之后它按最坏档约 1.9 小时/次\n"+
@@ -91,7 +107,115 @@ func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
 				"这条测试在它身上是空转的，读数作废", s.name)
 		}
 	}
-	t.Logf("检查了 %d 个（源 × 品种 × 周期）组合，没有日内周期", checked)
+	t.Logf("检查了 %d 个（源 × 品种 × 周期）组合，全部落在 Daily/Weekly/Monthly 里", checked)
+}
+
+// guard: 那张手写源表的完整性 —— 新加源忘了进表就红。
+// TestSourceTableCoversEveryCapsImplementor 关的是上面那条测试**自己写下的射程边界**：
+// 那张源表是**手写**的 ⇒ 新加一个源而忘了加进表，上面那条不会响。
+//
+// ⛔ 而显然的办法（数 `source/` 下的目录）是错的，评审方量过、我复量：
+//
+//	source/ 下目录 = **3**（cffexsource · sinasource · **pacing**）
+//	其中实现 Caps 的 = **2**
+//	⇒ 目录数 ≠ 源数；而「排除 pacing」这件事本身又要手维护 ⇒ 问题只是换了个地方
+//
+// 🔴 本仓那条：**范围按性质划，别按目录划。**
+// ⇒ 判据换成「**声明了 `Caps(tickflow.ProductKey) tickflow.Capabilities` 的类型有几个**」，
+// 用 `go/ast` 扫，而不是数目录。
+//
+// ⚠️ 而它的盲点**本仓已经写过**，就在 `source.go` 那段「不要靠嵌入获得 isPeriod」旁边：
+// **AST 扫的是「谁【声明】了它」，而契约要的是「谁【满足】它」** ——
+// 一个靠**内嵌**拿到 `Caps`（提升方法）的类型没有这一行字面，**这条断言看不见它**。
+// 今天本仓没有这种写法，而这句话要跟着判据走。
+func TestSourceTableCoversEveryCapsImplementor(t *testing.T) {
+	declared := countCapsDeclarations(t)
+	if declared == 0 {
+		t.Fatal("一处 Caps 声明都没扫到 —— 尺子坏了，读数作废")
+	}
+	if declared != len(sourcesUnderTest(t)) {
+		t.Fatalf("本仓声明了 %d 处 `Caps(...)`，而 %s 里那张手写源表只有 %d 条。"+
+			"  ⇒ 新加了源而没加进表的话，那条到期条件在它身上【不会响】。"+
+			"  ⇒ 处置：把新源加进 sourcesUnderTest，别调这里的数。",
+			declared, "hasbars_expiry_test.go", len(sourcesUnderTest(t)))
+	}
+}
+
+// countCapsDeclarations 用 go/ast 数「声明了 Caps 那个签名」的方法有几个。
+func countCapsDeclarations(t *testing.T) int {
+	t.Helper()
+	n := 0
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "tools", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, ".go") || strings.HasSuffix(p, "_test.go") {
+			return nil
+		}
+		f, perr := parser.ParseFile(token.NewFileSet(), p, nil, 0)
+		if perr != nil {
+			return perr
+		}
+		for _, d := range f.Decls {
+			fd, ok := d.(*ast.FuncDecl)
+			if !ok || fd.Recv == nil || fd.Name.Name != "Caps" {
+				continue
+			}
+			// 签名要对得上：一个入参、一个返回，且都是 tickflow.* 那两个类型
+			if fd.Type.Params == nil || len(fd.Type.Params.List) != 1 ||
+				fd.Type.Results == nil || len(fd.Type.Results.List) != 1 {
+				continue
+			}
+			if exprName(fd.Type.Params.List[0].Type) == "ProductKey" &&
+				exprName(fd.Type.Results.List[0].Type) == "Capabilities" {
+				n++
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("扫源码失败：%v", err)
+	}
+	return n
+}
+
+// exprName 取 `pkg.Name` 或 `Name` 的那个 Name。
+func exprName(e ast.Expr) string {
+	switch v := e.(type) {
+	case *ast.SelectorExpr:
+		return v.Sel.Name
+	case *ast.Ident:
+		return v.Name
+	}
+	return ""
+}
+
+// capsSource 是一个源在这两条测试里用得到的那一面。
+type capsSource struct {
+	name string
+	caps func(tickflow.ProductKey) tickflow.Capabilities
+}
+
+// sourcesUnderTest 是**手写**的源表 —— 本仓今天没有「所有源」的注册表。
+//
+// ⚠️ 它的失败方向：**新加一个源而忘了加进来** ⇒ 上面那条到期条件在它身上不会响。
+// ⇒ 而这一格**已经被 `TestSourceTableCoversEveryCapsImplementor` 关上了**：
+//
+//	它数「声明了 Caps 那个签名的类型有几个」，与这张表的长度对不上就红。
+func sourcesUnderTest(t *testing.T) []capsSource {
+	t.Helper()
+	cal := testCalendarForCaps(t)
+	return []capsSource{
+		{"sinasource", newSinaForCaps(t, cal).Caps},
+		{"cffexsource", newCffexForCaps(t, cal).Caps},
+	}
 }
 
 func testCalendarForCaps(t *testing.T) tickflow.Calendar {
