@@ -308,6 +308,12 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 			//
 			// ⇒ 判据：**给一族路径统一具名之前，先数清这一族有几条，
 			// 并逐条问「它现在的哑，是不是有人故意留的」。**
+			//
+			// ⚠️ **这一条评审方【没有走到过】**（他自己列进「核不了的」那一栏：
+			// 走到它要 `now` 落在收盘之前，而他的四格里没有那一格）。
+			// ⇒ 我量了：`TestNotYetClosedKeepsItsDeliberateSilence` 走的就是这条路，
+			// 并且带着一条**前提自检**（`Requested[1] != 0 ⇒ Fatal`）——
+			// 没有那一句，一条走不到这儿的输入也会让它绿。
 			rep.Requested = [2]TradingDay{req.From, 0}
 			return rep, nil
 		}
@@ -393,6 +399,16 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		// ⇒ 判据：**哑有三种状态，不是两种** ——
 		// 故意的哑 / 声明过是结果的哑 / **从来没人回答过的哑**。
 		// 而「问它是不是故意的」，第一步是看**有没有人写过**。
+		//
+		// ⇒ **而这一条的落款现在有了，它是评审方的**（2026-09-10，原话，一字不改）：
+		//
+		//	「请求区间里一天都不交易 ⇒ 没有东西被要过，
+		//	  『没什么可同步』是一个完整而正确的回答。
+		//	  而调用方查得到：Requested 在、Bars=0、Gaps=0。」
+		//
+		// ⚠️ 引原话而不是转述，是本仓刚立的那条：**引用「某人说过什么」只有那个人能核**
+		// ⇒ 这类归属要带原话，否则它是一条永远不会被验的断言，而它看起来像有出处。
+		// ⚠️ 而他裁的是「**该**真」，不是「今天已经对」—— 今天这一步（具名化）做完，它才真。
 		if err := s.planGaps(k, req.From, to, nil, &rep); err != nil {
 			return rep, err
 		}
