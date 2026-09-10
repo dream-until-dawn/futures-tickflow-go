@@ -76,6 +76,23 @@ func newTestClient(t *testing.T, ds *dayServer, days []tickflow.TradingDay) *Cli
 	return c
 }
 
+// newTestClientWithHTTP 与 newTestClient 只差一样东西：**注入的那个 http.Client**。
+// 给 clientuse_test.go 用 —— 它要断言「声明了 ClientUseHTTP，那就真的走那个 client」。
+func newTestClientWithHTTP(t *testing.T, ds *dayServer, days []tickflow.TradingDay,
+	h *http.Client) *Client {
+	t.Helper()
+	cal, err := embedded.New(days)
+	if err != nil {
+		t.Fatalf("造日历：%v", err)
+	}
+	c, err := New(cal, WithBaseURL(ds.URL), WithHTTPClient(h),
+		WithClock(func() int64 { return nowAfter }))
+	if err != nil {
+		t.Fatalf("New：%v", err)
+	}
+	return c
+}
+
 func icReq(from, to tickflow.TradingDay) tickflow.BarRequest {
 	return tickflow.BarRequest{Symbol: icSym(), Period: tickflow.Daily, From: from, To: to}
 }

@@ -64,6 +64,10 @@ type fixtureServer struct {
 	gotReferer string
 	status     int
 	body       string
+
+	// hits 是对端【收到几次请求】。给 clientuse_test.go 那条用：
+	// 「注入的 client 用了几次」要拿去和它比，而不是只比「> 0」。
+	hits int
 }
 
 func newFixtureServer(t *testing.T) *fixtureServer {
@@ -75,6 +79,7 @@ func newFixtureServer(t *testing.T) *fixtureServer {
 		"T2612":  "daily_T2612.jsonp",
 	}
 	fs.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fs.hits++
 		fs.gotSymbol = r.URL.Query().Get("symbol")
 		fs.gotReferer = r.Header.Get("Referer")
 		if fs.status != http.StatusOK {
@@ -94,6 +99,20 @@ func newFixtureServer(t *testing.T) *fixtureServer {
 	}))
 	t.Cleanup(fs.Close)
 	return fs
+}
+
+// newTestClientWithHTTP 与 newTestClient 只差一样东西：**注入的那个 http.Client**。
+// 给 clientuse_test.go 用 —— 它要断言「声明了 ClientUseHTTP，那就真的走那个 client」。
+func newTestClientWithHTTP(t *testing.T, fs *fixtureServer, h *http.Client) *Client {
+	t.Helper()
+	c, err := New(testCal(t),
+		WithBaseURL(fs.URL),
+		WithHTTPClient(h),
+		WithClock(func() int64 { return nowAfter }))
+	if err != nil {
+		t.Fatalf("New：%v", err)
+	}
+	return c
 }
 
 func newTestClient(t *testing.T, fs *fixtureServer) *Client {
