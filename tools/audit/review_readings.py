@@ -19,13 +19,16 @@
 
 跑法：python tools/audit/review_readings.py [main]
 """
+import io
 import subprocess
 import sys
 
-# 控制台可能是 GBK（本机实测），而本文件的说明是中文 ——
-# 不改编码的话，最该被读到的那几行会变成乱码。
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+# 控制台可能是 GBK（本机实测），而本文件的说明是中文。
+# ⚠️ 两个流都要包 —— 本仓 TestScriptsWrapBothStreams 立过这条，理由是
+# 【失败时】印出来的每个中文字都是乱码，而失败那一支恰恰是本脚本最要紧的输出。
+# （我第一版只用 sys.stdout.reconfigure 包了 stdout，被那条守卫当场拦下。）
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 
 def git(*args):
