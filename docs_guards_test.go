@@ -2351,6 +2351,58 @@ func TestContentLocatorCheckerItself(t *testing.T) {
 	}
 }
 
+// —— 射程的两张名单，以及一条【每一类都必须有归属】的断言 ——
+//
+// ⛔ 上一版这里只有一张白名单，注释里写着「这一维不封闭：新增一种文本扩展名时它不会自己进来」。
+// 🔴 **而那是一句关于【将来】的话，评审方 2026-09-10 把它量成了一张关于【今天】的表：
+// 今天就有 4 个文本文件在射程外** —— `LICENSE` · `.gitignore` · `.gitattributes` · `.env.example`。
+// 他还往 `LICENSE` 里塞了一个 0x08：**白名单守卫顶层红 0，漏掉**。
+//
+// ⇒ 这与本仓这两天反复打的是同一条：**白名单是对【开放】的那一侧做枚举。**
+// ⇒ 处置不是换判据，是**加一格**：把「不封闭」变成一条**会红**的断言 ——
+// **仓里出现的每一类（扩展名，或无扩展名文件的文件名）都必须落在两张名单之一里**，
+// 否则红。⇒ 新类进仓时**强制一次决定**，而不是静默落在射程外。
+//
+// ⚠️ 而我加了一格评审方没提的：**`.env` 也在 `filepath.Walk` 的射程里，而它装着密钥**
+// （untracked ＋ gitignored）。本守卫只报「文件:行号 ＋ 码位」，**从不印内容** ——
+// 而**下一个想让报文更好读的人，会想把那一行原文印出来**。
+// ⇒ 所以它进 skip 名单，并把理由写在这儿。
+var (
+	// scanExt / scanName：要扫的。
+	scanExt = map[string]string{
+		".go": "源码", ".md": "文档", ".py": "工具脚本", ".txt": "高水位等纯文本",
+		".mod": "go.mod", ".sum": "go.sum", ".example": "配置模板（.env.example）",
+		".yml": "尚未出现，先占位", ".yaml": "同上", ".json": "同上",
+	}
+	scanName = map[string]string{
+		"LICENSE": "纯文本", ".gitignore": "纯文本",
+		".gitattributes": "纯文本，而且它决定 git 怎么处理换行",
+	}
+	// skipExt / skipName：**显式**不扫的，每条写明理由。
+	skipExt = map[string]string{
+		".exe":   "二进制（doccheck.exe 之类），本来就含控制字符",
+		".jsonp": "fixture：上游原样存下来的响应，不该被本仓的规矩改写",
+		".xml":   "同上",
+	}
+	skipName = map[string]string{
+		".env": "**装着密钥**，untracked ＋ gitignored ⇒ 本守卫不读它" +
+			"（今天只报文件名与码位、从不印内容，而下一个想让报文更好读的人会想印那一行）",
+	}
+)
+
+// classOf 给一个文件名一个【类】：无扩展名的用文件名本身，其余用小写扩展名。
+//
+// ⚠️ 两种分类法都说得通（评审方按「.gitignore 是一类扩展名」数出 12 类，
+// 我按 `filepath.Ext` 数出 11 类）—— **而要断言的那件事不受它影响**：
+// **每个文件都要有归属。** 这里选文件名那一种，因为无扩展名的那一桶里
+// 同时装着「要扫的 LICENSE」和「绝不能读的 .env」，**按扩展名分它们会塌进同一格**。
+func classOf(name string) string {
+	if ext := strings.ToLower(filepath.Ext(name)); ext != "" {
+		return ext
+	}
+	return name
+}
+
 // TestNoControlCharactersInSources 挡的是一族**只有 `cat -A` 看得见**的字符。
 //
 // ⛔ 它的由来是两天里各咬我们一次（2026-09-10）：
@@ -2379,10 +2431,6 @@ func TestContentLocatorCheckerItself(t *testing.T) {
 //
 // ⚠️ 前提自检：扫到的文件数必须 > 0 —— 否则这条守卫是空转的，而空转和「全干净」同形。
 func TestNoControlCharactersInSources(t *testing.T) {
-	textExt := map[string]bool{
-		".go": true, ".md": true, ".py": true, ".txt": true,
-		".mod": true, ".sum": true, ".yml": true, ".yaml": true, ".json": true,
-	}
 	isBad := func(r rune) bool {
 		if r == '\t' || r == '\n' || r == '\r' {
 			return false
@@ -2391,7 +2439,7 @@ func TestNoControlCharactersInSources(t *testing.T) {
 	}
 
 	var scanned int
-	var bad []string
+	var bad, unclassified []string
 	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -2403,7 +2451,18 @@ func TestNoControlCharactersInSources(t *testing.T) {
 			}
 			return nil
 		}
-		if !textExt[strings.ToLower(filepath.Ext(p))] {
+		cls := classOf(info.Name())
+		if _, skip := skipExt[cls]; skip {
+			return nil
+		}
+		if _, skip := skipName[cls]; skip {
+			return nil
+		}
+		_, wantExt := scanExt[cls]
+		_, wantName := scanName[cls]
+		if !wantExt && !wantName {
+			// ⛔ 这一类既不在「要扫」也不在「显式不扫」里 ⇒ 它静默落在射程外。
+			unclassified = append(unclassified, fmt.Sprintf("%s（%s）", cls, p))
 			return nil
 		}
 		b, rerr := os.ReadFile(p)
@@ -2426,6 +2485,16 @@ func TestNoControlCharactersInSources(t *testing.T) {
 	}
 	if scanned == 0 {
 		t.Fatal("一个文本文件都没扫到 —— 这条守卫是空转的，读数作废")
+	}
+	// ⛔ 承重的那一格：**每一类都必须有归属**。
+	if len(unclassified) > 0 {
+		t.Fatalf("有 %d 类文件既不在【要扫】也不在【显式不扫】里：%s"+
+			"  ⇒ 它们静默落在这条守卫的射程外。"+
+			"  ⇒ 处置：把它加进 scanExt/scanName（要扫）"+
+			"或 skipExt/skipName（不扫，并写明理由）。"+
+			"  ⇒ 这一格存在的理由：上一版只有一张白名单，"+
+			"而白名单是对【开放】的那一侧做枚举 —— 当时就已经有 4 个文本文件在射程外了。",
+			len(unclassified), strings.Join(unclassified, " · "))
 	}
 	if len(bad) > 0 {
 		t.Fatalf("扫过 %d 个文本文件，发现 %d 处控制字符：\n  %s\n"+
