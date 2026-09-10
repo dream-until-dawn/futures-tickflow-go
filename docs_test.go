@@ -907,6 +907,7 @@ var guardNames = []string{
 	`TestScriptsWrapBothStreams`,
 	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
+	`TestUnknownClassIsNotReadAndIsLoud`,
 }
 
 // funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。

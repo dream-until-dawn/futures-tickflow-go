@@ -2302,7 +2302,11 @@ func TestContentLocatorsResolve(t *testing.T) {
 	// ⇒ 有人加了第五条而没抬这个数时，此后从 5 掉回 4 不会响。
 	// 没做成自动的理由是代价：那要改 rebuild_docs_test.py 的登记表结构，
 	// 而这条守卫今天只有 4 条载荷。**写下来，不假装它是自动的。**
-	const locatorHighWater = 4
+	// ⇒ 2026-09-10 抬到 5：`## 二十` 新增的「六｜换读法本身」那一节引了
+	// 「一个正确但慢到不能用的接口方法」这条定位（出处在同章「三｜」，命中里有一条不是引用）。
+	// ⚠️ 而抬这个数是**手动**的 —— 上面那句「有人加了第五条而没抬这个数时不会响」
+	// 今天被兑现了一次：加第五条的是我，**而我是靠读这段注释才想起来抬的，不是被红叫醒的。**
+	const locatorHighWater = 5
 	if len(locs) < locatorHighWater {
 		t.Fatalf("只捞到 %d 条内容定位（%v）——低于高水位 %d。\n"+
 			"⇒ 若你确实删了一条：把上面那个常数改下来，并在这儿写一句为什么。\n"+
@@ -2648,6 +2652,7 @@ func scanForControlChars(t *testing.T, root string, classify func(name string) (
 	return out
 }
 
+// guard: 未知类的【默认】—— 名单只决定红绿，不决定读不读；默认被改成「会读」或「静默」就红。
 // TestUnknownClassIsNotReadAndIsLoud 钉的是**默认**，不是那张名单。
 //
 // ⛔ 它的由来（评审方 2026-09-10 铺「名字族」那一维之后归纳，我复量并做成测试）：

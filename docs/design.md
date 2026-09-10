@@ -4890,3 +4890,207 @@ if b.TradingDay == day { return true, nil }        // store.go —— 找到就�
 > 🔴 他自己给的成因值得留：**「我读了 `HasBars` 的外层循环就停了，没往下读它调的那一支。」**
 > ⇒ **给一个「代价多大」下结论前，要一路读到【真正做功的那一层】** ——
 > 外层那个 `for` 长得就很像主项，**而它只是入口。**
+
+### 六｜换读法本身 —— 评审方登记的四问，逐条答
+
+> ⚠️ 本节全部跨节引用**只用内容定位、不带章节号**（理由见上一节末尾那几格）。
+
+---
+
+#### 问一｜新读法答的是六类里的哪一类
+
+⛔ **答案是「一条边界」，不是「一类」** —— 这个差别决定了等价性测试的射程有多大。
+
+逐行读 `classifyTradingDay`（`gap.go`，搜 `has, err := hasBars(d)`）：
+
+```
+for _, s := range cov {            ← 不落在任何 coverage 段里 ⇒ 直接 GapNeverFetched（没走到 hasBars）
+    errors.Is(s.Err, ErrSpanUnverified) ⇒ GapStoreUnverified   ← 在 hasBars 之前
+    errors.Is(s.Err, ErrLegacyMeta)     ⇒ GapStoreLegacy       ← 在 hasBars 之前
+    s.Err != nil                        ⇒ 中止（坏了，不折进任何一类）
+    has, err := hasBars(d)                                     ← 只到这里才问
+        err != nil ⇒ 中止（坏了）
+        has       ⇒ 0（哨兵：有数据，不是缺口）
+        !has      ⇒ GapConfirmedEmpty
+}
+```
+
+⇒ 于是六类里 **`hasBars` 只参与一条边界**：
+
+```
+有数据（哨兵 0，不出包） ←→ GapConfirmedEmpty
+```
+
+而另外五类**一次都不问它**，各自的真值来自别处：
+
+```
+GapNeverFetched     coverage（这一天不在任何段里）—— 在循环之外返回
+GapNotTrading       日历（自然日区间减去 Walk 走过的天）—— 根本不进 classifyTradingDay
+GapCalendarUnknown  日历（Covers 之外）
+GapStoreUnverified  SpanStatus.Err
+GapStoreLegacy      SpanStatus.Err
+```
+
+📌 **这一问的用处**：等价性测试**不必**去覆盖六类，只需钉住那一条边界
+（外加「坏了」那两条中止路径的错误面）。**射程小是好消息，而它得先被数出来。**
+
+⛔ **而顺带撞见一格，单列，我还没量**：
+生产路径上 `ErrSpanUnverified` 是由 **Syncer 自己那份** `verified map[Span]bool`
+在 `hasBars` **之前**填进 `SpanStatus.Err` 的（`sync.go`，搜 `st.Err = ErrSpanUnverified`），
+而 `segfile.HasBars` 里**另有一份**自己的 `s.verified[sp]` 检查。
+⇒ 两份若永不分岔，则 `segfile.HasBars` 那条 `ErrSpanUnverified` 分支
+**在唯一的生产调用点上够不到** —— 那正是本仓「一道从不生效的防线」那一格的形状。
+⚠️ 而**我只是读出了这个可能，没有造输入去打它** ⇒ 那一半记为**推而未量**。
+（它今天在 `store_test.go` 里是被测到的，所以「没有测试」这句话不成立；
+要问的是「**生产路径**上够不够得到」。）
+
+⛔ **而去量它的路上撞见一件更重的，这一格判据是封闭的、已经量完**：
+
+```bash
+grep -rn "Syncer{" --include=*.go .        # 全仓 1 处，就在 NewSyncer 里 ⇒ 它是唯一构造器
+grep -rln "NewSyncer" --include=*_test.go . # sync_test.go · sync_gate_applicability_test.go
+grep -rln "segfile"   --include=*_test.go . # 12 个文件，而上面那两个【都不在其中】
+```
+
+🔴 **`Syncer → segfile.Store` 这条缝，今天一个测试都没有。**
+每一条 Syncer 测试用的都是 `fakeStore`；
+`sync_dispose_test.go` 里那个 `"segfile: 假装走查发现对不上"` 是 **`fakeStore` 错误里的字符串字面量**，
+不是真的接了 segfile。
+
+⇒ 后果有两层，第二层比第一层重：
+
+```
+一、segfile.HasBars 那条 ErrSpanUnverified 分支，在【生产路径】上从没被任何测试走过
+二、Store 契约的三值语义，只被【各自单独】测过：
+    segfile 那侧对着 segfile 测、Syncer 那侧对着 fakeStore 测
+    ⇒ 而 fakeStore 是我们自己写的，它【按我们以为的契约】行事
+    ⇒ 两边各自全绿，而「真实现是否满足 Syncer 依赖的那条契约」没有任何读数
+```
+
+⚠️ 这正是本仓那条「**五条分支各自全绿、合起来红；跨分支约束只有合并看得见**」，
+而这里连「合起来」这个动作都还没有发生过。
+
+📌 ⇒ **它改变问三的落法**：一条写在 `store/segfile` 包内的等价性测试，
+答的是「两个读法在同一份库上一致」，**答不了「Syncer 用它的那条路上一致」**。
+⇒ 换读法那一颗**要带一个把真 `segfile.Store` 接进 `Syncer` 的集成测试**，
+否则新读法与旧读法的等价，只在一个从未被生产路径走过的层面上成立。
+
+---
+
+#### 问二｜要不要改 `Store` 接口 —— 改，而且是【换】不是【加】
+
+取数的那条命令（**不带左括号**，否则漏掉方法值与接口装箱）：
+
+```bash
+grep -rn "HasBars" --include=*.go .
+```
+
+读数（2026-09-10 当场取，非测试项逐条核过）：
+
+```
+1 处声明          store.go            type Store interface { … HasBars(day TradingDay) (bool, error) }
+1 个真实现        store/segfile/store.go   func (s *Store) HasBars(…)
+1 个测试替身      sync_test.go             func (s *fakeStore) HasBars(…)
+1 个生产调用点    sync.go                  PlanGaps(s.cal, k, from, to, cov, s.store.HasBars)
+                                          ⚠️ 以【方法值】传出 ⇒ 用 `HasBars(` 数会漏掉它
+0 个仓外消费者    本仓今天没有下游；refdata 亦是零消费者（刻意选择，已有用户裁决）
+```
+
+⇒ **改动面 = 1 声明 ＋ 1 实现 ＋ 1 替身 ＋ 1 调用点。** 这就是「改接口」在今天的全部代价。
+
+**新增**：
+
+```go
+// DaysWithBars 一次回答【一整段】里哪些交易日有根。
+DaysWithBars(span Span) (map[TradingDay]bool, error)
+```
+
+⇒ 复杂度从 `O(天数 × 根数)` 变成 `O(根数)`：**一次 Sync 扫一遍，不是每天扫一遍。**
+⚠️ 而它换的是**形状**不是常数 —— 不引入任何派生索引，
+真值来源仍是 `.dat` 本身（若改成往 `.meta` 里存一张「哪天有根」的表，
+那张表会与 `.dat` 漂开，而那正是 B1/B2 两条判据当初要防的东西）。
+
+**三值语义保住**：未走查段仍返回 `ErrSpanUnverified`，不返回一个空 map。
+🔴 **这一格是承重的**：一个空 map 与「这一段每天都没有根」在调用方那儿长得一模一样
+—— 「没验过」不许悄悄变成一个肯定的答案（B3），换读法不许把它换掉。
+
+**为什么是【换】不是【加】**（本仓已有的那条，出处搜「**一个正确但慢到不能用的接口方法**」）：
+留着两个，慢的那个仍然可用，而下一个人不会知道该用哪个。
+
+⚠️ **而 `HasBars` 不删** —— 它从接口降级为 `*segfile.Store` 的具体方法。
+理由不是兼容，是**问三需要一个独立的参照实现**：
+🔴 **若等价性测试的两边都走新代码，那条测试是空的。**
+
+---
+
+#### 问三｜等价性 —— **一条会红的测试，不是一句声明**
+
+判据：同一份库、同一个**已走查**段、段内每一天：
+
+```
+DaysWithBars(span)[d]   ==   HasBars(d)        （对段内每个 d）
+```
+
+错误面也要对：**未走查段**上，两者都必须给出 `ErrSpanUnverified`。
+
+⛔ **三条防空转，逐条写明它防的是什么**：
+
+```
+一、前提自检：段内必须【至少一天为 true 且至少一天为 false】
+   防的是：一份每天都有根（或每天都没有）的库，会让「两边都对」变成必然
+   —— 而本仓那条「一个正确的期望值会掩盖一次空转」正是这个形状
+
+二、参照实现必须是【旧代码原样】，不能是新读法的包装
+   判据是问「什么改动会让它红」：把新读法写成恒 false ⇒ 必须红；恒 true ⇒ 必须红
+   ⇒ 这两格要在实现那一颗里【当场打出来】，不是写在这儿就算
+
+三、库的形状要跨段、跨天，并且【同一天被 AppendBars 追加两次】
+   防的是：新读法若「一次扫描建 set」，重复记录正是它与旧读法最可能分岔的地方
+   —— 旧读法找到第一条就返回，新读法要处理「已经在 set 里了」
+```
+
+⚠️ **等价只在【已走查段】上有定义。** 未走查段两边都不给布尔值 ——
+写清楚是因为：不写的话，下一个人会把「两边都报错」读成「等价性在这里也验过了」。
+
+⛔ **而这条测试自己有一格照不到，先写下来**：它验的是**两个读法在同一份库上一致**，
+**不是**「新读法是对的」。两个都错、且错得一样时它照绿。
+⇒ 挡这一格的是既有的 `TestMultiSpanHasBars` 那类**对着构造断言**的测试，不是这一条。
+**两条测试各答一半，合起来才是「新读法可以换上去」。**
+
+---
+
+#### 问四｜「1.9 小时」背后的规模前提 —— 逐项给取法
+
+```
+天数  2600     2016-01-04 起的交易日数（天勤 1m 的回溯深度，见 probe.md）
+根数  89 万    单个 .dat 的记录条数
+              ⚠️ 依据：`Bar` 结构体【没有 Symbol 字段】（bar.go）
+              ⇒ 一个 .dat = 一个 (dir, period) 序列，不是多品种混装
+每条  1 次 ReadAt，RecordSize = 88（store/segfile/dat.go）
+⇒ 2600 × 89万 ≈ 23 亿次 ReadAt
+```
+
+**它是外推，不是实测**（原文已写，这里把射程再钉一遍）：
+比例定律 `T ∝ 天数 × 根数` 由五点实测得到（days 5→80，每翻一番约四倍，
+评审方另加 D=160 一点在区间之外仍成立）；**1.9 小时本身没有人跑过。**
+
+**下界声明**：那些毫秒来自合成库、页缓存热、单进程、无并发写者
+⇒ 真实场景**只会更慢**。
+
+⛔ **而原文缺了一格，这里补上**：
+**23 亿次是【一个 store、一次 Sync】的数。**
+`Store` 是按 `(dir, Period)` 开的（`segfile.Open(dir, p)`），
+`Sync` 一次处理一个 `req.Symbol` ⇒ **多品种 / 多周期各自一个 store，代价线性叠加。**
+八个品种同步一轮 ⇒ 约 **×8**。
+🔴 这一格重要，因为「1.9 小时」听起来像一次全量同步的总代价，**而它是其中一格的代价。**
+
+---
+
+#### 本节【还没量的】
+
+```
+① segfile.HasBars 自己那条 ErrSpanUnverified 分支，在生产路径上够不够得到
+   （Syncer 的 verified 与 Store 的 verified 是两份，会不会分岔 —— 推而未量）
+② 新读法的实测数
+   —— 代码还没写 ⇒ 今天一个数都没有，「O(根数)」是分析不是读数
+```
