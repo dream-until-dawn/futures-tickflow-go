@@ -252,3 +252,48 @@ func TestScanRefusesTrailingGarbage(t *testing.T) {
 		t.Fatalf("结尾后只有空白却被拒了：%v —— 这道守卫会误伤真文件", err)
 	}
 }
+
+// TestCloseReportsUnreadDownload —— **本层自己回答「这份下载被校验过没有」**。
+//
+// ⛔ 它存在的理由：gzip 的完整性保证绑在「流被读到 EOF」这个**事件**上，
+// 而让那个事件发生的是**调用方** ⇒ 在有这道断言之前，它只是一条**约定**。
+//
+// 🔴 而这一条是补出来的：改法是评审方给的，他**手测了两端却没有留下测试** ——
+// 而本仓那条是「永远绿的测试等于没有测试」，它的姊妹是
+// **「手测过而没有测试」等于下一次改动时没有测试**。
+func TestCloseReportsUnreadDownload(t *testing.T) {
+	newBody := func(t *testing.T) io.ReadCloser {
+		t.Helper()
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Encoding", "gzip")
+			w.Write(gz(t, twoEntries))
+		}))
+		t.Cleanup(srv.Close)
+		body, err := Fetch(context.Background(), srv.Client(), srv.URL)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return body
+	}
+
+	// 甲｜对照组：读到头再关 ⇒ **不许报错**（否则这道断言就是在误伤正常路径）
+	body := newBody(t)
+	if _, err := io.ReadAll(body); err != nil {
+		t.Fatalf("完整的一份读不完：%v", err)
+	}
+	if err := body.Close(); err != nil {
+		t.Fatalf("读到头了却报错 —— 这道断言在误伤正常路径：%v", err)
+	}
+
+	// 乙｜读几个字节就放手 ⇒ 必须报出来
+	body = newBody(t)
+	buf := make([]byte, 4)
+	if _, err := body.Read(buf); err != nil {
+		t.Fatalf("读前 4 字节就失败了：%v", err)
+	}
+	err := body.Close()
+	if !errors.Is(err, errNotReadToEOF) {
+		t.Fatalf("提前放手而 Close 没说话：%v —— "+
+			"那时「这份数据完不完整」这句话没有人回答得了", err)
+	}
+}
