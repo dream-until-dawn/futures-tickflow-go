@@ -226,6 +226,7 @@ func TestCapabilitiesValidate(t *testing.T) {
 		Periods:   []Period{m1, d1},
 		MaxBars:   1023,
 		BatchDays: BatchDaysUnbounded,
+		ClientUse: ClientUseHTTP,
 		Since:     map[Period]TradingDay{m1: 20200506, d1: 20090327},
 	}
 	if err := good.Validate(); err != nil {
@@ -282,6 +283,31 @@ func TestCapabilitiesValidate(t *testing.T) {
 				t.Errorf("BatchDays=%s（%d）应当被拒，实得 %v", c.name, c.v, err)
 			}
 		}
+		// —— ClientUse 同族：零值不合法，而两个方向的后果【相反】 ——
+		//
+		//	想好了不走 HTTP 却被当成走 ⇒ **每一次同步都被诬告**（长期误报会关掉它自己）
+		//	忘了填却被当成不走        ⇒ 「源绕开了闸门」这件事**永远沉默**
+		//
+		// ⇒ 两个方向都坏 ⇒ 不能有默认值。
+		for _, c := range []struct {
+			name string
+			v    ClientUse
+		}{{"零值", 0}, {"越出已知集合", ClientUse(7)}, {"负数", ClientUse(-1)}} {
+			bad := good
+			bad.ClientUse = c.v
+			if err := bad.Validate(); err == nil || !strings.Contains(err.Error(), "ClientUse") {
+				t.Errorf("ClientUse=%s（%d）应当被拒，实得 %v", c.name, int(c.v), err)
+			}
+		}
+		// 对照：两种合法形态都要通过 —— 否则上面那条可能是「ClientUse 恒被拒」。
+		for _, v := range []ClientUse{ClientUseHTTP, ClientUseNone} {
+			ok := good
+			ok.ClientUse = v
+			if err := ok.Validate(); err != nil {
+				t.Errorf("ClientUse=%v 是合法形态，却被拒：%v", v, err)
+			}
+		}
+
 		// 对照：两种合法形态都要通过 —— 否则上面那条可能是「BatchDays 恒被拒」。
 		for _, v := range []int{1, 5, BatchDaysUnbounded} {
 			okc := good

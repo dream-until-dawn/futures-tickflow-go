@@ -287,6 +287,23 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 	rep.Requested = [2]TradingDay{req.From, to}
 
+	// ⛔ **在依赖 Caps 之前，先让它自证** —— 而这一格是量出来的，不是想出来的：
+	// `Capabilities.Validate()` **生产侧零调用点**（2026-09-09 实测：只有两个源
+	// 各自的测试在调它）。⇒ 于是本文件里那句「`BatchDays` 的零值在
+	// `Capabilities.Validate()` 那一侧已经被拒」**在生产侧是假的** ——
+	// 一个第三方 `Source` 实现带着 `BatchDays: 0` 会一路畅通。
+	//
+	// ⇒ 判据（昨天那条的第三次）：**为一句「从 Y 那里保证」辩护之前，
+	// 先 grep 【Y 有没有被调用】** —— 一个零调用点的检查器，
+	// 它挡住的东西全在别人的想象里。
+	//
+	// ⚠️ 而放在这里而不是 `NewSyncer`：`Caps` 是**按品种**问的（登记㉔），
+	// 构造时还不知道要同步哪个品种。
+	caps := s.src.Caps(k)
+	if err := caps.Validate(); err != nil {
+		return rep, fmt.Errorf("tickflow: 源在 %s 上的 Caps 自己不自洽: %w", k, err)
+	}
+
 	// —— C3b / D2b：打开这个库时发现的事，在这里留声并处置 ——
 	// ⛔ 放在拉取【之前】：D2b 的一支要作废 coverage，另一支要停 ——
 	// 两者都必须在「按 coverage 决定拉什么」之前发生。
@@ -323,7 +340,7 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		return rep, nil
 	}
 
-	chunks := chunkDays(days, s.src.Caps(k).BatchDays)
+	chunks := chunkDays(days, caps.BatchDays)
 	gateBefore := s.gate.count()
 	touched, syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
 	rep.Halt = halt
@@ -333,15 +350,25 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	//
 	// ⚠️ 判据故意写得窄：**只在「向源要过数据、而闸门一次都没被用到」时出声。**
 	// 少一次不报（源可以自己合并请求），一次不报才报 —— 而 0 是那个可判的边界。
+	// ⛔ 而它**不能被抬成 `gate增量 < attempts`**：
+	// **Syncer 不可能知道「一次 Bars 该发几个请求」** —— 一次调用发几次随源而变
+	// （sina 1 次、cffex N 次），**而那正是当初把闸门放进 RoundTripper 的理由**。
+	// ⇒ 那个比较**没有真值**，不是「更严的判据」。（评审方 2026-09-09 提出后撤回。）
+	// ⇒ 代价照报：**窄到 `== 0`，挡住的是「完全无视」，挡不住「大部分无视」**
+	// （实测 5 次里 1 次过闸 ⇒ 0 条留声 · Complete()=true ⇒ 沉默）。
 	//
-	// ⚠️ **声明的射程**：它假定源是走 HTTP 的。一个从缓存/本地文件答题的源
-	// 会被误报 —— 而本仓今天两个源都只走 HTTP，且 `SourceFactory` 收的就是
-	// `*http.Client`（一个不发 HTTP 的源没有理由接受它）。**写下来，不假装通用。**
-	if attempts > 0 && s.gate.count() == gateBefore {
+	// ⛔ **而「适不适用」由【源自己】说，不靠这个 0 去猜**（`Caps.ClientUse`）：
+	// 一个不走 HTTP 的源计数恒为 0 ⇒ 上一版**每一次同步都诬告它**，
+	// 而**一个长期误报的告警最终会关掉它自己** —— 那会把这一格的全部收益吃掉。
+	rep.UngatedOK = caps.ClientUse == ClientUseHTTP
+	if rep.UngatedOK && attempts > 0 && s.gate.count() == gateBefore {
+		// ⚠️ **措辞只报【读数】，不报【成因】**（评审方 2026-09-09 的判据，我认）：
+		// 上一版写「这个源多半没有用交给它的那个 http.Client」——那是一句**成因**，
+		// 而一条会误报的留声，成因错的时候比读数错多错一格。
+		// ⇒ **读数错是一格，成因错是两格。** 成因留给读的人。
 		rep.UngatedSource = append(rep.UngatedSource,
-			fmt.Sprintf("向源要过 %d 次数据，而【我们装的限流闸门一次都没被用到】——"+
-				"这个源多半没有用交给它的那个 http.Client；"+
-				"那意味着这次同步既没有限流也没有超时", attempts))
+			fmt.Sprintf("向源要过 %d 次数据，而经我们那个 http.Client 的请求是 0 次"+
+				"（这个源声明了 ClientUseHTTP）", attempts))
 	}
 
 	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
@@ -503,8 +530,12 @@ func (s *Syncer) tradingDays(k ProductKey, from, to TradingDay) ([]TradingDay, e
 // 切成一天一块对 sinasource 是 2671 次「拉全部历史」⇒ **不是浪费，是不可用**；
 // 不切对 cffexsource 是一次失败丢 2671 天。
 //
-// ⚠️ `BatchDays` 的零值在 `Capabilities.Validate()` 那一侧已经被拒。
-// **这里再判一次，而理由不是「以防万一」**：本函数拿到 0 会造出无限循环，
+// ⚠️ `BatchDays` 的零值由 `Capabilities.Validate()` 拒 —— 而 `Sync` 现在**真的调它**了。
+// ⛔ **上一版这句话写的是「那一侧已经被拒」，而它在生产侧是假的**：
+// 实测 `Capabilities.Validate()` 当时**零个生产调用点**，只有两个源各自的测试在调。
+// ⇒ 一句「别处已经挡住了」，要先 grep 那个「别处」有没有被调用。
+//
+// **而这里仍然再判一次**，理由不是「以防万一」：本函数拿到 0 会造出无限循环，
 // 而那种失败**不报错、只是不返回** —— 比一个错误难查得多。
 func chunkDays(days []TradingDay, batch int) [][]TradingDay {
 	if len(days) == 0 {

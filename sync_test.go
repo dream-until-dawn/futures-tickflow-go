@@ -92,7 +92,11 @@ func (s *httpSource) Bars(ctx context.Context, req BarRequest) ([]Bar, error) {
 
 func (s *httpSource) Caps(ProductKey) Capabilities {
 	return Capabilities{Periods: []Period{Daily},
-		Since: map[Period]TradingDay{Daily: 20200101}, BatchDays: s.batch}
+		Since: map[Period]TradingDay{Daily: 20200101}, BatchDays: s.batch,
+		// ⚠️ 这一行是被【自己的测试】逼出来的：不写它 ⇒ ClientUse 零值
+		// ⇒ 「不适用」⇒ 闸门那条检查静默关掉，而 TestGateBypassLeavesANote 当场红。
+		// **一个忘了声明的桩，会把它自己要测的那条检查关掉。**
+		ClientUse: ClientUseHTTP}
 }
 
 // fakeStore 只记下被调了什么，不做任何落盘。**每一格都可配**，

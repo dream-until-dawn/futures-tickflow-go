@@ -231,6 +231,8 @@ func (c *Client) Caps(k tickflow.ProductKey) tickflow.Capabilities {
 		// 一次请求 = 一个合约的【全部历史】⇒ 区间对本源不构成代价。
 		// ⛔ 切成一天一块的话，回补要 2671 次「拉全部历史」——**不是浪费，是不可用**。
 		BatchDays: tickflow.BatchDaysUnbounded,
+		// 本源走 HTTP（`c.http.Do`）⇒ 闸门计数为 0 是一个该出声的读数。
+		ClientUse: tickflow.ClientUseHTTP,
 		Since:     map[tickflow.Period]tickflow.TradingDay{tickflow.Daily: dailySince},
 		HasSettle: k.Exchange != tickflow.CFFEX,
 		HasOI:     true,

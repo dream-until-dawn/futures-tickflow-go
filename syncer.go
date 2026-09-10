@@ -124,6 +124,15 @@ type SyncReport struct {
 	// 那样做报告不会提。** 堵不住和不留声是两件事。
 	UngatedSource []string
 
+	// UngatedOK 说这个源**适不适用**上面那条检查（`Caps.ClientUse == ClientUseHTTP`）。
+	//
+	// ⛔ **不可省，理由与 `NightAbsentOK` 一模一样**：
+	// 「不适用」与「适用且没问题」在 `len(UngatedSource) == 0` 上**不可分辨**。
+	// ⇒ 而上一版没有这一格，于是一个不走 HTTP 的源**每一次同步都被诬告**
+	//（实测：Ungated 1 条 · Complete()=false，永远）——
+	// **而一个长期误报的告警，最终会关掉它自己。**
+	UngatedOK bool
+
 	// Halt 是【这次同步为什么停下来】。零值 HaltUnknown ⇒ 留声（见 HaltReason）。
 	//
 	// ⛔ 它进这个结构体、而不是只当循环里的一个局部变量，是评审方 2026-09-09

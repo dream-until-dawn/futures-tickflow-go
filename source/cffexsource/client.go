@@ -200,6 +200,8 @@ func (c *Client) Caps(k tickflow.ProductKey) tickflow.Capabilities {
 		// **一天一个请求** ⇒ 切到一天，失败最多丢一天。
 		// 不切的话，一次失败丢 2671 天（全量回补的请求数，见包注释）。
 		BatchDays: 1,
+		// 本源走 HTTP（`c.http.Do`）⇒ 闸门计数为 0 是一个该出声的读数。
+		ClientUse: tickflow.ClientUseHTTP,
 		Since:     map[tickflow.Period]tickflow.TradingDay{tickflow.Daily: cffexSince},
 		HasSettle: k.Exchange == tickflow.CFFEX,
 		HasOI:     true,

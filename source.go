@@ -126,6 +126,57 @@ func (r BarRequest) Validate() error {
 // **一个具名常量说「我想好了」，一个 0 说不清是「想好了」还是「忘了」。**
 const BatchDaysUnbounded = -1
 
+// ClientUse 说这个源**用不用**编排交给它的那个 `*http.Client`。
+//
+// 🔴 **它存在的理由是一次【诬告】**（评审方 2026-09-09 造，我复现，读数一致）：
+// 编排装了一个数请求的 `RoundTripper` 来抓「源绕开了我们的 client」那个假绿，
+// 而判据是「计数为 0」。于是**一个根本不走 HTTP 的源，每一次同步都被指控**：
+//
+//	Bars=5 · UngatedSource 1 条 · Complete() = false —— 每一次，永远
+//
+// ⛔ 而它的分量不是「误报烦人」：
+// **一个长期误报的告警，最终会关掉它自己。**
+// 一份永远 `Complete()==false` 的报告，读的人三周后就不看那一格了 ——
+// **于是它当初要抓的那个真假绿，又变回看不见。**
+//
+// ⇒ 根子是那个老形状：**「源不用我们的 client」与「源根本不走 HTTP」
+// 在【计数为 0】上不可分辨** —— 同 SYN-4 / 登记⑫ / `NightAbsentOK` 那一族。
+// ⇒ 解法也照那一族：**「不适用」要能被【说出来】，不能靠一个 0 去猜。**
+//
+// ⛔ **而它由【源自己】声明，不由调用方声明 —— 这一格要写死。**
+// 「走不走 HTTP」是源的性质，和 `BatchDays` / `Since` 同类；
+// 让调用方在构造 Syncer 时说，就又变成一句**不可核的承诺**——
+// 而那正是 `SourceFactory` 那一格刚刚取消掉的东西。
+//
+// ⚠️ **零值不合法**，由 `Capabilities.Validate` 拒。理由同 `BatchDays`：
+// 一个 `false` 说不清是「想好了，不走 HTTP」还是「忘了填」，
+// 而这两者最哑的后果相反（前者不该报，后者该报）。
+type ClientUse int
+
+const (
+	// ClientUseHTTP 这个源用编排给的 `*http.Client` 取数据。
+	// ⇒ 闸门计数为 0 是一个**该出声**的读数。
+	ClientUseHTTP ClientUse = iota + 1
+
+	// ClientUseNone 这个源不走那个 client（websocket / 本地文件 / 缓存）。
+	// ⇒ 闸门计数恒为 0，而那是**正常的**：这一格上「不适用」。
+	//
+	// ⚠️ 受益者已经排在路线图上：`source/shinnysource`（v0.5）走 websocket，
+	// **它没有任何理由用那个 `*http.Client` 去取 Bar。**
+	ClientUseNone
+)
+
+// String 让它在错误与报告里读得出来。
+func (u ClientUse) String() string {
+	switch u {
+	case ClientUseHTTP:
+		return "走编排给的 http.Client"
+	case ClientUseNone:
+		return "不走那个 client"
+	}
+	return fmt.Sprintf("ClientUse(%d)", int(u))
+}
+
 // Capabilities 报告一个源【在某个品种上】的能力与边界。
 //
 // ⚠️ 深度必须按品种问，不能只按周期。新浪的 1023 是【根数】上限，
@@ -167,6 +218,12 @@ type Capabilities struct {
 	// 和「一根都给不了」，两者不可分辨 ⇒ **忘了填查不出来**。
 	// 这里把「不必切」写成一个【具名常量】，就是为了让它和「忘了填」分得开。
 	BatchDays int
+
+	// ClientUse 说这个源用不用编排交给它的那个 *http.Client。零值不合法。
+	//
+	// ⛔ 它不是「要不要限流」，是**「限流这件事在这个源上适不适用」** ——
+	// 编排靠它把【不适用】与【适用但被绕开】分开，而那两者在计数 0 上同形。
+	ClientUse ClientUse
 
 	HasSettle bool // 是否给结算价
 	HasOI     bool // 是否给持仓量
@@ -223,6 +280,20 @@ func (c Capabilities) Validate() error {
 			"要么给一个正数（一次请求覆盖几个交易日），"+
 			"要么写 BatchDaysUnbounded（区间对这个源不构成代价）；"+
 			"0 说不清是「想好了」还是「忘了」", c.BatchDays))
+	}
+	// ⛔ ClientUse 零值不合法，理由同 BatchDays：一个 0 说不清是「想好了」还是「忘了」，
+	// 而这里两者最哑的后果**方向相反**：
+	//
+	//	想好了不走 HTTP，却被当成走  ⇒ **每一次同步都被诬告**（而长期误报会关掉它自己）
+	//	忘了填，却被当成不走         ⇒ 「源绕开了闸门」这件事**永远沉默**
+	//
+	// ⇒ 两个方向都坏，所以不能有默认值 —— 必须由源说出来。
+	if c.ClientUse != ClientUseHTTP && c.ClientUse != ClientUseNone {
+		errs = append(errs, fmt.Errorf("ClientUse=%d 不合法——"+
+			"要么 ClientUseHTTP（这个源用编排给的 http.Client 取数据），"+
+			"要么 ClientUseNone（走 websocket/本地/缓存，不用那个 client）；"+
+			"零值说不清是「想好了」还是「忘了」，而这两者错的方向相反",
+			int(c.ClientUse)))
 	}
 	return errors.Join(errs...)
 }
