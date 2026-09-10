@@ -2195,3 +2195,158 @@ func rootGapKindNames(t *testing.T) []string {
 	sort.Strings(out)
 	return out
 }
+
+// ───────── 内容定位必须指得到出处 ─────────
+//
+// 由来是一条判据在本仓被违反了**两次，而两次都发生在【说明它的那一段里】**：
+//
+//	一 我把一批会失效的引用（章节号）换成「引那句原话」的内容定位 ——
+//	  而我自己写的三串里有两串是【概括】不是原话 ⇒ grep 它们只命中引用自己
+//	二 更干净的一次：我写下「命中 = 出处 ＋ 引用 ✅」来说明第一次那个错，
+//	  而那句话把那个串抄了进去 ⇒ **命中从 2 变成 3**
+//	  ⇒ **一句自我证伪的话：写下它的那个动作，让它写的那个读数变成假的。**
+//
+// 🔴 而我为这一族立过一条触发（「写完一段【关于某个字符串的说明】就 grep 它一次」），
+// **它没有响** —— 因为那一段在作者心里是「关于一次失误的说明」，那个串只是例子里的细节：
+//
+//	触发按【这一段在说什么】划，而危险按【这一段含哪些字符】划。
+//	而主题是作者自己定的 ⇒ **越是「这一段主要在讲别的」，它越不触发。**
+//
+// ⇒ 所以它要一条机械守卫，不是一条要人想起来的规矩
+// （同 rule-as-fact 那一格：规矩要绑在一个一定会做的动作上，不是绑在我对这段话的分类上）。
+//
+// ⚠️ 分隔符用 `**` 而不是引号 —— **被引的串自己就含引号**。
+// 评审方 2026-09-10 实测：以引号为分隔符，三条**没有一条捕对**
+// （含内层引号的那条被截断，另两条把 `**` 一起捕了进去 ⇒ 拿去 grep 命中 0）。
+// ⇒ 这正是本仓那条「**判别符不能比被判别的东西更细**」——
+// 而这一次它的长法是：**分隔符出现在载荷里面。**
+//
+// 单列它【抓不住】的那一格（本仓那条：全是勾的报告分不出「核过了」和「没核出东西」）：
+// 它守的是【定位指不指得到】。而由来里那第二次（说明段抄了那个串 ⇒ 命中从 2 变成 3）
+// 它【抓不住】—— 出处那一行还在，hasSource 仍为真。
+// ⇒ 那一格是「说明里写的读数变假了」，不是「定位坏了」，是两件事。
+// 而我【不】把判据改成「命中恰好 2」：一个串合法地被引用两次就会误报，
+// 而一条会误报的守卫最终会被关掉（本仓 ③ 那一格记过）。
+// ⇒ 那一格留给人，而这条守卫只承诺它承诺的那一半。
+
+// locatorRe 捞出 `搜…「**X**」` 里的 X。
+var locatorRe = regexp.MustCompile(`搜[^「]*「\*\*(.+?)\*\*」`)
+
+// contentLocators 返回文本里全部内容定位的载荷。
+func contentLocators(text string) []string {
+	var out []string
+	for _, m := range locatorRe.FindAllStringSubmatch(text, -1) {
+		out = append(out, m[1])
+	}
+	return out
+}
+
+// locatorResolves 判「这条定位指得到出处吗」：
+// 命中里必须有一条**不是定位行本身**。
+//
+// ⚠️ 判据不是「命中 ≥ 2」—— 两条定位互相命中时读数也是 2，
+// **与「出处 ＋ 引用」一模一样**。
+//
+// ⛔ 判「这一行是不是【本条定位自己】」用的是**同一条正则**，不是「这行含不含『搜』」。
+// 第一版用的是后者，而评审方 2026-09-10 打出了它的假红：
+// 把「搜」塞进【出处】那一行 ⇒ 守卫报「命中 2 行，而每一行都是定位行本身」——
+// **那句话是假的**（其中一行就是出处）。
+// 📎 而误报面今天已经存在：design.md 里 6 行含「搜」，其中 **2 行不是定位行**
+// （「先搜裸名字」「git log -S 搜它的标题形式」）——
+// 它们今天不含任何载荷所以没出事，**而那是巧合，不是设计**；
+// 且这份文档的题材保证这个碰撞会长大（规矩要求写更多定位，讲检索的散文也在变多）。
+// 🔴 ⇒ 一句话：**判「是不是定位行」要和「捞定位」用同一把尺子。**
+// （而它撞上本文件自己写下的那条：一条会误报的守卫最终会被关掉。）
+func locatorResolves(text, payload string) (hits int, hasSource bool) {
+	for _, line := range strings.Split(text, "\n") {
+		if !strings.Contains(line, payload) {
+			continue
+		}
+		hits++
+		if !isOwnLocatorLine(line, payload) {
+			hasSource = true
+		}
+	}
+	return hits, hasSource
+}
+
+// isOwnLocatorLine 判「这一行是不是【payload 这条定位】自己那一行」。
+//
+// ⚠️ 判的是「本条」而不是「任何一条定位」：一行可以是 A 的定位行，
+// 同时是 B 的出处 —— 按「任何一条」判会把那一行对 B 也排除掉。
+func isOwnLocatorLine(line, payload string) bool {
+	for _, m := range locatorRe.FindAllStringSubmatch(line, -1) {
+		if m[1] == payload {
+			return true
+		}
+	}
+	return false
+}
+
+func TestContentLocatorsResolve(t *testing.T) {
+	b, err := os.ReadFile(filepath.Join("docs", "design.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(b)
+	locs := contentLocators(text)
+
+	// 前提自检（防空转）：捞不到定位时，下面那个循环一次都不跑，而测试照绿。
+	//
+	// ⛔ 这个数是【高水位】，不是「够用就行」的下限 —— 评审方 2026-09-10 实测：
+	// 第一版写 3 而实际是 4 ⇒ **删掉一条定位，它绿着不响**。
+	// ⇒ 语义按 tools/audit/high_water.txt 那一条：**任何缩水都要是一个显式动作**
+	// （涨了就把这个数抬上来；而降下去必须有人来这里说明为什么）。
+	//
+	// ⚠️ 单列它抓不住的：这是一个**手抬**的高水位，不像 high_water.txt 那样由生成器自动抬。
+	// ⇒ 有人加了第五条而没抬这个数时，此后从 5 掉回 4 不会响。
+	// 没做成自动的理由是代价：那要改 rebuild_docs_test.py 的登记表结构，
+	// 而这条守卫今天只有 4 条载荷。**写下来，不假装它是自动的。**
+	const locatorHighWater = 4
+	if len(locs) < locatorHighWater {
+		t.Fatalf("只捞到 %d 条内容定位（%v）——低于高水位 %d。\n"+
+			"⇒ 若你确实删了一条：把上面那个常数改下来，并在这儿写一句为什么。\n"+
+			"⇒ 若你没删：多半是正则与文中写法漂开了 —— 先修捞法，别改被测方。",
+			len(locs), locs, locatorHighWater)
+	}
+	for _, p := range locs {
+		hits, hasSource := locatorResolves(text, p)
+		if !hasSource {
+			t.Errorf("内容定位指不到出处：搜「%s」在 docs/design.md 里命中 %d 行，"+
+				"而【每一行都是定位行本身】。\n"+
+				"⇒ 多半是你写了一句【概括】而不是文件里的【原话】；"+
+				"把出处那一行的原文粘过来。\n"+
+				"⚠️ 注意「命中 ≥ 2」不算数：两条定位互相命中时读数也是 2。", p, hits)
+		}
+	}
+}
+
+// TestContentLocatorCheckerItself 是上面那条守卫的对照组 —— **它在断言里，不在注释里**。
+//
+// 三格：一条真指得到的、一条只命中定位行的、以及**载荷里含引号的那一条**
+// （最后这格是评审方实测出来的坑：用引号当分隔符时它会被截断）。
+func TestContentLocatorCheckerItself(t *testing.T) {
+	const good = "一行原话：门会写\n引用见 搜「**门会写**」\n"
+	const bad = "引用见 搜「**从没写过的串**」\n另一处引用 搜「**从没写过的串**」\n"
+	const nested = "一行原话：和「一分钟」是同一个库\n引用见 搜「**和「一分钟」是同一个库**」\n"
+
+	if got := contentLocators(good); len(got) != 1 || got[0] != "门会写" {
+		t.Fatalf("捞法坏了：good 捞到 %q", got)
+	}
+	if _, ok := locatorResolves(good, "门会写"); !ok {
+		t.Fatal("对照组塌了：一条【真指得到】的定位被判成指不到 ⇒ 下面那格的红不算数")
+	}
+	if hits, ok := locatorResolves(bad, "从没写过的串"); ok || hits != 2 {
+		t.Fatalf("坏例没被抓住：命中 %d、hasSource=%v —— "+
+			"而它正是「两条定位互相命中，读数也是 2」那一格", hits, ok)
+	}
+	// 载荷含引号：以引号为分隔符会在这里截断，用 ** 不会。
+	got := contentLocators(nested)
+	if len(got) != 1 || got[0] != "和「一分钟」是同一个库" {
+		t.Fatalf("载荷含引号时捞错了：%q\n"+
+			"⇒ 这正是「分隔符出现在载荷里面」那一格；分隔符必须是那对星号，不能是引号", got)
+	}
+	if _, ok := locatorResolves(nested, got[0]); !ok {
+		t.Fatal("载荷含引号的那条被判成指不到")
+	}
+}
