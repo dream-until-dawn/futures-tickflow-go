@@ -2424,8 +2424,29 @@ var (
 //
 // ⚠️ 两种分类法都说得通（评审方按「.gitignore 是一类扩展名」数出 12 类，
 // 我按 `filepath.Ext` 数出 11 类）—— **而要断言的那件事不受它影响**：
-// **每个文件都要有归属。** 这里选文件名那一种，因为无扩展名的那一桶里
-// 同时装着「要扫的 LICENSE」和「绝不能读的 .env」，**按扩展名分它们会塌进同一格**。
+// **每个文件都要有归属。**
+//
+// ⛔ **而这里原来给的【理由】是假的**（2026-09-10 实测，见下表）：
+// 原文写「无扩展名的那一桶里同时装着『要扫的 LICENSE』和『绝不能读的 `.env`』」——
+// 🔴 **`.env` 从来不在那一桶里**：`filepath.Ext(".env")` 返回的是 `".env"`，
+// 它走的是**扩展名支**。那个「会塌进同一格」的场面**构造不出来**。
+//
+//	文件名           filepath.Ext        走哪一支     classOf
+//	.env             ".env"              扩展名支     ".env"
+//	.ENV             ".ENV"              扩展名支     ".env"     ← 大小写折叠
+//	secrets.env      ".env"              扩展名支     ".env"     ← 同一类
+//	.gitignore       ".gitignore"        扩展名支     ".gitignore"
+//	LICENSE          ""                  **文件名支** "LICENSE"
+//	id_rsa           ""                  **文件名支** "id_rsa"
+//
+// ⇒ **决定本身仍然对，错的是它给的例子** —— 而例子会被下一个人当检查表用。
+// 文件名支今天那一桶里只有 `LICENSE` 一个已知类；**它承重的时刻是有人往里加第二个**
+// （例如 `id_rsa` 这类无扩展名的密钥文件）—— 那时按扩展名分才真的会塌：
+// 两者的 `filepath.Ext` 都是空串。
+//
+// 📎 顺带两条读数，写在这儿好让下一个人**不必逐个往名单里加名字**：
+// `secrets.env` 与 `.ENV` **都不是靠名单里那条字面命中的** ——
+// 一个走扩展名类、一个走大小写折叠，两个都落进 `.env` 那一类。
 func classOf(name string) string {
 	if ext := strings.ToLower(filepath.Ext(name)); ext != "" {
 		return ext
@@ -2625,6 +2646,67 @@ func scanForControlChars(t *testing.T, root string, classify func(name string) (
 		t.Fatalf("扫描失败：%v", err)
 	}
 	return out
+}
+
+// TestUnknownClassIsNotReadAndIsLoud 钉的是**默认**，不是那张名单。
+//
+// ⛔ 它的由来（评审方 2026-09-10 铺「名字族」那一维之后归纳，我复量并做成测试）：
+// 我上一颗把 `.env` 那条名单的理由改成了事实，**而那仍然是在讲一个【名字】**。
+// 真正该问的是：**那一族名字里，有没有哪一个会被读到？**
+// 他量了六个（`.env.local` `.env.production` `.npmrc` `id_rsa` `.ENV` `secrets.env`），
+// 🔴 **没有一个被读到** —— 而成因不是名单：
+//
+//	已知类（在四张名单里）      名单说了算：要扫的读，显式不扫的不读
+//	**未知类（不在任何名单里）**  **默认是【不读 ＋ 红】**
+//
+// ⇒ **名单只决定「红还是绿」，不决定「读还是不读」。**
+// ⇒ 而这句话承重：一个没人想到过的密钥文件名（明天的 `.pgpass`、`kubeconfig`……）
+// **不需要有人预先把它加进名单**，就已经不会被读。
+//
+// ⚠️ 而「不读」和「静默跳过」必须分开 —— 所以这条测试断言**两件事**：
+// **① 它没被读**（植进去的控制字符不出现在命中里）**② 它大声**（落进 unclassified）。
+// 只断言 ① 的话，把默认改成「静默不扫」也能过，而那正是白名单那个洞。
+func TestUnknownClassIsNotReadAndIsLoud(t *testing.T) {
+	const marker = "ZZ-UNKNOWN-CLASS-PROBE"
+	dir := t.TempDir()
+	// 一个今天四张名单都没有的类；内容含控制字符 —— 它是【读没读】的探针。
+	probe := filepath.Join(dir, "zzprobe.pgpass")
+	if err := os.WriteFile(probe, []byte(marker+" a\bb\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 前提自检：这个类今天真的**是**未知的 —— 否则下面两句都在问一个已知类。
+	if scan, known := classifyByLists("zzprobe.pgpass"); known {
+		t.Fatalf("`.pgpass` 今天已经在名单里了（scan=%v）—— "+
+			"这条测试要的是一个【未知类】，读数作废。换一个没人登记过的扩展名。", scan)
+	}
+
+	got := scanForControlChars(t, dir, classifyByLists)
+
+	// ① 它没被读。
+	if len(got.hits) != 0 {
+		t.Fatalf("未知类被读了：%v\n"+
+			"  ⇒ 承重的那句话是「未知类的默认是【不读】」——"+
+			"一个没人预先登记过的密钥文件名，不该因为没人想到它而被读进报文。",
+			got.hits)
+	}
+	if got.scanned != 0 {
+		t.Fatalf("未知类被计进了 scanned（%d）—— 它不该被打开", got.scanned)
+	}
+	// ② 它大声。
+	if len(got.unclassified) != 1 {
+		t.Fatalf("未知类没有落进 unclassified（%d 条：%v）\n"+
+			"  ⇒ 只做到「不读」是不够的：【静默跳过】和【不读】在这里长得一样，"+
+			"而静默跳过正是上一版白名单那个洞。", len(got.unclassified), got.unclassified)
+	}
+	if !strings.Contains(got.unclassified[0], ".pgpass") {
+		t.Fatalf("报的不是那个类：%s", got.unclassified[0])
+	}
+	// ⚠️ 而报文里同样不许有内容 —— 与 TestGuardNeverPrintsFileContent 同一条性质，
+	// 这里顺手在 unclassified 那一栏上也钉一次（那一栏走的是另一段组装代码）。
+	if strings.Contains(got.unclassified[0], marker) {
+		t.Fatalf("unclassified 那一栏印出了文件内容：%s", got.unclassified[0])
+	}
 }
 
 // classifyByLists 是真守卫用的那个分类器：查那四张名单。
