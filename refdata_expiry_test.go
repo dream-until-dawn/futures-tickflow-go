@@ -76,6 +76,7 @@ func countField(t *testing.T, field, want string) int {
 	return n
 }
 
+// guard: 到期条件本身。它不是业务测试 —— 到期那天它红，而那正是它的用途。
 // TestRefdataExpiryConditionNotYetDue —— 到期的那天它自己红。
 func TestRefdataExpiryConditionNotYetDue(t *testing.T) {
 	// **两个模块各问一次** —— 见 importCounts 上面那段。
@@ -92,6 +93,7 @@ func TestRefdataExpiryConditionNotYetDue(t *testing.T) {
 	}
 }
 
+// guard: 尺子自己。它钉住 goListFields 那个常量，没有它上面那条会两种情况同样地绿。
 // TestGoListImportRulerWorks —— **尺子自己也要验**，而它钉的是 `goListFields` 这个常量。
 //
 // ⛔ **第一版这条测试是空的**，而它长得完全像一条好测试：

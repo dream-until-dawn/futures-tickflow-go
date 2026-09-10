@@ -333,11 +333,60 @@ def main():
     #   TestGuardsDoNotSkipThemselves（parser.ParseFile）。⚠️ 两台都是【消费】
     #   guardNames 的，**不产生**它 —— 遍历现成，产生登记表那一步仍只有一处，
     #   而登记只从这一行的两个位置抽。**同一张表，一头按性质、一头按位置。**
-    #   ⇒ 缺的不是收集，是「哪些 func Test 算守卫」这个定义。单独一格再做。
+    #   ⇒ 缺的不是收集，是「哪些 func Test 算守卫」这个定义。
+    #
+    # ✅ **【2026-09-10 补上了那个定义】** —— 就用这一行自己指出的那条路：
+    #   **`// guard:` 是一个【声明】，而声明是可机器判的。**
+    #   于是这张表有两个来源，而两个来源回答的是**同一个问题的两种答法**：
+    #
+    #	按位置：staticTpl ＋ docs_guards_test.go 里的每一个 func Test
+    #	按声明：**全仓（根模块）任何 _test.go 里，紧挨着 `// guard:` 那一行的 func Test**
+    #
+    # 🔴 而它为什么是【现在必须】：本轮新写了三条守卫，
+    #   两条在 refdata_expiry_test.go、一条在 review_readings_argv_test.go
+    #   ⇒ **按位置那一头看不见它们** ⇒ 把整份文件删掉，high_water 一声不吭。
+    #   （评审方 2026-09-10 量出来的：实际守卫 25、登记 22。）
+    # ⚠️ 而这不是「没人写过」——本仓已经写过两遍（docs_test.go 那段实测 ＋
+    #   docs_guards_test.go 里那条「手写守卫一律写进 docs_guards_test.go」的约定）。
+    #   **写下来的边界拦不住下一个人，因为他不会先去读边界。** ⇒ 这次改成机器判的。
+    #
+    # ⚠️ 而「声明」的代价也写下来：**它要人记得写那一行**。
+    #   它比「按位置」好的地方只有一条 —— **忘了写标记，守卫仍在原地工作；
+    #   而放错位置，守卫从登记表里【消失】而没有任何提示。**
+    #   ⇒ 两种失败方向不同：前者是「少登记一条」，后者是「以为登记了」。
+    def declared_guards():
+        """扫根模块所有 *_test.go，收 `// guard:` 紧邻声明的 func Test。"""
+        found, files = set(), 0
+        for dirpath, dirnames, filenames in os.walk(ROOT):
+            dirnames[:] = [d for d in dirnames
+                           if d not in (".git", "tools", "__pycache__", "node_modules")]
+            for fn in filenames:
+                if not fn.endswith("_test.go"):
+                    continue
+                files += 1
+                lines = open(os.path.join(dirpath, fn), encoding="utf-8").read().split("\n")
+                for i, ln in enumerate(lines):
+                    if not ln.startswith("// guard:"):
+                        continue
+                    # 往下找到第一行 `func TestX(` —— 中间只许有注释行。
+                    for nxt in lines[i + 1:]:
+                        m = re.match(r"^func (Test[A-Za-z0-9_]*)\(", nxt)
+                        if m:
+                            found.add(m.group(1))
+                            break
+                        if not nxt.startswith("//"):
+                            break
+        assert files > 0, "一个 _test.go 都没扫到 —— 拒绝在空输入上写表"
+        return found
+
     guardsSrc = staticTpl + open(os.path.join(ROOT, "docs_guards_test.go"),
                                  encoding="utf-8").read()
-    names = sorted(set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc)))
+    byPosition = set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc))
+    byDeclaration = declared_guards()
+    names = sorted(byPosition | byDeclaration)
     assert names, "一个守卫名都没抽到 —— 拒绝写空表"
+    print("守卫登记：按位置 %d ＋ 按声明 %d ⇒ 合计 %d"
+          % (len(byPosition), len(byDeclaration), len(names)))
     guardTable = "\n".join("\t`%s`," % n for n in names)
 
     counts = {"rules": quotes.count("\n") + 1,

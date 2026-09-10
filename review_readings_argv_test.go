@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// guard: 跑真脚本的【行为】守卫。本仓已有的脚本类守卫都是文本断言，而文本断言
+// 挡不住「把那次调用删掉」—— 这一条是那一族的第一个成员。
 // TestReviewReadingsRefusesStrayFlags 打的是 `tools/audit/review_readings.py` 的**行为**，
 // 不是它的文本。
 //
