@@ -3,6 +3,7 @@ package tickflow
 import (
 	"encoding/json"
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -34,6 +35,11 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 		{"旧 meta 标记", SyncReport{Halt: HaltDone, LegacyMetaUnverified: []string{"rb/1m"}}},
 		{"对不上网格的根", SyncReport{Halt: HaltDone, Misaligned: 1}},
 		{"可疑交易日", SyncReport{Halt: HaltDone, AnomalousDays: []TradingDay{20200807}}},
+		// ⚠️ 这一格是【补的】—— UngatedSource 落地时没有被加进这张表，
+		// 而表本身不会因为少一行而变红：
+		// **一张「每一格都要在」的表，少一格的样子和它满的样子一模一样。**
+		// ⇒ 它和 `absent` / `elsewhere` 那一族同形：登记表自己需要一张盯着它的网。
+		{"闸门没被用到", SyncReport{Halt: HaltDone, UngatedSource: []string{"5 次 / 0 次"}}},
 		{"中止：预算耗尽", SyncReport{Halt: HaltBudget}},
 		{"中止：被取消", SyncReport{Halt: HaltContext}},
 		{"中止：没记录理由（零值）", SyncReport{Halt: HaltUnknown}},
@@ -41,6 +47,13 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			if c.r.Complete() {
 				t.Errorf("%s 单独出现时 Complete() 仍为 true —— 这一格没有参与派生", c.name)
+			}
+			// ⛔ **而「恰好一条」比「bool 翻了」强一格**（⑥ 落地之后才写得出来）：
+			// 一个 bool 只答「有没有」——**它同时看不见「没参与」和「被数了两次」**。
+			// 而 `Incidents()` 让这两种都变成读数：0 条 / 2 条。
+			if got := c.r.Incidents(); len(got) != 1 {
+				t.Errorf("%s 单独出现时交出 %d 条痕迹，期望【恰好 1 条】：%v"+
+					"（0 条 ⇒ 这一格没有参与；2 条 ⇒ 它被数了两次）", c.name, len(got), got)
 			}
 		})
 	}
@@ -250,4 +263,148 @@ func TestReportCompleteIsInvariantUnderRandomGaps(t *testing.T) {
 			"这时【不能】当成通过", rounds, maxSegs, maxSpan, maxDays)
 	}
 	t.Logf("%d 轮：最大段数=%d 最大跨度=%d 最大总天数=%d", rounds, maxSegs, maxSpan, maxDays)
+}
+
+// candidates 给一个字段造【若干个】非零值，用来问「动它会不会产生痕迹」。
+//
+// 🔴 **它返回的是一组值，不是一个 —— 这一格是被自己的守卫当场抓到的**：
+// 上一版只造一个 `1`，而 `HaltReason(1)` 恰好是 `HaltDone`，**干净的那个**
+// ⇒ 守卫报「Halt 不再产生痕迹 —— 幽灵项」，而 `Halt` 明明是参与派生的。
+//
+// > ⛔ **一个探针只喂一个值时，「这一格不影响结果」与
+// > 「这个值恰好是干净的那一个」不可分辨。**
+// ⇒ 而这正是本仓那条阶梯的第三次换装（`tools/probe/README.md`）：
+// **1 个已知值挡不住「恰好等于那个值」；要两个不同的。**
+// 这里是它的第三个用处：**不是写断言，不是读别人给的值，是【造探针的输入】。**
+func candidates(f reflect.Value) ([]reflect.Value, bool) {
+	t := f.Type()
+	switch t.Kind() {
+	case reflect.Int, reflect.Int32, reflect.Int64:
+		// 1..4：枚举型字段的「干净值」常常是 1，只喂 1 会把它读成「不参与」。
+		var out []reflect.Value
+		for _, n := range []int64{1, 2, 3, 4} {
+			out = append(out, reflect.ValueOf(n).Convert(t))
+		}
+		return out, true
+	case reflect.Bool:
+		return []reflect.Value{reflect.ValueOf(true)}, true
+	case reflect.Slice:
+		e := t.Elem()
+		v := reflect.MakeSlice(t, 1, 1)
+		switch e.Kind() {
+		case reflect.String:
+			v.Index(0).SetString("x")
+		case reflect.Int32, reflect.Int, reflect.Int64:
+			v.Index(0).SetInt(20200807)
+		case reflect.Struct:
+			// Gap 这类：留零值元素即可，它只需要「切片非空」
+		default:
+			return nil, false
+		}
+		return []reflect.Value{v}, true
+	case reflect.Array:
+		v := reflect.New(t).Elem()
+		if t.Len() > 0 && v.Index(0).CanSet() && v.Index(0).Kind() == reflect.Int32 {
+			v.Index(0).SetInt(20200807)
+			return []reflect.Value{v}, true
+		}
+		return nil, false
+	case reflect.Struct:
+		v := reflect.New(t).Elem()
+		if t.NumField() > 0 && v.Field(0).CanSet() {
+			switch v.Field(0).Kind() {
+			case reflect.Int, reflect.Int32, reflect.Int64:
+				v.Field(0).SetInt(1)
+				return []reflect.Value{v}, true
+			}
+		}
+		return nil, false
+	}
+	return nil, false
+}
+
+// TestEveryIncidentProducingFieldIsInTheTable 是那张表的**第二张网**。
+//
+// 🔴 **它存在的理由是一处刚发生的漏登记**：`UngatedSource` 落地时
+// **没有被加进上面那张「每一格都要能单独翻它」的表**，而表照绿。
+//
+// > ⛔ **一张「每一格都要在」的表，少一格的样子和它满的样子一模一样。**
+//
+// ⇒ 而这与本仓 `absent` / `elsewhere` / `guardNames` 那一族同形：
+// **登记表自己需要一张盯着它的网** —— 否则「登记」这个动作本身没有守卫。
+//
+// ⇒ 这一张网的做法：**反射枚举 `SyncReport` 的每一个字段**，逐个把它设成非零值，
+// 看 `Incidents()` 会不会因此多出东西。**会的那些，必须在上面那张表里出现过。**
+//
+// ⚠️ 射程两条，和它一起读：
+//
+//	一 它按【字段名】对表，不按语义 —— 表里那一行有没有真的断言对，它管不了。
+//	二 造不出「非零值」的字段（本函数 nonZero 返回 false 的那些）它跳过 ——
+//	  而**跳过了几个会被打印出来**：跳过数一旦变多，说明这张网在悄悄变松。
+func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
+	// 上面那张表覆盖到的字段（人工登记 —— 而它正是被这条测试盯着的那一半）。
+	covered := map[string]bool{
+		"TruncatedTails":       true,
+		"LegacyMetaDiscarded":  true,
+		"LegacyMetaUnverified": true,
+		"Misaligned":           true,
+		"AnomalousDays":        true,
+		"UngatedSource":        true,
+		"Halt":                 true,
+	}
+
+	base := SyncReport{Halt: HaltDone}
+	if len(base.Incidents()) != 0 {
+		t.Fatal("基底就带着痕迹 —— 前提没成立，下面每一格的比较都没有意义")
+	}
+
+	rt := reflect.TypeOf(base)
+	var skipped []string
+	var found []string
+	for i := 0; i < rt.NumField(); i++ {
+		name := rt.Field(i).Name
+		v := reflect.New(rt).Elem()
+		v.Set(reflect.ValueOf(base))
+		cands, ok := candidates(v.Field(i))
+		if !ok {
+			skipped = append(skipped, name)
+			continue
+		}
+		produces := false
+		for _, c := range cands {
+			v.Set(reflect.ValueOf(base)) // 每一轮都从干净的基底重来
+			v.Field(i).Set(c)
+			if len(v.Interface().(SyncReport).Incidents()) > 0 {
+				produces = true
+				break
+			}
+		}
+		if !produces {
+			continue // 这一格不产生痕迹（Requested / Covered / Bars / Gaps …）
+		}
+		found = append(found, name)
+		if !covered[name] {
+			t.Errorf("字段 %s 动一下就会产生痕迹，而它【不在那张表里】——\n"+
+				"  ⇒ 表少一行不会变红：少一格的样子和它满的样子一模一样。\n"+
+				"  ⇒ 去上面那张用例表里补一行，再回来把它加进 covered", name)
+		}
+	}
+	for name := range covered {
+		hit := false
+		for _, f := range found {
+			if f == name {
+				hit = true
+			}
+		}
+		if !hit {
+			t.Errorf("covered 里登记了 %s，而它【不再产生痕迹】—— 幽灵项，删掉它", name)
+		}
+	}
+	// ⛔ 基线：不能一格都没找到（那时上面每一条都会「通过」）。
+	if len(found) == 0 {
+		t.Fatal("一个会产生痕迹的字段都没找到 —— 多半是 nonZero 造不出值了；" +
+			"这时【不能】当成通过")
+	}
+	t.Logf("会产生痕迹的字段 %d 个：%v；跳过（造不出非零值）%d 个：%v",
+		len(found), found, len(skipped), skipped)
 }

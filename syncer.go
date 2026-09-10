@@ -176,15 +176,56 @@ type SyncReport struct {
 // ⇒ 一般式（评审方 2026-09-09）：**当一个「总状态」漏报了某件事，
 // 先问那件事有没有【留声】—— 补留声比放宽总状态安全：
 // 留声是加一个事实，放宽是改一个定义。**
-func (r SyncReport) Complete() bool {
-	_, halted := r.Halt.note()
-	return !halted &&
-		len(r.UngatedSource) == 0 &&
-		len(r.TruncatedTails) == 0 &&
-		len(r.LegacyMetaDiscarded) == 0 &&
-		len(r.LegacyMetaUnverified) == 0 &&
-		r.Misaligned == 0 &&
-		len(r.AnomalousDays) == 0
+// ⛔ **而它现在是从 `Incidents()` 算出来的，不再自己列一遍那六格** ——
+// 那一步的全部内容是：**让「加一个事实」成为唯一的扩展方式。**
+//
+//	上一版  加一种痕迹 ⇒ 加字段 ＋ **改这个判断式**（改一个定义）
+//	这一版  加一种痕迹 ⇒ 加字段 ＋ **在 Incidents() 里加一行**（加一个事实）
+//
+// ⇒ 而这正是那条判据自己的形状：**补留声是加一个事实，放宽是改一个定义。**
+// 上一版每加一种痕迹都要动一次定义 —— **而定义每被动一次，就有一次被动错的机会。**
+func (r SyncReport) Complete() bool { return len(r.Incidents()) == 0 }
+
+// Incidents 交出这次同步留下的【每一条需要人看一眼的痕迹】。
+//
+// ⛔ **它是那六格的唯一汇合处**，而 `Complete()` 只是 `len(...) == 0`。
+// ⇒ 加一种新痕迹时**只动这里**：
+// 判断式不用改，`String()` 不用改，测试里那张「每一格都要能单独翻它」的表也不用改形状。
+//
+// ⚠️ 它比一个 bool 多带一样东西：**是哪几条** ——
+// 而那正是 `String()` 上一版只能写「（有留下痕迹，见明细）」的原因。
+//
+// ⛔ **到期条件（评审方 2026-09-09 要求写下来，我认）**：
+// `[]string` 只在「调用方拿它来**看有没有、看是哪几条**」时够用。
+// **哪天有人要按类别分支**（`if 是截断 then …`），
+// 正确的动作是**给它一个类型**，而不是去 `strings.Contains` ——
+// 后者会把⑱ 那一格请回来：**把已经分开的类别，用字符串又粘回去。**
+// ⇒ 这一条自己就是自己的有效期：**仓里出现第一处 `strings.Contains(incident, …)` 那天，它到期。**
+func (r SyncReport) Incidents() []string {
+	var out []string
+	if note, halted := r.Halt.note(); halted {
+		out = append(out, note)
+	}
+	for _, s := range r.UngatedSource {
+		out = append(out, "闸门没被用到："+s)
+	}
+	for _, s := range r.TruncatedTails {
+		out = append(out, "开库时截过残尾："+s)
+	}
+	for _, s := range r.LegacyMetaDiscarded {
+		out = append(out, "旧 meta 已作废重拉："+s)
+	}
+	for _, s := range r.LegacyMetaUnverified {
+		out = append(out, "旧 meta 标记未核并停："+s)
+	}
+	if r.Misaligned > 0 {
+		out = append(out, fmt.Sprintf("%d 根对不上网格", r.Misaligned))
+	}
+	if len(r.AnomalousDays) > 0 {
+		out = append(out, fmt.Sprintf("%d 个交易日的模板与实际矛盾：%v",
+			len(r.AnomalousDays), r.AnomalousDays))
+	}
+	return out
 }
 
 func (r SyncReport) String() string {
@@ -200,8 +241,10 @@ func (r SyncReport) String() string {
 		s += "，停因：" + r.Halt.String()
 		_ = note
 	}
-	if !r.Complete() {
-		s += "（有留下痕迹，见明细）"
+	if n := len(r.Incidents()); n > 0 {
+		// ⚠️ 报**条数**，不报内容 —— 这一行是给人扫一眼的，明细去读 `Incidents()`。
+		// 而上一版只能写「有留下痕迹」：**一个 bool 说不出「几条」。**
+		s += fmt.Sprintf("（%d 条痕迹，见 Incidents()）", n)
 	}
 	return s
 }
