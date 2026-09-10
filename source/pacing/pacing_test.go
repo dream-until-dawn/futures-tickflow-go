@@ -165,3 +165,53 @@ func TestTransportRespectsRequestContext(t *testing.T) {
 		t.Fatal("RoundTrip 没有跟着请求的 ctx 结束 —— 闸门用的多半是 Background")
 	}
 }
+
+// TestFixedDelayHonoursTheGivenDelay 间隔必须等于**调用方给的那个 d** —— 两个值各验一次。
+//
+// 🔴 **它补的是一个真的、今天开着的洞**（评审方 2026-09-09 量出，我复现，读数一致）：
+//
+//	把 `f.next = now.Add(wait + f.d)` 里的 `f.d` 换成写死的 100ms
+//	（`f.d` 存下来但再没人读，Go 不报错，编译过）
+//	⇒ **全仓 0 红** —— 也就是 `FixedDelay(1*time.Second)` 实际按 100ms 发，七个包全绿
+//
+// ⇒ 成因就在上面那条测试里：`TestFixedDelayPacesSecondCall` **只用了一个 d = 100ms**，
+// 于是它停在阶梯第三级 —— **「写死成 100ms」的实现恰好相等，照绿。**
+//
+// ⛔ 而这一格是本仓自己早就记过的：`tools/probe/README.md` §2 ——
+// **「1 个已知值挡不住『恰好返回那个值』；2 个不同的已知值挡得住任何常量。」**
+// ⇒ 判据：**每次觉得「这条断言还能更强」，先去仓里搜有没有记过那一格。**
+//
+// ⚠️ 两个值**都不是 100ms**：否则这条测试自己也会被那个突变绕过去。
+// ⚠️ 而它留在**本包**里，理由是「够不到」是一句带地址的话 ——
+// 根包的测试够不到 `f.now`，**而本包的测试够得到**（注入口就在上面那条测试里）。
+// ⇒ 不必改 API，也不必量墙钟。
+func TestFixedDelayHonoursTheGivenDelay(t *testing.T) {
+	for _, d := range []time.Duration{70 * time.Millisecond, 230 * time.Millisecond} {
+		t.Run(d.String(), func(t *testing.T) {
+			p, err := FixedDelay(d)
+			if err != nil {
+				t.Fatal(err)
+			}
+			f := p.(*fixed)
+			clk := &fakeClock{t: time.Unix(0, 0)}
+			f.now = clk.now
+
+			// 第一次：不必等，而它把「下一次可发时刻」推到 +d。
+			if err := f.Wait(context.Background()); err != nil {
+				t.Fatal(err)
+			}
+			if got := f.next.Sub(clk.t); got != d {
+				t.Fatalf("第一次之后，下一次可发时刻应当是 +%v，实得 +%v\n"+
+					"  ⇒ 它用的不是调用方给的那个 d", d, got)
+			}
+			// 第二次：把时钟推到那一刻，它应当再推 +d。
+			clk.t = f.next
+			if err := f.Wait(context.Background()); err != nil {
+				t.Fatal(err)
+			}
+			if got := f.next.Sub(clk.t); got != d {
+				t.Errorf("第二次之后应当再 +%v，实得 +%v", d, got)
+			}
+		})
+	}
+}
