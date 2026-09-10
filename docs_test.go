@@ -877,6 +877,8 @@ func TestCarrierCensus(t *testing.T) {
 var guardNames = []string{
 	`TestCarrierCensus`,
 	`TestCarriersHaveNoHTMLComments`,
+	`TestContentLocatorCheckerItself`,
+	`TestContentLocatorsResolve`,
 	`TestDocLinksResolve`,
 	`TestEveryQuotedRuleIsRegistered`,
 	`TestEveryRuleSectionHasAnAnchor`,
