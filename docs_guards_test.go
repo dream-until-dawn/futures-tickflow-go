@@ -2350,3 +2350,89 @@ func TestContentLocatorCheckerItself(t *testing.T) {
 		t.Fatal("载荷含引号的那条被判成指不到")
 	}
 }
+
+// TestNoControlCharactersInSources 挡的是一族**只有 `cat -A` 看得见**的字符。
+//
+// ⛔ 它的由来是两天里各咬我们一次（2026-09-10）：
+//
+//	送审方：heredoc 把注释里的 `\b` 变成了**一个真的退格字符（0x08）**写进 source.go
+//	评审方：同族的另一次，写进了记忆文件
+//
+// 🔴 而它的失败方向是**不可见**：那个 0x08 在源文件里
+// **编译过、`go vet` 过、`gofmt` 过、`doccheck` 过** —— 一路全绿。
+// ⇒ 这正是本仓那条：**一个静默的错误，比一个大声的错误贵**。
+//
+// ⚠️ 而更贵的一格在后面：**修它的时候我把 `\x08` 换成了 `b`**
+// ⇒ 那条命令变成 `grep "\.HasOIb"` ⇒ **它跑出来是 0，而我要的答案正好也是 0**
+// ⇒ **一个对的答案、错的理由。** 若不是顺手做了对照（比【总命中】而不只比目标范围），
+// 这一格会以「读数没变」通过。
+//
+// —— 判据与射程 ——
+//
+// 查的：C0 控制字符里除 `\t` `\n` `\r` 之外的那些（`\x00-\x08 \x0b \x0c \x0e-\x1f`）
+// 范围：文本类扩展名（.go .md .py .txt .mod .sum .yml .yaml .json）——
+//
+//	⚠️ 按**扩展名**划而不是按目录划，因为仓里还有 .exe / .jsonp / .xml 这些
+//	**本来就可能含控制字符**的东西（fixture 与二进制）。
+//	⇒ 这一维不封闭：**新增一种文本扩展名时它不会自己进来**，
+//	  而那个失败方向是「少查一类」，不是误报。
+//
+// ⚠️ 前提自检：扫到的文件数必须 > 0 —— 否则这条守卫是空转的，而空转和「全干净」同形。
+func TestNoControlCharactersInSources(t *testing.T) {
+	textExt := map[string]bool{
+		".go": true, ".md": true, ".py": true, ".txt": true,
+		".mod": true, ".sum": true, ".yml": true, ".yaml": true, ".json": true,
+	}
+	isBad := func(r rune) bool {
+		if r == '\t' || r == '\n' || r == '\r' {
+			return false
+		}
+		return r < 0x20 || r == 0x7f
+	}
+
+	var scanned int
+	var bad []string
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !textExt[strings.ToLower(filepath.Ext(p))] {
+			return nil
+		}
+		b, rerr := os.ReadFile(p)
+		if rerr != nil {
+			return rerr
+		}
+		scanned++
+		for i, line := range strings.Split(string(b), "\n") {
+			for _, r := range line {
+				if isBad(r) {
+					bad = append(bad, fmt.Sprintf("%s:%d 有 %U", p, i+1, r))
+					break
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("扫文件失败：%v", err)
+	}
+	if scanned == 0 {
+		t.Fatal("一个文本文件都没扫到 —— 这条守卫是空转的，读数作废")
+	}
+	if len(bad) > 0 {
+		t.Fatalf("扫过 %d 个文本文件，发现 %d 处控制字符：\n  %s\n"+
+			"  ⇒ 它们编译过、vet 过、gofmt 过、doccheck 过 —— 只有 `cat -A` 看得见（形如 ^H）。\n"+
+			"  ⇒ 多半来自 heredoc：写含反斜杠的内容时用 Write/Edit 工具，别走 heredoc。\n"+
+			"  ⇒ ⚠️ 修的时候别把 \\x08 换成 b —— 那会造出一条【坏掉却给出正确答案】的选择器。",
+			scanned, len(bad), strings.Join(bad, "\n  "))
+	}
+	t.Logf("扫过 %d 个文本文件，控制字符 0 处", scanned)
+}

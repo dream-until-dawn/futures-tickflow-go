@@ -896,6 +896,7 @@ var guardNames = []string{
 	`TestMergeRecordCriterion`,
 	`TestMergeRecordPrecedesWhatItLicenses`,
 	`TestNoConflictMarkersInDocs`,
+	`TestNoControlCharactersInSources`,
 	`TestNoDuplicateHeadingsInCarriers`,
 	`TestNoMarkdownEmphasisInPrintedMessages`,
 	`TestNoOrphanedSentences`,
