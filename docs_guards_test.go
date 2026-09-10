@@ -2246,17 +2246,41 @@ func contentLocators(text string) []string {
 //
 // ⚠️ 判据不是「命中 ≥ 2」—— 两条定位互相命中时读数也是 2，
 // **与「出处 ＋ 引用」一模一样**。
+//
+// ⛔ 判「这一行是不是【本条定位自己】」用的是**同一条正则**，不是「这行含不含『搜』」。
+// 第一版用的是后者，而评审方 2026-09-10 打出了它的假红：
+// 把「搜」塞进【出处】那一行 ⇒ 守卫报「命中 2 行，而每一行都是定位行本身」——
+// **那句话是假的**（其中一行就是出处）。
+// 📎 而误报面今天已经存在：design.md 里 6 行含「搜」，其中 **2 行不是定位行**
+// （「先搜裸名字」「git log -S 搜它的标题形式」）——
+// 它们今天不含任何载荷所以没出事，**而那是巧合，不是设计**；
+// 且这份文档的题材保证这个碰撞会长大（规矩要求写更多定位，讲检索的散文也在变多）。
+// 🔴 ⇒ 一句话：**判「是不是定位行」要和「捞定位」用同一把尺子。**
+// （而它撞上本文件自己写下的那条：一条会误报的守卫最终会被关掉。）
 func locatorResolves(text, payload string) (hits int, hasSource bool) {
 	for _, line := range strings.Split(text, "\n") {
 		if !strings.Contains(line, payload) {
 			continue
 		}
 		hits++
-		if !strings.Contains(line, "搜") {
+		if !isOwnLocatorLine(line, payload) {
 			hasSource = true
 		}
 	}
 	return hits, hasSource
+}
+
+// isOwnLocatorLine 判「这一行是不是【payload 这条定位】自己那一行」。
+//
+// ⚠️ 判的是「本条」而不是「任何一条定位」：一行可以是 A 的定位行，
+// 同时是 B 的出处 —— 按「任何一条」判会把那一行对 B 也排除掉。
+func isOwnLocatorLine(line, payload string) bool {
+	for _, m := range locatorRe.FindAllStringSubmatch(line, -1) {
+		if m[1] == payload {
+			return true
+		}
+	}
+	return false
 }
 
 func TestContentLocatorsResolve(t *testing.T) {
@@ -2268,9 +2292,22 @@ func TestContentLocatorsResolve(t *testing.T) {
 	locs := contentLocators(text)
 
 	// 前提自检（防空转）：捞不到定位时，下面那个循环一次都不跑，而测试照绿。
-	if len(locs) < 3 {
-		t.Fatalf("只捞到 %d 条内容定位（%v）——低于本文件已知的条数，"+
-			"多半是正则与文中写法漂开了；先修捞法，别改被测方", len(locs), locs)
+	//
+	// ⛔ 这个数是【高水位】，不是「够用就行」的下限 —— 评审方 2026-09-10 实测：
+	// 第一版写 3 而实际是 4 ⇒ **删掉一条定位，它绿着不响**。
+	// ⇒ 语义按 tools/audit/high_water.txt 那一条：**任何缩水都要是一个显式动作**
+	// （涨了就把这个数抬上来；而降下去必须有人来这里说明为什么）。
+	//
+	// ⚠️ 单列它抓不住的：这是一个**手抬**的高水位，不像 high_water.txt 那样由生成器自动抬。
+	// ⇒ 有人加了第五条而没抬这个数时，此后从 5 掉回 4 不会响。
+	// 没做成自动的理由是代价：那要改 rebuild_docs_test.py 的登记表结构，
+	// 而这条守卫今天只有 4 条载荷。**写下来，不假装它是自动的。**
+	const locatorHighWater = 4
+	if len(locs) < locatorHighWater {
+		t.Fatalf("只捞到 %d 条内容定位（%v）——低于高水位 %d。\n"+
+			"⇒ 若你确实删了一条：把上面那个常数改下来，并在这儿写一句为什么。\n"+
+			"⇒ 若你没删：多半是正则与文中写法漂开了 —— 先修捞法，别改被测方。",
+			len(locs), locs, locatorHighWater)
 	}
 	for _, p := range locs {
 		hits, hasSource := locatorResolves(text, p)
