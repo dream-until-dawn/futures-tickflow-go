@@ -241,6 +241,12 @@ func (b *bodyReader) Read(p []byte) (int, error) {
 // 而那**不是误报** —— 它说的是「这份下载没有被校验过」，**而那句话是真的**；
 // 中止的人自己知道为什么中止，而 `defer Close()` 不看返回值的人本来也没在读它。
 //
+// ⛔ **而 raw.Close() 的错误此前在出错的两支里被整个丢掉**（评审方 2026-09-10 报，建议格）：
+// 突变「把最后那行 return rerr 改成 return nil（并 _ = rerr 保住构建）」⇒ **0 红**
+// —— 它不是「一个被守着的行为被丢了」，是**一个从没被断言过的返回值**。
+// ⇒ 现在用 errors.Join 把它并上去：两个哨兵的 errors.Is 都照旧成立，而 rerr 不再静默消失。
+// ⚠️ 而它可测，因为 raw 是一个 io.ReadCloser —— 测试里给一个 Close 会报错的就行。
+//
 // ⚠️ 到期条件（与本包哨兵那条同源，见 contract.go 包注释）：
 // **在出现第一个包外调用方之前**，改 Close 的返回值是免费的；有了就是破坏性变更。
 // ⇒ 当前读数**不写在这里** —— 它由 `TestRefdataExpiryConditionNotYetDue` 当场求，
@@ -272,15 +278,46 @@ func (b *bodyReader) Close() error {
 	//
 	// ⇒ 摘掉它，这一格会被报成「你放手了」，**而这份流其实是断的** ⇒ 信息反而丢了。
 	// ⇒ 所以是**合并**，不是删除；哪一侧先看见都算数。
-	if e := b.readErr; e != nil || zerr != nil {
-		if e == nil {
-			e = zerr
-		}
-		return fmt.Errorf("%w：%v（【该重取】—— 这份流坏了，不是调用方少读了）", errStreamBroken, e)
+	//
+	// ⛔ **【2026-09-10 第二条必改】而「合并」把另一维压掉了：【谁造成的】。**
+	// 评审方铺的第三个维度是这个，实测（分片慢速回，读 4096 字节后调用方自己 cancel）：
+	//
+	//	Read ⇒ **context canceled** ⇒ 落进 errStreamBroken ⇒ 报「该重取」
+	//	而它是**调用方自己的选择**，按本包的处置表该是「不必重取」
+	//
+	// 🔴 而最难看的一格：**它与本函数自己上方那段注释直接矛盾** ——
+	// 那段写着「提前放手的调用方（**ctx 取消**、回调喊停）会拿到一个 Close 错误，
+	// 而它说的是『这份下载没有被校验过』」。**同一个函数里代码与注释各说各的，而注释那版是对的。**
+	// ⇒ 留声含成因的**第四次**：「这份流坏了」假、「不是调用方少读了」也假。
+	//
+	// ⚠️ 射程先划清（评审方划的，我照收并复量）：
+	// **`readErr` 的取值不封闭**（它是 transport / OS / ctx 交回来的任何错误）
+	// ⇒ **只能兜底，不能枚举** ⇒ 默认仍落 errStreamBroken（保守：宁可多说一次「该重取」）。
+	// 而 **ctx 那两个是封闭且判得了的** ⇒ 单独摘出去。
+	// ⚠️ 实测：`context.Canceled` **两个来源都会出现**（`Read` 与 `zr.Close()` 各量到一次）
+	// ⇒ 判据要看合并之后的那一个，不能只看 readErr。
+	e := b.readErr
+	if e == nil {
+		e = zerr
 	}
-	if !b.sawEOF {
-		return fmt.Errorf("%w（读到这里就放手了 ⇒ gzip 的 CRC 与长度校验【没有发生】，"+
-			"这份数据是不是完整的，本层答不了）", errNotReadToEOF)
+	// ⚠️ `rerr` 不再被丢掉 —— 见 `Close` 说明末尾那一段。
+	join := func(err error) error {
+		if rerr != nil {
+			return errors.Join(err, rerr)
+		}
+		return err
+	}
+	switch {
+	case errors.Is(e, context.Canceled) || errors.Is(e, context.DeadlineExceeded):
+		// 调用方自己放手 ⇒ 与「读到一半 return」同一侧：**流没坏，只是没验过**。
+		return join(fmt.Errorf("%w：%v（调用方自己中止的 ⇒【不必】重取；"+
+			"而这份数据有没有问题，本层答不了）", errNotReadToEOF, e))
+	case e != nil:
+		return join(fmt.Errorf("%w：%v（【该重取】—— 这份流坏了，不是调用方少读了）",
+			errStreamBroken, e))
+	case !b.sawEOF:
+		return join(fmt.Errorf("%w（读到这里就放手了 ⇒ gzip 的 CRC 与长度校验【没有发生】，"+
+			"这份数据是不是完整的，本层答不了）", errNotReadToEOF))
 	}
 	return rerr
 }
