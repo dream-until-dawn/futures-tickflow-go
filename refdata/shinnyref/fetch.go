@@ -21,15 +21,21 @@ var (
 	// errNotReadToEOF 是「这份下载没被读到头」——**不是数据坏了，是【没验过】**。
 	// 两者要分得开：前者可以重试，后者是调用方自己的选择。
 	errNotReadToEOF = errors.New("shinnyref: 这份下载没有被读到 EOF——完整性没有被校验")
-	// errStreamBroken 是「读到底了，而校验失败了」——**和上面那条是相反的两件事**。
+	// errStreamBroken 是「这份流坏了」——**和上面那条是相反的两件事**。
 	//
 	// ⛔ 它是被逼出来的：原来这两种情况**共用上面那一个哨兵**，
 	// 于是一份 CRC 坏掉的下载会被报成「你没读完、校验没发生」——**两句都假**。
 	// ⇒ 分开的判据不是措辞，是**处置不同**：
 	//
-	//	errNotReadToEOF ⇒ 调用方自己的选择（中止）⇒ **不必重取**
-	//	errStreamBroken ⇒ 这份数据是坏的        ⇒ **该重取**
-	errStreamBroken = errors.New("shinnyref: 这份下载读到底了，而完整性校验失败了")
+	//	errNotReadToEOF ⇒ 调用方自己的选择（中止），而流是好的 ⇒ **不必重取**
+	//	errStreamBroken ⇒ 这份数据是坏的                     ⇒ **该重取**
+	//
+	// ⚠️ **【2026-09-10 第二次更正】它的第一版句子写着「读到底了，而校验失败了」——
+	// 而那半句「读到底了」是假的**：`砍掉一半 · 只读 4 字节就放手` 这一格也归它
+	// （流是断的，而调用方并没有读到底）。
+	// 🔴 同一格教训的第三次：**留声措辞不含成因** —— 这次是**新哨兵继承了旧哨兵的毛病**。
+	// ⇒ 现在它只承诺「校验没通过 ⇒ 该重取」，**不承诺调用方读了多少**。
+	errStreamBroken = errors.New("shinnyref: 这份下载的完整性校验没有通过——该重取")
 	errBadStatus    = errors.New("shinnyref: 取数返回了一个非 200 的状态")
 	errRangeAsked   = errors.New("shinnyref: 这个端点上 Range 与 gzip 互斥——本函数不接受 Range")
 )
@@ -190,8 +196,16 @@ type bodyReader struct {
 	//	ISIZE 翻一位   最后一次 Read=(30, gzip: invalid checksum) · zr.Close()=**nil**
 	//	砍掉末尾 8B    最后一次 Read=(30, unexpected EOF)         · zr.Close()=**nil**
 	//
-	// 🔴 三种坏法**都不走 `zr.Close()` 那一支**（它一律返回 nil）——
-	// 所以下面那个「zerr != nil」分支**接不住它们**，它只对【流中段就断了】那种成立。
+	// 🔴 三种坏法**都不走 `zr.Close()`**（它一律返回 nil）⇒ 只看 `zr.Close()` 接不住它们。
+	//
+	// ⚠️ 而反过来也不成立 —— `zr.Close()` **会单独说话**，我造出了那一格：
+	//
+	//	砍掉一半 · **只读 4 字节就放手** ⇒ readErr=**nil** · zr.Close()=**unexpected EOF**
+	//	（成因：flate 已经预读到断点并存下错误，而调用方只取走了 4 字节解压输出）
+	//
+	// ⇒ **两个来源各自都出现过，谁也不蕴含谁** ⇒ `Close` 里把它们**合成一格**，
+	// 哪一侧先看见都算 `errStreamBroken`。（评审方判「zerr 那支从不单独说话」，
+	// 而这一格是它的反例 —— 所以修法是**合并**，不是删除。）
 	readErr error
 }
 
@@ -241,16 +255,28 @@ func (b *bodyReader) Read(p []byte) (int, error) {
 func (b *bodyReader) Close() error {
 	zerr := b.zr.Close()
 	rerr := b.raw.Close()
-	// ⚠️ 这一支只对【流中段就断了】成立（deflate 自己没结束）——
-	// CRC / ISIZE / 截尾三种坏法都不走这里，见 readErr 那段读数。
-	if zerr != nil {
-		return fmt.Errorf("shinnyref: gzip 流没有完整结束（截断？）: %w", zerr)
-	}
-	// ⛔ 顺序要紧：**先问「流坏没坏」，再问「读完没读完」** ——
-	// 反过来的话，一份坏掉的下载会被报成「你没读完」，而那是假的。
-	if b.readErr != nil {
-		return fmt.Errorf("%w：%v（【这份下载读到底了，完整性校验发生了、而且失败了】——"+
-			"该重取，不是调用方少读了）", errStreamBroken, b.readErr)
+
+	// ⛔ **两个来源合成一格**：`Read` 那一侧看见的错误，和 `zr.Close()` 那一侧看见的错误，
+	// **说的是同一件事（这份流坏了）**，而它们各自单独出现过。
+	//
+	// 【2026-09-10 必改】此前它们是两支，而**第一支 `%w` 的是 `zerr` 不是哨兵**
+	// ⇒ 最严重的那种坏（流中段就断、且调用方读到底）报出来的错
+	// **既不是 errStreamBroken 也不是 errNotReadToEOF** ——
+	// 一个照着这套分类写的调用方**不会重取**。（评审方 2026-09-10 判必改，我复现。）
+	//
+	// ⚠️ 而修法**不能是「摘掉 zerr 那一支」** —— 他判「它从不单独说话」，
+	// 而我造出了反例（七格里那一格）：
+	//
+	//	砍掉一半 · **只读 4 字节就放手** ⇒ readErr=**nil** · zr.Close()=**unexpected EOF**
+	//	（成因：flate 已经预读到断点并存下错误，而调用方只取走了 4 字节解压输出）
+	//
+	// ⇒ 摘掉它，这一格会被报成「你放手了」，**而这份流其实是断的** ⇒ 信息反而丢了。
+	// ⇒ 所以是**合并**，不是删除；哪一侧先看见都算数。
+	if e := b.readErr; e != nil || zerr != nil {
+		if e == nil {
+			e = zerr
+		}
+		return fmt.Errorf("%w：%v（【该重取】—— 这份流坏了，不是调用方少读了）", errStreamBroken, e)
 	}
 	if !b.sawEOF {
 		return fmt.Errorf("%w（读到这里就放手了 ⇒ gzip 的 CRC 与长度校验【没有发生】，"+
