@@ -15,6 +15,13 @@ import (
 //
 // ⚠️ 故意【不导出】：本包对外的失败分类还没有进 docs/contract.md，
 // 而本仓的规矩是文档先行。测试与本包同包，用得到它们。
+//
+// ⛔ 而「不导出」今天有一个后果，写成**当场可求值**的到期条件（评审方 2026-09-10 提）：
+//
+//	包外调用方【没法 errors.Is 分类】⇒ 「调用方自己按错误分流」这句话**今天只对包内成立**
+//	⇒ 到期条件：**在出现第一个包外调用方之前**
+//	   求值法：`grep -rl 'refdata/shinnyref' --include=*.go .`
+//	   数一数有没有本包之外的包 —— **今天 0**
 var (
 	errNotFuture   = errors.New("shinnyref: 这一条不是期货合约（class 不是 FUTURE）")
 	errMissing     = errors.New("shinnyref: 缺字段——报错，不补")
@@ -60,19 +67,36 @@ func DecodeContract(raw []byte) (Contract, error) {
 	if e.Class != ClassFuture {
 		return Contract{}, fmt.Errorf("%w: class=%q", errNotFuture, e.Class)
 	}
-	for name, ok := range map[string]bool{
-		"exchange_id":     e.ExchangeID != nil,
-		"product_id":      e.ProductID != nil,
-		"delivery_year":   e.DeliveryYear != nil,
-		"delivery_month":  e.DeliveryMonth != nil,
-		"volume_multiple": e.VolumeMultiple != nil,
-		"price_tick":      e.PriceTick != nil,
-		"expire_datetime": e.ExpireDatetime != nil,
-		"trading_time":    e.TradingTime != nil,
+	// ⛔ 用**有序的 slice**，不用 map ——
+	// 第一版用 map 遍历，而 Go 的 map 顺序是随机的：
+	// 同一份输入（`{"class":"FUTURE"}`）跑 40 次 ⇒ **8 种报文**（评审方量的，我复现）。
+	// 🔴 它不产生错答案（每一条都为真），**而它让同一个失败不可复现** ——
+	// 而本仓把读数当证据用，一个报文随机的错误贴进信里时**对不上账**。
+	// ⚠️ 而我原来的测试是「逐个改键名」所以是确定的 ——
+	// **确定性来自测试的构造，不来自被测方**（这一句是这一格真正的教训）。
+	//
+	// ⇒ 而这里更进一步：**一次报出【全部】缺的**，不是报第一个。
+	// 报第一个的话，调用方要试 N 次才知道缺了 N 个。
+	var missing []string
+	for _, f := range []struct {
+		name string
+		ok   bool
+	}{
+		{"exchange_id", e.ExchangeID != nil},
+		{"product_id", e.ProductID != nil},
+		{"delivery_year", e.DeliveryYear != nil},
+		{"delivery_month", e.DeliveryMonth != nil},
+		{"volume_multiple", e.VolumeMultiple != nil},
+		{"price_tick", e.PriceTick != nil},
+		{"expire_datetime", e.ExpireDatetime != nil},
+		{"trading_time", e.TradingTime != nil},
 	} {
-		if !ok {
-			return Contract{}, fmt.Errorf("%w: %s", errMissing, name)
+		if !f.ok {
+			missing = append(missing, f.name)
 		}
+	}
+	if len(missing) > 0 {
+		return Contract{}, fmt.Errorf("%w: %s", errMissing, strings.Join(missing, " "))
 	}
 
 	sym, err := symbolOf(*e.ExchangeID, *e.ProductID, *e.DeliveryYear, *e.DeliveryMonth)
@@ -104,8 +128,23 @@ func symbolOf(exch, prod string, year, month int) (tickflow.Symbol, error) {
 	if month < 1 || month > 12 {
 		return tickflow.Symbol{}, fmt.Errorf("shinnyref: delivery_month=%d 不是 1..12", month)
 	}
-	if year < 1990 || year > 2999 {
-		return tickflow.Symbol{}, fmt.Errorf("shinnyref: delivery_year=%d 不像一个年份", year)
+	// ⛔ 上界下界都卡在 **2000..2099**，而这不是「像不像一个年份」——
+	// 是 **`tickflow.Symbol` 只表达得了这一段**：它只带两位年，
+	// `Symbol.Expiry()` ＝ `2000 + YearMon/100` ⇒ 出了这一段就**静默折叠**。
+	//
+	// 实测（评审方 2026-09-10 构造，我逐格复现，读数逐位一致）：
+	//
+	//	1999-12 ⇒ Expiry() 给 **2099-12**   1990-01 ⇒ **2090-01**
+	//	2100-01 ⇒ **2000-01**              2101-03 ⇒ **2001-03**   2999-12 ⇒ **2099-12**
+	//
+	// 🔴 五个值全部**被放行且产生静默错值** —— 而 `newSymbol` 也接不住（它只校月份）。
+	// ⚠️ 可达性今天是 **0**（上游的 delivery_year 都在 2015–2035）——
+	// **而判它必改的是【方向】不是可达性**：它落在「静默」那一侧。
+	if year < 2000 || year > 2099 {
+		return tickflow.Symbol{}, fmt.Errorf(
+			"shinnyref: delivery_year=%d 超出 2000..2099 —— "+
+				"本仓的 tickflow.Symbol 只带两位年（Expiry() ＝ 2000 + YearMon/100），"+
+				"1999 会被折成 2099、2100 会被折成 2000 ⇒ 这里拒绝，不折", year)
 	}
 	return tickflow.ParseSymbol(fmt.Sprintf("%s.%s%02d%02d", exch, prod, year%100, month))
 }

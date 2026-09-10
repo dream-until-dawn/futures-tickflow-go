@@ -3,6 +3,7 @@ package shinnyref
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -231,5 +232,90 @@ func TestExpireIsMillisecondsLikeBarTs(t *testing.T) {
 	if want := int64(1581692400000); got.ExpireTs != want {
 		t.Fatalf("ExpireTs = %d，要 %d（上游给的是 unix 秒，本仓的时刻单位是毫秒）",
 			got.ExpireTs, want)
+	}
+}
+
+// ───────── 年份：Symbol 表达不了的那一段，拒绝而不是折叠 ─────────
+
+// TestYearOutsideSymbolRangeIsRefusedNotFolded 钉的是一个【静默错值】。
+//
+// 🔴 而它承重的部分不是「拒绝了」，是**对照组**：
+// 先证「若放行，它会静默折叠成另一个年份」—— 否则「我们拒绝了 1999」读起来像小题大做。
+func TestYearOutsideSymbolRangeIsRefusedNotFolded(t *testing.T) {
+	// 一｜Symbol 能表达的那一段，两端都要通（否则下面那些拒绝可能只是「什么都拒」）。
+	for _, c := range []struct{ y, m int }{{2000, 1}, {2026, 9}, {2099, 12}} {
+		sym, err := symbolOf("SHFE", "au", c.y, c.m)
+		if err != nil {
+			t.Fatalf("前提不成立，本格作废：%d-%02d 在 Symbol 表达得了的段里，却被拒：%v", c.y, c.m, err)
+		}
+		if ey, em := sym.Expiry(); ey != c.y || em != c.m {
+			t.Fatalf("前提不成立：%d-%02d 在段内却折成了 %d-%02d", c.y, c.m, ey, em)
+		}
+	}
+	// 二｜段外：先证【若放行会折叠】，再证【我们拒绝】。
+	for _, c := range []struct {
+		y, m    int
+		wouldBe int // 若照两位年拼出去，Expiry() 会给的年份
+	}{
+		{1999, 12, 2099}, {1990, 1, 2090}, {2100, 1, 2000}, {2101, 3, 2001}, {2999, 12, 2099},
+	} {
+		// 对照组：绕过校验，直接照两位年拼一个 —— 看它折成什么。
+		folded, err := tickflow.ParseSymbol(fmt.Sprintf("SHFE.au%02d%02d", c.y%100, c.m))
+		if err != nil {
+			t.Fatalf("对照组塌了：%d-%02d 连拼都拼不出来：%v", c.y, c.m, err)
+		}
+		gotY, _ := folded.Expiry()
+		if gotY != c.wouldBe {
+			t.Fatalf("对照组塌了：%d 应当折成 %d，实得 %d —— 折叠这件事本身不成立了，"+
+				"那下面那个拒绝就没有理由", c.y, c.wouldBe, gotY)
+		}
+		if gotY == c.y {
+			t.Fatalf("对照组塌了：%d 没有被折 ⇒ 这一格测的不是我以为的东西", c.y)
+		}
+		// 正题：symbolOf 必须拒它。
+		if sym, err := symbolOf("SHFE", "au", c.y, c.m); err == nil {
+			t.Errorf("symbolOf 放行了 %d-%02d ⇒ %s，而它的 Expiry() 会给 %d —— 静默差 100 年",
+				c.y, c.m, sym.String(), c.wouldBe)
+		}
+	}
+}
+
+// ───────── 缺字段：报文要确定，且一次报全 ─────────
+
+func TestMissingReportIsDeterministicAndComplete(t *testing.T) {
+	const bare = `{"class":"FUTURE"}`
+	first := ""
+	for i := 0; i < 40; i++ {
+		_, err := DecodeContract([]byte(bare))
+		if err == nil {
+			t.Fatal("一个只有 class 的输入被收下了")
+		}
+		if i == 0 {
+			first = err.Error()
+			continue
+		}
+		if err.Error() != first {
+			t.Fatalf("同一份输入跑出了两种报文 —— 那让同一个失败不可复现：\n第 1 次 %s\n第 %d 次 %s",
+				first, i+1, err.Error())
+		}
+	}
+	// 而且要一次报全：八个字段都该在那一句里。
+	for _, f := range []string{
+		"exchange_id", "product_id", "delivery_year", "delivery_month",
+		"volume_multiple", "price_tick", "expire_datetime", "trading_time",
+	} {
+		if !strings.Contains(first, f) {
+			t.Errorf("报文里没有 %s —— 一次只报一个的话，调用方要试 8 次才知道缺了 8 个：%s", f, first)
+		}
+	}
+}
+
+// ───────── 零长度时段：不许 ─────────
+
+func TestZeroLengthRangeIsRefused(t *testing.T) {
+	// 上游今天没有这种数据；这条守的是那一行不变式本身（评审方突变 `b <= a` ⇒ `b < a` 时全绿）。
+	body := entryJSON(`{"day":[["09:00:00","09:00:00"]]}`)
+	if _, err := DecodeContract(body); err == nil {
+		t.Fatal("零长度时段被收下了 —— 一个 [t, t) 的时段装不下任何一根")
 	}
 }
