@@ -297,3 +297,38 @@ func TestCloseReportsUnreadDownload(t *testing.T) {
 			"那时「这份数据完不完整」这句话没有人回答得了", err)
 	}
 }
+
+// TestFetchAcceptsUppercaseGzip —— HTTP 的 content-coding **大小写无关**（RFC 9110 §8.4.1）。
+//
+// ⚠️ 这一格的失败方向是**大声**的（会被拒），所以它不重；
+// 而**拒得莫名其妙会把读的人引向错误的方向**（去查网络、查代理）。
+func TestFetchAcceptsUppercaseGzip(t *testing.T) {
+	for _, enc := range []string{"gzip", "GZIP", "GZip"} {
+		t.Run(enc, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Encoding", enc)
+				w.Write(gz(t, twoEntries))
+			}))
+			defer srv.Close()
+			body, err := Fetch(context.Background(), srv.Client(), srv.URL)
+			if err != nil {
+				t.Fatalf("Content-Encoding=%q 被拒了：%v —— 这三个是同一个编码", enc, err)
+			}
+			if _, err := io.ReadAll(body); err != nil {
+				t.Fatal(err)
+			}
+			if err := body.Close(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+	// ⚠️ 对照组：**别的**编码仍然要被拒（否则上面那三格可能只是「什么都收」）。
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Encoding", "br")
+		w.Write([]byte(twoEntries))
+	}))
+	defer srv.Close()
+	if _, err := Fetch(context.Background(), srv.Client(), srv.URL); !errors.Is(err, errNoGzip) {
+		t.Fatalf("Content-Encoding=br 没被拒：%v", err)
+	}
+}

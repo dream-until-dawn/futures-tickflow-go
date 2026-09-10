@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // DefaultURL 是天勤 openmd 的合约目录。免费、无鉴权。
@@ -91,7 +92,12 @@ func Fetch(ctx context.Context, client *http.Client, url string) (io.ReadCloser,
 		}
 		return nil, fmt.Errorf("%w: %d", errBadStatus, resp.StatusCode)
 	}
-	if enc := resp.Header.Get("Content-Encoding"); enc != "gzip" {
+	// ⚠️ `EqualFold` 不是 `!=` —— HTTP 的 content-coding **是大小写无关的**
+	// （RFC 9110 §8.4.1）⇒ 服务端回 `GZIP` 时按 `!=` 会被拒掉。
+	// 那个失败方向是**大声**的（不是静默少数据），所以它不重；
+	// ⛔ 而**拒得莫名其妙会让人怀疑错方向** —— 读的人会去查网络、查代理，
+	// 而真正的原因是我这一行把一个合法的值判成了非法。
+	if enc := resp.Header.Get("Content-Encoding"); !strings.EqualFold(enc, "gzip") {
 		resp.Body.Close()
 		return nil, fmt.Errorf("%w: Content-Encoding=%q（要 gzip）——"+
 			"不带压缩这一份是 351 MB 而不是 10.6 MiB，慢约 31 倍，"+
