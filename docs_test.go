@@ -907,6 +907,7 @@ var guardNames = []string{
 	`TestScriptsWrapBothStreams`,
 	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
+	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 }
 
