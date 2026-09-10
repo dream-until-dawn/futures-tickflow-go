@@ -2385,8 +2385,24 @@ var (
 		".xml":   "同上",
 	}
 	skipName = map[string]string{
-		".env": "**装着密钥**，untracked ＋ gitignored ⇒ 本守卫不读它" +
-			"（今天只报文件名与码位、从不印内容，而下一个想让报文更好读的人会想印那一行）",
+		// ⛔ **【必改】`.git` 在 linked worktree 里是一个【文件】，不是目录。**
+		//
+		// ⇒ `info.IsDir()` 为假 ⇒ 走不到 `filepath.SkipDir` ⇒ 落进分类那一步 ⇒ 无归属 ⇒ 红。
+		// 🔴 而它的分量不是「多一条红」：**评审方那一整套评审都在 linked worktree 里跑**
+		// ⇒ 这条守卫在他那边**每次都红**，而在主克隆上**每次都绿**。
+		// ⇒ 本仓「CI 绿而用户红」那一格原样重演，**而这次更近**：
+		// 同一个 OS、同一个文件系统，**差的只是 `.git` 的形态**。
+		// ⚠️ 而抓出它的正是这一颗新加的那条穷尽断言 —— **是断言在干活，不是断言写错了。**
+		".git": "linked worktree 里它是【文件】不是目录，SkipDir 拦不住它；而它的内容是 git 的内务",
+		// ⚠️ **这一条是【纵深】，不是【依据】**（评审方 2026-09-10 指出我的不一致，我认）：
+		//
+		//	我原来写的理由是「本守卫从不印内容，而下一个想让报文更好读的人会想印那一行」
+		//	🔴 而**同一条理由对 `.env.example` 一样成立**（模板被人填上真值是常见事），
+		//	  可它在 scanExt 里（`.example`）⇒ **要么那条理由承重、要么它不是依据**，两者不能都成立
+		//
+		// ⇒ 真正承重的是那个**性质**：`TestGuardNeverPrintsFileContent` 把它做成了测试。
+		// ⇒ 这一条留着，作用是**即使将来有人改了报文，这一格也不读** —— 理由跟着它实际起的作用走。
+		".env": "装着密钥，untracked ＋ gitignored ⇒ 纵深：即使报文将来改了，这一格也不读",
 	}
 )
 
@@ -2504,4 +2520,88 @@ func TestNoControlCharactersInSources(t *testing.T) {
 			scanned, len(bad), strings.Join(bad, "\n  "))
 	}
 	t.Logf("扫过 %d 个文本文件，控制字符 0 处", scanned)
+}
+
+// TestGuardNeverPrintsFileContent 把「那条守卫从不印文件内容」从一个**事实**变成一个**性质**。
+//
+// ⛔ 它的由来（评审方 2026-09-10 指出，我认）：我给 `.env` 写的排除理由是
+// 「本守卫今天只报文件名与码位、从不印内容，而下一个想让报文更好读的人会想印那一行」——
+// 🔴 **而同一条理由对 `.env.example` 一样成立**（模板被人填上真值是常见事），
+// 可它在 `scanExt` 里、会被扫 ⇒ **要么那条理由承重、要么它不是依据，两者不能都成立。**
+//
+// ⇒ 真正承重的是那个**性质**，而性质**可测**：
+// 造一个含【合成记号】＋控制字符的临时文件 ⇒ 跑那条守卫 ⇒ **输出里不许出现那个记号**。
+//
+// ⚠️ 记号是**本测试自己编的**，不取自任何真实文件 —— 一条「证明不泄露」的测试
+// **自己不该去碰那个不该被碰的东西**。
+//
+// ⚠️ 而这条测试的射程说清楚：它证的是「**报文不含被扫文件的内容**」，
+// 不是「本仓没有任何东西会印内容」。
+func TestGuardNeverPrintsFileContent(t *testing.T) {
+	const marker = "ZZ-SYNTHETIC-MARKER-DO-NOT-PRINT"
+
+	dir := t.TempDir()
+	probe := filepath.Join(dir, "zzleak_probe.md")
+	// 记号与控制字符在同一行 —— 若报文印的是「那一行」，记号必然跟着出来。
+	if err := os.WriteFile(probe, []byte("# probe\n"+marker+" a\bb\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got := scanForControlChars(t, dir)
+
+	// 前提自检：这个构造必须真的**被抓到** —— 否则下面那句「不含记号」是空转的。
+	if len(got) == 0 {
+		t.Fatal("植入的控制字符没被抓到 —— 这条测试是空转的，读数作废")
+	}
+	joined := strings.Join(got, "\n")
+	if !strings.Contains(joined, "zzleak_probe.md") {
+		t.Fatalf("抓到了，而报的不是那个文件：%s", joined)
+	}
+	// ⛔ 承重的那一句。
+	if strings.Contains(joined, marker) {
+		t.Fatalf("报文里出现了被扫文件的【内容】：%s\n"+
+			"  ⇒ 那条守卫会扫到 .env.example 这类文件，"+
+			"而一个把整行印出来的报文会把里面的东西带进日志。",
+			joined)
+	}
+}
+
+// scanForControlChars 是那条守卫的扫描部分，抽出来好让上面那条测试问它。
+//
+// ⚠️ 它只做「找」，不做「报」—— 报文长什么样是调用方的事，
+// 而上面那条测试问的正是「报文里有没有内容」。
+func scanForControlChars(t *testing.T, root string) []string {
+	t.Helper()
+	isBad := func(r rune) bool {
+		if r == '\t' || r == '\n' || r == '\r' {
+			return false
+		}
+		return r < 0x20 || r == 0x7f
+	}
+	var out []string
+	err := filepath.Walk(root, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		b, rerr := os.ReadFile(p)
+		if rerr != nil {
+			return rerr
+		}
+		for i, line := range strings.Split(string(b), "\n") {
+			for _, r := range line {
+				if isBad(r) {
+					out = append(out, fmt.Sprintf("%s:%d 有 %U", filepath.Base(p), i+1, r))
+					break
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("扫描失败：%v", err)
+	}
+	return out
 }
