@@ -886,6 +886,7 @@ var guardNames = []string{
 	`TestGoListImportRulerWorks`,
 	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
+	`TestHasBarsExpiryConditionNotYetDue`,
 	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
 	`TestHighWaterRuleAdjacency`,

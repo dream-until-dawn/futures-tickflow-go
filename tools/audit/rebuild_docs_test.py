@@ -355,8 +355,26 @@ def main():
     #   而放错位置，守卫从登记表里【消失】而没有任何提示。**
     #   ⇒ 两种失败方向不同：前者是「少登记一条」，后者是「以为登记了」。
     def declared_guards():
-        """扫根模块所有 *_test.go，收 `// guard:` 紧邻声明的 func Test。"""
+        """扫根模块所有 *_test.go，收 `// guard:` 紧邻声明的 func Test。
+
+        返回 (收到的名字集合, **行首标记的总条数**)。
+
+        ⛔ 第二个返回值是【必改】加的（评审方 2026-09-10 打出来）：
+        **一个写了却没生效的标记，此前和没写一样，且没有任何提示。** 两格实测：
+
+            甲 标记挂在一个**不是 func Test** 的东西上方
+               ⇒ 行首标记 6→**7**，而收到仍是 **6**；重造不报、vet 过、守卫全绿
+            乙 标记与 func Test 之间隔了**一个空行**（Go 里很常见的写法）
+               ⇒ 行首标记仍 **6**，而收到掉到 **5**；同样一声不吭
+
+        🔴 而真正的问题不是「多了一个洞」，是我写在 fetch 那边的成本分析
+        **只枚举了两个取值**（写了 / 没写），而真实的取值空间有**三个**：
+        **写了且生效 / 没写 / 写了但没生效** —— 第三种恰恰落在
+        「以为登记了」那一栏，也就是这条新来源当初宣称要消灭的那一栏。
+        ⇒ 本仓那条：**完备性断言先逐维问「封不封闭」** —— 这一维我只写了两个取值。
+        """
         found, files = set(), 0
+        marks = []
         for dirpath, dirnames, filenames in os.walk(ROOT):
             dirnames[:] = [d for d in dirnames
                            if d not in (".git", "tools", "__pycache__", "node_modules")]
@@ -368,6 +386,7 @@ def main():
                 for i, ln in enumerate(lines):
                     if not ln.startswith("// guard:"):
                         continue
+                    marks.append("%s:%d" % (os.path.join(dirpath, fn), i + 1))
                     # 往下找到第一行 `func TestX(` —— 中间只许有注释行。
                     for nxt in lines[i + 1:]:
                         m = re.match(r"^func (Test[A-Za-z0-9_]*)\(", nxt)
@@ -377,16 +396,37 @@ def main():
                         if not nxt.startswith("//"):
                             break
         assert files > 0, "一个 _test.go 都没扫到 —— 拒绝在空输入上写表"
-        return found
+        return found, marks
 
     guardsSrc = staticTpl + open(os.path.join(ROOT, "docs_guards_test.go"),
                                  encoding="utf-8").read()
     byPosition = set(re.findall(r"(?m)^func (Test[A-Za-z0-9_]*)\(", guardsSrc))
-    byDeclaration = declared_guards()
+    byDeclaration, marks = declared_guards()
+
+    # ⛔ **必改（2026-09-10）**：写了却没生效的标记，此前是静默的。
+    # ⇒ 断言【行首标记的条数】＝【收到的条数】。不等就停，并印出每一行标记，
+    #   让写的人自己对照哪一行没落到 `func Test` 上。
+    # ⚠️ 而「多了一行讲这个机制的散文」也会被它拦下 —— 那是**故意的**：
+    #   讲它的时候把那行缩进（别顶格），否则它和一个真标记在机器眼里一模一样。
+    if len(marks) != len(byDeclaration):
+        print("⛔ 行首 `// guard:` 有 %d 条，而只有 %d 条落到了 func Test 上。"
+              % (len(marks), len(byDeclaration)), file=sys.stderr)
+        print("   一个写了却没生效的标记，和没写一样 —— 而它更糟：写的人以为登记了。",
+              file=sys.stderr)
+        print("   收集规矩：标记必须**顶格**，且它与 `func TestX(` 之间**只许有注释行**"
+              "（空行会断开）。", file=sys.stderr)
+        for m in marks:
+            print("   标记：%s" % m, file=sys.stderr)
+        sys.exit("拒绝写表：先让每一条标记都落到一个 func Test 上")
+
     names = sorted(byPosition | byDeclaration)
     assert names, "一个守卫名都没抽到 —— 拒绝写空表"
-    print("守卫登记：按位置 %d ＋ 按声明 %d ⇒ 合计 %d"
-          % (len(byPosition), len(byDeclaration), len(names)))
+    # ⚠️ 印【交集】而不是印一个加号：`a ＋ b ⇒ c` 这个形状**只在两个集合不相交时读得通**，
+    # 而今天恰好不相交（这句话已经被烙进 v0.4 那份不可改的注解里了）。
+    # ⇒ 交集那个数一出现就自己说话，不必等谁去做减法。（评审方 2026-09-10 建议格。）
+    both = byPosition & byDeclaration
+    print("守卫登记：按位置 %d · 按声明 %d · 交集 %d ⇒ 并集 %d"
+          % (len(byPosition), len(byDeclaration), len(both), len(names)))
     guardTable = "\n".join("\t`%s`," % n for n in names)
 
     counts = {"rules": quotes.count("\n") + 1,
