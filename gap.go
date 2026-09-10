@@ -114,16 +114,37 @@ type SpanStatus struct {
 // 有数据的那些天不出现在结果里（它们不是缺口），所以结果是一个
 // **「除去有数据的天」之后的划分**，不是一个覆盖全区间的划分。
 //
-// ⛔ hasBars 或 coverage 报出一个本层认不出的错误 ⇒ **整段中止并返回它**。
+// ⛔ daysWithBars 或 coverage 报出一个本层认不出的错误 ⇒ **整段中止并返回它**。
 // 「坏了」不是「答不了」：一个要中止，一个要报成缺口然后继续，
 // 而两者在 `(bool, error)` 上长得一模一样（登记：冲突八）。
-func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) ([]Gap, error) {
+func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, daysWithBars func(Span) (map[TradingDay]bool, error)) ([]Gap, error) {
 	if cal == nil {
 		return nil, errors.New("tickflow: PlanGaps 需要一个日历——第三、第四类的真值只有它给得出")
 	}
-	if hasBars == nil {
-		return nil, errors.New("tickflow: PlanGaps 需要 hasBars——" +
+	if daysWithBars == nil {
+		return nil, errors.New("tickflow: PlanGaps 需要 daysWithBars——" +
 			"没有它就分不出「拉过，确认没有」和「有数据」，而那两者的处置相反")
+	}
+	// ⛔ **按段记忆：每一段最多读一次。** 这才是换读法的全部收益 ——
+	// 逐日问 `O(天数 × 根数)` 变成整段问 `O(根数)`。
+	//
+	// ⚠️ 而它**不预取**：`daysOf` 只在 `classifyTradingDay` 真的走到那一行时才被调
+	// （见那一行上面的注释）。⇒ `cov` 为空 ⇒ 这个 map 一次都不填 ⇒ **零次读存储**。
+	// 🔴 「记忆」和「预取」在代码里长得很像，而它们在 `cov` 为空那一族上差一个整文件扫描。
+	//
+	// ⚠️ 错误**不进缓存**：一次失败不该把后面每一天都变成同一个错误的复读；
+	// 而本层遇错即中止，所以重试的机会本来也只有一次。
+	memo := make(map[Span]map[TradingDay]bool)
+	daysOf := func(sp Span) (map[TradingDay]bool, error) {
+		if m, ok := memo[sp]; ok {
+			return m, nil
+		}
+		m, err := daysWithBars(sp)
+		if err != nil {
+			return nil, err
+		}
+		memo[sp] = m
+		return m, nil
 	}
 	if !from.Valid() || !to.Valid() {
 		return nil, fmt.Errorf("tickflow: PlanGaps 的区间不合法：from=%d to=%d", int32(from), int32(to))
@@ -168,7 +189,7 @@ func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus,
 	if inter {
 		var werr error
 		if err := cal.Walk(k, lo, hi, func(d Day) bool {
-			kd, e := classifyTradingDay(d.Num, cov, hasBars)
+			kd, e := classifyTradingDay(d.Num, cov, daysOf)
 			if e != nil {
 				werr = e
 				return false
@@ -215,7 +236,7 @@ func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus,
 
 // classifyTradingDay 回答「这一个交易日属于哪一类」。
 // 返回 0 表示**有数据，不是缺口**（那是一个不出包的哨兵，见 GapKind 的注释）。
-func classifyTradingDay(d TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) (GapKind, error) {
+func classifyTradingDay(d TradingDay, cov []SpanStatus, daysOf func(Span) (map[TradingDay]bool, error)) (GapKind, error) {
 	for _, s := range cov {
 		if d < s.Span.From || d > s.Span.To {
 			continue
@@ -232,12 +253,18 @@ func classifyTradingDay(d TradingDay, cov []SpanStatus, hasBars func(TradingDay)
 				"——这是【坏了】，不是【答不了】，所以中止而不是报成缺口：%w",
 				s.Span.From, s.Span.To, s.Err)
 		}
-		has, err := hasBars(d)
+		// ⛔ **这一行的【位置】就是那条性质**：`daysOf` 只在
+		// 「这一天落进某个段 ＋ 该段没报错」之后才被调。
+		// ⇒ `cov` 为空、或这一天不落在任何段里 ⇒ **一次都不读存储**
+		// （下面那个 `return GapNeverFetched` 在 for 之外）。
+		// 🔴 把它挪到循环外面无条件取整段，会让「全新品种/周期的首次同步」纯亏 ——
+		// 代价与判据见 docs/design.md 二十·六「问五」甲。
+		days, err := daysOf(s.Span)
 		if err != nil {
-			return 0, fmt.Errorf("tickflow: 问 %s 有没有根时出错——这是【坏了】，"+
-				"中止而不是报成「拉过，确认没有」：%w", d, err)
+			return 0, fmt.Errorf("tickflow: 问 [%s, %s] 哪些天有根时出错——这是【坏了】，"+
+				"中止而不是报成「拉过，确认没有」：%w", s.Span.From, s.Span.To, err)
 		}
-		if has {
+		if days[d] {
 			return 0, nil
 		}
 		return GapConfirmedEmpty, nil

@@ -467,6 +467,50 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 	return false, nil // 不在任何 coverage 里 ⇒ 没拉过，这不是「确认没有」
 }
 
+// DaysWithBars 一次回答【一整段】里哪些交易日有根。
+//
+// ⛔ 它换掉的是 `HasBars` 在生产路径上的位置，而**换的是形状不是常数**：
+//
+//	旧  每天一次 HasBars ⇒ dayHasRecords 线性扫 .dat  ⇒ O(天数 × 根数)
+//	新  一整段一次       ⇒ 只扫一遍                    ⇒ O(根数)
+//
+// 代价与它在哪一族输入上**更慢**，逐条写在 `docs/design.md` 的
+// 「问五｜新读法在哪些输入上比旧读法【慢】」里 —— 这里不复述那些数，
+// 只留一句判据：**新读法的代价是【恒定】的 ≈N 次读，旧读法可低到 1 次。**
+//
+// ⛔ **三值语义必须原样保住**（B3）：这一段没走查过时返回 `ErrSpanUnverified`，
+// **不返回一个空 map**。🔴 空 map 与「这一段每天都没有根」在调用方那儿长得一模一样 ——
+// 而那正是「没验过悄悄变成一个肯定的答案」那个洞。
+//
+// ⚠️ 射程：只回答 `[span.From, span.To]` 之内的交易日；
+// 落在段外的记录一概不进结果（它们属于别的段，由那一段自己的调用回答）。
+func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, error) {
+	if !s.verified[span] {
+		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
+			tickflow.ErrSpanUnverified, span.From, span.To)
+	}
+	st, err := s.dat.Stat()
+	if err != nil {
+		return nil, err
+	}
+	n := CountRecords(st.Size())
+	buf := make([]byte, RecordSize)
+	out := make(map[tickflow.TradingDay]bool)
+	for i := int64(0); i < n; i++ {
+		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
+			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
+		}
+		b, err := DecodeBar(buf)
+		if err != nil {
+			return nil, err
+		}
+		if b.TradingDay >= span.From && b.TradingDay <= span.To {
+			out[b.TradingDay] = true
+		}
+	}
+	return out, nil
+}
+
 // dayHasRecords 走一遍 `.dat`，看这一天有没有记录。
 //
 // ⚠️ 它是 B2 那条判据的同一条：**和一次真正的枚举比，不和一个算出来的期望比。**

@@ -2561,9 +2561,14 @@ type SpanStatus struct {
 // 内部不取时钟、不碰网络、不开文件。
 // ⇒ 这是甲能排在 `Store` 接口【之前】的全部理由（见七之八）。
 //
-// hasBars 回答「这一天在 .dat 里有没有记录」。它是一个参数而不是一个接口，
-// 理由是**测试要能一行造出六类里的任何一类**；实现方把 `Store.HasBars` 包一层即可。
-func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, hasBars func(TradingDay) (bool, error)) ([]Gap, error)
+// daysWithBars 回答「这【一整段】里哪些交易日有记录」。它是一个参数而不是一个接口，
+// 理由是**测试要能一行造出六类里的任何一类**；实现方把 `Store.DaysWithBars` 直接传进来即可。
+//
+// ⛔ **它上一版是 `hasBars func(TradingDay) (bool, error)`（逐日问）** ——
+// 换成按段问是 v0.5 那一颗，全部理由与代价在「二十·六」那一节（四问＋问五）。
+// ⚠️ 而调用点被钉死：**按 coverage 段调、只对与请求区间相交的段调**，
+// 由 `TestPlanGapsReadsNothingWhenNoCoverage` 等三条守着，不靠这句话。
+func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus, daysWithBars func(Span) (map[TradingDay]bool, error)) ([]Gap, error)
 ```
 
 ⛔ **这个签名在文档里写成【一行】，而那不是排版偏好** ——
@@ -2893,7 +2898,7 @@ HasBars(day TradingDay) (bool, error)
 ```go
 type Store interface {
 	Coverage() []Span
-	HasBars(day TradingDay) (bool, error)
+	DaysWithBars(span Span) (map[TradingDay]bool, error)
 	AppendBars(bars []Bar) error
 	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
 	Verify(span Span) error

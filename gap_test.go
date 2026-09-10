@@ -59,8 +59,39 @@ func week() *fakeCal {
 	return c
 }
 
-func always(v bool) func(TradingDay) (bool, error) {
-	return func(TradingDay) (bool, error) { return v, nil }
+// byDay 把一个【逐日谓词】接成 `PlanGaps` 要的【按段】读法。
+//
+// ⛔ 它是**测试专用的形状转换器**，理由要写清楚，别让它冒充生产路径：
+// 本文件这些用例断言的是**分类逻辑**（哪一天落进哪一类），
+// 而不是**读取形状**（读几次、每次读多少）。⇒ 用逐日谓词表达用例更直接。
+//
+// 🔴 而「读取形状」那一半**另有人守，不靠这里**：
+//
+//	TestPlanGapsReadsNothingWhenNoCoverage       cov 为空 ⇒ 读 0 次
+//	TestPlanGapsReadsEachSpanAtMostOnce          每段最多读一次
+//	syncer_segfile_seam_test.go                  真库穿过这条缝
+//	store/segfile 的等价性测试                    新旧两个读法答案一致
+//
+// ⚠️ 写下这张表，是因为一个转换器最容易造成的错觉是
+// **「这些用例已经把新读法测过了」** —— 它们没有，它们测的是它上游那一段。
+func byDay(has func(TradingDay) (bool, error)) func(Span) (map[TradingDay]bool, error) {
+	return func(sp Span) (map[TradingDay]bool, error) {
+		out := make(map[TradingDay]bool)
+		for d := sp.From; d <= sp.To; d = natNext(d) {
+			v, err := has(d)
+			if err != nil {
+				return nil, err
+			}
+			if v {
+				out[d] = true
+			}
+		}
+		return out, nil
+	}
+}
+
+func always(v bool) func(Span) (map[TradingDay]bool, error) {
+	return byDay(func(TradingDay) (bool, error) { return v, nil })
 }
 
 var testKey = ProductKey{Exchange: "SHFE", Product: "rb"}
@@ -91,7 +122,7 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 		name    string
 		from    TradingDay
 		cov     []SpanStatus
-		hasBars func(TradingDay) (bool, error)
+		hasBars func(Span) (map[TradingDay]bool, error)
 		want    GapKind
 	}
 	cases := []tc{
@@ -207,7 +238,7 @@ func TestPlanGapsPartitionsTheRange(t *testing.T) {
 	cov := []SpanStatus{{Span: Span{From: 20200106, To: 20200108}}}
 	has := func(d TradingDay) (bool, error) { return d == 20200106, nil }
 
-	gaps, err := PlanGaps(cal, testKey, 20200103, 20200113, cov, has)
+	gaps, err := PlanGaps(cal, testKey, 20200103, 20200113, cov, byDay(has))
 	if err != nil {
 		t.Fatalf("不该出错：%v", err)
 	}
@@ -253,7 +284,7 @@ func TestPlanGapsDoesNotSwallowADayWithData(t *testing.T) {
 	cov := []SpanStatus{{Span: Span{From: 20200106, To: 20200110}}}
 	has := func(d TradingDay) (bool, error) { return d == 20200107, nil }
 
-	gaps, err := PlanGaps(cal, testKey, 20200106, 20200108, cov, has)
+	gaps, err := PlanGaps(cal, testKey, 20200106, 20200108, cov, byDay(has))
 	if err != nil {
 		t.Fatalf("不该出错：%v", err)
 	}
@@ -278,7 +309,7 @@ func TestPlanGapsMergesOnlyWithinAKind(t *testing.T) {
 	if err != nil {
 		t.Fatalf("不该出错：%v", err)
 	}
-	checkShape(t, 20200106, 20200112, gaps, always(false))
+	checkShape(t, 20200106, 20200112, gaps, func(TradingDay) (bool, error) { return false, nil })
 	want := []Gap{
 		{20200106, 20200110, GapNeverFetched},
 		{20200111, 20200112, GapNotTrading},
@@ -331,11 +362,11 @@ func TestPlanGapsAbortsOnBroken(t *testing.T) {
 	for _, c := range []struct {
 		name    string
 		cov     []SpanStatus
-		hasBars func(TradingDay) (bool, error)
+		hasBars func(Span) (map[TradingDay]bool, error)
 	}{
-		{"hasBars 报错（.dat 读坏了）",
+		{"daysWithBars 报错（.dat 读坏了）",
 			[]SpanStatus{{Span: Span{From: 20200106, To: 20200110}}},
-			func(TradingDay) (bool, error) { return false, boom }},
+			func(Span) (map[TradingDay]bool, error) { return nil, boom }},
 		{"coverage 报了一个认不出的错误",
 			[]SpanStatus{{Span: Span{From: 20200106, To: 20200110}, Err: boom}},
 			always(false)},

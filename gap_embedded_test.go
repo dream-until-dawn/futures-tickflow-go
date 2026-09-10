@@ -22,7 +22,15 @@ import (
 
 var key = tickflow.ProductKey{Exchange: "SHFE", Product: "rb"}
 
-func never(tickflow.TradingDay) (bool, error) { return false, nil }
+// never 是「这一段里一天都没有根」。
+//
+// ⚠️ 换读法之后它按【段】答，而它返回的是**空 map ＋ nil error** ——
+// 那正是「拉过、确认没有」；⛔ 而「答不了」在新契约里落在 **error** 上，
+// **不落在空 map 上**（空 map 与「每天都没根」长得一模一样）。
+// ⇒ 本文件用得着的只有前者，写下这一句是为了让它别被当成后者的样例。
+func never(tickflow.Span) (map[tickflow.TradingDay]bool, error) {
+	return map[tickflow.TradingDay]bool{}, nil
+}
 
 // mustCal 造一份只含给定交易日的真日历。
 func mustCal(t *testing.T, days ...tickflow.TradingDay) tickflow.Calendar {

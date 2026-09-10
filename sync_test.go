@@ -129,8 +129,23 @@ type fakeStore struct {
 }
 
 func (s *fakeStore) Coverage() []Span { return append([]Span(nil), s.coverage...) }
-func (s *fakeStore) HasBars(d TradingDay) (bool, error) {
-	return s.hasBarsSet[d], nil
+
+// DaysWithBars 是这个桩对新读法的实现。
+//
+// ⛔ 它**按段答**，而 `hasBarsSet` 仍是按天记的 —— 两者的换算就在这儿。
+// ⚠️ 而这个桩**不模拟三值语义的第三值**（未走查 ⇒ 报错）：
+// 本文件里「哪一段走查过」由 `Syncer` 自己那份 `verified` 在 `SpanStatus.Err` 上表达，
+// 桩这一侧再模拟一次只会让两处口径漂开。
+// 🔴 **真实现那一侧的三值语义由 `store/segfile` 自己的测试与那条缝的集成测试守**，
+// 不由这个桩守 —— 写下来是因为：**一个桩的沉默，读起来像「这一格不存在」。**
+func (s *fakeStore) DaysWithBars(sp Span) (map[TradingDay]bool, error) {
+	out := make(map[TradingDay]bool)
+	for d, ok := range s.hasBarsSet {
+		if ok && d >= sp.From && d <= sp.To {
+			out[d] = true
+		}
+	}
+	return out, nil
 }
 func (s *fakeStore) AppendBars(b []Bar) error { s.appended += len(b); return nil }
 func (s *fakeStore) Verify(sp Span) error     { s.verified = append(s.verified, sp); return s.verifyErr }
