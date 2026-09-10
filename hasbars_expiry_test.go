@@ -6,6 +6,9 @@ import (
 	"go/token"
 	"os"
 	"path/filepath"
+	"reflect"
+	"runtime"
+	"sort"
 	"strings"
 	"testing"
 
@@ -129,22 +132,67 @@ func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
 // 一个靠**内嵌**拿到 `Caps`（提升方法）的类型没有这一行字面，**这条断言看不见它**。
 // 今天本仓没有这种写法，而这句话要跟着判据走。
 func TestSourceTableCoversEveryCapsImplementor(t *testing.T) {
-	declared := countCapsDeclarations(t)
-	if declared == 0 {
+	declared := capsImplementors(t)
+	if len(declared) == 0 {
 		t.Fatal("一处 Caps 声明都没扫到 —— 尺子坏了，读数作废")
 	}
-	if declared != len(sourcesUnderTest(t)) {
-		t.Fatalf("本仓声明了 %d 处 `Caps(...)`，而 %s 里那张手写源表只有 %d 条。"+
-			"  ⇒ 新加了源而没加进表的话，那条到期条件在它身上【不会响】。"+
-			"  ⇒ 处置：把新源加进 sourcesUnderTest，别调这里的数。",
-			declared, "hasbars_expiry_test.go", len(sourcesUnderTest(t)))
+	inTable := map[string]bool{}
+	for _, s := range sourcesUnderTest(t) {
+		inTable[implOf(t, s.caps)] = true
 	}
+	for impl := range declared {
+		if !inTable[impl] {
+			t.Fatalf("本仓声明了 %s 的 Caps，而那张手写源表里没有它。"+
+				"⇒ 新加了源而没加进表的话，那条到期条件在它身上【不会响】。"+
+				"⇒ 处置：把它加进 sourcesUnderTest，别动这里的判据。", impl)
+		}
+	}
+	for impl := range inTable {
+		if !declared[impl] {
+			t.Fatalf("表里有 %s，而本仓没有它的 Caps 声明 —— "+
+				"表里那一行指向的不是一个源（或者它靠内嵌拿到 Caps，见上面那段盲点）。", impl)
+		}
+	}
+	t.Logf("Caps 实现 %d 个，与表逐个对上：%v", len(declared), keysOf(declared))
 }
 
-// countCapsDeclarations 用 go/ast 数「声明了 Caps 那个签名」的方法有几个。
-func countCapsDeclarations(t *testing.T) int {
+// implOf 从一个**方法值**里取出它属于哪个实现，形如 `sinasource.Client`。
+//
+// ⛔ 它存在的理由是【必改】：上一版断言的是 `len(表) == 声明数` —— **一个计数** ——
+// 而守卫自己的报文说的是**覆盖**。评审方四格实测，我复现：
+//
+//	① 表里把 cffexsource 换成第二个 sinasource ⇒ 计数仍 2 ⇒ **两条守卫都绿**
+//	② ① ＋ 让 cffexsource 真的声明日内周期     ⇒ **㉒ 真的到期了，而全仓一条不红**
+//	③ 对照：只让 cffexsource 到期、表不动       ⇒ 到期条件红 ✅（尺子是好的）
+//
+// 🔴 **守卫声称的是【覆盖】，断言的却是【个数】** —— 与上一颗那个标记同型：
+// **招牌好处在它写成的样子上不成立。**
+// ⚠️ 而①不是刁钻构造：**照着表里已有那行复制一份当新源的模板、忘了换构造函数**，产出的正是①。
+//
+// ⇒ 而修法比「表里再加一个手写字段」硬一格：**实现名从函数值本身取** ——
+// `runtime.FuncForPC` 给出 `pkg.(*Type).Method-fm` ⇒ **那张表说不了谎**。
+func implOf(t *testing.T, f func(tickflow.ProductKey) tickflow.Capabilities) string {
 	t.Helper()
-	n := 0
+	full := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
+	// 形如 …/source/sinasource.(*Client).Caps-fm
+	name := strings.TrimSuffix(full, "-fm")
+	if i := strings.LastIndex(name, "/"); i >= 0 {
+		name = name[i+1:]
+	}
+	parts := strings.Split(name, ".")
+	if len(parts) < 3 {
+		t.Fatalf("取不出实现名：%q —— 这条判据依赖方法值的形状，而它变了", full)
+	}
+	recv := strings.Trim(parts[len(parts)-2], "(*)")
+	return parts[0] + "." + recv
+}
+
+// capsImplementors 用 go/ast 收「声明了 Caps 那个签名」的 `包名.接收者类型`。
+//
+// ⚠️ 收的是**集合**不是个数 —— 见 implOf 上面那段。
+func capsImplementors(t *testing.T) map[string]bool {
+	t.Helper()
+	out := map[string]bool{}
 	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -165,25 +213,34 @@ func countCapsDeclarations(t *testing.T) int {
 		}
 		for _, d := range f.Decls {
 			fd, ok := d.(*ast.FuncDecl)
-			if !ok || fd.Recv == nil || fd.Name.Name != "Caps" {
+			if !ok || fd.Recv == nil || fd.Name.Name != "Caps" || len(fd.Recv.List) != 1 {
 				continue
 			}
-			// 签名要对得上：一个入参、一个返回，且都是 tickflow.* 那两个类型
 			if fd.Type.Params == nil || len(fd.Type.Params.List) != 1 ||
 				fd.Type.Results == nil || len(fd.Type.Results.List) != 1 {
 				continue
 			}
-			if exprName(fd.Type.Params.List[0].Type) == "ProductKey" &&
-				exprName(fd.Type.Results.List[0].Type) == "Capabilities" {
-				n++
+			if exprName(fd.Type.Params.List[0].Type) != "ProductKey" ||
+				exprName(fd.Type.Results.List[0].Type) != "Capabilities" {
+				continue
 			}
+			out[f.Name.Name+"."+exprName(fd.Recv.List[0].Type)] = true
 		}
 		return nil
 	})
 	if err != nil {
 		t.Fatalf("扫源码失败：%v", err)
 	}
-	return n
+	return out
+}
+
+func keysOf(m map[string]bool) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // exprName 取 `pkg.Name` 或 `Name` 的那个 Name。
@@ -191,6 +248,8 @@ func exprName(e ast.Expr) string {
 	switch v := e.(type) {
 	case *ast.SelectorExpr:
 		return v.Sel.Name
+	case *ast.StarExpr:
+		return exprName(v.X)
 	case *ast.Ident:
 		return v.Name
 	}
