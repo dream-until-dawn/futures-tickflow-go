@@ -563,7 +563,7 @@ func (s *Syncer) planGaps(k ProductKey, from, to TradingDay, verified map[Span]b
 		}
 		cov = append(cov, st)
 	}
-	gaps, err := PlanGaps(s.cal, k, from, to, cov, s.store.HasBars)
+	gaps, err := PlanGaps(s.cal, k, from, to, cov, s.store.DaysWithBars)
 	if err != nil {
 		return fmt.Errorf("tickflow: 分类缺口失败: %w", err)
 	}

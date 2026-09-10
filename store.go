@@ -69,11 +69,26 @@ type Store interface {
 	// Coverage 返回【交易日闭区间】的有序不重叠列表（A1a / A1b）。
 	Coverage() []Span
 
-	// HasBars 回答「这一天在库里有没有根」。
+	// DaysWithBars 一次回答【一整段】里哪些交易日有根。
 	//
 	// ⛔ 它有【三种】答案，而不是两种：有 / 没有 / **答不了**（ErrSpanUnverified）。
 	// 「没走查过」不许悄悄变成一个肯定的「确认没有」（B3）。
-	HasBars(day TradingDay) (bool, error)
+	// 🔴 而三值里的第三值落在 **error** 上，不落在「返回一个空 map」上 ——
+	// 空 map 与「这一段每天都没有根」在调用方那儿长得一模一样。
+	//
+	// ⛔ **它替换了上一版的 `HasBars(day)`**，理由不是接口美学，是复杂度：
+	// 逐日问 ⇒ `O(天数 × 根数)`，整段问 ⇒ `O(根数)`。
+	// 全部代价（含**它在哪一族输入上更慢**）写在 `docs/design.md`
+	// 「二十·六」那一节，四问＋问五逐条带取法。
+	//
+	// ⚠️ **调用点被设计钉死**：按 coverage 段调用，且**只对与请求区间相交的段**调用。
+	// 🔴 这一条承重：把它挪到循环外面无条件取整段，会让「全新品种/周期的首次同步」
+	// （`cov` 为空）从**一次不读**变成**读整个文件** —— 那一族是纯亏。
+	// ⇒ 守着它的是 `TestPlanGapsReadsNothingWhenNoCoverage`，不是这段注释。
+	//
+	// ⚠️ 而 `HasBars(day)` 没有消失：它仍是 `*segfile.Store` 的具体方法，
+	// **作为等价性测试的参照实现**。两边都走新代码的话，那条测试是空的。
+	DaysWithBars(span Span) (map[TradingDay]bool, error)
 
 	// AppendBars 只把这一批根写进数据文件，**不碰 coverage**（C1 的一半）。
 	//
