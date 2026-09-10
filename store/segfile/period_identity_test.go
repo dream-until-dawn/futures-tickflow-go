@@ -223,8 +223,18 @@ func TestMigrationInstructionTerminates(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, _, err := Open(dir, tickflow.Daily)
+	s0, _, err := Open(dir, tickflow.Daily)
 	if err == nil {
+		// ⚠️ 接住并关掉。这一支是【前提失败】那一支 —— 而它一旦走到，
+		// 说明 Open 成功了，于是那个 Store 持着一个 *os.File，而这里把它丢了。
+		// 实测后果（评审方 2026-09-10，Windows）：t.TempDir() 的清理当场失败
+		// 「unlinkat …1d.dat: The process cannot access the file because it is
+		// being used by another process」⇒ 临时目录留着、句柄还开着。
+		// 🔴 它只在【断言已经红了之后】发生 ⇒ 不改变任何结论，
+		// 只是让那次失败的现场更脏 —— 而更脏的现场正是下一轮误读的来源。
+		if s0 != nil {
+			s0.Close()
+		}
 		t.Fatal("前提不成立，本格作废：旧库还在旁边而 Open 收下了")
 	}
 	// ⛔ 这里原来写的是 strings.Contains(err.Error(), "format")，而它【空转】——
