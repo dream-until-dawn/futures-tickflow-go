@@ -93,9 +93,24 @@ func (s *httpSource) Bars(ctx context.Context, req BarRequest) ([]Bar, error) {
 func (s *httpSource) Caps(ProductKey) Capabilities {
 	return Capabilities{Periods: []Period{Daily},
 		Since: map[Period]TradingDay{Daily: 20200101}, BatchDays: s.batch,
-		// ⚠️ 这一行是被【自己的测试】逼出来的：不写它 ⇒ ClientUse 零值
-		// ⇒ 「不适用」⇒ 闸门那条检查静默关掉，而 TestGateBypassLeavesANote 当场红。
-		// **一个忘了声明的桩，会把它自己要测的那条检查关掉。**
+		// ⚠️ 这一行是被【自己的测试】逼出来的。实测（删掉它再跑）：
+		//
+		//	tickflow: 源在 SHFE.rb 上的 Caps 自己不自洽: ClientUse=0 不合法…
+		//	⇒ TestGateBypassLeavesANote 两个子格都红
+		//
+		// ⇒ **`Sync` 当场硬报错，不是「静默关掉」** —— `caps.Validate()` 在
+		// `rep.UngatedOK = …` 之前六十行，零值**根本走不到那一行**。
+		// ⇒ 教训是正的那一面：**`Validate` 那条新接线，第一个抓到的就是它自己的桩。**
+		//
+		// 🔴 **而这一句改过一次，上一版的【成因和教训都是反的】**（评审方 2026-09-10 实测抓的）：
+		// 我写的是「不写它 ⇒ 闸门那条检查静默关掉」。
+		// ⛔ 而它**曾经是真的** —— 我写下它的时候 `Sync` 还没有调 `Validate()`；
+		// **那条调用是我在【同一颗提交里】后加的，一加就把这句注释作废了。**
+		//
+		// > **一颗提交可以作废它自己先写下的话** —— 本仓记过它的「数」的形态
+		// > （一颗提交作废了它自己写的数），这是它的【成因】形态。
+		// > ⇒ 而成因这一形态更阴：数字看得出陈旧，**一句因果读起来永远新鲜**。
+		// ⇒ 动作：**同一颗提交里改了控制流，回头把这颗里写过的每一句「⇒ 会怎样」重跑一遍。**
 		ClientUse: ClientUseHTTP}
 }
 
