@@ -2447,58 +2447,12 @@ func classOf(name string) string {
 //
 // ⚠️ 前提自检：扫到的文件数必须 > 0 —— 否则这条守卫是空转的，而空转和「全干净」同形。
 func TestNoControlCharactersInSources(t *testing.T) {
-	isBad := func(r rune) bool {
-		if r == '\t' || r == '\n' || r == '\r' {
-			return false
-		}
-		return r < 0x20 || r == 0x7f
-	}
+	// ⛔ 这一行是【必改】的落点（评审方 2026-09-10）：扫描不再由这条守卫自己写一遍，
+	// 而是与 TestGuardNeverPrintsFileContent **调同一个函数** ——
+	// 🔴 否则下一个想让报文更好读的人改的是这里，而那条性质测问的是另一份，**它照绿**。
+	got := scanForControlChars(t, ".", classifyByLists)
+	scanned, bad, unclassified := got.scanned, got.hits, got.unclassified
 
-	var scanned int
-	var bad, unclassified []string
-	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			switch info.Name() {
-			case ".git", "__pycache__", "node_modules":
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		cls := classOf(info.Name())
-		if _, skip := skipExt[cls]; skip {
-			return nil
-		}
-		if _, skip := skipName[cls]; skip {
-			return nil
-		}
-		_, wantExt := scanExt[cls]
-		_, wantName := scanName[cls]
-		if !wantExt && !wantName {
-			// ⛔ 这一类既不在「要扫」也不在「显式不扫」里 ⇒ 它静默落在射程外。
-			unclassified = append(unclassified, fmt.Sprintf("%s（%s）", cls, p))
-			return nil
-		}
-		b, rerr := os.ReadFile(p)
-		if rerr != nil {
-			return rerr
-		}
-		scanned++
-		for i, line := range strings.Split(string(b), "\n") {
-			for _, r := range line {
-				if isBad(r) {
-					bad = append(bad, fmt.Sprintf("%s:%d 有 %U", p, i+1, r))
-					break
-				}
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		t.Fatalf("扫文件失败：%v", err)
-	}
 	if scanned == 0 {
 		t.Fatal("一个文本文件都没扫到 —— 这条守卫是空转的，读数作废")
 	}
@@ -2547,13 +2501,16 @@ func TestGuardNeverPrintsFileContent(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	got := scanForControlChars(t, dir)
+	// ⚠️ 这里传的分类器是「全扫、且都算有归属」—— 本测试问的是**报文里有没有内容**，
+	// 而不是那四张名单划得对不对（那是上面那条守卫的事）。
+	// ⇒ 变的只有【扫哪些】，**组装命中串的那段代码是同一份**。
+	got := scanForControlChars(t, dir, func(string) (bool, bool) { return true, true })
 
 	// 前提自检：这个构造必须真的**被抓到** —— 否则下面那句「不含记号」是空转的。
-	if len(got) == 0 {
+	if len(got.hits) == 0 {
 		t.Fatal("植入的控制字符没被抓到 —— 这条测试是空转的，读数作废")
 	}
-	joined := strings.Join(got, "\n")
+	joined := strings.Join(got.hits, "\n")
 	if !strings.Contains(joined, "zzleak_probe.md") {
 		t.Fatalf("抓到了，而报的不是那个文件：%s", joined)
 	}
@@ -2566,11 +2523,34 @@ func TestGuardNeverPrintsFileContent(t *testing.T) {
 	}
 }
 
-// scanForControlChars 是那条守卫的扫描部分，抽出来好让上面那条测试问它。
+// scanOutcome 是一次扫描的全部产出：`TestNoControlCharactersInSources` 的三个断言
+// 各要其中一栏（空转自检要 scanned、归属那格要 unclassified、控制字符那格要 hits）。
+type scanOutcome struct {
+	hits         []string // 命中，形如 "路径:行号 有 U+0008"
+	scanned      int      // 真正读过的文件数
+	unclassified []string // 既不在【要扫】也不在【显式不扫】里的
+}
+
+// scanForControlChars 是那条守卫的扫描部分，**两条测试都调它**。
 //
-// ⚠️ 它只做「找」，不做「报」—— 报文长什么样是调用方的事，
-// 而上面那条测试问的正是「报文里有没有内容」。
-func scanForControlChars(t *testing.T, root string) []string {
+// ⛔ 上一版这句注释写的是「抽出来好让上面那条测试问它」，而**那句话当时为假**
+// （评审方 2026-09-10 量的，我核过三条路）：它不是抽出来的，是**复制**出来的 ——
+//
+//	helper 的全仓引用    只有性质测、它自己的注释、它的声明
+//	真守卫函数体里调它    **0 次**
+//	真守卫自己有          另一份 isBad ＋ filepath.Walk(".") ＋ os.ReadFile
+//
+// 🔴 而两份实现**已经漂开了一格**：这一份当时印 `filepath.Base(p)`，真守卫印 `p`。
+// ⇒ 那正是「复制」与「抽出」的差别所在：**复制出来的那一刻两份是一样的，
+// 而此后每一次改动都只落在其中一份上，测试却一直绿。**
+// ⇒ 现在是真的抽出来了：**性质测检查的那些字符串，就是真守卫要印出去的那些字符串。**
+//
+// ⚠️ 它只做「找」，不做「报」—— 报文长什么样仍是调用方的事，
+// 而 `TestGuardNeverPrintsFileContent` 问的正是「这些串里有没有文件内容」。
+//
+// classify 回答两件事：**要不要扫**、以及**这一类有没有归属**。
+// ⇒ 真守卫传 `classifyByLists`（查那四张名单）；性质测传「全扫、且都算有归属」。
+func scanForControlChars(t *testing.T, root string, classify func(name string) (scan, known bool)) scanOutcome {
 	t.Helper()
 	isBad := func(r rune) bool {
 		if r == '\t' || r == '\n' || r == '\r' {
@@ -2578,22 +2558,36 @@ func scanForControlChars(t *testing.T, root string) []string {
 		}
 		return r < 0x20 || r == 0x7f
 	}
-	var out []string
+	var out scanOutcome
 	err := filepath.Walk(root, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() {
+			switch info.Name() {
+			case ".git", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		scan, known := classify(info.Name())
+		if !known {
+			// ⛔ 这一类既不在「要扫」也不在「显式不扫」里 ⇒ 它静默落在射程外。
+			out.unclassified = append(out.unclassified, fmt.Sprintf("%s（%s）", classOf(info.Name()), p))
+			return nil
+		}
+		if !scan {
 			return nil
 		}
 		b, rerr := os.ReadFile(p)
 		if rerr != nil {
 			return rerr
 		}
+		out.scanned++
 		for i, line := range strings.Split(string(b), "\n") {
 			for _, r := range line {
 				if isBad(r) {
-					out = append(out, fmt.Sprintf("%s:%d 有 %U", filepath.Base(p), i+1, r))
+					out.hits = append(out.hits, fmt.Sprintf("%s:%d 有 %U", p, i+1, r))
 					break
 				}
 			}
@@ -2604,4 +2598,25 @@ func scanForControlChars(t *testing.T, root string) []string {
 		t.Fatalf("扫描失败：%v", err)
 	}
 	return out
+}
+
+// classifyByLists 是真守卫用的那个分类器：查那四张名单。
+//
+// ⚠️ 顺序承重：**先问「显式不扫」再问「要扫」** —— `.env` 落在 skipName，
+// 而若反过来先查 scanExt，一个叫 `.env` 的类要是哪天也进了 scanExt，它就会被读。
+func classifyByLists(name string) (scan, known bool) {
+	cls := classOf(name)
+	if _, ok := skipExt[cls]; ok {
+		return false, true
+	}
+	if _, ok := skipName[cls]; ok {
+		return false, true
+	}
+	if _, ok := scanExt[cls]; ok {
+		return true, true
+	}
+	if _, ok := scanName[cls]; ok {
+		return true, true
+	}
+	return false, false
 }
