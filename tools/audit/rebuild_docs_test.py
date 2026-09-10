@@ -486,7 +486,59 @@ def main():
         if n > hw[k]:
             grew.append((k, hw[k], n))
             hw[k] = n
-    if grew:
+    # —— 守卫名单的【集合差】，而不只是它的【条数】 ——
+    #
+    # ⛔ 这一段的由来是一格实测的盲区（评审方 2026-09-10 造，我独立复现）：
+    # **把一条既有守卫【改个名字】** ＝ 删一条 ＋ 加一条 ⇒ 净变化 0 ⇒
+    #
+    #	guards  34 → **34**（不变）
+    #	来历行  42 → **42**（一行都没加）
+    #	全仓顶层红 **0**
+    #
+    # 🔴 而注册表里那一条**已经被换成了另一个名字**。
+    # ⚠️ 它的分量不在「追溯不到」，在**这个文件自己声明的那条保护被绕开**：
+    # `TestGuardsStillExist` 的报文写着「**删守卫是显式动作**」——
+    # 而一次删除只要**同一次里顺手加一条无关的守卫**，计数就不变
+    # ⇒ 下限不触发、来历不记 ⇒ **那次删除是隐形的**。
+    #
+    # 📎 形状与 `TestSourceTableCoversEveryCapsImplementor` 上打出的那一格**同型**：
+    # **基数相等 ≠ 集合相同** —— 同一条教训在两个不相干的机制上各出现一次。
+    #
+    # ⇒ 处置：触发条件从「**数涨了**」换成「**数涨了【或】成员换了**」，
+    # 并且**新增与移除两栏都写** —— 一次删除因此无法被一次新增洗掉。
+    oldNames = guardNamesOnDisk()
+    addedGuards = removedGuards = None
+    if oldNames is not None:
+        addedGuards = [n for n in names if n not in set(oldNames)]
+        removedGuards = [n for n in oldNames if n not in set(names)]
+    elif os.path.exists(TARGET):
+        # ⚠️ 只在【文件在而解析不出来】时出声。第一次生成时文件本来就不存在，
+        # 那不是故障，出声只会教人忽略这条提示。
+        print("⚠️ 盘上 docs_test.go 在，而 guardNames 解析不出来 ⇒ "
+              "本次无法报告守卫名单的增减；先看 guardNamesOnDisk 与生成格式是不是漂开了。",
+              file=sys.stderr)
+
+    guardsGrew = any(k == "guards" for k, _, _ in grew)
+    membershipChanged = bool(addedGuards or removedGuards)
+    if guardsGrew and oldNames is not None:
+        # ⛔ 「表长大了却说不出新增的是谁」是一个自相矛盾的状态 —— 拒绝，别写一行空话。
+        assert addedGuards, (
+            "guards 涨到 %d，而与盘上旧表求差得到 0 个新名字 —— 这两件事不能同真。"
+            "多半是 guardNamesOnDisk 的解析与生成格式漂开了；先修解析，别改被测方。"
+            % len(names))
+
+    def guardNote():
+        """来历行里那两栏。**说不出的时候要说「说不出」**，别只是不说。"""
+        if oldNames is None:
+            return "；名单增减：【说不出——旧表解析未命中，见 guardNamesOnDisk】"
+        out = ""
+        if addedGuards:
+            out += "；本次新增：" + " ".join(addedGuards)
+        if removedGuards:
+            out += "；本次移除：" + " ".join(removedGuards)
+        return out or "；名单未变"
+
+    if grew or membershipChanged:
         # ⛔ 先看链断没断 —— 断着就不追加（评审方 2026-09-09 定的甲''）。
         #    往一条断链上追加，等于给一个答不了的问题再添一行。
         refuseIfChainBroken(hwLines)
@@ -494,27 +546,7 @@ def main():
         # 手写的来历没有守卫，而一个假的来历比没有来历更危险（评审方 2026-09-08）。
         before = [ln for ln in hwLines if provOf(ln)]
         today = datetime.date.today().isoformat()
-        # 本次新增的守卫名字 —— 它让【同一天、同一个前值】的两次抬高在文本上分得开。
-        # ⚠️ 要在覆盖 TARGET 之前读，而写盘在本段之后 ⇒ 此刻盘上还是旧那份。
-        addedGuards = None
-        guardsGrew = any(k == "guards" for k, _, _ in grew)
-        if guardsGrew:
-            oldNames = guardNamesOnDisk()
-            if oldNames is None:
-                # ⛔ 说不出的时候，**在证据里说「说不出」**，别只是不说。
-                # 静默降级会让这道防线安静地消失，而下一个读来历行的人
-                # 分不出「那次没有分叉」和「那次我没看出来」——
-                # 本仓那条：**外形不携带状态，需要的是一次求值，不是一次阅读。**
-                print("⚠️ guards 抬高了，而盘上旧 guardNames 解析不出来 ⇒ "
-                      "来历行里记「说不出」；先看 guardNamesOnDisk 与生成格式是不是漂开了。",
-                      file=sys.stderr)
-            else:
-                addedGuards = [n for n in names if n not in set(oldNames)]
-                # ⛔ 「表长大了却说不出新增的是谁」是一个自相矛盾的状态 —— 拒绝，别写一行空话。
-                assert addedGuards, (
-                    "guards 从 %d 涨到 %d，而与盘上旧表求差得到 0 个新名字 —— "
-                    "这两件事不能同真。多半是 guardNamesOnDisk 的解析与生成格式漂开了；"
-                    "先修解析，别改被测方。" % (hw["guards"] - len(grew), len(names)))
+        appended = 0
         for k, old, new in grew:
             # `自 <前值>` 是【正式字段】，不是说明文字的一部分：
             # 两行都声称从同一个前值来 ⇒ 那是一次分叉，而分叉与并集的顺序无关。
@@ -526,12 +558,18 @@ def main():
             # 行尾多出来的字对它们透明。**这是特意选的落法** ——
             # 加一个正式字段会同时改两个解析器，而那正是本文件警告过
             # 「`自` 与 `合流` 抢同一个槽位」那一格的成因。
-            note = ""
-            if k == "guards":
-                note = ("；本次新增：" + " ".join(addedGuards) if addedGuards
-                        else "；本次新增：【说不出——旧表解析未命中，见 guardNamesOnDisk】")
+            note = guardNote() if k == "guards" else ""
             hwLines.append("# 来历 %s %s %d 自 %d 自动：重造时表长大（%d -> %d）%s"
                            % (today, k, new, old, old, new, note))
+            appended += 1
+        if membershipChanged and not guardsGrew:
+            # ⛔ **数没变而成员换了** —— 这一行正是那个盲区的补丁。
+            # `自 <前值>` 填的是同一个数：**它就是这一行要说的事**
+            # （链检查按 running max 走，val == prev 不算断链 —— 我核过 chainBreaks）。
+            n = len(names)
+            hwLines.append("# 来历 %s guards %d 自 %d 自动：条数未变而【名单成员变了】%s"
+                           % (today, n, n, guardNote()))
+            appended += 1
         writeHighWater(hwLines, hw)
         # 只增不改：已有的来历行必须原样、原序地还在前面。
         #
@@ -542,9 +580,12 @@ def main():
         _, wroteLines = readHighWater()
         wrote = [ln for ln in wroteLines if provOf(ln)]
         assert wrote[:len(before)] == before,             "只增不改被破坏了——盘上已有的来历行被改动或删除了"
-        assert len(wrote) == len(before) + len(grew),             "盘上的来历行数对不上：原 %d 行 + 本次 %d 行 ≠ %d 行"             % (len(before), len(grew), len(wrote))
-        print("高水位抬高：%s（表长大了，这是自动的）；追加来历 %d 行"
-              % ("，".join("%s %d→%d" % g for g in grew), len(grew)))
+        assert len(wrote) == len(before) + appended,             "盘上的来历行数对不上：原 %d 行 + 本次 %d 行 ≠ %d 行"             % (len(before), appended, len(wrote))
+        what = "，".join("%s %d→%d" % g for g in grew) or "无（条数未变）"
+        print("高水位抬高：%s；追加来历 %d 行%s"
+              % (what, appended,
+                 "（其中一行记的是【条数未变而成员变了】）"
+                 if membershipChanged and not guardsGrew else ""))
     # 下限本身不再写进生成物，但生成器仍然要为它把关：
     # 一个 0 或负数的下限等于没有下限，而它会一路安静地生效。
     for k in ("anchors", "rules", "census", "guards"):
