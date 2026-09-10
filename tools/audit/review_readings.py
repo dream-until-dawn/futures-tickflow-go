@@ -31,12 +31,58 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 
+class GitFailed(Exception):
+    """一次 git 调用非 0 退出。"""
+
+    def __init__(self, args, code, stderr):
+        self.args_ = args
+        self.code = code
+        self.stderr = stderr
+
+
 def git(*args):
-    return subprocess.run(("git",) + args, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace").stdout.strip()
+    """跑一条 git，**非 0 退出就抛**。
+
+    ⛔ 第一版只取 stdout、不看返回码 —— 而评审方 2026-09-10 把它两端都打了：
+
+        base_ref 打错   ⇒ 每一次 git 都失败，而它 exit=0 印出一份【完整的假报告】
+        不在 git 仓里   ⇒ 同上，且那份报告是【最令人安心】的那一版：
+                          「porcelain 0」「分支尖之外（无）」
+
+    🔴 而承重的那一句正好落在这儿：`dirty = git("status", "--porcelain")`
+    失败时也返回空串 ⇒ **「工作区不干净就拒绝出数」这道闸门，在 git 本身失败时判为【干净】**
+    ⇒ **失败方向是放行。**
+
+    ⚠️ 而它不是「脚本要健壮」那一类要求：**这份输出会被贴进送审信，
+    而送审信是门禁的证据链** —— 一个能静默印出「分支尖之外（无）」的工具，
+    恰好在门禁最需要真值的那一栏上失效。
+
+    ⚠️ 单列一条【试过而不成立】的（评审方量的，我收）：
+    本以为现实触发是「共用工作树里并发跑 git 撞 index.lock」——
+    实测把 index.lock 摆在那儿，`git status --porcelain` **照样 exit 0**（它只是不回写索引）
+    ⇒ **不拿它当理由**。可达的是上面那两条（参数打错 / 不在仓里或 git 不在 PATH）。
+    """
+    p = subprocess.run(("git",) + args, capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    if p.returncode != 0:
+        raise GitFailed(args, p.returncode, (p.stderr or "").strip())
+    return p.stdout.strip()
 
 
 def main():
+    try:
+        return _main()
+    except GitFailed as e:
+        print("REFUSE: git %s -> exit %d" % (" ".join(e.args_), e.code))
+        if e.stderr:
+            print("   " + e.stderr.split("\n")[0])
+        print("")
+        print("一次 git 调用失败了 —— 而这份输出会被贴进送审信。")
+        print("宁可不出数，也不出一份【看起来完整】的报告。")
+        return 2
+
+
+def _main():
     base_ref = sys.argv[1] if len(sys.argv) > 1 else "main"
 
     dirty = git("status", "--porcelain")
@@ -64,7 +110,10 @@ def main():
     print("%s..尖  %s   ·   尖..%s  %s   ⇒  %s"
           % (base_ref, ahead, base_ref, behind,
              "快进" if behind == "0" else "分岔 ⇒ 并时是真合并，记得核那次合并自身的 diff 是 0 行"))
-    print("porcelain       0")
+    # ⚠️ 印【量到的那个值】，不印一个打上去的 0（评审方提，我收）——
+    # 这个脚本的题目正是「读数要来自它自己的定义式」，而这一行原来是个字面量。
+    # ⇒ 它与上面那道闸门用的是**同一次读数**，所以两者不可能互相矛盾。
+    print("porcelain       %d" % (0 if not dirty else len(dirty.split("\n"))))
     print("")
 
     # 分支尖之外还有没有别的
