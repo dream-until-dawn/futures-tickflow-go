@@ -34,6 +34,9 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 
+_warnings = []
+
+
 class GitFailed(Exception):
     """一次 git 调用非 0 退出。"""
 
@@ -69,6 +72,14 @@ def git(*args):
                        encoding="utf-8", errors="replace")
     if p.returncode != 0:
         raise GitFailed(args, p.returncode, (p.stderr or "").strip())
+    # ⛔ 成功时的 stderr 也要收着 —— 实测：一个指向不存在对象的 ref，
+    # `for-each-ref` **警告到 stderr 并跳过它**，而退出码是 0
+    # ⇒ 那条 ref 既不出现在结果里，也不引起失败 ⇒「分支尖之外」印出「（无）」。
+    # 🔴 而那一栏的职责正是**把我不知道的东西报出来**，
+    # 一个「被安静跳过的 ref」恰恰是它最该报的那一种。
+    warn = (p.stderr or "").strip()
+    if warn:
+        _warnings.append("git %s: %s" % (" ".join(args), warn.split("\n")[0]))
     return p.stdout.strip()
 
 
@@ -106,6 +117,31 @@ def _main():
     ahead = git("rev-list", "--count", "%s..HEAD" % base_ref)
     behind = git("rev-list", "--count", "HEAD..%s" % base_ref)
 
+    # ⛔ **所有 git 调用都收在第一个 print 之前**（评审方 2026-09-10 建议甲，我采纳）。
+    #
+    # 原来的顺序是：先打印头部六行 → 再去跑 for-each-ref 与循环里的 rev-list。
+    # 于是那句「宁可不出数，也不出一份【看起来完整】的报告」
+    # **只对第一批 git 调用成立** —— 后面任何一次失败，头部六行都已经落地了，
+    # 而 REFUSE 会印在「分支尖之外」那个标题【下面】
+    # ⇒ 那份输出是「一份看起来完整的报告，而恰好缺了那一栏」，
+    # **而那一栏正是这条命令最值钱的那一栏。**
+    # 🔴 ⇒ 那句承诺原来靠「第一批调用恰好都在打印之前」成立，**而不是靠结构**。
+    #
+    # ⚠️ 单列一条【我复现不出来的】：评审方用一条指向不存在对象的 ref 触发了它；
+    # 我照同一构造跑，`for-each-ref` 警告到 stderr 并**跳过**那条 ref、退出码 0
+    # ⇒ 循环根本没调到 rev-list ⇒ 没有失败。
+    # **我没能复现那个触发** —— 上面这个顺序问题是【读调用次序】确认的，不是量出来的。
+    others = []
+    for r in git("for-each-ref", "--format=%(refname)", "refs/heads", "refs/remotes").split("\n"):
+        if not r:
+            continue
+        n = git("rev-list", "--count", "%s..%s" % (base_ref, r))
+        if n and n != "0":
+            others.append((r, n))
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # ——— 到这里为止，一次 git 都不会再跑；下面只打印 ———
+
     print("分支            %s" % branch)
     print("分支尖(全长)    %s" % tip)
     print("%-14s  %s%s" % (base_ref, base, "" if base != mb else "   （＝ merge-base，可快进）"))
@@ -119,32 +155,27 @@ def _main():
     print("porcelain       %d" % (0 if not dirty else len(dirty.split("\n"))))
     print("")
 
-    # 分支尖之外还有没有别的
-    # ⛔ 这一栏带时刻，而上面那几栏不带 —— 因为它们的【成因】不同（评审方 2026-09-10 提，我收）：
+    # ⛔ 这一栏带时刻，而上面那几栏不带 —— 因为它们的【成因】不同（评审方提，我收）：
     #
     #   分支尖 / merge-base / porcelain   由**我自己**的动作改变 ⇒ 我不动它就不变
     #   分支尖之外                        由**别人**的动作改变 ⇒ **我什么都不做它也会变**
     #
-    # ⇒ 同本仓索引里那条：**当前值由对方的动作改变，而任何触发条件都必然迟对方一步。**
+    # ⇒ 同本仓那条：**当前值由对方的动作改变，而任何触发条件都必然迟对方一步。**
     # 📎 实录：这一栏第一次真用就报出一条我不知道的 ref（评审方 worktree 的本地分支），
     #    而我发信时它已经被删了 —— **报告为真，只是发信时已不是当前值。**
-    #    ⇒ 印一个时刻，让收信方一眼看出「这一栏是那一刻的」。
-    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     print("分支尖之外（本地 heads ＋ 远端跟踪，逐条 rev-list --count %s..它）"
           "  —— 这一栏由【别人】的动作改变，读于 %s：" % (base_ref, now))
-    refs = git("for-each-ref", "--format=%(refname)", "refs/heads", "refs/remotes").split("\n")
-    other = []
-    for r in refs:
-        if not r:
-            continue
-        n = git("rev-list", "--count", "%s..%s" % (base_ref, r))
-        if n and n != "0":
-            other.append((r, n))
-    if not other:
+    if not others:
         print("   （无）")
-    for r, n in other:
+    for r, n in others:
         mark = "  ← 本分支" if r.endswith("/" + branch) or r.endswith(branch) else ""
         print("   %-46s +%s%s" % (r, n, mark))
+
+    if _warnings:
+        print("")
+        print("⚠️ git 自己的告警（退出码是 0，而它说了话 —— 通常意味着某个 ref 被跳过了）：")
+        for w in _warnings:
+            print("   " + w)
     return 0
 
 
