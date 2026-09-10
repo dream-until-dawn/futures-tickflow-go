@@ -88,6 +88,18 @@ const (
 	HaltBudget
 	// HaltContext 调用方取消了。留声。
 	HaltContext
+
+	// HaltNoTradingDays 请求区间里一个交易日都没有。**不留声 —— 它是结果，不是异常。**
+	//
+	// ⚠️ 「没什么可同步」是一个**完整而正确**的回答，而调用方查得到全部依据：
+	// `Requested` 在、`Bars=0`、而 `Gaps` 里那一段写着「不是交易日」。
+	HaltNoTradingDays
+
+	// HaltOutsideCoverage 请求整段落在日历能回答的范围之外。**同样不留声。**
+	//
+	// ⛔ 而它**只有在 `Gaps` 被填过之后才配不留声**（评审方 2026-09-10 的裁法，我认）：
+	// **只改 `Complete()` 而不加载体，那一步是【放宽】；先加事实再谈总状态，才是【自洽】。**
+	HaltOutsideCoverage
 )
 
 // note 返回这次中止的留声文字，以及**要不要留声**。
@@ -96,7 +108,12 @@ const (
 // **黑名单漏掉的那个会静默通过，白名单漏掉的那个会吵。**
 func (h HaltReason) note() (string, bool) {
 	switch h {
-	case HaltDone:
+	case HaltDone, HaltNoTradingDays, HaltOutsideCoverage:
+		// ⚠️ 这三个都不留声，而**理由不同**，写在一起免得被读成一类：
+		//	HaltDone             跑完了
+		//	HaltNoTradingDays    没有东西可跑 —— 而 Gaps 里写着「不是交易日」
+		//	HaltOutsideCoverage  日历答不了这一段 —— 而 Gaps 里写着「日历答不了」
+		// ⇒ 后两个之所以不留声，是因为**那件事已经落成了一个事实**（在 Gaps 里）。
 		return "", false
 	case HaltBudget:
 		return "同步因连续失败用尽预算而中止——已同步的部分是完整的，未同步的部分没有被记为「拉过」", true
@@ -118,6 +135,10 @@ func (h HaltReason) String() string {
 		return "预算耗尽"
 	case HaltContext:
 		return "被取消"
+	case HaltNoTradingDays:
+		return "区间里没有交易日"
+	case HaltOutsideCoverage:
+		return "区间在日历覆盖之外"
 	}
 	return fmt.Sprintf("HaltReason(%d)", int(h))
 }
@@ -276,6 +297,17 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		if !found {
 			// ⛔ 「一天都还没收盘」不是错误，是一份【没有可同步区间】的报告。
 			// 而它仍然带着 HaltUnknown ⇒ Complete() 为假 ⇒ 不会被读成「跑完了」。
+			//
+			// ⛔ **它【不】跟着另外两条一起具名化，而这是一个写下来的决定**
+			//（评审方 2026-09-10 指出，我认）：
+			// 另外两条的「没东西可同步」是**日历给的确定答案**，
+			// 而这一条是**「现在还答不了，等收盘」** —— 它是一个【时刻】问题，
+			// 下一分钟同样的请求可能就有答案了。
+			// ⇒ 而这里连 `To` 都定不下来 ⇒ **没有区间可以交给 PlanGaps 分类** ——
+			// 也就是说它连「落成一个事实」这一步都做不到，所以它只能留声。
+			//
+			// ⇒ 判据：**给一族路径统一具名之前，先数清这一族有几条，
+			// 并逐条问「它现在的哑，是不是有人故意留的」。**
 			rep.Requested = [2]TradingDay{req.From, 0}
 			return rep, nil
 		}
@@ -329,6 +361,23 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 	if hi < from {
 		// 请求整段落在覆盖之外 ⇒ 没有可走的交易日。这是【结果】，不是异常。
+		//
+		// 🔴 **而上一版只写了这句话，没有把它落成任何事实**：报告里除了 `Halt`
+		// 那一位什么也没有（`Gaps` 空、`Bars=0`），而 `Halt` 是零值「未记录」——
+		// **一句我们完全知道答案的话，报成了「不知道为什么停」。**
+		//
+		// ⛔ 而修法**不是手填**：`PlanGaps` 早就答得出来，是这条 `return` 跳过了它。
+		// 实测（`week()` 覆盖 0106..0112）：
+		//
+		//	整段在覆盖之前/之后 ⇒ 1 段【日历答不了】（GapCalendarUnknown）
+		//	而那一类的定义里逐字写着「或日期在 Covers 之外」—— 槽位一直都在
+		//
+		// ⇒ 判据：**一条早退跳过了一个【已经答得出这件事】的函数时，
+		// 该补的不是一个事实，是那次调用。** 手填会让同一个判断有两个来源。
+		if err := s.planGaps(k, req.From, to, nil, &rep); err != nil {
+			return rep, err
+		}
+		rep.Halt = HaltOutsideCoverage
 		return rep, nil
 	}
 
@@ -337,6 +386,17 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		return rep, err
 	}
 	if len(days) == 0 {
+		// 区间在覆盖内，而里面一个交易日都没有（比如只请求了周末）。
+		//
+		// ⛔ **上一版这里【一句注释都没有】** —— 三条非错误早退里最弱的一条：
+		// 另外两条各自写过半句，而这一条**从来没有人说过它的哑是不是故意的**。
+		// ⇒ 判据：**哑有三种状态，不是两种** ——
+		// 故意的哑 / 声明过是结果的哑 / **从来没人回答过的哑**。
+		// 而「问它是不是故意的」，第一步是看**有没有人写过**。
+		if err := s.planGaps(k, req.From, to, nil, &rep); err != nil {
+			return rep, err
+		}
+		rep.Halt = HaltNoTradingDays
 		return rep, nil
 	}
 
