@@ -28,19 +28,36 @@ import (
 //
 //	go test ./store/segfile/ -run XXX -bench ReadShape -benchmem -benchtime=1x
 //
-// —— 读数（2026-09-10，AMD Ryzen 7 5700X，Windows，-benchtime=1x -count=4）——
+// —— 读数 ——
+//
+// ⛔ **一组读数没有基准就会被下一个人当成【当前值】读**（本仓索引那一段记过同一条）。
+// 所以基准写死在这儿：
+//
+//	被测的那份代码   commit **8eeefad**（本文件落地那一颗）
+//	                此后对本文件的改动只在**计时区间之外**（注释与 buildDat 的前提自检）
+//	机器            AMD Ryzen 7 5700X 8-Core（16 线程）· Windows
+//	Go              go1.26.1 windows/amd64
+//	命令            go test ./store/segfile/ -run XXX -bench ReadShape -benchmem -benchtime=1x -count=4
+//	日期            2026-09-10
 //
 //	                       ns/op（四轮）              B/op        allocs/op
 //	一次全给 ReadShapeAll   49.6 / 51.6 / 44.7 / 47.2   85,5xx,xxx     8–19
 //	流式     ReadShapeWalk  38.3 / 38.8 / 37.5 / 38.3       90,5xx      4–7
 //	提前喊停 …WalkFirstDay   4.4 /  6.4 /  5.1 /  5.3       90,4xx      4–5
 //
-// 🔴 **「一次全给」两头都输**：内存约 **945 倍**（81.6 MiB vs 88 KiB），
-// 而时间**还多约 24%**（~47 ms vs ~38 ms）。
-// ⚠️ 而这个方向是反直觉的，所以它是四轮采样得出的：**两组区间不重叠**
-// （All 最小 44.7 ms > Walk 最大 38.8 ms）—— 单次采样不足以说这句话。
-// 成因（**未验，只写指向**）：全给那条要把 89 万个 `Bar` 逐个 append 进一个切片，
-// 那份拷贝与扩容是流式那条根本不做的事。
+// 🔴 **决定（流式赢）单靠【内存】那一项就已经定了**：约 **945 倍**（81.6 MiB vs 88 KiB）。
+// ⚠️ 而这一项**不是计时**，是 Go 数出来的字节数 ⇒ **它本身就是精确值**，
+// 加轮次或做统计检验对它没有意义。
+//
+// ⛔ **而时间那一行【不参与结论】**（评审方 2026-09-10 判，我收）：
+//
+//	读数      All 44.7–51.6 ms  vs  Walk 37.5–38.8 ms ⇒ 约慢 24%
+//	性质      **方向观察**：四轮，两组区间不重叠；**未做任何统计检验，也没换机器**
+//	用法      **不参与这一节的结论** —— 结论由上面那个精确的内存项单独定
+//	成因      未验，只写指向：全给那条要把 89 万个 `Bar` 逐个 append 进切片
+//
+// 🔴 按本仓那条：**不承重的数，问题不是准不准，是会不会被当成规格。**
+// ⇒ 处置不是加轮次，是**在它旁边写清楚它不承重**。
 //
 // ⛔ **而这些数的射程要一起读**：
 //
@@ -93,9 +110,16 @@ func buildDat(tb testing.TB) string {
 	if err != nil {
 		tb.Fatal(err)
 	}
-	if got := CountRecords(st.Size()); got != benchBars {
-		tb.Fatalf("造出来的 .dat 记录数不对：%d，要 %d", got, benchBars)
+	// ⚠️ 这一行【不走 CountRecords】，而这不是不信任它：
+	// CountRecords 里有残尾判断那段逻辑，而它是**被测包自己的**代码 ——
+	// 拿 X 当前提去验 X，本仓记过。
+	// 🔴 而真正的理由是评审方那句：**独立的那一版只要一行、零逻辑、免费** ——
+	// **既然免费，就不该停在「可接受」上。**
+	if want := int64(benchBars) * RecordSize; st.Size() != want {
+		tb.Fatalf("造出来的 .dat 大小不对：%d 字节，要 %d", st.Size(), want)
 	}
+	// 📎 而 readAllLocal 里那次 CountRecords【该留】：那不是自检，
+	// 那是**被测的实现本身**（一次全给要拿它预分配切片）。
 	return path
 }
 
