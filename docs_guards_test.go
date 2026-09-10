@@ -2491,6 +2491,19 @@ func TestNoControlCharactersInSources(t *testing.T) {
 //
 // ⚠️ 而这条测试的射程说清楚：它证的是「**报文不含被扫文件的内容**」，
 // 不是「本仓没有任何东西会印内容」。
+//
+// ⛔ **射程里还有一格它照不到，而我量过，不是推的**：本测试问的是
+// `scanForControlChars` 交出来的那些**命中串**，而**真守卫的 `t.Fatalf` 那一段
+// 仍然可以自己再去读一次文件**。实测（2026-09-10，突变 MUTREP）：
+//
+//	在 TestNoControlCharactersInSources 的报文里加一句 os.ReadFile(命中文件) 并印出来
+//	＋ 植入一个含合成记号的探针文件
+//	⇒ 真守卫红，而**记号原文照印**；`TestGuardNeverPrintsFileContent` **仍然绿**
+//
+// ⇒ 所以这次重构关掉的是「**两份扫描实现会漂开**」那个洞，
+// **不是「任何人都印不出内容」** —— 后者今天没有守卫。
+// ⇒ 这一格不收紧判据（要收就得禁掉真守卫里的 os.ReadFile，那会误伤将来正当的用法），
+// 按本仓惯例**单列在这里**：知道它在，比让判据看起来很全要值钱。
 func TestGuardNeverPrintsFileContent(t *testing.T) {
 	const marker = "ZZ-SYNTHETIC-MARKER-DO-NOT-PRINT"
 
