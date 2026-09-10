@@ -2,6 +2,7 @@ package segfile
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -26,7 +27,7 @@ func bar(day tickflow.TradingDay, ts int64) tickflow.Bar {
 func newStore(t *testing.T) (*Store, tickflow.Calendar, tickflow.ProductKey) {
 	t.Helper()
 	cal, k := testCalendar(t)
-	s, truncated, err := Open(t.TempDir())
+	s, truncated, err := Open(t.TempDir(), tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("Open 失败：%v", err)
 	}
@@ -107,13 +108,14 @@ func TestInvariantC3a_Green(t *testing.T) {
 func TestInvariantA1b_RedOnOpen(t *testing.T) {
 	dir := t.TempDir()
 	// 有序但重叠 —— 所以红了只可能是 A1b。
-	bad := `{"format":1,"coverage":[` +
+	// format 现算：本格测的是 coverage 结构，format 只需要「本版认得」。
+	bad := fmt.Sprintf(`{"format":%d,"coverage":[`, FormatVersion) +
 		`{"from":20200731,"to":20200804,"bars":3,"days":3},` +
 		`{"from":20200803,"to":20200806,"bars":3,"days":3}]}`
 	if err := os.WriteFile(filepath.Join(dir, "1m.meta"), []byte(bad), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s, _, err := Open(dir)
+	s, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err == nil {
 		s.Close()
 		t.Fatal("A1b 在读那一侧没有响：Open 收下了一份重叠的 coverage" +
@@ -127,13 +129,13 @@ func TestInvariantA1b_RedOnOpen(t *testing.T) {
 func TestInvariantA1b_GreenOnOpen(t *testing.T) {
 	dir := t.TempDir()
 	// 与 _Red 只差第二段的起点：挪到前一段结束之后就不重叠了。
-	good := `{"format":1,"coverage":[` +
+	good := fmt.Sprintf(`{"format":%d,"coverage":[`, FormatVersion) +
 		`{"from":20200731,"to":20200803,"bars":2,"days":2},` +
 		`{"from":20200804,"to":20200806,"bars":3,"days":3}]}`
 	if err := os.WriteFile(filepath.Join(dir, "1m.meta"), []byte(good), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s, _, err := Open(dir)
+	s, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("A1b 在读那一侧误伤：合法的 coverage 被 Open 拒了：%v", err)
 	}
@@ -208,7 +210,7 @@ func TestMetaSurvivesCrashBeforeRename(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "1m.meta.tmp"), good[:len(good)/2], 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s2, _, err := Open(dir)
+	s2, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("崩在 rename 之前，上一份好的 .meta 应当还能打开，实得 %v", err)
 	}

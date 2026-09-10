@@ -34,7 +34,7 @@ func TestOpenStateCarriesTruncatedTail(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s, truncated, err := Open(dir)
+	s, truncated, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("Open 失败：%v", err)
 	}
@@ -53,7 +53,7 @@ func TestOpenStateCarriesTruncatedTail(t *testing.T) {
 // ⛔ 少了这一条，上面那条也可能是「它把 Open 的返回值抄了过来，
 // 而那个返回值本身恒为 30」。**两条合起来才钉住「它跟着实际的残尾走」。**
 func TestOpenStateCleanDirHasNoTail(t *testing.T) {
-	s, _, err := Open(t.TempDir())
+	s, _, err := Open(t.TempDir(), tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,7 +101,7 @@ func TestOpenStateDistinguishesLegacyFromFresh(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			s, _, err := Open(dir)
+			s, _, err := Open(dir, tickflow.MustIntraday(1))
 			if err != nil {
 				t.Fatalf("Open 失败：%v", err)
 			}
@@ -128,7 +128,7 @@ func TestOpenStateDistinguishesLegacyFromFresh(t *testing.T) {
 func TestDiscardCoverageClearsPersistsAndForgetsVerified(t *testing.T) {
 	dir := t.TempDir()
 	cal, k := testCalendar(t)
-	s, _, err := Open(dir)
+	s, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,7 +164,7 @@ func TestDiscardCoverageClearsPersistsAndForgetsVerified(t *testing.T) {
 	s.Close()
 
 	// 落盘了吗 —— 换一个进程视角（重新打开）再问一次。
-	s2, _, err := Open(dir)
+	s2, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("重开失败：%v", err)
 	}
@@ -182,7 +182,7 @@ func TestDiscardCoverageClearsPersistsAndForgetsVerified(t *testing.T) {
 func TestDiscardCoverageKeepsBars(t *testing.T) {
 	dir := t.TempDir()
 	cal, k := testCalendar(t)
-	s, _, err := Open(dir)
+	s, _, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -41,7 +41,7 @@ func TestSYN10VerifyPointsAtTheRealCause(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "1m.dat"), body, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s, truncated, err := Open(dir)
+	s, truncated, err := Open(dir, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatalf("Open 失败：%v", err)
 	}
@@ -82,7 +82,7 @@ func TestSYN10VerifyPointsAtTheRealCause(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir2, "1m.dat"), body2, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s2, _, err := Open(dir2)
+	s2, _, err := Open(dir2, tickflow.MustIntraday(1))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,6 +1,7 @@
 package tickflow
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -349,4 +350,61 @@ func min64(a, b int64) int64 {
 		return a
 	}
 	return b
+}
+
+// —— 落盘名 ——
+
+// PeriodDirName 返回周期在【落盘路径】上的名字。
+//
+// ⛔ 它【不是】String()，而这不是风格问题 —— 两者在【非法输入】那一格必须分开：
+//
+//	String()  给人看：CalendarPeriod 越界糊成 "?"，IntradayPeriod{} 给 "0m"
+//	本函数    做标识符：那两种输入**报错** —— 一个要拼进路径的名字，要么对，要么不存在
+//
+// ⚠️ 而它还必须【大小写无关唯一】：判重名的不是本程序，是文件系统，
+// 而它的规矩依平台而异。实测（Windows，2026-09-10，两组）：
+//
+//	写 1m.dat「这是一分钟线」再读 1M.dat ⇒ 读到「这是一分钟线」
+//	写 1M.dat「这是月线」再读 1m.dat     ⇒ 读到「这是月线」；目录里只剩 1 个文件
+//	⇒ Monthly.String()=="1M" 与 MustIntraday(1).String()=="1m" 在那台机器上是同一个库
+//	而 Linux 大小写敏感 ⇒ 不撞 ⇒ **CI 绿，用户红**
+//
+// ⇒ 所以这里给的名字不是「我检查过不重复」，是**结构上不相交**：
+//
+//	日内  永远是「十进制数字 + 'm'」   1m · 5m · 15m
+//	日历  永远是那三个固定词           1d · 1w · 1mo
+//	⇒ 日内名里 'm' 之后没有字符，而三个日历名的第二个字符都不是 'm'
+//	  ⇒ 两族的取值空间不相交
+//
+// **「我检查过没重复」这个性质会随新成员失效；结构性质不会。**
+//
+// ⚠️ `1m` / `1d` 与 docs/design.md §六 布局里写的名字一致；
+// 偏离 String() 的只有 Monthly（"1mo" 而不是 "1M"），**而 §六 从没写过它**。
+func PeriodDirName(p Period) (string, error) {
+	switch v := p.(type) {
+	case IntradayPeriod:
+		if v.min <= 0 {
+			return "", fmt.Errorf("tickflow: 日内周期必须为正，收到 %d——"+
+				"零值 IntradayPeriod 是 Intraday() 拒绝产出的值，"+
+				"而它的 String() 仍然给得出 %q（那正是本函数与 String() 分开的原因）",
+				v.min, v.String())
+		}
+		return fmt.Sprintf("%dm", v.min), nil
+	case CalendarPeriod:
+		switch v {
+		case Daily:
+			return "1d", nil
+		case Weekly:
+			return "1w", nil
+		case Monthly:
+			// ⚠️ 不是 String() 的 "1M"：那个与日内的 "1m" 【大小写无关地相同】。
+			return "1mo", nil
+		}
+		return "", fmt.Errorf("tickflow: CalendarPeriod(%d) 不是已知周期，不能做落盘名——"+
+			"它的 String() 给的是 %q，而【所有越界输入都得到这一个值】",
+			int(v), v.String())
+	case nil:
+		return "", errors.New("tickflow: nil 周期不能做落盘名")
+	}
+	return "", fmt.Errorf("tickflow: 未知的 Period 实现 %T——不能做落盘名", p)
 }

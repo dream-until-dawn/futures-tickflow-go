@@ -2,6 +2,7 @@ package segfile
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -222,12 +223,16 @@ func TestInvariantA3_Red(t *testing.T) {
 
 func TestInvariantA3_Green(t *testing.T) {
 	// 与 _Red 只差一件事：写的是本版认识的版本号。
-	m, err := DecodeMeta([]byte(`{"format":1,"coverage":[]}`))
+	//
+	// ⚠️ 这个版本号【现算】，不写字面量：本测试断言的是「写下来的与没写分得开」，
+	// 而不是「1」这个值。2026-09-10 把 FormatVersion 从 1 升到 2 时，
+	// 这一格连同另外五格一起红了 —— **红的不是不变量，是六份抄件同时过期。**
+	m, err := DecodeMeta(metaWithFormat(FormatVersion))
 	if err != nil {
-		t.Fatalf("A3 误伤：format=1 是合法的，却报错：%v", err)
+		t.Fatalf("A3 误伤：format=%d 是合法的，却报错：%v", FormatVersion, err)
 	}
 	if m.Format == nil || *m.Format != FormatVersion {
-		t.Fatalf("A3 误伤：format=1 没被读成 %d：%+v", FormatVersion, m)
+		t.Fatalf("A3 误伤：format=%d 没被读回来：%+v", FormatVersion, m)
 	}
 }
 
@@ -321,7 +326,7 @@ func TestInvariantE1a_Red(t *testing.T) {
 
 func TestInvariantE1a_Green(t *testing.T) {
 	// 与 _Red 只差一件事：JSON 是完整的。
-	if _, err := DecodeMeta([]byte(`{"format":1,"coverage":[]}`)); err != nil {
+	if _, err := DecodeMeta(metaWithFormat(FormatVersion)); err != nil {
 		t.Fatalf("E1a 误伤：合法 JSON 被判读不懂：%v", err)
 	}
 }
@@ -329,9 +334,11 @@ func TestInvariantE1a_Green(t *testing.T) {
 // ───────── E1b：format 大于当前已知版本时报错，不照旧版语义读 ─────────
 
 func TestInvariantE1b_Red(t *testing.T) {
-	m, err := DecodeMeta([]byte(`{"format":2,"coverage":[]}`))
+	// 「比本版新」现算，别写字面量 —— 写死的话，本版升到那个数的那天，
+	// 这一格会从「测未来版本」悄悄变成「测当前版本」。
+	m, err := DecodeMeta(metaWithFormat(FormatVersion + 1))
 	if err == nil {
-		t.Fatalf("E1b 没有响：未来版本被照 v%d 读了，得到 %+v", FormatVersion, m)
+		t.Fatalf("E1b 没有响：未来版本 %d 被照 v%d 读了，得到 %+v", FormatVersion+1, FormatVersion, m)
 	}
 	if !errors.Is(err, errFutureFormat) {
 		t.Fatalf("E1b 响了，但归错了类：%v", err)
@@ -340,9 +347,19 @@ func TestInvariantE1b_Red(t *testing.T) {
 
 func TestInvariantE1b_Green(t *testing.T) {
 	// 与 _Red 只差一个数字：等于本版认识的版本号。
-	if _, err := DecodeMeta([]byte(`{"format":1,"coverage":[]}`)); err != nil {
+	if _, err := DecodeMeta(metaWithFormat(FormatVersion)); err != nil {
 		t.Fatalf("E1b 误伤：format 等于当前版本却报了「超前」：%v", err)
 	}
+}
+
+// metaWithFormat 拼一份只带 format 的最小 .meta。
+//
+// ⚠️ 它存在的理由是一条实录：2026-09-10 把 FormatVersion 由 1 升到 2 时，
+// **六个测试同时红了，而红的一个不变量都没有** —— 红的是六份写死的版本号。
+// 一个把「当前版本」抄进断言的测试，在版本变化时会**指向被测方**，
+// 而真正过期的是它自己。
+func metaWithFormat(v int) []byte {
+	return []byte(fmt.Sprintf(`{"format":%d,"coverage":[]}`, v))
 }
 
 // ───────── F1：.meta 不得含任何由交易日历派生的字段 ─────────

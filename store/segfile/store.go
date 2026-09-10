@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 )
@@ -19,10 +20,13 @@ import (
 //
 // ⛔ 还有三处【范围边界】，写在这儿免得被读成通用实现：
 //
-//	一、周期写死成 1m（`1m.dat` / `1m.meta`）。
-//	    而 design.md §六 的目录布局里，一个合约目录下会有多个周期（`1m.dat` / `1d.dat`…）。
-//	    ⇒ 本类型现在是【一个合约的一个周期】，不是「一个合约目录」。
-//	    要支持多周期，Open 得收一个周期参数 —— 那是接口形状的变更，等 Store 接口定型时一起做。
+//	一、✅ **这一条已到期并做掉了**（2026-09-10，design.md §十八）。
+//	    它原来写「周期写死成 1m，要支持多周期得让 Open 收一个周期参数」——
+//	    `Open` 现在收了，落盘名是 `<PeriodDirName(p)>.dat` / `.meta`。
+//	    ⇒ 本类型仍然是【一个合约的一个周期】，而现在**那个周期是它身份的一部分**：
+//	    两个周期落在两个文件上 ⇒ 「混进同一个库」不是被拦住，是**不可表达**。
+//	    ⚠️ 而落盘名走 `tickflow.PeriodDirName`，**不是 `Period.String()`** ——
+//	    String() 的 "1M"（Monthly）与 "1m"（1 分钟）在 Windows 上是同一个文件（实测）。
 //	二、没有锁。布局里那个 `.lock` 本版一个字都没碰
 //	    ⇒ **两个进程同时开同一个目录，本类型不会拦。**
 //	    而 B3 那个 `verified` 正是进程内状态：别的进程改了 .meta，这边的走查结论就过期了，
@@ -35,6 +39,11 @@ import (
 type Store struct {
 	dir string
 	dat *os.File
+
+	// period 是【落盘名】（PeriodDirName 的输出），不是 Period 本身。
+	// 存名字而不存周期，是因为本层用得到的只有名字：它要拼路径。
+	// 存 Period 会让本层多背一个它不使用的类型，而**多背的那一份迟早会和真相漂开**。
+	period string
 
 	meta Meta
 
@@ -74,6 +83,7 @@ const (
 
 var (
 	errNotDurable     = errors.New("segfile: coverage 想扩到 .dat 还没有的数据上")
+	errUnknownSibling = errors.New("segfile: 这个目录里有本版读不懂的旧库——不在它旁边新建")
 	errIncomplete     = errors.New("segfile: 上游没有完整成功，不许扩 coverage")
 	errBarsMismatch   = errors.New("segfile: bars 与走查数出来的对不上")
 	errDaysMismatch   = errors.New("segfile: days 与走查数出来的对不上")
@@ -92,17 +102,37 @@ var (
 // **本断言不要求它** —— 若哪天有人把构造塞进接口，这一行会当场红。
 var _ tickflow.Store = (*Store)(nil)
 
-// Open 打开一个落盘目录。返回被截掉的残尾字节数（C3a，见 OpenDat）。
-func Open(dir string) (s *Store, truncated int64, err error) {
+// Open 打开一个落盘目录里【某一个周期】的库。返回被截掉的残尾字节数（C3a，见 OpenDat）。
+//
+// ⚠️ 周期是【身份】不是选项：它决定开哪两个文件。落盘名来自 `tickflow.PeriodDirName`，
+// **不是 `Period.String()`** —— 后者把 Monthly 叫成 "1M"，而那与 1 分钟的 "1m"
+// 在 Windows 上是同一个文件（实测两组，见 design.md §十七）。
+//
+// ⛔ 这里有一个【顺序】要紧的地方：`readMeta` 与 `refuseUnknownSiblings` 都在
+// `OpenDat` **之前**。原因是 `OpenDat` 带 `O_CREATE` —— 它一跑就把 `.dat` 建出来了。
+// 拦截放在它后面的话，**拦是拦住了，而文件已经落地**（本仓在 AppendBars/CommitSpan
+// 那一格记过同一个形状）。
+func Open(dir string, p tickflow.Period) (s *Store, truncated int64, err error) {
+	name, err := tickflow.PeriodDirName(p)
+	if err != nil {
+		return nil, 0, fmt.Errorf("segfile: 开 %s 失败: %w", dir, err)
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return nil, 0, err
 	}
-	f, truncated, err := OpenDat(filepath.Join(dir, "1m.dat"))
+	b, rerr := os.ReadFile(filepath.Join(dir, name+".meta"))
+	// ⛔ 要【新建】一个库之前，先看看这个目录里有没有本版读不懂的旧库。见 §十八 三。
+	if os.IsNotExist(rerr) {
+		if serr := refuseUnknownSiblings(dir, name); serr != nil {
+			return nil, 0, serr
+		}
+	}
+	f, truncated, err := OpenDat(filepath.Join(dir, name+".dat"))
 	if err != nil {
 		return nil, 0, err
 	}
-	st := &Store{dir: dir, dat: f, truncated: truncated, verified: map[tickflow.Span]bool{}}
-	b, err := os.ReadFile(filepath.Join(dir, "1m.meta"))
+	st := &Store{dir: dir, dat: f, period: name, truncated: truncated, verified: map[tickflow.Span]bool{}}
+	err = rerr
 	switch {
 	case err == nil:
 		m, derr := DecodeMeta(b)
@@ -258,7 +288,7 @@ func (s *Store) writeMeta() error {
 	if err != nil {
 		return err
 	}
-	final := filepath.Join(s.dir, "1m.meta")
+	final := filepath.Join(s.dir, s.period+".meta")
 	tmp := final + ".tmp"
 	// ⛔ 必须 Sync 之后再 Rename：改名只保证【名字】换了，不保证【内容】已经落盘。
 	//
@@ -489,4 +519,55 @@ func (s *Store) DiscardCoverage() error {
 	s.meta.Coverage = nil
 	s.verified = map[tickflow.Span]bool{}
 	return s.writeMeta()
+}
+
+// refuseUnknownSiblings 是迁移那一格（design.md §十八 三）。
+//
+// 触发条件很窄：我们正要在 dir 里【新建】一个库（`<self>.meta` 不存在）。
+// 而若同目录里还有一份【本版读不懂的】`.meta`，那说明这里躺着一份**周期未知**的旧数据 ——
+// 本版之前 `Open` 无条件开 `1m.dat`，而当时两个源的 `Periods` 都只有 `Daily`
+// ⇒ **那些库其实是「日线数据躺在一个叫 1m.dat 的文件里」。**
+//
+// 🔴 悄悄在它旁边新建一个空库，就是一次**静默的数据消失** ——
+// 旧数据还在盘上，而库当它不存在。所以这里拒绝，并把碰到的文件名报出来。
+//
+// ⚠️ 「读不懂」包含两格，它们是**两件事**：
+//
+//	DecodeMeta 报错     ⇒ format 不在本版已知集合内（E1b）
+//	format 字段缺失     ⇒ A3 那一格；它是 v0.3 之前写的，语义未知
+//
+// ⛔ 而本函数**不做迁移**：它答不了「那份数据到底是哪个周期」——
+// 那要人去看。自作主张改名，正是本仓在 refdata 那一节记过的「修补」。
+func refuseUnknownSiblings(dir, self string) error {
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	var bad []string
+	for _, e := range ents {
+		n := e.Name()
+		if e.IsDir() || !strings.HasSuffix(n, ".meta") || n == self+".meta" {
+			continue
+		}
+		b, rerr := os.ReadFile(filepath.Join(dir, n))
+		if rerr != nil {
+			return rerr
+		}
+		m, derr := DecodeMeta(b)
+		switch {
+		case derr != nil:
+			bad = append(bad, fmt.Sprintf("%s（%v）", n, derr))
+		case m.Format == nil:
+			bad = append(bad, fmt.Sprintf("%s（没有 format 字段——v0.3 之前写的，语义未知）", n))
+		}
+	}
+	if len(bad) == 0 {
+		return nil
+	}
+	return fmt.Errorf("%w: %s 里有 %s；"+
+		"本版把周期写进文件名，而那些文件是【周期写死成 1m】的那一版留下的，"+
+		"它们装的是哪个周期没有任何东西记着。"+
+		"⇒ 在旁边新建一个空库会让那份数据静默消失，所以这里拒绝。"+
+		"处置要人做：确认那份数据的周期，把文件改成对应的名字，再重开",
+		errUnknownSibling, dir, strings.Join(bad, "；"))
 }
