@@ -50,6 +50,26 @@
   后者会在下一次合法的账本合并时红，**而那是误报，误报的守卫最终被关掉**。
 - 历史豁免名单**只增不改，且只能收历史提交**；新合并不许进。
 - 它**不看**那些行写了什么 —— 内容对不对由账本自己那三条守卫（链 / 来历 / 合流位置）管。
+
+## 退出码（三档，而每一档都配了一个真能走到它的输入）
+
+    0   扫到 ≥1 颗合并，且全部合规
+    1   **有违例** —— 报文里点了名
+    2   **扫到 0 颗** —— 空转；那不是「合规」，是【量不了】
+    3   **跑不起来／前提不成立** —— 没有 git、不在仓里、没有那个 ref、喂了非合并提交
+
+⛔ 2026-09-11 之前**第 3 档根本不存在**：`raise SystemExit("refuse: …")` 传的是字符串，
+退出码是 **1** —— 与「有违例」**同一个字节**。而调用方（`merge_gate_test.go`）的图例
+逐字写着「其它 ＝ 跑不起来」。
+
+🔴 那句图例**不是假的，是【为真而有害】**：读到 1 的人被它送去查「哪颗合并越界」，
+而真相是**这道门禁根本没跑起来**。⇒ 本仓收的那条：
+**一句处置有三种坏法 —— 为假 · 为真而有害 · 循环。**
+
+⚠️ 而它是怎么过了评审的，评审方自己给的答案（原话）：
+**「评审读的是断言，而一份【图例】不长得像断言 —— 它长得像帮助文本。」**
+⇒ 所以这三档不留在图例里：**每一档在 `merge_gate_test.go` 里都有一个走得到它的用例**，
+而**调用方一律断言 `rc == 0`，不许写 `rc != 1`**。
 """
 import io
 import subprocess
@@ -71,17 +91,35 @@ HISTORIC = {
 }
 
 
+# 退出码三档。**别把它们内联成字面量** —— 上面那段记着为什么：
+# 「跑不起来」曾经和「有违例」共用 1，而图例照旧写着它们不同。
+EXIT_VIOLATION = 1
+EXIT_NOTHING = 2
+EXIT_BROKEN = 3
+
+
+def refuse(msg):
+    """前提不成立 ⇒ 拒绝出读数，**用它自己那一档退出码**。
+
+    ⛔ 不许写回 `raise SystemExit(msg)`：那个的退出码是 **1**，而 1 是「有违例」。
+    两种处置完全相反（一个去查哪颗合并越界，一个去查环境），
+    **而它们曾经共用一个字节。**
+    """
+    print(msg, file=sys.stderr)
+    raise SystemExit(EXIT_BROKEN)
+
+
 def git(*args):
-    """跑 git，非 0 就抛。
+    """跑 git，非 0 就拒。
 
     ⛔ **不给它加 check=False** —— 本仓那条：一道闸门只要有开关，最终就会被打开。
     要用非 0 表达正常结论的地方，另写一个函数。
     """
     p = subprocess.run(["git"] + list(args), capture_output=True)
     if p.returncode != 0:
-        raise SystemExit("refuse: git %s ⇒ exit=%d\n%s"
-                         % (" ".join(args), p.returncode,
-                            p.stderr.decode("utf-8", "replace")))
+        refuse("refuse: git %s ⇒ exit=%d\n%s"
+               % (" ".join(args), p.returncode,
+                  p.stderr.decode("utf-8", "replace")))
     return p.stdout.decode("utf-8", "replace")
 
 
@@ -104,10 +142,10 @@ def ownDiffFiles(sha):
     """
     n = parentCount(sha)
     if n < 2:
-        raise SystemExit("refuse: %s 有 %d 个父 —— 它不是合并提交。\n"
-                         "  ⇒ `git show --cc` 对它印的是普通 diff，本判据在它身上【没有真值】，\n"
-                         "     而返回的空集会被读成「自带 diff 为空」＝合规。拒绝出这个读数。"
-                         % (sha, n))
+        refuse("refuse: %s 有 %d 个父 —— 它不是合并提交。\n"
+               "  ⇒ `git show --cc` 对它印的是普通 diff，本判据在它身上【没有真值】，\n"
+               "     而返回的空集会被读成「自带 diff 为空」＝合规。拒绝出这个读数。"
+               % (sha, n))
     out = git("show", "--format=", "--cc", sha)
     return [ln[len("diff --cc "):].strip()
             for ln in out.split("\n") if ln.startswith("diff --cc ")]
@@ -136,7 +174,7 @@ def main():
         print("⛔ 一颗合并都没扫到 —— 这道门禁是空转的，读数作废\n"
               "  ⇒ 浅克隆（--depth）里没有合并历史；那不是「合规」，是【量不了】。",
               file=sys.stderr)
-        return 2
+        return EXIT_NOTHING
 
     bad = []
     ok, ledger, exempt = 0, 0, 0
@@ -165,7 +203,7 @@ def main():
               "     白名单之外的文件出现在那里，意味着有东西没经过任何一次单独评审。\n"
               "  ⇒ 若那个文件是生成物（如 docs_test.go）：别手合，删掉重跑生成器。",
               file=sys.stderr)
-        return 1
+        return EXIT_VIOLATION
 
     print("✅ 扫了 %d 颗合并：自带 diff 为空 %d · 只有账本 %d · 历史豁免 %d"
           % (len(shas), ok, ledger, exempt))
