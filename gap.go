@@ -81,7 +81,7 @@ const (
 	// **「跑一次 `Sync`，看 `rep.Gaps` 里有没有 `GapStoreUnverified`」**。
 	// 🔴 (iv) 之后**坏库不再报这一类**（它们报 `GapStoreVerifyFailed`）
 	// ⇒ 照那句话做的人**找不到它**，于是得出「这个库没问题」——**而库是坏的**。
-	// ⇒ tag 改不了 ⇒ 勘误写在 `docs/errata.md`，
+	// ⇒ tag 改不了 ⇒ 勘误写在 `docs/release/v0.5.0.md`（本版的发布说明），
 	// 而 `tag_selfcheck_meta_test.go` 钉着「勘误在，且点名了改看哪一类」。
 	// 📎 ⇒ **在 `rep.Gaps` 里找不到这一类，不再是「库没问题」的证据。**
 	//

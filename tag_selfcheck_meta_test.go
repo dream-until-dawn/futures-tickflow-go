@@ -382,13 +382,13 @@ func TestTagV041SelfCheckTwoHasAnErratum(t *testing.T) {
 		t.Fatalf("发布注解里找不到方法二那句原话：%q", sentence)
 	}
 
-	errata, err := os.ReadFile(filepath.Join("docs", "errata.md"))
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.5.0.md"))
 	if err != nil {
 		t.Fatalf("读勘误失败：%v\n"+
 			"  ⇒ tag 注解改不了，勘误是唯一的通道 —— 这份文件不许消失。", err)
 	}
 	for _, want := range []string{"v0.4.1", "自查", "方法二", "GapStoreVerifyFailed"} {
-		if !strings.Contains(string(errata), want) {
+		if !strings.Contains(string(notes), want) {
 			t.Errorf("勘误里没有 %q。\n"+
 				"  ⇒ 一条勘误要说清【哪一版的哪一句】失效了、以及【改看什么】——"+
 				"少了后者，读的人只知道旧路不通，不知道新路在哪。", want)
