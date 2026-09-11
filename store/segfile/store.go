@@ -514,10 +514,27 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 // ⚠️ 它读盘而不缓存一个字段，理由是本文件那条：**多背的那一份迟早会和真相漂开**。
 // 代价可核：**一次 `ReadAt`**，而它旁边就是一次 `Write` ＋ 一次 `Sync`。
 //
-// ⚠️ **「size 是 `RecordSize` 的整数倍」这个前提有出处，不是默认**（三条，逐条可查）：
-// ① `OpenDat` 对残尾是**物理截断**（`f.Truncate(n * RecordSize)`）⇒ 开机那一刻就是整数倍
-// ② `.dat` 全仓**只有一处写入点**，而它写的 `buf` 长度本身就是 `len(bars)*RecordSize`
-// ③ 那一处的错误**被检查了**，而 Go 的 `Write` 在短写时返回 error ⇒ 短写不会被当成成功
+// ⚠️ **「size 是 `RecordSize` 的整数倍」这个前提有出处，不是默认。**
+// 写 `.dat` 的语句**有两处**，而**两处都保持整数倍**：
+//
+//	`dat.go` 的 `OpenDat`      `f.Truncate(n * RecordSize)` —— 残尾是**物理截断**，
+//	                           而它截到的正是整数倍；此刻句柄还没被存进 `s.dat`
+//	本文件的 `AppendBars`      `s.dat.Write(buf)`，而 `buf` 的长度本身就是
+//	                           `len(bars)*RecordSize`；那一处的错误**被检查了**，
+//	                           而 Go 的 `Write` 在短写时返回 error ⇒ 短写不会被当成成功
+//
+// ⛔ **上一版这里写的是「全仓只有一处写入点」，而那是假的**（评审方 2026-09-11 指出）：
+// 我的判据是 `grep "dat\.Write\|dat\.Truncate"` —— **那是按【变量名】划的射程**，
+// 而 `OpenDat` 里那一处的接收者叫 `f`，不叫 `dat` ⇒ **它照不到**。
+// 🔴 结论侥幸没受影响（漏掉的那处恰好也保持整数倍），**而判据是坏的**：
+// 若哪天有人在 `OpenDat` 里加第二个写动作，那条 grep 仍会报「全仓一处」。
+// ⇒ 按性质划的问法是：**这个 `*os.File` 从 `OpenDat` 交出来到 `Close` 为止，
+// 被哪些语句写过** ——
+//
+//	grep -rnE "\.(Write|WriteAt|WriteString|Truncate)\(" --include=*.go store/segfile/ | grep -v _test
+//
+// 它在本包命中 3 处，**而第三处（`store.go` 里写 `.meta` 临时文件的那个 `f.Write`）
+// 写的不是 `.dat`** —— 这一步机器替不了，只有 3 行要读。
 func (s *Store) lastTradingDay() (tickflow.TradingDay, bool, error) {
 	st, err := s.dat.Stat()
 	if err != nil {
