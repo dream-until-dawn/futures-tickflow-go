@@ -26,7 +26,7 @@
 rules 321
 anchors 61
 census 5
-guards 50
+guards 51
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -411,3 +411,4 @@ guards 50
 # 来历 2026-09-11 guards 49 自 48 自动：重造时表长大（48 -> 49）；本次新增：TestMergeOwnDiffStaysInsideWhitelist
 # 来历 2026-09-11 rules 321 自 314 自动：重造时表长大（314 -> 321）
 # 来历 2026-09-11 guards 50 自 49 自动：重造时表长大（49 -> 50）；本次新增：TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight
+# 来历 2026-09-11 guards 51 自 50 自动：重造时表长大（50 -> 51）；本次新增：TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage
