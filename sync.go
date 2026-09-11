@@ -605,10 +605,38 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 // 🔴 本仓那条：**「够不到」是一句带地址的话** —— 分得开的信息已经在手里，我们把它丢了。
 // ⇒ 现在它原样回去，由 `planGaps` 包进 `ErrSpanVerifyFailed` 交给分类。
 // ⚠️ 而 `TruncatedTails` 那一条**保留**：它是给人扫一眼的痕迹，与类型化的那条不是一回事。
+// ⛔ **2026-09-11：它走查的不是 `touched` 里那些值本身，是 `Coverage()` 里与它们相交的那些段。**
+//
+// 那一改修的是一个生产缺陷：**一次完全成功的多块同步，会把刚拉好的整段报成「未走查」。**
+//
+//	写入侧  span := Span{From: chunk[0], To: chunk[len-1], Bars: len(bars), Days: …}
+//	        ⇒ 键是【分块】的 span：{d1,d1,1,1} {d2,d2,1,1} {d3,d3,1,1}
+//	读取侧  planGaps 走 for sp := range s.store.Coverage()
+//	        ⇒ CommitSpan 已经把相邻块并成一段 ⇒ 键是 {d1,d3,3,3}
+//	🔴 `Span` 是四字段结构体 ⇒ 做 map 键时这两组值不相等，而两处代码都写着 `verified[sp]`。
+//
+// ⚠️ 为什么**不是**「把键换成 `Coverage()` 里那个值」（那条看起来更小）：
+// **换键不等于走查过。** 走查 `[d1,d1] Bars=1` 通过，不建立 `[d1,d3] Bars=3` 为真 ——
+// 合并段的 `Bars=3` 那个数没有任何人核过。⇒ 那会把「走查过」这个标签**贴**到一个
+// 从未被走查的身份上，比今天的误报更坏：今天是「答不了」（保守），那之后是一个没有根据的肯定。
+// 📎 本仓 B3：**「没验过」不许悄悄变成一个肯定的答案。** ⇒ 这里是**真的按合并身份走查一遍**：
+// 合并段的 `Bars`/`Days` 这次是**数出来的**，不是从某一块继承来的。
+//
+// 🔴 **修法的本体是一句关于【键】的约束，写死在这儿**：
+// `okSpans` / `failedSpans` 的键**必须与 `planGaps` 查的键同源** —— 两边都来自 `Coverage()`。
+// ⇒ 任何一次改动若让写入侧的键换个来路（比如为了省一次 `Coverage()` 调用而用回 `touched`），
+// 这个缺陷就原样回来，而**代码看上去一模一样**。
+//
+// ⚠️ 也**不是**「走查 `Coverage()` 的每一段」：段多而本次只同步一小段时那是代价回归。
+// 一遍扫完所有段是 (iv) 的事，它要先把 `Verify` 换成批量形态。
+//
+// ⚠️ 射程：它**不修**「全库错误归给哪些段」——`touched` 为空时（落盘/扩 coverage 先失败）
+// 这里的目标集合同样为空，什么都不走查。那一格由 `whole_library_error_unattributed_test.go`
+// 钉着，等 (iv) 把走查绑到【库】上才会变。
 func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, map[Span]error) {
 	okSpans := map[Span]bool{}
 	failedSpans := map[Span]error{}
-	for _, sp := range touched {
+	for _, sp := range spansTouchedBy(s.store.Coverage(), touched) {
 		if err := s.store.Verify(sp); err != nil {
 			rep.TruncatedTails = append(rep.TruncatedTails,
 				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, err))
@@ -618,6 +646,41 @@ func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, 
 		okSpans[sp] = true
 	}
 	return okSpans, failedSpans
+}
+
+// spansTouchedBy 回 `cov` 里**与本次碰过的任何一块相交**的那些段。
+//
+// ⚠️ 它是**纯函数**（不碰 `s.store`），理由是本仓那条：
+// **一句写在函数注释里的行为断言，应当由【那个函数自己的输入】来钉，
+// 而不是等端到端去碰**——上一版是 `*Syncer` 的方法，那句「两段都会被走查」
+// 只能绕端到端去验，而端到端能不能到达那个状态，双方都没量过。
+//
+// ⚠️ 判据是区间重叠，不是相等：一块提交进去之后 `CommitSpan` 会把它与相邻的并起来，
+// 所以合并段的 `[From, To]` **既不等于任何一块，也不一定被任何一块包含**。
+// ⇒ 「按 `[From,To]` 去找那一块」同样查不到（双方各自打过这个突变，两次都全绿）。
+//
+// ⚠️ 一次同步碰到两个不相邻的段时，两段都会被走查 —— 那是对的，
+// 而代价是两次整文件扫描。⇒ 下面那一格单元测试钉的就是这句话。
+//
+// ⛔ **别写成「相交段数 ≤ 分块数，所以只会更便宜」——那句是假的**（双方 2026-09-11 各自量过）：
+//
+//	cov = [{08-05,08-05}, {08-07,08-07}]（两段，不相邻）
+//	touched = [{08-05..08-07}]（一块）      ⇒ 相交 2 段 ⇒ **j=2 > k=1**
+//
+// 🔴 一块可以横跨多段，所以那个不等式不成立。**多段时它比按块走查更贵。**
+// ⇒ 真正的便宜要等 (iv)（一遍扫完所有段），它要先把 `Verify` 换成批量形态。
+// 📎 收：**一个计数不等式最像「显然」的时候，正是它没被喂过反例的时候。**
+func spansTouchedBy(cov, touched []Span) []Span {
+	var out []Span
+	for _, cs := range cov {
+		for _, t := range touched {
+			if t.From <= cs.To && cs.From <= t.To {
+				out = append(out, cs)
+				break
+			}
+		}
+	}
+	return out
 }
 
 // planGaps 把 coverage 翻成七类缺口。
