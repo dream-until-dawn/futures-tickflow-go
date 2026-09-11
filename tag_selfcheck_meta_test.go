@@ -347,3 +347,160 @@ func TestTagV041SelfCheckOneStillWorks(t *testing.T) {
 		}
 	})
 }
+
+// —— (l) 与「方法一」那格的**第三个姊妹**：同一节自查，三句话，三句都有钉子 ——
+//
+// ⛔ v0.5 的 (iv) 把走查绑到【库】上之后，自查方法二**失效**了，而失效的方式是
+// **为真而有害**：照着做的人找不到 `GapStoreUnverified`，于是得出「这个库没问题」——
+// **而库是坏的**。
+//
+//	v0.4.1  坏库 ＋ 再同步 ⇒ 落盘先失败 ⇒ 一段都没走查 ⇒ 每段报 (5) ⇒ 找得到 ✅
+//	v0.5    走查按 coverage 的每一段走一遍 ⇒ 坏库每段都【走查过而没通过】
+//	        ⇒ 报的是 (7) GapStoreVerifyFailed ⇒ 找不到 (5) ⛔
+//
+// 🔴 **tag 注解改不了 ⇒ 唯一的通道是勘误**，而这一格钉的就是「勘误在，且说对了」。
+//
+// ⚠️ 红了有两个方向：
+//
+//	红法一  勘误被删了 / 没点名改看哪一类 ⇒ 补回去
+//	红法二  **方法二又管用了**（坏库上又找得到 (5)）⇒ 那多半是 (iv) 被回退了；
+//	        处置是**再写一条勘误**说明它何时恢复，**不是把这里的断言删掉**
+//
+// 📎 而这份勘误是怎么被逼出来的：计划里有一步「把 whole_library 那条翻面」——
+// **翻面的那一刻，就是方法二失效的那一刻。**
+// ⇒ **一颗钉在现状上的钉子，它响的那一刻要连着问「有没有哪份不可修的东西引用了这个现状」。**
+
+// guard: v0.4.1 自查方法二已失效，而勘误必须在、且点名改看 GapStoreVerifyFailed。
+func TestTagV041SelfCheckTwoHasAnErratum(t *testing.T) {
+	const sentence = "看 `rep.Gaps` 里有没有 `GapStoreUnverified`"
+	src, err := os.ReadFile(filepath.Join("docs", "release", "v0.4.1.md"))
+	if err != nil {
+		t.Fatalf("读发布注解失败：%v", err)
+	}
+	// ⛔ 前提自检：钉的是【那一句】，先证明它还在。
+	if !strings.Contains(string(src), sentence) {
+		t.Fatalf("发布注解里找不到方法二那句原话：%q", sentence)
+	}
+
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.5.0.md"))
+	if err != nil {
+		t.Fatalf("读勘误失败：%v\n"+
+			"  ⇒ tag 注解改不了，勘误是唯一的通道 —— 这份文件不许消失。", err)
+	}
+	// ⛔ **射程：它钉的是「这几个词在文件里出现过」，不是「那两句话完好」。**
+	//
+	// 评审方 2026-09-11 打了两格突变，**都没红**：
+	//
+	//	T1 删掉「方法一不受影响」那一行           ⇒ 无（那时名单里没有「方法一」）
+	//	T3 把「改看这一类」块里的标识符换掉       ⇒ 无（它在别处还出现一次）
+	//
+	// ⇒ T1 是**必改**，已修 —— **而按字面加「方法一」这个词【不成立】**：
+	// 同一片里我给勘误补了两行实测，那两行里也写着「方法一」
+	// ⇒ 删掉那个小节之后它仍然出现 1 次，T1 照样绿（我按他的突变实打了一次才发现）。
+	// 🔴 收：**一个「某某出现过」的判据，会被同一片里另一处无关的改动悄悄满足。**
+	// ⇒ 锚点换成整句「方法一不受影响」——它盖住的是**读者最需要的那一句**
+	// （旧路不通之后，唯一还能走的那条）。
+	// ⚠️ 而 T3 **不修**：散文逐句钉会误报，而**会误报的守卫最终被关掉**。
+	// 🔴 ⇒ **它钉不住的那一部分，靠的是这份文件自己那条「打过 tag 之后正文一个字不许动」** ——
+	// 那是一条**纪律**，而纪律该被写下来，不该被默认。
+	// 📎 收：**当守卫只能钉住一部分时，把「它钉不住的那一部分靠什么挡」写在旁边。**
+	//
+	// ⚠️ 而「钉住的那一部分」也要说清是按什么挑的 —— 见下面那张【四件事】的表：
+	// **它钉的是读者照着做时需要的四件事各一句**，不是逐句钉散文。
+	// —— 📌 名单不是「我们挑的几个词」，是【读者要能做的四件事】各一句 ——
+	//
+	//	一、哪一版的哪一句失效  ⇒ "v0.4.1" · "自查" · "方法二"
+	//	二、改看什么            ⇒ "GapStoreVerifyFailed"
+	//	三、还有没有能走的路    ⇒ "方法一不受影响"
+	//	四、**那条路怎么走**    ⇒ 下面那一整句（`Verify(span)` 三个字在文件里有 2 处，
+	//	                          删一处照样命中 ⇒ 必须钉整句）
+	//
+	// 🔴 ⇒ **这条清单有一条不再增长的判据**：想再加一条，先问「它对应第几件事」——
+	// 答不出来就不该加。（评审方 2026-09-11 定；第四件是他打 V2 打出来的：
+	// 只删掉「怎么走」那一行 ⇒ 当时跑了而不红。）
+	for _, want := range []string{
+		"v0.4.1", "自查", "方法二",
+		"GapStoreVerifyFailed",
+		"方法一不受影响",
+		"一、对 `store.Coverage()` 的每一段跑 `store.Verify(span)`：",
+	} {
+		if !strings.Contains(string(notes), want) {
+			t.Errorf("勘误里没有 %q。\n"+
+				"  ⇒ 一条勘误要说清【哪一版的哪一句】失效了、以及【改看什么】——"+
+				"少了后者，读的人只知道旧路不通，不知道新路在哪。", want)
+		}
+	}
+
+	// —— 而勘误说的那件事，要有一个当场的读数撑着 ——
+	const (
+		a1 = tickflow.TradingDay(20200805)
+		a2 = tickflow.TradingDay(20200806)
+	)
+	cal, err := embedded.New([]tickflow.TradingDay{a1, a2})
+	if err != nil {
+		t.Fatalf("造日历失败：%v", err)
+	}
+	dir := t.TempDir()
+	seed, _, err := segfile.Open(dir, tickflow.Daily)
+	if err != nil {
+		t.Fatalf("开库失败：%v", err)
+	}
+	if cerr := seed.Close(); cerr != nil {
+		t.Fatalf("关库失败：%v", cerr)
+	}
+	writeZeroRecord(t, dir) // 盘上先有一条全库坏记录
+	store, truncated, err := segfile.Open(dir, tickflow.Daily)
+	if err != nil {
+		t.Fatalf("重开失败：%v", err)
+	}
+	if truncated != 0 {
+		t.Fatalf("前提没成立：重开砍掉了 %d 字节 ⇒ 坏记录没留住，读数作废", truncated)
+	}
+	t.Cleanup(func() {
+		if cerr := store.Close(); cerr != nil {
+			t.Errorf("关库失败：%v", cerr)
+		}
+	})
+	syn, err := tickflow.NewSyncer(tickflow.SyncerConfig{
+		Calendar: cal, Store: store,
+		NewSource: func(*http.Client) tickflow.Source {
+			return seamSource{give: map[tickflow.TradingDay]bool{a1: true, a2: true}}
+		},
+		Pacer: pacing.NoPacing(), Timeout: 5 * time.Second,
+	})
+	if err != nil {
+		t.Fatalf("造 Syncer 失败：%v", err)
+	}
+	rep, serr := syn.Sync(context.Background(), tickflow.SyncRequest{
+		Symbol: tickflow.Symbol{Exchange: "SHFE", Product: "rb", YearMon: 2101},
+		Period: tickflow.Daily, From: a1, To: a2,
+	}, dayStartMs(20200901))
+	if serr != nil {
+		t.Fatalf("同步出错：%v", serr)
+	}
+	// ⛔ 前提自检：真的报出了缺口 —— 空的 Gaps 会让下面两句一起空转。
+	if len(rep.Gaps) == 0 {
+		t.Fatalf("一段缺口都没报 ⇒ 下面两句是空转的，读数作废（Halt=%v Bars=%d）", rep.Halt, rep.Bars)
+	}
+	sawOld, sawNew := false, false
+	var kinds []string
+	for _, g := range rep.Gaps {
+		kinds = append(kinds, g.From.String()+".."+g.To.String()+"="+g.Kind.String())
+		switch g.Kind {
+		case tickflow.GapStoreUnverified:
+			sawOld = true
+		case tickflow.GapStoreVerifyFailed:
+			sawNew = true
+		}
+	}
+	if !sawNew {
+		t.Errorf("坏库上没有报出 GapStoreVerifyFailed，实得：%s\n"+
+			"  ⇒ 勘误里写的「改看这一类」就落空了。", strings.Join(kinds, " "))
+	}
+	if sawOld {
+		t.Errorf("坏库上仍然报得出 GapStoreUnverified，实得：%s\n"+
+			"  ⇒ 这是红法二：方法二又管用了（多半是 (iv) 被回退）。\n"+
+			"  ⇒ 处置是【再写一条勘误】说明它何时恢复，不是把这里的断言删掉。",
+			strings.Join(kinds, " "))
+	}
+}

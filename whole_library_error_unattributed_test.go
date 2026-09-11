@@ -15,41 +15,42 @@ import (
 	"github.com/dream-until-dawn/futures-tickflow-go/store/segfile"
 )
 
-// —— ⛔ 这一条钉住的也是【一个今天就存在的缺陷】：真因在手里，而报文里没有它 ——
+// —— 这一条守的是【一条全库坏记录，要归给每一段】——
 //
-// 盘上有一条**全库**坏记录（零值 `TradingDay`）时：
+// ⛔ 由来：上一版这里钉的是**缺陷本身** —— 盘上有一条全库坏记录时，
+// 两段都只拿到 `GapStoreUnverified`，而 `TruncatedTails` 是**空的**：
+// 分得开的信息已经在手里（segfile 那侧每一段的 `Verify` 都报得出真因），我们把它丢了。
+// 那颗钉子在 (iv) 落地时如约响了，于是按它报文里写死的红法二处置：
+// **改这条测试，不是把断言改回去。**
 //
-//	segfile 那一侧   Coverage() 的【每一段】跑 Verify 都报得出真因（本条前提自检会证明这一点）
-//	Sync 的报文      两段都只有 `GapStoreUnverified`，而 `TruncatedTails` 是**空的**
+// 根因是**走查绑在「本次碰过什么」上**：那一跑在写盘那一步就 halt 了 ⇒ `touched` 为空
+// ⇒ 一圈都不转 ⇒ 每一段落到 `!verified[sp]`。
+// ⇒ (iv) 把走查绑到**库本身**（`VerifyCoverage` 一遍扫描核算每一段），于是：
 //
-// 🔴 ⇒ **分得开的信息已经在手里，我们把它丢了** —— 而丢的方式是：
-// 这次同步在写盘那一步就 halt 了 ⇒ `touched` 为空 ⇒ `verifyTouched` 一圈都不转
-// ⇒ 没有任何一段报出真因 ⇒ 每一段落到 `!verified[sp]` ⇒ 全报「本次没走查」。
+//	全库错误（零值 / 顺序 / 谁的段都不属于）在第一条坏记录上中止整遍，**而它归给每一段**
+//	⇒ 两段都报 `GapStoreVerifyFailed`，且真因对**每一段**各印一条
 //
-// ⚠️ 而 `GapStoreUnverified` 这一类的处置写着「**不表示这一段有问题**」——
-// **库确实坏了。** ⇒ 那句话在这里**为真而有害**：它把读的人送去「走一遍就行」，
-// 而真相是这个库需要人来决定怎么办。
+// 🔴 而这不是「保持了今天的好行为」—— **今天根本没有那个行为**：
+// 今天只有 `touched` 的段拿得到真因，没碰过的段拿到的是
+// 「本次没走查过，**不表示这一段有问题**」，**而库确实有问题**。
 //
-// 📎 它与 `false_unverified_test.go` 是**两件事，两份报文**：
+// —— ⚠️ 前提自检那一道是本条的要害，别删 ——
 //
-//	那一条  一次【成功】的多块同步报出伪缺口   ⇒ 病在【键】
-//	本条    一次【失败】的同步把真因整个丢掉   ⇒ 病在【谁被走查】
+// 它先证明 **segfile 那侧每一段的 `Verify` 都报得出真因**。
+// 🔴 少了它，「真因归给了每一段」就没有立足点 ——
+// **「信息不在手里」与「信息在手里而没归对」在报文里长得一样。**
 //
 // —— ⚠️ 红了有两个方向 ——
 //
-//	红法一  构造被改坏（零值记录没留住 / 没并成两段）⇒ 前提自检先说话
-//	红法二  **有人把它修好了**（两段变成 `GapStoreVerifyFailed`，或 `TruncatedTails` 里有了真因）
-//	        ⇒ 那就是 (iv) 落地了（走查绑到【库】上、全库错误归给每一段）
-//	        ⇒ 该做的是：删掉这条测试、改 `gap.go` 那段处置的第一、二种情形，
-//	          **不是把断言改回去**
+//	红法一  构造被改坏（坏记录没留住 / 没并成两段 / 那一跑没 halt）⇒ 前提自检先说话
+//	红法二  **有人把归属改回去了**（某一段又拿不到真因）⇒ 那是回归，
+//	        去看 `VerifyCoverage` 里那句「`whole != nil` ⇒ 归给每一段」
 //
-// ⛔ 射程：本条构造出的是那段处置里的**情形二**（一段都没走查）。
-// **情形一**（本次同步中【别的段】报出了全库错误，而没碰过的段拿不到它）本条**没有构造**——
-// 它要求「一段被碰过而另一段没有」，而今天每一块都会被 `CommitSpan`，我造不出来。
-// ⇒ 那一格留在「核不了的」单子上，别把本条的绿读成两种情形都验过了。
+// ⛔ 射程：本条构造的是**一段都没走查过**那一种（`touched` 空）。
+// 它现在之所以仍然能拿到真因，正是因为走查**不再看 `touched`** —— 那就是本条钉的那件事。
 
-// guard: 全库坏记录 ＋ 一段都没走查 ⇒ 两段都只报「本次没走查」，真因一个字都没印。
-func TestWholeLibraryErrorIsNotAttributedToUntouchedSpans(t *testing.T) {
+// guard: 一条全库坏记录要归给【每一段】—— 两段都报「走查没通过」，且真因各印一条。
+func TestWholeLibraryErrorIsAttributedToEverySpan(t *testing.T) {
 	const (
 		a1 = tickflow.TradingDay(20200805)
 		a2 = tickflow.TradingDay(20200806)
@@ -189,25 +190,38 @@ func TestWholeLibraryErrorIsNotAttributedToUntouchedSpans(t *testing.T) {
 		}
 	}
 
-	// —— 断言一：两段都只拿到「本次没走查」，而库确实坏了 ——
+	// —— 断言一：两段都拿到「走查没通过」，而不是「本次没走查」——
 	for _, d := range []tickflow.TradingDay{a1, b1} {
 		k, ok := kindOf[d]
 		if !ok {
 			t.Fatalf("%s 不在任何缺口里 —— 构造变了，读数作废：%s", d, strings.Join(got, " "))
 		}
-		if k != tickflow.GapStoreUnverified {
-			t.Errorf("%s 报成了 %v，而今天它是「本次没走查」。\n"+
-				"  这是红法二：有人把它修好了（多半是 (iv)）。\n"+
-				"  ⇒ 删掉这条测试，并改 gap.go 里 GapStoreUnverified 那段处置的第一、二种情形，\n"+
-				"     不是把断言改回去。实得：%s", d, k, strings.Join(got, " "))
+		if k != tickflow.GapStoreVerifyFailed {
+			t.Errorf("%s 报成了 %v，期望「走查没通过」。\n"+
+				"  ⇒ 若是「本次没走查」：全库错误没有归给这一段，那是回归 ——\n"+
+				"     去看 VerifyCoverage 里那句「whole != nil 时归给每一段」。\n"+
+				"  实得：%s", d, k, strings.Join(got, " "))
 		}
 	}
 
-	// —— 断言二（要害）：连真因都没人印 ——
-	if len(rep.TruncatedTails) != 0 {
-		t.Errorf("TruncatedTails 里有东西了：%v\n"+
-			"  今天它是空的 —— 一段都没走查，所以没有任何一段报出真因。\n"+
-			"  ⇒ 这是红法二：真因开始被印出来了。改这条测试与那段处置，别把断言改回去。",
-			rep.TruncatedTails)
+	// —— 断言二（要害）：真因对【每一段】各印一条 ——
+	//
+	// 🔴 只断言「有东西」不够：一条痕迹也满足它，而那正是上一版的病
+	// （只有 touched 的段拿得到真因）。所以按段数点名。
+	if len(rep.TruncatedTails) != len(cov) {
+		t.Errorf("TruncatedTails 有 %d 条，而 coverage 有 %d 段——期望每一段各一条。\n"+
+			"  ⇒ 少了：有段没拿到真因（回归）；多了：同一段被走查了不止一次。\n"+
+			"  实得：%v", len(rep.TruncatedTails), len(cov), rep.TruncatedTails)
+	}
+	joined := strings.Join(rep.TruncatedTails, " | ")
+	for _, sp := range cov {
+		want := sp.From.String() + ".." + sp.To.String()
+		if !strings.Contains(joined, want) {
+			t.Errorf("痕迹里没有 %s 那一段：\n  %s\n"+
+				"  ⇒ 这一段没拿到真因，而库是坏的。", want, joined)
+		}
+	}
+	if !strings.Contains(joined, "零值") {
+		t.Errorf("痕迹里没有那条全库错误的真因（「零值」）：\n  %s", joined)
 	}
 }

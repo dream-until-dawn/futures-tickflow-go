@@ -479,7 +479,7 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 
 	chunks := chunkDays(days, caps.BatchDays)
 	gateBefore := s.gate.count()
-	touched, syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
+	syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
 	rep.Halt = halt
 
 	// ⛔ **闸门有没有被用到** —— 这一格接住的是那个【假绿】：
@@ -510,7 +510,11 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 
 	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
 	// 一次中止之后的库比跑完之后的库更需要被走查，而不是更不需要。
-	verified, failed := s.verifyTouched(touched, &rep)
+	verified, failed, breach := s.verifyAll(&rep)
+	if breach != nil {
+		// 违约 ＝ 坏了 ⇒ 中止。报告一并返回：已经落盘的那部分是真的。
+		return rep, breach
+	}
 	if gerr := s.planGaps(k, req.From, to, verified, failed, &rep); gerr != nil && ferr == nil {
 		ferr = gerr
 	}
@@ -591,118 +595,91 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 	return since <= cov[0].From
 }
 
-// verifyTouched 是 SYN-6：**结束时走查本次碰过的段。**
+// verifyAll 是 SYN-6：**结束时走查【全库】——一遍扫描，同时核算 coverage 的每一段。**
 //
-// ⛔ 不走查 ⇒ 冷序列的损坏**发现时间没有上界**：一段写下去之后没有人再读它，
-// 坏了也要等到有人来取那段数据的那一天才知道 —— 而那可能是几个月后。
+// ⛔ **上一版走查的是「本次碰过的那些段」，而这一版不看 `touched` 了。**
+// 判据不是代价（两者都是一遍整文件扫描），是**保证绑在什么上**：
 //
-// 返回「走查过且没问题」的那些段，给缺口分类当输入（B3：**没走查过的时候，
-// 那两个计数什么也不意味着**）。
-// ⛔ 第二个返回值是 2026-09-11 加的，而它补的是一处**丢信息**：
-// 上一版把走查失败的**真因**转成一句字符串塞进 `TruncatedTails` 就完了 ——
-// 于是那一段在缺口分类里与「本次没碰它」**长得一模一样**，
-// 而调用方拿不到「为什么没通过」。
-// 🔴 本仓那条：**「够不到」是一句带地址的话** —— 分得开的信息已经在手里，我们把它丢了。
-// ⇒ 现在它原样回去，由 `planGaps` 包进 `ErrSpanVerifyFailed` 交给分类。
-// ⚠️ 而 `TruncatedTails` 那一条**保留**：它是给人扫一眼的痕迹，与类型化的那条不是一回事。
-// ⛔ **2026-09-11：它走查的不是 `touched` 里那些值本身，是 `Coverage()` 里与它们相交的那些段。**
+//	绑在 touched 上  ⇒ 丙片改的正是「谁会被碰」⇒ 那个保证跟着缩水，而条款文本一个字不会报警
+//	绑在【库】上     ⇒ 丙片怎么挑段都影响不到它
 //
-// 那一改修的是一个生产缺陷：**一次完全成功的多块同步，会把刚拉好的整段报成「未走查」。**
+// 📎 本仓那条：**一个保证若绑在一个事件上，就问「谁负责让那个事件发生」** ——
+// SYN-6 原来绑在「被碰过」上，而那个集合的主人是 `fetch`，不是走查。
 //
-//	写入侧  span := Span{From: chunk[0], To: chunk[len-1], Bars: len(bars), Days: …}
-//	        ⇒ 键是【分块】的 span：{d1,d1,1,1} {d2,d2,1,1} {d3,d3,1,1}
-//	读取侧  planGaps 走 for sp := range s.store.Coverage()
-//	        ⇒ CommitSpan 已经把相邻块并成一段 ⇒ 键是 {d1,d3,3,3}
-//	🔴 `Span` 是四字段结构体 ⇒ 做 map 键时这两组值不相等，而两处代码都写着 `verified[sp]`。
+// —— 📌 被删掉的那个函数留下的读数（代码可以删，读数不能随它消失）——
 //
-// ⚠️ 为什么**不是**「把键换成 `Coverage()` 里那个值」（那条看起来更小）：
-// **换键不等于走查过。** 走查 `[d1,d1] Bars=1` 通过，不建立 `[d1,d3] Bars=3` 为真 ——
-// 合并段的 `Bars=3` 那个数没有任何人核过。⇒ 那会把「走查过」这个标签**贴**到一个
-// 从未被走查的身份上，比今天的误报更坏：今天是「答不了」（保守），那之后是一个没有根据的肯定。
-// 📎 本仓 B3：**「没验过」不许悄悄变成一个肯定的答案。** ⇒ 这里是**真的按合并身份走查一遍**：
-// 合并段的 `Bars`/`Days` 这次是**数出来的**，不是从某一块继承来的。
+// 上一版有个 `spansTouchedBy(cov, touched)`，回「`cov` 里与任何一块相交的那些段」。
+// 它连同五格单元守卫一起删了，而这三条读数要留着 ——
+// **否则下一个人重新引入「按 touched 挑段」时，这几轮全要重走**：
 //
-// 🔴 **修法的本体是一句关于【键】的约束，写死在这儿**：
-// `okSpans` / `failedSpans` 的键**必须与 `planGaps` 查的键同源** —— 两边都来自 `Coverage()`。
-// ⇒ 任何一次改动若让写入侧的键换个来路（比如为了省一次 `Coverage()` 调用而用回 `touched`），
-// 这个缺陷就原样回来，而**代码看上去一模一样**。
+//	一、`verified` 的键必须与 `planGaps` 查的键**同源**（都来自 `Coverage()`）。
+//	    2026-09-11 的生产缺陷正是两边不同源：写入侧用【分块】的 span
+//	    `{d1,d1,1,1} {d2,d2,1,1} {d3,d3,1,1}`，而 `CommitSpan` 已把它们并成 `{d1,d3,3,3}`
+//	    ⇒ `Span` 是四字段结构体，做 map 键时两组值不相等，**而两处代码都写着 `verified[sp]`**。
+//	二、「按 `[From,To]` 找那一块」**修不了它**（双方各打一次突变，两次全绿）：
+//	    合并段的 `[From,To]` 本来就不等于任何一块的。
+//	三、那条「相交段数 ≤ 分块数 ⇒ 只会更便宜」的不等式，**函数层为假、生产路径为真** ——
+//	    函数层反例：`cov=[{08-05,08-05},{08-07,08-07}]` ＋ 一块 `[08-05..08-07]` ⇒ j=2 > k=1；
+//	    而 `CommitSpan` 只能向后扩（`ValidateCoverage` 拒 `From < prev.From` 与 `From <= prev.To`）
+//	    ⇒ 经由 `Sync` 到不了那个状态。
+//	    🔴 **证伪也要说清是在哪一层证伪的** —— 反例的杀伤力越大，越容易忘了给它挂层级。
 //
-// ⚠️ 也**不是**「走查 `Coverage()` 的每一段」：段多而本次只同步一小段时那是代价回归。
-// 一遍扫完所有段是 (iv) 的事，它要先把 `Verify` 换成批量形态。
+// —— ⚠️ 第二个返回值非 nil 时，这里【什么都不填】，而那是有意的 ——
 //
-// ⚠️ 射程：它**不修**「全库错误归给哪些段」——`touched` 为空时（落盘/扩 coverage 先失败）
-// 这里的目标集合同样为空，什么都不走查。那一格由 `whole_library_error_unattributed_test.go`
-// 钉着，等 (iv) 把走查绑到【库】上才会变。
-func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, map[Span]error) {
+// `VerifyCoverage` 的第二个返回值 ＝「这一遍跑不起来」。那时 `verified` 与 `failed` 都是空的
+// ⇒ 每一段落到 `planGaps` 的 `!verified[sp]` ⇒ 报成 `GapStoreUnverified`
+// ＝「**本次没走查过**」。🔴 **那句话在这时是真的** —— 走查确实没跑成。
+// ⇒ 这也是 (iv) 之后那一类**唯一的**生产者（另一个是 Store 违约、没给某一段结论）：
+// 两条早退（`HaltOutsideCoverage` / `HaltNoTradingDays`）**都产不出它**（2026-09-11 实测，
+// 两格都断言过 `Halt`）—— 因为 `classifyTradingDay` 是按【请求区间里的每个交易日】调的，
+// 而那两条早退各自消灭了那个前提。
+//
+// ⚠️ `TruncatedTails` 那一条痕迹**保留**：它是给人扫一眼的，与类型化的那条不是一回事。
+// —— ⛔ 第三个返回值：**`Store` 违约 ＝【坏了】，不是【答不了】** ——
+//
+// 契约要求 `VerifyCoverage` 是**全的**（`Coverage()` 里每一段都有一个结论）。
+// 漏掉一段时，本层**认不出**发生了什么 —— 而本仓那条最硬的规矩正压在这儿：
+// **「坏了」不是「答不了」：认不出的一律中止，不折进任何一类缺口。**
+//
+// ⚠️ 把它折成 `GapStoreUnverified` 看起来更温和，而那是有害的：
+// 调用方会拿到一个**看起来可以照着处置的答案**，而那个处置不存在
+// （「再走一遍」对一个不给结论的实现没有用）。
+// 📎 与 `classifyTradingDay` 那条兜底同一个处置、同一个理由。
+//
+// ⚠️ 而「这一遍跑不起来」（`VerifyCoverage` 的第二个返回值）**不是违约**：
+// 那时每一段落到「本次没走查过」，**而那句话是真的** —— 见下面那一支。
+func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error, error) {
 	okSpans := map[Span]bool{}
 	failedSpans := map[Span]error{}
-	for _, sp := range spansTouchedBy(s.store.Coverage(), touched) {
-		if err := s.store.Verify(sp); err != nil {
+	res, err := s.store.VerifyCoverage()
+	if err != nil {
+		// ⛔ 「跑不起来」不许伪装成「每一段都没问题」：留空 ⇒ 每一段报「本次没走查过」。
+		rep.TruncatedTails = append(rep.TruncatedTails,
+			fmt.Sprintf("这一遍走查没能跑起来：%v", err))
+		return okSpans, failedSpans, nil
+	}
+
+	// ⛔ 契约一：**全的**。漏掉一段 ＝ 违约 ＝ 坏了 ⇒ 中止（见上面那段注释）。
+	for _, sp := range s.store.Coverage() {
+		if _, ok := res[sp]; !ok {
+			return nil, nil, fmt.Errorf(
+				"tickflow: 这个 Store 的 VerifyCoverage 没有为 [%s, %s] 给出结论"+
+					"——契约要求它对 Coverage() 的每一段都给一个（nil 即通过）。"+
+					"这是【坏了】，不是【答不了】，所以中止而不是报成一类缺口："+
+					"折成缺口会让调用方拿到一个看起来可以照着处置的答案，而那个处置不存在",
+				sp.From, sp.To)
+		}
+	}
+	for sp, verr := range res {
+		if verr != nil {
 			rep.TruncatedTails = append(rep.TruncatedTails,
-				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, err))
-			failedSpans[sp] = err
+				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, verr))
+			failedSpans[sp] = verr
 			continue
 		}
 		okSpans[sp] = true
 	}
-	return okSpans, failedSpans
-}
-
-// spansTouchedBy 回 `cov` 里**与本次碰过的任何一块相交**的那些段。
-//
-// ⚠️ 它是**纯函数**（不碰 `s.store`），理由是本仓那条：
-// **一句写在函数注释里的行为断言，应当由【那个函数自己的输入】来钉，
-// 而不是等端到端去碰**——上一版是 `*Syncer` 的方法，那句「两段都会被走查」
-// 只能绕端到端去验，而端到端能不能到达那个状态，双方都没量过。
-//
-// ⚠️ 判据是区间重叠，不是相等：一块提交进去之后 `CommitSpan` 会把它与相邻的并起来，
-// 所以合并段的 `[From, To]` **既不等于任何一块，也不一定被任何一块包含**。
-// ⇒ 「按 `[From,To]` 去找那一块」同样查不到（双方各自打过这个突变，两次都全绿）。
-//
-// ⚠️ 一次同步碰到两个不相邻的段时，两段都会被走查 —— 那是对的，
-// 而代价是两次整文件扫描。⇒ 下面那一格单元测试钉的就是这句话。
-//
-// ⛔ **别写成「相交段数 ≤ 分块数，所以只会更便宜」——那句是假的**（双方 2026-09-11 各自量过）：
-//
-//	cov = [{08-05,08-05}, {08-07,08-07}]（两段，不相邻）
-//	touched = [{08-05..08-07}]（一块）      ⇒ 相交 2 段 ⇒ **j=2 > k=1**
-//
-// 🔴 而错在**推理的形状**，不在那半句前提：
-// 「每个被选中的段至少有一块落在它里面」**是真的**，而它推不出那个不等式 ——
-// 那要求「段 → 块」这个映射是**单射**，而**一块可以同时落进好几段**（横跨中间的缺口）。
-// 📎 本仓那条正打在这儿：**引对了前提而推出假的结论 —— 而前提越对，结论看起来越可信。**
-//
-// ⇒ **而「假」与「真」分在两层上，两句都要说**：
-//
-//	函数契约  j 可以大于 k —— 上面那个反例就是，而下面那一格单元测试钉着它
-//	生产路径  **到不了那个状态** ⇒ j ≤ k ⇒ 与上一版比**只会更便宜或持平**
-//
-// ⛔ **而「到不了」是【推出来的，不是这里保证的】**，依赖链写全（否则它会静默变假）：
-//
-//	ValidateCoverage  `s.From < prev.From` ⇒ errUnordered · `s.From <= prev.To` ⇒ errOverlap
-//	CommitSpan        把新段【追加到末尾】再 NormalizeCoverage（它第一件事就是 ValidateCoverage）
-//	⇒ 一块能提交成功 ⇔ 它整个落在最后那一段的【右边】⇒ 提交后它 ⊆ 恰好一段
-//	⇒ 各段互不重叠 ⇒ 每一块只与【一段】相交
-//
-// 🔴 **哪天放开「倒填」（往中间的缺口里补），这一句就变假，而这里不会报警。**
-// 而倒填**正是将来可能要做的事** —— v0.4.1 的注解里那句「先拉晚的区间，早的那一段就再也进不来」
-// 说的就是同一个设计决定。📎 本仓那条：**保证绑在一个事件上，就问谁负责让那个事件发生** ——
-// 这里那个「事件」是「没有人放开倒填」，而**改那条限制的人不会想到他同时在改一条代价断言**。
-//
-// ⇒ 真正的、无条件的便宜要等 (iv)（一遍扫完所有段），它要先把 `Verify` 换成批量形态。
-// 📎 收：**一个计数不等式最像「显然」的时候，正是它没被喂过反例的时候**；
-// 而**证伪也要说清是在哪一层证伪的** —— 反例的杀伤力越大，越容易忘了给它挂层级。
-func spansTouchedBy(cov, touched []Span) []Span {
-	var out []Span
-	for _, cs := range cov {
-		for _, t := range touched {
-			if t.From <= cs.To && cs.From <= t.To {
-				out = append(out, cs)
-				break
-			}
-		}
-	}
-	return out
+	return okSpans, failedSpans, nil
 }
 
 // planGaps 把 coverage 翻成七类缺口。
@@ -812,18 +789,17 @@ func chunkDays(days []TradingDay, batch int) [][]TradingDay {
 //	二  **本函数今天短到读得完，所以不给它加 AST 守卫**（守卫本身的维护成本高过它挡住的）。
 //	    ⇒ **这个判断在函数长起来的那天要重做。**
 func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
-	chunks [][]TradingDay, rep *SyncReport) ([]Span, []TradingDay, int, HaltReason, error) {
+	chunks [][]TradingDay, rep *SyncReport) ([]TradingDay, int, HaltReason, error) {
 
 	consecutive := 0
 	attempts := 0
 	var synced [2]TradingDay
-	var touched []Span
 	var syncedDays []TradingDay
 
 	for _, chunk := range chunks {
 		if err := ctx.Err(); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, attempts, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
+			return syncedDays, attempts, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
 		}
 		br := BarRequest{Symbol: req.Symbol, Period: req.Period,
 			From: chunk[0], To: chunk[len(chunk)-1]}
@@ -839,7 +815,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 			// ⇒ 「K 的零值是安全的」这句话，真值取决于**这一个符号**。
 			if consecutive > req.MaxConsecutiveFails {
 				rep.Synced = synced
-				return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
+				return syncedDays, attempts, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
 					"停在 %s；最后一次: %v",
 					ErrBudgetExhausted, consecutive, req.MaxConsecutiveFails, chunk[0], err)
 			}
@@ -849,17 +825,16 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 
 		if err := s.store.AppendBars(bars); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, attempts, HaltStoreWrite, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
+			return syncedDays, attempts, HaltStoreWrite, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
 		}
 		span := Span{From: chunk[0], To: chunk[len(chunk)-1],
 			Bars: len(bars), Days: distinctDays(bars)}
 		if err := s.store.CommitSpan(s.cal, k, span, OutcomeComplete); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, attempts, HaltCoverageWrite, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
+			return syncedDays, attempts, HaltCoverageWrite, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
 		}
 
 		rep.Bars += len(bars)
-		touched = append(touched, span)
 		syncedDays = append(syncedDays, chunk...)
 		if synced[0] == 0 {
 			synced[0] = chunk[0]
@@ -880,7 +855,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 		}
 	}
 	rep.Synced = synced
-	return touched, syncedDays, attempts, HaltDone, nil
+	return syncedDays, attempts, HaltDone, nil
 }
 
 // distinctDays 数这一批根覆盖了几个【交易日】。`Span.Days` 要它。

@@ -2921,9 +2921,28 @@ type Store interface {
 	DaysWithBars(span Span) (map[TradingDay]bool, error)
 	AppendBars(bars []Bar) error
 	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
-	Verify(span Span) error
+	VerifyCoverage() (map[Span]error, error)
 	Close() error
 }
+```
+
+⚠️ **`Verify(span)` 于 (iv)（2026-09-11）从这张表里降级成 `*segfile.Store` 的具体方法**，而那不是接口美学：
+它扫整个 `.dat` 却只核算一段 ⇒ 走查 k 段 ＝ k 次整文件扫描（890000 根实测：k=8 时 19.9s vs 单遍 2.5s）。
+🔴 而真正的理由是**把走查从「本次碰过什么」上解绑**：SYN-6 的保证原本绑在 `touched` 上，
+而丙片改的正是「谁会被碰」—— 绑到**库本身**之后，丙片怎么挑段都影响不到它。
+
+✅ 而它没有消失，两条理由**都不是兼容**：
+一、**v0.4.1 的 tag 注解逐字要人跑它**（「对 `Coverage()` 的每一段跑 `store.Verify(span)`」），**而 tag 改不了**；
+二、它是新读法的**参照实现** —— 两边都走新代码的话，等价性测试是空的。
+📎 与当年 `HasBars(day)` 降级成具体方法是同一个先例、同一个理由。
+
+⛔ `VerifyCoverage` 的契约三条（缺一条上层就会读错，逐条有守卫）：
+
+```
+一 全的      Coverage() 里每一段都要有一个结论（nil ＝ 通过）；漏掉 ＝ 违约
+二 键同源    键是 Coverage() 返回的那些值（整个 Span 结构体都参与相等）
+三 nil map   第二个返回值非 nil ＝ 这一遍跑不起来，那时第一个返回值必须是 nil map，
+             不是空 map —— len(m)==0 对两者是同一个读数，而 m == nil 分得开
 ```
 
 ✅ **这张欠条已于丙一到期兑现**（接口落进根包 `store.go`），所以它现在进了 `go` 围栏。

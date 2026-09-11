@@ -484,6 +484,125 @@ func (s *Store) Verify(span tickflow.Span) error {
 	return nil
 }
 
+// VerifyCoverage 一遍扫描核算 `Coverage()` 的**每一段**。
+//
+// ⛔ **为什么要它**（(iv)，2026-09-11）：`Verify(span)` 的循环上界是
+// `CountRecords(st.Size())` —— 它扫**整个 `.dat`**，与 `span` 无关；
+// 段内核算（`bars`/`days`）才是 `span` 那一份。
+// ⇒ 走查 k 段 ＝ k 次整文件扫描，而其中 k−1 次把全库那部分**原样重做**。
+// 实测（890000 根 · 88 B/条 · 约 78 MB）：`k=8` 时按段各走一次 19.9s，单遍 2.5s。
+//
+// 🔴 **而它真正的理由不是省时间，是【把走查从「本次碰过什么」上解绑】**：
+// SYN-6 的保证原本绑在 `touched` 上，而丙片改的正是「谁会被碰」——
+// 绑到**库本身**之后，丙片怎么挑段都影响不到它。
+//
+// —— 契约（调用方按这几条写，`sync.go` 就是照它写的）——
+//
+//	一、**全的**：`Coverage()` 里每一段都要有一个结论（nil ＝ 通过）。
+//	    漏掉一段 ＝ 违约 —— 而调用方拿不到结论时按「本次没走查过」处置，那句话是真的。
+//	二、**键是 `Coverage()` 返回的那些值**（整个 `Span` 结构体）。
+//	    🔴 这一条承重：`planGaps` 查的是同一批值，而 (o) 那个生产缺陷正是两边键不同源
+//	    （写入侧用【分块】的 span，读取侧用并段之后的值）。
+//	三、第二个返回值非 nil ＝ **这一遍跑不起来**（读盘失败）。那时第一个返回值是 **nil map**，
+//	    **不是空 map** —— `len(m)==0` 对两者是同一个读数，而 `m == nil` 分得开。
+//
+// ⛔ **全库错误（零值 / 顺序 / 谁的段都不属于）在第一条坏记录上就中止整遍**，
+// 而它**归给每一段** —— 理由不是「保持今天的行为」（今天只有 `touched` 的段拿得到），
+// 是**全库错误按定义影响每一段**：库坏了，而没拿到真因的那些段会被报成
+// 「本次没走查过，**不表示这一段有问题**」，那句话在那时为真而有害。
+//
+// ⚠️ **射程：它对上的是「这一段的两个数」，不是「这一段的内容对不对」。**
+// `Bars`/`Days` 相等**不蕴含**每一天的根都在（§6.1 那条老限定：那两个计数说不出是哪一天丢了）。
+// 🔴 而更狠一格：两个计数相等**甚至不蕴含「这一段的记录都属于这一段」** ——
+// 少一条属于本段的 ＋ 多一条别处的，两两相消，计数照样对上。
+// ⇒ **「记账和盘上对上了」靠的是【计数 ＋ 归属】两条判据一起**，
+// 归属那条就是下面那个 `hit < 0 ⇒ errRecordOutside`。少任何一条，「对上了」都不蕴含「这一段没问题」。
+//
+// 📎 而它核的那两个数**是相加出来的**：`NormalizeCoverage` 合并相邻段时做的是
+// `last.Bars += s.Bars` / `last.Days += s.Days`，**从来没有重新数过**。
+// ⇒ **这是本仓唯一一个把合并身份的记账与盘上对上的地方。**
+//
+// ⚠️ `Verify(span)` **没有被它取代**，两条理由：
+// 一、v0.4.1 的 tag 注解逐字要人「对 `Coverage()` 的每一段跑 `store.Verify(span)`」，**而 tag 改不了**；
+// 二、它是这个新读法的**参照实现** —— 两边都走新代码的话，等价性测试是空的。
+func (s *Store) VerifyCoverage() (map[tickflow.Span]error, error) {
+	cov := s.meta.Coverage
+	st, err := s.dat.Stat()
+	if err != nil {
+		return nil, err // ⇒ 契约三：跑不起来时第一个返回值必须是 nil map
+	}
+	n := CountRecords(st.Size())
+	buf := make([]byte, RecordSize)
+	bars := make([]int, len(cov))
+	days := make([]int, len(cov))
+	prevInSpan := make([]tickflow.TradingDay, len(cov))
+	var prev tickflow.TradingDay
+
+	// whole 是一条【全库】错误：它影响每一段，所以下面归给每一段。
+	var whole error
+	for i := int64(0); i < n && whole == nil; i++ {
+		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
+			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
+		}
+		b, derr := DecodeBar(buf)
+		if derr != nil {
+			return nil, derr
+		}
+		switch {
+		case b.TradingDay == 0:
+			// SYN-10：零值要指得到真因，而它必须判在最前面（见 Verify 里那段长注释）。
+			whole = fmt.Errorf("%w: 第 %d 条记录（Ts=%d）的 TradingDay 是零值——"+
+				"它来自本版写入口之外（旧版/别的写者/手工造的）；"+
+				"这不是文件损坏，别去查长度和截断", errZeroTradingDay, i, b.Ts)
+		case b.TradingDay < prev:
+			whole = fmt.Errorf("%w: 第 %d 条是 %s，而上一条是 %s",
+				errRecordDisorder, i, b.TradingDay, prev)
+		}
+		if whole != nil {
+			break
+		}
+		prev = b.TradingDay
+
+		hit := -1
+		for j := range cov {
+			if b.TradingDay >= cov[j].From && b.TradingDay <= cov[j].To {
+				hit = j
+				break
+			}
+		}
+		if hit < 0 {
+			// 归属那一条：谁的段都不属于 ⇒ 这才是真的损坏（与 Verify 的 default 同义）。
+			whole = fmt.Errorf("%w: 第 %d 条记录是 %s，而它不落在任何一段 coverage 里",
+				errRecordOutside, i, b.TradingDay)
+			break
+		}
+		if b.TradingDay != prevInSpan[hit] {
+			days[hit]++
+			prevInSpan[hit] = b.TradingDay
+		}
+		bars[hit]++
+	}
+
+	out := make(map[tickflow.Span]error, len(cov))
+	for j, sp := range cov {
+		switch {
+		case whole != nil:
+			out[sp] = whole
+		case bars[j] != sp.Bars:
+			out[sp] = fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条",
+				errBarsMismatch, bars[j], sp.Bars)
+		case days[j] != sp.Days:
+			out[sp] = fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
+				"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
+				errDaysMismatch, days[j], sp.Days)
+		default:
+			out[sp] = nil
+			s.verified[sp] = true
+		}
+	}
+	return out, nil
+}
+
 // dayInAnySpan 报告这一天在不在【任何】一段 coverage 里。
 //
 // Verify 用它把「别的段的记录」与「谁的段都不属于的记录」分开 ——
