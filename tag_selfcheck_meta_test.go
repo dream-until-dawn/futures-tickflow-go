@@ -29,14 +29,14 @@ import (
 //
 //	断言一  删掉 .meta 重开 ⇒ coverage 为空
 //	断言二  再同步 ⇒ 那一段报成 GapNeverFetched（「没拉过」）
-//	断言三  **方法二要人找的 GapStoreUnverified 一个都没有**
+//	断言三  **方法二要人找的 GapStoreVerifyUnrun 一个都没有**
 //
 // 断言三才是那句限定的**要害**：照着方法二做的人会找不到它、
 // 于是得出「这个库没问题」—— 而真相是**这次自查没有真值**。
 //
 // ⚠️ **而断言三在当前（单段）构造下，红必伴随断言二红；它单独钉不住东西。**
 // 这个构造只产出一条缺口 ⇒ 它若不是 `GapNeverFetched`，断言二必红；
-// 而断言三只在它恰好是 `GapStoreUnverified` 时才多红一格 ⇒ **{三红} ⊆ {二红}**。
+// 而断言三只在它恰好是 `GapStoreVerifyUnrun` 时才多红一格 ⇒ **{三红} ⊆ {二红}**。
 // ⇒ 它今天的价值是**把注解要人找的那个名字写进报文**；
 // 等构造是多段时（那一格在「核不了的」单子上）它才独立。
 // 📎 本仓那条：**一句处置有三种坏法 —— 为假 · 为真而有害 · 循环**；
@@ -65,8 +65,8 @@ import (
 //
 // —— 📐 突变（2026-09-11 实测，两个签名不同 ⇒ 断言二与断言三分得开）——
 //
-//	L1  classifyTradingDay 的 GapNeverFetched → GapStoreUnverified
-//	    ⇒ 红：断言二（没有一段报「没拉过」）· 断言三（仍然报出了 GapStoreUnverified）
+//	L1  classifyTradingDay 的 GapNeverFetched → GapStoreVerifyUnrun
+//	    ⇒ 红：断言二（没有一段报「没拉过」）· 断言三（仍然报出了 GapStoreVerifyUnrun）
 //	L2  同一处 → GapConfirmedEmpty
 //	    ⇒ 红：**只有**断言二
 //	基线（全名核过）：--- PASS: TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta
@@ -195,7 +195,7 @@ func TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta(t *testing.T) {
 		switch g.Kind {
 		case tickflow.GapNeverFetched:
 			sawNeverFetched = true
-		case tickflow.GapStoreUnverified:
+		case tickflow.GapStoreVerifyUnrun:
 			sawUnverified = true
 		}
 	}
@@ -210,7 +210,7 @@ func TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta(t *testing.T) {
 
 	// —— 断言三（要害）：方法二要人找的那一类，一个都没有 ——
 	if sawUnverified {
-		t.Errorf("删掉 .meta 之后仍然报出了 GapStoreUnverified，实得：%s\n"+
+		t.Errorf("删掉 .meta 之后仍然报出了 GapStoreVerifyUnrun，实得：%s\n"+
 			"  ⇒ 那意味着 v0.4.1 自查方法二在这种状态下【仍然有效】——\n"+
 			"     而注解那句限定说它无效。两者只能有一个为真。\n"+
 			"  ⇒ 若是有人把它修好了：那是好事，改这条测试，"+
@@ -487,7 +487,7 @@ func TestTagV041SelfCheckTwoHasAnErratum(t *testing.T) {
 	for _, g := range rep.Gaps {
 		kinds = append(kinds, g.From.String()+".."+g.To.String()+"="+g.Kind.String())
 		switch g.Kind {
-		case tickflow.GapStoreUnverified:
+		case tickflow.GapStoreVerifyUnrun:
 			sawOld = true
 		case tickflow.GapStoreVerifyFailed:
 			sawNew = true
@@ -498,9 +498,62 @@ func TestTagV041SelfCheckTwoHasAnErratum(t *testing.T) {
 			"  ⇒ 勘误里写的「改看这一类」就落空了。", strings.Join(kinds, " "))
 	}
 	if sawOld {
-		t.Errorf("坏库上仍然报得出 GapStoreUnverified，实得：%s\n"+
+		t.Errorf("坏库上仍然报得出 GapStoreVerifyUnrun，实得：%s\n"+
 			"  ⇒ 这是红法二：方法二又管用了（多半是 (iv) 被回退）。\n"+
 			"  ⇒ 处置是【再写一条勘误】说明它何时恢复，不是把这里的断言删掉。",
 			strings.Join(kinds, " "))
+	}
+}
+
+// —— 第二条勘误的钉子：**同一条停止规则，另一组四件事** ——
+//
+// ⛔ (p) 把 `GapStoreUnverified` 改成了 `GapStoreVerifyUnrun`，而**旧名字在一份改不了的载体里**
+// （`v0.4.1` 的 tag 正文逐字写着它）⇒ 从那份注解里 grep 旧名字的人，**落点必须是这条勘误**。
+//
+// 📌 名单按那条**不再增长的判据**挑 —— 读者照着做时需要的四件事各一句：
+//
+//	一、哪一版的哪个名字没了  ⇒ 旧标识符逐字
+//	二、新名字是什么          ⇒ 新标识符逐字
+//	三、为什么改              ⇒ 「结论静静地错」→「编译不过」那一对
+//	四、照着做要改什么        ⇒ 那一句动作
+//
+// ⇒ 想再加一条，先问「它对应第几件事」，答不出来就不该加。
+//
+// ⚠️ 红了有两个方向：
+//
+//	红法一  勘误被删 / 少了四件事里的一件 ⇒ 补回去
+//	红法二  **旧名字又回来了**（比如有人加了 deprecated 别名）
+//	        ⇒ 那把这次改名买的那一声响**原样退款了** —— 处置是去掉别名，不是改这里
+
+// guard: 改名那条勘误在，且四件事各一句（旧名 · 新名 · 为什么 · 怎么改）。
+func TestGapKindRenameHasAnErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.5.0.md"))
+	if err != nil {
+		t.Fatalf("读本版发布说明失败：%v", err)
+	}
+	text := string(notes)
+	for _, want := range []string{
+		"GapStoreUnverified",  // 一、哪个名字没了
+		"GapStoreVerifyUnrun", // 二、新名字
+		"结论静静地错",              // 三、为什么改（不改名那一支）
+		"编译不过",                // 三、为什么改（改名那一支）
+		"照着做要改什么",             // 四、动作
+	} {
+		if !strings.Contains(text, want) {
+			t.Errorf("改名勘误里没有 %q。\n"+
+				"  ⇒ 四件事缺一件，从 v0.4.1 注解里 grep 旧名字的人就落不到该落的地方。", want)
+		}
+	}
+
+	// ⛔ 而旧标识符**不许再出现在代码里** —— 留一个别名就把这次改名买的那一声响退款了。
+	// 📎 这一条的输入域是【整个仓】⇒ 它在合并之后才定真值（判据表那一条）。
+	src, err := os.ReadFile("gap.go")
+	if err != nil {
+		t.Fatalf("读 gap.go 失败：%v", err)
+	}
+	if strings.Contains(string(src), "GapStoreUnverified") {
+		t.Errorf("gap.go 里仍然有 GapStoreUnverified。\n" +
+			"  ⇒ 若是 deprecated 别名：它让调用方编译得过、行为照旧，\n" +
+			"     而这次改名买的全部东西就是那一次编译期失败。")
 	}
 }

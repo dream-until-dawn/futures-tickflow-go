@@ -9,7 +9,7 @@ import (
 
 // —— 这一条守的是【写进处置里的那两句话为真】——
 //
-// `gap.go` 的 GapStoreUnverified 把「跑一次 store.Verify(span)」写成了给用户的判别符，
+// `gap.go` 的 GapStoreVerifyUnrun 把「跑一次 store.Verify(span)」写成了给用户的判别符，
 // 并在旁边写了两句限定。那两句话是**断言**，所以要有东西钉住它们：
 //
 //	一、它【不是只读的】：走查通过之后，HasBars / DaysWithBars 对这一段
@@ -36,7 +36,7 @@ import (
 //   承重的是 `gap_verify_failed_test.go` 那五格；这一份是搭车的两格。
 //
 // ⇒ 那它为什么还值得有？因为它钉的是**写进用户处置里的三句断言**
-// （`gap.go` 的 `GapStoreUnverified`）——**那三句话会被照着做**，
+// （`gap.go` 的 `GapStoreVerifyUnrun`）——**那三句话会被照着做**，
 // 而「它们今天为真」这件事此前没有任何东西守着。
 
 // guard: 写进处置的那两句（Verify 不是只读的 · span 必须来自 Coverage）必须为真。

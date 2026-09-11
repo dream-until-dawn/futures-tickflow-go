@@ -131,9 +131,9 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 			[]SpanStatus{{Span: Span{From: 20200106, To: 20200110}}}, always(false), GapConfirmedEmpty},
 		{"不是交易日：周六", 20200111, nil, always(false), GapNotTrading},
 		{"日历答不了：落在 Covers 之外", 20200103, nil, always(false), GapCalendarUnknown},
-		{"存储答不了·未走查", 20200106,
+		{"存储答不了·走查没跑成", 20200106,
 			[]SpanStatus{{Span: Span{From: 20200106, To: 20200110}, Err: ErrSpanUnverified}},
-			always(false), GapStoreUnverified},
+			always(false), GapStoreVerifyUnrun},
 		{"存储答不了·旧格式", 20200106,
 			[]SpanStatus{{Span: Span{From: 20200106, To: 20200110}, Err: ErrLegacyMeta}},
 			always(false), GapStoreLegacy},
@@ -167,7 +167,7 @@ func TestPlanGapsEachInputTriggersExactlyOneKind(t *testing.T) {
 	}
 
 	all := []GapKind{GapNeverFetched, GapConfirmedEmpty, GapNotTrading,
-		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
+		GapCalendarUnknown, GapStoreVerifyUnrun, GapStoreLegacy}
 	for _, k := range all {
 		if _, ok := got[k]; !ok {
 			t.Errorf("%s 没有任何一条用例【期望】它 —— 六类里少了一类的覆盖", k)
