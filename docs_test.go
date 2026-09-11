@@ -938,6 +938,7 @@ var guardNames = []string{
 	`TestScriptsWrapBothStreams`,
 	`TestSortednessHoldsAfterVerify`,
 	`TestSourceTableCoversEveryCapsImplementor`,
+	`TestSpansTouchedByCoversEveryIntersectingSpan`,
 	`TestStatusClaimsMatchRepo`,
 	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
