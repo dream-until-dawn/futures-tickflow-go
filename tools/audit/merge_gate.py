@@ -115,10 +115,21 @@ def ownDiffFiles(sha):
 
 def main():
     argv = sys.argv[1:]
-    if argv:
-        shas = argv
+    # `--rev=<ref>` 换一个起点（默认 main）。
+    # ⛔ 它存在的理由是**对照组**，不是方便：「一颗合并都没扫到」那一格
+    # 原来造不出输入（要伪造浅克隆），而指向根提交就够了 ——
+    # 评审方 2026-09-11 想到的，比我原来打算造浅克隆便宜得多。
+    rev = "main"
+    rest = []
+    for a in argv:
+        if a.startswith("--rev="):
+            rev = a[len("--rev="):]
+        else:
+            rest.append(a)
+    if rest:
+        shas = rest
     else:
-        shas = git("log", "--merges", "--format=%h", "main").split()
+        shas = git("log", "--merges", "--format=%h", rev).split()
 
     # ⛔ 前提自检：空输入上不许出结论。空转与「全都合规」同形。
     if not shas:

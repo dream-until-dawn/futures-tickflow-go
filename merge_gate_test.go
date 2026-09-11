@@ -61,4 +61,56 @@ func TestMergeOwnDiffStaysInsideWhitelist(t *testing.T) {
 		t.Fatalf("门禁的输出里没有那句计数 —— 它的输出格式变了，而这条守卫是照着它读的：\n%s", text)
 	}
 	t.Log(strings.TrimSpace(text))
+
+	// —— ⛔ 下面两格是【补回来的】，而它们补的是这条守卫自己的洞 ——
+	//
+	// 评审方 2026-09-11 打突变发现：`merge_gate.py` 里那条**父数断言**
+	// （父数 < 2 就拒绝出读数）**没有任何断言落在它身上** —— 把它整条拿掉，
+	// 这条守卫照样 PASS。成因不是它写错了：**Go 这一侧只跑 `main` 上的合并，
+	// 而那些全是两个父** ⇒ 那条断言存在、正确，而从不被走到。
+	//
+	// 🔴 ⇒ 这正是 (c) 那一片的形状（「写着我是守卫，而没有断言落在它身上」），
+	// **而这一次轮到守卫自己。**
+	// 📎 收一句：**一条断言只在【它会失败的那种输入】被喂进来时才算被守着** ——
+	// 而「正常输入全都合规」恰恰保证了那种输入永远不出现。
+
+	t.Run("非合并提交上拒绝出读数", func(t *testing.T) {
+		sha := gitOut(t, "log", "--no-merges", "--format=%h", "-1", "main")
+		out, err := exec.Command("python", "tools/audit/merge_gate.py", sha).CombinedOutput()
+		if err == nil {
+			t.Fatalf("喂它一颗非合并提交 %s，而它给了读数：\n%s\n"+
+				"  ⇒ `git show --cc` 对非合并印的是普通 diff（`diff --git`），\n"+
+				"     文件集合为空 ⇒ 会被读成「自带 diff 为空」＝合规。\n"+
+				"  ⇒ 「量不了」和「量出来是 0」在这里长得一模一样，所以它必须拒绝。", sha, out)
+		}
+		if !strings.Contains(string(out), "不是合并提交") {
+			t.Errorf("它拒了，而没拒在那一条上（要「不是合并提交」）：\n%s", out)
+		}
+	})
+
+	t.Run("零颗合并时报作废而不是合规", func(t *testing.T) {
+		root := gitOut(t, "rev-list", "--max-parents=0", "--format=%h", "HEAD")
+		// `--format=%h` 会多印一行 `commit <sha>`；取最后一行。
+		if lines := strings.Fields(root); len(lines) > 0 {
+			root = lines[len(lines)-1]
+		}
+		out, err := exec.Command("python", "tools/audit/merge_gate.py", "--rev="+root).CombinedOutput()
+		if err == nil {
+			t.Fatalf("从根提交起一颗合并都没有，而它报了合规：\n%s", out)
+		}
+		if !strings.Contains(string(out), "空转") {
+			t.Errorf("它红了，而没红在那一条上（要「空转…读数作废」）：\n%s", out)
+		}
+	})
+}
+
+// gitOut 跑一条 git 并把输出去掉首尾空白。跑不起来就红 —— 这条守卫本来就依赖 git。
+func gitOut(t *testing.T, args ...string) string {
+	t.Helper()
+	out, err := exec.Command("git", args...).Output()
+	if err != nil {
+		t.Fatalf("git %s 失败：%v —— 这条守卫依赖 git，跑不起来是红，不是跳过",
+			strings.Join(args, " "), err)
+	}
+	return strings.TrimSpace(string(out))
 }
