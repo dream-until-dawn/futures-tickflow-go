@@ -23,7 +23,7 @@
 # 而留 10% 余量等于说「删掉最多 10% 不用打招呼」，那和这条规矩的意图相反。
 #
 # 格式：一行一个 `名字 数值`，# 开头是注释。
-rules 321
+rules 333
 anchors 61
 census 5
 guards 51
@@ -412,3 +412,4 @@ guards 51
 # 来历 2026-09-11 rules 321 自 314 自动：重造时表长大（314 -> 321）
 # 来历 2026-09-11 guards 50 自 49 自动：重造时表长大（49 -> 50）；本次新增：TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight
 # 来历 2026-09-11 guards 51 自 50 自动：重造时表长大（50 -> 51）；本次新增：TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage
+# 来历 2026-09-11 rules 333 自 321 自动：重造时表长大（321 -> 333）
