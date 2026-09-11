@@ -938,7 +938,6 @@ var guardNames = []string{
 	`TestScriptsWrapBothStreams`,
 	`TestSortednessHoldsAfterVerify`,
 	`TestSourceTableCoversEveryCapsImplementor`,
-	`TestSpansTouchedByCoversEveryIntersectingSpan`,
 	`TestStatusClaimsMatchRepo`,
 	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
@@ -948,9 +947,11 @@ var guardNames = []string{
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
+	`TestVerifyCoverageContract`,
+	`TestVerifyCoverageMatchesVerifyPerSpan`,
 	`TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight`,
 	`TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage`,
-	`TestWholeLibraryErrorIsNotAttributedToUntouchedSpans`,
+	`TestWholeLibraryErrorIsAttributedToEverySpan`,
 }
 
 // funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。
