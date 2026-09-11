@@ -85,5 +85,5 @@ func TestTagRecipesPinVerbatimCleanup(t *testing.T) {
 		t.Fatalf("扫了 %d 个文件，一条 `git tag -a` 食谱都没找到 —— "+
 			"要么食谱被删了、要么判据漂了；两种都得有人看一眼，不能算绿", checked)
 	}
-	t.Logf("扫了 %d 个文件，%d 条食谱都带着 %s", checked, recipes, want)
+	t.Logf("扫了 %d 个文件，找到 %d 条食谱", checked, recipes)
 }
