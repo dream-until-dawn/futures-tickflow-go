@@ -26,7 +26,7 @@
 rules 314
 anchors 60
 census 5
-guards 39
+guards 41
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -396,3 +396,4 @@ guards 39
 # 来历 2026-09-10 guards 33 自 32 自动：重造时表长大（32 -> 33）
 # 来历 2026-09-10 guards 34 自 33 自动：重造时表长大（33 -> 34）
 # 来历 2026-09-10 guards 39 自 34 自动：重造时表长大（34 -> 39）；本次新增：TestDaysWithBarsEqualsHasBars TestPlanGapsReadsEachSpanAtMostOnce TestPlanGapsReadsNothingWhenDayOutsideEverySpan TestPlanGapsReadsNothingWhenNoCoverage TestUnverifiedSpanRefusesBothReads
+# 来历 2026-09-11 guards 41 自 39 自动：重造时表长大（39 -> 41）；本次新增：TestAppendBarsRejectsOutOfOrder TestSortednessHoldsAfterVerify

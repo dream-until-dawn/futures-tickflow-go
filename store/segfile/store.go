@@ -90,6 +90,19 @@ var (
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
+
+	// errOutOfOrder 这一批里（或它与盘上最后一条之间）交易日倒退了。
+	//
+	// ⛔ **它与 `Verify` 那句「记录的交易日不是非降序」说的是同一件事，
+	// 而它们【指向不同的东西】** —— 这正是本文件已经为零值 TradingDay
+	// 论证过一次的那条，而顺序这一格当时没有一并做：
+	//
+	//	走查时报   「这个文件里第 i 条比上一条早」   —— 指向**文件**（读起来像损坏）
+	//	写入时报   「你给我的第 i 条比盘上最后一条早」 —— 指向**调用方**，也就是真因
+	//
+	// 🔴 而顺序这一格的距离比零值那一格**更远**：走查发生在**下一次 Sync**，
+	// 而那时写它的那次调用早已结束 —— 报文里没有任何东西指得回去。
+	errOutOfOrder = errors.New("segfile: 交易日倒退了——这一批与盘上已有的记录合不成非降序")
 )
 
 // ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
@@ -219,6 +232,41 @@ func (s *Store) AppendBars(bars []tickflow.Bar) error {
 				"而那条信息指不到真因", errZeroTradingDay, i, b.Ts)
 		}
 	}
+	// ⛔ **顺序也拦在写入口**，理由与上面那一格【同一条】，而距离更远。
+	//
+	// 它关掉的是一个实测出来的窗口（2026-09-11，探针量的，不是推的）：
+	//
+	//	Verify 过 ⇒ verified[span] = true，此刻文件有序
+	//	一次**合法的** AppendBars 写进一条倒退的记录 ⇒ **一个字都没人查**
+	//	⇒ 此后 verified 仍为 true 而文件已乱序，直到**下一次**走查才红
+	//
+	// ⚠️ 而这个窗口**今天没有伤到任何人**：现行读法是线性扫描，**对乱序免疫**
+	// （同一份库上实测：乱序之后 `DaysWithBars` 给的答案仍然是对的）。
+	// 🔴 **它伤的是将来** —— 任何「利用有序性」的读法（二分、只扫段对应的那一段）
+	// 在这个窗口里会**静默给出错的答案**（实测：二分把一天漏报成缺席）。
+	// ⚠️ 而那个错的**方向要说准**：二分只会**漏报存在** ⇒ 那一天被判成
+	// `GapConfirmedEmpty` ⇒ **重复拉取（吵，不丢数据）**，**不是**「静默漏数据」那一类。
+	// ⇒ 所以这一格的价值不是修一个今天的 bug，是**把一个不变量从「某一刻检查过」
+	// 变成「一直成立」** —— 而那是那类读法能不能被考虑的前提。
+	//
+	// ⚠️ **它禁掉了什么，写清楚**：**按追加做的倒填**（先写晚的、再补早的）。
+	// 而它**没有拿走任何今天可用的能力** —— 那样的文件**本来就过不了 `Verify`**
+	// （实测：倒填之后重新走查当场红）。⇒ 这一格搬的是**报错的位置**，不是规矩本身。
+	if last, ok, err := s.lastTradingDay(); err != nil {
+		return err
+	} else if ok && bars[0].TradingDay < last {
+		return fmt.Errorf("%w: 这一批第 0 条是 %s，而盘上最后一条是 %s——"+
+			"这样的文件过不了走查，而走查要到【下一次同步】才跑，"+
+			"那时报文只会说「文件里第 i 条比上一条早」，指不回写它的这次调用",
+			errOutOfOrder, bars[0].TradingDay, last)
+	}
+	for i := 1; i < len(bars); i++ {
+		if bars[i].TradingDay < bars[i-1].TradingDay {
+			return fmt.Errorf("%w: 这一批内部第 %d 条是 %s，而第 %d 条是 %s",
+				errOutOfOrder, i, bars[i].TradingDay, i-1, bars[i-1].TradingDay)
+		}
+	}
+
 	buf := make([]byte, 0, len(bars)*RecordSize)
 	for _, b := range bars {
 		r := EncodeBar(b)
@@ -509,6 +557,31 @@ func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, 
 		}
 	}
 	return out, nil
+}
+
+// lastTradingDay 读盘上**最后一条**记录的交易日。ok 为 false 表示文件是空的。
+//
+// ⚠️ 它读盘而不缓存一个字段，理由是本仓那条：**多背的那一份迟早会和真相漂开**
+// （`Store` 只存 `period` 名字而不存 `Period` 那一格写的是同一句话）。
+// 代价可核：**一次 `ReadAt`**，而它旁边就是一次 `Write` ＋ 一次 `Sync`。
+func (s *Store) lastTradingDay() (tickflow.TradingDay, bool, error) {
+	st, err := s.dat.Stat()
+	if err != nil {
+		return 0, false, err
+	}
+	n := CountRecords(st.Size())
+	if n == 0 {
+		return 0, false, nil
+	}
+	buf := make([]byte, RecordSize)
+	if _, err := s.dat.ReadAt(buf, (n-1)*RecordSize); err != nil {
+		return 0, false, err
+	}
+	b, err := DecodeBar(buf)
+	if err != nil {
+		return 0, false, err
+	}
+	return b.TradingDay, true, nil
 }
 
 // dayHasRecords 走一遍 `.dat`，看这一天有没有记录。
