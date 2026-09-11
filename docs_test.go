@@ -909,6 +909,7 @@ var guardNames = []string{
 	`TestPlanGapsReadsNothingWhenDayOutsideEverySpan`,
 	`TestPlanGapsReadsNothingWhenNoCoverage`,
 	`TestRefdataExpiryConditionNotYetDue`,
+	`TestReleaseNotesTagBodyIsExtractable`,
 	`TestResyncTwiceDoesNotPoisonTheStore`,
 	`TestReviewReadingsRefusesStrayFlags`,
 	`TestRootErrorSentinelsAreDisposed`,
@@ -917,6 +918,7 @@ var guardNames = []string{
 	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
+	`TestTagRecipesPinVerbatimCleanup`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanRefusesBothReads`,
 }

@@ -26,7 +26,7 @@
 rules 314
 anchors 60
 census 5
-guards 44
+guards 46
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -400,3 +400,4 @@ guards 44
 # 来历 2026-09-11 guards 42 自 41 自动：重造时表长大（41 -> 42）；本次新增：TestBackfillAfterVerifyDoesNotPoisonTheStore
 # 来历 2026-09-11 guards 43 自 42 自动：重造时表长大（42 -> 43）；本次新增：TestResyncTwiceDoesNotPoisonTheStore
 # 来历 2026-09-11 guards 44 自 43 自动：重造时表长大（43 -> 44）；本次新增：TestGuardMarkersAreRegistered
+# 来历 2026-09-11 guards 46 自 44 自动：重造时表长大（44 -> 46）；本次新增：TestReleaseNotesTagBodyIsExtractable TestTagRecipesPinVerbatimCleanup
