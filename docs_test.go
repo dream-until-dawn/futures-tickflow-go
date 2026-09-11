@@ -939,7 +939,7 @@ var guardNames = []string{
 	`TestSortednessHoldsAfterVerify`,
 	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
-	`TestSuccessfulMultiChunkSyncStillReportsUnverified`,
+	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestTagRecipesPinVerbatimCleanup`,
 	`TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta`,
