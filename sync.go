@@ -85,9 +85,40 @@ const (
 	// HaltDone 跑到 `To` 了。**唯一不留声的那个。**
 	HaltDone
 	// HaltBudget 连续失败次数超过了 `MaxConsecutiveFails`。留声，并且 `Sync` 返回错误。
+	//
+	// ⛔ **它此前还盖着另外两条出口**（落盘失败 / 扩 coverage 失败），而那是一个缺陷：
+	// 实测三条出口在调用方能读到的每一个通道上的取值 ——
+	//
+	//	通道                                 超预算   落盘失败   扩 coverage 失败
+	//	errors.Is(err, ErrBudgetExhausted)   true    **false**  **false**
+	//	Halt.String()                        预算耗尽  预算耗尽   预算耗尽      ← 后两个是假话
+	//	Incidents() 那句留声                  ——      同上       同上         ← 后两个是假话
+	//	盘上根数 / coverage 段数              0 / 0    0 / 0     **1 / 0**
+	//
+	// 🔴 **两个通道互相矛盾**：`errors.Is` 说「不是预算」，而 `String()` 说「预算耗尽」。
+	// ⇒ 读的人按后者行事：**加大预算、稍后重试** —— 而那正是 ≤v0.4.0 上加重损坏的动作。
 	HaltBudget
 	// HaltContext 调用方取消了。留声。
 	HaltContext
+
+	// HaltStoreWrite 把这一批记录写进盘时失败了（`Store.AppendBars`）。留声，`Sync` 返回错误。
+	//
+	// ⚠️ 与 `HaltBudget` 分开，判据不是「它们看起来不同」，是**处置不同**：
+	// 超预算 ⇒ 上游在闹脾气，等一等再来是对的；
+	// 落盘失败 ⇒ **是本机的问题**（盘满 / 权限 / 文件被占），加大预算一点用都没有。
+	HaltStoreWrite
+
+	// HaltCoverageWrite 记录已经写进盘了，**而把这一段登记进 coverage 时失败了**
+	// （`Store.CommitSpan`）。留声，`Sync` 返回错误。
+	//
+	// 🔴 **它和 `HaltStoreWrite` 也必须分开，而理由是那条最贵的**：
+	// 这一条留下的是**孤儿记录** —— 盘上有这一批，coverage 里没有（实测 1 根 / 0 段）。
+	// ⇒ **直接重跑同一次 Sync，会把同一批记录【再追加一遍】** ——
+	// 而那正是 v0.4.1 修的那个毁库动作。
+	// ⇒ 所以它的留声必须说「**别直接重试**」，而不是「已同步的部分是完整的」。
+	//
+	// 📎 本仓那条：**判两个东西该不该共用一个名字，看【处置】分不分岔，不看成因像不像。**
+	HaltCoverageWrite
 
 	// HaltNoTradingDays 请求区间里一个交易日都没有。**不留声 —— 它是结果，不是异常。**
 	//
@@ -119,6 +150,18 @@ func (h HaltReason) note() (string, bool) {
 		return "同步因连续失败用尽预算而中止——已同步的部分是完整的，未同步的部分没有被记为「拉过」", true
 	case HaltContext:
 		return "同步被调用方取消——已同步的部分是完整的", true
+	case HaltStoreWrite:
+		return "把这一批记录写进盘时失败了——已同步的部分是完整的，这一批没有被记为「拉过」；" +
+			"这是本机的问题（盘满／权限／文件被占），加大预算没有用", true
+	case HaltCoverageWrite:
+		// ⛔ 这一句和上面两句**形状不同，而那是故意的**：
+		// 前两句能说「已同步的部分是完整的」，是因为那一批根本没落盘；
+		// 而这一条**落盘成功、登记失败** ⇒ 盘上有这一批而 coverage 里没有。
+		// 🔴 直接重跑会把同一批**再追加一遍** —— 那正是 v0.4.1 修的那个毁库动作。
+		return "记录已经写进盘了，而把这一段登记进 coverage 时失败了——" +
+			"盘上有这一批而 coverage 里没有（孤儿记录）。" +
+			"⛔ 别直接重跑同一次同步：那会把同一批记录再追加一遍。" +
+			"先跑一次 Verify 看这一段的状态，再决定怎么办", true
 	}
 	return "这份报告没有记录它为什么停下来（可能是它压根没有跑过）——" +
 		"按【没同步完】处理，别读成「跑完了且干净」", true
@@ -133,6 +176,10 @@ func (h HaltReason) String() string {
 		return "跑完"
 	case HaltBudget:
 		return "预算耗尽"
+	case HaltStoreWrite:
+		return "落盘失败"
+	case HaltCoverageWrite:
+		return "扩 coverage 失败（盘上已有这一批）"
 	case HaltContext:
 		return "被取消"
 	case HaltNoTradingDays:
@@ -684,13 +731,13 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 
 		if err := s.store.AppendBars(bars); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, attempts, HaltStoreWrite, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
 		}
 		span := Span{From: chunk[0], To: chunk[len(chunk)-1],
 			Bars: len(bars), Days: distinctDays(bars)}
 		if err := s.store.CommitSpan(s.cal, k, span, OutcomeComplete); err != nil {
 			rep.Synced = synced
-			return touched, syncedDays, attempts, HaltBudget, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
+			return touched, syncedDays, attempts, HaltCoverageWrite, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
 		}
 
 		rep.Bars += len(bars)
