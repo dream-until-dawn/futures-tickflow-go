@@ -2743,3 +2743,141 @@ func classifyByLists(name string) (scan, known bool) {
 	}
 	return false, false
 }
+
+// TestGuardMarkersAreRegistered 堵住「**声称被覆盖，而没有**」那一格。
+//
+// 起因（评审方登记为 main 侧第一条，理由是它抬高另外两条的验收门槛）：
+// 本仓有两样东西各说各话 ——
+//
+//	`// guard:` 标记   作者写在测试头上的一句【声称】：这是一个守卫
+//	`guardNames`      登记表，而 `TestGuardsStillExist` / `TestGuardsDoNotSkipThemselves`
+//	                  的断言【只对登记表里的名字生效】
+//
+// ⛔ 两者之间没有任何东西相连：一个测试可以带着标记、却从没进过登记表。
+// 那时它**看起来被守着**（标记在那儿），**而实际上一条断言都没落到它身上** ——
+// 删掉它、掏空它、给它加 Skip，三条登记表守卫**一个都不会响**。
+//
+// 🔴 这一格的形状值得单写：**这不是「漏了一个」，是【覆盖的声称】和【覆盖的范围】
+// 由两份互不相干的数据各自维护** —— 而声称那一份是给人看的，范围那一份才是给机器跑的。
+// ⇒ 本仓那条的又一个实例：**一句关于守卫能力的话，会被下一个人当成守卫的契约用。**
+//
+// ⚠️ **判据必须 `parser.ParseComments`，而这和隔壁那条守卫【正好相反】** ——
+// `TestGuardsDoNotSkipThemselves` 特意用 `0`（不解析注释），理由是散文里提 `t.Skip`
+// 是合法的、不该被打中。这一条要找的东西**本身就住在注释里**，绕不开。
+// ⇒ 代价是：**这一条会被散文打中**，而隔壁那条不会。所以先量了再定判据：
+//
+//	挂在函数文档注释上的 `// guard:` 行  19 处
+//	游离的（不属于任何函数文档注释）      **0** 处
+//	散文里的假阳性                       **0** 处（判据要求【行首就是】`// guard:`，
+//	                                     而散文里提它时都带着反引号或缩进）
+//
+// ⇒ 本仓「先量、再定判据」的又一次；而这次量出来的 0，正是判据可以这么严的依据。
+//
+// ⚠️ 射程（照例写明它不比什么）：
+//
+//	堵的     函数文档注释里的 `// guard:` 标记 ⇒ 那个函数名必须在 guardNames 里
+//	堵的     游离的标记（不挂在任何函数上）—— 它声称了守卫身份，而没有东西可登记
+//	不堵的   **登记了而没有标记**（今天 25 个）—— 标记是可选的说明，不是登记的前提
+//	不堵的   **登记了、也有标记、而断言是空的** —— 那是「代价二」，只有对照组能看见
+//	不堵的   标记写在【非注释】的地方（字符串字面量里）—— 判据走 AST，那里没有注释
+//
+// 🔴 最后一条要说清：**它堵的是「声称而没登记」，不是「登记了就真的被守着」。**
+// 后半句是另一块（每个守卫各有一格能重跑的对照组），本仓记过它、也记过为什么不做。
+func TestGuardMarkersAreRegistered(t *testing.T) {
+	registered := map[string]bool{}
+	for _, n := range guardNames {
+		registered[n] = true
+	}
+	if len(registered) == 0 {
+		t.Fatal("guardNames 是空的 —— 这条守卫没有可比的对象，读数作废")
+	}
+
+	const mark = "// guard:"
+	fset := token.NewFileSet()
+	var files, marks int
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			// ⚠️ `tools` 必须跟着排除 —— **判据要和生成器那一份【逐字对齐】**：
+			// `rebuild_docs_test.py` 的 declared_guards() 把 tools 排在外面，
+			// 所以 tools 里的标记它【不会】登记。我若扫它，就会红在一个
+			// **跑了生成器也修不好**的地方 ⇒ 那种红最终只会让人把守卫关掉。
+			switch info.Name() {
+			case ".git", "tools", "__pycache__", "node_modules":
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, "_test.go") {
+			return nil
+		}
+		// 最后一个参数是 ParseComments：这一条要找的东西住在注释里。
+		f, perr := parser.ParseFile(fset, p, nil, parser.ParseComments)
+		if perr != nil {
+			return perr
+		}
+		files++
+
+		inDoc := map[*ast.Comment]bool{}
+		for _, d := range f.Decls {
+			fd, ok := d.(*ast.FuncDecl)
+			if !ok || fd.Doc == nil {
+				continue
+			}
+			for _, c := range fd.Doc.List {
+				inDoc[c] = true
+				if !strings.HasPrefix(c.Text, mark) {
+					continue
+				}
+				marks++
+				name := fd.Name.Name
+				if !strings.HasPrefix(name, "Test") {
+					t.Errorf("%s:%d 的 %s 带着 `%s` 标记，而它不是测试函数\n"+
+						"  ⇒ 它进不了 guardNames，那个标记是一句无处兑现的声称。",
+						p, fset.Position(c.Pos()).Line, name, mark)
+					continue
+				}
+				if !registered[name] {
+					t.Errorf("%s:%d 的 %s 带着 `%s` 标记，而它【不在 guardNames 里】\n"+
+						"  ⇒ 它看起来被守着，而 TestGuardsStillExist 与\n"+
+						"     TestGuardsDoNotSkipThemselves 的断言【一条都没落到它身上】：\n"+
+						"     删掉它、掏空它、给它加 Skip，三条都不会响。\n"+
+						"  ⇒ 处置：跑 tools/audit/rebuild_docs_test.py 重生成登记表。",
+						p, fset.Position(c.Pos()).Line, name, mark)
+				}
+			}
+		}
+		// 游离的标记：它声称了守卫身份，而没有函数可登记。
+		for _, cg := range f.Comments {
+			for _, c := range cg.List {
+				if inDoc[c] || !strings.HasPrefix(c.Text, mark) {
+					continue
+				}
+				marks++
+				t.Errorf("%s:%d 有一个 `%s` 标记，而它不是任何 func 的文档注释\n"+
+					"  ⇒ 没有名字可以进 guardNames，这句声称兑现不了。\n"+
+					"  ⇒ 两种成因，生成器那边都实测过：标记与 func 之间隔了一个空行；\n"+
+					"     或者标记挂在一个不是函数的东西上方。\n"+
+					"  ⇒ 收集规矩：标记必须顶格，且它与 `func TestX(` 之间只许有注释行。",
+					p, fset.Position(c.Pos()).Line, mark)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("走 _test.go 时出错：%v", err)
+	}
+
+	// ⛔ 前提自检两条：空转与「全都合规」同形。
+	if files == 0 {
+		t.Fatal("一份 _test.go 都没扫到 —— 这条守卫是空转的，读数作废")
+	}
+	if marks == 0 {
+		t.Fatalf("扫了 %d 份 _test.go，一个 `%s` 标记都没找到 —— "+
+			"要么标记体例被换掉了、要么判据漂了；两种都得有人看一眼，不能算绿",
+			files, mark)
+	}
+	t.Logf("扫了 %d 份 _test.go，找到 %d 个 `%s` 标记", files, marks, mark)
+}
