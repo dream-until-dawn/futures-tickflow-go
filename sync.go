@@ -510,7 +510,11 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 
 	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
 	// 一次中止之后的库比跑完之后的库更需要被走查，而不是更不需要。
-	verified, failed := s.verifyAll(&rep)
+	verified, failed, breach := s.verifyAll(&rep)
+	if breach != nil {
+		// 违约 ＝ 坏了 ⇒ 中止。报告一并返回：已经落盘的那部分是真的。
+		return rep, breach
+	}
 	if gerr := s.planGaps(k, req.From, to, verified, failed, &rep); gerr != nil && ferr == nil {
 		ferr = gerr
 	}
@@ -631,7 +635,20 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 // 而那两条早退各自消灭了那个前提。
 //
 // ⚠️ `TruncatedTails` 那一条痕迹**保留**：它是给人扫一眼的，与类型化的那条不是一回事。
-func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error) {
+// —— ⛔ 第三个返回值：**`Store` 违约 ＝【坏了】，不是【答不了】** ——
+//
+// 契约要求 `VerifyCoverage` 是**全的**（`Coverage()` 里每一段都有一个结论）。
+// 漏掉一段时，本层**认不出**发生了什么 —— 而本仓那条最硬的规矩正压在这儿：
+// **「坏了」不是「答不了」：认不出的一律中止，不折进任何一类缺口。**
+//
+// ⚠️ 把它折成 `GapStoreUnverified` 看起来更温和，而那是有害的：
+// 调用方会拿到一个**看起来可以照着处置的答案**，而那个处置不存在
+// （「再走一遍」对一个不给结论的实现没有用）。
+// 📎 与 `classifyTradingDay` 那条兜底同一个处置、同一个理由。
+//
+// ⚠️ 而「这一遍跑不起来」（`VerifyCoverage` 的第二个返回值）**不是违约**：
+// 那时每一段落到「本次没走查过」，**而那句话是真的** —— 见下面那一支。
+func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error, error) {
 	okSpans := map[Span]bool{}
 	failedSpans := map[Span]error{}
 	res, err := s.store.VerifyCoverage()
@@ -639,7 +656,19 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error) {
 		// ⛔ 「跑不起来」不许伪装成「每一段都没问题」：留空 ⇒ 每一段报「本次没走查过」。
 		rep.TruncatedTails = append(rep.TruncatedTails,
 			fmt.Sprintf("这一遍走查没能跑起来：%v", err))
-		return okSpans, failedSpans
+		return okSpans, failedSpans, nil
+	}
+
+	// ⛔ 契约一：**全的**。漏掉一段 ＝ 违约 ＝ 坏了 ⇒ 中止（见上面那段注释）。
+	for _, sp := range s.store.Coverage() {
+		if _, ok := res[sp]; !ok {
+			return nil, nil, fmt.Errorf(
+				"tickflow: 这个 Store 的 VerifyCoverage 没有为 [%s, %s] 给出结论"+
+					"——契约要求它对 Coverage() 的每一段都给一个（nil 即通过）。"+
+					"这是【坏了】，不是【答不了】，所以中止而不是报成一类缺口："+
+					"折成缺口会让调用方拿到一个看起来可以照着处置的答案，而那个处置不存在",
+				sp.From, sp.To)
+		}
 	}
 	for sp, verr := range res {
 		if verr != nil {
@@ -650,7 +679,7 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error) {
 		}
 		okSpans[sp] = true
 	}
-	return okSpans, failedSpans
+	return okSpans, failedSpans, nil
 }
 
 // planGaps 把 coverage 翻成七类缺口。

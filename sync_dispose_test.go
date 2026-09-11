@@ -3,6 +3,7 @@ package tickflow
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/source/pacing"
@@ -263,4 +264,52 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 			"那说明 Gaps 的类别根本没跟着走查结果走。\n"+
 			"  实得：%v", rep2.Gaps)
 	}
+}
+
+// —— 这一条守的是【`Store` 违约 ＝ 坏了，不是答不了】——
+//
+// `VerifyCoverage` 的契约一要求它是**全的**：`Coverage()` 里每一段都要有一个结论。
+// ⛔ 漏掉一段时，编排这一层**认不出**发生了什么 ⇒ 按本仓那条最硬的规矩：
+// **认不出的一律中止，不折进任何一类缺口。**
+//
+// 🔴 把它折成 `GapStoreUnverified` 看起来更温和，而那是有害的：
+// 调用方会拿到一个**看起来可以照着处置的答案**，而那个处置不存在
+// （「再走一遍」对一个不给结论的实现没有用）。
+// 📎 与 `classifyTradingDay` 那条兜底同一个处置、同一个理由。
+//
+// ⚠️ 而「这一遍跑不起来」（`VerifyCoverage` 的第二个返回值）**不是违约**：
+// 那时每一段落到「本次没走查过」—— **而那句话是真的**，所以它照旧报成缺口。
+// ⇒ 下面第二格钉的就是这个**分岔**：少了它，一个把两者都当成中止的实现也能让第一格绿。
+
+// guard: VerifyCoverage 漏掉一段 ⇒ 中止；而「跑不起来」不是违约，照旧报成缺口。
+func TestStoreBreachAbortsWhileUnrunnableDoesNot(t *testing.T) {
+	sp := Span{From: 20200805, To: 20200806, Bars: 2, Days: 2}
+
+	t.Run("违约 漏掉一段_中止", func(t *testing.T) {
+		st := &fakeStore{coverage: []Span{sp}, verifySkipAll: true}
+		_, _, breach := (&Syncer{store: st}).verifyAll(&SyncReport{})
+		if breach == nil {
+			t.Fatal("漏掉一段而它没有中止 ⇒ 那一段会被折成一类缺口，" +
+				"而调用方会拿到一个照着做不通的处置")
+		}
+		if !strings.Contains(breach.Error(), "没有为") {
+			t.Errorf("它中止了，而报文没点名是哪一段没给结论：%v", breach)
+		}
+	})
+
+	t.Run("跑不起来 不是违约_照旧报成缺口", func(t *testing.T) {
+		st := &fakeStore{coverage: []Span{sp}, verifyAllErr: errors.New("读盘失败")}
+		rep := &SyncReport{}
+		ok, failed, breach := (&Syncer{store: st}).verifyAll(rep)
+		if breach != nil {
+			t.Fatalf("「跑不起来」被当成了违约 ⇒ 中止：%v\n"+
+				"  ⇒ 那时每一段落到「本次没走查过」，而那句话是真的，不该中止。", breach)
+		}
+		if len(ok) != 0 || len(failed) != 0 {
+			t.Errorf("跑不起来时它仍然填了结论：ok=%v failed=%v", ok, failed)
+		}
+		if len(rep.TruncatedTails) == 0 {
+			t.Error("跑不起来而 TruncatedTails 里没有痕迹 ⇒ 调用方分不出它和「Store 违约」")
+		}
+	})
 }

@@ -125,9 +125,11 @@ type fakeStore struct {
 	verifyErr error
 	// verifyAllErr 让测试把「这一遍走查跑不起来」注进来（VerifyCoverage 的第二个返回值）。
 	verifyAllErr error
-	discarded    int
-	verified     []Span
-	hasBarsSet   map[TradingDay]bool
+	// verifySkipAll 让测试模拟一个【违约】的实现：一段结论都不给。
+	verifySkipAll bool
+	discarded     int
+	verified      []Span
+	hasBarsSet    map[TradingDay]bool
 
 	// appendErr / commitErr 让测试把两条【落盘侧】的失败注进来。
 	// 零值是 nil ⇒ 现有用例一个字都不用改。
@@ -170,6 +172,9 @@ func (s *fakeStore) AppendBars(b []Bar) error {
 func (s *fakeStore) VerifyCoverage() (map[Span]error, error) {
 	if s.verifyAllErr != nil {
 		return nil, s.verifyAllErr
+	}
+	if s.verifySkipAll {
+		return map[Span]error{}, nil
 	}
 	out := make(map[Span]error, len(s.coverage))
 	for _, sp := range s.coverage {
