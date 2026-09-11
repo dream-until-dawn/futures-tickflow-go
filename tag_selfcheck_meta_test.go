@@ -217,3 +217,133 @@ func TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta(t *testing.T) {
 			"并在 release notes 写一条勘误。", strings.Join(kinds, " "))
 	}
 }
+
+// —— (l) 的姊妹格：同一节【自查】的方法一 ——
+//
+// `v0.4.1` 的 tag 注解里，自查方法一逐字是：
+//
+//	一、对 `store.Coverage()` 的每一段跑 `store.Verify(span)`：
+//	    坏掉的段返回「记录的交易日不是非降序」。**这一条在删过文件之后仍然可读。**
+//
+// 🔴 **tag 注解改不了，而这一句逐字点名了一个 API 和一句报文。**
+// ⇒ 钉的不是「存在一个叫 `Verify` 的方法」（那只钉住名字），
+// 是**照着那句话做一遍，看它今天还走得通**：签名对得上 · 健康库全过 · 坏库给出那句话。
+//
+// ⚠️ 红了有两个方向：
+//
+//	红法一  构造被改坏（坏记录没留住 / coverage 不是一段）⇒ 前提自检先说话
+//	红法二  **`Verify(span)` 该退休了**（签名变了 / 报文换了 / 方法没了）
+//	        ⇒ 处置是**改这条测试 ＋ 在 release notes 写一条勘误**（tag 改不了，只能靠勘误），
+//	          **不是把断言删掉**
+//
+// 📎 一份不可修的注解，值得**每一句**都有钉子 —— (l) 钉那一节的第二句，本条钉第一句。
+
+// guard: v0.4.1 注解自查方法一（对每一段跑 Verify，坏段报「不是非降序」）今天照着做得通。
+func TestTagV041SelfCheckOneStillWorks(t *testing.T) {
+	const want = "坏掉的段返回「记录的交易日不是非降序」"
+	src, err := os.ReadFile(filepath.Join("docs", "release", "v0.4.1.md"))
+	if err != nil {
+		t.Fatalf("读发布注解失败：%v", err)
+	}
+	// ⛔ 前提自检：这条测试钉的是【那一句】，所以先证明那一句还在它该在的地方。
+	// 少了它，注解改了而测试照旧绿 —— 那时它钉的是一句已经不存在的话。
+	if !strings.Contains(string(src), want) {
+		t.Fatalf("发布注解里找不到那句自查原话：%q\n"+
+			"  ⇒ 若是注解被改了：tag 里那份改不了，这条测试钉的是 tag 里那一句。", want)
+	}
+
+	const (
+		d1 = tickflow.TradingDay(20200805)
+		d2 = tickflow.TradingDay(20200806)
+	)
+	cal, err := embedded.New([]tickflow.TradingDay{d1, d2})
+	if err != nil {
+		t.Fatalf("造日历失败：%v", err)
+	}
+	key := tickflow.ProductKey{Exchange: "SHFE", Product: "rb"}
+	dir := t.TempDir()
+	s, _, err := segfile.Open(dir, tickflow.Daily)
+	if err != nil {
+		t.Fatalf("开库失败：%v", err)
+	}
+	mk := func(d tickflow.TradingDay, ts int64) tickflow.Bar {
+		return tickflow.Bar{Ts: ts, TsEnd: ts + 1, TradingDay: d,
+			Open: 1, High: 1, Low: 1, Close: 1, Volume: 1}
+	}
+	if err := s.AppendBars([]tickflow.Bar{mk(d1, 1), mk(d2, 2)}); err != nil {
+		t.Fatalf("落盘失败：%v", err)
+	}
+	if err := s.CommitSpan(cal, key,
+		tickflow.Span{From: d1, To: d2, Bars: 2, Days: 2}, tickflow.OutcomeComplete); err != nil {
+		t.Fatalf("登记失败：%v", err)
+	}
+
+	t.Run("健康库 照着做一遍_每一段都过", func(t *testing.T) {
+		cov := s.Coverage()
+		if len(cov) != 1 {
+			t.Fatalf("前提没成立：期望 1 段，实得 %v ⇒ 读数作废", cov)
+		}
+		for _, sp := range cov {
+			if err := s.Verify(sp); err != nil {
+				t.Fatalf("健康库上 Verify(%v) 就报错了：%v\n"+
+					"  ⇒ 自查方法一在一个没问题的库上给出假警报，那句注解就不成立了。", sp, err)
+			}
+		}
+	})
+
+	if err := s.Close(); err != nil {
+		t.Fatalf("关库失败：%v", err)
+	}
+	// 造一条【倒序】记录：写入口拒收，只能绕过它直接写 .dat。
+	var dat string
+	if werr := filepath.Walk(dir, func(p string, fi os.FileInfo, e error) error {
+		if e == nil && !fi.IsDir() && strings.HasSuffix(p, ".dat") {
+			dat = p
+		}
+		return e
+	}); werr != nil {
+		t.Fatalf("走一遍库目录失败：%v", werr)
+	}
+	rec := segfile.EncodeBar(mk(d1, 3)) // 交易日回到 d1，而盘上最后一条是 d2
+	f, err := os.OpenFile(dat, os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		t.Fatalf("打开 .dat 失败：%v", err)
+	}
+	if _, err := f.Write(rec[:]); err != nil {
+		f.Close()
+		t.Fatalf("写倒序记录失败：%v", err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatalf("关 .dat 失败：%v", err)
+	}
+
+	t.Run("坏库 报的必须是注解点名的那句话", func(t *testing.T) {
+		s2, truncated, err := segfile.Open(dir, tickflow.Daily)
+		if err != nil {
+			t.Fatalf("重开失败：%v", err)
+		}
+		t.Cleanup(func() {
+			if cerr := s2.Close(); cerr != nil {
+				t.Errorf("关库失败：%v", cerr)
+			}
+		})
+		// ⛔ 前提自检：那条倒序记录留住了（OpenDat 会砍半截记录）。
+		if truncated != 0 {
+			t.Fatalf("前提没成立：重开砍掉了 %d 字节 ⇒ 坏记录没留住，读数作废", truncated)
+		}
+		cov := s2.Coverage()
+		if len(cov) != 1 {
+			t.Fatalf("前提没成立：期望 1 段，实得 %v ⇒ 读数作废", cov)
+		}
+		err = s2.Verify(cov[0])
+		if err == nil {
+			t.Fatalf("坏库上 Verify 竟然通过了 ⇒ 自查方法一查不出它该查的东西")
+		}
+		if !strings.Contains(err.Error(), "记录的交易日不是非降序") {
+			t.Errorf("坏段报的不是注解点名的那句话。\n"+
+				"  注解逐字：%s\n  实得：%v\n"+
+				"  ⇒ 这是红法二：报文换了。tag 改不了 ——\n"+
+				"     先在 release notes 写一条勘误，再改这条测试，别把断言删掉。", want, err)
+		}
+	})
+}
