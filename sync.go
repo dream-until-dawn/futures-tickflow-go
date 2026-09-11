@@ -441,7 +441,7 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		//
 		// ⇒ 判据：**一条早退跳过了一个【已经答得出这件事】的函数时，
 		// 该补的不是一个事实，是那次调用。** 手填会让同一个判断有两个来源。
-		if err := s.planGaps(k, req.From, to, nil, &rep); err != nil {
+		if err := s.planGaps(k, req.From, to, nil, nil, &rep); err != nil {
 			return rep, err
 		}
 		rep.Halt = HaltOutsideCoverage
@@ -470,7 +470,7 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		// ⚠️ 引原话而不是转述，是本仓刚立的那条：**引用「某人说过什么」只有那个人能核**
 		// ⇒ 这类归属要带原话，否则它是一条永远不会被验的断言，而它看起来像有出处。
 		// ⚠️ 而他裁的是「**该**真」，不是「今天已经对」—— 今天这一步（具名化）做完，它才真。
-		if err := s.planGaps(k, req.From, to, nil, &rep); err != nil {
+		if err := s.planGaps(k, req.From, to, nil, nil, &rep); err != nil {
 			return rep, err
 		}
 		rep.Halt = HaltNoTradingDays
@@ -510,8 +510,8 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 
 	// ⛔ SYN-6 / 缺口 / 夜盘**在 ferr 非空时也要做** ——
 	// 一次中止之后的库比跑完之后的库更需要被走查，而不是更不需要。
-	verified := s.verifyTouched(touched, &rep)
-	if gerr := s.planGaps(k, req.From, to, verified, &rep); gerr != nil && ferr == nil {
+	verified, failed := s.verifyTouched(touched, &rep)
+	if gerr := s.planGaps(k, req.From, to, verified, failed, &rep); gerr != nil && ferr == nil {
 		ferr = gerr
 	}
 	s.scanNight(k, syncedDays, &rep)
@@ -598,28 +598,47 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 //
 // 返回「走查过且没问题」的那些段，给缺口分类当输入（B3：**没走查过的时候，
 // 那两个计数什么也不意味着**）。
-func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) map[Span]bool {
+// ⛔ 第二个返回值是 2026-09-11 加的，而它补的是一处**丢信息**：
+// 上一版把走查失败的**真因**转成一句字符串塞进 `TruncatedTails` 就完了 ——
+// 于是那一段在缺口分类里与「本次没碰它」**长得一模一样**，
+// 而调用方拿不到「为什么没通过」。
+// 🔴 本仓那条：**「够不到」是一句带地址的话** —— 分得开的信息已经在手里，我们把它丢了。
+// ⇒ 现在它原样回去，由 `planGaps` 包进 `ErrSpanVerifyFailed` 交给分类。
+// ⚠️ 而 `TruncatedTails` 那一条**保留**：它是给人扫一眼的痕迹，与类型化的那条不是一回事。
+func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, map[Span]error) {
 	okSpans := map[Span]bool{}
+	failedSpans := map[Span]error{}
 	for _, sp := range touched {
 		if err := s.store.Verify(sp); err != nil {
 			rep.TruncatedTails = append(rep.TruncatedTails,
 				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, err))
+			failedSpans[sp] = err
 			continue
 		}
 		okSpans[sp] = true
 	}
-	return okSpans
+	return okSpans, failedSpans
 }
 
-// planGaps 把 coverage 翻成六类缺口。
+// planGaps 把 coverage 翻成七类缺口。
 //
 // ⚠️ 没被本次走查过的段一律带 ErrSpanUnverified —— 那是 B3 的直接落法：
 // **「没走查过」不许悄悄变成一个肯定的「确认没有」。**
-func (s *Syncer) planGaps(k ProductKey, from, to TradingDay, verified map[Span]bool, rep *SyncReport) error {
+func (s *Syncer) planGaps(k ProductKey, from, to TradingDay,
+	verified map[Span]bool, failed map[Span]error, rep *SyncReport) error {
 	var cov []SpanStatus
 	for _, sp := range s.store.Coverage() {
 		st := SpanStatus{Span: sp}
-		if !verified[sp] {
+		switch {
+		case failed[sp] != nil:
+			// ⛔ **顺序要紧**：走查失败的段同时也满足 `!verified[sp]`，
+			// 而那两句话不是一回事 ——「走查过而没通过」比「本次没走查」**知道得更多**。
+			// ⇒ 先判信息多的那一支。
+			//
+			// ⚠️ 双 `%w`：**哨兵与真因都要能被 errors.Is 取到** ——
+			// 只包哨兵，调用方回不到现场；只包真因，调用方分不出「这一类」。
+			st.Err = fmt.Errorf("%w: %w", ErrSpanVerifyFailed, failed[sp])
+		case !verified[sp]:
 			st.Err = ErrSpanUnverified
 		}
 		cov = append(cov, st)

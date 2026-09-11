@@ -932,6 +932,8 @@ var guardNames = []string{
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
+	`TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight`,
+	`TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage`,
 }
 
 // funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。

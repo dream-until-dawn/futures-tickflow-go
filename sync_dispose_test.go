@@ -243,14 +243,24 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// ⛔ **这一格 2026-09-11 改过期望值，而改的方向是【修好了】，不是【弄坏了】** ——
+	// 写清楚，因为本仓那条：一条钉住行为的测试，红有两个方向，报文要说得出是哪一个。
+	//
+	//	改之前  走查失败 ⇒ GapStoreUnverified   ← 它与「本次没走查」**共用一个类别**
+	//	改之后  走查失败 ⇒ GapStoreVerifyFailed ← 而真因包在 Err 里，errors.Is 取得到
+	//
+	// 🔴 旧的那个期望值**钉住的正是那次混装**：它要求「走查失败」也报成「未走查」，
+	// 而那两件事的处置分岔（前者重跑无意义，后者不表示这一段有问题）。
+	// ⇒ 所以这一次红是产品变对了，处置是改这里的期望，不是把类别改回去。
 	found := false
 	for _, g := range rep2.Gaps {
-		if g.Kind == GapStoreUnverified {
+		if g.Kind == GapStoreVerifyFailed {
 			found = true
 		}
 	}
 	if !found {
-		t.Error("走查全失败，却一段【答不了·未走查】都没有 —— " +
-			"那说明 Gaps 的类别根本没跟着走查结果走")
+		t.Errorf("走查全失败，却一段【答不了·走查没通过】都没有 —— "+
+			"那说明 Gaps 的类别根本没跟着走查结果走。\n"+
+			"  实得：%v", rep2.Gaps)
 	}
 }

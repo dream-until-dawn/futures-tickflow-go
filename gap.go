@@ -13,7 +13,7 @@ import (
 // ⇒ 这是它能排在 `Store` 接口【之前】的全部理由 —— 它的五个输入
 // （`Span` / 两个存储哨兵 / 两个日历哨兵）都住在本包，`Store` 接口定型推不翻它。
 
-// GapKind 是缺口的六类。**零值不合法** —— 忘了填的调用方会当场被拒，
+// GapKind 是缺口的七类。**零值不合法** —— 忘了填的调用方会当场被拒，
 // 而不是拿到六类里的某一个（同 segfile.Outcome 那条理由）。
 //
 // ⚠️ 而零值在【本包内部】另有一个用处：`classifyTradingDay` 用它表示
@@ -58,11 +58,28 @@ const (
 	// 连跑三遍，`Gaps` 与 `coverage` 三次逐字相同，每次都报错、`Complete()` 一直是 false。
 	// 🔴 ⇒ **照这句话做，得到的是一个稳定、静默、永远卡住的状态** ——
 	// 而「走一遍就行」读起来像它会好。
-	// ✅ 判别符不花钱：**走一遍，看这一条缺口动没动** ——
-	// 没动就是第二种来历，去读 `Verify` 的报文（它会说「记录的交易日落在本段之外」，
-	// 而那句话说的是孤儿记录，不是文件坏了），**别再重跑**。
-	// 📎 正解是把这一类拆成两类（处置不同 ⇒ 不该共用一个名字），而那是另一片；
-	//   这一步只把话说准 —— **一个说错了的处置，比没有处置贵。**
+	// ⛔ **上一版这里写的判别符是「走一遍，看这一条缺口动没动」，而它是【循环】的**（实测）：
+	// 今天第二次同步会在**落盘那一步**就中止，**根本走不到走查** ⇒ 缺口逐字不变。
+	// **「走一遍」得到的是同一句话，不是新信息。**
+	//
+	// ✅ **判别符改成「多印一列」，而不是「多做一次」**：对这一段跑一次 `store.Verify(span)`。
+	//
+	//	绿 ⇒ 数据没问题，这一类说的只是「本次没走查」
+	//	     （实测：一段刚同步干净、`Verify` 返回 nil 的段，
+	//	      在下一次【失败的】同步里照样被报成这一类）
+	//	红 ⇒ 那是另一回事，真因在报文里 —— 而那一类现在有自己的名字：`GapStoreVerifyFailed`
+	//
+	// ⚠️ **而那个诊断动作有两条副作用，写在这儿因为「跑一下看看」天然假设它是只读的**：
+	//
+	//	一、**它不是只读的**：走查通过之后这一段在本进程内变成「已走查」，
+	//	    于是 `HasBars` / `DaysWithBars` 对它从【拒绝回答】变成【回答】（实测）。
+	//	二、**它扫整个 `.dat`**，不只是这一段 —— 代价随**整个库**增长。
+	//
+	// ⛔ **而 span 必须是 `store.Coverage()` 返回的那个值**：`verified` 按整个 `Span`
+	// 结构体做键（`Bars` / `Days` 也参与相等），而报文只印 `[From, To]`
+	// ⇒ 自己拼一个 `From`/`To` 相同而 `Bars` 不同的，`DaysWithBars` 会报
+	// **「这一段还没走查过」—— 与真的没验过一模一样**（实测）。
+	// ⇒ 所以判别要**先看 `Verify` 说了什么**（它分得清「bars 对不上」与「记录落在本段之外」）。
 	//
 	// 最危险的错认：当成「拉过确认没有」⇒ 把「没验过」升级成一个肯定的答案。
 	GapStoreUnverified
@@ -72,6 +89,26 @@ const (
 	//
 	// 最危险的错认：与上一类合并 ⇒「走一遍就好」被用在一个需要人拍板的格子上。
 	GapStoreLegacy
+
+	// —— 下面这一条是后加的，**加在末尾** ——
+	//
+	// ⛔ 理由与 `HaltReason` 那次同：**可见且有界的代价，优先于静默且无界的代价。**
+	// 插在中间读起来更像一族（`GapStore*` 三条挨着），**而既有取值会静静地 +1** ——
+	// 而那种依赖不会在编译期出声。⇒ 分组这件事写在注释里，一分钱数值代价都不用付。
+	// （落地时让编译器印过改前改后：1..6 全部不变，新的这条是 7。）
+
+	// GapStoreVerifyFailed 存储答不了：这一段**走查过了，而它没通过**（ErrSpanVerifyFailed）。
+	//
+	// ⚠️ 它与 `GapStoreUnverified` 分开，判据是**处置分不分岔**，不是「看起来像不像」：
+	//
+	//	GapStoreUnverified   本次没走查过这一段    ⇒ 它**不表示这一段有问题**
+	//	GapStoreVerifyFailed 走查过了而没通过      ⇒ **别再重跑**，去读包在里面的真因
+	//
+	// 🔴 而名字说的是**现状**，不是「应该」：它说「走查过了而没通过」，不说「这一段坏了」——
+	// **坏没坏要由那个真因回答，而真因就包在 `Err` 里**（`errors.Is` 取得到）。
+	//
+	// 最危险的错认：与上一类合并 ⇒ 「走一遍就好」被用在一个**重跑毫无意义**的格子上。
+	GapStoreVerifyFailed
 )
 
 func (k GapKind) String() string {
@@ -88,6 +125,8 @@ func (k GapKind) String() string {
 		return "存储答不了·未走查"
 	case GapStoreLegacy:
 		return "存储答不了·旧格式"
+	case GapStoreVerifyFailed:
+		return "存储答不了·走查没通过"
 	}
 	return fmt.Sprintf("GapKind(%d)", int(k))
 }
@@ -115,13 +154,15 @@ func (g Gap) String() string {
 type SpanStatus struct {
 	Span Span
 
-	// Err 是这一段的可答性：nil / ErrSpanUnverified / ErrLegacyMeta。
+	// Err 是这一段的可答性：nil / ErrSpanUnverified / ErrSpanVerifyFailed / ErrLegacyMeta。
+	//
+	// ⚠️ **这四个之外的一律走下面那条兜底** —— 而那一句是【白名单】，别把它改成黑名单。
 	//
 	// ⚠️ **别的错误值一律当成「坏了」** —— 中止，不折进缺口。见 PlanGaps 的兜底。
 	Err error
 }
 
-// PlanGaps 把请求区间按【六类缺口】分好。签名与用法见 docs/design.md §七之九。
+// PlanGaps 把请求区间按【七类缺口】分好。签名与用法见 docs/design.md §七之九。
 //
 // 返回的是请求区间在【自然日】上的分段：**不重叠、有序、相邻且同类必已合并**。
 // 有数据的那些天不出现在结果里（它们不是缺口），所以结果是一个
@@ -259,6 +300,11 @@ func classifyTradingDay(d TradingDay, cov []SpanStatus, daysOf func(Span) (map[T
 			return GapStoreUnverified, nil
 		case errors.Is(s.Err, ErrLegacyMeta):
 			return GapStoreLegacy, nil
+		case errors.Is(s.Err, ErrSpanVerifyFailed):
+			// ⚠️ 用 errors.Is 而不是 ==：真因是**包在里面**的
+			// （`fmt.Errorf("%w: %w", ErrSpanVerifyFailed, 真因)`），
+			// 而调用方还可能在外面再包一层。⇒ 这一支要穿透。
+			return GapStoreVerifyFailed, nil
 		case s.Err != nil:
 			// ⛔ 兜底：这一维【不封闭】。「坏了」不是「答不了」——
 			// 认不出的错误一律中止，不折进任何一类缺口。
