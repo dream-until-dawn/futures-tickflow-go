@@ -14,7 +14,13 @@ tag 注解是本仓这套门禁里**唯一一件既不可改、又不在任何�
 ⇒ 这支脚本就是那一步，而它**只做裁剪，不做别的**：
 
     python tools/audit/tag_body.py docs/release/v0.4.1.md > body.txt
-    git tag -a v0.4.1 -F body.txt <SHA>
+    git tag -a v0.4.1 --cleanup=verbatim -F body.txt <SHA>
+
+⛔ `--cleanup=verbatim` 不是可选的：`git tag -F` 默认 `--cleanup=whitespace`，
+**会折叠连续空行** ⇒ 打进去的字节与这支脚本裁出来的**不是同一串**（实测 2026-09-11，
+这条链第一次真用就撞上）。
+🔴 ⇒ 这支脚本保住了字节，**而下一步会把它们改掉** ——
+两步里只要有一步会翻译，整条链就断了，**而断了的样子是「看起来都成功了」**。
 
 ## 判据
 
