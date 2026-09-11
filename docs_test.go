@@ -876,6 +876,7 @@ func TestCarrierCensus(t *testing.T) {
 // 已删。**一个「唯一」是最容易过期的措辞——它把「我现在只想到一个」写成了「只有一个」。**
 var guardNames = []string{
 	`TestAppendBarsRejectsOutOfOrder`,
+	`TestBackfillAfterVerifyDoesNotPoisonTheStore`,
 	`TestCarrierCensus`,
 	`TestCarriersHaveNoHTMLComments`,
 	`TestContentLocatorCheckerItself`,

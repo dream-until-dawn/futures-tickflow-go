@@ -81,6 +81,20 @@ const (
 	OutcomeFailed = tickflow.OutcomeFailed
 )
 
+// ErrOutOfOrder 这一批的交易日与盘上已有的记录合不成非降序。
+//
+// ⛔ **它是本包里【唯一】导出的错误哨兵，理由写清楚，别让它读起来像随手导出的。**
+//
+// 本包别的哨兵都只回答「这个文件怎么了」——那是**本包内部**的事，
+// 而调用方对它们唯一能做的事就是报出去。
+// 🔴 而这一条不同：它回答的是「**你刚才那次调用做错了什么**」，
+// 且它有一个**调用方够得着的处置**（换一个不倒退的区间、或先重建）。
+// ⇒ 一个调用方要分辨得出它，就得 `errors.Is` 得到它。
+//
+// ⚠️ 而它导出的**代价**一并写下：从今天起它是契约的一部分，改文案可以，
+// **换值会打断下游的 `errors.Is`** —— 而那是一次静默的打断。
+var ErrOutOfOrder = errors.New("segfile: 交易日倒退了——这一批与盘上已有的记录合不成非降序")
+
 var (
 	errNotDurable     = errors.New("segfile: coverage 想扩到 .dat 还没有的数据上")
 	errUnknownSibling = errors.New("segfile: 这个目录里有本版读不懂的旧库——不在它旁边新建")
@@ -90,19 +104,6 @@ var (
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
-
-	// errOutOfOrder 这一批里（或它与盘上最后一条之间）交易日倒退了。
-	//
-	// ⛔ **它与 `Verify` 那句「记录的交易日不是非降序」说的是同一件事，
-	// 而它们【指向不同的东西】** —— 这正是本文件已经为零值 TradingDay
-	// 论证过一次的那条，而顺序这一格当时没有一并做：
-	//
-	//	走查时报   「这个文件里第 i 条比上一条早」   —— 指向**文件**（读起来像损坏）
-	//	写入时报   「你给我的第 i 条比盘上最后一条早」 —— 指向**调用方**，也就是真因
-	//
-	// 🔴 而顺序这一格的距离比零值那一格**更远**：走查发生在**下一次 Sync**，
-	// 而那时写它的那次调用早已结束 —— 报文里没有任何东西指得回去。
-	errOutOfOrder = errors.New("segfile: 交易日倒退了——这一批与盘上已有的记录合不成非降序")
 )
 
 // ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
@@ -258,12 +259,12 @@ func (s *Store) AppendBars(bars []tickflow.Bar) error {
 		return fmt.Errorf("%w: 这一批第 0 条是 %s，而盘上最后一条是 %s——"+
 			"这样的文件过不了走查，而走查要到【下一次同步】才跑，"+
 			"那时报文只会说「文件里第 i 条比上一条早」，指不回写它的这次调用",
-			errOutOfOrder, bars[0].TradingDay, last)
+			ErrOutOfOrder, bars[0].TradingDay, last)
 	}
 	for i := 1; i < len(bars); i++ {
 		if bars[i].TradingDay < bars[i-1].TradingDay {
 			return fmt.Errorf("%w: 这一批内部第 %d 条是 %s，而第 %d 条是 %s",
-				errOutOfOrder, i, bars[i].TradingDay, i-1, bars[i-1].TradingDay)
+				ErrOutOfOrder, i, bars[i].TradingDay, i-1, bars[i-1].TradingDay)
 		}
 	}
 

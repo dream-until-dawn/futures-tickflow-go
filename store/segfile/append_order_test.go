@@ -64,8 +64,8 @@ func TestAppendBarsRejectsOutOfOrder(t *testing.T) {
 		}
 		before := recordCount(t, s)
 		err = s.AppendBars([]tickflow.Bar{bar(20200806, 2)})
-		if !errors.Is(err, errOutOfOrder) {
-			t.Fatalf("倒退的那一批给的是 %v，而该给 errOutOfOrder\n"+
+		if !errors.Is(err, ErrOutOfOrder) {
+			t.Fatalf("倒退的那一批给的是 %v，而该给 ErrOutOfOrder\n"+
 				"  ⇒ 不拦的话它要到【下一次走查】才红，而那时报文只会指向文件，指不回写它的那次调用", err)
 		}
 		// ⛔ **拒绝必须发生在【写之前】** —— 而这一句是直接量的，不是靠走查推的。
@@ -85,8 +85,8 @@ func TestAppendBarsRejectsOutOfOrder(t *testing.T) {
 		t.Cleanup(func() { _ = s.Close() })
 
 		err = s.AppendBars([]tickflow.Bar{bar(20200807, 3), bar(20200805, 1)})
-		if !errors.Is(err, errOutOfOrder) {
-			t.Fatalf("批内倒退给的是 %v，而该给 errOutOfOrder", err)
+		if !errors.Is(err, ErrOutOfOrder) {
+			t.Fatalf("批内倒退给的是 %v，而该给 ErrOutOfOrder", err)
 		}
 	})
 
@@ -147,14 +147,14 @@ func TestSortednessHoldsAfterVerify(t *testing.T) {
 	}
 
 	// ⛔ 窗口的入口：走查过了，`verified` 为 true。此刻再写一条倒退的。
-	if err := s.AppendBars([]tickflow.Bar{bar(20200806, 2)}); !errors.Is(err, errOutOfOrder) {
+	if err := s.AppendBars([]tickflow.Bar{bar(20200806, 2)}); !errors.Is(err, ErrOutOfOrder) {
 		t.Fatalf("走查之后仍然写得进倒退的记录（err=%v）——那个窗口还开着。\n"+
 			"  ⇒ 它今天不伤人（线性扫描对乱序免疫），而任何利用有序性的读法\n"+
 			"     在这个窗口里会【静默】给出错的答案。", err)
 	}
 
 	// ⛔ 承重的那一句：**重新走查必须仍然绿**。
-	// 🔴 少了它，一个「把 AppendBars 改成永远返回 errOutOfOrder」的实现也能过上面那条 ——
+	// 🔴 少了它，一个「把 AppendBars 改成永远返回 ErrOutOfOrder」的实现也能过上面那条 ——
 	// 而那种实现让整个库不可写。**拒绝要拒对，不是拒得多。**
 	if err := s.Verify(sp); err != nil {
 		t.Fatalf("那条倒退的记录被拒之后，重新走查却红了：%v\n"+
