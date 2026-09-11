@@ -90,6 +90,18 @@ var (
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
+
+	// errOutOfOrder 这一批里（或它与盘上最后一条之间）交易日倒退了。
+	//
+	// ⛔ **v0.4.1 补丁**。它与 `Verify` 那句「记录的交易日不是非降序」说的是同一件事，
+	// 而它们**指向不同的东西** —— 这正是本文件已经为零值 TradingDay 论证过一次的那条：
+	//
+	//	走查时报   「这个文件里第 i 条比上一条早」   —— 指向**文件**（读起来像损坏）
+	//	写入时报   「你给我的第 i 条比盘上最后一条早」 —— 指向**调用方**，也就是真因
+	//
+	// 🔴 而顺序这一格的距离比零值那一格**更远**：走查发生在**下一次 Sync**，
+	// 而那时写它的那次调用早已结束 —— 报文里没有任何东西指得回去。
+	errOutOfOrder = errors.New("segfile: 交易日倒退了——这一批与盘上已有的记录合不成非降序")
 )
 
 // ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
@@ -219,6 +231,36 @@ func (s *Store) AppendBars(bars []tickflow.Bar) error {
 				"而那条信息指不到真因", errZeroTradingDay, i, b.Ts)
 		}
 	}
+	// ⛔ **v0.4.1 补丁：顺序也拦在写入口**，理由与上面那一格【同一条】，而距离更远。
+	//
+	// 它修的是一个 v0.4.0 里**今天就在**的数据损坏（两边各自独立复现）：
+	//
+	//	把【同一条 Sync 再跑一遍】⇒ 同样的记录被**重复追加**（0810 接在 0811 之后 ⇒ 倒退）
+	//	`CommitSpan` 拒了重叠并报错、`rep.Bars=0` —— **而记录已经在盘上**
+	//	⇒ 那一段从此**走查不过**，而产品内**没有任何恢复路**（只能手工删文件）
+	//	⇒ 更糟：文档写着「走一遍就行」，**照做每次都再灌一批**（176 → 352 → 528 字节，实测）
+	//
+	// ⚠️ 它禁掉的是**按追加做的倒填**，而那样的文件**本来就过不了 `Verify`**
+	// ⇒ 这一格搬的是**报错的位置**，不是规矩本身。
+	//
+	// ⚠️ 而它买到的那条不变量要写准：**不是**「文件一直有序」（一份本来就乱的 `.dat`
+	// 追加一条 ≥ 末条的记录仍会被收下 —— 本检查只比**末条**），
+	// 而是 **「`verified` 的段，从走查那一刻起一直有序」**。
+	if last, ok, err := s.lastTradingDay(); err != nil {
+		return err
+	} else if ok && bars[0].TradingDay < last {
+		return fmt.Errorf("%w: 这一批第 0 条是 %s，而盘上最后一条是 %s——"+
+			"这样的文件过不了走查，而走查要到【下一次同步】才跑，"+
+			"那时报文只会说「文件里第 i 条比上一条早」，指不回写它的这次调用",
+			errOutOfOrder, bars[0].TradingDay, last)
+	}
+	for i := 1; i < len(bars); i++ {
+		if bars[i].TradingDay < bars[i-1].TradingDay {
+			return fmt.Errorf("%w: 这一批内部第 %d 条是 %s，而第 %d 条是 %s",
+				errOutOfOrder, i, bars[i].TradingDay, i-1, bars[i-1].TradingDay)
+		}
+	}
+
 	buf := make([]byte, 0, len(bars)*RecordSize)
 	for _, b := range bars {
 		r := EncodeBar(b)
@@ -465,6 +507,35 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 		return s.dayHasRecords(day)
 	}
 	return false, nil // 不在任何 coverage 里 ⇒ 没拉过，这不是「确认没有」
+}
+
+// lastTradingDay 读盘上**最后一条**记录的交易日。ok 为 false 表示文件是空的。
+//
+// ⚠️ 它读盘而不缓存一个字段，理由是本文件那条：**多背的那一份迟早会和真相漂开**。
+// 代价可核：**一次 `ReadAt`**，而它旁边就是一次 `Write` ＋ 一次 `Sync`。
+//
+// ⚠️ **「size 是 `RecordSize` 的整数倍」这个前提有出处，不是默认**（三条，逐条可查）：
+// ① `OpenDat` 对残尾是**物理截断**（`f.Truncate(n * RecordSize)`）⇒ 开机那一刻就是整数倍
+// ② `.dat` 全仓**只有一处写入点**，而它写的 `buf` 长度本身就是 `len(bars)*RecordSize`
+// ③ 那一处的错误**被检查了**，而 Go 的 `Write` 在短写时返回 error ⇒ 短写不会被当成成功
+func (s *Store) lastTradingDay() (tickflow.TradingDay, bool, error) {
+	st, err := s.dat.Stat()
+	if err != nil {
+		return 0, false, err
+	}
+	n := CountRecords(st.Size())
+	if n == 0 {
+		return 0, false, nil
+	}
+	buf := make([]byte, RecordSize)
+	if _, err := s.dat.ReadAt(buf, (n-1)*RecordSize); err != nil {
+		return 0, false, err
+	}
+	b, err := DecodeBar(buf)
+	if err != nil {
+		return 0, false, err
+	}
+	return b.TradingDay, true, nil
 }
 
 // dayHasRecords 走一遍 `.dat`，看这一天有没有记录。
