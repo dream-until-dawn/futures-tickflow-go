@@ -908,6 +908,7 @@ var guardNames = []string{
 	`TestPlanGapsReadsNothingWhenDayOutsideEverySpan`,
 	`TestPlanGapsReadsNothingWhenNoCoverage`,
 	`TestRefdataExpiryConditionNotYetDue`,
+	`TestResyncTwiceDoesNotPoisonTheStore`,
 	`TestReviewReadingsRefusesStrayFlags`,
 	`TestRootErrorSentinelsAreDisposed`,
 	`TestScriptsWrapBothStreams`,
