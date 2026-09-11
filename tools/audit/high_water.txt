@@ -26,7 +26,7 @@
 rules 333
 anchors 61
 census 5
-guards 57
+guards 59
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -419,3 +419,4 @@ guards 57
 # 来历 2026-09-11 guards 55 自 54 自动：重造时表长大（54 -> 55）；本次新增：TestSpansTouchedByCoversEveryIntersectingSpan
 # 来历 2026-09-11 guards 56 自 55 自动：重造时表长大（55 -> 56）；本次新增：TestTagV041SelfCheckOneStillWorks
 # 来历 2026-09-11 guards 57 自 56 自动：重造时表长大（56 -> 57）；本次新增：TestVerifyCoverageContract TestVerifyCoverageMatchesVerifyPerSpan TestWholeLibraryErrorIsAttributedToEverySpan；本次移除：TestSpansTouchedByCoversEveryIntersectingSpan TestWholeLibraryErrorIsNotAttributedToUntouchedSpans
+# 来历 2026-09-11 guards 59 自 57 自动：重造时表长大（57 -> 59）；本次新增：TestStoreBreachAbortsWhileUnrunnableDoesNot TestTagV041SelfCheckTwoHasAnErratum
