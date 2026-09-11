@@ -126,6 +126,11 @@ type fakeStore struct {
 	discarded  int
 	verified   []Span
 	hasBarsSet map[TradingDay]bool
+
+	// appendErr / commitErr 让测试把两条【落盘侧】的失败注进来。
+	// 零值是 nil ⇒ 现有用例一个字都不用改。
+	appendErr error
+	commitErr error
 }
 
 func (s *fakeStore) Coverage() []Span { return append([]Span(nil), s.coverage...) }
@@ -147,17 +152,26 @@ func (s *fakeStore) DaysWithBars(sp Span) (map[TradingDay]bool, error) {
 	}
 	return out, nil
 }
-func (s *fakeStore) AppendBars(b []Bar) error { s.appended += len(b); return nil }
-func (s *fakeStore) Verify(sp Span) error     { s.verified = append(s.verified, sp); return s.verifyErr }
-func (s *fakeStore) OpenState() OpenState     { return s.openState }
-func (s *fakeStore) DiscardCoverage() error   { s.discarded++; s.coverage = nil; return nil }
-func (s *fakeStore) Close() error             { return nil }
+func (s *fakeStore) AppendBars(b []Bar) error {
+	if s.appendErr != nil {
+		return s.appendErr
+	}
+	s.appended += len(b)
+	return nil
+}
+func (s *fakeStore) Verify(sp Span) error   { s.verified = append(s.verified, sp); return s.verifyErr }
+func (s *fakeStore) OpenState() OpenState   { return s.openState }
+func (s *fakeStore) DiscardCoverage() error { s.discarded++; s.coverage = nil; return nil }
+func (s *fakeStore) Close() error           { return nil }
 
 // CommitSpan 记下这一段，**并且扩 coverage** ——
 // ⛔ 上一版只记 spans 不动 coverage，于是 `planGaps` 里那张
 // 「哪些段本次走查过」的表**一格都匹配不上**：查表恒为 false，等于死代码，
 // 而所有断言照绿。**一个和真实现【行为不同】的桩，会让被测代码的一整段静默失效。**
 func (s *fakeStore) CommitSpan(_ Calendar, _ ProductKey, sp Span, _ Outcome) error {
+	if s.commitErr != nil {
+		return s.commitErr
+	}
 	s.spans = append(s.spans, sp)
 	s.coverage = append(s.coverage, sp)
 	return nil

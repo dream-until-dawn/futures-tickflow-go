@@ -26,7 +26,7 @@
 rules 314
 anchors 60
 census 5
-guards 46
+guards 47
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -401,3 +401,6 @@ guards 46
 # 来历 2026-09-11 guards 43 自 42 自动：重造时表长大（42 -> 43）；本次新增：TestResyncTwiceDoesNotPoisonTheStore
 # 来历 2026-09-11 guards 44 自 43 自动：重造时表长大（43 -> 44）；本次新增：TestGuardMarkersAreRegistered
 # 来历 2026-09-11 guards 46 自 44 自动：重造时表长大（44 -> 46）；本次新增：TestReleaseNotesTagBodyIsExtractable TestTagRecipesPinVerbatimCleanup
+# 来历 2026-09-11 guards 46 合流 45 两条分支【各自从 44 抬起】：main 侧到 46（(0) 带来的两条发布守卫），v0.5/halt-reasons 侧到 45（TestHaltReasonAgreesWithEveryChannel）。这一行证明 46 是【合流之后】的最大值，不是有人把已经见过的值手工调低；上面两行的顺序不承载任何含义。⚠️ 合流之后这棵树上的守卫实为 47（两侧并集），而抬到 47 由紧随其后的那一次重造留下自己的来历行 —— 合并提交不带生成物。
+# 来历 2026-09-11 guards 45 自 44 自动：重造时表长大（44 -> 45）；本次新增：TestHaltReasonAgreesWithEveryChannel
+# 来历 2026-09-11 guards 47 自 46 手动：合流之后这棵树上的守卫是两侧【并集】＝47，而生成器在这一步会拒绝（它按「新表 − 盘上旧表」求新名字，而 git 已经把两侧的名字都合进 docs_test.go ⇒ 差集为空，于是它判「涨了却没有新名字」并停）。⇒ 这一行是手动抬高的签字：抬的是【合流带来的并集】，不是有人凭空改大。

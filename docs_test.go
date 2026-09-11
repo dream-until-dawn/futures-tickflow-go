@@ -891,6 +891,7 @@ var guardNames = []string{
 	`TestGuardNeverPrintsFileContent`,
 	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
+	`TestHaltReasonAgreesWithEveryChannel`,
 	`TestHasBarsExpiryConditionNotYetDue`,
 	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
