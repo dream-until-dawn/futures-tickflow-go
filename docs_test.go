@@ -920,6 +920,7 @@ var guardNames = []string{
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestTagRecipesPinVerbatimCleanup`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
+	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
 }
 

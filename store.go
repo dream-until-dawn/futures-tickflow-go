@@ -140,6 +140,11 @@ type Store interface {
 var (
 	// ErrSpanUnverified 这一段的 bars/days 还没走查过，所以现在【答不了】
 	// 「这一天是不是确认没有」。补救：走一遍（第二档）。瞬时，自动可解。
+	//
+	// ⛔ **「瞬时、自动可解」只对「刚写进来、还没轮到走查」那一种来历成立**（2026-09-11 实测）。
+	// 同一个错误还盖着**孤儿记录**（`CommitSpan` 在 `AppendBars` 成功之后失败留下）——
+	// 那一种**走多少遍都不动**。判别符：**走一遍，看缺口动没动**；没动就别再重跑。
+	// 详见 `gap.go` 的 `GapStoreUnverified`。
 	ErrSpanUnverified = errors.New("tickflow/store: 这一段还没走查过——答不了，不是「没有」")
 
 	// ErrLegacyMeta .meta 没有 format 字段（v0.3 之前写的），而这个源不可重放，
