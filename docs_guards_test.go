@@ -1922,8 +1922,12 @@ type sentinelDisposition struct {
 var errorSentinelDisposition = map[string]sentinelDisposition{
 	"ErrNotTradingDay":  {GapNotTrading, "日历知道，而那天不交易"},
 	"ErrUncovered":      {GapCalendarUnknown, "日历【答不了】，不是「没有交易」"},
-	"ErrSpanUnverified": {GapStoreUnverified, "存储答不了·未走查；瞬时，走一遍就行"},
-	"ErrLegacyMeta":     {GapStoreLegacy, "存储答不了·旧格式；必须问人"},
+	"ErrSpanUnverified": {GapStoreUnverified, "存储答不了·未走查；它说的是【本次】没走查过，不表示这一段有问题"},
+	// ⚠️ 2026-09-11 新增：它与上一条的判据是【处置分不分岔】——
+	// 上一条不表示这一段有问题；这一条走查过了而没通过，重跑毫无意义，
+	// 而真因包在 Err 里（双 %w，errors.Is 取得到）。
+	"ErrSpanVerifyFailed": {GapStoreVerifyFailed, "存储答不了·走查没通过；别再重跑，去读包在里面的真因"},
+	"ErrLegacyMeta":       {GapStoreLegacy, "存储答不了·旧格式；必须问人"},
 
 	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
@@ -2078,12 +2082,13 @@ func TestRootErrorSentinelsAreDisposed(t *testing.T) {
 //	扫源码那半  抓「加了一类而没登记」——它枚举的是性质，不是我写下的名字
 //	这张表那半  给出【值】，才做得了「哪一类被哪个哨兵指着」这个比对
 var gapKindNames = map[string]GapKind{
-	"GapNeverFetched":    GapNeverFetched,
-	"GapConfirmedEmpty":  GapConfirmedEmpty,
-	"GapNotTrading":      GapNotTrading,
-	"GapCalendarUnknown": GapCalendarUnknown,
-	"GapStoreUnverified": GapStoreUnverified,
-	"GapStoreLegacy":     GapStoreLegacy,
+	"GapNeverFetched":      GapNeverFetched,
+	"GapConfirmedEmpty":    GapConfirmedEmpty,
+	"GapNotTrading":        GapNotTrading,
+	"GapCalendarUnknown":   GapCalendarUnknown,
+	"GapStoreUnverified":   GapStoreUnverified,
+	"GapStoreLegacy":       GapStoreLegacy,
+	"GapStoreVerifyFailed": GapStoreVerifyFailed,
 }
 
 func checkGapKindsAreDisposed(t *testing.T) {

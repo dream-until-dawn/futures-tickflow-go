@@ -13,7 +13,7 @@ import (
 // ⇒ 这是它能排在 `Store` 接口【之前】的全部理由 —— 它的五个输入
 // （`Span` / 两个存储哨兵 / 两个日历哨兵）都住在本包，`Store` 接口定型推不翻它。
 
-// GapKind 是缺口的六类。**零值不合法** —— 忘了填的调用方会当场被拒，
+// GapKind 是缺口的七类。**零值不合法** —— 忘了填的调用方会当场被拒，
 // 而不是拿到六类里的某一个（同 segfile.Outcome 那条理由）。
 //
 // ⚠️ 而零值在【本包内部】另有一个用处：`classifyTradingDay` 用它表示
@@ -72,6 +72,26 @@ const (
 	//
 	// 最危险的错认：与上一类合并 ⇒「走一遍就好」被用在一个需要人拍板的格子上。
 	GapStoreLegacy
+
+	// —— 下面这一条是后加的，**加在末尾** ——
+	//
+	// ⛔ 理由与 `HaltReason` 那次同：**可见且有界的代价，优先于静默且无界的代价。**
+	// 插在中间读起来更像一族（`GapStore*` 三条挨着），**而既有取值会静静地 +1** ——
+	// 而那种依赖不会在编译期出声。⇒ 分组这件事写在注释里，一分钱数值代价都不用付。
+	// （落地时让编译器印过改前改后：1..6 全部不变，新的这条是 7。）
+
+	// GapStoreVerifyFailed 存储答不了：这一段**走查过了，而它没通过**（ErrSpanVerifyFailed）。
+	//
+	// ⚠️ 它与 `GapStoreUnverified` 分开，判据是**处置分不分岔**，不是「看起来像不像」：
+	//
+	//	GapStoreUnverified   本次没走查过这一段    ⇒ 它**不表示这一段有问题**
+	//	GapStoreVerifyFailed 走查过了而没通过      ⇒ **别再重跑**，去读包在里面的真因
+	//
+	// 🔴 而名字说的是**现状**，不是「应该」：它说「走查过了而没通过」，不说「这一段坏了」——
+	// **坏没坏要由那个真因回答，而真因就包在 `Err` 里**（`errors.Is` 取得到）。
+	//
+	// 最危险的错认：与上一类合并 ⇒ 「走一遍就好」被用在一个**重跑毫无意义**的格子上。
+	GapStoreVerifyFailed
 )
 
 func (k GapKind) String() string {
@@ -88,6 +108,8 @@ func (k GapKind) String() string {
 		return "存储答不了·未走查"
 	case GapStoreLegacy:
 		return "存储答不了·旧格式"
+	case GapStoreVerifyFailed:
+		return "存储答不了·走查没通过"
 	}
 	return fmt.Sprintf("GapKind(%d)", int(k))
 }
@@ -115,13 +137,15 @@ func (g Gap) String() string {
 type SpanStatus struct {
 	Span Span
 
-	// Err 是这一段的可答性：nil / ErrSpanUnverified / ErrLegacyMeta。
+	// Err 是这一段的可答性：nil / ErrSpanUnverified / ErrSpanVerifyFailed / ErrLegacyMeta。
+	//
+	// ⚠️ **这四个之外的一律走下面那条兜底** —— 而那一句是【白名单】，别把它改成黑名单。
 	//
 	// ⚠️ **别的错误值一律当成「坏了」** —— 中止，不折进缺口。见 PlanGaps 的兜底。
 	Err error
 }
 
-// PlanGaps 把请求区间按【六类缺口】分好。签名与用法见 docs/design.md §七之九。
+// PlanGaps 把请求区间按【七类缺口】分好。签名与用法见 docs/design.md §七之九。
 //
 // 返回的是请求区间在【自然日】上的分段：**不重叠、有序、相邻且同类必已合并**。
 // 有数据的那些天不出现在结果里（它们不是缺口），所以结果是一个
@@ -259,6 +283,11 @@ func classifyTradingDay(d TradingDay, cov []SpanStatus, daysOf func(Span) (map[T
 			return GapStoreUnverified, nil
 		case errors.Is(s.Err, ErrLegacyMeta):
 			return GapStoreLegacy, nil
+		case errors.Is(s.Err, ErrSpanVerifyFailed):
+			// ⚠️ 用 errors.Is 而不是 ==：真因是**包在里面**的
+			// （`fmt.Errorf("%w: %w", ErrSpanVerifyFailed, 真因)`），
+			// 而调用方还可能在外面再包一层。⇒ 这一支要穿透。
+			return GapStoreVerifyFailed, nil
 		case s.Err != nil:
 			// ⛔ 兜底：这一维【不封闭】。「坏了」不是「答不了」——
 			// 认不出的错误一律中止，不折进任何一类缺口。
