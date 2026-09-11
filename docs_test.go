@@ -887,6 +887,7 @@ var guardNames = []string{
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestFifthColumnNamesExist`,
 	`TestGoListImportRulerWorks`,
+	`TestGuardMarkersAreRegistered`,
 	`TestGuardNeverPrintsFileContent`,
 	`TestGuardsDoNotSkipThemselves`,
 	`TestGuardsStillExist`,
