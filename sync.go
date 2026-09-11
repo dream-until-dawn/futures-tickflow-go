@@ -636,7 +636,7 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, map[Span]error) {
 	okSpans := map[Span]bool{}
 	failedSpans := map[Span]error{}
-	for _, sp := range s.coverageTouchedBy(touched) {
+	for _, sp := range spansTouchedBy(s.store.Coverage(), touched) {
 		if err := s.store.Verify(sp); err != nil {
 			rep.TruncatedTails = append(rep.TruncatedTails,
 				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, err))
@@ -648,19 +648,31 @@ func (s *Syncer) verifyTouched(touched []Span, rep *SyncReport) (map[Span]bool, 
 	return okSpans, failedSpans
 }
 
-// coverageTouchedBy 回 `Coverage()` 里**与本次碰过的任何一块相交**的那些段。
+// spansTouchedBy 回 `cov` 里**与本次碰过的任何一块相交**的那些段。
+//
+// ⚠️ 它是**纯函数**（不碰 `s.store`），理由是本仓那条：
+// **一句写在函数注释里的行为断言，应当由【那个函数自己的输入】来钉，
+// 而不是等端到端去碰**——上一版是 `*Syncer` 的方法，那句「两段都会被走查」
+// 只能绕端到端去验，而端到端能不能到达那个状态，双方都没量过。
 //
 // ⚠️ 判据是区间重叠，不是相等：一块提交进去之后 `CommitSpan` 会把它与相邻的并起来，
 // 所以合并段的 `[From, To]` **既不等于任何一块，也不一定被任何一块包含**。
 // ⇒ 「按 `[From,To]` 去找那一块」同样查不到（双方各自打过这个突变，两次都全绿）。
 //
-// ⚠️ 一次同步碰到两个不相邻的段时，两段都会被走查 —— 那是对的。
-// ⛔ **而它不是代价回归，别读成变贵了**：每一个被选中的合并段，至少有一块落在它里面
-// ⇒ **相交的段数 ≤ 本次的分块数**，而上一版是「每个分块各走一次全扫」。
-// ⇒ **换之后只会更便宜或持平。**（一遍扫完所有段是 (iv) 的事，它要先把 `Verify` 换成批量形态。）
-func (s *Syncer) coverageTouchedBy(touched []Span) []Span {
+// ⚠️ 一次同步碰到两个不相邻的段时，两段都会被走查 —— 那是对的，
+// 而代价是两次整文件扫描。⇒ 下面那一格单元测试钉的就是这句话。
+//
+// ⛔ **别写成「相交段数 ≤ 分块数，所以只会更便宜」——那句是假的**（双方 2026-09-11 各自量过）：
+//
+//	cov = [{08-05,08-05}, {08-07,08-07}]（两段，不相邻）
+//	touched = [{08-05..08-07}]（一块）      ⇒ 相交 2 段 ⇒ **j=2 > k=1**
+//
+// 🔴 一块可以横跨多段，所以那个不等式不成立。**多段时它比按块走查更贵。**
+// ⇒ 真正的便宜要等 (iv)（一遍扫完所有段），它要先把 `Verify` 换成批量形态。
+// 📎 收：**一个计数不等式最像「显然」的时候，正是它没被喂过反例的时候。**
+func spansTouchedBy(cov, touched []Span) []Span {
 	var out []Span
-	for _, cs := range s.store.Coverage() {
+	for _, cs := range cov {
 		for _, t := range touched {
 			if t.From <= cs.To && cs.From <= t.To {
 				out = append(out, cs)
