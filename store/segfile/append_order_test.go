@@ -44,7 +44,7 @@ func recordCount(t *testing.T, s *Store) int64 {
 	return st.Size() / RecordSize
 }
 
-// guard: AppendBars 拒绝倒退的交易日 —— 把有序性从「某一刻检查过」变成「一直成立」。
+// guard: AppendBars 拒绝倒退的交易日 —— 让【走查过的段】此后不再变乱。
 // TestAppendBarsRejectsOutOfOrder 是那道拦在写入口的检查。
 func TestAppendBarsRejectsOutOfOrder(t *testing.T) {
 	bar := func(d tickflow.TradingDay, ts int64) tickflow.Bar {
@@ -118,6 +118,18 @@ func TestAppendBarsRejectsOutOfOrder(t *testing.T) {
 //
 // ⇒ 后者才是二分那类读法要的东西；而前者是它的实现手段。
 // 🔴 而实测过的那个窗口正是从**走查之后**开始的 —— 所以这条测试的构造必须先走查。
+//
+// ⛔ **而这条测试的名字里那个「After Verify」不是排版，是它的【射程】**
+// （评审方 2026-09-11 收窄，我造对照复核）：
+//
+//	一份**本来就乱**的 `.dat`（走查之前就乱，或由别的工具写下的）
+//	追加一条 ≥ 末条的记录 ⇒ **收下了** —— 本检查只比**末条**
+//	⇒ 文件仍然是乱的，而它**过不了走查**（实测：Verify 当场红）
+//
+// ⇒ 所以买到的**不是**「文件一直有序」，是 **「`verified` 的段，从走查那一刻起一直有序」**。
+// ⚠️ 而这一格**故意不做成断言**：写一条「乱文件仍可追加」的测试，等于把今天这个
+// 不够紧的行为**钉成规格** —— 而它将来可能被收紧（例如 `Open` 时就拒绝乱文件）。
+// **写下射程，不锁住实现。**
 func TestSortednessHoldsAfterVerify(t *testing.T) {
 	cal := testCal(t)
 	s, _, err := Open(t.TempDir(), tickflow.Daily)
