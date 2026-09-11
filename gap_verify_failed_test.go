@@ -45,8 +45,15 @@ func TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight(t *testing.T) {
 
 	cause := errors.New("segfile: 记录的交易日落在本段之外")
 
-	t.Run("一 喂真因_给出新类别而不是中止", func(t *testing.T) {
-		gaps, err := plan(t, fmt.Errorf("%w: %w", ErrSpanVerifyFailed, cause))
+	// ⛔ 这一格喂的是【裸哨兵】，而不是包了真因的那个 —— 2026-09-11 评审方打突变打出来的：
+	// 上一版喂 `fmt.Errorf("%w: %w", 哨兵, 真因)`，而「三」喂的是它【再包一层】
+	// ⇒ **三的输入 ⊃ 一的输入，而两格断言相同** ⇒ 凡是让一红的缺陷必然也让三红，
+	// **一在【红】这一侧不提供任何超出三的判别力**（实测：M1 与 M2 红的是同一对子用例）。
+	// 🔴 收：**两格若输入是包含关系而断言相同，前一格就是多余的** ——
+	// 而它的代价不是冗余，是**两个不同的缺陷印出同一张脸**。
+	// ⇒ 改喂裸哨兵之后：把那一支改成 `==` 时「一」绿而「三」红，两者才分得开。
+	t.Run("一 喂裸哨兵_给出新类别而不是中止", func(t *testing.T) {
+		gaps, err := plan(t, ErrSpanVerifyFailed)
 		if err != nil {
 			t.Fatalf("它中止了，而这一类现在该被认出来：%v", err)
 		}
