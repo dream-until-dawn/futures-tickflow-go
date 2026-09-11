@@ -941,6 +941,7 @@ var guardNames = []string{
 	`TestStatusClaimsMatchRepo`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestTagRecipesPinVerbatimCleanup`,
+	`TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
