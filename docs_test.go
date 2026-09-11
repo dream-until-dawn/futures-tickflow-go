@@ -943,6 +943,7 @@ var guardNames = []string{
 	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestTagRecipesPinVerbatimCleanup`,
+	`TestTagV041SelfCheckOneStillWorks`,
 	`TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,

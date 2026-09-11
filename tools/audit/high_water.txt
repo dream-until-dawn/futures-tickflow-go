@@ -26,7 +26,7 @@
 rules 333
 anchors 61
 census 5
-guards 55
+guards 56
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -417,3 +417,4 @@ guards 55
 # 来历 2026-09-11 guards 54 自 52 自动：重造时表长大（52 -> 54）；本次新增：TestSuccessfulMultiChunkSyncStillReportsUnverified TestWholeLibraryErrorIsNotAttributedToUntouchedSpans
 # 来历 2026-09-11 guards 54 自 54 自动：条数未变而【名单成员变了】；本次新增：TestSuccessfulMultiChunkSyncReportsNoFalseGap；本次移除：TestSuccessfulMultiChunkSyncStillReportsUnverified
 # 来历 2026-09-11 guards 55 自 54 自动：重造时表长大（54 -> 55）；本次新增：TestSpansTouchedByCoversEveryIntersectingSpan
+# 来历 2026-09-11 guards 56 自 55 自动：重造时表长大（55 -> 56）；本次新增：TestTagV041SelfCheckOneStillWorks
