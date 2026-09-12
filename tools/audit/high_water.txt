@@ -23,10 +23,10 @@
 # 而留 10% 余量等于说「删掉最多 10% 不用打招呼」，那和这条规矩的意图相反。
 #
 # 格式：一行一个 `名字 数值`，# 开头是注释。
-rules 333
+rules 334
 anchors 61
 census 5
-guards 60
+guards 62
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -421,3 +421,5 @@ guards 60
 # 来历 2026-09-11 guards 57 自 56 自动：重造时表长大（56 -> 57）；本次新增：TestVerifyCoverageContract TestVerifyCoverageMatchesVerifyPerSpan TestWholeLibraryErrorIsAttributedToEverySpan；本次移除：TestSpansTouchedByCoversEveryIntersectingSpan TestWholeLibraryErrorIsNotAttributedToUntouchedSpans
 # 来历 2026-09-11 guards 59 自 57 自动：重造时表长大（57 -> 59）；本次新增：TestStoreBreachAbortsWhileUnrunnableDoesNot TestTagV041SelfCheckTwoHasAnErratum
 # 来历 2026-09-11 guards 60 自 59 自动：重造时表长大（59 -> 60）；本次新增：TestGapKindRenameHasAnErratum
+# 来历 2026-09-12 guards 62 自 60 自动：重造时表长大（60 -> 62）；本次新增：TestGateTierLegendIsHonest TestNoMapKeyedBySpan
+# 来历 2026-09-12 rules 334 自 333 自动：重造时表长大（333 -> 334）

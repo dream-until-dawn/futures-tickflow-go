@@ -665,8 +665,24 @@ rm docs_test.go && python tools/audit/rebuild_docs_test.py && git diff --exit-co
 
 ```bash
 python tools/audit/merge_gate.py            # 扫 main 上全部合并
-python tools/audit/merge_gate.py <merge>    # 只看一颗
+python tools/audit/merge_gate.py <merge>    # 只看一颗（**位置参数**）
+python tools/audit/merge_gate.py --rev=<ref>  # 换一个【起点】，仍然扫它上面全部合并
 ```
+
+⛔ **`--rev=` 换的是【起点】，不是「只看这一颗」。** 喂单颗用位置参数 ——
+评审方 2026-09-11 用 `--rev=<非合并 sha>` 想喂单颗，拿到 `rc=0`，**差一步写成「那一档走不到」**。
+2026-09-12 复量（`SHA=$(git log --no-merges --format=%h -1 main)`，当天取到 `5eaaa02`）：
+
+```
+merge_gate.py $SHA         ⇒ rc=3   拒绝出读数（「有 1 个父」）
+merge_gate.py --rev=$SHA   ⇒ rc=0   扫了 54 颗
+merge_gate.py              ⇒ rc=0   扫了 55 颗    ← 默认起点 main
+```
+
+**54 与 55 那一对差就是证据**：换起点 ⇒ 颗数变。（数会随 main 长，要的是命令。）
+⚠️ 而**别只读退出码**：那行「扫了 N 颗合并」是判别符 —— **想喂单颗时 `N` 必须是 1**。
+🔴 本仓那条在消费侧的形态：**一个工具把读数印全了，而调用方只取退出码 ——
+丢信息的那一步在【读】这边，不在【印】那边。**
 
 **退出码三档 —— 而调用方一律断言 `rc == 0`：**
 
