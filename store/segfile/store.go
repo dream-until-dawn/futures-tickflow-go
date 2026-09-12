@@ -104,6 +104,19 @@ var (
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
+
+	// errSpanNotInCoverage 调用方给的那一段**不在 coverage 里**。
+	//
+	// ⛔ 它**不是** `ErrSpanUnverified`，而那是有意的 —— 判据是本仓那条：
+	// **判两个东西该不该共用一个名字，看【处置】分不分岔。**
+	//
+	//	没走查过        ⇒ 答不了 ⇒ 上层报成一类缺口，调用方看得懂
+	//	不在 coverage 里 ⇒ **坏了** —— 调用方拿了一个库里没有的段来问，
+	//	                  这一层认不出发生了什么 ⇒ 上层的兜底会中止，而那是对的
+	//
+	// 🔴 而它此前**共用着** `ErrSpanUnverified` 的报文（「这一段还没走查过」）——
+	// **与真的没验过一模一样**，于是一个调用方的错被报成了库的状态。
+	errSpanNotInCoverage = errors.New("segfile: 这一段不在 coverage 里")
 )
 
 // ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
@@ -666,9 +679,35 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 // ⚠️ 射程：只回答 `[span.From, span.To]` 之内的交易日；
 // 落在段外的记录一概不进结果（它们属于别的段，由那一段自己的调用回答）。
 func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, error) {
-	if !s.verified[span] {
+	// —— (j)：**先在 coverage 里找到登记的那个值，再拿它当键** ——
+	//
+	// ⛔ 上一版直接查 `s.verified[span]` —— 键是**调用方给的那个值**。
+	// 而 `Span` 是四字段结构体（`Bars`/`Days` 也参与相等）⇒ 自己拼一个
+	// `From`/`To` 相同而 `Bars` 不同的，查不到 ⇒ 报「这一段还没走查过」
+	// **—— 与真的没验过一模一样**，于是**一个调用方的错被报成了库的状态**。
+	//
+	// 🔴 而 `HasBars` 一直是对的：它**先在 `s.meta.Coverage` 里找到那一段**，再拿那个值查。
+	// ⇒ 这一版把那一步搬了过来。📎 本仓那条：**报错指向数据，而真因在调用方。**
+	//
+	// ⚠️ 判据是 `[From, To]` **相等**，不是包含：这个方法的契约是「回答**一整段**」，
+	// 而调用方点名的就是 coverage 里的某一段（`planGaps` 传的正是 `Coverage()` 的值）。
+	var reg tickflow.Span
+	found := false
+	for _, sp := range s.meta.Coverage {
+		if sp.From == span.From && sp.To == span.To {
+			reg, found = sp, true
+			break
+		}
+	}
+	if !found {
+		return nil, fmt.Errorf("%w: 你给的 [%s, %s] 不在任何一段 coverage 里"+
+			"——这不是「没走查过」，是这一段根本不存在；"+
+			"请传 store.Coverage() 返回的那些值",
+			errSpanNotInCoverage, span.From, span.To)
+	}
+	if !s.verified[reg] {
 		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
-			tickflow.ErrSpanUnverified, span.From, span.To)
+			tickflow.ErrSpanUnverified, reg.From, reg.To)
 	}
 	st, err := s.dat.Stat()
 	if err != nil {
