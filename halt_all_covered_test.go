@@ -96,8 +96,22 @@ func TestHaltNoTradingDaysAndAllCoveredAreDistinguishable(t *testing.T) {
 				"  ⇒ 那会让它和「全都拉过了」共用同一张脸，而两者的处置相反"+
 				"（一个换区间，一个什么都不用做）。", rep.SkippedCovered)
 		}
-		t.Logf("一 ⇒ Halt=%v · Bars=%d · 跳过=%v · Complete=%v",
-			rep.Halt, rep.Bars, rep.SkippedCovered, rep.Complete())
+		// 🔴 承重：这一档**必须是干净的结果** —— Complete() 为真、一条痕迹都没有。
+		//
+		// ⛔ 为什么这一档必须 Complete()：**「请求区间里一天都不交易」是一个干净的结果，
+		// 不是一次需要人看一眼的事件**。它一旦留声，`Complete()` 变假，
+		// 而兜底那句会说「这份报告没有记录它为什么停下来（可能是它压根没有跑过）」——
+		// **那是假话，它明明跑过了**。
+		// ⚠️ 而这一条此前只被 t.Logf 印着：实测把 HaltAllCovered 从 note() 的
+		// 不留声白名单里拿掉，**全仓 540 个用例一格都没红**（评审方 2026-09-12 打的，我复量）。
+		if !rep.Complete() || len(rep.Incidents()) != 0 {
+			t.Errorf("这一档留下了痕迹（Complete=%v，痕迹 %v）——\n"+
+				"  ⇒ 「请求区间里一天都不交易」是结果不是事件；它一旦留声，\n"+
+				"     每一次「只请求了非交易日」的同步都会被报成「没同步完」。",
+				rep.Complete(), rep.Incidents())
+		}
+		t.Logf("一 ⇒ Halt=%v · Bars=%d · 跳过=%v · Complete=%v · 痕迹=%v",
+			rep.Halt, rep.Bars, rep.SkippedCovered, rep.Complete(), rep.Incidents())
 	})
 
 	t.Run("二 区间里的交易日全部已覆盖", func(t *testing.T) {
@@ -129,7 +143,21 @@ func TestHaltNoTradingDaysAndAllCoveredAreDistinguishable(t *testing.T) {
 				"  ⇒ 它只是换了个说法的枚举值；而 %q 里的日期含着数字，"+
 				"只找数字的判据在这里恒真。", got, got)
 		}
-		t.Logf("二 ⇒ Halt=%v · Bars=%d · 跳过=%v · Complete=%v",
-			rep.Halt, rep.Bars, rep.SkippedCovered, rep.Complete())
+		// 🔴 承重：这一档**必须是干净的结果** —— Complete() 为真、一条痕迹都没有。
+		//
+		// ⛔ 为什么这一档必须 Complete()：**「该拉的都拉过了」是一个干净的结果，
+		// 不是一次需要人看一眼的事件**。它一旦留声，`Complete()` 变假，
+		// 而兜底那句会说「这份报告没有记录它为什么停下来（可能是它压根没有跑过）」——
+		// **那是假话，它明明跑过了**。
+		// ⚠️ 而这一条此前只被 t.Logf 印着：实测把 HaltAllCovered 从 note() 的
+		// 不留声白名单里拿掉，**全仓 540 个用例一格都没红**（评审方 2026-09-12 打的，我复量）。
+		if !rep.Complete() || len(rep.Incidents()) != 0 {
+			t.Errorf("这一档留下了痕迹（Complete=%v，痕迹 %v）——\n"+
+				"  ⇒ 「该拉的都拉过了」是结果不是事件；它一旦留声，\n"+
+				"     每一次稳态增量同步都会被报成「没同步完」。",
+				rep.Complete(), rep.Incidents())
+		}
+		t.Logf("二 ⇒ Halt=%v · Bars=%d · 跳过=%v · Complete=%v · 痕迹=%v",
+			rep.Halt, rep.Bars, rep.SkippedCovered, rep.Complete(), rep.Incidents())
 	})
 }

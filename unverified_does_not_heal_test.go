@@ -163,6 +163,27 @@ func TestUnverifiedSpanDoesNotHealByRunningAgain(t *testing.T) {
 				"  ⇒ 若这一类真的自愈了，该改的是【文档里那句「瞬时、自动可解」】和这条测试，"+
 				"不是把它调绿。（err=%v）", i, err)
 		}
+		// 🔴 承重（评审方 2026-09-12 要求，理由是读代码读出来的）：
+		// 这一格此前**唯一带内容的断言是 `got == first` —— 拿它自己跟自己比**。
+		// ⇒ 一次把「走查没通过」退化成「走查没跑过」的回归，**这格照样绿**，
+		// 而那两档正是 (p) 一整片去分开的两个东西。
+		//
+		//	GapStoreVerifyFailed  走查跑了，而它没通过  ⇒ **别再重跑**，去读包在里面的真因
+		//	GapStoreVerifyUnrun   走查根本没跑成        ⇒ 再跑一遍是有意义的
+		//
+		// ⇒ 所以要断**类别**，不能只断「指纹稳不稳」。
+		kindOK := false
+		for _, g := range rep.Gaps {
+			if g.Kind == tickflow.GapStoreVerifyFailed {
+				kindOK = true
+			}
+		}
+		if !kindOK {
+			t.Errorf("第 %d 遍：缺口里没有一条是「走查没通过」：%v\n"+
+				"  ⇒ 盘上确实有一批不属于任何已提交段的记录，走查【跑过了而没通过】；\n"+
+				"     报成「没走查过」会把调用方送去再跑一遍 —— 而那一遍什么都不会变。",
+				i, rep.Gaps)
+		}
 		// 判别符就是文档里给的那一个：**这一条缺口动没动。**
 		got := gapsFingerprint(rep.Gaps)
 		if i == 1 {
