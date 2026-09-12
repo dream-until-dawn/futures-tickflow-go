@@ -104,6 +104,36 @@ var (
 	errRecordOutside  = errors.New("segfile: 记录的交易日落在本段之外")
 	errRecordDisorder = errors.New("segfile: 记录的交易日不是非降序")
 	errZeroTradingDay = errors.New("segfile: 记录的 TradingDay 是零值")
+
+	// errSpanNotInCoverage 调用方给的那一段**不在 coverage 里**。
+	//
+	// ⛔ 它**不是** `ErrSpanUnverified`，而那是有意的 —— 判据是本仓那条：
+	// **判两个东西该不该共用一个名字，看【处置】分不分岔。**
+	//
+	//	没走查过        ⇒ 答不了 ⇒ 上层报成一类缺口，调用方看得懂
+	//	不在 coverage 里 ⇒ **坏了** —— 调用方拿了一个库里没有的段来问，
+	//	                  这一层认不出发生了什么 ⇒ 上层的兜底会中止，而那是对的
+	//
+	// 🔴 而它此前**共用着** `ErrSpanUnverified` 的报文（「这一段还没走查过」）——
+	// **与真的没验过一模一样**，于是一个调用方的错被报成了库的状态。
+	//
+	// —— ⚠️ 射程：**经由 `PlanGaps` 进来的 span 永远来自 `Coverage()` ⇒ 这一支在那条路上走不到** ——
+	//
+	//	gap.go  PlanGaps 里的 memo 包装 ⇒ daysWithBars(sp)，sp 来自 cov
+	//	gap.go  classifyTradingDay      ⇒ daysOf(s.Span)，s.Span 来自 cov
+	//	sync.go planGaps 传的是 s.store.DaysWithBars，而 cov 由 s.store.Coverage() 造
+	//
+	// ⇒ 它防的是**别的调用方**（本仓今天没有）。
+	// 🔴 **端到端造不出它，不是缺口，是它的射程** —— 按本仓那条分法：
+	// 「今天验不了」是缺口，而这是「**今天没有受益人**」⇒ **保险**。
+	// ⇒ 写在这儿，免得下一个人拿端到端去试、试不出来，然后判它是死代码。
+	//
+	// 📎 而它走的是 `classifyTradingDay` 里 **`daysOf` 那一条**兜底
+	// （「问 […] 哪些天有根时出错——这是【坏了】，中止」），由 `gap_test.go` 的
+	// 「daysWithBars 报错（.dat 读坏了）」那一格守着 ——
+	// ⚠️ **不是** `gap_verify_failed_test.go` 那格（那一格喂的是 `SpanStatus.Err`，
+	// 守的是另一条兜底）。**这个函数里有两条兜底，而它们的输入不同。**
+	errSpanNotInCoverage = errors.New("segfile: 这一段不在 coverage 里")
 )
 
 // ⛔ **编译期断言：本类型必须满足根包的 `Store` 接口。**
@@ -666,9 +696,40 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 // ⚠️ 射程：只回答 `[span.From, span.To]` 之内的交易日；
 // 落在段外的记录一概不进结果（它们属于别的段，由那一段自己的调用回答）。
 func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, error) {
-	if !s.verified[span] {
+	// —— (j)：**先在 coverage 里找到登记的那个值，再拿它当键** ——
+	//
+	// ⛔ 上一版直接查 `s.verified[span]` —— 键是**调用方给的那个值**。
+	// 而 `Span` 是四字段结构体（`Bars`/`Days` 也参与相等）⇒ 自己拼一个
+	// `From`/`To` 相同而 `Bars` 不同的，查不到 ⇒ 报「这一段还没走查过」
+	// **—— 与真的没验过一模一样**，于是**一个调用方的错被报成了库的状态**。
+	//
+	// 🔴 而 `HasBars` 一直是对的：它**先在 `s.meta.Coverage` 里找到那一段**，再拿那个值查。
+	// ⇒ 这一版把那一步搬了过来。📎 本仓那条：**报错指向数据，而真因在调用方。**
+	//
+	// ⚠️ 判据是 `[From, To]` **相等**，不是包含：这个方法的契约是「回答**一整段**」，
+	// 而调用方点名的就是 coverage 里的某一段（`planGaps` 传的正是 `Coverage()` 的值）。
+	var reg tickflow.Span
+	found := false
+	for _, sp := range s.meta.Coverage {
+		if sp.From == span.From && sp.To == span.To {
+			reg, found = sp, true
+			break
+		}
+	}
+	if !found {
+		return nil, fmt.Errorf("%w: 你给的 [%s, %s] 不在任何一段 coverage 里"+
+			"——这不是「没走查过」，是这一段根本不存在；"+
+			"请传 store.Coverage() 返回的那些值",
+			errSpanNotInCoverage, span.From, span.To)
+	}
+	// ⚠️ 报文里用 `reg` 不用 `span`：**今天两者恒等**（查找条件是逐字相等），
+	// 所以这一处改动今天**不可观测**（评审方打过一格突变，绿）。
+	// 🔴 而它是**预置**的：判据一旦放松成「包含」——**正是最容易被顺手写成的那一种** ——
+	// `reg` 与 `span` 就不再相等，那时报文里该出现的是**库里登记的那一段**，
+	// 不是调用方给的那个区间。⇒ 今天写对，比那天再想起来便宜。
+	if !s.verified[reg] {
 		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
-			tickflow.ErrSpanUnverified, span.From, span.To)
+			tickflow.ErrSpanUnverified, reg.From, reg.To)
 	}
 	st, err := s.dat.Stat()
 	if err != nil {
