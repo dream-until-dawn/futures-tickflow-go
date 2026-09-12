@@ -1922,7 +1922,7 @@ type sentinelDisposition struct {
 var errorSentinelDisposition = map[string]sentinelDisposition{
 	"ErrNotTradingDay":  {GapNotTrading, "日历知道，而那天不交易"},
 	"ErrUncovered":      {GapCalendarUnknown, "日历【答不了】，不是「没有交易」"},
-	"ErrSpanUnverified": {GapStoreUnverified, "存储答不了·未走查；它说的是【本次】没走查过，不表示这一段有问题"},
+	"ErrSpanUnverified": {GapStoreVerifyUnrun, "存储答不了·走查没跑成；它说的是【本次】没走查过，不表示这一段有问题"},
 	// ⚠️ 2026-09-11 新增：它与上一条的判据是【处置分不分岔】——
 	// 上一条不表示这一段有问题；这一条走查过了而没通过，重跑毫无意义，
 	// 而真因包在 Err 里（双 %w，errors.Is 取得到）。
@@ -2086,7 +2086,7 @@ var gapKindNames = map[string]GapKind{
 	"GapConfirmedEmpty":    GapConfirmedEmpty,
 	"GapNotTrading":        GapNotTrading,
 	"GapCalendarUnknown":   GapCalendarUnknown,
-	"GapStoreUnverified":   GapStoreUnverified,
+	"GapStoreVerifyUnrun":  GapStoreVerifyUnrun,
 	"GapStoreLegacy":       GapStoreLegacy,
 	"GapStoreVerifyFailed": GapStoreVerifyFailed,
 }

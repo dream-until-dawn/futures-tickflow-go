@@ -1316,7 +1316,7 @@ var (
     // ⛔ **「瞬时、自动可解」只对「刚写进来、还没轮到走查」那一种来历成立**（2026-09-11 实测）。
     // 同一个错误还盖着**孤儿记录**（`CommitSpan` 在 `AppendBars` 成功之后失败留下）——
     // 那一种**走多少遍都不动**。判别符：**走一遍，看缺口动没动**；没动就别再重跑。
-    // 详见 `gap.go` 的 `GapStoreUnverified`。
+    // 详见 `gap.go` 的 `GapStoreVerifyUnrun`。
     ErrSpanUnverified = errors.New("tickflow/store: 这一段还没走查过——答不了，不是「没有」")
 
     // ErrLegacyMeta .meta 没有 format 字段（v0.3 之前写的），而这个源不可重放，
@@ -1760,7 +1760,7 @@ Windows 上只读端持有序列时写者回填不了（`MoveFileEx` 限制）�
 ⇒ **缺口是【六】类，不是四类。** 而新增的两类必须分开，因为**处置不同**（同⑱）：
 
 ```
-存储答不了·未走查   ErrSpanUnverified  瞬时、自动可解 ⇒ **走一遍就行，不必问人**
+存储答不了·走查没跑成   ErrSpanUnverified  瞬时、自动可解 ⇒ **走一遍就行，不必问人**
                                       ⚠️ 只对「刚写进来还没走查」那一种来历成立；
                                       孤儿记录那一种**走多少遍都不动**（实测三遍逐字相同）
 存储答不了·旧格式   ErrLegacyMeta      需要一个【显式决定】 ⇒ **必须问人，机器不许替他答**
@@ -1900,7 +1900,7 @@ const (
 	// 最危险的错认：当成「不是交易日」⇒ **静默跳过整段历史**。
 	GapCalendarUnknown
 
-	// GapStoreUnverified 存储答不了：这一段还没走查过（ErrSpanUnverified）。
+	// GapStoreVerifyUnrun 存储答不了：这一段还没走查过（ErrSpanUnverified）。
 	// **瞬时、自动可解** —— 走一遍就行，不必问人。
 	//
 	// ⛔ **而上面那句话只对【一种来历】成立**（2026-09-11 实测）：
@@ -1916,7 +1916,7 @@ const (
 	// 📎 正解是把这一类拆成两类（处置不同 ⇒ 不该共用一个名字），而那是另一片；
 	//   这一步只把话说准 —— **一个说错了的处置，比没有处置贵。**
 	// 最危险的错认：当成「拉过确认没有」⇒ 把「没验过」升级成一个肯定的答案。
-	GapStoreUnverified
+	GapStoreVerifyUnrun
 
 	// GapStoreLegacy 存储答不了：.meta 版本未知且源不可重放（ErrLegacyMeta）。
 	// **需要一个显式决定** —— 必须问人，机器不许替他答。
@@ -1936,7 +1936,7 @@ type Gap struct {
 }
 ```
 
-⚠️ **`GapStoreUnverified` 与 `GapStoreLegacy` 分开，是因为处置不同，不是因为成因不同**
+⚠️ **`GapStoreVerifyUnrun` 与 `GapStoreLegacy` 分开，是因为处置不同，不是因为成因不同**
 （同⑱）：前者机器自己能解，后者机器**不许**替人解。
 合成一类的话，报告会把「需要你拍板」说成「重跑一下就好」——
 **而那句话的错法是【让人不去看】，不是让人看错。**
@@ -2002,7 +2002,7 @@ type SyncRequest struct {
 | 拉过，确认没有 | coverage | ✓ | ✓ | 当成「没拉过」⇒ 每次都重拉一段确实没有的区间（吵，但不丢数据） |
 | 不是交易日 / 不在交易时段 | **日历** | 不存在 | ✓ | 当成「没拉过」⇒ 永远重拉一段**不存在**的区间 |
 | **日历答不了**（`ErrUncovered`） | **日历的覆盖边界** | 不存在 | **✓ 第四类** | 当成「不是交易日」⇒ **静默跳过整段历史** |
-| **存储答不了·未走查**（`ErrSpanUnverified`） | **存储**（B3） | 不存在 | **✓ 第五类** | 当成「拉过确认没有」⇒ **把「没验过」升级成一个肯定的答案** |
+| **存储答不了·走查没跑成**（`ErrSpanUnverified`） | **存储**（B3） | 不存在 | **✓ 第五类** | 当成「拉过确认没有」⇒ **把「没验过」升级成一个肯定的答案** |
 | **存储答不了·旧格式**（`ErrLegacyMeta`） | **存储**（D2a） | 不存在 | **✓ 第六类** | 与第五类合并 ⇒ 「重跑一下就好」被用在一个**需要人拍板**的格子上 |
 
 > ⚠️ **这一列必须逐行写明方向**。上一版的表头是「错认成『不是交易日』的后果」，
@@ -2660,7 +2660,7 @@ GapNeverFetched     日历覆盖内的交易日 · cov 为空                   
 GapConfirmedEmpty   同上 · cov 覆盖该日且 Err==nil · hasBars 给 false  ⇒ 第二类
 GapNotTrading       区间里夹一个非交易日（Walk 跳过它）                 ⇒ 第三类
 GapCalendarUnknown  请求区间的一端落在 Covers() 之外                    ⇒ 第四类
-GapStoreUnverified  cov 覆盖该日 · Err = ErrSpanUnverified             ⇒ 第五类
+GapStoreVerifyUnrun  cov 覆盖该日 · Err = ErrSpanUnverified             ⇒ 第五类
 GapStoreLegacy      cov 覆盖该日 · Err = ErrLegacyMeta                 ⇒ 第六类
 兜底                hasBars 返回一个不是上述哨兵的错误                  ⇒ **返回 error，不返回缺口**
 ```
@@ -4949,7 +4949,7 @@ if b.TradingDay == day { return true, nil }        // store.go —— 找到就�
 
 ```
 for _, s := range cov {            ← 不落在任何 coverage 段里 ⇒ 直接 GapNeverFetched（没走到 hasBars）
-    errors.Is(s.Err, ErrSpanUnverified) ⇒ GapStoreUnverified   ← 在 hasBars 之前
+    errors.Is(s.Err, ErrSpanUnverified) ⇒ GapStoreVerifyUnrun   ← 在 hasBars 之前
     errors.Is(s.Err, ErrLegacyMeta)     ⇒ GapStoreLegacy       ← 在 hasBars 之前
     s.Err != nil                        ⇒ 中止（坏了，不折进任何一类）
     has, err := hasBars(d)                                     ← 只到这里才问
@@ -4971,7 +4971,7 @@ for _, s := range cov {            ← 不落在任何 coverage 段里 ⇒ 直�
 GapNeverFetched     coverage（这一天不在任何段里）—— 在循环之外返回
 GapNotTrading       日历（自然日区间减去 Walk 走过的天）—— 根本不进 classifyTradingDay
 GapCalendarUnknown  日历（Covers 之外）
-GapStoreUnverified  SpanStatus.Err
+GapStoreVerifyUnrun  SpanStatus.Err
 GapStoreLegacy      SpanStatus.Err
 ```
 

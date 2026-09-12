@@ -8,7 +8,7 @@ import (
 
 // —— 这一条守的是【「本次没走查」与「走查过而没通过」分得开】——
 //
-// ⛔ 由来（2026-09-11 实测）：`GapStoreUnverified` 一类盖着两种来历，而**处置分岔**：
+// ⛔ 由来（2026-09-11 实测）：`GapStoreVerifyUnrun` 一类盖着两种来历，而**处置分岔**：
 //
 //	本次没走查过这一段        它**不表示这一段有问题**（健康库上就是这一支）
 //	走查过了，而它没通过      **别再重跑**，去读真因
@@ -38,7 +38,7 @@ func TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight(t *testing.T) {
 	// 我第一版探针的日历盖不到那个区间，两支都返回「日历答不了」，
 	// **而它印出来的 err=nil 读起来像「那一支容忍了它」。**
 	if gaps, err := plan(t, ErrSpanUnverified); err != nil ||
-		len(gaps) == 0 || gaps[0].Kind != GapStoreUnverified {
+		len(gaps) == 0 || gaps[0].Kind != GapStoreVerifyUnrun {
 		t.Fatalf("前提没成立：标定端没走到 coverage 那一支 ⇒ 整轮读数作废\n"+
 			"  gaps=%v err=%v", gaps, err)
 	}
@@ -103,7 +103,7 @@ func TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight(t *testing.T) {
 
 	t.Run("四 两类不许混_旧哨兵仍给旧类别", func(t *testing.T) {
 		gaps, err := plan(t, ErrSpanUnverified)
-		if err != nil || len(gaps) == 0 || gaps[0].Kind != GapStoreUnverified {
+		if err != nil || len(gaps) == 0 || gaps[0].Kind != GapStoreVerifyUnrun {
 			t.Fatalf("旧哨兵不再给旧类别了 ⇒ 两类混了：gaps=%v err=%v", gaps, err)
 		}
 	})
@@ -116,5 +116,5 @@ func TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight(t *testing.T) {
 // 里那条端到端的守着（走查全失败 ⇒ 报告里要有这一类）。
 // ⇒ 写清楚是因为：不写的话，下一个人会把这条的绿读成「整条线都接对了」。
 //
-// ⚠️ 而 `GapStoreUnverified` 这一类**本身**的射程写在 `gap.go` 上：
+// ⚠️ 而 `GapStoreVerifyUnrun` 这一类**本身**的射程写在 `gap.go` 上：
 // 它说的是【本次】没走查过，**不表示这一段有问题** —— 而今天在健康库上它也会出现。

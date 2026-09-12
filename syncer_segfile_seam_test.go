@@ -222,7 +222,7 @@ func TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam(t *testing.
 		if got != tickflow.GapConfirmedEmpty {
 			t.Errorf("%s 报成了 %v，期望 GapConfirmedEmpty。\n"+
 				"  ⇒ 若是 GapNeverFetched：coverage 没提交，或提交了而这一天不在段里；\n"+
-				"  ⇒ 若是 GapStoreUnverified：走查没发生 —— 而那正是本仓标为"+
+				"  ⇒ 若是 GapStoreVerifyUnrun：走查没发生 —— 而那正是本仓标为"+
 				"【最危险的错认】的那一格的邻居。", d, got)
 		}
 	}

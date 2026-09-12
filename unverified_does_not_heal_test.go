@@ -14,7 +14,7 @@ import (
 
 // —— 这一条钉住的是一句【已经写进文档的话】的真值 ——
 //
-// 文档与两处源码注释都说 `GapStoreUnverified` / `ErrSpanUnverified` 是
+// 文档与两处源码注释都说 `GapStoreVerifyUnrun` / `ErrSpanUnverified` 是
 // **「瞬时、自动可解 —— 走一遍就行，不必问人」**。
 //
 // ⛔ 而那句话只对**一种来历**成立：「这一段刚写进来，还没轮到走查」。

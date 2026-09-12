@@ -48,7 +48,7 @@ const (
 	// 「哪天是交易日」在那里没有答案。这条非对称是那一类的定义带来的，别去「统一」它。
 	GapCalendarUnknown
 
-	// GapStoreUnverified 存储答不了：这一段**本次没有被走查**（ErrSpanUnverified）。
+	// GapStoreVerifyUnrun 存储答不了：这一段**本次没有被走查**（ErrSpanUnverified）。
 	//
 	// ⛔ **它的产生者在 (iv)（2026-09-11）整个换了一批，旧的那些全部消失了** ——
 	// 而这一段的处置文字曾经是写给旧的那些的。写清楚，别让它静默变假：
@@ -78,7 +78,7 @@ const (
 	// —— ⛔⛔ 而它牵着一份【改不了的】注解，写在这儿 ——
 	//
 	// `v0.4.1` 的 tag 注解里，自查方法二逐字要人
-	// **「跑一次 `Sync`，看 `rep.Gaps` 里有没有 `GapStoreUnverified`」**。
+	// **「跑一次 `Sync`，看 `rep.Gaps` 里有没有 `GapStoreVerifyUnrun`」**。
 	// 🔴 (iv) 之后**坏库不再报这一类**（它们报 `GapStoreVerifyFailed`）
 	// ⇒ 照那句话做的人**找不到它**，于是得出「这个库没问题」——**而库是坏的**。
 	// ⇒ tag 改不了 ⇒ 勘误写在 `docs/release/v0.5.0.md`（本版的发布说明），
@@ -104,7 +104,7 @@ const (
 	// ⇒ 它不是偶尔有害，是**必然**有害。（`false_unverified_test.go` 钉着修完之后的样子。）
 	//
 	// 最危险的错认：当成「拉过确认没有」⇒ 把「没验过」升级成一个肯定的答案。
-	GapStoreUnverified
+	GapStoreVerifyUnrun
 
 	// GapStoreLegacy 存储答不了：.meta 版本未知且源不可重放（ErrLegacyMeta）。
 	// **需要一个显式决定** —— 必须问人，机器不许替他答。
@@ -121,9 +121,9 @@ const (
 
 	// GapStoreVerifyFailed 存储答不了：这一段**走查过了，而它没通过**（ErrSpanVerifyFailed）。
 	//
-	// ⚠️ 它与 `GapStoreUnverified` 分开，判据是**处置分不分岔**，不是「看起来像不像」：
+	// ⚠️ 它与 `GapStoreVerifyUnrun` 分开，判据是**处置分不分岔**，不是「看起来像不像」：
 	//
-	//	GapStoreUnverified   本次没走查过这一段    ⇒ 它**不表示这一段有问题**
+	//	GapStoreVerifyUnrun   本次没走查过这一段    ⇒ 它**不表示这一段有问题**
 	//	GapStoreVerifyFailed 走查过了而没通过      ⇒ **别再重跑**，去读包在里面的真因
 	//
 	// 🔴 而名字说的是**现状**，不是「应该」：它说「走查过了而没通过」，不说「这一段坏了」——
@@ -143,8 +143,8 @@ func (k GapKind) String() string {
 		return "不是交易日"
 	case GapCalendarUnknown:
 		return "日历答不了"
-	case GapStoreUnverified:
-		return "存储答不了·未走查"
+	case GapStoreVerifyUnrun:
+		return "存储答不了·走查没跑成"
 	case GapStoreLegacy:
 		return "存储答不了·旧格式"
 	case GapStoreVerifyFailed:
@@ -319,7 +319,7 @@ func classifyTradingDay(d TradingDay, cov []SpanStatus, daysOf func(Span) (map[T
 		}
 		switch {
 		case errors.Is(s.Err, ErrSpanUnverified):
-			return GapStoreUnverified, nil
+			return GapStoreVerifyUnrun, nil
 		case errors.Is(s.Err, ErrLegacyMeta):
 			return GapStoreLegacy, nil
 		case errors.Is(s.Err, ErrSpanVerifyFailed):

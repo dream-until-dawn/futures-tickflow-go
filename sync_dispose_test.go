@@ -226,11 +226,11 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 
 	// 🔴 **类别要分得开，而这一格钉住的是 B3 的接线**：
 	// 本次走查过的段 ⇒ 「拉过、确认没有」（GapConfirmedEmpty）；
-	// 没走查过的段   ⇒ 「答不了」（GapStoreUnverified）。
+	// 没走查过的段   ⇒ 「答不了」（GapStoreVerifyUnrun）。
 	// ⇒ 若 planGaps 那张「哪些段走查过」的表匹配不上（比如键的形状不对），
 	//   每一段都会变成 Unverified —— **而那读起来仍然像一份正常的报告**。
 	for _, g := range rep.Gaps {
-		if g.Kind == GapStoreUnverified {
+		if g.Kind == GapStoreVerifyUnrun {
 			t.Errorf("缺口 %s 报成【答不了·未走查】，而本次这些段都刚走查过 ——\n"+
 				"  ⇒ 「哪些段走查过」那张表没有匹配上", g)
 		}
@@ -247,7 +247,7 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 	// ⛔ **这一格 2026-09-11 改过期望值，而改的方向是【修好了】，不是【弄坏了】** ——
 	// 写清楚，因为本仓那条：一条钉住行为的测试，红有两个方向，报文要说得出是哪一个。
 	//
-	//	改之前  走查失败 ⇒ GapStoreUnverified   ← 它与「本次没走查」**共用一个类别**
+	//	改之前  走查失败 ⇒ GapStoreVerifyUnrun   ← 它与「本次没走查」**共用一个类别**
 	//	改之后  走查失败 ⇒ GapStoreVerifyFailed ← 而真因包在 Err 里，errors.Is 取得到
 	//
 	// 🔴 旧的那个期望值**钉住的正是那次混装**：它要求「走查失败」也报成「未走查」，
@@ -272,7 +272,7 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 // ⛔ 漏掉一段时，编排这一层**认不出**发生了什么 ⇒ 按本仓那条最硬的规矩：
 // **认不出的一律中止，不折进任何一类缺口。**
 //
-// 🔴 把它折成 `GapStoreUnverified` 看起来更温和，而那是有害的：
+// 🔴 把它折成 `GapStoreVerifyUnrun` 看起来更温和，而那是有害的：
 // 调用方会拿到一个**看起来可以照着处置的答案**，而那个处置不存在
 // （「再走一遍」对一个不给结论的实现没有用）。
 // 📎 与 `classifyTradingDay` 那条兜底同一个处置、同一个理由。

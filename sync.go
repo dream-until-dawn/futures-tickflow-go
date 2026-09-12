@@ -627,7 +627,7 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 // —— ⚠️ 第二个返回值非 nil 时，这里【什么都不填】，而那是有意的 ——
 //
 // `VerifyCoverage` 的第二个返回值 ＝「这一遍跑不起来」。那时 `verified` 与 `failed` 都是空的
-// ⇒ 每一段落到 `planGaps` 的 `!verified[sp]` ⇒ 报成 `GapStoreUnverified`
+// ⇒ 每一段落到 `planGaps` 的 `!verified[sp]` ⇒ 报成 `GapStoreVerifyUnrun`
 // ＝「**本次没走查过**」。🔴 **那句话在这时是真的** —— 走查确实没跑成。
 // ⇒ 这也是 (iv) 之后那一类**唯一的**生产者（另一个是 Store 违约、没给某一段结论）：
 // 两条早退（`HaltOutsideCoverage` / `HaltNoTradingDays`）**都产不出它**（2026-09-11 实测，
@@ -641,7 +641,7 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 // 漏掉一段时，本层**认不出**发生了什么 —— 而本仓那条最硬的规矩正压在这儿：
 // **「坏了」不是「答不了」：认不出的一律中止，不折进任何一类缺口。**
 //
-// ⚠️ 把它折成 `GapStoreUnverified` 看起来更温和，而那是有害的：
+// ⚠️ 把它折成 `GapStoreVerifyUnrun` 看起来更温和，而那是有害的：
 // 调用方会拿到一个**看起来可以照着处置的答案**，而那个处置不存在
 // （「再走一遍」对一个不给结论的实现没有用）。
 // 📎 与 `classifyTradingDay` 那条兜底同一个处置、同一个理由。

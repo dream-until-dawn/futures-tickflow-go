@@ -80,7 +80,7 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 // ⚠️ **而它仍然是一个样本** —— 不变性只在下面这几个形状上被验过。
 func TestReportCompleteIsInvariantUnderGaps(t *testing.T) {
 	all := []GapKind{GapNeverFetched, GapConfirmedEmpty, GapNotTrading,
-		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
+		GapCalendarUnknown, GapStoreVerifyUnrun, GapStoreLegacy}
 	sixKinds := make([]Gap, 0, len(all))
 	for i, k := range all {
 		d := TradingDay(20200801 + i)
@@ -184,7 +184,7 @@ func TestSyncRequestZeroToIsAQuestionNotAnAnswer(t *testing.T) {
 // randomGaps 造一份随机缺口：段数、跨度、类别、总天数、顺序**全随机**。
 func randomGaps(rnd *rand.Rand) []Gap {
 	kinds := []GapKind{GapNeverFetched, GapConfirmedEmpty, GapNotTrading,
-		GapCalendarUnknown, GapStoreUnverified, GapStoreLegacy}
+		GapCalendarUnknown, GapStoreVerifyUnrun, GapStoreLegacy}
 	n := rnd.Intn(13) // 0..12 段 —— 含 0，也含「多于 6」
 	gs := make([]Gap, 0, n)
 	for i := 0; i < n; i++ {
