@@ -902,6 +902,7 @@ var guardNames = []string{
 	`TestCarriersHaveNoHTMLComments`,
 	`TestContentLocatorCheckerItself`,
 	`TestContentLocatorsResolve`,
+	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
 	`TestDaysWithBarsEqualsHasBars`,
 	`TestDocLinksResolve`,
 	`TestEveryQuotedRuleIsRegistered`,

@@ -26,7 +26,7 @@
 rules 334
 anchors 61
 census 5
-guards 65
+guards 66
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -425,3 +425,4 @@ guards 65
 # 来历 2026-09-12 rules 334 自 333 自动：重造时表长大（333 -> 334）
 # 来历 2026-09-12 guards 63 自 62 自动：重造时表长大（62 -> 63）；本次新增：TestEverySyncRequestFieldIsRead
 # 来历 2026-09-12 guards 65 自 63 自动：重造时表长大（63 -> 65）；本次新增：TestHaltNoTradingDaysAndAllCoveredAreDistinguishable TestPartialOverlapResyncLeavesNoOrphan
+# 来历 2026-09-12 guards 66 自 65 自动：重造时表长大（65 -> 66）；本次新增：TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds
