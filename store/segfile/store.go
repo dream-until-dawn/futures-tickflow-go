@@ -116,6 +116,23 @@ var (
 	//
 	// 🔴 而它此前**共用着** `ErrSpanUnverified` 的报文（「这一段还没走查过」）——
 	// **与真的没验过一模一样**，于是一个调用方的错被报成了库的状态。
+	//
+	// —— ⚠️ 射程：**经由 `PlanGaps` 进来的 span 永远来自 `Coverage()` ⇒ 这一支在那条路上走不到** ——
+	//
+	//	gap.go  PlanGaps 里的 memo 包装 ⇒ daysWithBars(sp)，sp 来自 cov
+	//	gap.go  classifyTradingDay      ⇒ daysOf(s.Span)，s.Span 来自 cov
+	//	sync.go planGaps 传的是 s.store.DaysWithBars，而 cov 由 s.store.Coverage() 造
+	//
+	// ⇒ 它防的是**别的调用方**（本仓今天没有）。
+	// 🔴 **端到端造不出它，不是缺口，是它的射程** —— 按本仓那条分法：
+	// 「今天验不了」是缺口，而这是「**今天没有受益人**」⇒ **保险**。
+	// ⇒ 写在这儿，免得下一个人拿端到端去试、试不出来，然后判它是死代码。
+	//
+	// 📎 而它走的是 `classifyTradingDay` 里 **`daysOf` 那一条**兜底
+	// （「问 […] 哪些天有根时出错——这是【坏了】，中止」），由 `gap_test.go` 的
+	// 「daysWithBars 报错（.dat 读坏了）」那一格守着 ——
+	// ⚠️ **不是** `gap_verify_failed_test.go` 那格（那一格喂的是 `SpanStatus.Err`，
+	// 守的是另一条兜底）。**这个函数里有两条兜底，而它们的输入不同。**
 	errSpanNotInCoverage = errors.New("segfile: 这一段不在 coverage 里")
 )
 
@@ -705,6 +722,11 @@ func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, 
 			"请传 store.Coverage() 返回的那些值",
 			errSpanNotInCoverage, span.From, span.To)
 	}
+	// ⚠️ 报文里用 `reg` 不用 `span`：**今天两者恒等**（查找条件是逐字相等），
+	// 所以这一处改动今天**不可观测**（评审方打过一格突变，绿）。
+	// 🔴 而它是**预置**的：判据一旦放松成「包含」——**正是最容易被顺手写成的那一种** ——
+	// `reg` 与 `span` 就不再相等，那时报文里该出现的是**库里登记的那一段**，
+	// 不是调用方给的那个区间。⇒ 今天写对，比那天再想起来便宜。
 	if !s.verified[reg] {
 		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
 			tickflow.ErrSpanUnverified, reg.From, reg.To)
