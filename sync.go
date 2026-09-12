@@ -561,7 +561,7 @@ func (s *Syncer) disposeOpenState(req SyncRequest, rep *SyncReport) error {
 		rep.LegacyMetaUnverified = append(rep.LegacyMetaUnverified,
 			fmt.Sprintf(".meta 没有 format 而这个源重放不了 %s 起的历史 ⇒ "+
 				"coverage【不】作废（作废换不来任何东西，而丢掉那些区间不可逆）；"+
-				"要一个显式决定（Force 或人工确认）", cov[0].From))
+				"要一个显式决定（人工确认后删掉该周期的 .dat/.meta 再重拉）", cov[0].From))
 		return err
 	}
 }
