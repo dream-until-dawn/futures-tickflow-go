@@ -109,7 +109,7 @@ func openSyntheticStore(tb testing.TB) (*Store, tickflow.Span) {
 	span := tickflow.Span{From: lo, To: hi, Bars: benchBars,
 		Days: (benchBars + benchSpanDays - 1) / benchSpanDays}
 	s.meta.Coverage = []tickflow.Span{span}
-	s.verified = map[tickflow.Span]bool{span: true}
+	s.verified = map[tickflow.SpanKey]bool{span.Key(): true}
 
 	// 前提自检：这一步真的把库摆成了「可读」——否则下面量到的是一条 error 返回的耗时。
 	if _, err := s.DaysWithBars(span); err != nil {
@@ -223,7 +223,7 @@ func BenchmarkHasBarsAbsentDay(b *testing.B) {
 	// ⚠️ `HasBars` 先找「这一天落在哪一段 coverage 里」，找不到就返回「没拉过」而**不读文件**。
 	// ⇒ 要量「缺席那一档」，那一天必须**落在段内**。这里把段撑大一天。
 	s.meta.Coverage = []tickflow.Span{{From: span.From, To: absent, Bars: span.Bars, Days: span.Days}}
-	s.verified = map[tickflow.Span]bool{s.meta.Coverage[0]: true}
+	s.verified = map[tickflow.SpanKey]bool{s.meta.Coverage[0].Key(): true}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		has, err := s.HasBars(absent)

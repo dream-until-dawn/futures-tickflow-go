@@ -615,7 +615,10 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 //	一、`verified` 的键必须与 `planGaps` 查的键**同源**（都来自 `Coverage()`）。
 //	    2026-09-11 的生产缺陷正是两边不同源：写入侧用【分块】的 span
 //	    `{d1,d1,1,1} {d2,d2,1,1} {d3,d3,1,1}`，而 `CommitSpan` 已把它们并成 `{d1,d3,3,3}`
-//	    ⇒ `Span` 是四字段结构体，做 map 键时两组值不相等，**而两处代码都写着 `verified[sp]`**。
+//	🔴 两组值不相等 ⇒ map 查不到，**而两处代码都写着 `verified[sp]`**。
+//	⚠️ 那时的解释写的是「`Span` 是四字段结构体」——**当时为真，而它把注意力引错了地方**：
+//	这一格里差的是**区间本身**（`[d1,d1]` vs `[d1,d3]`），不是 `Bars`/`Days`。
+//	⇒ 所以 2026-09-12 把键收窄成 `SpanKey`（只有 `[From,To]`）之后，这一格**照旧被抓住**。
 //	二、「按 `[From,To]` 找那一块」**修不了它**（双方各打一次突变，两次全绿）：
 //	    合并段的 `[From,To]` 本来就不等于任何一块的。
 //	三、那条「相交段数 ≤ 分块数 ⇒ 只会更便宜」的不等式，**函数层为假、生产路径为真** ——
@@ -648,9 +651,9 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 //
 // ⚠️ 而「这一遍跑不起来」（`VerifyCoverage` 的第二个返回值）**不是违约**：
 // 那时每一段落到「本次没走查过」，**而那句话是真的** —— 见下面那一支。
-func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error, error) {
-	okSpans := map[Span]bool{}
-	failedSpans := map[Span]error{}
+func (s *Syncer) verifyAll(rep *SyncReport) (map[SpanKey]bool, map[SpanKey]error, error) {
+	okSpans := map[SpanKey]bool{}
+	failedSpans := map[SpanKey]error{}
 	res, err := s.store.VerifyCoverage()
 	if err != nil {
 		// ⛔ 「跑不起来」不许伪装成「每一段都没问题」：留空 ⇒ 每一段报「本次没走查过」。
@@ -661,7 +664,7 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error, erro
 
 	// ⛔ 契约一：**全的**。漏掉一段 ＝ 违约 ＝ 坏了 ⇒ 中止（见上面那段注释）。
 	for _, sp := range s.store.Coverage() {
-		if _, ok := res[sp]; !ok {
+		if _, ok := res[sp.Key()]; !ok {
 			return nil, nil, fmt.Errorf(
 				"tickflow: 这个 Store 的 VerifyCoverage 没有为 [%s, %s] 给出结论"+
 					"——契约要求它对 Coverage() 的每一段都给一个（nil 即通过）。"+
@@ -687,20 +690,20 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[Span]bool, map[Span]error, erro
 // ⚠️ 没被本次走查过的段一律带 ErrSpanUnverified —— 那是 B3 的直接落法：
 // **「没走查过」不许悄悄变成一个肯定的「确认没有」。**
 func (s *Syncer) planGaps(k ProductKey, from, to TradingDay,
-	verified map[Span]bool, failed map[Span]error, rep *SyncReport) error {
+	verified map[SpanKey]bool, failed map[SpanKey]error, rep *SyncReport) error {
 	var cov []SpanStatus
 	for _, sp := range s.store.Coverage() {
 		st := SpanStatus{Span: sp}
 		switch {
-		case failed[sp] != nil:
+		case failed[sp.Key()] != nil:
 			// ⛔ **顺序要紧**：走查失败的段同时也满足 `!verified[sp]`，
 			// 而那两句话不是一回事 ——「走查过而没通过」比「本次没走查」**知道得更多**。
 			// ⇒ 先判信息多的那一支。
 			//
 			// ⚠️ 双 `%w`：**哨兵与真因都要能被 errors.Is 取到** ——
 			// 只包哨兵，调用方回不到现场；只包真因，调用方分不出「这一类」。
-			st.Err = fmt.Errorf("%w: %w", ErrSpanVerifyFailed, failed[sp])
-		case !verified[sp]:
+			st.Err = fmt.Errorf("%w: %w", ErrSpanVerifyFailed, failed[sp.Key()])
+		case !verified[sp.Key()]:
 			st.Err = ErrSpanUnverified
 		}
 		cov = append(cov, st)

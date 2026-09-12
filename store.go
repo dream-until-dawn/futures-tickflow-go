@@ -36,6 +36,36 @@ type Span struct {
 	Days int `json:"days"`
 }
 
+// SpanKey 是一段 coverage 的**身份**：只有 `[From, To]`。
+//
+// ⛔ **为什么要它，而不是直接拿 `Span` 当 map 键**（那是 2026-09-12 之前的做法）：
+// `Span` 是四字段结构体 ⇒ `Bars`/`Days` **也参与相等** ⇒ 把它当键，等于宣布
+// 「这四个字段都是身份的一部分」。而那句话**没有任何人同意过** —— 是 Go 的 `==` 替我们答的。
+//
+// 🔴 那个默认答案已经造过两次事故（都在 2026-09-11）：
+//
+//	(o)  写入侧用【分块】的 span 当键，读取侧用 `CommitSpan` 并段之后的值
+//	     ⇒ 一次**完全成功**的多块同步，把刚拉好的整段报成「未走查」
+//	(j)  `DaysWithBars` 拿【调用方给的值】当键
+//	     ⇒ 自拼一个 `Bars` 不同的，报「这一段还没走查过」——**与真的没验过一模一样**
+//
+// ⇒ 这个类型把那条约定从**纪律**变成**类型**：
+// 一个 `Bars` 写错的 `Span` 再也**拼不出**一个不同的键 —— 它连表达那件事的位置都没有。
+//
+// ⚠️ 而它**不削弱** (o) 那一格的保护：那里两边差的是**区间本身**
+// （分块的 `[d1,d1]` 与并段后的 `[d1,d3]`），不是那两个计数 ⇒ 键仍然不相等，缺陷仍然会被抓住。
+// 📎 ⇒ 收窄身份**只去掉了一个从来没人依赖的维**，这正是它可以晚做、而做了就是纯收缩的原因。
+type SpanKey struct {
+	From TradingDay `json:"from"`
+	To   TradingDay `json:"to"`
+}
+
+// Key 取这一段的身份。**凡是拿 span 做 map 键的地方都走它。**
+func (s Span) Key() SpanKey { return SpanKey{From: s.From, To: s.To} }
+
+// String 让它在报文里读得出来。
+func (k SpanKey) String() string { return "[" + k.From.String() + ", " + k.To.String() + "]" }
+
 // Outcome 是上游这一次响应的结果。C2 要它。
 //
 // ⚠️ 它不是 bool，而且**零值不合法** —— 忘了填的调用方会当场被拒，
@@ -109,10 +139,11 @@ type Store interface {
 	//	一、**全的**：`Coverage()` 里每一段都要有一个结论（nil ＝ 通过）。
 	//	    ⛔ 漏掉一段 ＝ 违约。而编排拿不到结论时按「本次没走查过」处置 —— 那句话是真的，
 	//	    所以违约**不会**变成一个肯定的答案，只会变成一条吵闹的缺口（B3）。
-	//	二、**键是 `Coverage()` 返回的那些值**（整个 `Span` 结构体都参与相等）。
-	//	    🔴 承重：`planGaps` 查的是同一批值。2026-09-11 的生产缺陷正是两边键不同源 ——
+	//	二、**键是 `Coverage()` 里每一段的 `Key()`**（＝ `[From, To]`，见 `SpanKey`）。
+	//	    🔴 承重：`planGaps` 查的是同一批段。2026-09-11 的生产缺陷正是两边键不同源 ——
 	//	    写入侧用【分块】的 span，读取侧用 `CommitSpan` 并段之后的值，而两处代码
-	//	    **都写着 `verified[sp]`**。
+	//	    **都写着 `verified[sp]`**；那里差的是**区间本身**（`[d1,d1]` vs `[d1,d3]`），
+	//	    所以换成 `SpanKey` 之后那一格照旧被抓住。
 	//	三、第二个返回值非 nil ＝ **这一遍跑不起来**（读盘失败）；那时第一个返回值必须是
 	//	    **nil map**，不是空 map。
 	//	    🔴 理由：`len(m)==0` 对 nil 与空 map 是同一个读数，而 `m == nil` 分得开 ——
@@ -130,7 +161,7 @@ type Store interface {
 	//     **而 tag 改不了**（`tag_selfcheck_meta_test.go` 钉着那一句）；
 	// 二、它是新读法的**参照实现** —— 两边都走新代码的话，等价性测试是空的。
 	// 📎 与当年 `HasBars(day)` 降级成具体方法是同一个先例，同一个理由。
-	VerifyCoverage() (map[Span]error, error)
+	VerifyCoverage() (map[SpanKey]error, error)
 
 	// OpenState 报【打开这个库时发现的、需要编排处置的事】（C3b / D2b 要它）。
 	//
