@@ -126,6 +126,13 @@ type SyncReport struct {
 	LegacyMetaDiscarded  []string
 	LegacyMetaUnverified []string
 
+	// SkippedCovered 记「这次跳过了哪些已经覆盖过的交易日」（丙片）。
+	//
+	// ⛔ 它**必须存在**，理由不是好看：跳过之后 `Bars=0`，
+	// 而「源什么都没给」同样是 `Bars=0` —— 没有这一栏，两种状态共用一句话。
+	// 📎 本仓那条（报文的粒度要和判据一样）在**报告**上的形态。
+	SkippedCovered []string
+
 	// UngatedSource 非空时说：这次同步向源要过数据，而【我们装的限流闸门一次都没被用到】。
 	//
 	// 🔴 它接住的是一个**假绿**（评审方 2026-09-09 造，我复现读数一致）：
