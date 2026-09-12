@@ -500,6 +500,7 @@ var quotedRules = []struct {
 	{`CONTRIBUTING.md`, `### 三类文件，三种解法 —— 而它们【不一样】`, `在它落地之前，这一步靠这份文档顶着，不靠人记得。`},
 	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `要求合并时写一条合流记录，而合流记录按定义就是两个父都没有的内容 ——`},
 	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `两条规矩指向同一颗提交，一条要 0 行，另一条要非 0。`},
+	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `54 与 55 那一对差就是证据：换起点 ⇒ 颗数变。（数会随 main 长，要的是命令。）`},
 	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `退出码三档 —— 而调用方一律断言 rc == 0：`},
 	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `⛔ 2026-09-11 之前第 3 档根本不存在：raise SystemExit("refuse: …") 传字符串，`},
 	{`CONTRIBUTING.md`, `### 合并门禁：**自带 diff 的【文件集合】⊆ 一张明示白名单**`, `退出码是 1 —— 与「有违例」同一个字节。而调用方的图例逐字写着「其它 ＝ 跑不起来」。`},
@@ -663,7 +664,7 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
-	{`CONTRIBUTING.md`, 322},
+	{`CONTRIBUTING.md`, 329},
 	{`tools/audit/README.md`, 99},
 	{`docs/method-landing.md`, 163},
 }
@@ -907,6 +908,7 @@ var guardNames = []string{
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestFifthColumnNamesExist`,
 	`TestGapKindRenameHasAnErratum`,
+	`TestGateTierLegendIsHonest`,
 	`TestGoListImportRulerWorks`,
 	`TestGuardMarkersAreRegistered`,
 	`TestGuardNeverPrintsFileContent`,
@@ -926,6 +928,7 @@ var guardNames = []string{
 	`TestNoConflictMarkersInDocs`,
 	`TestNoControlCharactersInSources`,
 	`TestNoDuplicateHeadingsInCarriers`,
+	`TestNoMapKeyedBySpan`,
 	`TestNoMarkdownEmphasisInPrintedMessages`,
 	`TestNoOrphanedSentences`,
 	`TestPlanGapsReadsEachSpanAtMostOnce`,
