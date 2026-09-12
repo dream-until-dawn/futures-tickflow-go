@@ -906,6 +906,7 @@ var guardNames = []string{
 	`TestDocLinksResolve`,
 	`TestEveryQuotedRuleIsRegistered`,
 	`TestEveryRuleSectionHasAnAnchor`,
+	`TestEverySyncRequestFieldIsRead`,
 	`TestFifthColumnNamesExist`,
 	`TestGapKindRenameHasAnErratum`,
 	`TestGateTierLegendIsHonest`,
