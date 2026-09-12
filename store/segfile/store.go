@@ -60,7 +60,7 @@ type Store struct {
 	//
 	// ⚠️ 它是【进程内】状态，不落盘：一份 .meta 被另一个进程改过之后，
 	// 上一次走查的结论就不再成立。落盘会让它变成一个会过期的抄件。
-	verified map[tickflow.Span]bool
+	verified map[tickflow.SpanKey]bool
 }
 
 // Outcome 是上游这一次响应的结果。C2 要它。
@@ -175,7 +175,7 @@ func Open(dir string, p tickflow.Period) (s *Store, truncated int64, err error) 
 	if err != nil {
 		return nil, 0, err
 	}
-	st := &Store{dir: dir, dat: f, period: name, truncated: truncated, verified: map[tickflow.Span]bool{}}
+	st := &Store{dir: dir, dat: f, period: name, truncated: truncated, verified: map[tickflow.SpanKey]bool{}}
 	err = rerr
 	switch {
 	case err == nil:
@@ -510,7 +510,7 @@ func (s *Store) Verify(span tickflow.Span) error {
 			"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
 			errDaysMismatch, days, span.Days)
 	}
-	s.verified[span] = true
+	s.verified[span.Key()] = true
 	return nil
 }
 
@@ -555,7 +555,7 @@ func (s *Store) Verify(span tickflow.Span) error {
 // ⚠️ `Verify(span)` **没有被它取代**，两条理由：
 // 一、v0.4.1 的 tag 注解逐字要人「对 `Coverage()` 的每一段跑 `store.Verify(span)`」，**而 tag 改不了**；
 // 二、它是这个新读法的**参照实现** —— 两边都走新代码的话，等价性测试是空的。
-func (s *Store) VerifyCoverage() (map[tickflow.Span]error, error) {
+func (s *Store) VerifyCoverage() (map[tickflow.SpanKey]error, error) {
 	cov := s.meta.Coverage
 	st, err := s.dat.Stat()
 	if err != nil {
@@ -613,21 +613,21 @@ func (s *Store) VerifyCoverage() (map[tickflow.Span]error, error) {
 		bars[hit]++
 	}
 
-	out := make(map[tickflow.Span]error, len(cov))
+	out := make(map[tickflow.SpanKey]error, len(cov))
 	for j, sp := range cov {
 		switch {
 		case whole != nil:
-			out[sp] = whole
+			out[sp.Key()] = whole
 		case bars[j] != sp.Bars:
-			out[sp] = fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条",
+			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条",
 				errBarsMismatch, bars[j], sp.Bars)
 		case days[j] != sp.Days:
-			out[sp] = fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
+			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
 				"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
 				errDaysMismatch, days[j], sp.Days)
 		default:
-			out[sp] = nil
-			s.verified[sp] = true
+			out[sp.Key()] = nil
+			s.verified[sp.Key()] = true
 		}
 	}
 	return out, nil
@@ -660,7 +660,7 @@ func (s *Store) HasBars(day tickflow.TradingDay) (bool, error) {
 		if day < sp.From || day > sp.To {
 			continue
 		}
-		if !s.verified[sp] {
+		if !s.verified[sp.Key()] {
 			return false, fmt.Errorf("%w: %s 落在 [%s, %s] 里，而这一段还没走查过",
 				tickflow.ErrSpanUnverified, day, sp.From, sp.To)
 		}
@@ -727,7 +727,7 @@ func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, 
 	// 🔴 而它是**预置**的：判据一旦放松成「包含」——**正是最容易被顺手写成的那一种** ——
 	// `reg` 与 `span` 就不再相等，那时报文里该出现的是**库里登记的那一段**，
 	// 不是调用方给的那个区间。⇒ 今天写对，比那天再想起来便宜。
-	if !s.verified[reg] {
+	if !s.verified[reg.Key()] {
 		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
 			tickflow.ErrSpanUnverified, reg.From, reg.To)
 	}
@@ -828,7 +828,7 @@ func (s *Store) OpenState() tickflow.OpenState {
 // 换的是【语义的来源】（coverage 由新版写入），不是把字节删掉。
 func (s *Store) DiscardCoverage() error {
 	s.meta.Coverage = nil
-	s.verified = map[tickflow.Span]bool{}
+	s.verified = map[tickflow.SpanKey]bool{}
 	return s.writeMeta()
 }
 

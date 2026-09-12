@@ -210,16 +210,20 @@ func PlanGaps(cal Calendar, k ProductKey, from, to TradingDay, cov []SpanStatus,
 	//
 	// ⚠️ 错误**不进缓存**：一次失败不该把后面每一天都变成同一个错误的复读；
 	// 而本层遇错即中止，所以重试的机会本来也只有一次。
-	memo := make(map[Span]map[TradingDay]bool)
+	// ⚠️ 键走 `Key()`，与别处一致（`SpanKey` ＝ `[From,To]`）。
+	// 今天它**不可观测**：`daysOf` 的入参永远来自 `cov`，而那一批值本来就互不相同。
+	// 🔴 而留一个四字段键在这里，下一个人会问「为什么这一处不同」——
+	// 一致本身有价值：**不一致是一个要被解释的东西，而多数人不会去解释它，会去模仿它。**
+	memo := make(map[SpanKey]map[TradingDay]bool)
 	daysOf := func(sp Span) (map[TradingDay]bool, error) {
-		if m, ok := memo[sp]; ok {
+		if m, ok := memo[sp.Key()]; ok {
 			return m, nil
 		}
 		m, err := daysWithBars(sp)
 		if err != nil {
 			return nil, err
 		}
-		memo[sp] = m
+		memo[sp.Key()] = m
 		return m, nil
 	}
 	if !from.Valid() || !to.Valid() {

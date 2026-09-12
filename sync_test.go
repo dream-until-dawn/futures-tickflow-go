@@ -169,17 +169,17 @@ func (s *fakeStore) AppendBars(b []Bar) error {
 // ⚠️ 它必须是**全的**：漏掉一段，上层会把那一段报成「本次没走查过」——
 // 而那会让一个本该红的用例**静静变绿**。
 // ⚠️ 契约三：`verifyAllErr` 非 nil 时回 **nil map**，不是空 map。
-func (s *fakeStore) VerifyCoverage() (map[Span]error, error) {
+func (s *fakeStore) VerifyCoverage() (map[SpanKey]error, error) {
 	if s.verifyAllErr != nil {
 		return nil, s.verifyAllErr
 	}
 	if s.verifySkipAll {
-		return map[Span]error{}, nil
+		return map[SpanKey]error{}, nil
 	}
-	out := make(map[Span]error, len(s.coverage))
+	out := make(map[SpanKey]error, len(s.coverage))
 	for _, sp := range s.coverage {
 		s.verified = append(s.verified, sp)
-		out[sp] = s.verifyErr
+		out[sp.Key()] = s.verifyErr
 	}
 	return out, nil
 }

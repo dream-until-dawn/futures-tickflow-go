@@ -2921,7 +2921,7 @@ type Store interface {
 	DaysWithBars(span Span) (map[TradingDay]bool, error)
 	AppendBars(bars []Bar) error
 	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
-	VerifyCoverage() (map[Span]error, error)
+	VerifyCoverage() (map[SpanKey]error, error)
 	Close() error
 }
 ```
@@ -2940,10 +2940,31 @@ type Store interface {
 
 ```
 一 全的      Coverage() 里每一段都要有一个结论（nil ＝ 通过）；漏掉 ＝ 违约
-二 键同源    键是 Coverage() 返回的那些值（整个 Span 结构体都参与相等）
+二 键同源    键是 Coverage() 里每一段的 Key()（＝ [From, To]，见 SpanKey）
 三 nil map   第二个返回值非 nil ＝ 这一遍跑不起来，那时第一个返回值必须是 nil map，
              不是空 map —— len(m)==0 对两者是同一个读数，而 m == nil 分得开
 ```
+
+⛔ **而「键」这件事于 (丙)（2026-09-12）从【纪律】变成了【类型】。**
+
+上一版拿 `Span` 本身做 map 键 —— 它是四字段结构体 ⇒ `Bars`/`Days` **也参与相等**
+⇒ 等于宣布「这四个字段都是身份的一部分」。
+🔴 **而那句话没有任何人同意过 —— 是 Go 的 `==` 替我们答的，而它答错过两次：**
+
+```
+(o)  写入侧用【分块】的 span 当键，读取侧用 CommitSpan 并段之后的值
+     ⇒ 一次【完全成功】的多块同步，把刚拉好的整段报成「未走查」
+     ⇒ cffexsource 的 BatchDays 出厂就是 1 ⇒ 那个源上任何跨天同步都中招
+(j)  DaysWithBars 拿【调用方给的值】当键
+     ⇒ 自拼一个 Bars 不同的，报「这一段还没走查过」——与真的没验过一模一样
+```
+
+⇒ `SpanKey{From, To}` ＋ `Span.Key()`：**一个 `Bars` 写错的 `Span` 再也拼不出一个不同的键** ——
+它连表达那件事的位置都没有。
+
+⚠️ 而它**不削弱 (o) 那一格的保护**：那里两边差的是**区间本身**（`[d1,d1]` vs `[d1,d3]`），
+不是那两个计数 ⇒ 键仍然不相等，缺陷仍然会被抓住。
+📎 ⇒ 收窄身份**只去掉了一个从来没人依赖的维** —— 这正是它可以晚做、而做了就是**纯收缩**的原因。
 
 ✅ **这张欠条已于丙一到期兑现**（接口落进根包 `store.go`），所以它现在进了 `go` 围栏。
 ⛔ 而**它被守住靠的不止是「进了围栏」**，还有一条更硬的：
