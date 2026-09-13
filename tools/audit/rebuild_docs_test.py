@@ -505,22 +505,45 @@ def drill():
     #   B3 来历行不写来源         ⇒ 与「旧表在盘上」的来历行逐字相同 ⇒ 这里找不到「旧表取自 HEAD(」⇒ 红
     # ⚠️ 施加自检（R2 那一课）：这一趟必须真的抬了水位，否则来历行根本不会被写，上面两条恒不成立而判红 ——
     # 那是「读数作废」，不是「退路坏了」，两者的处置不同，所以分开报。
+    #
+    # —— 后半：守「盘上优先于 HEAD」这个【决定】本身（评审方 2026-09-13 的必改 4）——
+    #
+    # ⛔ 由来：评审方的突变 B5 把「盘上用不了才退 HEAD」翻成「一律取 HEAD」⇒ 演练与全量测试**全绿**，
+    # 而同一分支上两次重造、中间不提交（最常见的开发节奏）时，账本会**重复认领**：
+    #   现状  …本次新增：TestZZB5One  /  …本次新增：TestZZB5Two
+    #   B5    …旧表取自 HEAD；本次新增：TestZZB5One  /  …旧表取自 HEAD；本次新增：TestZZB5One TestZZB5Two
+    # ⇒ 取值五前半守「用不了时退」，**没有任何一格守「能用时不许退」**。
+    # ⇒ 并进来少一次重造：前半那次成功重造之后，盘上的表恰好多一个名字而 HEAD 没有 ——
+    #   正是「盘上可用且与 HEAD 不同」。再塞探针二、再重造 ⇒ 新增来历行只许点名探针二、不许含「旧表取自」。
     probe5 = os.path.join(ROOT, "zz_drill_headsrc_test.go")
-    if os.path.exists(probe5):
-        print("❌ 取值五读数作废：探针文件已经存在：%s —— 不动它" % probe5)
-        sys.exit(1)
+    probe6 = os.path.join(ROOT, "zz_drill_disksrc_test.go")
+    for p in (probe5, probe6):
+        if os.path.exists(p):
+            print("❌ 取值五读数作废：探针文件已经存在：%s —— 不动它" % p)
+            sys.exit(1)
     hw5 = open(HIGH_WATER, "rb").read()
     open(probe5, "wb").write(
         "package tickflow\n\nimport \"testing\"\n\n"
         "// guard: 演练探针（能编译，只为让守卫计数上涨），跑完即删。\n"
         "func TestZZDrillHeadSource(t *testing.T) {}\n".encode("utf-8"))
     open(TARGET, "wb").write(conflicted.encode("utf-8"))      # 盘上旧表：夹着冲突标记 ⇒ 用不了
+    r6 = None
     try:
         r5 = subprocess.run([sys.executable, os.path.abspath(__file__)], cwd=ROOT, capture_output=True)
         ledger5 = open(HIGH_WATER, encoding="utf-8").read()
+        disk5 = open(TARGET, encoding="utf-8").read()          # 前半重造之后盘上的表（后半的「旧表」）
+        if r5.returncode == 0:
+            open(probe6, "wb").write(
+                "package tickflow\n\nimport \"testing\"\n\n"
+                "// guard: 演练探针二（能编译），跑完即删。\n"
+                "func TestZZDrillDiskSource(t *testing.T) {}\n".encode("utf-8"))
+            r6 = subprocess.run([sys.executable, os.path.abspath(__file__)], cwd=ROOT, capture_output=True)
+            ledger6 = open(HIGH_WATER, encoding="utf-8").read()
     finally:
         # ⚠️ 收尾不走 restore()：这是演练自己造的输入，按它自己的快照写回
-        os.remove(probe5)
+        for p in (probe5, probe6):
+            if os.path.exists(p):
+                os.remove(p)
         open(TARGET, "wb").write(start)
         open(HIGH_WATER, "wb").write(hw5)
     out5 = (r5.stdout + r5.stderr).decode("utf-8", "replace")
@@ -551,6 +574,46 @@ def drill():
     print("  取值五 盘上旧表用不了 ⇒ 成功重造（施加自检：「%s」）→ 来历行「…%s」"
           % (raised5[0], hit5[0].split("自动：", 1)[-1]))
 
+    # —— 取值五后半：盘上旧表【可用且与 HEAD 不同】⇒ 不许退到 HEAD ——
+    diskNames5, _ = parseGuardNames(disk5)
+    headNames5, headSha5, _ = guardNamesFromHead()
+    # ⛔ 施加自检一：前半那次重造之后，盘上的表确实和 HEAD 不同（否则「不许退」与「退了」在账本上长得一样）
+    if (diskNames5 is None or headNames5 is None
+            or "TestZZDrillHeadSource" not in diskNames5 or "TestZZDrillHeadSource" in headNames5):
+        print("❌ 取值五后半读数作废：前半重造之后盘上的表没有与 HEAD 分开"
+              "（盘上含探针一：%s · HEAD 含探针一：%s）"
+              % (diskNames5 is not None and "TestZZDrillHeadSource" in diskNames5,
+                 headNames5 is not None and "TestZZDrillHeadSource" in headNames5))
+        sys.exit(1)
+    out6 = (r6.stdout + r6.stderr).decode("utf-8", "replace")
+    if r6.returncode != 0:
+        print("❌ 取值五后半：盘上旧表可用时，一次本该成功的重造失败了（rc=%d）" % r6.returncode)
+        print(out6.strip()[-800:])
+        sys.exit(1)
+    raised6 = [ln.strip() for ln in out6.splitlines()
+               if ln.strip().startswith("高水位抬高：") and "guards" in ln]
+    # ⛔ 施加自检二：第二次也真的抬了水位
+    if not raised6:
+        print("❌ 取值五后半读数作废：第二次重造没抬 guards 水位（输出里没有「高水位抬高：guards …」）")
+        sys.exit(1)
+    before6 = set(ledger5.split("\n"))
+    added6 = [ln for ln in ledger6.split("\n") if ln.startswith("# 来历") and ln not in before6]
+    hit6 = [ln for ln in added6 if "TestZZDrillDiskSource" in ln
+            and "TestZZDrillHeadSource" not in ln and "旧表取自" not in ln]
+    if not hit6:
+        print("❌ 取值五后半：盘上旧表可用（与 HEAD(%s) 不同），而第二次新增的来历行不是「只点名探针二、不写来源」" % headSha5)
+        for ln in added6 or ["（一行都没有）"]:
+            print("   新增来历：%s" % ln)
+        joined6 = "\n".join(added6)
+        # ⚠️ 只印与读数对得上的那一句
+        if "旧表取自" in joined6:
+            print("   ⇒ 写着「旧表取自 …」：盘上旧表能用时也退了 —— 「盘上优先」被翻过来了")
+        elif "TestZZDrillHeadSource" in joined6:
+            print("   ⇒ 探针一被第二次认领：这一行的旧表不是盘上那份")
+        sys.exit(1)
+    print("  取值五后半 盘上旧表可用且与 HEAD(%s) 不同 ⇒ 成功重造（施加自检：「%s」）→ 来历行「…%s」"
+          % (headSha5, raised6[0], hit6[0].split("自动：", 1)[-1]))
+
     open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
     # ⛔ 收尾那句话由【这张清单】生成：断言遍历它，打印也遍历它 —— 手写文件名会比实现宽或窄。
     snaps = ((TARGET, start), (HIGH_WATER, hwStart0))
@@ -562,7 +625,7 @@ def drill():
         print("❌ 演练之后 vet 不过：\n%s" % out)
         sys.exit(1)
     print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次，旧表冲突标记认得出，"
-          "旧表退到 HEAD 且来历行写明来源；"
+          "旧表退到 HEAD 且来历行写明来源，盘上旧表能用时不退；"
           "%s 都读回来与开跑前逐字节相同；vet 过。"
           % " 与 ".join(os.path.basename(p) for p, _ in snaps))
 
