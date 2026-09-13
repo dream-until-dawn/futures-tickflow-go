@@ -189,8 +189,12 @@ func TestSYN6VerifyFailureLeavesANote(t *testing.T) {
 	if err != nil {
 		t.Fatalf("走查失败不改变「已落盘的是真的」，不该整体报错：%v", err)
 	}
-	if len(rep.TruncatedTails) != len(st.spans) {
-		t.Errorf("%d 段走查全失败，却只留了 %d 条声", len(st.spans), len(rep.TruncatedTails))
+	if len(rep.VerifyFailed) != len(st.spans) {
+		t.Errorf("%d 段走查全失败，却只留了 %d 条声", len(st.spans), len(rep.VerifyFailed))
+	}
+	// ⛔ 而且【不许再写进 TruncatedTails】—— 那一栏的前缀是「开库时截过残尾」。
+	if len(rep.TruncatedTails) != 0 {
+		t.Errorf("走查失败又写进了 TruncatedTails：%v ⇒ 它会被宣布成「开库时截过残尾」", rep.TruncatedTails)
 	}
 	if rep.Complete() {
 		t.Error("每一段走查都失败了，而报告说 Complete()")
@@ -308,8 +312,11 @@ func TestStoreBreachAbortsWhileUnrunnableDoesNot(t *testing.T) {
 		if len(ok) != 0 || len(failed) != 0 {
 			t.Errorf("跑不起来时它仍然填了结论：ok=%v failed=%v", ok, failed)
 		}
-		if len(rep.TruncatedTails) == 0 {
-			t.Error("跑不起来而 TruncatedTails 里没有痕迹 ⇒ 调用方分不出它和「Store 违约」")
+		if len(rep.VerifyUnrun) == 0 {
+			t.Error("跑不起来而 VerifyUnrun 里没有痕迹 ⇒ 调用方分不出它和「Store 违约」")
+		}
+		if len(rep.TruncatedTails) != 0 {
+			t.Errorf("「走查跑不起来」写进了 TruncatedTails：%v ⇒ 它会被宣布成「开库时截过残尾」", rep.TruncatedTails)
 		}
 	})
 }

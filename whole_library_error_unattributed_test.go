@@ -208,12 +208,12 @@ func TestWholeLibraryErrorIsAttributedToEverySpan(t *testing.T) {
 	//
 	// 🔴 只断言「有东西」不够：一条痕迹也满足它，而那正是上一版的病
 	// （只有 touched 的段拿得到真因）。所以按段数点名。
-	if len(rep.TruncatedTails) != len(cov) {
-		t.Errorf("TruncatedTails 有 %d 条，而 coverage 有 %d 段——期望每一段各一条。\n"+
+	if len(rep.VerifyFailed) != len(cov) {
+		t.Errorf("VerifyFailed 有 %d 条，而 coverage 有 %d 段——期望每一段各一条。\n"+
 			"  ⇒ 少了：有段没拿到真因（回归）；多了：同一段被走查了不止一次。\n"+
-			"  实得：%v", len(rep.TruncatedTails), len(cov), rep.TruncatedTails)
+			"  实得：%v", len(rep.VerifyFailed), len(cov), rep.VerifyFailed)
 	}
-	joined := strings.Join(rep.TruncatedTails, " | ")
+	joined := strings.Join(rep.VerifyFailed, " | ")
 	for _, sp := range cov {
 		want := sp.From.String() + ".." + sp.To.String()
 		if !strings.Contains(joined, want) {

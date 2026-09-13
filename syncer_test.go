@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -31,6 +32,9 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 		// ⇒ 判据：**测试内部的小聪明出错时，结果是【绿】不是红** ——
 		// 所以用例表里宁可重复，也别在里面放条件。
 		{"截断留声", SyncReport{Halt: HaltDone, TruncatedTails: []string{"1m.dat: 33 字节"}}},
+		// ⛔ (u) 2026-09-13：走查的两种痕迹从 TruncatedTails 挪出来，各自一栏 —— 各自都要能单独翻 Complete()。
+		{"走查没通过", SyncReport{Halt: HaltDone, VerifyFailed: []string{"走查 0805..0807 失败：数出 4 条，.meta 记 3 条"}}},
+		{"走查没跑成", SyncReport{Halt: HaltDone, VerifyUnrun: []string{"这一遍走查没能跑起来：读盘失败"}}},
 		{"旧 meta 作废", SyncReport{Halt: HaltDone, LegacyMetaDiscarded: []string{"rb/1m"}}},
 		{"旧 meta 标记", SyncReport{Halt: HaltDone, LegacyMetaUnverified: []string{"rb/1m"}}},
 		{"对不上网格的根", SyncReport{Halt: HaltDone, Misaligned: 1}},
@@ -351,12 +355,39 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 	// 上面那张表覆盖到的字段（人工登记 —— 而它正是被这条测试盯着的那一半）。
 	covered := map[string]bool{
 		"TruncatedTails":       true,
+		"VerifyFailed":         true,
+		"VerifyUnrun":          true,
 		"LegacyMetaDiscarded":  true,
 		"LegacyMetaUnverified": true,
 		"Misaligned":           true,
 		"AnomalousDays":        true,
 		"UngatedSource":        true,
 		"Halt":                 true,
+	}
+
+	// ⛔ **反方向那一半**（评审方 2026-09-13 的 (u) 裁定）：不产生痕迹的字段，**必须显式登记在这里，每项带一句理由**。
+	//
+	// 由来：这张网原来对「不产生痕迹的字段」直接 `continue` ⇒ **新加一栏而忘了进 `Incidents()`，它看不见** ——
+	// 而 (u) 的硬约束恰恰是「新栏必须进 `Incidents()`」。评审方 09-12 字段普查时量到过四个两面都看不见的字段，
+	// 各有正当理由，**而理由没有写在任何机器读得到的地方**。
+	// ⇒ 现在每一个导出字段，**要么**在 covered（产生痕迹，且上面那张表能单独翻 Complete()），
+	//   **要么**在这张清单里（不产生痕迹，理由写明）。**两边都不在 ⇒ 红。**
+	noTrace := map[string]string{
+		"Requested":      "请求的闭区间 —— 输入的回显，不是事件",
+		"Covered":        "日历能回答的闭区间 —— 事实；答不了时 Sync 直接返回 ErrUncovered（事件走 err）",
+		"CoversOK":       "为假时 Sync 返回 ErrUncovered —— 事件走 err，不走痕迹",
+		"Synced":         "实际同步到的闭区间 —— 结果，不是事件",
+		"Bars":           "本次落盘的条数 —— 结果；0 在 HaltAllCovered / HaltNoTradingDays 下是干净的",
+		"Gaps":           "库的状态的另一个独立通道（2026-09-12 裁定：库的状态 ＝ Complete() ＋ Gaps），不进 Incidents 是设计",
+		"NightAbsentRun": "给人看的，不下判断（字段注释原话）",
+		"NightAbsentOK":  "只说那条夜盘检查适不适用 —— 「不适用」不是事件",
+		"SkippedCovered": "跳过已覆盖是结果不是事件，见 HaltAllCovered",
+		"UngatedOK":      "只说闸门那条检查适不适用 —— 事件是 UngatedSource",
+	}
+	for name := range noTrace {
+		if covered[name] {
+			t.Errorf("字段 %s 同时登记在 covered 与「不产生痕迹」清单里 —— 只能在一边", name)
+		}
 	}
 
 	base := SyncReport{Halt: HaltDone}
@@ -386,7 +417,17 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 			}
 		}
 		if !produces {
-			continue // 这一格不产生痕迹（Requested / Covered / Bars / Gaps …）
+			if _, ok := noTrace[name]; !ok {
+				t.Errorf("字段 %s 动一下【不】产生痕迹，而它也【不在「不产生痕迹」清单里】——\n"+
+					"  ⇒ 两条出路，二选一：\n"+
+					"     一 它该留声（多半如此，新栏常是这样）⇒ 让 Incidents() 读它，再去上面那张用例表补一行、加进 covered；\n"+
+					"     二 它确实不该留声 ⇒ 加进 noTrace，并写一句凭什么。\n"+
+					"  ⇒ 这正是 (u) 那条硬约束守的形状：新栏忘了进 Incidents()，坏库上 Complete() 会变真。", name)
+			}
+			continue
+		}
+		if why, ok := noTrace[name]; ok {
+			t.Errorf("字段 %s 登记为「不产生痕迹」（理由：%s），而它动一下【会】产生痕迹 —— 清单过期了", name, why)
 		}
 		found = append(found, name)
 		if !covered[name] {
@@ -436,4 +477,44 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 	}
 	t.Logf("会产生痕迹的字段 %d 个：%v；跳过 %d 个（整数候选值 %v）",
 		len(found), found, len(skipped), intProbes)
+}
+
+// —— 这一条守的是【走查两栏的痕迹用词与缺口类型逐字对齐】（(u)，2026-09-13）——
+//
+// ⛔ 由来：v0.4.1 起走查失败写在 TruncatedTails，被 Incidents() 宣布成「开库时截过残尾：…」。
+// (u) 把它拆成 VerifyFailed / VerifyUnrun 两栏，前缀取缺口类型用词的后半 ——
+// 评审方要求钉住这个对齐：**两处用同一个词，改一处另一处跟着红**，否则两套词汇迟早漂开。
+//
+// guard: 走查两栏的痕迹前缀与 GapStoreVerifyFailed / GapStoreVerifyUnrun 的用词逐字对齐，且不是「开库时截过残尾」。
+func TestVerifyTraceWordingMatchesGapKinds(t *testing.T) {
+	for _, c := range []struct {
+		field string
+		r     SyncReport
+		kind  GapKind
+	}{
+		{"VerifyFailed", SyncReport{Halt: HaltDone, VerifyFailed: []string{"x"}}, GapStoreVerifyFailed},
+		{"VerifyUnrun", SyncReport{Halt: HaltDone, VerifyUnrun: []string{"x"}}, GapStoreVerifyUnrun},
+	} {
+		t.Run(c.field, func(t *testing.T) {
+			ks := c.kind.String()
+			i := strings.LastIndex(ks, "·")
+			// ⛔ 前提自检：缺口类型用词里得有「·」分出后半，否则下面比的是整句
+			if i < 0 {
+				t.Fatalf("缺口类型 %v 的用词 %q 里没有「·」—— 取不到后半，读数作废", c.kind, ks)
+			}
+			word := ks[i+len("·"):]
+			inc := c.r.Incidents()
+			if len(inc) != 1 {
+				t.Fatalf("%s 单独出现时交出 %d 条痕迹，期望恰好 1 条：%v", c.field, len(inc), inc)
+			}
+			if !strings.HasPrefix(inc[0], word+"：") {
+				t.Errorf("%s 的痕迹前缀与缺口类型用词不对齐：痕迹 %q，缺口类型 %q（后半 %q）\n"+
+					"  ⇒ 同一件事两套说法：读报告的人在 Incidents() 与 Gaps 里看到两个词，分不出是不是同一件。",
+					c.field, inc[0], ks, word)
+			}
+			if strings.HasPrefix(inc[0], "开库时截过残尾") {
+				t.Errorf("%s 的痕迹又被贴上了「开库时截过残尾」：%q —— 那是 v0.4.1 起的错标签", c.field, inc[0])
+			}
+		})
+	}
 }
