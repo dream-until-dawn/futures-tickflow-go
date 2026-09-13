@@ -3,7 +3,7 @@
 中国期货的行情数据层：拉取、持久化、算指标，并向回测引擎提供可步进的多周期视图。
 
 > 哪些包已实现、哪些还没开始，只记在 [contract.md 〇](docs/contract.md) 那张状态表里（它有守卫）；
-> 排期只记在 [design.md 十五](docs/design.md)。这里不抄第二份。已发布的版本以 `git tag -l` 为准。
+> 排期只记在 [design.md 十五](docs/design.md)。这里不抄第二份。已发布的版本以 `git tag -l --sort=version:refname` 为准（不带 `--sort` 是字典序，v0.10.0 会排到 v0.1.0 与 v0.2.0 之间）。
 
 ---
 

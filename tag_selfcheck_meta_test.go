@@ -596,3 +596,45 @@ func TestVerifyFailedMoveHasAnErratum(t *testing.T) {
 		t.Errorf("勘误三那一节提到了「没能跑起来」—— 那一支 v0.4.1 里 0 处，不是对外变更，不进勘误")
 	}
 }
+
+// —— 这一条钉的是【勘误四：v0.4.1 注解里「再跑一遍」那段诊断与处置表的真值】（评审方 2026-09-13 必改）——
+//
+// 起因：丙片（跳过已覆盖的交易日）改的正是 v0.4.1 注解教用户做的那个动作。
+// 实测：指纹仍成立 · 对照表「正常重跑」一列整列过期 · 「只删 .dat」从「看顺序」变成「任何顺序都修不好」。
+//
+// 名单是读者要落到的五件事，各一个词（取【勘误四那一节】的文本，不取全文 —— v0.4.1 / HaltAllCovered 在别处都出现过）：
+//
+//	一、哪一版的哪一段        ⇒ "v0.4.1" · "再跑一次"
+//	二、指纹还能不能用        ⇒ "仍然成立"
+//	三、对照表哪一列过期、新值 ⇒ "正常重跑" · "HaltAllCovered"
+//	四、顺序拉反那一列的 Halt  ⇒ "HaltStoreWrite"
+//	五、半吊子处置的新结局与仍有效的那条 ⇒ "只删 .dat" · "一起删"
+//
+// guard: v0.5.0 发布说明里有勘误四，五件事各一词都在那一节里。
+func TestRerunDiagnosisErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.5.0.md"))
+	if err != nil {
+		t.Fatalf("读本版发布说明失败：%v", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误四"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.5.0.md 里没有「%s」这一节 —— 照 v0.4.1 注解「只删 .dat、从早到晚拉」做的人，本版上每条命令 err=nil 而库永远修不好", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{
+		"v0.4.1", "再跑一次", // 一
+		"仍然成立",                   // 二
+		"正常重跑", "HaltAllCovered", // 三
+		"HaltStoreWrite", // 四
+		"只删 .dat", "一起删", // 五
+	} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("勘误四那一节里没有 %q —— 五件事缺一件，照 v0.4.1 注解诊断的人就落不到该落的地方", want)
+		}
+	}
+}
