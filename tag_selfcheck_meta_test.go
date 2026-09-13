@@ -557,3 +557,42 @@ func TestGapKindRenameHasAnErratum(t *testing.T) {
 			"     而这次改名买的全部东西就是那一次编译期失败。")
 	}
 }
+
+// —— 这一条钉的是【勘误三：走查失败挪出 TruncatedTails】（(u)，2026-09-13）——
+//
+// ⛔ 射程（评审方裁定）：**只有 VerifyFailed 那一半进过发布版** —— `git show v0.4.1:sync.go` 里
+// 走查失败写在 TruncatedTails（:544-545），而「这一遍走查没能跑起来」那一支 v0.4.1 里 0 处（(iv) 之后才有）。
+// ⇒ 勘误里不许写成「两条都挪走了」，「没能跑起来」那一条不进勘误。
+//
+// ⚠️ 判据取【勘误三那一节】的文本，不取全文：`v0.4.1` 在勘误一里就出现过，拿全文比是恒真的。
+//
+// guard: v0.5.0 发布说明里有勘误三，四个词都在那一节里，且那一节不提「没能跑起来」。
+func TestVerifyFailedMoveHasAnErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.5.0.md"))
+	if err != nil {
+		t.Fatalf("读本版发布说明失败：%v", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误三"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.5.0.md 里没有「%s」这一节 —— v0.4.1 的调用方从 TruncatedTails 里找走查失败，升级后静静地找不到", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{
+		"v0.4.1",         // 一、哪一版的调用方受影响
+		"TruncatedTails", // 二、旧的那一栏
+		"VerifyFailed",   // 三、新的那一栏
+		"静默",             // 四、为什么必须有这条勘误
+	} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("勘误三那一节里没有 %q —— 四件事缺一件，受影响的调用方就落不到该落的地方", want)
+		}
+	}
+	if strings.Contains(sec, "没能跑起来") {
+		t.Errorf("勘误三那一节提到了「没能跑起来」—— 那一支 v0.4.1 里 0 处，不是对外变更，不进勘误")
+	}
+}
