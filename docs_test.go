@@ -935,6 +935,8 @@ var guardNames = []string{
 	`TestMergeOwnDiffStaysInsideWhitelist`,
 	`TestMergeRecordCriterion`,
 	`TestMergeRecordPrecedesWhatItLicenses`,
+	`TestMissingRecordsAbortsBeforePlanning`,
+	`TestMissingRecordsNamesAreOneFamily`,
 	`TestNoConflictMarkersInDocs`,
 	`TestNoControlCharactersInSources`,
 	`TestNoDuplicateHeadingsInCarriers`,
