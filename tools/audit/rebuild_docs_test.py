@@ -474,8 +474,8 @@ def drill():
     # ⛔ 由来：两条分支各加一格守卫、冲突后不照配方、带着标记直接重造 ⇒ 旧解析把两侧名字都收进来
     # ⇒ 差集为空而计数涨了 ⇒ 断言触发，报文把成因说成「解析与生成格式漂开了」（照它修解析是白修）。
     # ⇒ 这一格**不跑主流程**，只在解析层断言，所以便宜；而它由 module_sweep 自动跑。
-    # ⚠️ 射程：它守「认得出冲突标记」这一件。**「认不出时退到 HEAD」与「来历行写明旧表取自 HEAD」这两件
-    # 没有自动守卫** —— 只在 (s-b) 送审时的扔掉克隆里量过（双侧冲突场景，路线甲/乙/丙）。
+    # ⚠️ 射程：它守「认得出冲突标记」这一件。「认不出时退到 HEAD」与「来历行写明旧表取自 HEAD」
+    # 由下面的取值五守（评审方 2026-09-13 判：B3 是这一片唯一对外可见的新行为，回归时不许一格都不红）。
     names0, why0 = parseGuardNames(start.decode("utf-8", "replace"))
     if names0 is None:
         print("❌ 取值四读数作废：基线 docs_test.go 本身就解析不出（%s）—— 下面那格比的是两个 None" % why0)
@@ -498,6 +498,59 @@ def drill():
     print("  取值四 旧表夹着冲突标记：基线解析出 %d 个名字（标定）→ 注入冲突块 → 解析不出（%s）"
           % (len(names0), why4))
 
+    # —— 取值五：盘上旧表用不了 ⇒ 一次【成功的】重造 ⇒ 来历行写明「旧表取自 HEAD(」且点名新增 ——
+    #
+    # ⛔ 它守两件（评审方 2026-09-13 的必改 3，两格突变在 (s-b) 送审时量过而没有自动守卫）：
+    #   B2 退到 HEAD 那一条没了   ⇒ 来历行变成「说不出」⇒ 这里找不到探针名 ⇒ 红
+    #   B3 来历行不写来源         ⇒ 与「旧表在盘上」的来历行逐字相同 ⇒ 这里找不到「旧表取自 HEAD(」⇒ 红
+    # ⚠️ 施加自检（R2 那一课）：这一趟必须真的抬了水位，否则来历行根本不会被写，上面两条恒不成立而判红 ——
+    # 那是「读数作废」，不是「退路坏了」，两者的处置不同，所以分开报。
+    probe5 = os.path.join(ROOT, "zz_drill_headsrc_test.go")
+    if os.path.exists(probe5):
+        print("❌ 取值五读数作废：探针文件已经存在：%s —— 不动它" % probe5)
+        sys.exit(1)
+    hw5 = open(HIGH_WATER, "rb").read()
+    open(probe5, "wb").write(
+        "package tickflow\n\nimport \"testing\"\n\n"
+        "// guard: 演练探针（能编译，只为让守卫计数上涨），跑完即删。\n"
+        "func TestZZDrillHeadSource(t *testing.T) {}\n".encode("utf-8"))
+    open(TARGET, "wb").write(conflicted.encode("utf-8"))      # 盘上旧表：夹着冲突标记 ⇒ 用不了
+    try:
+        r5 = subprocess.run([sys.executable, os.path.abspath(__file__)], cwd=ROOT, capture_output=True)
+        ledger5 = open(HIGH_WATER, encoding="utf-8").read()
+    finally:
+        # ⚠️ 收尾不走 restore()：这是演练自己造的输入，按它自己的快照写回
+        os.remove(probe5)
+        open(TARGET, "wb").write(start)
+        open(HIGH_WATER, "wb").write(hw5)
+    out5 = (r5.stdout + r5.stderr).decode("utf-8", "replace")
+    if r5.returncode != 0:
+        print("❌ 取值五：盘上旧表用不了时，一次本该成功的重造失败了（rc=%d）" % r5.returncode)
+        print(out5.strip()[-800:])
+        sys.exit(1)
+    raised5 = [ln.strip() for ln in out5.splitlines()
+               if ln.strip().startswith("高水位抬高：") and "guards" in ln]
+    if not raised5:
+        print("❌ 取值五读数作废：这一趟没抬 guards 水位（输出里没有「高水位抬高：guards …」）"
+              " ⇒ 来历行根本没被写，下面的判据没有真值")
+        sys.exit(1)
+    before5 = set(hw5.decode("utf-8").split("\n"))
+    added5 = [ln for ln in ledger5.split("\n") if ln.startswith("# 来历") and ln not in before5]
+    hit5 = [ln for ln in added5 if "旧表取自 HEAD(" in ln and "TestZZDrillHeadSource" in ln]
+    if not hit5:
+        print("❌ 取值五：盘上旧表用不了，而这一趟新增的来历行里没有一行同时含「旧表取自 HEAD(」与探针名")
+        for ln in added5 or ["（一行都没有）"]:
+            print("   新增来历：%s" % ln)
+        # ⚠️ 只印与读数对得上的那一句 —— 两句一起印就是在猜成因（本仓那条：成因错比读数错多错一格）
+        joined5 = "\n".join(added5)
+        if "说不出" in joined5:
+            print("   ⇒ 来历行写着「说不出」：旧表在盘上用不了时没有退到 HEAD")
+        elif "TestZZDrillHeadSource" in joined5 and "旧表取自 HEAD(" not in joined5:
+            print("   ⇒ 点名了探针而没写「旧表取自 HEAD(」：来源那一栏没写 —— 与旧表在盘上的来历行长得一样")
+        sys.exit(1)
+    print("  取值五 盘上旧表用不了 ⇒ 成功重造（施加自检：「%s」）→ 来历行「…%s」"
+          % (raised5[0], hit5[0].split("自动：", 1)[-1]))
+
     open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
     # ⛔ 收尾那句话由【这张清单】生成：断言遍历它，打印也遍历它 —— 手写文件名会比实现宽或窄。
     snaps = ((TARGET, start), (HIGH_WATER, hwStart0))
@@ -508,7 +561,8 @@ def drill():
     if code != 0:
         print("❌ 演练之后 vet 不过：\n%s" % out)
         sys.exit(1)
-    print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次，旧表冲突标记认得出；"
+    print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次，旧表冲突标记认得出，"
+          "旧表退到 HEAD 且来历行写明来源；"
           "%s 都读回来与开跑前逐字节相同；vet 过。"
           % " 与 ".join(os.path.basename(p) for p, _ in snaps))
 
