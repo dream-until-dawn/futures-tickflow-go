@@ -215,8 +215,20 @@ def refuseIfChainBroken(lines):
     raise SystemExit(1)
 
 
-def restore(original):
+def restore(original, originalHW):
     """把盘上恢复成动手之前的样子，返回一句话说明【走的是哪一条路径】。
+
+    ⛔ **它管两个文件，不是一个**（2026-09-13 改）。主流程这一趟会写：
+
+        high_water.txt   先写（抬高水位 ＋ 追加来历）
+        docs_test.go     后写
+
+    上一版只收 `original`、只还原 docs_test.go，而失败路径照样打印「盘上没有留半成品」——
+    在 main=8aad108 的扔掉克隆里实测：vet 失败 ⇒ docs_test.go md5 不变，
+    **high_water.txt md5 6b060db5 → f9113326**（guards 63→64 ＋ 一行「本次新增」的来历）。
+    后果：下一次正常重造时 TestGuardsStillExist 要求一个【什么都没删】的人去写删除说明。
+    🔴 收：**一个动作写了 N 个文件，它的还原就得管 N 个** —— 先数「这一趟写过哪些」，再数「还原管了哪些」。
+
 
     ⚠️ 这是【唯一】一份还原实现：main() 的失败路径和 drill() 都调它。
 
@@ -235,15 +247,19 @@ def restore(original):
     返回值本身也是那条规矩的一部分：**输出要写明走了哪一条**，
     否则下一次射程变了，还是只能靠人记得去问。
     """
+    # ⚠️ 顺序：先还原 high_water.txt。它是【先被写】的那一个，
+    # 而且它若留着被抬高的数，下一次重造就会从一个假的下限起跑。
+    open(HIGH_WATER, "wb").write(originalHW)
+    hw = "把 high_water.txt 逐字节还原了"
     if original is None:
         # 这次跑之前文件【本来就不存在】。那时「还原」= 把它删掉，
         # 而不是写一个 None 进去——否则失败路径自己会崩，
         # 而崩在还原步骤上，等于盘上留着半成品。
         if os.path.exists(TARGET):
             os.remove(TARGET)
-        return "把 docs_test.go 删掉了（它本来就不存在）"
+        return "把 docs_test.go 删掉了（它本来就不存在），" + hw
     open(TARGET, "wb").write(original)
-    return "把 docs_test.go 逐字节还原了"
+    return "把 docs_test.go 逐字节还原了，" + hw
 
 
 def drill():
@@ -272,12 +288,22 @@ def drill():
               "先跑一次不带 --drill 的重建，再来演练。")
         sys.exit(1)
     start = open(TARGET, "rb").read()               # 演练结束时必须回到这一份
+    hwStart0 = open(HIGH_WATER, "rb").read()
 
     # —— 取值一：original 是 bytes（文件在，被写坏）——
+    # ⛔ 2026-09-13 起 high_water.txt 也一起写坏：restore 管两个文件，演练就得两个都验。
     open(TARGET, "wb").write("// 故意写坏，看还原路径把不把它救回来\n".encode("utf-8"))
+    open(HIGH_WATER, "ab").write("# 演练故意追加的一行\n".encode("utf-8"))
     broken = open(TARGET, "rb").read()
     assert broken != start, "演练本身没生效——文件没被改坏，下面的结论不算数"
-    what1 = restore(start)
+    assert open(HIGH_WATER, "rb").read() != hwStart0, "演练本身没生效——high_water.txt 没被改坏"
+    what1 = restore(start, hwStart0)
+    if open(HIGH_WATER, "rb").read() != hwStart0:
+        open(HIGH_WATER, "wb").write(hwStart0)
+        open(TARGET, "wb").write(start)
+        print("❌ 还原路径没把 high_water.txt 恢复成原样")
+        print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
+        sys.exit(1)
     if open(TARGET, "rb").read() != start:
         # ⚠️ 收尾【不走 restore】：它刚被判定是坏的。
         # 一个实验的收尾如果依赖它刚证明为坏的那个东西，收尾本身就不可信。
@@ -301,7 +327,7 @@ def drill():
     # **一个不执行被测代码的演练，和没有这个演练一样。**
     os.remove(TARGET)
     open(TARGET, "wb").write(b"// pretend the generator just wrote this\n")
-    what2 = restore(None)
+    what2 = restore(None, hwStart0)
     if os.path.exists(TARGET):
         # ⚠️ 与取值一同样的收尾：绕过 restore 直接写回。
         # 上一稿只给取值一加了这条，取值二没加 —— 于是它红是红了，
@@ -312,6 +338,57 @@ def drill():
         print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
         sys.exit(1)
     print("  取值二 original=None ：生成器写了一份 → %s → 盘上确实没有它" % what2)
+    open(TARGET, "wb").write(start)                 # 取值三要从基线起跑
+
+    # —— 取值三：**主流程自己的失败路径**，而不是单独调 restore() ——
+    #
+    # ⛔ 由来（2026-09-13，在 main=8aad108 的扔掉克隆里量出来的）：
+    # 前两个取值只验了「restore() 被调时做得对不对」，**从没验过「主流程失败时调没调它、调得全不全」**。
+    # 而主流程先 writeHighWater（抬高＋追加来历）、再写 docs_test.go、再 gofmt/vet ——
+    # vet 失败时 restore(original) **只还原 docs_test.go**：
+    #
+    #	rebuild rc=1 · 报文「…盘上没有留半成品」
+    #	docs_test.go md5 不变 ✅ · high_water.txt md5 6b060db5 → f9113326 · git status: M high_water.txt
+    #
+    # 🔴 **一个动作写了两个文件，而还原只管了一个** —— 那句「盘上没有留半成品」是假话，
+    # 而后果是下一次正常重造时 TestGuardsStillExist 要求一个【什么都没删】的人去写删除说明。
+    #
+    # ⇒ 这一格造一次**真的**失败：塞一格带 guard 标记、而编译不过的测试 ⇒ 计数涨（会抬水位）
+    # ＋ vet 必然失败 ⇒ 然后断言**两个文件都逐字节回到开跑前**。
+    probe = os.path.join(ROOT, "zz_drill_vetfail_test.go")
+    if os.path.exists(probe):
+        print("❌ 演练要用的探针文件已经存在：%s —— 不动它，演练作废" % probe)
+        sys.exit(1)
+    hwStart = open(HIGH_WATER, "rb").read()
+    open(probe, "wb").write(
+        "package tickflow\n\nimport \"testing\"\n\n"
+        "// guard: 演练探针（故意编译不过），跑完即删。\n"
+        "func TestZZDrillVetFails(t *testing.T) { undefinedOnPurpose() }\n".encode("utf-8"))
+    try:
+        r = subprocess.run([sys.executable, os.path.abspath(__file__)],
+                           cwd=ROOT, capture_output=True)
+    finally:
+        os.remove(probe)
+    out3 = (r.stdout + r.stderr).decode("utf-8", "replace")
+    docBack = open(TARGET, "rb").read() == start
+    hwBack = open(HIGH_WATER, "rb").read() == hwStart
+    if r.returncode == 0 or not (docBack and hwBack):
+        # ⚠️ 收尾照前两格的规矩：**绕过被判为坏的那条路径**直接写回。
+        open(TARGET, "wb").write(start)
+        open(HIGH_WATER, "wb").write(hwStart)
+        if r.returncode == 0:
+            print("❌ 塞了一格编译不过的守卫，主流程居然退 0 —— 这一格没走到失败路径，读数作废")
+        else:
+            print("❌ 主流程失败了（rc=%d），而盘上没回到开跑前：docs_test.go %s · high_water.txt %s"
+                  % (r.returncode, "逐字节相同" if docBack else "【变了】",
+                     "逐字节相同" if hwBack else "【变了】"))
+            for ln in out3.splitlines():
+                if "半成品" in ln or "高水位" in ln:
+                    print("   主流程原话：%s" % ln.strip())
+        print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
+        sys.exit(1)
+    print("  取值三 主流程真失败：rc=%d → docs_test.go 逐字节相同 · high_water.txt 逐字节相同"
+          % r.returncode)
 
     open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
     assert open(TARGET, "rb").read() == start, "演练没把盘上还原成开跑前那一份"
@@ -320,13 +397,58 @@ def drill():
     if code != 0:
         print("❌ 演练之后 vet 不过：\n%s" % out)
         sys.exit(1)
-    print("演练通过：restore() 的两种入参取值各走了一次，盘上回到开跑前那一份，vet 过。")
+    print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次，"
+          "盘上回到开跑前那一份，vet 过。")
+
+
+class RebuildFailed(Exception):
+    """主流程里一个【已经说过原因】的失败 —— 交给 main() 那唯一一处还原。"""
 
 
 def main():
     # ② 先备份。文件可能不存在——**那正是「删掉能不能造回来」那条判据要的情形**，
     #    所以这里不能假设它在。
     original = open(TARGET, "rb").read() if os.path.exists(TARGET) else None
+    # ⛔ high_water.txt 也要备份：这一趟【先】写它。它一定在（不在就没有下限可读）。
+    originalHW = open(HIGH_WATER, "rb").read()
+
+    # ⛔ **还原只在这一处**。上一版有两条泄漏：
+    #   一、vet 失败那一支调了 restore，而 restore 只管 docs_test.go
+    #   二、抬高水位之后任何一个 assert 失败 —— **这里外面没有兜底，连 docs_test.go 都不还原**
+    # ⇒ 改成：主体里的一切失败（assert、异常、非 0 的 SystemExit、vet 失败）都落到下面这一处。
+    try:
+        rebuild(original)
+    except SystemExit as e:
+        if e.code in (0, None):
+            raise
+        fail(original, originalHW, None)
+    except BaseException as e:            # noqa: B902 —— 包括 KeyboardInterrupt：打断也不许留半成品
+        fail(original, originalHW, e)
+
+
+def fail(original, originalHW, exc):
+    """唯一的失败出口：清中间产物 ⇒ 还原两个文件 ⇒ **核一遍确实还原了** ⇒ 退 1。"""
+    for f in ("rows.gen", "quotes.gen", "census.gen"):
+        p = os.path.join(ROOT, f)
+        if os.path.exists(p):
+            os.remove(p)
+    if exc is not None:
+        print("❌ 重造中途抛了 %s：%s" % (type(exc).__name__, exc))
+    what = restore(original, originalHW)
+    # ⚠️ 核状态，不核动作：那句「盘上没有留半成品」要由【读回来的字节】撑着，不由「调过 restore」撑着。
+    assert open(HIGH_WATER, "rb").read() == originalHW, "high_water.txt 没还原成开跑前那一份"
+    if original is None:
+        assert not os.path.exists(TARGET), "docs_test.go 本来不存在，而还原之后它还在"
+    else:
+        assert open(TARGET, "rb").read() == original, "docs_test.go 没还原成开跑前那一份"
+    leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
+                 if os.path.exists(os.path.join(ROOT, f))]
+    assert not leftovers, "中间产物没清干净：%s" % leftovers
+    print("已%s，中间产物也清了 —— 盘上没有留半成品（两个文件都读回来核过）" % what)
+    sys.exit(1)
+
+
+def rebuild(original):
 
     # ⚠️ 这里【不再】从旧文件里截 prefix。
     #
@@ -623,18 +745,10 @@ def main():
             os.remove(p)
 
     if not ok:                                     # ④ 任何一步失败就整份还原
-        # 还原只有【一份实现】，drill() 调的是同一个 restore()。
-        # 上一版这里是主流程自己写一遍、drill() 抄一遍 —— 于是这里加了
-        # `original is None` 分支之后，演练到不了那儿而输出照旧说「演练通过」。
-        what = restore(original)
-        leftovers = [f for f in ("rows.gen", "quotes.gen", "census.gen")
-                     if os.path.exists(os.path.join(ROOT, f))]
-        assert not leftovers, "中间产物没清干净：%s" % leftovers
-        # ⚠️ 这句必须分两种说：文件本来就不存在时，做的是【删掉】不是【还原】。
-        # 上一版两种情况共用「逐字节还原」——而那在第二种情况下是一句假话，
-        # 正是本仓一直在拆的「自述比实现宽」，这次在失败路径上（没人会去看的地方）。
-        print("已%s，中间产物也清了 —— 盘上没有留半成品" % what)
-        sys.exit(1)
+        # 还原只有【一份实现】，而且只有【一个出口】：main() 里的 fail()。
+        # ⛔ 上一版这里自己调 restore —— 而 restore 当时只管 docs_test.go，
+        # 于是这一支打印「盘上没有留半成品」时，high_water.txt 已经被抬高了（2026-09-13 实测）。
+        raise RebuildFailed("gofmt / vet 没过（原因见上面那段输出）")
 
     print("docs_test.go 重建完成：锚点 %d 节 / 规矩 %d 条 / 普查 %d 份 / 守卫 %d 个；"
           "gofmt 与 vet 均过"
