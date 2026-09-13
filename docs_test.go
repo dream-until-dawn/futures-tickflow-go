@@ -945,6 +945,7 @@ var guardNames = []string{
 	`TestPlanGapsReadsEachSpanAtMostOnce`,
 	`TestPlanGapsReadsNothingWhenDayOutsideEverySpan`,
 	`TestPlanGapsReadsNothingWhenNoCoverage`,
+	`TestReadmeHasNoScheduleTable`,
 	`TestRefdataExpiryConditionNotYetDue`,
 	`TestReleaseNotesTagBodyIsExtractable`,
 	`TestResyncTwiceDoesNotPoisonTheStore`,
