@@ -121,24 +121,66 @@ def guardNamesOnDisk():
     try:
         text = open(TARGET, encoding="utf-8").read()
     except FileNotFoundError:
-        return None            # 第一次生成：没有旧表可比，不是错
+        return None, "盘上没有 docs_test.go"     # 第一次生成 / 照旧配方 rm 过：没有旧表可比
+    return parseGuardNames(text)
+
+
+def parseGuardNames(text):
+    """从一份 docs_test.go 的【文本】里解析 guardNames。回 (名字列表 或 None, 解析不出的原因)。
+
+    ⛔ 失败方向一律是 None（不出证据），**并且带上原因** —— 原因会进报文，
+    因为「解析不出」有几种来历，而它们的处置不同（2026-09-13 实测出来的那一种见下）。
+    """
     head = "var guardNames = []string{"
     i = text.find(head)
     if i < 0:
-        return None            # 旧文件里没有这张表（格式变过）⇒ 说不出差集，如实返回
-    out = []
+        return None, "文件里没有 guardNames 这张表（格式变过？）"
+    block = []
     for ln in text[i + len(head):].split("\n"):
-        s = ln.strip()
-        if s == "}":
+        if ln.strip() == "}":
             break
-        if s.startswith("`") and s.endswith("`,"):
-            out.append(s[1:-2])
+        block.append(ln)
+    # ⛔ 表里夹着冲突标记 ⇒ 这不是「一张旧表」，是【两侧的旧表叠在一起】。
+    # 2026-09-13 在 aacea54 的扔掉克隆里实测：两条分支各加一格守卫、冲突后不照配方、
+    # 带着标记直接重造 ⇒ 下面那个循环把两侧的名字都收进来 ⇒ 差集为空而计数涨了 ⇒ 断言触发，报文写
+    # 「多半是 guardNamesOnDisk 的解析与生成格式漂开了；先修解析」—— **成因说错了**，
+    # 照它去修解析是白修（本仓那条：一句处置可以为真而有害）。
+    # ⇒ 认出来，当作解析不出，交给调用方退到 HEAD。
+    if any(ln.startswith(("<<<<<<<", "=======", ">>>>>>>")) for ln in block):
+        return None, "guardNames 表里夹着合并冲突标记（两侧的旧表叠在一起）"
+    out = []
+    for ln in block:
+        t = ln.strip()
+        if t.startswith("`") and t.endswith("`,"):
+            out.append(t[1:-2])
     # ⛔ 表头在、条目 0 条 ⇒ 那是【解析失败】，不是「旧表是空的」
     # （旧表不可能为空：guards 的下限已经被断言 > 0）。
     # 🔴 而两者的后果差得很远：当成「空表」的话，差集 = **全部名字**
     # ⇒ 来历行会把整张表列出来 —— **一份全错的证据，而它不出声。**
     # ⇒ 按本仓那条：**一个【产出证据】的工具，失败方向必须是「不出证据」。**
-    return out or None
+    if not out:
+        return None, "表头在而条目 0 条"
+    return out, ""
+
+
+def guardNamesFromHead():
+    """退路：从 `git show HEAD:docs_test.go` 解析旧表。回 (名字 或 None, HEAD 的短 SHA 或 "", 原因)。
+
+    ⛔ 为什么要这条退路（2026-09-13 实测，评审方裁定）：合并冲突时旧配方要求先 rm docs_test.go ⇒
+    旧表**必然**不在；而两侧各加过守卫 ⇒ 计数**必然**涨 ⇒ 账本只能写「说不出」。
+    「删＋涨」是那条配方在它唯一用途上的必然结果 ⇒ 不能拒绝，只能给它一个旧表。
+    ⚠️ HEAD 的含义随场景变：**合并时它是被合进的那一侧（main），rebase 时它是被接上去的上游。**
+    ⇒ 所以账本那一行必须写明「旧表取自 HEAD(<sha>)」，否则两种来源写出长得一样的来历行。
+    """
+    r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True)
+    if r.returncode != 0:
+        return None, "", "取不到 HEAD（不在 git 仓里？还没有提交？）"
+    sha = r.stdout.decode("utf-8", "replace").strip()
+    r = subprocess.run(["git", "show", "HEAD:docs_test.go"], cwd=ROOT, capture_output=True)
+    if r.returncode != 0:
+        return None, sha, "HEAD 里没有 docs_test.go"
+    names, why = parseGuardNames(r.stdout.decode("utf-8", "replace"))
+    return names, sha, why
 
 
 def chainBreaks(lines):
@@ -425,17 +467,167 @@ def drill():
     print("  取值三 主流程真失败：rc=%d（施加自检：主流程原话「%s」）"
           "→ docs_test.go 逐字节相同 · high_water.txt 逐字节相同" % (r.returncode, raised[0]))
 
+    open(TARGET, "wb").write(start)                 # 取值四不写盘，但要从基线读
+
+    # —— 取值四：旧表解析认得出【冲突标记】（2026-09-13，(s-b)）——
+    #
+    # ⛔ 由来：两条分支各加一格守卫、冲突后不照配方、带着标记直接重造 ⇒ 旧解析把两侧名字都收进来
+    # ⇒ 差集为空而计数涨了 ⇒ 断言触发，报文把成因说成「解析与生成格式漂开了」（照它修解析是白修）。
+    # ⇒ 这一格**不跑主流程**，只在解析层断言，所以便宜；而它由 module_sweep 自动跑。
+    # ⚠️ 射程：它守「认得出冲突标记」这一件。「认不出时退到 HEAD」与「来历行写明旧表取自 HEAD」
+    # 由下面的取值五守（评审方 2026-09-13 判：B3 是这一片唯一对外可见的新行为，回归时不许一格都不红）。
+    names0, why0 = parseGuardNames(start.decode("utf-8", "replace"))
+    if names0 is None:
+        print("❌ 取值四读数作废：基线 docs_test.go 本身就解析不出（%s）—— 下面那格比的是两个 None" % why0)
+        sys.exit(1)
+    txt = start.decode("utf-8", "replace")
+    head = "var guardNames = []string{\n"
+    at = txt.find(head)
+    if at < 0:
+        print("❌ 取值四读数作废：基线里找不到 guardNames 表头，造不出冲突样本")
+        sys.exit(1)
+    at += len(head)
+    conflicted = (txt[:at] + "<<<<<<< HEAD\n\t`TestZZDrillOurs`,\n=======\n\t`TestZZDrillTheirs`,\n"
+                  ">>>>>>> other\n" + txt[at:])
+    names4, why4 = parseGuardNames(conflicted)
+    if names4 is not None or "冲突标记" not in why4:
+        print("❌ 取值四：表里夹着冲突标记，而解析给出了 %s（原因：%r）"
+              % ("%d 个名字" % len(names4) if names4 is not None else "None", why4))
+        print("   ⇒ 两侧的旧表叠在一起会被当成一张旧表 ⇒ 差集为空而计数涨 ⇒ 断言报一个错的成因。")
+        sys.exit(1)
+    print("  取值四 旧表夹着冲突标记：基线解析出 %d 个名字（标定）→ 注入冲突块 → 解析不出（%s）"
+          % (len(names0), why4))
+
+    # —— 取值五：盘上旧表用不了 ⇒ 一次【成功的】重造 ⇒ 来历行写明「旧表取自 HEAD(」且点名新增 ——
+    #
+    # ⛔ 它守两件（评审方 2026-09-13 的必改 3，两格突变在 (s-b) 送审时量过而没有自动守卫）：
+    #   B2 退到 HEAD 那一条没了   ⇒ 来历行变成「说不出」⇒ 这里找不到探针名 ⇒ 红
+    #   B3 来历行不写来源         ⇒ 与「旧表在盘上」的来历行逐字相同 ⇒ 这里找不到「旧表取自 HEAD(」⇒ 红
+    # ⚠️ 施加自检（R2 那一课）：这一趟必须真的抬了水位，否则来历行根本不会被写，上面两条恒不成立而判红 ——
+    # 那是「读数作废」，不是「退路坏了」，两者的处置不同，所以分开报。
+    #
+    # —— 后半：守「盘上优先于 HEAD」这个【决定】本身（评审方 2026-09-13 的必改 4）——
+    #
+    # ⛔ 由来：评审方的突变 B5 把「盘上用不了才退 HEAD」翻成「一律取 HEAD」⇒ 演练与全量测试**全绿**，
+    # 而同一分支上两次重造、中间不提交（最常见的开发节奏）时，账本会**重复认领**：
+    #   现状  …本次新增：TestZZB5One  /  …本次新增：TestZZB5Two
+    #   B5    …旧表取自 HEAD；本次新增：TestZZB5One  /  …旧表取自 HEAD；本次新增：TestZZB5One TestZZB5Two
+    # ⇒ 取值五前半守「用不了时退」，**没有任何一格守「能用时不许退」**。
+    # ⇒ 并进来少一次重造：前半那次成功重造之后，盘上的表恰好多一个名字而 HEAD 没有 ——
+    #   正是「盘上可用且与 HEAD 不同」。再塞探针二、再重造 ⇒ 新增来历行只许点名探针二、不许含「旧表取自」。
+    probe5 = os.path.join(ROOT, "zz_drill_headsrc_test.go")
+    probe6 = os.path.join(ROOT, "zz_drill_disksrc_test.go")
+    for p in (probe5, probe6):
+        if os.path.exists(p):
+            print("❌ 取值五读数作废：探针文件已经存在：%s —— 不动它" % p)
+            sys.exit(1)
+    hw5 = open(HIGH_WATER, "rb").read()
+    open(probe5, "wb").write(
+        "package tickflow\n\nimport \"testing\"\n\n"
+        "// guard: 演练探针（能编译，只为让守卫计数上涨），跑完即删。\n"
+        "func TestZZDrillHeadSource(t *testing.T) {}\n".encode("utf-8"))
+    open(TARGET, "wb").write(conflicted.encode("utf-8"))      # 盘上旧表：夹着冲突标记 ⇒ 用不了
+    r6 = None
+    try:
+        r5 = subprocess.run([sys.executable, os.path.abspath(__file__)], cwd=ROOT, capture_output=True)
+        ledger5 = open(HIGH_WATER, encoding="utf-8").read()
+        disk5 = open(TARGET, encoding="utf-8").read()          # 前半重造之后盘上的表（后半的「旧表」）
+        if r5.returncode == 0:
+            open(probe6, "wb").write(
+                "package tickflow\n\nimport \"testing\"\n\n"
+                "// guard: 演练探针二（能编译），跑完即删。\n"
+                "func TestZZDrillDiskSource(t *testing.T) {}\n".encode("utf-8"))
+            r6 = subprocess.run([sys.executable, os.path.abspath(__file__)], cwd=ROOT, capture_output=True)
+            ledger6 = open(HIGH_WATER, encoding="utf-8").read()
+    finally:
+        # ⚠️ 收尾不走 restore()：这是演练自己造的输入，按它自己的快照写回
+        for p in (probe5, probe6):
+            if os.path.exists(p):
+                os.remove(p)
+        open(TARGET, "wb").write(start)
+        open(HIGH_WATER, "wb").write(hw5)
+    out5 = (r5.stdout + r5.stderr).decode("utf-8", "replace")
+    if r5.returncode != 0:
+        print("❌ 取值五：盘上旧表用不了时，一次本该成功的重造失败了（rc=%d）" % r5.returncode)
+        print(out5.strip()[-800:])
+        sys.exit(1)
+    raised5 = [ln.strip() for ln in out5.splitlines()
+               if ln.strip().startswith("高水位抬高：") and "guards" in ln]
+    if not raised5:
+        print("❌ 取值五读数作废：这一趟没抬 guards 水位（输出里没有「高水位抬高：guards …」）"
+              " ⇒ 来历行根本没被写，下面的判据没有真值")
+        sys.exit(1)
+    before5 = set(hw5.decode("utf-8").split("\n"))
+    added5 = [ln for ln in ledger5.split("\n") if ln.startswith("# 来历") and ln not in before5]
+    hit5 = [ln for ln in added5 if "旧表取自 HEAD(" in ln and "TestZZDrillHeadSource" in ln]
+    if not hit5:
+        print("❌ 取值五：盘上旧表用不了，而这一趟新增的来历行里没有一行同时含「旧表取自 HEAD(」与探针名")
+        for ln in added5 or ["（一行都没有）"]:
+            print("   新增来历：%s" % ln)
+        # ⚠️ 只印与读数对得上的那一句 —— 两句一起印就是在猜成因（本仓那条：成因错比读数错多错一格）
+        joined5 = "\n".join(added5)
+        if "说不出" in joined5:
+            print("   ⇒ 来历行写着「说不出」：旧表在盘上用不了时没有退到 HEAD")
+        elif "TestZZDrillHeadSource" in joined5 and "旧表取自 HEAD(" not in joined5:
+            print("   ⇒ 点名了探针而没写「旧表取自 HEAD(」：来源那一栏没写 —— 与旧表在盘上的来历行长得一样")
+        sys.exit(1)
+    print("  取值五 盘上旧表用不了 ⇒ 成功重造（施加自检：「%s」）→ 来历行「…%s」"
+          % (raised5[0], hit5[0].split("自动：", 1)[-1]))
+
+    # —— 取值五后半：盘上旧表【可用且与 HEAD 不同】⇒ 不许退到 HEAD ——
+    diskNames5, _ = parseGuardNames(disk5)
+    headNames5, headSha5, _ = guardNamesFromHead()
+    # ⛔ 施加自检一：前半那次重造之后，盘上的表确实和 HEAD 不同（否则「不许退」与「退了」在账本上长得一样）
+    if (diskNames5 is None or headNames5 is None
+            or "TestZZDrillHeadSource" not in diskNames5 or "TestZZDrillHeadSource" in headNames5):
+        print("❌ 取值五后半读数作废：前半重造之后盘上的表没有与 HEAD 分开"
+              "（盘上含探针一：%s · HEAD 含探针一：%s）"
+              % (diskNames5 is not None and "TestZZDrillHeadSource" in diskNames5,
+                 headNames5 is not None and "TestZZDrillHeadSource" in headNames5))
+        sys.exit(1)
+    out6 = (r6.stdout + r6.stderr).decode("utf-8", "replace")
+    if r6.returncode != 0:
+        print("❌ 取值五后半：盘上旧表可用时，一次本该成功的重造失败了（rc=%d）" % r6.returncode)
+        print(out6.strip()[-800:])
+        sys.exit(1)
+    raised6 = [ln.strip() for ln in out6.splitlines()
+               if ln.strip().startswith("高水位抬高：") and "guards" in ln]
+    # ⛔ 施加自检二：第二次也真的抬了水位
+    if not raised6:
+        print("❌ 取值五后半读数作废：第二次重造没抬 guards 水位（输出里没有「高水位抬高：guards …」）")
+        sys.exit(1)
+    before6 = set(ledger5.split("\n"))
+    added6 = [ln for ln in ledger6.split("\n") if ln.startswith("# 来历") and ln not in before6]
+    hit6 = [ln for ln in added6 if "TestZZDrillDiskSource" in ln
+            and "TestZZDrillHeadSource" not in ln and "旧表取自" not in ln]
+    if not hit6:
+        print("❌ 取值五后半：盘上旧表可用（与 HEAD(%s) 不同），而第二次新增的来历行不是「只点名探针二、不写来源」" % headSha5)
+        for ln in added6 or ["（一行都没有）"]:
+            print("   新增来历：%s" % ln)
+        joined6 = "\n".join(added6)
+        # ⚠️ 只印与读数对得上的那一句
+        if "旧表取自" in joined6:
+            print("   ⇒ 写着「旧表取自 …」：盘上旧表能用时也退了 —— 「盘上优先」被翻过来了")
+        elif "TestZZDrillHeadSource" in joined6:
+            print("   ⇒ 探针一被第二次认领：这一行的旧表不是盘上那份")
+        sys.exit(1)
+    print("  取值五后半 盘上旧表可用且与 HEAD(%s) 不同 ⇒ 成功重造（施加自检：「%s」）→ 来历行「…%s」"
+          % (headSha5, raised6[0], hit6[0].split("自动：", 1)[-1]))
+
     open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
-    assert open(TARGET, "rb").read() == start, "演练没把 docs_test.go 还原成开跑前那一份"
-    # ⛔ 收尾那句「盘上回到开跑前」同样要由【两个】文件撑着，不是一个。
-    assert open(HIGH_WATER, "rb").read() == hwStart0, "演练没把 high_water.txt 还原成开跑前那一份"
+    # ⛔ 收尾那句话由【这张清单】生成：断言遍历它，打印也遍历它 —— 手写文件名会比实现宽或窄。
+    snaps = ((TARGET, start), (HIGH_WATER, hwStart0))
+    for path, want in snaps:
+        assert open(path, "rb").read() == want, "演练没把 %s 还原成开跑前那一份" % os.path.basename(path)
 
     code, out = run("go", "vet", "./...")
     if code != 0:
         print("❌ 演练之后 vet 不过：\n%s" % out)
         sys.exit(1)
-    print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次；"
-          "docs_test.go 与 high_water.txt 都读回来与开跑前逐字节相同；vet 过。")
+    print("演练通过：restore() 的两种入参取值各走了一次，主流程真失败走了一次，旧表冲突标记认得出，"
+          "旧表退到 HEAD 且来历行写明来源，盘上旧表能用时不退；"
+          "%s 都读回来与开跑前逐字节相同；vet 过。"
+          % " 与 ".join(os.path.basename(p) for p, _ in snaps))
 
 
 class RebuildFailed(Exception):
@@ -669,37 +861,50 @@ def rebuild(original):
     #
     # ⇒ 处置：触发条件从「**数涨了**」换成「**数涨了【或】成员换了**」，
     # 并且**新增与移除两栏都写** —— 一次删除因此无法被一次新增洗掉。
-    oldNames = guardNamesOnDisk()
+    # —— 旧表从哪儿来：盘上 ⇒ HEAD ⇒ 说不出（**最后一层不拒绝**，评审方 2026-09-13 裁定）——
+    #
+    # ⛔ 最后一层为什么不拒绝：HEAD 里也解析不出（第一次生成、表格式刚改过）时拒绝，
+    # 就是「先有鸡还是先有蛋」—— 格式一改，之后每一次重造都被拒，直到提交为止。
+    # 「说不出」本来就是【不出证据】，不违反「产出证据的工具，失败方向必须是不出证据」。
+    oldNames, whyDisk = guardNamesOnDisk()
+    oldSource = ""                          # "" ＝ 盘上；否则写进来历行
+    if oldNames is None:
+        headNames, headSha, whyHead = guardNamesFromHead()
+        if headNames is not None:
+            oldNames, oldSource = headNames, "HEAD(%s)" % headSha
+            print("⚠️ 盘上的旧表用不了（%s）⇒ 旧表改取自 HEAD(%s)；来历行会写明这一点。"
+                  % (whyDisk, headSha), file=sys.stderr)
+        else:
+            print("⚠️ 旧表两处都取不到 —— 盘上：%s；HEAD：%s ⇒ 本次守卫名单的增减【说不出】。"
+                  % (whyDisk, whyHead), file=sys.stderr)
     addedGuards = removedGuards = None
     if oldNames is not None:
         addedGuards = [n for n in names if n not in set(oldNames)]
         removedGuards = [n for n in oldNames if n not in set(names)]
-    elif os.path.exists(TARGET):
-        # ⚠️ 只在【文件在而解析不出来】时出声。第一次生成时文件本来就不存在，
-        # 那不是故障，出声只会教人忽略这条提示。
-        print("⚠️ 盘上 docs_test.go 在，而 guardNames 解析不出来 ⇒ "
-              "本次无法报告守卫名单的增减；先看 guardNamesOnDisk 与生成格式是不是漂开了。",
-              file=sys.stderr)
 
     guardsGrew = any(k == "guards" for k, _, _ in grew)
     membershipChanged = bool(addedGuards or removedGuards)
     if guardsGrew and oldNames is not None:
         # ⛔ 「表长大了却说不出新增的是谁」是一个自相矛盾的状态 —— 拒绝，别写一行空话。
         assert addedGuards, (
-            "guards 涨到 %d，而与盘上旧表求差得到 0 个新名字 —— 这两件事不能同真。"
-            "多半是 guardNamesOnDisk 的解析与生成格式漂开了；先修解析，别改被测方。"
-            % len(names))
+            "guards 涨到 %d，而与旧表（取自%s）求差得到 0 个新名字 —— 这两件事不能同真。"
+            "先查那一份旧表本身（盘上：是否被手改过、是否还带冲突标记；HEAD：那颗提交里的表对不对）；"
+            "两处都对时，才是 parseGuardNames 的解析与生成格式漂开了。"
+            % (len(names), oldSource or "盘上"))
 
     def guardNote():
         """来历行里那两栏。**说不出的时候要说「说不出」**，别只是不说。"""
         if oldNames is None:
-            return "；名单增减：【说不出——旧表解析未命中，见 guardNamesOnDisk】"
+            return "；名单增减：【说不出——盘上与 HEAD 都取不到旧表】"
+        # ⛔ 用了退路就写明：合并时 HEAD 是 main，rebase 时是上游 —— 同一句「本次新增」含义不同。
+        src = ("；旧表取自 %s" % oldSource) if oldSource else ""
         out = ""
         if addedGuards:
             out += "；本次新增：" + " ".join(addedGuards)
         if removedGuards:
             out += "；本次移除：" + " ".join(removedGuards)
-        return out or "；名单未变"
+        # ⚠️ 来源与增减是两栏：若拼成一个串再 `or "；名单未变"`，用了退路时「名单未变」会被来源那一栏吃掉。
+        return src + (out or "；名单未变")
 
     if grew or membershipChanged:
         # ⛔ 先看链断没断 —— 断着就不追加（评审方 2026-09-09 定的甲''）。
