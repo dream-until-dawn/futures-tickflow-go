@@ -968,6 +968,7 @@ var guardNames = []string{
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
+	`TestV060MissingRecordsErratum`,
 	`TestVerifyCoverageContract`,
 	`TestVerifyCoverageMatchesVerifyPerSpan`,
 	`TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight`,
