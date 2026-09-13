@@ -200,6 +200,56 @@ func TestMissingRecordsAbortsBeforePlanning(t *testing.T) {
 		}
 		mrMustAbort(t, dir, 20200805, 20200810, 2)
 	})
+	t.Run("S3′_恰好少1条", func(t *testing.T) {
+		// 边界格（评审方 2026-09-13 打出来的：九格里少的条数只有 4 和 2 ⇒ 阈值写成 >1、判据写成 <claimed-1 全仓不红）
+		dir := mrGoodLib(t)
+		if err := os.Truncate(mrFile(dir, ".dat"), 3*segfile.RecordSize); err != nil {
+			t.Fatal(err)
+		}
+		mrMustAbort(t, dir, 20200805, 20200810, 1)
+		l := mrOpen(t, dir)
+		defer l.close(t)
+		rep, _ := l.sync(20200805, 20200810)
+		if len(rep.MissingRecords) != 1 || !strings.Contains(rep.MissingRecords[0], "少 1 条") {
+			t.Errorf("恰好少 1 条时报文里没有「少 1 条」：%q", rep.MissingRecords)
+		}
+	})
+	t.Run("S4′_截尾与缺记录同一次开库", func(t *testing.T) {
+		// C3b：截了不许不留声 —— 截出半截是缺记录最常见的真实成因，而中止的那一份报告里截尾那条也必须在。
+		// ⚠️ 不预先开库：截尾与缺记录必须出现在【同一次】Open 里（S4 预先开过一次，那一格验不了这个组合）。
+		dir := mrGoodLib(t)
+		const ragged = 24
+		if err := os.Truncate(mrFile(dir, ".dat"), 2*segfile.RecordSize+ragged); err != nil {
+			t.Fatal(err)
+		}
+		metaBefore := mrRead(t, mrFile(dir, ".meta"))
+		l := mrOpen(t, dir)
+		defer l.close(t)
+		if st := l.st.OpenState(); st.TruncatedTail != ragged || st.MissingRecords != 2 {
+			t.Fatalf("前提不成立：同一次开库应当 TruncatedTail=%d 且 MissingRecords=2，得到 %+v", ragged, st)
+		}
+		rep, err := l.sync(20200805, 20200810)
+		t.Logf("err=%v · TruncatedTails=%q · MissingRecords=%q", err, rep.TruncatedTails, rep.MissingRecords)
+		if !errors.Is(err, tickflow.ErrMissingRecords) {
+			t.Errorf("err 不是 ErrMissingRecords：%v", err)
+		}
+		if len(rep.TruncatedTails) != 1 || !strings.Contains(rep.TruncatedTails[0], "24 字节") {
+			t.Errorf("中止的那份报告里没有截尾那条（带字节数）：%q —— 截了不留声，与「本来没事」同形", rep.TruncatedTails)
+		}
+		if len(rep.MissingRecords) != 1 {
+			t.Errorf("rep.MissingRecords 有 %d 条，期望 1 条：%q", len(rep.MissingRecords), rep.MissingRecords)
+		}
+		if l.calls != 0 {
+			t.Errorf("中止之前向源要了 %d 次数据", l.calls)
+		}
+		// 「不碰盘」扣掉 C3a 的合法改动：.dat 从 两条整＋24 字节 变成 两条整；.meta 一个字节不许动
+		if fi, serr := os.Stat(mrFile(dir, ".dat")); serr != nil || fi.Size() != 2*segfile.RecordSize {
+			t.Errorf(".dat 大小应当只被 C3a 截到 %d 字节，得到 %v（err=%v）", 2*segfile.RecordSize, fi, serr)
+		}
+		if !bytes.Equal(mrRead(t, mrFile(dir, ".meta")), metaBefore) {
+			t.Error(".meta 的字节变了 —— 中止必须在任何写之前")
+		}
+	})
 	t.Run("S4_dat截出半截", func(t *testing.T) {
 		dir := mrGoodLib(t)
 		if err := os.Truncate(mrFile(dir, ".dat"), 2*segfile.RecordSize+24); err != nil {

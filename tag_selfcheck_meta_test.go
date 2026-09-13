@@ -651,6 +651,9 @@ func TestRerunDiagnosisErratum(t *testing.T) {
 //	三、新的读数            ⇒ "ErrMissingRecords"
 //	四、出路                ⇒ "一起删" · "从早到晚"
 //
+// ⚠️ 欠条（评审方 2026-09-13）：v0.6.0.md 现在只有勘误一这一节 ⇒ 「节内删词就红」的突变证明不了判据取的是那一节。
+// ⇒ **这份文件长出第二节时，补一格「节外同词、节内删词」的突变**（照 TestRerunDiagnosisErratum 验收里的 E3）。
+//
 // guard: v0.6.0 发布说明里有勘误一，四件事的词都在那一节里。
 func TestV060MissingRecordsErratum(t *testing.T) {
 	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.6.0.md"))
