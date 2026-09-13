@@ -55,6 +55,11 @@ type Store struct {
 	truncated  int64
 	legacyMeta bool
 
+	// missing 是 Open 那一刻「coverage 声称的条数 − .dat 里的完整记录数」（只在前者更大时非零）。
+	// 判据与射程见 tickflow.OpenState.MissingRecords；它与 CommitSpan 那条 errNotDurable 是【同一条不变量】，
+	// 那边在写入口守，这边在开库时核 —— 核到被打破，说明是本库之外的东西动过文件。
+	missing int64
+
 	// verified 记「这一段【走查过】没有」。B3 要它：**没走查过的时候，
 	// 那两个计数什么也不意味着**，不许回答「拉过，确认没有」。
 	//
@@ -204,6 +209,19 @@ func Open(dir string, p tickflow.Period) (s *Store, truncated int64, err error) 
 		// A3：format 缺失时 Format 为 nil，与「写了 0」分得开。
 		// ⇒ 这一格就是 D2a 的入口条件；处置不在这一层。
 		st.legacyMeta = m.Format == nil
+		// (v)：n < Σbars ⇒ 盘上缺数据而 coverage 还在。本层不处置（编排中止），只量出来。
+		fi, serr := f.Stat()
+		if serr != nil {
+			f.Close()
+			return nil, 0, serr
+		}
+		var claimed int64
+		for _, sp := range m.Coverage {
+			claimed += int64(sp.Bars)
+		}
+		if have := CountRecords(fi.Size()); have < claimed {
+			st.missing = claimed - have
+		}
 	case os.IsNotExist(err):
 		v := FormatVersion
 		st.meta = Meta{Format: &v}
@@ -810,8 +828,9 @@ func (s *Store) dayHasRecords(day tickflow.TradingDay) (bool, error) {
 // 写下来是因为下一个人会想在这儿加第三格，而那一格未必也有这个性质。
 func (s *Store) OpenState() tickflow.OpenState {
 	return tickflow.OpenState{
-		TruncatedTail: s.truncated,
-		LegacyMeta:    s.legacyMeta,
+		TruncatedTail:  s.truncated,
+		LegacyMeta:     s.legacyMeta,
+		MissingRecords: s.missing,
 	}
 }
 

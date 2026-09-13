@@ -145,6 +145,10 @@ type SyncReport struct {
 	LegacyMetaDiscarded  []string
 	LegacyMetaUnverified []string
 
+	// MissingRecords 非空时说：打开库时盘上的记录少于 coverage 声称的条数，这次同步**在规划之前中止了**（(v)）。
+	// 🔴 必须进 `Incidents()`；与 `OpenState.MissingRecords`、`ErrMissingRecords` 同一个词（有守卫钉着）。
+	MissingRecords []string
+
 	// SkippedCovered 记「这次跳过了哪些已经覆盖过的交易日」（丙片）。
 	//
 	// ⛔ 它**必须存在**，理由不是好看：跳过之后 `Bars=0`，
@@ -273,6 +277,9 @@ func (r SyncReport) Incidents() []string {
 	}
 	for _, s := range r.LegacyMetaUnverified {
 		out = append(out, "旧 meta 标记未核并停："+s)
+	}
+	for _, s := range r.MissingRecords {
+		out = append(out, "开库时缺记录："+s)
 	}
 	if r.Misaligned > 0 {
 		out = append(out, fmt.Sprintf("%d 根对不上网格", r.Misaligned))

@@ -638,3 +638,41 @@ func TestRerunDiagnosisErratum(t *testing.T) {
 		}
 	}
 }
+
+// —— v0.6.0 勘误一：v0.5.0 勘误四丙格「只删 .dat ⇒ 每条 err = nil」自 (v) 起变了（2026-09-13）——
+//
+// 起因：(v) 让开库时「盘上记录少于 coverage 声称的条数」直接中止 ⇒ 已发布的 v0.5.0 注解里那一格在 main 上变假。
+// 照 v0.5.0.md 头里那条「勘误不许等到发布再写」，勘误与代码同片落地。
+//
+// 名单是读者要落到的四件事，各取词（取【勘误一那一节】的文本，不取全文）：
+//
+//	一、哪一版的哪一格      ⇒ "v0.5.0" · "勘误四"
+//	二、旧的读数            ⇒ "err = nil"
+//	三、新的读数            ⇒ "ErrMissingRecords"
+//	四、出路                ⇒ "一起删" · "从早到晚"
+//
+// ⚠️ 欠条（评审方 2026-09-13）：v0.6.0.md 现在只有勘误一这一节 ⇒ 「节内删词就红」的突变证明不了判据取的是那一节。
+// ⇒ **这份文件长出第二节时，补一格「节外同词、节内删词」的突变**（照 TestRerunDiagnosisErratum 验收里的 E3）。
+//
+// guard: v0.6.0 发布说明里有勘误一，四件事的词都在那一节里。
+func TestV060MissingRecordsErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.6.0.md"))
+	if err != nil {
+		t.Fatalf("读 v0.6.0 发布说明失败：%v —— (v) 让 v0.5.0 注解里一格变假，勘误不许等到发布再写", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误一"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.6.0.md 里没有「%s」这一节 —— 照 v0.5.0 注解判断「err = nil ⇒ 只删了 .dat」的人，本版上看到的是 ErrMissingRecords", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{"v0.5.0", "勘误四", "err = nil", "ErrMissingRecords", "一起删", "从早到晚"} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("v0.6.0 勘误一那一节里没有 %q —— 四件事缺一件，读 v0.5.0 注解的人落不到该落的地方", want)
+		}
+	}
+}

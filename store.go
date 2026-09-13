@@ -240,6 +240,17 @@ var (
 	// ErrLegacyMeta .meta 没有 format 字段（v0.3 之前写的），而这个源不可重放，
 	// 所以 coverage 既不能当「已拉过」也不能当「没拉过」。补救：一个显式决定。
 	ErrLegacyMeta = errors.New("tickflow/store: meta 版本未知且源不可重放——需要一个显式决定")
+
+	// ErrMissingRecords 打开库时，盘上的完整记录**少于** coverage 声称的条数（(v)，2026-09-13）。
+	//
+	// ⛔ 它不进缺口分类：`Sync` 在**规划缺口之前**就中止 —— 在缺数据的库上，
+	// 「挑段跳过已覆盖」会把缺的那些天当成拉过而永远跳过（v0.5.0 勘误四丙格：每条命令 err=nil，一条不重拉）。
+	// ⇒ 处置只有一个，而且要人做：**把这个周期的数据文件与元数据一起删掉，按交易日从早到晚重拉**。
+	// 别再重跑（补不回来），也别只删其中一个。
+	//
+	// 📎 名字不带存储格式：`Store` 是接口，「记录少了」是任何实现都能说的一件事；
+	// 与 `OpenState.MissingRecords`、`SyncReport.MissingRecords` 同一个词（有一格守卫钉着）。
+	ErrMissingRecords = errors.New("tickflow/store: 开库时缺记录——盘上的记录少于 coverage 声称的条数，同步补不回来")
 )
 
 // —— 打开这个库时发现的事，与它们的处置 ——
@@ -268,6 +279,26 @@ type OpenState struct {
 	// ⛔ 它**不是「坏了」，是【要一个决定】** —— 而那个决定取决于
 	// 「这个源能不能把那一段重新给一遍」，那要 Caps.Since，本层没有。⇒ 见 DecideLegacyMeta。
 	LegacyMeta bool
+
+	// MissingRecords 是打开时「coverage 声称的记录条数 − 盘上完整记录条数」，**只在前者更大时非零**（(v)）。
+	//
+	// > 0 ⇒ 盘上缺数据而 coverage 还在 ⇒ 编排必须中止并出声（见 ErrMissingRecords）。
+	//
+	// ⛔ 判据是「少于」，不是「不等于」：**多于**是本库自己能合法产生的状态
+	// （崩在落盘与扩 coverage 之间留下的孤儿记录、只删了元数据、HaltCoverageWrite 那个出口），
+	// 各有自己的出声点；**少于**则只能来自本库之外 —— 写路径从第一个发布版起就守着「先落盘、再扩 coverage，
+	// 盘上条数不够就拒」（segfile：`errNotDurable`，引入于 bc92565；v0.3.0 / v0.4.0 / v0.4.1 / v0.5.0 的
+	// store/segfile/store.go 各含 2 处，AppendBars 里的 `dat.Sync()` 各 1 处）
+	// ⇒ **任何发布版写出来、没被外部动过的库都满足「不少于」**，升级那天不会被这一格拦下。
+	//
+	// ⚠️ 射程：
+	//
+	//	认      少于的全部情形：整份数据文件被删、截成整条、截出半截（后者与 TruncatedTail 同时非零）
+	//	不认    条数够而内容不对（被换成别的记录、乱序、落在段外）⇒ 仍由同步末尾的走查报
+	//	不认    多于（见上）
+	//	不认    不填这一格的 Store 实现 ⇒ 零值 ＝ 没发现（与另外两格同一个约定）
+	//	少认    旧格式元数据里没有条数（Bars=0）的段 ⇒ 声称的条数偏小 ⇒ 只会少认，不会误认
+	MissingRecords int64
 }
 
 // LegacyDecision 是 `format` 缺失时的处置。

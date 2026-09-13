@@ -530,6 +530,9 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	//	而它的调用点在**日历求交之前**（本函数上方）⇒ Sync 已经停了
 	//
 	// ⇒ 所以走到这儿的 coverage，要么是本进程刚写的，要么带着 format ⇒ 语义已知。
+	// ⚠️ **而语义已知 ≠ 数据还在**（(v)，2026-09-13）：一份带 format 的 .meta 配一个被删掉或截短的 .dat，
+	// 上面这段论证照样成立，而跳过会把缺的那些天永远跳过。那一格由 disposeOpenState 里的
+	// MissingRecords 检查在更前面拦下（开库时 n < Σbars ⇒ 中止）；它拦不住的是「条数够而内容不对」，那归走查。
 	want, skipped := splitCovered(days, s.store.Coverage())
 	if len(skipped) > 0 {
 		// ⚠️ **跳过必须留下事实**：没有它，「跳过了」与「源什么都没给」在报告上同形
@@ -611,6 +614,30 @@ func (s *Syncer) disposeOpenState(req SyncRequest, rep *SyncReport) error {
 			fmt.Sprintf("打开库时截掉了 %d 字节残尾（C3a）——"+
 				"截断本身已经处理好了，留这一条是为了让它和「本来没事」分得开", st.TruncatedTail))
 	}
+
+	// (v)：盘上缺记录而 coverage 还在 ⇒ **在规划之前中止**。
+	//
+	// ⛔ 为什么中止而不是出声后继续：继续就会进「挑段跳过已覆盖」，缺的那些天被当成拉过而跳过，
+	// 走查再报一遍、err=nil —— 那正是 v0.5.0 勘误四丙格的死路，只是多一条痕迹。
+	// 而按裁定过的 err 语义（这一次动作本身没做成），**这次同步确实没做成**：它拒绝在缺数据的库上规划。
+	// ⚠️ 中止对这个周期的**所有**请求都生效，包括 coverage 之外的新日子 ——
+	// 在缺数据的库上往后追加只会让那个缺口更难补（补的时候要从早到晚重拉，追加得越多重拉越多）。这不是误伤。
+	// ⛔ 放在 LegacyMeta 之前：LegacyDiscard 那一支会作废 coverage 并全区间重拉，
+	// 而盘上那些残余记录还在 ⇒ 先拉早的会撞 ErrOutOfOrder。缺数据的库不该进那一支。
+	if st.MissingRecords > 0 {
+		cov := s.store.Coverage()
+		var claimed int
+		for _, sp := range cov {
+			claimed += sp.Bars
+		}
+		rep.MissingRecords = append(rep.MissingRecords,
+			fmt.Sprintf("盘上的记录比 coverage 声称的 %d 条少 %d 条 —— 盘上缺数据而 coverage 还在，"+
+				"同步会把这些天当成已经拉过而跳过，永远补不回来。"+
+				"⛔ 别再重跑，也别只删其中一个文件：把这个周期的 .dat 与 .meta 一起删掉，然后按交易日从早到晚重拉",
+				claimed, st.MissingRecords))
+		return fmt.Errorf("%w：少 %d 条（coverage 声称 %d 条）", ErrMissingRecords, st.MissingRecords, claimed)
+	}
+
 	if !st.LegacyMeta {
 		return nil
 	}
