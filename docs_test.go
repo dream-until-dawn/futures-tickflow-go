@@ -948,6 +948,7 @@ var guardNames = []string{
 	`TestReadmeHasNoScheduleTable`,
 	`TestRefdataExpiryConditionNotYetDue`,
 	`TestReleaseNotesTagBodyIsExtractable`,
+	`TestRerunDiagnosisErratum`,
 	`TestResyncTwiceDoesNotPoisonTheStore`,
 	`TestReviewReadingsRefusesStrayFlags`,
 	`TestRootErrorSentinelsAreDisposed`,
