@@ -1929,6 +1929,11 @@ var errorSentinelDisposition = map[string]sentinelDisposition{
 	"ErrSpanVerifyFailed": {GapStoreVerifyFailed, "存储答不了·走查没通过；别再重跑，去读包在里面的真因"},
 	"ErrLegacyMeta":       {GapStoreLegacy, "存储答不了·旧格式；必须问人"},
 
+	// ⚠️ (v) 2026-09-13：ErrMissingRecords【不进缺口分类】，理由与 ErrClosed / ErrBudgetExhausted 都不同 ——
+	// 它是【时机】不同：Sync 在规划缺口之前就中止了，这一次没有任何一天被分类。
+	// 而库的真实状态（缺的那些天）要等人把两份文件一起删掉、从早到晚重拉之后才重新可答。
+	"ErrMissingRecords": {0, "不进缺口分类 —— Sync 在规划缺口之前中止（开库时盘上记录少于 coverage 声称的条数）"},
+
 	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
 	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。

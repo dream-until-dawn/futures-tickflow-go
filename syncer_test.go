@@ -37,6 +37,8 @@ func TestReportCompleteIsDerivedFromEveryContributingField(t *testing.T) {
 		{"走查没跑成", SyncReport{Halt: HaltDone, VerifyUnrun: []string{"这一遍走查没能跑起来：读盘失败"}}},
 		{"旧 meta 作废", SyncReport{Halt: HaltDone, LegacyMetaDiscarded: []string{"rb/1m"}}},
 		{"旧 meta 标记", SyncReport{Halt: HaltDone, LegacyMetaUnverified: []string{"rb/1m"}}},
+		// ⛔ (v) 2026-09-13：开库时缺记录 —— Sync 中止时它是那一条事件；也要能单独翻 Complete()。
+		{"开库时缺记录", SyncReport{Halt: HaltDone, MissingRecords: []string{"少 4 条"}}},
 		{"对不上网格的根", SyncReport{Halt: HaltDone, Misaligned: 1}},
 		{"可疑交易日", SyncReport{Halt: HaltDone, AnomalousDays: []TradingDay{20200807}}},
 		// ⚠️ 这一格是【补的】—— UngatedSource 落地时没有被加进这张表，
@@ -359,6 +361,7 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 		"VerifyUnrun":          true,
 		"LegacyMetaDiscarded":  true,
 		"LegacyMetaUnverified": true,
+		"MissingRecords":       true,
 		"Misaligned":           true,
 		"AnomalousDays":        true,
 		"UngatedSource":        true,
@@ -516,5 +519,45 @@ func TestVerifyTraceWordingMatchesGapKinds(t *testing.T) {
 				t.Errorf("%s 的痕迹又被贴上了「开库时截过残尾」：%q —— 那是 v0.4.1 起的错标签", c.field, inc[0])
 			}
 		})
+	}
+}
+
+// —— (v) 名字对齐：一件事、一个处置 ⇒ 一个词（评审方 2026-09-13 裁定）——
+//
+// 同一件事在三个地方出现：开库读数 `OpenState.<词>` · 报告栏 `SyncReport.<词>` · 哨兵 `Err<词>`；
+// 读报告的人还会在 `Incidents()` 与 `err.Error()` 里看到它的中文说法。
+// ⇒ 五处必须是同一个词，否则读的人要自己知道「A 就是 B」（本仓那条：判两个东西该不该共用一个名字，看处置分不分岔）。
+// ⛔ 而这个词**不许带存储格式**（`Dat` / `Meta`）：`Store` 是接口，把 segfile 的文件名钉进根包的公开标识符，
+// 发布之后再改就是一次勘误二那样的代价。（报文**文本**里写 .dat/.meta 可以，那是给人照做的。）
+//
+// guard: OpenState 一格、SyncReport 一栏、根包哨兵用同一个词且不带存储格式；Incidents 前缀与哨兵报文共用同一个中文词。
+func TestMissingRecordsNamesAreOneFamily(t *testing.T) {
+	const word, zh = "MissingRecords", "缺记录"
+	for _, bad := range []string{"Dat", "Meta", "Seg"} {
+		if strings.Contains(word, bad) {
+			t.Fatalf("这一族的词 %q 带了存储格式 %q", word, bad)
+		}
+	}
+	if f, ok := reflect.TypeOf(OpenState{}).FieldByName(word); !ok || f.Type.Kind() != reflect.Int64 {
+		t.Errorf("OpenState 里没有 int64 的 %s 一格（ok=%v）—— 开库读数与报告栏、哨兵不是同一个词了", word, ok)
+	}
+	if f, ok := reflect.TypeOf(SyncReport{}).FieldByName(word); !ok || f.Type != reflect.TypeOf([]string(nil)) {
+		t.Errorf("SyncReport 里没有 []string 的 %s 一栏（ok=%v）", word, ok)
+	}
+	found := false
+	for _, n := range rootErrorSentinels(t) {
+		if n == "Err"+word {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("根包里没有哨兵 Err%s —— 三处不是同一个词了", word)
+	}
+	inc := SyncReport{Halt: HaltDone, MissingRecords: []string{"x"}}.Incidents()
+	if len(inc) != 1 || !strings.HasPrefix(inc[0], "开库时"+zh+"：") {
+		t.Errorf("MissingRecords 单独出现时的痕迹不是恰好一条「开库时%s：…」：%q", zh, inc)
+	}
+	if !strings.Contains(ErrMissingRecords.Error(), zh) {
+		t.Errorf("ErrMissingRecords 的报文里没有「%s」：%q —— err 与 Incidents 两个通道用了两个说法", zh, ErrMissingRecords.Error())
 	}
 }
