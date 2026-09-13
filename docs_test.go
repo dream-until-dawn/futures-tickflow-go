@@ -669,7 +669,7 @@ var carrierCensus = []struct {
 }{
 	{`tools/probe/README.md`, 56},
 	{`docs/README.md`, 144},
-	{`CONTRIBUTING.md`, 346},
+	{`CONTRIBUTING.md`, 349},
 	{`tools/audit/README.md`, 102},
 	{`docs/method-landing.md`, 163},
 }
