@@ -2894,7 +2894,9 @@ func TestGuardMarkersAreRegistered(t *testing.T) {
 // （用户 09-10 已裁挪走）。而两份没有任何一次交付会同时经过。
 // ⇒ 处置不是「记得两边一起改」，是把 README 那份删掉、只留一句链接，并挡着它长回来。
 //
-// 判据：行首（去掉缩进后）是 `| vN.M |` 的表格行 ⇒ 那就是一张排期表的一行。
+// 判据：行首（去掉缩进后）是 `| vN.M |` 或 `| vN.M.P |`（段数不限）的表格行 ⇒ 那就是一张排期表的一行。
+// ⛔ 第一版只容两段（`v\d+\.\d+`），`| v0.5.0 | x |` 被放过 —— 而本仓 tag 与 pending.txt 用的正是三段式
+// （评审方 2026-09-13 实测抓到：加一行 `| v0.5.0 | x | 待办 |`，全仓一格不红）。
 //
 // ⚠️ 射程（照例写明它不比什么）：
 //
@@ -2907,7 +2909,7 @@ func TestGuardMarkersAreRegistered(t *testing.T) {
 //
 // guard: README 里没有排期表行（`| vN.M |`），而同一判据在 design.md 里能命中 —— 长回第二张表就红。
 func TestReadmeHasNoScheduleTable(t *testing.T) {
-	row := regexp.MustCompile(`^\|\s*v\d+\.\d+\s*\|`)
+	row := regexp.MustCompile(`^\|\s*v\d+(\.\d+)+\s*\|`)
 	count := func(path string) (hits []string) {
 		b, err := os.ReadFile(path)
 		if err != nil {

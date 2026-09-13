@@ -2,10 +2,8 @@
 
 中国期货的行情数据层：拉取、持久化、算指标，并向回测引擎提供可步进的多周期视图。
 
-> 已实现：`Bar` / `Symbol` / `Period` / `Calendar` 接口 · `calendar/embedded` · `store/segfile` · `source/sinasource` · `source/cffexsource`（日线）· `Syncer` · `refdata/shinnyref`（解码与取数层）。
-> 未开始：`source/shinnysource`（天勤深度分钟）· `calendar/derived` · `continuous` · `indicator` · `Feed`。
-> 已发布的版本以 `git tag -l` 为准。
-> 排期见 [design.md 十五](docs/design.md)，逐条能力与置信度见 [contract.md](docs/contract.md)。
+> 哪些包已实现、哪些还没开始，只记在 [contract.md 〇](docs/contract.md) 那张状态表里（它有守卫）；
+> 排期只记在 [design.md 十五](docs/design.md)。这里不抄第二份。已发布的版本以 `git tag -l` 为准。
 
 ---
 
