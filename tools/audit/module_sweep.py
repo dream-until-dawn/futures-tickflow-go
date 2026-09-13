@@ -50,6 +50,9 @@ porcelain 记的是**文件的状态**（` M` / `??`），不是**文件的内�
   已跟踪文件的内容变了 ⇒ diff 变了；多了未跟踪文件 ⇒ 清单变了；**两者都不需要一张手写的文件清单**
   （评审方提醒过：若只哈希「演练会写的那几个文件」，那张清单就得和 restore() 共用，否则演练多写一个就漏）。
 📎 porcelain 仍然印出来 —— 给人看「是哪几个文件」；**判据用的是指纹**。
+⚠️ 射程：`--exclude-standard` 会把 `.gitignore` 里的文件排除在指纹之外 —— 包括 `rows.gen` / `quotes.gen` /
+`census.gen` 这三个中间产物。演练中断留下的 `.gen` **这里看不见**。接受这个射程的理由（评审方判）：
+它们是被忽略的中间产物，**不会被正常提交带走**；而生成器自己在两条路径上都会清理它们。
 
 跑法：python tools/audit/module_sweep.py
 退出码：全部模块 gofmt / vet / test 都过、演练过、演练前后内容指纹相同 ⇒ 0；任一不过 ⇒ 1
@@ -127,9 +130,13 @@ def drill():
         print("   演练前：\n%s" % (before.rstrip() or "（空）"))
         print("   演练后：\n%s" % (after.rstrip() or "（空）"))
         if before == after:
-            print("   ⚠️ 前后 porcelain【一字不差】而内容指纹不同 ⇒ 某个【已经是 M】的文件内容被演练改了，")
-            print("      状态没变所以 porcelain 看不见 —— 多半是 docs_test.go 或 high_water.txt。")
-            print("      跑 `git diff` 看它们，别直接提交。")
+            print("   ⚠️ 前后 porcelain【一字不差】而内容指纹不同 ⇒ 某个【已经是 M 或 ??】的文件内容被演练改了，")
+            print("      状态没变所以 porcelain 看不见。")
+        # ⚠️ 只报读数，不报成因（本仓那条：成因错比读数错多错一格）—— 哪些文件动了，由读的人看。
+        _, stat = run(ROOT, "git", "diff", "HEAD", "--stat")
+        _, others = run(ROOT, "git", "ls-files", "--others", "--exclude-standard")
+        print("   演练后 git diff HEAD --stat：\n%s" % (stat.rstrip() or "（空）"))
+        print("   演练后未跟踪文件：\n%s" % (others.rstrip() or "（无）"))
         print("   ⇒ 演练在工作区里留下了东西（探针文件？写坏的 docs_test.go？追加过的 high_water.txt？）—— 先清掉再提交。")
     return code == 0 and same
 

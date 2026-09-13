@@ -29,7 +29,8 @@
 
 🔴 ⇒ **这张白名单不是新规矩，是把一条已经实行过 4 次的惯例写下来。**
 ⇒ 而 `docs_test.go` **不进**白名单，理由不是「它不常冲突」，是它**已有更强的处置**：
-`CONTRIBUTING.md` 逐字写着「`docs_test.go` | **生成物** | **别手合**：删掉重跑生成器」。
+`CONTRIBUTING.md` 那张表写着「`docs_test.go` | **生成物** | **别手合，也别 rm**：取 HEAD 那一侧再重跑生成器」
+（2026-09-13 之前是「删掉重跑生成器」—— 改掉的理由见 CONTRIBUTING「为什么去掉了原来开头的 `rm docs_test.go`」）。
 🔴 **一个文件若已有「别手合」的处置，它就不该有合并例外** —— 两条规矩指向同一个文件时，
 **强的那条吃掉弱的那条。**
 
@@ -124,7 +125,7 @@ WHITELIST = {"tools/audit/high_water.txt"}
 # 历史豁免：**只增不改，且只收历史提交。** 每一颗都写清越界在哪、那个文件今天的处置是什么。
 HISTORIC = {
     "f9278df": "越界 docs_test.go —— 它是生成物，今天的处置是"
-               "「别手合：删掉重跑 rebuild_docs_test.py」（CONTRIBUTING.md 那张表）",
+               "「别手合，也别 rm：取 HEAD 那一侧再重跑 rebuild_docs_test.py」（CONTRIBUTING.md 那张表）",
     "1f62620": "越界 docs_test.go 与 tools/audit/README.md —— 前者同上；"
                "后者是手写散文，正常合即可，不该出现在自带 diff 里",
 }
@@ -240,7 +241,8 @@ def main():
         print("  白名单：%s" % " ".join(sorted(WHITELIST)), file=sys.stderr)
         print("  ⇒ 合并提交是唯一能塞进「两个父都没有的内容」的地方；\n"
               "     白名单之外的文件出现在那里，意味着有东西没经过任何一次单独评审。\n"
-              "  ⇒ 若那个文件是生成物（如 docs_test.go）：别手合，删掉重跑生成器。",
+              "  ⇒ 若那个文件是生成物（如 docs_test.go）：别手合，也别 rm —— "
+              "git show HEAD:docs_test.go > docs_test.go，再重跑生成器。",
               file=sys.stderr)
         return EXIT_VIOLATION
 
