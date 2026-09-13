@@ -197,7 +197,7 @@ func (c *Client) fetchDaily(ctx context.Context, sym string) ([]byte, error) {
 //
 //	照 Since 去要 ⇒ **0 根 + ErrCalendarGap** —— 内置日历覆盖不到 2018，整段被拒
 //	⇒ **今天：吵，但安全**
-//	v0.4 `calendar/derived` 覆盖到 2018 之后 ⇒ 覆盖检查通过 ⇒ **丙格生效 ⇒ 安静**
+//	`calendar/derived` 覆盖到 2018 之后 ⇒ 覆盖检查通过 ⇒ **丙格生效 ⇒ 安静**
 //	⇒ **那时会把七年半记成「拉过、确认没有」**
 //
 // ⛔ **挡住它的东西被修好的那天，就是它上膛的那天** ——

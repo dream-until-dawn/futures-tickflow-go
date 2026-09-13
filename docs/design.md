@@ -4056,13 +4056,15 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 
 ## 十五、排期
 
+**排期只记这一张表。** README 原来抄着第二份，两边各自过期（2026-09-13 对表时：README 那份 v0.3 仍标「待办」、v0.4 仍含「从日线反推交易日历」）⇒ 删掉那份，由 `TestReadmeHasNoScheduleTable` 挡着它长回来。
+
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ 见 [probe.md](probe.md) |
 | v0.1 | `Bar` / `Symbol` / `Period` / `Calendar` 接口 **+ `calendar/embedded`（可用的实现）** | ✅ `v0.1.0` |
 | v0.2 | `Calendar` 接口收口（`(X, bool)` → `(X, error)` + `Covers`）／`calendar/embedded` 修一处**已随 `v0.1.0` 发布**的真 bug（国债日盘 09:15 → 09:30）／探针与 `tools/audit/` 仪器加固 | ✅ `v0.2.0` |
 | v0.3 | `Source`(新浪 + **cffexsource**) / `Store`(segfile) / `Syncer` | ✅ `v0.3.0`（2026-09-10 发布；tag 对象 `bef0e21e…` → commit `6252324…`；注解里带着四条【还活着的到期条件】与六条【声明的射程】，`git show v0.3.0` 可读） |
-| v0.4 | `refdata`(天勤) ＋ **`Store` 的「周期进身份」**（修那个假绿；读口子不加＝零调用点） | 待办 —— ⚠️ `calendar/derived` **已挪到 v0.5**（用户 2026-09-10 裁，理由见 §十六） |
+| v0.4 | `refdata`(天勤) ＋ **`Store` 的「周期进身份」**（修那个假绿；读口子不加＝零调用点） | ✅ `v0.4.0`（2026-09-10 发布；tag 对象 `2700d314…` → commit `f218ae6…`）＋ `v0.4.1`（2026-09-11；tag 对象 `be7fc801…` → commit `cb2a531…`） —— ⚠️ `calendar/derived` **已挪到 v0.5**（用户 2026-09-10 裁，理由见 §十六） |
 | v0.5 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**）＋ **`calendar/derived`**（它的唯一输入 1m 在这一档才进库）＋ `Store` 的读口子 | 待办 |
 | v0.6 | `continuous`——换月、复权、接缝 | 待办 |
 | v0.7 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |

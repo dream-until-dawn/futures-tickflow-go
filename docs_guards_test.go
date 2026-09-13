@@ -2886,3 +2886,47 @@ func TestGuardMarkersAreRegistered(t *testing.T) {
 	}
 	t.Logf("扫了 %d 份 _test.go，找到 %d 个 `%s` 标记", files, marks, mark)
 }
+
+// —— 排期只记一张表（2026-09-13）——
+//
+// 起因：README 与 design.md §十五 各有一张排期表，**两边各自过期** ——
+// 对表那天 README 的 v0.3 还标「待办」（`v0.3.0` 早已发布），v0.4 还含「从日线反推交易日历」
+// （用户 09-10 已裁挪走）。而两份没有任何一次交付会同时经过。
+// ⇒ 处置不是「记得两边一起改」，是把 README 那份删掉、只留一句链接，并挡着它长回来。
+//
+// 判据：行首（去掉缩进后）是 `| vN.M |` 的表格行 ⇒ 那就是一张排期表的一行。
+//
+// ⚠️ 射程（照例写明它不比什么）：
+//
+//	堵的     README.md 里任何一行「版本号开头的表格行」
+//	不堵的   其他 .md 里的第二张排期表（contract.md 等）——今天没有，写下来别假装它被守着
+//	不堵的   散文里的排期句（「v0.5 做天勤源」）—— 与引用某个已发布版本的句子分不开
+//
+// 🔴 **标定格**：同一个判据必须在 design.md §十五 上【命中】—— 否则正则写坏了（比如多要一段
+// `.\d+`），README 那一格会恒绿，而读起来像「README 干净」。
+//
+// guard: README 里没有排期表行（`| vN.M |`），而同一判据在 design.md 里能命中 —— 长回第二张表就红。
+func TestReadmeHasNoScheduleTable(t *testing.T) {
+	row := regexp.MustCompile(`^\|\s*v\d+\.\d+\s*\|`)
+	count := func(path string) (hits []string) {
+		b, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("读 %s：%v", path, err)
+		}
+		for i, ln := range strings.Split(string(b), "\n") {
+			if row.MatchString(strings.TrimSpace(ln)) {
+				hits = append(hits, fmt.Sprintf("%s:%d", path, i+1))
+			}
+		}
+		return hits
+	}
+	if cal := count(filepath.Join("docs", "design.md")); len(cal) == 0 {
+		t.Fatalf("判据在 docs/design.md 上一行都没命中 —— §十五 那张表明明在，" +
+			"说明正则写坏了；这时 README 那一格是恒绿的，不能算过")
+	}
+	if hits := count("README.md"); len(hits) > 0 {
+		t.Errorf("README.md 里长回了排期表行（%d 行：%s）。\n"+
+			"  排期只记 design.md 十五 那一张；README 只留一句链接。\n"+
+			"  两份各自过期过一次 —— 要改排期，改 design.md。", len(hits), strings.Join(hits, " "))
+	}
+}
