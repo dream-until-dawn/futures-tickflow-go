@@ -273,12 +273,13 @@ def restore(original, originalHW):
 def drill():
     """演练还原路径，**把 restore() 入参的取值空间走遍**，并写明每次走的是哪一条。
 
-    ⛔ **这一格没有自动守卫**（评审方 2026-09-13 的条件三：要么接进自查，要么写明 —— 我选写明）。
-    它只在有人跑 `python tools/audit/rebuild_docs_test.py --drill` 时才跑；
-    全仓没有任何 `.go` 测试或自查脚本调用它（grep `--drill`：只在 CONTRIBUTING 与 audit README 里被提到）。
-    ⇒ 取值三守的那条路径（主流程失败时两个文件都回到开跑前），**今天只被「记得跑」守着**。
-    ⚠️ 没接进 `go test` 的理由：取值三要跑一次完整重造，而重造里有 `go vet ./...` ——
-    嵌进 `go test` 是递归的、慢。这是代价，不是没想到。
+    ⛔ **谁来跑它：`tools/audit/module_sweep.py`**（评审方 2026-09-13 判，理由我认）。
+    那是 CONTRIBUTING 规定的自查命令；演练实测约 1.6s。
+    module_sweep 在跑它**前后各取一次 `git status --porcelain` 并比较** —— 核的是状态，不是「调过 drill」：
+    演练会临时改写工作区（写坏 docs_test.go、塞探针文件），一次 Ctrl-C 就可能留下残留。
+    ⚠️ 上一稿这里写的是「这一格没有自动守卫」，而 CONTRIBUTING 同一节还写着「常驻形态」——
+    **同一节里两句互相矛盾**，是我两颗提交各写一句造成的。
+    ⚠️ 不进 `go test` 的理由不变：取值三要跑一次含 `go vet ./...` 的完整重造，嵌进去是递归的、慢。
 
     评审方 2026-09-08：**备份要验，否则备份本身是第三种静默失败。**
     「任何一步失败就逐字节还原」这条路径**写下来了，但从没被执行过**——
@@ -387,6 +388,24 @@ def drill():
     out3 = (r.stdout + r.stderr).decode("utf-8", "replace")
     docBack = open(TARGET, "rb").read() == start
     hwBack = open(HIGH_WATER, "rb").read() == hwStart
+    # ⛔ **施加自检：这一趟主流程【真的写过】high_water.txt 吗？**（评审方 2026-09-13 的突变 R2 打出来的）
+    #
+    # 取值三本身就是一格突变（塞一格坏守卫），而它原来只断言「失败了 ＋ 两个文件都回来了」。
+    # R2 把探针的 `// guard:` 标记去掉 ⇒ vet 照样失败、**计数不涨 ⇒ 主流程根本不写 high_water**
+    # ⇒ 「逐字节相同」自然成立 ⇒ 它照样打印「取值三 主流程真失败…」「演练通过」。
+    # 🔴 **它守的那条泄漏路径根本没被走到，而输出一字不差。**
+    # ⇒ 证据取主流程自己的原话「高水位抬高：guards …」；找不到 ⇒ 读数作废，不许判通过。
+    raised = [ln.strip() for ln in out3.splitlines()
+              if ln.strip().startswith("高水位抬高：") and "guards" in ln]
+    if r.returncode != 0 and not raised:
+        open(TARGET, "wb").write(start)
+        open(HIGH_WATER, "wb").write(hwStart)
+        print("❌ 取值三读数作废：主流程失败了（rc=%d），而这一趟【没写过】high_water.txt"
+              "（输出里没有「高水位抬高：guards …」）" % r.returncode)
+        print("   ⇒ 它要守的那条泄漏路径根本没被走到；「两个文件逐字节相同」在这时是恒真的。")
+        print("   ⇒ 多半是探针不再让守卫计数上涨（标记识别方式变了？探针被改了？）。")
+        print("   （盘上已由演练直接写回，不是靠 restore）")
+        sys.exit(1)
     if r.returncode == 0 or not (docBack and hwBack):
         # ⚠️ 收尾照前两格的规矩：**绕过被判为坏的那条路径**直接写回。
         open(TARGET, "wb").write(start)
@@ -402,8 +421,8 @@ def drill():
                     print("   主流程原话：%s" % ln.strip())
         print("   （盘上已由演练【绕过 restore】直接写回，不是靠它自己）")
         sys.exit(1)
-    print("  取值三 主流程真失败：rc=%d → docs_test.go 逐字节相同 · high_water.txt 逐字节相同"
-          % r.returncode)
+    print("  取值三 主流程真失败：rc=%d（施加自检：主流程原话「%s」）"
+          "→ docs_test.go 逐字节相同 · high_water.txt 逐字节相同" % (r.returncode, raised[0]))
 
     open(TARGET, "wb").write(start)                 # 收掉演练自己的痕迹
     assert open(TARGET, "rb").read() == start, "演练没把 docs_test.go 还原成开跑前那一份"

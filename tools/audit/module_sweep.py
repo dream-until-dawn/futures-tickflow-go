@@ -25,8 +25,18 @@
 ⇒ **枚举 go.mod，并把找到的模块清单【打印出来】** ：
 范围写在输出里，而不是写在某个人的记忆里。
 
+## 另外一格：生成器的还原演练（`rebuild_docs_test.py --drill`）
+
+2026-09-13 接进来（评审方判）。理由：CONTRIBUTING 说「演练的取值三就是这条路径的**常驻形态**」——
+而此前**没有任何东西自动跑它**，那个「常驻」比实现宽。接进来之后那句话才成立。
+
+⛔ 它会**临时改写工作区**（写坏 docs_test.go、塞探针文件）⇒ 这里在跑它**前后各取一次**
+`git status --porcelain` 并比较，**把结果印出来** —— 核的是状态，不是「调过 drill」这个动作。
+一次 Ctrl-C 留下的残留会当场出声，不会被下一次提交顺手带走。
+⚠️ 演练的结论**单独一行**，不混进「模块 gofmt / vet / test」那几行。
+
 跑法：python tools/audit/module_sweep.py
-退出码：全部模块 gofmt / vet / test 都过 ⇒ 0；任一不过 ⇒ 1
+退出码：全部模块 gofmt / vet / test 都过、演练过、演练前后 porcelain 相同 ⇒ 0；任一不过 ⇒ 1
 """
 import io
 import os
@@ -57,6 +67,27 @@ def run(cwd, *args):
     return p.returncode, (p.stdout + p.stderr).decode("utf-8", "replace")
 
 
+def drill():
+    """跑生成器的还原演练，前后比 porcelain。回 True ＝ 演练过 且 前后相同。"""
+    c0, before = run(ROOT, "git", "status", "--porcelain")
+    if c0 != 0:
+        print("   ❌ 演练前取不到 git status --porcelain（rc=%d）⇒ 演练不跑，读数作废" % c0)
+        print(before.strip()[:400])
+        return False
+    code, out = run(ROOT, sys.executable, os.path.join(HERE, "rebuild_docs_test.py"), "--drill")
+    c1, after = run(ROOT, "git", "status", "--porcelain")
+    same = (c1 == 0 and before == after)
+    print("   %-34s %s" % ("演练 rebuild_docs_test.py --drill", "ok" if code == 0 else "❌ rc=%d" % code))
+    print("   %-34s %s" % ("演练前后 git status --porcelain", "相同" if same else "❌ 不同"))
+    if code != 0:
+        print(out.strip()[-1200:])
+    if not same:
+        print("   演练前：\n%s" % (before.rstrip() or "（空）"))
+        print("   演练后：\n%s" % (after.rstrip() or "（空）"))
+        print("   ⇒ 演练在工作区里留下了东西（探针文件？写坏的 docs_test.go？）—— 先清掉再提交。")
+    return code == 0 and same
+
+
 def main():
     mods = modules()
     print("本仓 Go 模块（枚举出来的，不是写死的）：")
@@ -80,10 +111,16 @@ def main():
                 bad += 1
                 print(out.strip()[:800])
     print()
-    if bad:
-        print("❌ %d 项没过。" % bad)
+    print("生成器还原演练（单独一格，不算模块）：")
+    drillOK = drill()
+    print()
+    if bad or not drillOK:
+        if bad:
+            print("❌ 模块：%d 项没过。" % bad)
+        if not drillOK:
+            print("❌ 演练没过（见上面「生成器还原演练」那一段）。")
         return 1
-    print("✅ %d 个模块，gofmt / vet / test 全过。" % len(mods))
+    print("✅ %d 个模块，gofmt / vet / test 全过；生成器还原演练过，演练前后 porcelain 相同。" % len(mods))
     print("⚠️ 而这只说明【被枚举到的】模块都过了 ——")
     print("   判据是「目录里有 go.mod」；一个不用 go.mod 组织的东西它照样看不见。")
     return 0
