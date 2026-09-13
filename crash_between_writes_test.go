@@ -42,10 +42,10 @@ import (
 //	缺口的**类别**    必须是「走查没通过」，不是「没走查过」
 //	报告里的**真因**  必须点名那两个数（4 与 3），而不是一句泛泛的「这一段有问题」
 //
-// —— ⛔ 而写这一格时撞见一个【错标签】，登记为 (u)，本片不改 ——
+// —— ⛔ 而写这一格时撞见一个【错标签】，登记为 (u)；2026-09-13 (u) 已落地 ——
 //
-// 走查失败那条留声今天写进的是 `rep.TruncatedTails`，而 `Incidents()` 给它加的前缀是
-// **「开库时截过残尾：」**。实测这一格印出来的 `Incidents()` 原文：
+// 走查失败那条留声当时写进的是 `rep.TruncatedTails`，而 `Incidents()` 给它加的前缀是
+// **「开库时截过残尾：」**。当时实测这一格印出来的 `Incidents()` 原文：
 //
 //	开库时截过残尾：走查 2020-08-05..2020-08-07 失败：
 //	segfile: bars 与走查数出来的对不上: 走查数出 4 条，而 .meta 记的是 3 条
@@ -56,8 +56,7 @@ import (
 // 改它要给 `SyncReport` 加一栏（`VerifyFailures`）并动 `Incidents()`，
 // 那是一次公开结构体的变更，且有三处测试在读这一栏，**该单独一片走评审**。
 //
-// ⚙ 而这一格**照旧读 `TruncatedTails`**：断言要跟着今天的事实走，
-// 不跟着我们希望的样子走 —— (u) 落地那天，这一行跟着改。
+// ⚙ (u) 落地之后这一格读 `VerifyFailed`，并断言那条痕迹的前缀是「走查没通过：」而不是「开库时截过残尾：」。
 
 // guard: 两次写之间崩溃 ⇒ Sync 不报错，而侦测必须出声并点名那两个数。
 func TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds(t *testing.T) {
@@ -132,7 +131,7 @@ func TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds(t *testing.T) {
 	// 而 Gaps **不在** Incidents() 里 ⇒ 这一格的「Complete() 为假」靠的是那条留声，不是缺口。
 	t.Logf("③ err=%v · Bars=%d · Halt=%v · Complete=%v\n   跳过=%v\n   缺口=%v\n   留声=%v\n   痕迹=%v",
 		err3, rep.Bars, rep.Halt, rep.Complete(),
-		rep.SkippedCovered, rep.Gaps, rep.TruncatedTails, rep.Incidents())
+		rep.SkippedCovered, rep.Gaps, rep.VerifyFailed, rep.Incidents())
 
 	// 🔴 承重一：`Sync` **不报错** —— 这是 2026-09-12 裁决的正常结果，不是缺陷。
 	// ⛔ 而写下它是必须的：少了这一句，下一个人会以为「它该报错」而去把裁决改回去。
@@ -162,7 +161,12 @@ func TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds(t *testing.T) {
 	//
 	// ⚠️ 判据写成「两个数都出现」，而不是找「对不上」三个字 ——
 	// 那句话可以被改写，而**那两个数是这件事本身**。
-	joined := strings.Join(rep.TruncatedTails, "\n")
+	// ⛔ 前提自检【在循环之前】：那几行留声真的存在 —— 空切片会让下面那个循环报一个误导的错。
+	// （评审方 2026-09-12 指出：上一版把这一条写在循环之后，而 Errorf 不中止 ⇒ 误导的错会先印出来。）
+	if len(rep.VerifyFailed) == 0 {
+		t.Fatalf("VerifyFailed 一条都没有 ⇒ 下面那两句断言会在问一个空字符串，读数作废")
+	}
+	joined := strings.Join(rep.VerifyFailed, "\n")
 	for _, want := range []string{"4 条", "3 条"} {
 		if !strings.Contains(joined, want) {
 			t.Errorf("报告里没点名 %q —— 真因没走到调用方手里：\n%s\n"+
@@ -170,8 +174,15 @@ func TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds(t *testing.T) {
 				want, joined)
 		}
 	}
-	// ⛔ 前提自检：那几行留声真的存在 —— 空切片会让上面那个循环报一个误导的错。
-	if len(rep.TruncatedTails) == 0 {
-		t.Fatalf("一条留声都没有 ⇒ 上面那两句断言在问一个空字符串，读数作废")
+	// 🔴 承重五（(u)）：那条痕迹在 Incidents() 里的前缀是「走查没通过：」，不是「开库时截过残尾：」。
+	var tagged []string
+	for _, s := range rep.Incidents() {
+		if strings.Contains(s, "4 条") {
+			tagged = append(tagged, s)
+		}
+	}
+	if len(tagged) != 1 || !strings.HasPrefix(tagged[0], "走查没通过：") {
+		t.Errorf("那条走查失败在 Incidents() 里的样子不对：%v\n"+
+			"  ⇒ 期望恰好一条、前缀「走查没通过：」—— 一条走查失败不许被宣布成别的事。", tagged)
 	}
 }

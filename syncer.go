@@ -119,7 +119,26 @@ type SyncReport struct {
 
 	// TruncatedTails 记「哪些库开的时候截掉了残尾」（C3b）。
 	// 截了不留声 ⇒ **与「本来没事」同形**。
+	//
+	// ⛔ 2026-09-13 起它**只装截断**。v0.4.1 里走查失败也写在这一栏，而 `Incidents()` 给这一栏的前缀是
+	// 「开库时截过残尾：」⇒ **一条走查失败被宣布成「开库时截过残尾」**。改到下面两栏，勘误见 docs/release/v0.5.0.md。
 	TruncatedTails []string
+
+	// VerifyFailed 记「走查跑了，而这一段没通过」—— 每一段一条，带真因（如「走查数出 4 条，而 .meta 记的是 3 条」）。
+	// VerifyUnrun  记「这一遍走查根本没跑成」（`Store.VerifyCoverage` 的第二个返回值非 nil，例如读盘失败）。
+	//
+	// ⛔ **拆成两栏而不是一栏**，判据是处置分岔，而这个分岔 (p) 那一片已经在缺口类型上落过一次：
+	//
+	//	VerifyFailed ↔ GapStoreVerifyFailed「走查没通过」⇒ **别再重跑**，去读真因
+	//	VerifyUnrun  ↔ GapStoreVerifyUnrun 「走查没跑成」⇒ **再跑一遍有意义**（它可能是瞬时的）
+	//
+	// 合成一栏，两种处置就回到一个 `[]string` 里靠前缀区分 —— 正是 `Incidents()` 注释里那条到期条件。
+	// ⚠️ 栏名与 `Incidents()` 前缀都与缺口类型的用词【逐字对齐】，有一格守卫钉着（改一处另一处跟着红）。
+	// ⚠️ 代价：公开结构体多两栏。
+	// 🔴 **两栏都必须进 `Incidents()`**：库的状态 ＝ `Complete()` ＋ `Gaps`，而 `Gaps` 不在 `Incidents()` 里 ——
+	// 漏进一栏，坏库上 `Complete()` 就会变真，`Sync` 文档注释里「判 err 不够，必须读 Complete()」那句成了假话。
+	VerifyFailed []string
+	VerifyUnrun  []string
 
 	// LegacyMetaDiscarded / LegacyMetaUnverified 是 D2b 的两种处置（作废 / 标记）。
 	// 判对了却不留声 ⇒ 自愈动作与「本来没事」同形。
@@ -241,6 +260,13 @@ func (r SyncReport) Incidents() []string {
 	}
 	for _, s := range r.TruncatedTails {
 		out = append(out, "开库时截过残尾："+s)
+	}
+	// ⚠️ 前缀取自缺口类型用词的后半（「存储答不了·走查没通过」「存储答不了·走查没跑成」）—— 有守卫钉着对齐。
+	for _, s := range r.VerifyFailed {
+		out = append(out, "走查没通过："+s)
+	}
+	for _, s := range r.VerifyUnrun {
+		out = append(out, "走查没跑成："+s)
 	}
 	for _, s := range r.LegacyMetaDiscarded {
 		out = append(out, "旧 meta 已作废重拉："+s)

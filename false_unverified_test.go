@@ -215,7 +215,7 @@ func TestSuccessfulMultiChunkSyncReportsNoFalseGap(t *testing.T) {
 
 		// —— 要害：报文里那个区间必须是【合并段】的，不是任何一块的 ——
 		want := cov[0].From.String() + ".." + cov[0].To.String()
-		joined := strings.Join(rep.TruncatedTails, " | ")
+		joined := strings.Join(rep.VerifyFailed, " | ")
 		if !strings.Contains(joined, want) {
 			t.Errorf("走查失败的痕迹里没有合并段那个区间 %s：\n  %s\n"+
 				"  ⇒ 那说明走查落在【分块】的身份上，而 planGaps 查的是合并段 ⇒ 键又分岔了。",

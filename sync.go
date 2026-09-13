@@ -712,7 +712,8 @@ func (s *Syncer) replayable(req SyncRequest, cov []Span) bool {
 // 两格都断言过 `Halt`）—— 因为 `classifyTradingDay` 是按【请求区间里的每个交易日】调的，
 // 而那两条早退各自消灭了那个前提。
 //
-// ⚠️ `TruncatedTails` 那一条痕迹**保留**：它是给人扫一眼的，与类型化的那条不是一回事。
+// ⚠️ `VerifyUnrun` 那一条痕迹**保留**：它是给人扫一眼的，与类型化的那条不是一回事。
+// （2026-09-13 之前它写在 `TruncatedTails`，被 `Incidents()` 贴上「开库时截过残尾」—— 见 SyncReport 那两栏的注释。）
 // —— ⛔ 第三个返回值：**`Store` 违约 ＝【坏了】，不是【答不了】** ——
 //
 // 契约要求 `VerifyCoverage` 是**全的**（`Coverage()` 里每一段都有一个结论）。
@@ -732,7 +733,7 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[SpanKey]bool, map[SpanKey]error
 	res, err := s.store.VerifyCoverage()
 	if err != nil {
 		// ⛔ 「跑不起来」不许伪装成「每一段都没问题」：留空 ⇒ 每一段报「本次没走查过」。
-		rep.TruncatedTails = append(rep.TruncatedTails,
+		rep.VerifyUnrun = append(rep.VerifyUnrun,
 			fmt.Sprintf("这一遍走查没能跑起来：%v", err))
 		return okSpans, failedSpans, nil
 	}
@@ -750,7 +751,7 @@ func (s *Syncer) verifyAll(rep *SyncReport) (map[SpanKey]bool, map[SpanKey]error
 	}
 	for sp, verr := range res {
 		if verr != nil {
-			rep.TruncatedTails = append(rep.TruncatedTails,
+			rep.VerifyFailed = append(rep.VerifyFailed,
 				fmt.Sprintf("走查 %s..%s 失败：%v", sp.From, sp.To, verr))
 			failedSpans[sp] = verr
 			continue
