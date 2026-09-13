@@ -24,7 +24,7 @@
 | `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
 | `source/sinasource` | ✅ **日线链路已通**：HTTP → JSONP → 行 → `Bar`，实现 `tickflow.Source`（`Bars` / `Caps`）。⚠️ **只做日线、只做具体合约**（主连在 `Symbol` 里表达不出来）；分钟线不做（1023 硬顶且无法翻页，深度走天勤） |
 | `source/cffexsource` | ✅ **日线链路已通**：HTTP（一天一请求，用 `Calendar.Walk` 铺开）→ XML → 期货行 → `Bar`，实现 `tickflow.Source`。结算价 0 在组装层映射成 NaN；XML 自带的 `tradingday` 与日历交叉核对。⚠️ 存档实测回溯到 **2016-01-04**——它是**存档级**下界（非逐日验证），**不是按品种的答案**：那天只有 IC/IF/IH/T/TF 五个品种，对后上市的 IM/TS/TL **明知是错**（登记㉔；⛔ **2026-09-10 复核 v5 推翻了原来那条处置**：天勤 openmd 全量 47 个字段里**没有上市日**（唯一像日期的是 `expire_datetime`＝到期）⇒ **refdata 关不掉这一格**；替代出处已实测，见探针文档「复核 v5」那一节）；**全量回补≈2671 次请求** |
-| `source/shinnysource` | ❌ **尚未开始**（v0.5） |
+| `source/shinnysource` | ❌ **尚未开始**（v0.6） |
 | `Syncer`（根包 `syncer.go` / `sync.go`） | ✅ 已发布 |
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
 | `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
@@ -52,7 +52,7 @@
 | 拉深度分钟 + 实时 | `source/shinnysource` | 需免费快期账户。**已实测打通**：主连 890,231 根 1m；**已到期合约同样供得出完整 1m**（`rb1605` 39,600 根），地板线 2016-01-04 |
 | 合约参考数据 | `refdata/shinnyref` | 乘数、最小变动价位、到期日、**交易时段表**；免费无鉴权 |
 | 交易时段模板 | `calendar/embedded` | **v0.1 已交付**：6 个交易所约 60 个品种，GFEX 由 1m 反推补入。⚠️ 只是**当前**模板，`2020-05-06` 之前返回 `ok=false`；未收录品种同样 `ok=false`，**不给默认** |
-| 交易日历 | `calendar/derived` | **从日线序列反推**，不维护节假日表。`calendar/embedded` **不自带交易日**，由调用方注入——不给就报错，不从工作日近似 |
+| 交易日历 | `calendar/derived` | **从日线序列反推交易日**，不维护节假日表；⚠️ 「那天有没有夜盘」日线反推不出，要 1m（design.md §二 那段注）。`calendar/embedded` **不自带交易日**，由调用方注入——不给就报错，不从工作日近似 |
 | 正确的周期对齐 | `Period.Bars(tmpl, TradingDay)` | 相位按品种标称模板算；跨休市段、跨隔夜、日末短根、**停夜盘日**都算对 |
 | 落盘，目录自选 | `store/segfile` | 88 字节定长记录 |
 | 增量同步 | `Syncer` | 按**交易日**记 coverage |
@@ -223,7 +223,7 @@ var CST = time.FixedZone("CST", 8*3600)
 | **证据里的数字被「拆解」成看起来核对过的样子** | **是**，而且**这一类没有机械守卫** | 实例：`228 = 225 + 3（夜盘 22:09/10/11）`——后半截是编的，dump 只打印了计数与首末。动机是「一个不解释的数字读起来像没查过」 | **只能靠第二方做一次算术**。本仓所有机制（探针/对照组/变异/双读/doccheck/欠条到期）**没有一个抓得到它**——别把它和别的风险当同构：**别的有一条命令能重跑，这一条没有** |
 | **文档里「尚未实现」那部分的字段不受 doccheck 守护** | **半**（实现那天才冒出来，看起来像回归其实一直在） | doccheck 的字段比对只在类型已实现时触发；白名单里的类型没有源码可比。**实例与它的对表只写在一处**：`tools/doccheck/pending.txt` 的抬头（那个例子曾有三个载体，2026-09-09 三个一起漂 ⇒ 收成一个） | 已在 `pending.txt` 抬头写明这是「用覆盖面换来的盲区」；实现那天冒出的分歧**不是新引入的** |
 | **内置时段表抄自【过期快照】** | **是**（那一族的每根 K 线边界都错，且不报错） | 实例：国债起点写成 `09:15`（实际 `09:30`），随 `v0.1.0` 发出去过。根因是 openmd 目录被截断且 `trading_time` **按合约**给，抄到了老合约那一行 | `shinny-embedded-template-matches-measured` 拿实测 1m 对**六种形状**逐个比；**「缺行」和「行是旧的」是两个独立的失效**，前者 H1 查过，后者是这次补的 |
-| **`calendar/embedded` 看不见停夜盘** | **半**（长假前后多给一段并不存在的夜盘） | 那几天的切分与判完结偏掉；**相位不受影响**（相位按标称算） | v0.4 `calendar/derived` 从分钟数据反推真值。由 `TestKnownDefect_EmbeddedCannotSeeSuspendedNight` 钉住，改掉时会变红 |
+| **`calendar/embedded` 看不见停夜盘** | **半**（长假前后多给一段并不存在的夜盘） | 那几天的切分与判完结偏掉；**相位不受影响**（相位按标称算） | `calendar/derived` 从分钟数据反推真值。由 `TestKnownDefect_EmbeddedCannotSeeSuspendedNight` 钉住，改掉时会变红 |
 | **K 线边界多装一段交易时间** | **是**（标签序列与覆盖检查都正常） | 模板过期时一根 60m 装 90 分钟，多出来的时间是从别处偷的 | 上界不变量 `TestBarsNeverExceedOnePeriod`，与下界那条**跑在同一片输入上** |
 | **K 线边界漏掉一段交易时间** | **是**（标签序列与根数都完全正常） | v0.1 自查实例：沪银 60m 的 `02:00–02:30` 不属于任何 `[Open, Close)`，按边界聚合的下游安静少 30 分钟成交 | `TestBarsCoverEveryTradingMinute` 按分钟点，要求每一分钟**恰好**落在一根里 |
 | **混用天勤与新浪的日期** | **是** | 天勤按交易日、新浪按自然日，混用整体错位一天 | `Bar.TradingDay` 统一以交易日为准，`sinasource` 入口处转换 |

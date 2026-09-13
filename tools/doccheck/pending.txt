@@ -11,6 +11,10 @@
 #
 # 加一项之前先问：它是真的排在后面，还是我不想现在处理它？
 #
+#   ⇒ 2026-09-13 那次改号（14 条：continuous 11 条 v0.6.0→v0.7.0 · AggRule 3 条 v0.5.0→v0.9.0）的答案：
+#     **是真的排在后面** —— 用户两次裁决（v0.5.0 给已落地的硬化；天勤源起整体顺延一号），
+#     问句与所选项逐字记在 docs/design.md §十五「版本号的两次裁决」。
+#
 # ---- ⚠️ 白名单的代价：这张表里的类型，它们的【字段】不受守卫 ----
 #
 # doccheck 的字段比对只在类型【已实现】时才触发（源码里找不到就走白名单分支）。
@@ -86,21 +90,21 @@
 # commit」就是在打完之后才暴露的）。
 
 # ---- v0.3：拉取 / 存储 / 同步 ----
-AggClockGrid      v0.5.0  AggRule 的成员：时钟网格
-AggTradingAxis    v0.5.0  AggRule 的成员：交易时间轴 + 相位
-NoAdjust          v0.6.0  AdjustMethod 的成员：不复权
-RatioBack         v0.6.0  AdjustMethod 的成员：后复权·比例
-RatioFwd          v0.6.0  AdjustMethod 的成员：前复权·比例
-DiffBack          v0.6.0  AdjustMethod 的成员：后复权·差值
-DiffFwd           v0.6.0  AdjustMethod 的成员：前复权·差值
+AggClockGrid      v0.9.0  AggRule 的成员：时钟网格〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
+AggTradingAxis    v0.9.0  AggRule 的成员：交易时间轴 + 相位〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
+NoAdjust          v0.7.0  AdjustMethod 的成员：不复权〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+RatioBack         v0.7.0  AdjustMethod 的成员：后复权·比例〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+RatioFwd          v0.7.0  AdjustMethod 的成员：前复权·比例〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+DiffBack          v0.7.0  AdjustMethod 的成员：后复权·差值〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+DiffFwd           v0.7.0  AdjustMethod 的成员：前复权·差值〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
 
-# ---- v0.5：深度分钟历史落地后，聚合口径才有意义 ----
-AggRule       v0.5.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**
+# ---- v0.9：随 Feed / 多周期（原 v0.5；聚合口径要等深度分钟落地才有意义，而深度分钟今在 v0.6）----
+AggRule       v0.9.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
 
-# ---- v0.6：主力连续 ----
-ContinuousSpec v0.6.0  换月规则 + 复权方式
-RollRule       v0.6.0  换月规则接口
-RollRule.Pick  v0.6.0  在候选合约里选主力
-AdjustMethod   v0.6.0  五种复权方式；默认后复权，前复权会改写历史
-Roll           v0.6.0  一个换月点：日期 / 新旧合约 / 基差 / 复权因子
-Continuous     v0.6.0  拼好的序列 + 接缝（Rolls 必须交出去）
+# ---- v0.7：主力连续（原 v0.6）----
+ContinuousSpec v0.7.0  换月规则 + 复权方式〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+RollRule       v0.7.0  换月规则接口〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+RollRule.Pick  v0.7.0  在候选合约里选主力〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+AdjustMethod   v0.7.0  五种复权方式；默认后复权，前复权会改写历史〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+Roll           v0.7.0  一个换月点：日期 / 新旧合约 / 基差 / 复权因子〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
+Continuous     v0.7.0  拼好的序列 + 接缝（Rolls 必须交出去）〔原 v0.6.0；用户 2026-09-13 裁「整体顺延一号」⇒ continuous 到 v0.7，见 design.md §十五〕
