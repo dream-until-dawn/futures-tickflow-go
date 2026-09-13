@@ -188,7 +188,7 @@ const (
 	// ClientUseNone 这个源不走那个 client（websocket / 本地文件 / 缓存）。
 	// ⇒ 闸门计数恒为 0，而那是**正常的**：这一格上「不适用」。
 	//
-	// ⚠️ 受益者已经排在路线图上：`source/shinnysource`（v0.5）走 websocket，
+	// ⚠️ 受益者已经排在路线图上：`source/shinnysource`（v0.6）走 websocket，
 	// **它没有任何理由用那个 `*http.Client` 去取 Bar。**
 	ClientUseNone
 )

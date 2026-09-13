@@ -2,10 +2,8 @@
 
 中国期货的行情数据层：拉取、持久化、算指标，并向回测引擎提供可步进的多周期视图。
 
-> **状态：`v0.2.0` 已发布。时间模型与落盘层已可用，拉取尚未开始。**
-> 已实现：`Bar` / `Symbol` / `Period` / `Calendar` 接口 · `calendar/embedded` · `store/segfile`。
-> 未开始：`Source`（新浪 / 天勤 / 中金所）· `Syncer` · `continuous` · `indicator` · `Feed`。
-> 排期见 [design.md 十五](docs/design.md)，逐条能力与置信度见 [contract.md](docs/contract.md)。
+> 哪些包已实现、哪些还没开始，只记在 [contract.md 〇](docs/contract.md) 那张状态表里（它有守卫）；
+> 排期只记在 [design.md 十五](docs/design.md)。这里不抄第二份。已发布的版本以 `git tag -l --sort=version:refname` 为准（不带 `--sort` 是字典序，v0.10.0 会排到 v0.1.0 与 v0.2.0 之间）。
 
 ---
 
@@ -175,22 +173,7 @@ futures-tickflow-go ──视图──> 回测引擎 ──成交/结算──> 
 
 ## 排期
 
-| 版本 | 内容 | 状态 |
-|---|---|---|
-| v0.0 | 探针：数据源可行性、时间模型实测、快期连通性 | ✅ |
-| v0.1 | 时间模型（`Bar` / `Symbol` / `Period` / `Calendar` + 内置日历）+ 测试 | ✅ |
-| v0.2 | `Calendar` 接口收口（`bool` → `error` + `Covers`）+ 内置日历修一处真 bug + 探针/仪器加固 | ✅ |
-| v0.3 | 新浪源 / segfile 存储 / Syncer | 待办 |
-| v0.4 | 合约参考数据 + 从日线反推交易日历 | 待办 |
-| v0.5 | 天勤源：深度分钟历史 | 待办 |
-| v0.6 | 主力连续：换月、复权、接缝 | 待办 |
-| v0.7 | 指标 | 待办 |
-| v0.8 | Feed / View / 多周期 | 待办 |
-| v0.9 | 实时通道 + `Feed.Push` | 待办 |
-| v1.0 | API 收口、端到端验收 | 待办 |
-
-**v0.1 先做时间模型，不是先做拉取**——因为「一根 K 线是否已完结」这个问题，
-在中国期货里必须先有交易日历才能回答，而这正是 `Source` 的实现约定之一。
+排期只有一张表，在 [design.md 十五](docs/design.md)——这里不抄第二份（抄过，两边各自过期；`TestReadmeHasNoScheduleTable` 挡着它长回来）。
 
 ## License
 

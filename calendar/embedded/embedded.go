@@ -7,7 +7,7 @@
 //
 // 【没有】交易日列表。本包**不维护节假日表**：那是每年国务院发文才定的，
 // 调休规则复杂，维护一张表意味着每年要改一次代码，且改晚了就静默出错。
-// 交易日由调用方注入——v0.4 的 calendar/derived 会从日线序列反推
+// 交易日由调用方注入——calendar/derived 会从日线序列反推（排期见 design.md §十五）
 // （有日线的那天就是交易日，这是从数据本身得到的真值）。
 //
 // 所以 New 要求显式给出交易日。不给就报错，**不猜**。
@@ -379,12 +379,12 @@ type Calendar struct {
 //
 // tradingDays 必须非空——本包**不维护节假日表**，也不从工作日近似
 // （用工作日近似会在每个长假前后错一次，而那正是保证金上调的时候）。
-// v0.4 的 calendar/derived 会从日线序列反推真值。
+// calendar/derived 会从日线序列反推真值。
 func New(tradingDays []tickflow.TradingDay) (*Calendar, error) {
 	if len(tradingDays) == 0 {
 		return nil, fmt.Errorf(
 			"embedded: 必须显式给出交易日——本包不维护节假日表，也不从工作日近似。" +
-				"v0.4 的 calendar/derived 会从日线序列反推")
+				"calendar/derived 会从日线序列反推")
 	}
 	ds := append([]tickflow.TradingDay(nil), tradingDays...)
 	sort.Slice(ds, func(i, j int) bool { return ds[i] < ds[j] })
@@ -497,7 +497,7 @@ func (c *Calendar) Covers(k tickflow.ProductKey) (from, to tickflow.TradingDay, 
 // DayOf 组装某个交易日的【实际】时段。
 //
 // ⚠️ 内置实现假定「实际 = 标称」——它**看不见停夜盘**这类逐日事实。
-// 那需要从分钟数据反推（v0.4 的 calendar/derived）。
+// 那需要从分钟数据反推（calendar/derived，排期见 design.md §十五）。
 // 所以本实现在长假前后会给出多余的夜盘段。
 //
 // ⛔ **而偏差有【两个方向】，上一版只声明了「多给」那一个**（评审方 2026-09-09 指出）：
@@ -523,7 +523,7 @@ func (c *Calendar) Covers(k tickflow.ProductKey) (from, to tickflow.TradingDay, 
 //	一  上层那条判据的门槛是「连续 ≥ 2 天无夜盘」，而左端的假日子永远只有 1 天
 //	二  内置日历从不产生真的无夜盘日
 //
-// ⚠️ **而第二条明年就会变**（v0.4 `calendar/derived` 落地 ⇒ 真的无夜盘日出现）：
+// ⚠️ **而第二条会变**（`calendar/derived` 落地 ⇒ 真的无夜盘日出现）：
 // 若某次注入的 `days[0]` 恰是长假前最后一个交易日、`days[1]` 是假后第一个，
 // 两者相连 = 连续 2 天 ⇒ 报出的区间**起点早一天、长度多一天**。
 // ⇒ 那条不变量记在 `design.md` §七之六 的 `SYN-9`。

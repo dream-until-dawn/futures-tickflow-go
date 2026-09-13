@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 68
+guards 70
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -431,3 +431,5 @@ guards 68
 # 来历 2026-09-13 rules 340 自 339 自动：重造时表长大（339 -> 340）
 # 来历 2026-09-13 rules 341 自 340 自动：重造时表长大（340 -> 341）
 # 来历 2026-09-13 guards 68 自 66 自动：重造时表长大（66 -> 68）；本次新增：TestVerifyFailedMoveHasAnErratum TestVerifyTraceWordingMatchesGapKinds
+# 来历 2026-09-13 guards 69 自 68 自动：重造时表长大（68 -> 69）；本次新增：TestReadmeHasNoScheduleTable
+# 来历 2026-09-13 guards 70 自 69 自动：重造时表长大（69 -> 70）；本次新增：TestRerunDiagnosisErratum
