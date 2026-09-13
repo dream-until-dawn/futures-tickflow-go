@@ -967,7 +967,9 @@ var guardNames = []string{
 	`TestVerifyCoverageContract`,
 	`TestVerifyCoverageMatchesVerifyPerSpan`,
 	`TestVerifyFailedIsItsOwnClassAndTheCatchAllStaysTight`,
+	`TestVerifyFailedMoveHasAnErratum`,
 	`TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage`,
+	`TestVerifyTraceWordingMatchesGapKinds`,
 	`TestWholeLibraryErrorIsAttributedToEverySpan`,
 }
 
