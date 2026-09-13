@@ -144,6 +144,24 @@ const (
 	//
 	// 📎 本仓那条：**判两个东西该不该共用一个名字，看【处置】分不分岔，不看成因像不像。**
 	HaltCoverageWrite
+
+	// HaltAllCovered 请求区间里的交易日**全都已经在 coverage 里**，一天都不必再拉。
+	// **不留声 —— 它是结果，不是异常。**
+	//
+	// ⛔ 它**必须与 `HaltNoTradingDays` 分开**，而判据是本仓那条（处置分不分岔）：
+	//
+	//	HaltNoTradingDays  请求区间里一天都不交易   ⇒ 换一个区间
+	//	HaltAllCovered     交易日有，而**已经拉过** ⇒ 什么都不用做；真想重拉，
+	//	                   删掉该周期的 .dat/.meta 再按交易日从早到晚重拉
+	//
+	// 🔴 两者在调用方那里的**每一个数上都相同**（`Bars=0` · `Gaps` 非空 · 不返回错误）——
+	// ⇒ 少了这一档，它们**共用一句话**，而那正是本仓最怕的形状。
+	//
+	// ⚠️ 而它同样**只有在事实落成之后才配不留声**：`rep.SkippedCovered` 里写着跳过了哪几段。
+	// （评审方 2026-09-10 对 `HaltOutsideCoverage` 的裁法，逐字适用。）
+	//
+	// 📌 加在**末尾**，既有取值一个都不动 —— 见上面那段「可见且有界的代价」。
+	HaltAllCovered
 )
 
 // note 返回这次中止的留声文字，以及**要不要留声**。
@@ -152,12 +170,13 @@ const (
 // **黑名单漏掉的那个会静默通过，白名单漏掉的那个会吵。**
 func (h HaltReason) note() (string, bool) {
 	switch h {
-	case HaltDone, HaltNoTradingDays, HaltOutsideCoverage:
-		// ⚠️ 这三个都不留声，而**理由不同**，写在一起免得被读成一类：
+	case HaltDone, HaltNoTradingDays, HaltOutsideCoverage, HaltAllCovered:
+		// ⚠️ 这四个都不留声，而**理由不同**，写在一起免得被读成一类：
 		//	HaltDone             跑完了
 		//	HaltNoTradingDays    没有东西可跑 —— 而 Gaps 里写着「不是交易日」
 		//	HaltOutsideCoverage  日历答不了这一段 —— 而 Gaps 里写着「日历答不了」
-		// ⇒ 后两个之所以不留声，是因为**那件事已经落成了一个事实**（在 Gaps 里）。
+		//	HaltAllCovered       都拉过了 —— 而 **SkippedCovered 里写着跳过了哪几段**
+		// ⇒ 后三个之所以不留声，是因为**那件事已经落成了一个事实**。
 		return "", false
 	case HaltBudget:
 		return "同步因连续失败用尽预算而中止——已同步的部分是完整的，未同步的部分没有被记为「拉过」", true
@@ -200,6 +219,8 @@ func (h HaltReason) String() string {
 		return "区间里没有交易日"
 	case HaltOutsideCoverage:
 		return "区间在日历覆盖之外"
+	case HaltAllCovered:
+		return "区间里的交易日已经全部覆盖过"
 	}
 	return fmt.Sprintf("HaltReason(%d)", int(h))
 }
@@ -332,6 +353,26 @@ func NewSyncer(cfg SyncerConfig) (*Syncer, error) {
 // ⚠️ **报告在返回错误时也是有内容的**：已经落盘的那部分是真的。
 // 而它一定带着一个 `Halt` —— 早退的那些路径带的是 `HaltUnknown`，
 // 于是它们的报告 `Complete()` 为假。
+//
+// —— ⛔ `err` 管什么、不管什么（2026-09-12 裁定，评审方判，我认）——
+//
+//	err       ＝ **这一次 Sync 动作本身没能完成它该做的事**
+//	            （参数立不住 · 源的能力立不住 · 预算耗尽 · 落盘失败 · 扩 coverage 失败 ·
+//	              被取消 · Store 违约）
+//	库的状态  ＝ **Complete() ＋ Gaps** —— 走查失败在这里，**不在 err**
+//
+// 🔴 **代价，明码写在这儿**：库已经坏了、而本次同步什么都没做错时，**`err` 为 nil**。
+// ⇒ **凡「我要知道这个库好不好」的调用方，判 `err` 不够，必须读 `Complete()`。**
+//
+// ⚠️ 它是本仓那条老病的一个**留着不治**的实例：`err == nil` 同时意味着
+// 「一切都好」与「本次没做错，而库是坏的」——**两种状态共用一个数**，而它们的处置相反。
+// 我们不靠消灭这个歧义来解决它（`err` 确实不该管库的历史状态），
+// **而是靠把它写在读这个数的人面前**。⇒ 不写，它就是一个静默风险。
+//
+// 📎 这条裁决的由来值得留着：丙片（挑段跳过已覆盖）之前，一个坏库上的重跑**看起来**会报错——
+// 而那个错来自「重拉第一天 ⇒ 交易日倒退」，**是巧合，不是契约**（走查失败从来只进 Gaps）。
+// 🔴 ⇒ **一个「一直都在出声」的信号，在你去问它「它凭什么出声」之前，
+// 你不知道它是契约还是巧合** —— 而这一次是行为变了**逼**我们去问的。
 func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncReport, error) {
 	k := req.Symbol.ProductKey()
 	rep := SyncReport{}
@@ -477,7 +518,41 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 		return rep, nil
 	}
 
-	chunks := chunkDays(days, caps.BatchDays)
+	// —— 丙片：**挑段跳过已经覆盖过的交易日** ——
+	//
+	// ⛔ 为什么这里不必再跑一次 `VerifyCoverage()`（那会是第二次整库扫描；
+	// (iv) 实测 890k 记录一次 2.586s）：`docs/design.md` 那条写着
+	// 「`unverified` 的 coverage【不】当作『已拉过』—— 否则语义未知的旧记录会让
+	// Syncer 静默跳过（最危险的方向）」，而**那句里的 `unverified` 专指
+	// 【不可重放的源 ＋ 旧 .meta】那一种（D2b）** —— 它到不了这一步：
+	//
+	//	disposeOpenState 的 default 支 ⇒ 填 rep.LegacyMetaUnverified 并 return err
+	//	而它的调用点在**日历求交之前**（本函数上方）⇒ Sync 已经停了
+	//
+	// ⇒ 所以走到这儿的 coverage，要么是本进程刚写的，要么带着 format ⇒ 语义已知。
+	want, skipped := splitCovered(days, s.store.Coverage())
+	if len(skipped) > 0 {
+		// ⚠️ **跳过必须留下事实**：没有它，「跳过了」与「源什么都没给」在报告上同形
+		// （两者都是 `Bars=0`）—— 本仓那条：两种状态不许共用一句话。
+		rep.SkippedCovered = append(rep.SkippedCovered,
+			fmt.Sprintf("跳过 %d 个已覆盖的交易日（%s..%s 之间），只拉剩下的 %d 个",
+				len(skipped), skipped[0], skipped[len(skipped)-1], len(want)))
+	}
+	if len(want) == 0 && len(skipped) > 0 {
+		// 全都拉过了。⚠️ 而**走查与缺口照做** —— 一次「什么都没拉」的同步，
+		// 它的报告仍然要回答「这个区间现在完不完整」。
+		verified, failed, breach := s.verifyAll(&rep)
+		if breach != nil {
+			return rep, breach
+		}
+		if gerr := s.planGaps(k, req.From, to, verified, failed, &rep); gerr != nil {
+			return rep, gerr
+		}
+		rep.Halt = HaltAllCovered
+		return rep, nil
+	}
+
+	chunks := chunkDays(want, caps.BatchDays)
 	gateBefore := s.gate.count()
 	syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
 	rep.Halt = halt
@@ -743,6 +818,35 @@ func (s *Syncer) tradingDays(k ProductKey, from, to TradingDay) ([]TradingDay, e
 		return nil, fmt.Errorf("tickflow: 遍历 %s 的 %s..%s 失败: %w", k, from, to, err)
 	}
 	return days, nil
+}
+
+// splitCovered 把交易日分成【要拉的】与【已经覆盖过的】两堆。
+//
+// ⚠️ 判据是**交易日落不落在某一段 coverage 的闭区间里**，而不是「请求区间与某段相交」——
+// 后者会把一次**部分重叠**的请求整段跳掉。
+// 🔴 本仓那条（(o) 那一格）：**`Coverage()` 给的是并段之后的值**，
+// 所以逐日判是唯一不依赖「段怎么并」的写法。
+//
+// ⛔ 它**不看走查状态**，理由写在调用点上（那一种 unverified 到不了这里）。
+//
+// ⚠️ 射程：`cov` 按 From 升序且互不重叠（`ValidateCoverage` 保证），
+// 而这里**不依赖那个保证** —— 逐段线性判，段数 k 很小（本仓实测 k=8）。
+func splitCovered(days []TradingDay, cov []Span) (want, skipped []TradingDay) {
+	for _, d := range days {
+		covered := false
+		for _, sp := range cov {
+			if sp.From <= d && d <= sp.To {
+				covered = true
+				break
+			}
+		}
+		if covered {
+			skipped = append(skipped, d)
+		} else {
+			want = append(want, d)
+		}
+	}
+	return want, skipped
 }
 
 // chunkDays 按源的 `BatchDays` 把交易日切成一批批。
