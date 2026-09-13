@@ -275,7 +275,8 @@ def drill():
 
     ⛔ **谁来跑它：`tools/audit/module_sweep.py`**（评审方 2026-09-13 判，理由我认）。
     那是 CONTRIBUTING 规定的自查命令；演练实测约 1.6s。
-    module_sweep 在跑它**前后各取一次 `git status --porcelain` 并比较** —— 核的是状态，不是「调过 drill」：
+    module_sweep 在跑它**前后各取一次工作区【内容指纹】并比较** —— 核的是状态，不是「调过 drill」
+    （⚠️ 不是 porcelain：它只记 M/??，已是 M 的 docs_test.go / high_water.txt 内容再变它看不见）：
     演练会临时改写工作区（写坏 docs_test.go、塞探针文件），一次 Ctrl-C 就可能留下残留。
     ⚠️ 上一稿这里写的是「这一格没有自动守卫」，而 CONTRIBUTING 同一节还写着「常驻形态」——
     **同一节里两句互相矛盾**，是我两颗提交各写一句造成的。
@@ -473,7 +474,7 @@ def fail(original, originalHW, exc):
     if exc is not None:
         print("❌ 重造中途抛了 %s：%s" % (type(exc).__name__, exc))
     done = restore(original, originalHW)
-    # ⚠️ 核状态，不核动作：那句「盘上没有留半成品」要由【读回来的字节】撑着，不由「调过 restore」撑着。
+    # ⚠️ 核状态，不核动作：下面打印的那张清单要由【读回来的字节】撑着，不由「调过 restore」撑着。
     assert open(HIGH_WATER, "rb").read() == originalHW, "high_water.txt 没还原成开跑前那一份"
     if original is None:
         assert not os.path.exists(TARGET), "docs_test.go 本来不存在，而还原之后它还在"
