@@ -1737,7 +1737,8 @@ func main() {
 	probeDiffRefetch(md, tok)
 	probeClientUse(md, tok)
 	probeEdge(md, tok)
-	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") || optIn("shinny-edge") {
+	probeDAMatrix(md, tok)
+	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") || optIn("shinny-edge") || optIn("shinny-da-matrix") {
 		if failed > 0 {
 			os.Exit(1)
 		}
