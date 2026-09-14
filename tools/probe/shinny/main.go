@@ -1733,7 +1733,9 @@ func main() {
 	probePageAll(md, tok)
 	probeSinaDays(md, tok)
 	probeReadTimeout(md, tok)
-	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") {
+	probeChunkMem(md, tok)
+	probeDiffRefetch(md, tok)
+	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") {
 		if failed > 0 {
 			os.Exit(1)
 		}
