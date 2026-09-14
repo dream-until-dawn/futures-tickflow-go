@@ -37,6 +37,7 @@ var mustNotImportLibrary = []string{
 	"pageall.go",     // v0.6 片一：全历史翻页 ＋ 归交易日对账 ＋ 无夜盘日 —— 规则是待验假设，不许拿本库判定
 	"sinadays.go",    // v0.6 片一 b：天勤 vs 新浪 rb 交易日集合 —— 两个外部源互比，不许拿本库判定
 	"readtimeout.go", // v0.6 片一 H5：服务端不回数据时 Read(ctx) 的行为 —— 量的是依赖库，不许拿本库判定
+	"diffrefetch.go", // v0.6 片二前置：本地删快照后同一连接重要同一段，服务端还发不发 —— 量外部协议，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
@@ -71,6 +72,7 @@ func TestGuardListCoversEveryProbeFile(t *testing.T) {
 	// 明确豁免，附理由。加一项之前先问：它的方向真的是「本库被测」吗？
 	exempt := map[string]string{
 		"template.go":          "被测对象就是内置表，方向是【本库被测、真值来自天勤】",
+		"chunkmem.go":          "被测对象是 tickflow.Bar 的布局与「DIFF 快照 → []Bar」的内存开销，方向是【本库被测】；归日规则写在文件里，不调本库日历（v0.6 片二前置）",
 		"independence_test.go": "就是这条检查本身",
 	}
 	files, err := filepath.Glob("*.go")
