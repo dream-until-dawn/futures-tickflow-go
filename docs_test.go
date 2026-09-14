@@ -976,6 +976,7 @@ var guardNames = []string{
 	`TestVerifyFailedMoveHasAnErratum`,
 	`TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage`,
 	`TestVerifyTraceWordingMatchesGapKinds`,
+	`TestWalkAgreesWithVerifyCoverage`,
 	`TestWholeLibraryErrorIsAttributedToEverySpan`,
 }
 

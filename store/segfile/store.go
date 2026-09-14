@@ -581,14 +581,10 @@ func (s *Store) VerifyCoverage() (map[tickflow.SpanKey]error, error) {
 	}
 	n := CountRecords(st.Size())
 	buf := make([]byte, RecordSize)
-	bars := make([]int, len(cov))
-	days := make([]int, len(cov))
-	prevInSpan := make([]tickflow.TradingDay, len(cov))
-	var prev tickflow.TradingDay
-
-	// whole 是一条【全库】错误：它影响每一段，所以下面归给每一段。
-	var whole error
-	for i := int64(0); i < n && whole == nil; i++ {
+	// ⛔ 核法在 coverageChecker 里（walk.go），与 Walk 共用一份 —— 片 B 评审：读法两份，核法一份。
+	// 读法这里仍是逐条 ReadAt（改读法登记为 (y)，另起一片带等价格与重量）。
+	c := newCoverageChecker(cov)
+	for i := int64(0); i < n; i++ {
 		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
 			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
 		}
@@ -596,56 +592,14 @@ func (s *Store) VerifyCoverage() (map[tickflow.SpanKey]error, error) {
 		if derr != nil {
 			return nil, derr
 		}
-		switch {
-		case b.TradingDay == 0:
-			// SYN-10：零值要指得到真因，而它必须判在最前面（见 Verify 里那段长注释）。
-			whole = fmt.Errorf("%w: 第 %d 条记录（Ts=%d）的 TradingDay 是零值——"+
-				"它来自本版写入口之外（旧版/别的写者/手工造的）；"+
-				"这不是文件损坏，别去查长度和截断", errZeroTradingDay, i, b.Ts)
-		case b.TradingDay < prev:
-			whole = fmt.Errorf("%w: 第 %d 条是 %s，而上一条是 %s",
-				errRecordDisorder, i, b.TradingDay, prev)
-		}
-		if whole != nil {
+		if !c.feed(i, b) {
 			break
 		}
-		prev = b.TradingDay
-
-		hit := -1
-		for j := range cov {
-			if b.TradingDay >= cov[j].From && b.TradingDay <= cov[j].To {
-				hit = j
-				break
-			}
-		}
-		if hit < 0 {
-			// 归属那一条：谁的段都不属于 ⇒ 这才是真的损坏（与 Verify 的 default 同义）。
-			whole = fmt.Errorf("%w: 第 %d 条记录是 %s，而它不落在任何一段 coverage 里",
-				errRecordOutside, i, b.TradingDay)
-			break
-		}
-		if b.TradingDay != prevInSpan[hit] {
-			days[hit]++
-			prevInSpan[hit] = b.TradingDay
-		}
-		bars[hit]++
 	}
-
-	out := make(map[tickflow.SpanKey]error, len(cov))
-	for j, sp := range cov {
-		switch {
-		case whole != nil:
-			out[sp.Key()] = whole
-		case bars[j] != sp.Bars:
-			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条",
-				errBarsMismatch, bars[j], sp.Bars)
-		case days[j] != sp.Days:
-			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
-				"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
-				errDaysMismatch, days[j], sp.Days)
-		default:
-			out[sp.Key()] = nil
-			s.verified[sp.Key()] = true
+	out := c.result()
+	for key, e := range out {
+		if e == nil {
+			s.verified[key] = true
 		}
 	}
 	return out, nil

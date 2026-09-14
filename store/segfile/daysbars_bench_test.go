@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 )
@@ -232,6 +233,55 @@ func BenchmarkHasBarsAbsentDay(b *testing.B) {
 		}
 		if has {
 			b.Fatal("这一天不该有根 —— 构造不成立，读数作废")
+		}
+	}
+}
+
+// BenchmarkWalkWholeSpan 量【真的 Walk】：整段一遍，缓冲顺序读 ＋ 边扫边核（v0.6 片 B）。
+//
+// ⚠️ 与上面几条同条数、同「每 240 根一个交易日」，**而交易日取真实日期**（2000-01-01 起逐日）：
+// 上面那份合成库的交易日是 `20200101 + i/240`，会出现 20203809 这种不是日期的值 ——
+// 它们喂 DaysWithBars 无妨，而 Walk 会先按 `TradingDay.Valid()` 拒掉那个区间（第一次跑就这样红了）。
+// ⚠️ 读法不同：上面是逐条 ReadAt，这里是 64 KiB 缓冲。合成库、页缓存热、单进程，同底。
+// 跑法：go test ./store/segfile/ -run XXX -bench WalkWholeSpan -benchtime=1x -count=3
+func BenchmarkWalkWholeSpan(b *testing.B) {
+	dir := b.TempDir()
+	f, err := os.Create(filepath.Join(dir, "1m.dat"))
+	if err != nil {
+		b.Fatal(err)
+	}
+	day0 := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	td := func(i int) tickflow.TradingDay {
+		d := day0.AddDate(0, 0, i/benchSpanDays)
+		return tickflow.TradingDay(d.Year()*10000 + int(d.Month())*100 + d.Day())
+	}
+	buf := make([]byte, 0, RecordSize*1024)
+	for i := 0; i < benchBars; i++ {
+		r := EncodeBar(tickflow.Bar{Ts: int64(i) * 60000, TsEnd: int64(i)*60000 + 60000, TradingDay: td(i), Close: 1.5})
+		buf = append(buf, r[:]...)
+		if len(buf) >= RecordSize*1024 {
+			f.Write(buf)
+			buf = buf[:0]
+		}
+	}
+	f.Write(buf)
+	f.Close()
+	s, _, err := Open(dir, tickflow.MustIntraday(1))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.Cleanup(func() { s.Close() })
+	span := tickflow.Span{From: td(0), To: td(benchBars - 1), Bars: benchBars, Days: (benchBars + benchSpanDays - 1) / benchSpanDays}
+	s.meta.Coverage = []tickflow.Span{span}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		n := 0
+		if err := s.Walk(span.From, span.To, func(tickflow.Bar) bool { n++; return true }); err != nil {
+			b.Fatal(err)
+		}
+		// 前提自检：一个空转的 Walk 跑得飞快 —— 回调数必须等于整库条数（而 Walk 自己也比过 .meta 的 Bars/Days）。
+		if n != benchBars {
+			b.Fatalf("回调 %d 次，应为 %d —— 这组读数量的是一条空转的路径", n, benchBars)
 		}
 	}
 }
