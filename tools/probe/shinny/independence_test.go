@@ -39,6 +39,7 @@ var mustNotImportLibrary = []string{
 	"readtimeout.go", // v0.6 片一 H5：服务端不回数据时 Read(ctx) 的行为 —— 量的是依赖库，不许拿本库判定
 	"diffrefetch.go", // v0.6 片二前置：本地删快照后同一连接重要同一段，服务端还发不发 —— 量外部协议，不许拿本库判定
 	"clientuse.go",   // v0.6 片 A 前置：websocket 握手走不走传进去的 http.Client —— 量依赖库与外部服务，不许拿本库判定
+	"edge.go",        // v0.6 片 A 前置：具体合约 1m 的协议边界（过期 / 上市前 / 不存在 / 郑商所码 / 未来）—— 量外部协议，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
