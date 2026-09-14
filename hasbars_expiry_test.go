@@ -97,7 +97,8 @@ func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
 					t.Fatalf("源 %s 对 %v 声明了一个【不是日历周期】的周期 %v —— "+
 						"【㉒ 那条到期条件到期了】。\n"+
 						"处置不是把这条测试改掉，是：\n"+
-						"  一、去看 HasBars 的 O(天数 × 根数)：日内落库之后它按最坏档约 1.9 小时/次\n"+
+						"  一、HasBars 已在 v0.5 换成 DaysWithBars（整段一次；890k 根实测 2500–2536 ms，design.md 二十）——\n"+
+						"      去核日内落库之后，每次 Sync 的 DaysWithBars 与 VerifyCoverage（890k 一次约 2.6 s）两遍整库扫描还受不受得了\n"+
 						"  二、决定是换算法还是加缓存，并把决定写进 docs/design.md\n"+
 						"  三、再回来改这条测试与 v0.4.0 注解里那条到期条件的后继",
 						s.name, k, p)

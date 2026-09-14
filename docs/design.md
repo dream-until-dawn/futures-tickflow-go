@@ -52,7 +52,7 @@ futures-tickflow-go/
 ├── calendar.go          Session / TradingDay / Calendar 接口
 ├── period.go            IntradayPeriod / CalendarPeriod：算 K 线边界
 ├── source.go            Source 接口
-├── store.go             Store / Iterator 接口
+├── store.go             Store 接口（设计里写过的 Iterator 没有落地；读口子的形状在 v0.6 定）
 ├── sync.go              Syncer：按 coverage 只拉缺失区间
 ├── feed.go              Feed / View：可步进的多周期视图
 ├── indicator_api.go     Indicator 接口（别名指向 indicator 子包）
@@ -695,6 +695,8 @@ type Capabilities struct {
     Periods   []Period // 支持哪些周期
     MaxBars   int      // 单次/总共最多能给多少根（新浪是 1023，且【无法翻页】）
     Since     map[Period]TradingDay // 【该品种】各周期**最早给得出哪个交易日**
+    BatchDays int      // 一次请求最好覆盖多少个交易日（BatchDaysUnbounded ＝ 不必切；0 被拒）
+    ClientUse ClientUse // 这个源用不用 Syncer 递过来的那个 http.Client（HTTP / None；零值被拒）
     HasSettle bool     // 是否给结算价
     HasOI     bool     // 是否给持仓量
     Realtime  bool
@@ -830,6 +832,7 @@ SQLite 要 CGO 或几十 MB 生成代码；bbolt 的 B+ 树页会让文件膨胀
 `Meta` / `AddCoverage` / `Series` / `Close`）」，而 `store/segfile` 实到的是
 `Coverage` / `AppendBars` / `CommitSpan` / `Verify` / `HasBars` / `Close` ——
 **八个名字只对上一个（`Close`）**。照那一行写 `Syncer`，它会对着一组不存在的方法。
+（📌 2026-09-14 注：上面列的是 09-09 那一刻 segfile 实到的方法；`Store` 接口今天是 `Coverage` / `DaysWithBars` / `AppendBars` / `CommitSpan` / `VerifyCoverage` / `OpenState` / `DiscardCoverage` / `Close`，以 `store.go` 为准。）
 
 与姊妹项目的两处不同（这两条与名字无关，仍然成立）：
 
@@ -2333,7 +2336,9 @@ SRC-4 原写  「越界的根落进别的段 ⇒ Verify 报损坏」
 
 ```
 今天就有对照物、而我没去对的，至少 8 行：
-  SRC-10  自然日→交易日      tools/probe/shinny/tradingday.go（整套实现 + 探针跑通过）
+  SRC-10  自然日→交易日      tools/probe/shinny/tradingday.go（09-09 原写「整套实现 + 探针跑通过」；
+                            ⚠️ 2026-09-14 复核：那个文件只读【当前】交易日的 bar-id 边界、没有通用的
+                            「时刻 → 交易日」换算；历史 1m 归日规则的实测见 probe.md 6.13 c）
   SRC-11  client_secret     main.go 的 clientSecret()：env → .env → SKIP，**无默认值**
                             ⇒ 这一行今天是【绿】的
   SRC-12  mdurl 名称服务     nsURL / mdurl / 「名称服务没给 mdurl」＋已有一条自检
@@ -3604,10 +3609,16 @@ v1 的实时源是 `source/shinnysource`（天勤，需免费快期账户）。
 **2026-09-07 已实测打通**：鉴权、名称服务、websocket、K 线拉取全部跑通，
 深度 890,231 根 1m（回溯到 2016-01-04），盘中能拿到当前正在走的那根。
 
-**仍未验的一条最要紧**：未完结的那一根在 DIFF 协议里**有没有标志位**。
-天勤若像 OKX 那样给一个 `Confirm`，判完结就能省掉查日历这一步；
-没有的话仍然只能靠日历。这一条在写 `shinnysource` 之前必须先问清楚，
-否则会写出一个「盘中把半根 K 线当成完整根」的实现——而它不报错。
+~~**仍未验的一条最要紧**：未完结的那一根在 DIFF 协议里**有没有标志位**。~~
+（09-07 原文，下面照录；📌 2026-09-14 注：**这一条已经问清楚了**，见 probe.md 6.6 ——
+kline 对象**根本没有**完结字段；序列节点上的 `trading_day_end_id` 是**预知的**，
+而它多半照标称模板算，**停夜盘日会不会仍预测整日没验**（probe.md 6.6「它没有证明的三件事」第 2 条，
+已焊进探针 `shinny-suspended-night-span`）⇒ **判完结仍以交易日历为准**。
+真正还挂着的是那第 2 条，不是「有没有标志位」。）
+
+> 天勤若像 OKX 那样给一个 `Confirm`，判完结就能省掉查日历这一步；
+> 没有的话仍然只能靠日历。这一条在写 `shinnysource` 之前必须先问清楚，
+> 否则会写出一个「盘中把半根 K 线当成完整根」的实现——而它不报错。
 
 ---
 
@@ -4065,7 +4076,7 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 | v0.2 | `Calendar` 接口收口（`(X, bool)` → `(X, error)` + `Covers`）／`calendar/embedded` 修一处**已随 `v0.1.0` 发布**的真 bug（国债日盘 09:15 → 09:30）／探针与 `tools/audit/` 仪器加固 | ✅ `v0.2.0` |
 | v0.3 | `Source`(新浪 + **cffexsource**) ＋ `source/pacing`（限流闸门） / `Store`(segfile) / `Syncer` | ✅ `v0.3.0`（2026-09-10 发布；tag 对象 `bef0e21e…` → commit `6252324…`；注解里带着四条【还活着的到期条件】与六条【声明的射程】，`git show v0.3.0` 可读） |
 | v0.4 | `refdata`(天勤) ＋ **`Store` 的「周期进身份」**（修那个假绿；读口子不加＝零调用点） | ✅ `v0.4.0`（2026-09-10 发布；tag 对象 `2700d314…` → commit `f218ae6…`）＋ `v0.4.1`（2026-09-11；tag 对象 `be7fc801…` → commit `cb2a531…`） —— ⚠️ `calendar/derived` 09-10 **挪到 v0.5**（用户裁，理由见 §十六），09-13 **随天勤源顺延到 v0.6**（见下「版本号的两次裁决」） |
-| v0.5 | 已落地的硬化：`Syncer` / `store/segfile` / 审计仪器（**含破坏性 API 变更**，逐条见 [release/v0.5.0.md](release/v0.5.0.md)） | 待发布（已在 main 上，待打 tag） |
+| v0.5 | 已落地的硬化：`Syncer` / `store/segfile` / 审计仪器（**含破坏性 API 变更**，逐条见 [release/v0.5.0.md](release/v0.5.0.md)） | ✅ `v0.5.0`（2026-09-13 发布；tag 对象 `211ec3c7…` → commit `e553d09…`） |
 | v0.6 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**）＋ **`calendar/derived`**（它的唯一输入 1m 在这一档才进库）＋ `Store` 的读口子 | 待办 |
 | v0.7 | `continuous`——换月、复权、接缝 | 待办 |
 | v0.8 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |
