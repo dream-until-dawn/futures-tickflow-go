@@ -1727,6 +1727,19 @@ func main() {
 	}
 	report("shinny-ns", "PASS", "mdurl="+md+"（不能写死域名，必须问名称服务）")
 
+	// v0.6 片一的点名探针（pagedepth.go）：跑在自己的超时里，不吃下面那 260s
+	probeUA(context.Background(), tok)
+	probePageExplore(context.Background(), md, tok)
+	probePageAll(md, tok)
+	probeSinaDays(md, tok)
+	probeReadTimeout(md, tok)
+	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") {
+		if failed > 0 {
+			os.Exit(1)
+		}
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 260*time.Second)
 	defer cancel()
 
