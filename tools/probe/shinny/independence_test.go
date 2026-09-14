@@ -33,6 +33,8 @@ import (
 var mustNotImportLibrary = []string{
 	"main.go",
 	"tradingday.go", // 里面的 rbSession 是照交易所公布写死的，不许改成读日历
+	"pagedepth.go",  // v0.6 片一：翻页 / UA / 日线形状 —— 断言外部世界，同样不许拿本库判定
+	"pageall.go",    // v0.6 片一：全历史翻页 ＋ 归交易日对账 ＋ 无夜盘日 —— 规则是待验假设，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
