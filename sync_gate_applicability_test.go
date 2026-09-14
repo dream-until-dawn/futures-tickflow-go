@@ -57,7 +57,7 @@ func syncerWith(t *testing.T, src Source) *Syncer {
 // 让调用方说就又变成一句不可核的承诺，而那正是 `SourceFactory` 刚取消掉的东西。
 func TestClientUseNoneIsNotAccused(t *testing.T) {
 	syn := syncerWith(t, &noHTTPSource{use: ClientUseNone})
-	rep, err := syn.Sync(context.Background(), req(0), 0)
+	rep, err := syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatalf("不走 HTTP 的源不该让同步失败：%v", err)
 	}
@@ -87,7 +87,7 @@ func TestClientUseNoneIsNotAccused(t *testing.T) {
 // ⚠️ 而这正是「一条一格突变」的用例版：两格之间**只差一个字段的取值**。
 func TestClientUseHTTPSourceThatSkipsHTTPIsAccused(t *testing.T) {
 	syn := syncerWith(t, &noHTTPSource{use: ClientUseHTTP})
-	rep, err := syn.Sync(context.Background(), req(0), 0)
+	rep, err := syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,7 +141,7 @@ func TestNoAttemptsMeansNoAccusation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	rep, err := h.syn.Sync(ctx, req(0), 0)
+	rep, err := h.syn.Sync(ctx, req(0), allClosed)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("期望 context.Canceled，实得 %v", err)
 	}
@@ -182,7 +182,7 @@ func TestSyncValidatesCapsBeforeRelyingOnThem(t *testing.T) {
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			syn := syncerWith(t, c.src)
-			rep, err := syn.Sync(context.Background(), req(0), 0)
+			rep, err := syn.Sync(context.Background(), req(0), allClosed)
 			if err == nil {
 				t.Fatal("Caps 立不住，Sync 却照跑")
 			}

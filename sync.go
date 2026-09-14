@@ -354,6 +354,8 @@ func NewSyncer(cfg SyncerConfig) (*Syncer, error) {
 	return &Syncer{cal: cfg.Calendar, store: cfg.Store, src: src, gate: gate}, nil
 }
 
+func fmtMs(ms int64) string { return time.UnixMilli(ms).In(CST).Format("2006-01-02 15:04") }
+
 // sameCalendar 判源交出的日历与 Syncer 的日历是不是**同一个**。见 CalendarHolder。
 func sameCalendar(fromSource, fromConfig Calendar) error {
 	if fromSource == nil {
@@ -452,6 +454,30 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 			"而空请求和「拉过、确认没有」在 coverage 里长得一样", req.From, to)
 	}
 	rep.Requested = [2]TradingDay{req.From, to}
+
+	// ⛔ **显式 `To` 含一个在 `now` 时还没全部收盘的交易日 ⇒ 报错**（评审方 2026-09-14 造输入复现，我复现，读数一致）。
+	//
+	// 没有这一格时（v0.5.0 实测，日线与 1m 同形）：
+	//
+	//	盘中 10:00，显式 To=当天   err=nil · Complete()=true · 当天登记进 coverage（1m：180 根 / 日线：「拉过、确认没有」）
+	//	收盘后同一请求再跑         err=nil · Halt=区间里的交易日已经全部覆盖过 · Complete()=true ⇒ **剩下的根永远不再拉**
+	//
+	// ⇒ 成因：源按约定丢掉未完结的根（约定二），而 `To == 0` 才走 `ClipToLastClosed`，显式 `To` 不裁 ⇒
+	// **「源没给」被登记成「这一天就这么多」**；挑段跳过已覆盖（v0.5.0 丙片）又把它从「下次补上」变成「永远不补」；
+	// 走查也抓不到（.meta 记的条数与盘上一致）。
+	//
+	// ⛔ **修在编排，不修在源**：「没收盘的那一天不许登记」对每个周期、每个源都一样，各源各守一遍就会漏一个。
+	// ⛔ **报错而不是悄悄裁**：显式 `To` 是调用方说出来的一个日子，把它裁掉等于替他改了请求；
+	// 「同步到最后一个已收盘日」这件事本来就有一个具名的问法 —— `To == 0`。
+	// ⚠️ 只核日历覆盖之内的日子：覆盖之外答不了「收没收盘」，由下面 Covers 那一格报。
+	if day, closesAt, found, err := firstUnclosedDay(s.cal, k, req.From, to, now); err != nil {
+		return rep, fmt.Errorf("tickflow: 判不了 [%s, %s] 里有没有还没收盘的交易日: %w", req.From, to, err)
+	} else if found {
+		return rep, fmt.Errorf("tickflow: To=%s 含一个在 now=%s 时还没收盘的交易日 %s（它最后一段收盘于 %s）——"+
+			"源只给已完结的根，这一天会被登记成「就这么多」，而之后的同步会把它当成已覆盖、永远不再拉；"+
+			"要「同步到最后一个已收盘的交易日」请传 To=0，或把 To 设为那一天之前",
+			to, fmtMs(now), day, fmtMs(closesAt))
+	}
 
 	// ⛔ **在依赖 Caps 之前，先让它自证** —— 而这一格是量出来的，不是想出来的：
 	// `Capabilities.Validate()` **生产侧零调用点**（2026-09-09 实测：只有两个源

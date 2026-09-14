@@ -133,3 +133,49 @@ func TestNewSyncerRejectsASecondCalendar(t *testing.T) {
 		}
 	}
 }
+
+// 盘中显式 To=当天 ⇒ 当天不进 coverage；收盘后同一请求 ⇒ 当天 345 根全部拉到。
+//
+// ⛔ 这是评审方 2026-09-14 造的那个输入（我复现过，读数一致）。修之前（0dbfa38 及 v0.5.0 的 Syncer）：
+//
+//	① 盘中 09-08 10:00  err=nil · Bars=180 · Halt=跑完 · Complete=true · coverage [{09-08 09-08 180 1}]
+//	② 收盘后同一请求     err=nil · Bars=0 · Halt=区间里的交易日已经全部覆盖过 · Complete=true ⇒ 另外 165 根永远补不回来
+func TestIntradayExplicitToTodayIsNotRegisteredAsAWholeDay(t *testing.T) {
+	cal := testCalendar(t)
+	fs := newFakeServer(t)
+	fs.series["SHFE.rb2601"] = minuteBars(t, cal, rbKey, 20260903, 20260908)
+	st, _, err := segfile.Open(t.TempDir(), tickflow.MustIntraday(1))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+	sync := func(now int64) (tickflow.SyncReport, error) {
+		cfg := fs.config(cal, now) // 源的 Now 与 Sync 的 now 是同一个时刻
+		s, err := tickflow.NewSyncer(tickflow.SyncerConfig{Calendar: cal, Store: st, Pacer: pacing.NoPacing(), Timeout: 5 * time.Second,
+			NewSource: honest(cfg)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return s.Sync(context.Background(), tickflow.SyncRequest{
+			Symbol: tickflow.Symbol{Exchange: tickflow.SHFE, Product: "rb", YearMon: 2601},
+			Period: tickflow.MustIntraday(1), From: 20260908, To: 20260908,
+		}, now)
+	}
+
+	rep, err := sync(cst(2026, 9, 8, 10, 0))
+	if err == nil || !strings.Contains(err.Error(), "还没收盘") {
+		t.Fatalf("① 盘中显式 To=当天应报「还没收盘」：err=%v · Bars=%d · coverage=%v", err, rep.Bars, st.Coverage())
+	}
+	if cov := st.Coverage(); len(cov) != 0 || rep.Bars != 0 {
+		t.Fatalf("① 被拒之后当天不许进 coverage、一根都不许落：coverage=%v Bars=%d", cov, rep.Bars)
+	}
+
+	rep, err = sync(farFuture)
+	if err != nil {
+		t.Fatalf("② 收盘后同一请求：%v", err)
+	}
+	cov := st.Coverage()
+	if rep.Bars != 345 || !rep.Complete() || len(cov) != 1 || cov[0].Bars != 345 {
+		t.Errorf("② 收盘后应把当天 345 根全部拉到：Bars=%d Complete=%v coverage=%v", rep.Bars, rep.Complete(), cov)
+	}
+}

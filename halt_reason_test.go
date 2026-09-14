@@ -61,7 +61,7 @@ func TestHaltReasonAgreesWithEveryChannel(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			h := c.build()
-			rep, err := h.syn.Sync(context.Background(), req(0), 0)
+			rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 
 			// 前提：这三条出口都该返回错误。前提不成立就作废，别去解读下面的读数。
 			if err == nil {

@@ -214,7 +214,19 @@ func (c *Client) Caps(k tickflow.ProductKey) tickflow.Capabilities {
 		// 能翻页，没有观察到硬顶。
 		MaxBars:   0,
 		BatchDays: BatchDays,
-		// websocket 握手经注入的 client（probe.md 6.19）⇒ 每次 Bars 至少过闸 1 次，计数为 0 是该出声的读数。
+		// websocket 握手经注入的 client ⇒ 每次 Bars 至少过闸 1 次，计数为 0 是该出声的读数。
+		//
+		// 读数（probe.md 6.19，探针 d98c354，2026-09-14 21:22:34，coder/websocket v1.8.15，形状复刻不经真 NewSyncer）：
+		//
+		//	A 不给 HTTPClient                           握手 101 · chart 5 根
+		//	B 计数 → http.Transport                     握手 101 · 握手后计数 1 · 收完仍是 1
+		//	C 计数 → 限流形状 → Transport，Timeout=5s   握手 101 · 计数 1 · 等 8s（过了 Timeout）同连接开新 chart 照样收到
+		//	D 计数 → 把 resp.Body 包成只读（必须红）     握手失败：
+		//	  「failed to WebSocket dial: response body is not a io.ReadWriteCloser: struct { io.ReadCloser }」
+		//
+		// ⛔ **D 格是写给将来改包装的人的**：coder/websocket 要求 Transport 返回【可写】的 body（dial.go 注释，实测会查）。
+		// 限流、计数、代理那一层只能**转发** resp，**不许包 body、不许换 resp** —— 否则每一次 Bars 都握手失败。
+		// 经真 NewSyncer 的那一格在 syncer_test.go（离线，含 token 已缓存之后那一次）与 live_test.go。
 		ClientUse: tickflow.ClientUseHTTP,
 		Since:     map[tickflow.Period]tickflow.TradingDay{tickflow.MustIntraday(1): minuteSince},
 		HasSettle: false, // 分钟线没有结算价

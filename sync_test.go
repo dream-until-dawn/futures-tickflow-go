@@ -256,6 +256,14 @@ func newHarnessWithStore(t *testing.T, p pacing.Pacer, batch, failN int, st *fak
 	return h
 }
 
+// allClosed 是「req 那一段每一天都已经收盘」的 now（2030-01-01 00:00 UTC，毫秒）。
+//
+// ⛔ 这些测试原来传 now = 0，意思是「时刻与本测试无关」。2026-09-14 起 Sync 拒绝「显式 To 含未收盘交易日」
+// （v0.6.0 勘误二），而 now = 0 时 req 的 2020-01-06..10 每一天都还没收盘 ⇒ 它们全都会在参数那一格被拒，
+// **走不到各自要测的那条路**。换成一个具名的「全都收盘了」，不是放宽断言：它们测的本来就不是时刻边界。
+// ⚠️ 仍然传 0 的那几格是故意的（例如 TestNotYetClosedKeepsItsDeliberateSilence 要的就是「一天都没收盘」）。
+const allClosed int64 = 1893456000000
+
 func req(k int) SyncRequest {
 	return SyncRequest{
 		Symbol:              Symbol{Exchange: "SHFE", Product: "rb", YearMon: 2610},
@@ -297,7 +305,7 @@ func TestEveryRequestThroughOurClientIsGated(t *testing.T) {
 	other := &countingPacer{} // 第二个实例：它【没有】被注入
 	h := newHarness(t, p, 1, 0)
 
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatalf("同步不该出错：%v", err)
 	}
@@ -371,7 +379,7 @@ func TestSyncerDoesNotAcceptAPrebuiltSource(t *testing.T) {
 // TestBudgetExhaustedIsAnErrorNotACleanReport 三件事一起断言。
 func TestBudgetExhaustedIsAnErrorNotACleanReport(t *testing.T) {
 	h := newHarness(t, pacing.NoPacing(), 1, 99) // 每一次都失败
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 
 	if !errors.Is(err, ErrBudgetExhausted) {
 		t.Fatalf("预算耗尽应当返回 ErrBudgetExhausted，实得 %v", err)
@@ -402,7 +410,7 @@ func TestBudgetExhaustedIsAnErrorNotACleanReport(t *testing.T) {
 // ⇒ 现在行为存在了，所以它可以被钉住 —— 钉的就是这一个符号。
 func TestBudgetComparisonOperatorIsPinned(t *testing.T) {
 	h := newHarness(t, pacing.NoPacing(), 1, 99)
-	_, err := h.syn.Sync(context.Background(), req(0), 0)
+	_, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if !errors.Is(err, ErrBudgetExhausted) {
 		t.Fatalf("前提没成立：应当因预算耗尽而中止，实得 %v", err)
 	}
@@ -417,7 +425,7 @@ func TestBudgetComparisonOperatorIsPinned(t *testing.T) {
 
 	// 对照：K=1 时应当试【两次】才停 —— 少了这一格，上面那个 1 也可能是「它永远只试一次」。
 	h2 := newHarness(t, pacing.NoPacing(), 1, 99)
-	if _, err := h2.syn.Sync(context.Background(), req(1), 0); !errors.Is(err, ErrBudgetExhausted) {
+	if _, err := h2.syn.Sync(context.Background(), req(1), allClosed); !errors.Is(err, ErrBudgetExhausted) {
 		t.Fatalf("K=1 也该耗尽，实得 %v", err)
 	}
 	if h2.src.calls != 2 {
@@ -430,7 +438,7 @@ func TestBudgetComparisonOperatorIsPinned(t *testing.T) {
 func TestHaltReasonsLandOnTheReport(t *testing.T) {
 	t.Run("跑完", func(t *testing.T) {
 		h := newHarness(t, pacing.NoPacing(), 1, 0)
-		rep, err := h.syn.Sync(context.Background(), req(0), 0)
+		rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -446,7 +454,7 @@ func TestHaltReasonsLandOnTheReport(t *testing.T) {
 		h := newHarness(t, pacing.NoPacing(), 1, 0)
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
-		rep, err := h.syn.Sync(ctx, req(0), 0)
+		rep, err := h.syn.Sync(ctx, req(0), allClosed)
 		if !errors.Is(err, context.Canceled) {
 			t.Fatalf("期望 context.Canceled，实得 %v", err)
 		}
@@ -608,7 +616,7 @@ func TestPacerIsConsultedBeforeEachRequest(t *testing.T) {
 	p := &countingPacer{log: &eventLog{}}
 	h := newHarness(t, p, 1, 0)
 
-	if _, err := h.syn.Sync(context.Background(), req(0), 0); err != nil {
+	if _, err := h.syn.Sync(context.Background(), req(0), allClosed); err != nil {
 		t.Fatalf("同步不该出错：%v", err)
 	}
 
@@ -667,7 +675,7 @@ func TestGateBypassLeavesANote(t *testing.T) {
 
 	t.Run("守规矩的工厂 ⇒ 不报", func(t *testing.T) {
 		syn, hits, p := newSyncer(t, false)
-		rep, err := syn.Sync(context.Background(), req(0), 0)
+		rep, err := syn.Sync(context.Background(), req(0), allClosed)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -687,7 +695,7 @@ func TestGateBypassLeavesANote(t *testing.T) {
 
 	t.Run("丢掉 client 的工厂 ⇒ 必须报", func(t *testing.T) {
 		syn, hits, p := newSyncer(t, true)
-		rep, err := syn.Sync(context.Background(), req(0), 0)
+		rep, err := syn.Sync(context.Background(), req(0), allClosed)
 		if err != nil {
 			t.Fatal(err)
 		}

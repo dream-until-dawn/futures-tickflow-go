@@ -41,6 +41,9 @@ func (n NightAbsent) String() string {
 // 「截到 `TradingDay(0)`」和「截到某一天」在返回值上**不可分辨** ——
 // 同⑫ 那一格（`MaxBars: 0` 既是「没有硬顶」也是「一根都给不了」），也同 SYN-4。
 //
+// ⛔ **它只替 `To == 0` 作答**。调用方给了显式 `To` 时，`Sync` 不裁 —— 而是在那一段里有还没收盘的交易日时**报错**
+// （2026-09-14 起；v0.5.0 及之前，显式 `To=当天` 在盘中会把半天登记成完整的一天，之后永远不补，见 v0.6.0 发布说明勘误二）。
+//
 // now 是毫秒时间戳，由调用方给。
 func ClipToLastClosed(cal Calendar, k ProductKey, to TradingDay, now int64) (TradingDay, bool, error) {
 	if cal == nil {
@@ -76,6 +79,38 @@ func ClipToLastClosed(cal Calendar, k ProductKey, to TradingDay, now int64) (Tra
 		return 0, false, fmt.Errorf("tickflow: ClipToLastClosed 遍历交易日失败：%w", err)
 	}
 	return last, found, nil
+}
+
+// firstUnclosedDay 找 [from, to] 里（与日历覆盖求交之后）**第一个在 now 时还没全部收盘**的交易日。
+//
+// 判据与 ClipToLastClosed 同口径：最后一段的 End > now 就算没收盘。
+// 覆盖不到这个品种、或区间与覆盖不相交 ⇒ found = false（答不了的那一格由调用方的 Covers 检查报）。
+func firstUnclosedDay(cal Calendar, k ProductKey, from, to TradingDay, now int64) (day TradingDay, closesAt int64, found bool, err error) {
+	cf, ct, ok := cal.Covers(k)
+	if !ok {
+		return 0, 0, false, nil
+	}
+	lo, hi := from, to
+	if lo < cf {
+		lo = cf
+	}
+	if hi > ct {
+		hi = ct
+	}
+	if hi < lo {
+		return 0, 0, false, nil
+	}
+	err = cal.Walk(k, lo, hi, func(d Day) bool {
+		if len(d.Sessions) == 0 {
+			return true
+		}
+		if end := d.Sessions[len(d.Sessions)-1].End; end > now {
+			day, closesAt, found = d.Num, end, true
+			return false
+		}
+		return true
+	})
+	return day, closesAt, found, err
 }
 
 // ScanBars 交出报告里的两格：**对不上网格的根数**（SYN-2）与**可疑的交易日**（SYN-5）。
