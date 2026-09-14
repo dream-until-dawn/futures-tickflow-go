@@ -386,6 +386,23 @@ type Source interface {
 	Caps(k ProductKey) Capabilities
 }
 
+// CalendarHolder 由【自己持有一份日历】的源实现：交出构造时注入的那一份。
+//
+// ⛔ 它存在的理由是一处**不报错的错位**（片二评审 2026-09-14 提出）：
+// 源拿自己那份日历给每根填 TradingDay，Syncer 拿 `SyncerConfig.Calendar` 规划「哪些天该拉」、
+// 登记 coverage —— **两份不是同一个时，两边对「这一根属于哪天」的答案可以不同，而没有一处会报错。**
+// ⇒ `NewSyncer` 在造出源之后问它要这一份，与 `SyncerConfig.Calendar` 比。
+//
+// ⚠️ 比的是**同一性**（`==`），不是**等价**：两份内容相同的日历实例也会被拒。
+// 理由：等价判不了（日历接口里没有「把你的全部答案交出来」这一维），
+// 而「传同一个」是调用方一行就做得到的事。类型不可比较时（例如值类型里含切片）同样拒，并在报文里说「传指针」。
+//
+// ⚠️ 射程：**只有实现了它的源才被核**。今天实现它的只有 `source/shinnysource`；
+// `sinasource` / `cffexsource` 也各持一份日历而没有实现 —— 那两个源上这一格照旧不设防。
+type CalendarHolder interface {
+	Calendar() Calendar
+}
+
 // —— CheckBars：把那六条约定变成一次可执行的检查 ——
 
 // CheckBars 拿一次请求和它的返回，核对 Source 的实现约定。

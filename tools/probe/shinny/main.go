@@ -1736,7 +1736,8 @@ func main() {
 	probeChunkMem(md, tok)
 	probeDiffRefetch(md, tok)
 	probeClientUse(md, tok)
-	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") {
+	probeEdge(md, tok)
+	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") || optIn("shinny-edge") {
 		if failed > 0 {
 			os.Exit(1)
 		}

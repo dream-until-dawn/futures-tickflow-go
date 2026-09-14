@@ -24,12 +24,13 @@
 | `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
 | `source/sinasource` | ✅ **日线链路已通**：HTTP → JSONP → 行 → `Bar`，实现 `tickflow.Source`（`Bars` / `Caps`）。⚠️ **只做日线、只做具体合约**（主连在 `Symbol` 里表达不出来）；分钟线不做（1023 硬顶且无法翻页，深度走天勤） |
 | `source/cffexsource` | ✅ **日线链路已通**：HTTP（一天一请求，用 `Calendar.Walk` 铺开）→ XML → 期货行 → `Bar`，实现 `tickflow.Source`。结算价 0 在组装层映射成 NaN；XML 自带的 `tradingday` 与日历交叉核对。⚠️ 存档实测回溯到 **2016-01-04**——它是**存档级**下界（非逐日验证），**不是按品种的答案**：那天只有 IC/IF/IH/T/TF 五个品种，对后上市的 IM/TS/TL **明知是错**（登记㉔；⛔ **2026-09-10 复核 v5 推翻了原来那条处置**：天勤 openmd 全量 47 个字段里**没有上市日**（唯一像日期的是 `expire_datetime`＝到期）⇒ **refdata 关不掉这一格**；替代出处已实测，见探针文档「复核 v5」那一节）；**全量回补≈2671 次请求** |
-| `source/shinnysource` | ❌ **尚未开始**（v0.6） |
+| `source/shinnysource` | ✅ **具体合约的 1m 已通**（v0.6 片 A）：token／名称服务（HTTPS）→ websocket DIFF 翻页 → `Bar`，实现 `tickflow.Source` 与 `tickflow.CalendarHolder`。⚠️ **只做具体合约的 1m**（主连拒掉）；日历只覆盖 2020-05-06 之后（H2），更早的不会被请求；**实时推送不做**（v0.10） |
 | `Syncer`（根包 `syncer.go` / `sync.go`） | ✅ 已发布 |
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
 | `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
 
-⇒ 「能力」一节里指向 `source/shinnysource` `calendar/derived` `continuous` `indicator` `Feed` 的行**都还是承诺**；
+⇒ 「能力」一节里指向 `calendar/derived` `continuous` `indicator` `Feed` 的行**都还是承诺**；
+指向 `source/shinnysource` 的那一行**只有「深度分钟」一半已实现**（具体合约、1m、≥ 2020-05-06），**「实时」仍是承诺**；
 指向 `Period` `calendar/embedded` `store/segfile` `source/sinasource` `Syncer` 的行**已有实现，并且有测试**；
 `refdata/shinnyref` 只到解码与取数层（说明列里哪几项已落地，以 design.md §十九 为准）。
 **标「实测」的行与本库实现无关——它们来自真实接口。**
@@ -303,7 +304,7 @@ var CST = time.FixedZone("CST", 8*3600)
 | **v1.x** | `Store` / `Source` / `Indicator` / `Calendar` 四个接口是对外契约，改它们要换模块路径 |
 | **落盘格式** | `.meta` 带 `format`（版本）与 `recordSize`。变更升 `format`，打开时报错并说明怎么迁移。**识别「这是不是我要的那份数据」不靠 `magic`，靠 `Open` 比对全量参数（G1）** |
 | **行为变更** | 不改签名但改结果的变更（如换默认复权方式）走 minor 版本并在 README 显著标注 |
-| Go 版本 | 1.22，与姊妹项目对齐 |
+| Go 版本 | **1.23**（2026-09-14 起；原为 1.22、与姊妹项目对齐 —— 那条对齐被用户的裁定打破，来历见 design.md 第一节末「Go 版本」那段的补注） |
 
 #### ⚠️ 上面那一行改过三处（2026-09-09），来历写在这儿
 

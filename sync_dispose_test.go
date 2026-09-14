@@ -22,7 +22,7 @@ func TestC3bTruncatedTailReachesTheReport(t *testing.T) {
 	st := &fakeStore{openState: OpenState{TruncatedTail: 33}}
 	h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
 
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatalf("残尾不该让同步失败（它已经处理好了）：%v", err)
 	}
@@ -36,7 +36,7 @@ func TestC3bTruncatedTailReachesTheReport(t *testing.T) {
 	// 对照：没有残尾时那一格必须是空的 ——
 	// ⛔ 少了这一条，一个「无论如何都塞一条」的实现也会绿。
 	h2 := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, &fakeStore{})
-	rep2, err := h2.syn.Sync(context.Background(), req(0), 0)
+	rep2, err := h2.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func TestD2bBothDispositionsReachTheReport(t *testing.T) {
 		st := &fakeStore{openState: OpenState{LegacyMeta: true}, coverage: legacyCov}
 		h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
 
-		rep, err := h.syn.Sync(context.Background(), req(0), 0)
+		rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 		if err != nil {
 			t.Fatalf("可重放那一支不该要人介入：%v", err)
 		}
@@ -90,7 +90,7 @@ func TestD2bBothDispositionsReachTheReport(t *testing.T) {
 			coverage: []Span{{From: 20191201, To: 20191231, Bars: 5, Days: 5}}}
 		h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
 
-		rep, err := h.syn.Sync(context.Background(), req(0), 0)
+		rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 		if !errors.Is(err, ErrLegacyMeta) {
 			t.Fatalf("不可重放那一支应当报 ErrLegacyMeta，实得 %v", err)
 		}
@@ -111,7 +111,7 @@ func TestD2bBothDispositionsReachTheReport(t *testing.T) {
 		// 这一格钉住的是**那个分支不会被走到**，免得下一个人去补它。
 		st := &fakeStore{openState: OpenState{LegacyMeta: true}}
 		h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
-		rep, err := h.syn.Sync(context.Background(), req(0), 0)
+		rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 		if err != nil {
 			t.Fatalf("空 coverage 上不该走 D2a：%v", err)
 		}
@@ -164,7 +164,7 @@ func TestReplayableIsAboutTheRangeNotTheSource(t *testing.T) {
 func TestSYN6VerifiesEverySpanTouchedThisRun(t *testing.T) {
 	st := &fakeStore{}
 	h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st) // 一天一块 ⇒ 5 段
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -185,7 +185,7 @@ func TestSYN6VerifiesEverySpanTouchedThisRun(t *testing.T) {
 func TestSYN6VerifyFailureLeavesANote(t *testing.T) {
 	st := &fakeStore{verifyErr: errors.New("segfile: 假装走查发现对不上")}
 	h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatalf("走查失败不改变「已落盘的是真的」，不该整体报错：%v", err)
 	}
@@ -209,7 +209,7 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 	// 库里什么都没有 ⇒ 请求区间里的每个交易日都该落进某一类缺口。
 	st := &fakeStore{}
 	h := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st)
-	rep, err := h.syn.Sync(context.Background(), req(0), 0)
+	rep, err := h.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -244,7 +244,7 @@ func TestGapsAreComputedNotLeftEmpty(t *testing.T) {
 	// ⛔ 少了这一格，上面那条也可能是「它对谁都不报 Unverified」。
 	st2 := &fakeStore{verifyErr: errors.New("假装走查失败")}
 	h2 := newHarnessWithStore(t, pacing.NoPacing(), 1, 0, st2)
-	rep2, err := h2.syn.Sync(context.Background(), req(0), 0)
+	rep2, err := h2.syn.Sync(context.Background(), req(0), allClosed)
 	if err != nil {
 		t.Fatal(err)
 	}

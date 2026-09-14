@@ -52,8 +52,14 @@ type Bar struct {
 
 	Open, High, Low, Close float64
 
-	Volume       float64 // 成交量（手）
-	Turnover     float64 // 成交额（元）
+	Volume float64 // 成交量（手）
+	// Turnover 是成交额（元）。**上游不给这个字段时为 NaN**，不是 0 ——「源不给」与「成交额为 0」是两件事。
+	//
+	//	cffexsource   给（中金所 XML 的 turnover）
+	//	shinnysource  NaN（DIFF 的 kline 没有这个字段，probe.md 6.13–6.20 量到的字段里没有）
+	//	sinasource    ⛔ **0** —— 新浪日线的行只有 d/o/h/l/c/v/p/s，也没有成交额，而组装层没填 ⇒ 零值。
+	//	              **这个 0 是一句假话**：登记，v0.6 之内决定改不改；改成 NaN 是对外行为变更，要进发布说明。
+	Turnover     float64
 	OpenInterest float64 // 持仓量（手）—— 中国期货特有，主力判定要用
 	// Settle 是当日结算价；仅日线有，分钟线为 NaN。
 	//
