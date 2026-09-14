@@ -653,6 +653,8 @@ func TestRerunDiagnosisErratum(t *testing.T) {
 //
 // ⚠️ 欠条（评审方 2026-09-13）：v0.6.0.md 现在只有勘误一这一节 ⇒ 「节内删词就红」的突变证明不了判据取的是那一节。
 // ⇒ **这份文件长出第二节时，补一格「节外同词、节内删词」的突变**（照 TestRerunDiagnosisErratum 验收里的 E3）。
+// ✅ 2026-09-14 勘误二落地，欠条兑现：「一起删」两节都有 ⇒ 只从勘误一那一节删掉 ⇒ 本测试红、勘误二那条不红；
+// 反过来只从勘误二删 ⇒ 勘误二那条红、本测试不红（读数在片 A 修复那封送审信里）。
 //
 // guard: v0.6.0 发布说明里有勘误一，四件事的词都在那一节里。
 func TestV060MissingRecordsErratum(t *testing.T) {
@@ -673,6 +675,42 @@ func TestV060MissingRecordsErratum(t *testing.T) {
 	for _, want := range []string{"v0.5.0", "勘误四", "err = nil", "ErrMissingRecords", "一起删", "从早到晚"} {
 		if !strings.Contains(sec, want) {
 			t.Errorf("v0.6.0 勘误一那一节里没有 %q —— 四件事缺一件，读 v0.5.0 注解的人落不到该落的地方", want)
+		}
+	}
+}
+
+// —— v0.6.0 勘误二：v0.5.0 上显式 To 含当天、盘中同步 ⇒ 当天登记成已覆盖、永不再拉（2026-09-14）——
+//
+// 起因：评审方离线造输入发现，已发布的 v0.5.0 带着它（日线把当天记成「拉过确认没有」，收盘后挑段跳过）。
+// 修复与勘误同片落地（照 v0.6.0.md 头里「勘误不许等到发布再写」）。
+//
+// 名单是读者要落到的五件事，各取词（取【勘误二那一节】的文本）：
+//
+//	一、哪一版          ⇒ "v0.5.0"
+//	二、什么输入        ⇒ "显式 To"
+//	三、旧的读数        ⇒ "拉过确认没有"
+//	四、新的读数与出路  ⇒ "还没收盘" · "To=0"
+//	五、坏库怎么修      ⇒ "一起删"
+//
+// guard: v0.6.0 发布说明里有勘误二，五件事的词都在那一节里。
+func TestV060ExplicitToErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.6.0.md"))
+	if err != nil {
+		t.Fatalf("读 v0.6.0 发布说明失败：%v —— v0.5.0 已发布的缺陷，勘误不许等到发布再写", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误二"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.6.0.md 里没有「%s」这一节 —— 在 v0.5.0 上盘中用显式 To 同步过的人，不知道自己的库里有永远补不上的日子", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{"v0.5.0", "显式 To", "拉过确认没有", "还没收盘", "To=0", "一起删"} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("v0.6.0 勘误二那一节里没有 %q —— 五件事缺一件，受影响的人落不到该落的地方", want)
 		}
 	}
 }
