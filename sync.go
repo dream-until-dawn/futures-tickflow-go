@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
 	"sync"
 	"time"
 
@@ -345,7 +346,32 @@ func NewSyncer(cfg SyncerConfig) (*Syncer, error) {
 		return nil, errors.New("tickflow: NewSource 返回了 nil——" +
 			"而一个 nil 的 Source 会在第一次调用时 panic，那比现在报错晚得多")
 	}
+	if h, ok := src.(CalendarHolder); ok {
+		if err := sameCalendar(h.Calendar(), cfg.Calendar); err != nil {
+			return nil, fmt.Errorf("tickflow: NewSyncer 的日历与源的日历对不上: %w", err)
+		}
+	}
 	return &Syncer{cal: cfg.Calendar, store: cfg.Store, src: src, gate: gate}, nil
+}
+
+// sameCalendar 判源交出的日历与 Syncer 的日历是不是**同一个**。见 CalendarHolder。
+func sameCalendar(fromSource, fromConfig Calendar) error {
+	if fromSource == nil {
+		return errors.New("源交出的日历是 nil——它归交易日用的是什么，从这一层看不见")
+	}
+	ts, tc := reflect.TypeOf(fromSource), reflect.TypeOf(fromConfig)
+	if ts != tc {
+		return fmt.Errorf("源用的是 %v，SyncerConfig.Calendar 是 %v——两份日历对「这一根属于哪天」的答案可以不同，而不会报错；"+
+			"把同一个日历同时交给源和 Syncer", ts, tc)
+	}
+	if !ts.Comparable() {
+		return fmt.Errorf("日历类型 %v 不可比较，核不了两边是不是同一个——传指针", ts)
+	}
+	if fromSource != fromConfig {
+		return fmt.Errorf("源与 SyncerConfig 各持一份 %v，而不是同一个——内容相同也不行（等价判不了，同一性判得了）；"+
+			"把同一个日历同时交给源和 Syncer", ts)
+	}
+	return nil
 }
 
 // Sync 把 `req` 那一段同步进库，并交出一份报告。
