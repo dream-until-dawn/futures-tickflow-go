@@ -2971,6 +2971,7 @@ type Store interface {
 	AppendBars(bars []Bar) error
 	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
 	VerifyCoverage() (map[SpanKey]error, error)
+	Walk(from, to TradingDay, fn func(Bar) bool) error // v0.6 片 B：读口子，边扫边核（语义见 store.go 接口注释）
 	Close() error
 }
 ```
@@ -5542,3 +5543,19 @@ CZCE.TA701    未到期，截至 2026-09-14 21:31 id 数 145,142
 ⚠️ **射程，两条**：
 一、它判的是**源拒不拒**。「有别的路把跨合约的日内序列写进同一个库」（例如将来 `continuous` 包自己落库）**不会让它响**。
 二、`segfile.DaysWithBars` 是**每段 coverage 扫一遍整个文件**。上面读数里段合成了 1 段；**段数多时（中间有拉失败留下的洞）扫描次数随段数线性涨** —— 没量。
+
+#### 登记 (y)：读法改造（2026-09-14，片 B 评审裁定；**本节上面的决定这一片不改写**）
+
+片 B 的读数（合成库、页缓存热、Windows）：逐条 `ReadAt` 一遍 890,000 根 2.9–3.3 s，而 64 KiB 缓冲顺序读＋逐条核 45–60 ms（真 `Walk` 44.9–47.0 ms）。
+⇒ **推论**：`DaysWithBars` / `VerifyCoverage` 改成缓冲读之后，上面那张表里每遍 0.3–0.4 s 会降到几 ms。**没在这两个真方法上量过**，所以不拿它改写上面的决定。
+
+```
+(y) 读法改造一片 —— v0.6 之内，排在片 C 之后，带三样：
+  一、真方法上的 scan_cost 重量（scan_cost_bench_test.go 与 daysbars_bench_test.go 两组）
+  二、坏库等价格全部重跑（(iv)、(j)、(v) 那几批 ＋ Walk 的 badLibs）
+  三、㉒ 后继「日内源必须拒主连」的前提重估 —— ⚠️ 分开写两个前提：
+      甲 扫描代价：缓冲读之后主连一遍约 55 ms，这一条弱了
+      乙 语义：「一个库只装一个合约」（记录数被合约寿命封顶、跨合约拼接不进库）—— **扫描变快不等于这一条可以撤**
+```
+📎 核法这一片已经只有一份（`segfile.coverageChecker`，Walk 与 VerifyCoverage 共用）⇒ (y) 只动读法。
+

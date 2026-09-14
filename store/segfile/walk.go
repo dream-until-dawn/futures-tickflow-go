@@ -1,0 +1,172 @@
+package segfile
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io"
+
+	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
+)
+
+// coverageChecker 是**逐条核对器**：喂一条记录，最后要每一段的结论。
+//
+// ⛔ 它存在的理由是片 B 评审（2026-09-14）那一条：**读法可以有两份，核法只许有一份**。
+// `VerifyCoverage`（逐条 ReadAt）与 `Walk`（缓冲顺序读）各自带一套「逐条核 ＋ 段计数 ＋ 与 .meta 比」的话，
+// 两份迟早漂开 —— 同一个坏库，一个说坏，一个说好。⇒ 两处都调它。
+//
+// 核三件【全库】的（任何一件不过 ⇒ 全库错误，归给每一段，停）：
+//
+//	SYN-10 零值 TradingDay（判在最前 —— 更准的诊断必须排在更泛的之前，见 Verify 的长注释）
+//	顺序   交易日非降序
+//	归属   落在某一段 coverage 里
+//
+// 再给每一段数 Bars / Days，扫完之后与 .meta 比（B1 / B2）。
+type coverageChecker struct {
+	cov    []tickflow.Span
+	bars   []int
+	days   []int
+	prevIn []tickflow.TradingDay
+	prev   tickflow.TradingDay
+	whole  error
+}
+
+func newCoverageChecker(cov []tickflow.Span) *coverageChecker {
+	return &coverageChecker{
+		cov:    cov,
+		bars:   make([]int, len(cov)),
+		days:   make([]int, len(cov)),
+		prevIn: make([]tickflow.TradingDay, len(cov)),
+	}
+}
+
+// feed 核第 i 条记录。返回 false ⇒ 这一条让全库错误成立（记在 whole 里），调用方应当停止读。
+func (c *coverageChecker) feed(i int64, b tickflow.Bar) bool {
+	switch {
+	case b.TradingDay == 0:
+		c.whole = fmt.Errorf("%w: 第 %d 条记录（Ts=%d）的 TradingDay 是零值——"+
+			"它来自本版写入口之外（旧版/别的写者/手工造的）；"+
+			"这不是文件损坏，别去查长度和截断", errZeroTradingDay, i, b.Ts)
+		return false
+	case b.TradingDay < c.prev:
+		c.whole = fmt.Errorf("%w: 第 %d 条是 %s，而上一条是 %s",
+			errRecordDisorder, i, b.TradingDay, c.prev)
+		return false
+	}
+	c.prev = b.TradingDay
+	hit := -1
+	for j := range c.cov {
+		if b.TradingDay >= c.cov[j].From && b.TradingDay <= c.cov[j].To {
+			hit = j
+			break
+		}
+	}
+	if hit < 0 {
+		// 归属那一条：谁的段都不属于 ⇒ 这才是真的损坏（与 Verify 的 default 同义）。
+		c.whole = fmt.Errorf("%w: 第 %d 条记录是 %s，而它不落在任何一段 coverage 里",
+			errRecordOutside, i, b.TradingDay)
+		return false
+	}
+	if b.TradingDay != c.prevIn[hit] {
+		c.days[hit]++
+		c.prevIn[hit] = b.TradingDay
+	}
+	c.bars[hit]++
+	return true
+}
+
+// result 交出每一段的结论，契约同 VerifyCoverage（全的 · 键是 Coverage() 的 Key() · nil ＝ 通过）。
+// 全库错误归给每一段；否则逐段比那两个计数。
+func (c *coverageChecker) result() map[tickflow.SpanKey]error {
+	out := make(map[tickflow.SpanKey]error, len(c.cov))
+	for j, sp := range c.cov {
+		switch {
+		case c.whole != nil:
+			out[sp.Key()] = c.whole
+		case c.bars[j] != sp.Bars:
+			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 条，而 .meta 记的是 %d 条",
+				errBarsMismatch, c.bars[j], sp.Bars)
+		case c.days[j] != sp.Days:
+			out[sp.Key()] = fmt.Errorf("%w: 走查数出 %d 个交易日，而 .meta 记的是 %d 个"+
+				"——只比 bars 会让「某天的起点丢了」读成「那天确认没有」",
+				errDaysMismatch, c.days[j], sp.Days)
+		default:
+			out[sp.Key()] = nil
+		}
+	}
+	return out
+}
+
+// walkBufSize 是 Walk 的读缓冲。读数（片 B 设计信，2026-09-14，合成库 890,000 根、页缓存热、Windows）：
+// 逐条 ReadAt 一遍 2.9–3.3 s，64 KiB 缓冲顺序读＋逐条核 54–60 ms。
+const walkBufSize = 64 << 10
+
+// errWalkRange Walk 的区间不整个落在某一段 coverage 里。
+var errWalkRange = errors.New("segfile: Walk 的区间不整个落在任何一段 coverage 里")
+
+// Walk 按文件顺序把 [from, to] 里的记录逐根交给 fn，**同一遍扫描里把整个库核一遍**。见 tickflow.Store.Walk。
+func (s *Store) Walk(from, to tickflow.TradingDay, fn func(tickflow.Bar) bool) error {
+	if fn == nil {
+		return errors.New("segfile: Walk 的 fn 是 nil")
+	}
+	if !from.Valid() || !to.Valid() || from > to {
+		return fmt.Errorf("segfile: Walk 的区间不合法：[%d, %d]", int32(from), int32(to))
+	}
+	cov := s.meta.Coverage
+	inside := false
+	for _, sp := range cov {
+		if from >= sp.From && to <= sp.To {
+			inside = true
+			break
+		}
+	}
+	if !inside {
+		// ⛔ 这一句与「没走查过」分开说：区间落在段外是【没拉过】，不是【没核过】。
+		return fmt.Errorf("%w: [%s, %s]，而 coverage 是 %v——"+
+			"段外（或跨过两段之间的空档）是「没拉过」，不是「没走查过」",
+			errWalkRange, from, to, cov)
+	}
+
+	st, err := s.dat.Stat()
+	if err != nil {
+		return fmt.Errorf("segfile: Walk 取文件大小失败: %w", err)
+	}
+	n := CountRecords(st.Size())
+	// ⛔ 长度取【开始这一刻】的文件大小；只用 SectionReader（ReadAt），**不动文件偏移**。
+	// AppendBars 今天自己会先 Seek 到尾（store.go），而那不是 Walk 可以动偏移的理由：它是另一处的防线。
+	r := bufio.NewReaderSize(io.NewSectionReader(s.dat, 0, n*RecordSize), walkBufSize)
+	buf := make([]byte, RecordSize)
+	c := newCoverageChecker(cov)
+	deliver := true
+	for i := int64(0); i < n; i++ {
+		if _, err := io.ReadFull(r, buf); err != nil {
+			return fmt.Errorf("segfile: Walk 读第 %d 条记录失败: %w", i, err)
+		}
+		b, err := DecodeBar(buf)
+		if err != nil {
+			return fmt.Errorf("segfile: Walk 解第 %d 条记录失败: %w", i, err)
+		}
+		// ⛔ 先核、再回调：没核过的记录不交出去。
+		if !c.feed(i, b) {
+			break
+		}
+		// ⛔ fn 返回 false 只停回调，扫描照样走完 —— 结论照给。
+		if deliver && b.TradingDay >= from && b.TradingDay <= to {
+			deliver = fn(b)
+		}
+	}
+
+	res := c.result()
+	var errs []error
+	for _, sp := range cov {
+		if e := res[sp.Key()]; e != nil {
+			errs = append(errs, fmt.Errorf("[%s, %s]: %w", sp.From, sp.To, e))
+			if c.whole != nil {
+				break // 全库错误归给每一段，报一次就够
+			}
+			continue
+		}
+		s.verified[sp.Key()] = true
+	}
+	return errors.Join(errs...)
+}
