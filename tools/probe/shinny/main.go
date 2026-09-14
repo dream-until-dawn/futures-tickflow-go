@@ -1731,7 +1731,9 @@ func main() {
 	probeUA(context.Background(), tok)
 	probePageExplore(context.Background(), md, tok)
 	probePageAll(md, tok)
-	if optIn("shinny-ua") || optIn("shinny-page") {
+	probeSinaDays(md, tok)
+	probeReadTimeout(md, tok)
+	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") {
 		if failed > 0 {
 			os.Exit(1)
 		}

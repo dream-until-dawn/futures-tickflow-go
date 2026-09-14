@@ -32,9 +32,11 @@ import (
 // 那条禁的是拿本库当**判定依据**。方向反了，就不是同一件事。
 var mustNotImportLibrary = []string{
 	"main.go",
-	"tradingday.go", // 里面的 rbSession 是照交易所公布写死的，不许改成读日历
-	"pagedepth.go",  // v0.6 片一：翻页 / UA / 日线形状 —— 断言外部世界，同样不许拿本库判定
-	"pageall.go",    // v0.6 片一：全历史翻页 ＋ 归交易日对账 ＋ 无夜盘日 —— 规则是待验假设，不许拿本库判定
+	"tradingday.go",  // 里面的 rbSession 是照交易所公布写死的，不许改成读日历
+	"pagedepth.go",   // v0.6 片一：翻页 / UA / 日线形状 —— 断言外部世界，同样不许拿本库判定
+	"pageall.go",     // v0.6 片一：全历史翻页 ＋ 归交易日对账 ＋ 无夜盘日 —— 规则是待验假设，不许拿本库判定
+	"sinadays.go",    // v0.6 片一 b：天勤 vs 新浪 rb 交易日集合 —— 两个外部源互比，不许拿本库判定
+	"readtimeout.go", // v0.6 片一 H5：服务端不回数据时 Read(ctx) 的行为 —— 量的是依赖库，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
