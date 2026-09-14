@@ -38,6 +38,7 @@ var mustNotImportLibrary = []string{
 	"sinadays.go",    // v0.6 片一 b：天勤 vs 新浪 rb 交易日集合 —— 两个外部源互比，不许拿本库判定
 	"readtimeout.go", // v0.6 片一 H5：服务端不回数据时 Read(ctx) 的行为 —— 量的是依赖库，不许拿本库判定
 	"diffrefetch.go", // v0.6 片二前置：本地删快照后同一连接重要同一段，服务端还发不发 —— 量外部协议，不许拿本库判定
+	"clientuse.go",   // v0.6 片 A 前置：websocket 握手走不走传进去的 http.Client —— 量依赖库与外部服务，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
