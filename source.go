@@ -397,8 +397,9 @@ type Source interface {
 // 理由：等价判不了（日历接口里没有「把你的全部答案交出来」这一维），
 // 而「传同一个」是调用方一行就做得到的事。类型不可比较时（例如值类型里含切片）同样拒，并在报文里说「传指针」。
 //
-// ⚠️ 射程：**只有实现了它的源才被核**。今天实现它的只有 `source/shinnysource`；
-// `sinasource` / `cffexsource` 也各持一份日历而没有实现 —— 那两个源上这一格照旧不设防。
+// ⚠️ 射程：**只有实现了它的源才被核**。今天本仓三个源（`shinnysource` / `sinasource` / `cffexsource`）都实现了；
+// 第三方源不实现它，这一格在它身上照旧不设防 —— 从 Syncer 这一层分不出「不持有日历」与「持有而没交出来」。
+// ⚠️ 对 sinasource / cffexsource 这是**对外行为变更**（v0.6 起）：原来传两份内容相同的日历能跑，现在 NewSyncer 报错。
 type CalendarHolder interface {
 	Calendar() Calendar
 }

@@ -99,7 +99,16 @@ func New(cal tickflow.Calendar, opts ...Option) (*Client, error) {
 	return c, nil
 }
 
-var _ tickflow.Source = (*Client)(nil)
+var (
+	_ tickflow.Source         = (*Client)(nil)
+	_ tickflow.CalendarHolder = (*Client)(nil)
+)
+
+// Calendar 交出构造时注入的日历，让 NewSyncer 核「与 SyncerConfig.Calendar 是同一个」（tickflow.CalendarHolder）。
+//
+// ⛔ 两份不是同一个时，本源给每根填的 TradingDay（与判完结）和 Syncer 规划、登记 coverage 用的答案可以不同，而没有一处报错。
+// 自 v0.6 起 NewSyncer 会拒：把同一个日历同时交给 New 与 SyncerConfig。
+func (c *Client) Calendar() tickflow.Calendar { return c.cal }
 
 // Bars 实现 tickflow.Source：逐个交易日取，拼成一段。
 //
