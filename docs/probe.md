@@ -2003,6 +2003,32 @@ KQ.m@SHFE.ag                                                              跨度
 >
 > **修法不是改这一行，是让整张表被对一遍**——见下。
 
+### 6.19 websocket 握手**走传进去的 `*http.Client`**：每拨一次号，计数包装记 1 次（`shinny-client-use`，v0.6 片 A 前置）
+
+起因：片二设计信判 `shinnysource` 声明 `ClientUseNone`，理由只算了取 token 与问名称服务那两个 HTTPS 请求，**没算 websocket 握手**。
+评审方读 coder/websocket v1.8.15 源码（`dial.go:24-27` · `78-83` · `223`）推出「握手走的就是 `DialOptions.HTTPClient`」——那是推论，本节把它量成读数。
+
+```
+底座      探针 d98c354（tools/probe/shinny/clientuse.go），2026-09-14 21:22:34 +0800 开跑，go run . -only shinny-client-use
+          （提交前在同一份代码上跑过一次，读数除耗时外逐行相同；再往前一次 C 格第二张 chart 用了同一序列，读数作废，原因见下）
+复刻      计数包装 ＝ sync.go 的 gateCounter 形状；限流形状 ＝ source/pacing 的 transport 形状（Wait 用请求自己的 ctx，这里等 100ms）
+          ⚠️ 探针不 import 本库 ⇒ 这是【形状】复刻，经真 NewSyncer 的那一格留给 shinnysource 自己的在线测试
+UA        本库名（uaSelf）· 序列 KQ.m@SHFE.rb 1m view_width=5 · websocket v1.8.15
+
+A 基线（不给 HTTPClient）                    握手成功 HTTP 101 · 计数 —   · chart 5 根 · 收完计数 —
+B 计数 → http.Transport                      握手成功 HTTP 101 · 握手后 1 · chart 5 根 · 收完计数 1
+C 计数 → 限流形状 → http.Transport，Timeout=5s  握手成功 HTTP 101 · 握手后 1 · chart 5 根
+                                             · 等 8s（过了 Timeout）在同一连接上开 KQ.m@SHFE.au 的 chart：5 根，无错 · 收完计数 1
+D 反标定：计数 → 把 resp.Body 包成只读        握手失败（3.30s）· 计数 1
+                                             · 错误原文：failed to WebSocket dial: response body is not a io.ReadWriteCloser: struct { io.ReadCloser }
+```
+⇒ **握手经过传进去的那个 client 的 Transport**：每拨一次号计数 1 次，之后的收发不再经过它（收完仍是 1）。
+⇒ **`Timeout > 0` 只管握手**：过了 Timeout 连接照常收发（C 格）—— 与 `dial.go:78-83`「挪成握手 ctx 期限、复制一份 client 把 Timeout 置 0」一致。
+⇒ **「Transport 必须返回可写 body」是真被检查的**（D 格红，报错原文说得出是哪一层），而 B、C 两种包装没有破坏它。
+⇒ 对 `shinnysource`：`Bars` 每次新拨连接时把 Syncer 递进来的 client 作为 `DialOptions.HTTPClient` 传进去 ⇒ 每次 `Bars` 至少过闸 1 次 ⇒ **可以声明 `ClientUseHTTP`，闸门那条检查不必对它关掉**；限流对每条连接也生效。
+📎 C 格第一次跑时第二张 chart 用了同一序列，只收到 1 根 —— 那是 6.18「同一连接不补发」，不是连接坏了；换序列后 5 根。**同一个探针里撞到了 6.18 自己**，读数作废、已改。
+⚠️ 射程：只量了 `http.Transport` 加两层「只转发」的包装；**一个改写响应的 RoundTripper（包 body、换 resp）会让握手失败**，报错原文如 D 格。没量 HTTP 代理；D 格为什么耗时 3.30s 没查。
+
 ### 6.18 ⛔ DIFF：本地删掉快照里的根之后，**同一连接上再要同一段，服务端一根都不再发**（`shinny-diff-refetch`，v0.6 片二前置）
 
 起因：`shinny-chunk-mem` 第一次把 N=5 / 20 / 60 三档放在**同一条连接**上顺序跑，N=5 那轮每块拉完就删本地 data；
