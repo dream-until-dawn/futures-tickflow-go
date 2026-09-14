@@ -235,6 +235,8 @@ func probePageAll(md, tok string) {
 		o, h, l, c, v float64
 		n             int
 		night         int
+		nightVol      float64 // 诊断：归到该交易日的夜盘 1m 成交量合计
+		nightZeroVol  int     // 诊断：其中成交量为 0 的夜盘根数
 		// 诊断开盘价不齐的成因（不参与对账判定）：
 		dayOpen         float64 // 当日日盘第一根的开盘价
 		haveDayOpen     bool
@@ -282,6 +284,10 @@ func probePageAll(md, tok string) {
 		a.n++
 		if hh := time.Unix(0, x.t).In(cst).Hour(); hh >= 21 || hh < 3 {
 			a.night++
+			a.nightVol += x.v
+			if x.v == 0 {
+				a.nightZeroVol++
+			}
 		}
 	}
 	match, empty := 0, 0
@@ -323,8 +329,8 @@ func probePageAll(md, tok string) {
 		if len(bad) == 0 {
 			match++
 		} else {
-			mism = append(mism, fmt("%s（%d 根）%s ‖ 诊断：日线O=日盘首根开盘价? %v（日盘首根=%v）· 持仓量 上日末根→当日首根 ×%.2f",
-				time.Unix(0, d.t).In(cst).Format("2006-01-02"), a.n, strings.Join(bad, " · "), a.haveDayOpen && a.dayOpen == d.o, a.dayOpen, oiJump))
+			mism = append(mism, fmt("%s（%d 根）%s ‖ 诊断：日线O=日盘首根开盘价? %v（日盘首根=%v）· 持仓量 上日末根→当日首根 ×%.2f · 夜盘 %d 根、成交量合计 %v、其中量为 0 的 %d 根",
+				time.Unix(0, d.t).In(cst).Format("2006-01-02"), a.n, strings.Join(bad, " · "), a.haveDayOpen && a.dayOpen == d.o, a.dayOpen, oiJump, a.night, a.nightVol, a.nightZeroVol))
 		}
 	}
 	b.WriteString(fmt("c 归交易日（规则：第一个「当日 15:15 晚于开盘时刻」的交易日）：日线 %d 天 · O/H/L/C/V 全对上 %d 天 · 不齐 %d 天（各字段不齐天数 %v）· 没归到 1m 的交易日 %d · 落在首个交易日之前很早的 1m %d · 落在末个交易日之后的 1m %d\n       ",
@@ -344,6 +350,14 @@ func probePageAll(md, tok string) {
 		}
 	}
 	b.WriteString(fmt("d 没有夜盘的交易日（归到它的 1m 里没有 21:00 后或 03:00 前的）：%d 天\n       ", len(noNight)))
+	// 诊断（不参与判定）：有夜盘根、而夜盘成交量合计为 0 的交易日 —— 「有根」与「有交易」是不是同一件事
+	var zeroNight []string
+	for i := 1; i < len(daily); i++ {
+		if aggs[i].night > 0 && aggs[i].nightVol == 0 {
+			zeroNight = append(zeroNight, time.Unix(0, daily[i].t).In(cst).Format("2006-01-02"))
+		}
+	}
+	b.WriteString(fmt("  诊断：有夜盘根而夜盘成交量合计为 0 的交易日 %d 天 %v\n       ", len(zeroNight), zeroNight))
 	for _, s := range noNight {
 		b.WriteString("  " + s + "\n       ")
 	}
