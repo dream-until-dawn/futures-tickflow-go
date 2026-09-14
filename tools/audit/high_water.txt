@@ -435,3 +435,4 @@ guards 73
 # 来历 2026-09-13 guards 70 自 69 自动：重造时表长大（69 -> 70）；本次新增：TestRerunDiagnosisErratum
 # 来历 2026-09-13 guards 72 自 70 自动：重造时表长大（70 -> 72）；本次新增：TestMissingRecordsAbortsBeforePlanning TestMissingRecordsNamesAreOneFamily
 # 来历 2026-09-13 guards 73 自 72 自动：重造时表长大（72 -> 73）；本次新增：TestV060MissingRecordsErratum
+# 来历 2026-09-14 guards 73 自 73 自动：条数未变而【名单成员变了】；本次新增：TestIntradaySourcesRejectContinuousBeforeNetwork；本次移除：TestHasBarsExpiryConditionNotYetDue

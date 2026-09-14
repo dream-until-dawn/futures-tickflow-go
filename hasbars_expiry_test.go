@@ -1,9 +1,13 @@
 package tickflow_test
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -11,15 +15,42 @@ import (
 	"sort"
 	"strings"
 	"testing"
+	"time"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 	"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/cffexsource"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource"
 )
 
-// guard: ㉒ 那条到期条件 —— 到期那天它自己红。
-// TestHasBarsExpiryConditionNotYetDue 把 `HasBars` 那条到期条件从
+// guard: ㉒ 的后继 —— 日内源必须在连网之前拒掉主连（一个库＝一个合约，扫描代价才有上界）。
+// TestIntradaySourcesRejectContinuousBeforeNetwork 是 ㉒ 那条到期条件【到期之后】的后继。
+//
+// ✅ **2026-09-14 ㉒ 到期了**（v0.6 片 A：`source/shinnysource` 声明 1m），照它自己写的处置走了三步：
+//
+//	一、答那一问（日内落库之后每次 Sync 的两遍整库扫描受不受得了）—— **量的**，不是推的：
+//	    `source/shinnysource/scan_cost_bench_test.go`，真 Syncer ＋ 真 segfile ＋ 本源对离线复刻，
+//	    2026-09-14，AMD Ryzen 7 5700X，三次运行：
+//	      一个合约一年 92,805 根 · coverage 合成 1 段
+//	      每次 Sync：DaysWithBars 1 次 317–399 ms · VerifyCoverage 1 次 317–364 ms
+//	      日常增量（往后多一天）一次 Sync 702–728 ms，几乎全是这两遍
+//	二、决定：**v0.6 不换算法、不加缓存**，写进 docs/design.md 二十·七
+//	三、到期条件换成后继（本测试），并把「那个决定成立的前提」钉住：
+//
+// ⛔ **前提是「一个库装一个合约」**：记录数被合约寿命封顶（probe.md 6.20：SHFE.rb2605 全寿命 82,769 个 id）。
+// **主连（YearMon == 0）没有这个上界** —— `KQ.m@SHFE.rb` 已有 892,005 根，而且每天都在长（6.13）。
+// ⇒ 后继条件：**任何声明了日内周期的源，都必须在连网之前拒掉主连**。
+// 哪天有源开始给日内主连，这里红 ⇒ 回去重答那一问。
+//
+// ⚠️ 射程：它判的是**源拒不拒**，不判「有没有别的路把跨合约的日内序列写进同一个库」
+// （例如将来 `continuous` 包自己落库）。那条路出现时这条测试**不会响** —— 写在这儿。
+// ⚠️ 另一面：`segfile` 的 `DaysWithBars` 是**每段 coverage 扫一遍整个文件**；
+// 正常路径上段会合成 1 段（上面读数），**段数多时（中间有拉失败留下的洞）扫描次数随段数线性涨** —— 没量。
+//
+// —— 以下是 ㉒ 原来那条测试（`TestHasBarsExpiryConditionNotYetDue`）的注释，原样保留 ——
+//
+// 它把 `HasBars` 那条到期条件从
 // **只有人能跑**变成**会红的测试**。
 //
 // 被钉住的那句话（v0.4.0 注解 二②）：
@@ -73,7 +104,7 @@ import (
 // ⇒ 所以判据反过来写：**不在 Daily/Weekly/Monthly 里就红。**
 // ⚠️ 代价一并说：`CalendarPeriod` 那个 const 块变长时（例如将来加 `Quarterly`）要跟着改
 // —— 而那会**红**，不会静默。**两边都要人动手，差别在哪一边是静默的。**
-func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
+func TestIntradaySourcesRejectContinuousBeforeNetwork(t *testing.T) {
 	sources := sourcesUnderTest(t)
 	products := embedded.Products()
 	// 前提自检：尺子不能是空转的 —— 没有品种时下面的循环一格都不跑，而它照样绿。
@@ -83,35 +114,102 @@ func TestHasBarsExpiryConditionNotYetDue(t *testing.T) {
 	if len(sources) == 0 {
 		t.Fatal("一个源都没有 —— 同上")
 	}
+	violations, intraday := continuousIntradayViolations(t, sources, products)
+	for _, v := range violations {
+		t.Error(v)
+	}
+	// 前提自检：今天的仓里至少有 shinnysource 声明日内 —— 一格日内都没检到时，「没有违反」什么也不证明。
+	if intraday == 0 {
+		t.Fatal("一个声明日内周期的（源 × 品种 × 周期）都没检到 —— 今天至少该检到 shinnysource；读数作废")
+	}
+	t.Logf("检查了 %d 个声明日内周期的（源 × 品种 × 周期）组合，全部在连网之前拒掉主连", intraday)
+}
 
-	checked := 0
+// TestContinuousIntradayViolationsCanFail 是上面那条的标定格：判据自己要会红。
+// ⛔ 没有这一格，上面那条的绿可能只是判据没生效（bars 没被调、计数器没接上）。
+func TestContinuousIntradayViolationsCanFail(t *testing.T) {
+	cells := []struct {
+		name string
+		src  capsSource
+		want int
+	}{
+		{"收下主连（不报错）、不连网 ⇒ 报", fakeIntraday(func(*http.Client) error { return nil }), 1},
+		{"拒主连、但先连了网 ⇒ 报", fakeIntraday(func(hc *http.Client) error {
+			if resp, err := hc.Get("http://example.invalid/"); err == nil {
+				resp.Body.Close()
+			}
+			return errors.New("拒")
+		}), 1},
+		{"拒主连、不连网 ⇒ 不报（对照）", fakeIntraday(func(*http.Client) error { return errors.New("拒") }), 0},
+	}
+	products := []tickflow.ProductKey{{Exchange: tickflow.SHFE, Product: "rb"}}
+	for _, ce := range cells {
+		v, n := continuousIntradayViolations(t, []capsSource{ce.src}, products)
+		if n != 1 || len(v) != ce.want {
+			t.Errorf("%s：检了 %d 格、报了 %d 条 %q，应为 1 格、%d 条", ce.name, n, len(v), v, ce.want)
+		}
+	}
+}
+
+func fakeIntraday(bars func(*http.Client) error) capsSource {
+	return capsSource{
+		name: "fakeIntraday",
+		caps: func(tickflow.ProductKey) tickflow.Capabilities {
+			return tickflow.Capabilities{Periods: []tickflow.Period{tickflow.MustIntraday(1)}}
+		},
+		bars: func(_ context.Context, hc *http.Client, _ tickflow.BarRequest) error { return bars(hc) },
+	}
+}
+
+// continuousIntradayViolations 对每个声明了【不是日历周期】的（源 × 品种 × 周期）拿主连去要一次，
+// 断言「报错」而且「注入的 client 一次都没被用到」。
+//
+// ⛔ 判据枚举【封闭】的那一侧（Daily/Weekly/Monthly），理由见 ㉒ 原注释末尾那一段。
+func continuousIntradayViolations(t *testing.T, sources []capsSource, products []tickflow.ProductKey) (violations []string, checked int) {
+	t.Helper()
 	for _, s := range sources {
 		sawAny := false
 		for _, k := range products {
 			for _, p := range s.caps(k).Periods {
 				sawAny = true
+				if p == tickflow.Daily || p == tickflow.Weekly || p == tickflow.Monthly {
+					continue
+				}
 				checked++
-				// ⛔ 判据枚举的是**封闭**的那一侧，而不是「是不是 IntradayPeriod」。
-				// 理由见函数注释末尾那一段。
-				if p != tickflow.Daily && p != tickflow.Weekly && p != tickflow.Monthly {
-					t.Fatalf("源 %s 对 %v 声明了一个【不是日历周期】的周期 %v —— "+
-						"【㉒ 那条到期条件到期了】。\n"+
-						"处置不是把这条测试改掉，是：\n"+
-						"  一、HasBars 已在 v0.5 换成 DaysWithBars（整段一次；890k 根实测 2500–2536 ms，design.md 二十）——\n"+
-						"      去核日内落库之后，每次 Sync 的 DaysWithBars 与 VerifyCoverage（890k 一次约 2.6 s）两遍整库扫描还受不受得了\n"+
-						"  二、决定是换算法还是加缓存，并把决定写进 docs/design.md\n"+
-						"  三、再回来改这条测试与 v0.4.0 注解里那条到期条件的后继",
-						s.name, k, p)
+				if s.bars == nil {
+					violations = append(violations, fmt.Sprintf("源 %s 对 %v 声明了日内周期 %v，而源表里没有给它 bars —— "+
+						"㉒ 的后继查不了它；把它的 bars 填进 sourcesUnderTest", s.name, k, p))
+					continue
+				}
+				rt := &refusingRT{}
+				req := tickflow.BarRequest{Symbol: tickflow.Symbol{Exchange: k.Exchange, Product: k.Product, YearMon: 0},
+					Period: p, From: 20260910, To: 20260910}
+				err := s.bars(context.Background(), &http.Client{Transport: rt}, req)
+				if err == nil || rt.n > 0 {
+					violations = append(violations, fmt.Sprintf("源 %s 对 %v 的日内周期 %v：拿主连去要 ⇒ 错误=%v · 连网 %d 次。\n"+
+						"【㉒ 的后继到期了】v0.6「不换算法、不加缓存」的决定，前提是一个库只装一个合约（记录数被合约寿命封顶）；"+
+						"主连没有这个上界（KQ.m@SHFE.rb 已 892,005 根）。\n"+
+						"处置不是改这条测试，是：\n"+
+						"  一、按主连那一档重量每次 Sync 的 DaysWithBars ＋ VerifyCoverage（890k 一档每遍约 2.5 s，design.md 二十）\n"+
+						"  二、决定换算法还是加缓存，写进 docs/design.md 二十·七\n"+
+						"  三、再回来改这条测试", s.name, k, p, err, rt.n))
 				}
 			}
 		}
-		// 前提自检：一个源若一个周期都不声明，上面的循环什么也没检 —— 那不是「没到期」。
+		// 前提自检：一个源若一个周期都不声明，上面的循环什么也没检。
 		if !sawAny {
-			t.Fatalf("源 %s 对所有品种都没有声明任何周期 —— "+
-				"这条测试在它身上是空转的，读数作废", s.name)
+			t.Fatalf("源 %s 对所有品种都没有声明任何周期 —— 这条测试在它身上是空转的，读数作废", s.name)
 		}
 	}
-	t.Logf("检查了 %d 个（源 × 品种 × 周期）组合，全部落在 Daily/Weekly/Monthly 里", checked)
+	return violations, checked
+}
+
+// refusingRT 数「被用到几次」，并且一律拒绝 —— 这条测试里不许真的连网。
+type refusingRT struct{ n int }
+
+func (r *refusingRT) RoundTrip(*http.Request) (*http.Response, error) {
+	r.n++
+	return nil, errors.New("本测试不许连网")
 }
 
 // guard: 那张手写源表的完整性 —— 新加源忘了进表就红。
@@ -274,6 +372,8 @@ func exprName(e ast.Expr) string {
 type capsSource struct {
 	name string
 	caps func(tickflow.ProductKey) tickflow.Capabilities
+	// bars 用注入的 client 造一个源实例并调一次 Bars。**声明日内周期的源必须填**（㉒ 的后继要它）。
+	bars func(ctx context.Context, hc *http.Client, req tickflow.BarRequest) error
 }
 
 // sourcesUnderTest 是**手写**的源表 —— 本仓今天没有「所有源」的注册表。
@@ -286,9 +386,27 @@ func sourcesUnderTest(t *testing.T) []capsSource {
 	t.Helper()
 	cal := testCalendarForCaps(t)
 	return []capsSource{
-		{"sinasource", newSinaForCaps(t, cal).Caps},
-		{"cffexsource", newCffexForCaps(t, cal).Caps},
+		{name: "sinasource", caps: newSinaForCaps(t, cal).Caps},
+		{name: "cffexsource", caps: newCffexForCaps(t, cal).Caps},
+		{name: "shinnysource", caps: newShinnyForCaps(t, cal, http.DefaultClient).Caps,
+			bars: func(ctx context.Context, hc *http.Client, req tickflow.BarRequest) error {
+				_, err := newShinnyForCaps(t, cal, hc).Bars(ctx, req)
+				return err
+			}},
 	}
+}
+
+func newShinnyForCaps(t *testing.T, cal tickflow.Calendar, hc *http.Client) *shinnysource.Client {
+	t.Helper()
+	// 凭证是占位串：这里只问 Caps() 与「主连在连网之前被拒」，不连网。
+	c, err := shinnysource.New(shinnysource.Config{
+		User: "u", Password: "p", ClientID: "c", ClientSecret: "s",
+		Calendar: cal, HTTPClient: hc, ReadTimeout: time.Second,
+	})
+	if err != nil {
+		t.Fatalf("构造 shinnysource 失败：%v", err)
+	}
+	return c
 }
 
 func testCalendarForCaps(t *testing.T) tickflow.Calendar {
