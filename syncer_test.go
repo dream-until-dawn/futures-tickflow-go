@@ -386,6 +386,7 @@ func TestEveryIncidentProducingFieldIsInTheTable(t *testing.T) {
 		"NightAbsentOK":  "只说那条夜盘检查适不适用 —— 「不适用」不是事件",
 		"SkippedCovered": "跳过已覆盖是结果不是事件，见 HaltAllCovered",
 		"UngatedOK":      "只说闸门那条检查适不适用 —— 事件是 UngatedSource",
+		"HeldBack":       "源晚一点出数不需要人看，下次同步自己补；处置与 Gaps 里的「没拉过」相同（勘误三）",
 	}
 	for name := range noTrace {
 		if covered[name] {

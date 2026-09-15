@@ -112,7 +112,11 @@ func dayStartMs(d tickflow.TradingDay) int64 {
 //	20200805  源不给  ⇒ 落在本次提交的 coverage 里、走查过、那天没根
 //	                    ⇒ 真库答「确认没有」⇒ 报告里必须是 GapConfirmedEmpty
 //	20200806  源给了  ⇒ 真库答「有」        ⇒ **它根本不该出现在缺口里**
-//	20200807  源不给  ⇒ 同 0805
+//	20200807  源不给  ⇒ **它是尾巴**：之后没有拉到根的交易日，日历里之后也没有收盘的交易日
+//	                    ⇒ 不登记（勘误三，2026-09-15）⇒ 报告里是 GapNeverFetched，HeldBack 点名它
+//
+// ⚠️ 0807 那一格 2026-09-15 之前断言的是 GapConfirmedEmpty（「同 0805」）——
+// 那正是勘误三修的缺陷：源还没出数的尾巴被登记成「拉过确认没有」。改的是期望，不是构造。
 //
 // ⛔ 承重的是**两个方向**，缺一个都能被一个坏实现骗过：
 //
@@ -211,8 +215,14 @@ func TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam(t *testing.
 		t.Fatal("一段缺口都没报 —— 而源只给了三天里的一天，这条测试是空转的，读数作废")
 	}
 
-	// ⛔ 方向一：源没给的那两天，真库必须答「确认没有」，而不是「没拉过」。
-	for _, d := range []tickflow.TradingDay{d1, d3} {
+	// ⛔ 尾巴那一天：不登记 ⇒「没拉过」，且报告说明它是拉过而挂起的。
+	if got := kindOf[d3]; got != tickflow.GapNeverFetched || len(rep.HeldBack) != 1 {
+		t.Errorf("%s 报成了 %v、HeldBack=%q，期望 GapNeverFetched 且挂起一条 ——\n"+
+			"  ⇒ 它之后没有拉到根的交易日，登记成「确认没有」就是勘误三那个缺陷", d3, got, rep.HeldBack)
+	}
+
+	// ⛔ 方向一：源没给、而其后有根的那一天，真库必须答「确认没有」，而不是「没拉过」。
+	for _, d := range []tickflow.TradingDay{d1} {
 		got, ok := kindOf[d]
 		if !ok {
 			t.Errorf("%s 不在任何缺口里 —— 而源没给过它的根。\n"+
