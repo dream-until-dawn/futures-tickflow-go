@@ -32,6 +32,8 @@ type holeSource struct {
 	mu       sync.Mutex
 	failLeft map[tickflow.TradingDay]int
 	asked    [][2]tickflow.TradingDay
+	cancelOn tickflow.TradingDay // 块首为它的那一次请求里调 cancel（造「重试之间被取消」）
+	cancel   context.CancelFunc
 }
 
 func (s *holeSource) Caps(tickflow.ProductKey) tickflow.Capabilities {
@@ -48,6 +50,9 @@ func (s *holeSource) Bars(_ context.Context, req tickflow.BarRequest) ([]tickflo
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.asked = append(s.asked, [2]tickflow.TradingDay{req.From, req.To})
+	if s.cancel != nil && req.From == s.cancelOn {
+		s.cancel()
+	}
 	if s.failLeft[req.From] > 0 {
 		s.failLeft[req.From]--
 		return nil, errors.New("holeSource: 造的瞬时失败")
@@ -95,7 +100,12 @@ func newHoleRig(t *testing.T, src *holeSource) (*tickflow.Syncer, *segfile.Store
 
 func holeSync(t *testing.T, syn *tickflow.Syncer, store *segfile.Store, src *holeSource, label string, to tickflow.TradingDay, k int) (tickflow.SyncReport, error, [][2]tickflow.TradingDay) {
 	t.Helper()
-	rep, err := syn.Sync(context.Background(), tickflow.SyncRequest{
+	return holeSyncCtx(context.Background(), t, syn, store, src, label, to, k)
+}
+
+func holeSyncCtx(ctx context.Context, t *testing.T, syn *tickflow.Syncer, store *segfile.Store, src *holeSource, label string, to tickflow.TradingDay, k int) (tickflow.SyncReport, error, [][2]tickflow.TradingDay) {
+	t.Helper()
+	rep, err := syn.Sync(ctx, tickflow.SyncRequest{
 		Symbol: tickflow.Symbol{Exchange: "SHFE", Product: "rb", YearMon: 2101},
 		Period: tickflow.Daily, From: 20200803, To: to, MaxConsecutiveFails: k}, dayStartMs(20200901))
 	asked := src.take()
@@ -122,6 +132,11 @@ func TestFailedChunkIsRetriedNotSkipped(t *testing.T) {
 	}
 	if n0805 != 2 {
 		t.Errorf("① 0805..0806 那一块被请求了 %d 次，期望 2 次（失败一次 ＋ 重试一次）—— 失败的块被跳过了：%v", n0805, asked1)
+	}
+	// 重试的请求必须与第一次完全相同（同一块的 From/To），整个请求序列逐项比。
+	want1 := [][2]tickflow.TradingDay{{20200803, 20200804}, {20200805, 20200806}, {20200805, 20200806}, {20200807, 20200810}}
+	if !sameAsked(asked1, want1) {
+		t.Errorf("① 请求序列 %v，期望 %v", asked1, want1)
 	}
 	if err1 != nil || rep1.Halt != tickflow.HaltDone {
 		t.Errorf("① err=%v Halt=%v，期望 nil 与「跑完」", err1, rep1.Halt)
@@ -191,5 +206,43 @@ func TestConsecutiveFailsResetAfterARetrySucceeds(t *testing.T) {
 	if err != nil || rep.Halt != tickflow.HaltDone || !oneSpan(store, 20200803, 20200810, 6) {
 		t.Errorf("err=%v Halt=%v 覆盖 %v，期望 nil、跑完、一段 [0803,0810] 6 根 —— 重试成功之后连续失败计数没清零",
 			err, rep.Halt, store.Coverage())
+	}
+}
+
+func sameAsked(a, b [][2]tickflow.TradingDay) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// guard: 重试之间被取消 ⇒ HaltContext，失败那一块及其后都不请求、不登记；下一次同步从失败那一块起。
+func TestContextCanceledBetweenRetriesRegistersNothingAfter(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	src := &holeSource{failLeft: map[tickflow.TradingDay]int{20200805: 1}, cancelOn: 20200805, cancel: cancel}
+	syn, store := newHoleRig(t, src)
+
+	rep1, err1, asked1 := holeSyncCtx(ctx, t, syn, store, src, "① 0805 那块失败，且那次请求里被取消", 20200810, 1)
+	want := [][2]tickflow.TradingDay{{20200803, 20200804}, {20200805, 20200806}}
+	if !sameAsked(asked1, want) {
+		t.Errorf("① 请求序列 %v，期望 %v —— 取消之后还在重试或往后请求", asked1, want)
+	}
+	if !errors.Is(err1, context.Canceled) || rep1.Halt != tickflow.HaltContext {
+		t.Errorf("① err=%v Halt=%v，期望 context.Canceled 与 HaltContext", err1, rep1.Halt)
+	}
+	if !oneSpan(store, 20200803, 20200804, 2) {
+		t.Errorf("① 覆盖 %v，期望只到失败块之前 [0803,0804]", store.Coverage())
+	}
+
+	src.cancel = nil
+	_, err2, asked2 := holeSync(t, syn, store, src, "② 不再取消，To=0811", 20200811, 1)
+	if err2 != nil || len(asked2) == 0 || asked2[0] != [2]tickflow.TradingDay{20200805, 20200806} || !oneSpan(store, 20200803, 20200811, 7) {
+		t.Errorf("② err=%v 请求序列 %v 覆盖 %v，期望 nil、从 [0805,0806] 起、一段 [0803,0811] 7 根", err2, asked2, store.Coverage())
 	}
 }

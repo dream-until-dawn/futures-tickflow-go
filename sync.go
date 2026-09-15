@@ -991,6 +991,8 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 		}
 		br := BarRequest{Symbol: req.Symbol, Period: req.Period,
 			From: chunk[0], To: chunk[len(chunk)-1]}
+		// attempts 数的是【调用 Bars 的次数】，重试也算一次 —— 它只用在闸门那句「向源要过 N 次数据」上，那句话按次数说才是真的。
+		// ⚠️ 它不是「请求了几块」：一块重试一次就是 2。
 		attempts++
 		bars, err := s.src.Bars(ctx, br)
 		if err != nil {

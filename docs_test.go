@@ -911,6 +911,7 @@ var guardNames = []string{
 	`TestConsecutiveFailsResetAfterARetrySucceeds`,
 	`TestContentLocatorCheckerItself`,
 	`TestContentLocatorsResolve`,
+	`TestContextCanceledBetweenRetriesRegistersNothingAfter`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
 	`TestDaysWithBarsEqualsHasBars`,
 	`TestDocLinksResolve`,
