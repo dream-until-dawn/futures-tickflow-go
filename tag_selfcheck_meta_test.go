@@ -750,3 +750,39 @@ func TestV060FailHoleErratum(t *testing.T) {
 		}
 	}
 }
+
+// —— v0.6.0 勘误三：v0.5.0 上收盘后不久同步日线，源还没出当天那一行 ⇒ 当天登记成「拉过确认没有」、永不再拉（2026-09-15）——
+//
+// 修复与勘误同片落地（照 v0.6.0.md 头里「勘误不许等到发布再写」）。
+//
+// 名单是读者要落到的六件事，各取词（取【勘误三那一节】的文本）：
+//
+//	一、哪一版          ⇒ "v0.5.0"
+//	二、什么时候同步    ⇒ "收盘后"
+//	三、旧的读数        ⇒ "拉过确认没有"
+//	四、新的读数        ⇒ "HeldBack"
+//	五、代价            ⇒ "5 个交易日"
+//	六、坏库怎么修      ⇒ "一起删" · 以及「修复不会自己改掉它们」那句的 "不会自己改掉"
+//
+// guard: v0.6.0 发布说明里有勘误三，六件事的词都在那一节里。
+func TestV060LateRowErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.6.0.md"))
+	if err != nil {
+		t.Fatalf("读 v0.6.0 发布说明失败：%v —— v0.5.0 已发布的缺陷，勘误不许等到发布再写", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误三"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.6.0.md 里没有「%s」这一节 —— 在 v0.5.0 上收盘后同步过日线的人，不知道自己的库里有永远补不上的日子", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{"v0.5.0", "收盘后", "拉过确认没有", "HeldBack", "5 个交易日", "一起删", "不会自己改掉"} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("v0.6.0 勘误三那一节里没有 %q —— 六件事缺一件，受影响的人落不到该落的地方", want)
+		}
+	}
+}

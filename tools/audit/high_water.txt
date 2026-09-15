@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 88
+guards 89
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -444,3 +444,4 @@ guards 88
 # 来历 2026-09-15 guards 81 自 80 自动：重造时表长大（80 -> 81）；本次新增：TestV060FailHoleErratum
 # 来历 2026-09-15 guards 82 自 81 自动：重造时表长大（81 -> 82）；本次新增：TestContextCanceledBetweenRetriesRegistersNothingAfter
 # 来历 2026-09-15 guards 88 自 82 自动：重造时表长大（82 -> 88）；本次新增：TestEmptyChunkTailIsRegisteredByLaterChunk TestEmptyDaySandwichedInOneChunkIsRegistered TestEmptyTailAgeCapBoundary TestHeldBackDaysDoNotJumpAFailedChunk TestLateRowIsNotRegisteredAndIsFetchedLater TestSinaLateDailyRowIsFetchedOnceItAppears
+# 来历 2026-09-15 guards 89 自 88 自动：重造时表长大（88 -> 89）；本次新增：TestV060LateRowErratum
