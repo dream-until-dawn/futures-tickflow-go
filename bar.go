@@ -57,8 +57,9 @@ type Bar struct {
 	//
 	//	cffexsource   给（中金所 XML 的 turnover）
 	//	shinnysource  NaN（DIFF 的 kline 没有这个字段，probe.md 6.13–6.20 量到的字段里没有）
-	//	sinasource    ⛔ **0** —— 新浪日线的行只有 d/o/h/l/c/v/p/s，也没有成交额，而组装层没填 ⇒ 零值。
-	//	              **这个 0 是一句假话**：登记，v0.6 之内决定改不改；改成 NaN 是对外行为变更，要进发布说明。
+	//	sinasource    NaN（新浪日线的行只有 d/o/h/l/c/v/p/s，没有成交额）
+	//	              ⚠️ v0.6.0 之前是 **0**（组装层没填 ⇒ 零值，「源不给」装成了「成交额为 0」）；
+	//	              用户 2026-09-15 裁定改成 NaN（对外行为变更，见 v0.6.0 发布说明）。**已落盘的旧数据里仍是 0，除非重拉。**
 	Turnover     float64
 	OpenInterest float64 // 持仓量（手）—— 中国期货特有，主力判定要用
 	// Settle 是当日结算价；仅日线有，分钟线为 NaN。

@@ -3,6 +3,7 @@ package sinasource
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
@@ -163,14 +164,17 @@ func AssembleDaily(rows []DailyRow, cal tickflow.Calendar, req tickflow.BarReque
 		}
 
 		out = append(out, tickflow.Bar{
-			Ts:           ts,
-			TsEnd:        tsEnd,
-			TradingDay:   td,
-			Open:         r.Open,
-			High:         r.High,
-			Low:          r.Low,
-			Close:        r.Close,
-			Volume:       r.Volume,
+			Ts:         ts,
+			TsEnd:      tsEnd,
+			TradingDay: td,
+			Open:       r.Open,
+			High:       r.High,
+			Low:        r.Low,
+			Close:      r.Close,
+			Volume:     r.Volume,
+			// ⛔ 新浪日线的行只有 d/o/h/l/c/v/p/s，没有成交额 ⇒ NaN，不是 0（用户 2026-09-15 裁定）。
+			// v0.6.0 之前这里是零值 0 ——「源不给」装成了「成交额为 0」。约定见 bar.go 的 Turnover 注释。
+			Turnover:     math.NaN(),
 			OpenInterest: r.OpenInterest,
 			Settle:       r.Settle,
 			Flags:        tickflow.FlagSrcSina,
