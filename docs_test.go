@@ -974,6 +974,7 @@ var guardNames = []string{
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
 	`TestV060ExplicitToErratum`,
+	`TestV060FailHoleErratum`,
 	`TestV060MissingRecordsErratum`,
 	`TestVerifyCoverageContract`,
 	`TestVerifyCoverageMatchesVerifyPerSpan`,
