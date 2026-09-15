@@ -118,6 +118,7 @@ const walkBufSize = 64 << 10
 // 而长度取开始那一刻 ⇒ 不改代码造不出「读到一半出错」。没有这条缝，
 // 「DaysWithBars 读错误时交出半张表、err 为 nil」这个变异全模块 0 红。
 // ⚠️ 只替换【读数据】这一处；Stat 仍走 s.dat（长度的来源不变）。参照实现不走它。
+// ⚠️ 它是包级可变变量 ⇒ **替换它的测试不许 t.Parallel()**（今天本包测试里没有并行；加了并行，注入会串进别的测试）。
 var scanReaderAt = func(s *Store) io.ReaderAt { return s.dat }
 
 func (s *Store) scanRecords(fn func(i int64, b tickflow.Bar) bool) (statErr, readErr error) {
