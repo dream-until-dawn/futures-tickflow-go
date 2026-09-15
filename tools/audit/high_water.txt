@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 77
+guards 82
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -439,3 +439,7 @@ guards 77
 # 来历 2026-09-14 guards 74 自 73 自动：重造时表长大（73 -> 74）；本次新增：TestV060ExplicitToErratum
 # 来历 2026-09-14 guards 75 自 74 自动：重造时表长大（74 -> 75）；本次新增：TestWalkAgreesWithVerifyCoverage
 # 来历 2026-09-15 guards 77 自 75 自动：重造时表长大（75 -> 77）；本次新增：TestReferenceImplementationsDoNotUseScanRecords TestScanReadErrorYieldsNoPartialResult
+# 来历 2026-09-15 guards 79 自 77 自动：重造时表长大（77 -> 79）；本次新增：TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances TestFailedChunkIsRetriedNotSkipped
+# 来历 2026-09-15 guards 80 自 79 自动：重造时表长大（79 -> 80）；本次新增：TestConsecutiveFailsResetAfterARetrySucceeds
+# 来历 2026-09-15 guards 81 自 80 自动：重造时表长大（80 -> 81）；本次新增：TestV060FailHoleErratum
+# 来历 2026-09-15 guards 82 自 81 自动：重造时表长大（81 -> 82）；本次新增：TestContextCanceledBetweenRetriesRegistersNothingAfter

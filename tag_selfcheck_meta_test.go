@@ -714,3 +714,39 @@ func TestV060ExplicitToErratum(t *testing.T) {
 		}
 	}
 }
+
+// —— v0.6.0 勘误四：v0.5.0 上 MaxConsecutiveFails ≥ 1 时一块失败一次就留洞，此后拉不到新交易日（2026-09-15）——
+//
+// 修复与勘误同片落地（照 v0.6.0.md 头里「勘误不许等到发布再写」）。
+//
+// 名单是读者要落到的六件事，各取词（取【勘误四那一节】的文本）：
+//
+//	一、哪一版          ⇒ "v0.5.0"
+//	二、什么配置        ⇒ "MaxConsecutiveFails"
+//	三、旧的读数        ⇒ "交易日倒退了"
+//	四、新的行为        ⇒ "重试同一块"
+//	五、行为变化        ⇒ "中间隔着一次成功"
+//	六、坏库怎么认怎么修 ⇒ "不止一段" · "一起删"
+//
+// guard: v0.6.0 发布说明里有勘误四，六件事的词都在那一节里。
+func TestV060FailHoleErratum(t *testing.T) {
+	notes, err := os.ReadFile(filepath.Join("docs", "release", "v0.6.0.md"))
+	if err != nil {
+		t.Fatalf("读 v0.6.0 发布说明失败：%v —— v0.5.0 已发布的缺陷，勘误不许等到发布再写", err)
+	}
+	text := string(notes)
+	head := "## ⛔ 勘误四"
+	i := strings.Index(text, head)
+	if i < 0 {
+		t.Fatalf("v0.6.0.md 里没有「%s」这一节 —— 在 v0.5.0 上设过失败预算的人，不知道自己的库可能已经卡死", head)
+	}
+	sec := text[i:]
+	if j := strings.Index(sec[len(head):], "\n## "); j >= 0 {
+		sec = sec[:len(head)+j]
+	}
+	for _, want := range []string{"v0.5.0", "MaxConsecutiveFails", "交易日倒退了", "重试同一块", "中间隔着一次成功", "不止一段", "一起删"} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("v0.6.0 勘误四那一节里没有 %q —— 六件事缺一件，受影响的人落不到该落的地方", want)
+		}
+	}
+}

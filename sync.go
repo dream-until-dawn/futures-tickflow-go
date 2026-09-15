@@ -983,13 +983,16 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 	var synced [2]TradingDay
 	var syncedDays []TradingDay
 
-	for _, chunk := range chunks {
+	for ci := 0; ci < len(chunks); {
+		chunk := chunks[ci]
 		if err := ctx.Err(); err != nil {
 			rep.Synced = synced
 			return syncedDays, attempts, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
 		}
 		br := BarRequest{Symbol: req.Symbol, Period: req.Period,
 			From: chunk[0], To: chunk[len(chunk)-1]}
+		// attempts 数的是【调用 Bars 的次数】，重试也算一次 —— 它只用在闸门那句「向源要过 N 次数据」上，那句话按次数说才是真的。
+		// ⚠️ 它不是「请求了几块」：一块重试一次就是 2。
 		attempts++
 		bars, err := s.src.Bars(ctx, br)
 		if err != nil {
@@ -1006,6 +1009,12 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 					"停在 %s；最后一次: %v",
 					ErrBudgetExhausted, consecutive, req.MaxConsecutiveFails, chunk[0], err)
 			}
+			// ⛔ **重试同一块，不跳过**（勘误四，2026-09-15；评审方在 d7f2d9a 与 e553d09 上复现，读数相同）。
+			//
+			// 上一版这里是「跳到下一块」⇒ 后面的块照登 ⇒ coverage 留洞；而洞事后补不进去
+			// （CommitSpan 拒「未按 From 升序」、AppendBars 拒「交易日倒退了」）⇒ 这个库此后每次同步
+			// 都停在洞那一块报「落盘失败」，**新的交易日永远拉不到**。触发只要 K ≥ 1 ＋ 一次瞬时失败。
+			// ⇒ 「连续失败超过上限就停」的字面含义不变：consecutive 数的正是【同一块】的连续失败。
 			continue
 		}
 		consecutive = 0
@@ -1040,6 +1049,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 				rep.AnomalousDays = append(rep.AnomalousDays, anom...)
 			}
 		}
+		ci++ // 只有这一块落盘并登记之后才往前走
 	}
 	rep.Synced = synced
 	return syncedDays, attempts, HaltDone, nil
