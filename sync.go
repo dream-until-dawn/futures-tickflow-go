@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"sort"
 	"sync"
 	"time"
 
@@ -608,8 +609,12 @@ func (s *Syncer) Sync(ctx context.Context, req SyncRequest, now int64) (SyncRepo
 	}
 
 	chunks := chunkDays(want, caps.BatchDays)
+	aged, err := closedLaterCounter(s.cal, k, want[0], now)
+	if err != nil {
+		return rep, err
+	}
 	gateBefore := s.gate.count()
-	syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, &rep)
+	syncedDays, attempts, halt, ferr := s.fetch(ctx, req, k, chunks, days, aged, &rep)
 	rep.Halt = halt
 
 	// ⛔ **闸门有没有被用到** —— 这一格接住的是那个【假绿】：
@@ -976,15 +981,55 @@ func chunkDays(days []TradingDay, batch int) [][]TradingDay {
 //	二  **本函数今天短到读得完，所以不给它加 AST 守卫**（守卫本身的维护成本高过它挡住的）。
 //	    ⇒ **这个判断在函数长起来的那天要重做。**
 func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
-	chunks [][]TradingDay, rep *SyncReport) ([]TradingDay, int, HaltReason, error) {
+	chunks [][]TradingDay, days []TradingDay, aged func(TradingDay) int, rep *SyncReport) ([]TradingDay, int, HaltReason, error) {
 
 	consecutive := 0
 	attempts := 0
 	var synced [2]TradingDay
 	var syncedDays []TradingDay
 
+	// —— 挂起：源一根没给、而还没有理由登记成「拉过确认没有」的那几天（勘误三，2026-09-15）——
+	//
+	// ⛔ 由来（离线实测，v0.5.0 与 d7f2d9a 读数相同；评审方独立复现）：新浪日线收盘后要过一阵才补上当天那一行。
+	// 那段时间里同步，当天整块 0 根 ⇒ 上一版照样把它登记进 coverage ⇒「拉过确认没有」⇒
+	// 源补上之后丙片把它当已覆盖跳过、报告全绿 ⇒ **每天收盘后定时同步的用户，每天永久缺一天。**
+	//
+	// ⇒ 判据：一天源没给根，只有下面两条之一成立才登记 ——
+	//
+	//	一 更晚的正面证据  它之后有一个交易日**这次拉到了根**（同一合约同一周期）⇒ 源已经出过更晚的数，这一天是真没有
+	//	二 年龄上限        它之后已经收盘了 emptyTailGraceDays 个交易日 ⇒ 不再等（用户 2026-09-15 定：重拉要有界）
+	//
+	// 否则挂起：**不登记，下次同步重拉**（失败方向是多拉，不是丢）。
+	//
+	// ⛔ 证据**不能只看同一块**：块尾空、下一块有根时，只看本块会把那几天挂起而把下一块照登 ⇒ coverage 留洞 ——
+	// 而洞事后补不进去（`CommitSpan` 拒「未按 From 升序」，实测）⇒ 那一天变成永久「没拉过」。
+	// ⇒ 挂起的日子**接进下一块**，与它一起登记。
+	// ⚠️ 而证据也不会来自「库里更晚处已有的根」：库只往后长，没登记的日子后面不会已有登记（洞除外，而洞补不进去）。
+	// ⛔ 挂起只接**紧挨着**的下一块：中间隔着一块失败的、或一个已覆盖的交易日 ⇒ 丢弃挂起（它们照旧是「没拉过」）——
+	// 接过去会把**没拉成的那几天**一起登记成「拉过确认没有」，那是最危险的方向。
+	var pending []TradingDay
+	idx := make(map[TradingDay]int, len(days))
+	for i, d := range days {
+		idx[d] = i
+	}
+	contiguous := func(a, b TradingDay) bool {
+		ia, oka := idx[a]
+		ib, okb := idx[b]
+		return oka && okb && ib == ia+1
+	}
+	holdBack := func(why string) {
+		if len(pending) > 0 {
+			rep.HeldBack = append(rep.HeldBack, fmt.Sprintf(
+				"源没给 %s..%s 这 %d 个交易日的根，而%s、收盘后也还不到 %d 个交易日——"+
+					"没有登记成「拉过确认没有」，下次同步会重拉（它们在 Gaps 里是「没拉过」）",
+				pending[0], pending[len(pending)-1], len(pending), why, emptyTailGraceDays))
+			pending = nil
+		}
+	}
+
 	for _, chunk := range chunks {
 		if err := ctx.Err(); err != nil {
+			holdBack("同步在拉到更晚的根之前被取消了")
 			rep.Synced = synced
 			return syncedDays, attempts, HaltContext, fmt.Errorf("tickflow: 同步被取消: %w", err)
 		}
@@ -1001,6 +1046,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 			//
 			// ⇒ 「K 的零值是安全的」这句话，真值取决于**这一个符号**。
 			if consecutive > req.MaxConsecutiveFails {
+				holdBack("同步在拉到更晚的根之前因连续失败中止了")
 				rep.Synced = synced
 				return syncedDays, attempts, HaltBudget, fmt.Errorf("%w: 连续 %d 次失败（上限 %d），"+
 					"停在 %s；最后一次: %v",
@@ -1010,23 +1056,51 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 		}
 		consecutive = 0
 
+		// ⚠️ 失败的块不在这里单独处理：它的日子夹在挂起与下一块之间 ⇒ 这一格就把挂起丢掉（突变实测：两道并存时各自都杀不死）。
+		if len(pending) > 0 && !contiguous(pending[len(pending)-1], chunk[0]) {
+			holdBack("它们与下一块之间隔着这次没拉成、或本来就不必拉的交易日")
+		}
+		cand := append(pending, chunk...)
+		pending = nil
+		// 登记到哪一天：最后一个拉到根的交易日，与最后一个过了年龄上限的交易日，取较晚者。
+		// ⚠️ 年龄随日子单调（越早的日子之后收盘的越多）⇒ 满足它的是 cand 的一段前缀。
+		cut := -1
+		var lastBar TradingDay
+		for _, b := range bars {
+			if b.TradingDay > lastBar {
+				lastBar = b.TradingDay
+			}
+		}
+		for i, d := range cand {
+			if (lastBar != 0 && d <= lastBar) || aged(d) >= emptyTailGraceDays {
+				cut = i
+			}
+		}
+		pending = append([]TradingDay(nil), cand[cut+1:]...)
+		if cut < 0 {
+			continue // 整块挂起：没有根，不落盘，不登记
+		}
+		commit := cand[:cut+1]
+
 		if err := s.store.AppendBars(bars); err != nil {
+			holdBack("同步在拉到更晚的根之前因落盘失败中止了")
 			rep.Synced = synced
 			return syncedDays, attempts, HaltStoreWrite, fmt.Errorf("tickflow: 落盘失败，停在 %s: %w", chunk[0], err)
 		}
-		span := Span{From: chunk[0], To: chunk[len(chunk)-1],
+		span := Span{From: commit[0], To: commit[len(commit)-1],
 			Bars: len(bars), Days: distinctDays(bars)}
 		if err := s.store.CommitSpan(s.cal, k, span, OutcomeComplete); err != nil {
+			holdBack("同步在拉到更晚的根之前因扩 coverage 失败中止了")
 			rep.Synced = synced
 			return syncedDays, attempts, HaltCoverageWrite, fmt.Errorf("tickflow: 扩 coverage 失败，停在 %s: %w", chunk[0], err)
 		}
 
 		rep.Bars += len(bars)
-		syncedDays = append(syncedDays, chunk...)
+		syncedDays = append(syncedDays, commit...)
 		if synced[0] == 0 {
-			synced[0] = chunk[0]
+			synced[0] = commit[0]
 		}
-		synced[1] = chunk[len(chunk)-1]
+		synced[1] = commit[len(commit)-1]
 
 		// SYN-2 / SYN-5：对不上网格的【根数】与可疑的【交易日】。
 		//
@@ -1041,8 +1115,37 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 			}
 		}
 	}
+	holdBack("它们之后这次没有拉到根的交易日")
 	rep.Synced = synced
 	return syncedDays, attempts, HaltDone, nil
+}
+
+// emptyTailGraceDays 是挂起的年龄上限：源一根没给的一天，它之后已经收盘了这么多个交易日 ⇒ 登记成「拉过确认没有」，不再等。
+//
+// ⚠️ 它是一个常数，而这是一个写下来的取舍（用户 2026-09-15 定）：没有它，已到期或长期停牌的合约，尾巴上每一天
+// 每次同步都要重拉 —— cffexsource 一天一个请求，随到期天数无界增长。
+// 代价：源晚于这么多个交易日才补上的那一天会丢。新浪日线的实测读数（出现之后还会再消失）在 docs/release/v0.6.0.md 勘误三。
+const emptyTailGraceDays = 5
+
+// closedLaterCounter 交出一个函数：对 d 回答「d 之后、到 now 为止已经收盘了几个交易日」（只数日历覆盖之内的）。
+//
+// ⚠️ 判「收盘」与 ClipToLastClosed 同口径：最后一段的 End <= now。一次 Walk 从 from 走到覆盖末端。
+func closedLaterCounter(cal Calendar, k ProductKey, from TradingDay, now int64) (func(TradingDay) int, error) {
+	_, ct, ok := cal.Covers(k)
+	var closed []TradingDay
+	if ok && from <= ct {
+		if err := cal.Walk(k, from, ct, func(d Day) bool {
+			if len(d.Sessions) > 0 && d.Sessions[len(d.Sessions)-1].End <= now {
+				closed = append(closed, d.Num)
+			}
+			return true
+		}); err != nil {
+			return nil, fmt.Errorf("tickflow: 数 %s 起已收盘的交易日失败: %w", from, err)
+		}
+	}
+	return func(d TradingDay) int {
+		return len(closed) - sort.Search(len(closed), func(i int) bool { return closed[i] > d })
+	}, nil
 }
 
 // distinctDays 数这一批根覆盖了几个【交易日】。`Span.Days` 要它。
