@@ -104,7 +104,35 @@ const walkBufSize = 64 << 10
 // errWalkRange Walk 的区间不整个落在某一段 coverage 里。
 var errWalkRange = errors.New("segfile: Walk 的区间不整个落在任何一段 coverage 里")
 
-// Walk 按文件顺序把 [from, to] 里的记录逐根交给 fn，**同一遍扫描里把整个库核一遍**。见 tickflow.Store.Walk。
+// Walk 按文件顺序把 [from, to] 里的记录逐根交给 fn；**同一遍扫描里把整个库核一遍**（v0.6 片 B）。
+//
+// 它是库的**读口子**：calendar/derived 要逐根看 Ts 与 Volume，只读每天首末根不够（probe.md 6.13 c″、6.21）。
+// ⚠️ **它不在 tickflow.Store 接口里**（用户 2026-09-15 裁定，design.md §十五「第四次裁决」）：只在本类型上。
+// ⚠️ **v0.6 里它没有生产消费者**：calendar/derived 于 2026-09-15 挪到 v0.7（design.md §十五「第三次裁决」），
+// 而本库 v0.4 那一节记过「读口子不加 ＝ 零调用点」的代价。它已随片 B 合入（先于那次裁决），
+// 契约由 store/segfile/walk_test.go 钉着；**第一个消费者是 v0.7 的 derived** —— 那时再核这段语义够不够用。
+//
+// —— 语义（片 B 评审 2026-09-14 裁定：边扫边核）——
+//
+//	前置    [from, to] 必须整个落在**某一段**已登记的 coverage 里；否则报错。
+//	        段外、或跨过两段之间的空档 ＝「没拉过」，**不是**「没走查过」，两句话分开说。
+//	        ⛔ **不要求**本进程先调过 VerifyCoverage —— 保证不绑在「之前某处调过」这件事上。
+//	一遍    逐条先核全库三件（零值 TradingDay · 非降序 · 落在某一段），**核过才回调**；
+//	        同时给每一段数 Bars/Days，扫完与 .meta 比 —— 核法与 VerifyCoverage 是同一份。
+//	停      fn 返回 false ⇒ **只停回调，扫描照样走完、结论照给**。
+//	        （提前停若不给结论，nil 就分不清「核过没问题」与「没核完」。）
+//	作废    ⛔ **返回非 nil ⇒ 这一次回调出去的每一根都作废**，调用方不得使用。
+//	        全库错误在第一条坏记录上中止；计数对不上在扫完后才报。
+//	副作用  扫完且某段对上 ⇒ 那一段置「走查过」（同 VerifyCoverage）；不改文件。
+//
+// ⚠️ **全库任何一处坏，对任何 [from, to] 都报错** —— 哪怕坏的那一段与 [from, to] 不相交。
+// 这是「逐条先核全库」的直接后果，与 VerifyCoverage 整库归因同形；
+// 代价是「读一段好数据」会被别处的坏数据挡住。**这是设计，不是缺陷。**
+//
+// ⚠️ **不是并发安全的**：扫描长度取【开始扫描那一刻】的文件大小，扫描期间追加进来的记录不在这一遍里；
+// 同一个库一边 AppendBars 一边 Walk 没有任何保证。
+// ⚠️ **没有 seek 索引**：每次都从文件头扫到尾（890,000 根约 55 ms，合成库读数见片 B 设计信）。
+// 按时间随机定位留给 Feed（v0.9）时再定。
 func (s *Store) Walk(from, to tickflow.TradingDay, fn func(tickflow.Bar) bool) error {
 	if fn == nil {
 		return errors.New("segfile: Walk 的 fn 是 nil")

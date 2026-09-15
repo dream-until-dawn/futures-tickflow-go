@@ -2971,7 +2971,6 @@ type Store interface {
 	AppendBars(bars []Bar) error
 	CommitSpan(cal Calendar, k ProductKey, span Span, out Outcome) error
 	VerifyCoverage() (map[SpanKey]error, error)
-	Walk(from, to TradingDay, fn func(Bar) bool) error // v0.6 片 B：读口子，边扫边核（语义见 store.go 接口注释）
 	Close() error
 }
 ```
@@ -4109,7 +4108,7 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 | v0.3 | `Source`(新浪 + **cffexsource**) ＋ `source/pacing`（限流闸门） / `Store`(segfile) / `Syncer` | ✅ `v0.3.0`（2026-09-10 发布；tag 对象 `bef0e21e…` → commit `6252324…`；注解里带着四条【还活着的到期条件】与六条【声明的射程】，`git show v0.3.0` 可读） |
 | v0.4 | `refdata`(天勤) ＋ **`Store` 的「周期进身份」**（修那个假绿；读口子不加＝零调用点） | ✅ `v0.4.0`（2026-09-10 发布；tag 对象 `2700d314…` → commit `f218ae6…`）＋ `v0.4.1`（2026-09-11；tag 对象 `be7fc801…` → commit `cb2a531…`） —— ⚠️ `calendar/derived` 09-10 **挪到 v0.5**（用户裁，理由见 §十六），09-13 **随天勤源顺延到 v0.6**（见下「版本号的两次裁决」），09-15 **再挪到 v0.7**（见下「第三次裁决」） |
 | v0.5 | 已落地的硬化：`Syncer` / `store/segfile` / 审计仪器（**含破坏性 API 变更**，逐条见 [release/v0.5.0.md](release/v0.5.0.md)） | ✅ `v0.5.0`（2026-09-13 发布；tag 对象 `211ec3c7…` → commit `e553d09…`） |
-| v0.6 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**）＋ `Store` 的读口子（`Walk`） | 进行中 —— ⚠️ `calendar/derived` 09-15 **挪到 v0.7**（用户裁，见下「第三次裁决」） |
+| v0.6 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**）＋ `segfile` 的逐根读（`(*segfile.Store).Walk`，**不进 `tickflow.Store` 接口**，见下「第四次裁决」） | 进行中 —— ⚠️ `calendar/derived` 09-15 **挪到 v0.7**（用户裁，见下「第三次裁决」） |
 | v0.7 | `continuous`——换月、复权、接缝 ＋ **`calendar/derived`**（判夜盘开没开要品种级连续序列，而那正是这一档的东西；probe.md 6.21） | 待办 |
 | v0.8 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |
 | v0.9 | `Feed` / `View` / 多周期（`AggRule` 聚合口径随它走） | 待办 |
@@ -4137,6 +4136,21 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 ⇒ 连带（不变的）：D-B「交易日由 base 裁、观测只报差异」照旧是规则，derived 在 v0.7 落地时照它写；
 「那 6 天长假后首日 ＝ 交易所停夜盘」是推论，v0.7 落地时必须拿交易所公告做一次第二来源对照。
 ⇒ 连带（代价）：`calendar/embedded` 看不见停夜盘（`TestKnownDefect_EmbeddedCannotSeeSuspendedNight`）**v0.6 不消**。
+⚠️ 问句里「只有品种级的连续序列（主连）**判得准**」说过头了（评审方 2026-09-15 更正）：
+主连在这一年里没有与正向证据矛盾的一天，但它判「没开」的那 6 天靠的是**缺**（那一夜没有根），没有第二来源；
+**不影响这一次的选择**（那句话会把人往「用天勤主连」那边推，而所选是挪到 v0.7）。
+
+**第四次裁决（用户 2026-09-15，我执行）** —— 第三次裁决的连带后果：`Store.Walk` 是为 derived 加的 —— 问句与所选项逐字照录：
+
+```
+问    存储的读数据接口 Walk 是为反推日历加的。反推日历挤到 v0.7 之后，它在 v0.6 里没有任何使用者（全仓生产代码调用 0 处）；而它在公开的 Store 接口里，别人自己实现的 Store 升级到 v0.6 会编译不过。v0.6.0 还没发布。怎么处理？
+选项  只从公开接口拿出来，实现留着（推荐）· 留在公开接口里照发 · 整个撤回，v0.7 再做（每项的代价写在问句的选项说明里）
+选    「只从公开接口拿出来，实现留着（推荐）」
+```
+⇒ 执行落点：`tickflow.Store` 接口删去 `Walk`（语义注释搬到 `store/segfile/walk.go`）· `sync_test.go` 里 fakeStore 的桩删去 · 本文 Store 围栏删去那一行 · 上表 v0.6 行。
+⇒ 不变的：`(*segfile.Store).Walk`、它的测试、共用核对器 `coverageChecker`、(y) 的共用扫描器都留着。
+⇒ 连带（代价）：v0.7 derived 若把逐根读加回 `tickflow.Store`，第三方实现在那一版编译不过一次（也是唯一一次，而那时接口有消费者验证）。
+📎 我给评审的「不撤」理由里写过「撤掉的话第三方要编译不过两次」—— **不成立**：v0.6.0 还没打 tag，现在拿出来第三方最多只破一次（评审方 2026-09-15 指出）。
 
 ⇒ 前两次的执行落点：上表 v0.5–v0.10 · `tools/doccheck/pending.txt` 14 条改号（continuous 11 条 v0.6.0→v0.7.0，AggRule 3 条 v0.5.0→v0.9.0，每条写明出处）· `docs/release/v0.5.0.md`「这一版有什么 / 没做到的」 · §十六 那条【丙】旁边的补注（原文不改）。
 

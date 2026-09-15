@@ -185,10 +185,6 @@ func (s *fakeStore) VerifyCoverage() (map[SpanKey]error, error) {
 }
 func (s *fakeStore) OpenState() OpenState { return s.openState }
 
-// Walk 编排不调它（它是 derived 的读口子）；桩直接拒，免得一个「看起来能读」的桩被误用。
-func (s *fakeStore) Walk(TradingDay, TradingDay, func(Bar) bool) error {
-	return errors.New("fakeStore: 不实现 Walk")
-}
 func (s *fakeStore) DiscardCoverage() error { s.discarded++; s.coverage = nil; return nil }
 func (s *fakeStore) Close() error           { return nil }
 
