@@ -1005,8 +1005,11 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 	// 而洞事后补不进去（`CommitSpan` 拒「未按 From 升序」，实测）⇒ 那一天变成永久「没拉过」。
 	// ⇒ 挂起的日子**接进下一块**，与它一起登记。
 	// ⚠️ 而证据也不会来自「库里更晚处已有的根」：库只往后长，没登记的日子后面不会已有登记（洞除外，而洞补不进去）。
-	// ⛔ 挂起只接**紧挨着**的下一块：中间隔着一块失败的、或一个已覆盖的交易日 ⇒ 丢弃挂起（它们照旧是「没拉过」）——
-	// 接过去会把**没拉成的那几天**一起登记成「拉过确认没有」，那是最危险的方向。
+	// ⛔ 挂起只接**紧挨着**的下一块：中间隔着一个已覆盖的交易日（请求的 From 早于已有 coverage）⇒ 丢弃挂起（它们照旧是「没拉过」）——
+	// 接过去，登记出去的段会与已有 coverage 重叠，而这一块的根已经落盘 ⇒ 孤儿记录。
+	// 📎 失败的块不会隔开挂起：失败重试同一块（勘误四），重试成功时挂起与它仍紧挨；预算用完时走出口、挂起被点名。
+	// ⚠️ 挡不住的一格：源的旧响应【中间】缺行（而不是只少末尾几行）⇒ 那一天被更晚的根夹住、登记成「拉过确认没有」。
+	// 2026-09-15 探针只观察到末尾一行来回翻；中间缺行是评审方离线构造的（v0.6.0 勘误三）。
 	var pending []TradingDay
 	idx := make(map[TradingDay]int, len(days))
 	for i, d := range days {
@@ -1065,9 +1068,8 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 		}
 		consecutive = 0
 
-		// ⚠️ 失败的块不在这里单独处理：它的日子夹在挂起与下一块之间 ⇒ 这一格就把挂起丢掉（突变实测：两道并存时各自都杀不死）。
 		if len(pending) > 0 && !contiguous(pending[len(pending)-1], chunk[0]) {
-			holdBack("它们与下一块之间隔着这次没拉成、或本来就不必拉的交易日")
+			holdBack("它们与下一块之间隔着已经覆盖过的交易日")
 		}
 		cand := append(pending, chunk...)
 		pending = nil
@@ -1136,14 +1138,18 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 
 // emptyTailGraceDays 是挂起的年龄上限：源一根没给的一天，它之后已经收盘了这么多个交易日 ⇒ 登记成「拉过确认没有」，不再等。
 //
-// ⚠️ 它是一个常数，而这是一个写下来的取舍（用户 2026-09-15 定）：没有它，已到期或长期停牌的合约，尾巴上每一天
-// 每次同步都要重拉 —— cffexsource 一天一个请求，随到期天数无界增长。
+// ⚠️ 它是一个常数，而这是一个写下来的取舍（用户 2026-09-15 定，选项原文「加一个年龄上限」：尾巴上的一天，
+// 如果它收盘后已经过了 N 个交易日（比如 5 个）仍然一根没有，就登记成「确认没有」；重拉最多 N 天，不会一直涨）。
+// 没有它，已到期或长期停牌的合约，尾巴上每一天每次同步都要重拉 —— cffexsource 一天一个请求，随到期天数无界增长。
 // 代价：源晚于这么多个交易日才补上的那一天会丢。新浪日线的实测读数（出现之后还会再消失）在 docs/release/v0.6.0.md 勘误三。
 const emptyTailGraceDays = 5
 
 // closedLaterCounter 交出一个函数：对 d 回答「d 之后、到 now 为止已经收盘了几个交易日」（只数日历覆盖之内的）。
 //
 // ⚠️ 判「收盘」与 ClipToLastClosed 同口径：最后一段的 End <= now。一次 Walk 从 from 走到覆盖末端。
+// ⛔ from 必须不晚于【要拉的第一天】（调用处是 want[0]；挂起的日子都不早于它）：请求区间内部的已收盘交易日也要数进去。只数请求末端之后的话，
+// To=0 时末端就是最后一个已收盘日 ⇒ 尾巴年龄永远是 0 ⇒ 年龄上限在这条主路上整个失效（评审方突变 R7，TestEmptyTailAgeCapWithToZero）。
+// ⚠️ 只数日历覆盖之内的：now 远在日历末端之后时，尾巴年龄涨不过日历末端 ⇒ 仍挂起、每次重拉（方向是吵；TestAgeCapStopsAtCalendarEnd）。
 func closedLaterCounter(cal Calendar, k ProductKey, from TradingDay, now int64) (func(TradingDay) int, error) {
 	_, ct, ok := cal.Covers(k)
 	var closed []TradingDay

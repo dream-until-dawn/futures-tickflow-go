@@ -35,13 +35,18 @@ var lateDays = []tickflow.TradingDay{
 
 var lateSym = tickflow.Symbol{Exchange: "SHFE", Product: "rb", YearMon: 2101}
 
-// lateSource 按一张可改的表给根，数自己被问了几次；fail 里的交易日在它所在那一块上报错。
+// lateSource 按一张可改的表给根，数自己被问了几次、记下每次请求的块。
+// fail[d] 是剩余失败次数：块里含 d 的请求在次数用完之前报错（给大数即恒失败）。
+// cancelOn 非 0 时，块首为它的那次请求里调 cancel（只调一次），照常返回。
 type lateSource struct {
-	mu    sync.Mutex
-	give  map[tickflow.TradingDay]bool
-	fail  map[tickflow.TradingDay]bool
-	batch int
-	calls int
+	mu       sync.Mutex
+	give     map[tickflow.TradingDay]bool
+	fail     map[tickflow.TradingDay]int
+	batch    int
+	calls    int
+	asked    [][2]tickflow.TradingDay
+	cancelOn tickflow.TradingDay
+	cancel   context.CancelFunc
 }
 
 func (s *lateSource) Caps(tickflow.ProductKey) tickflow.Capabilities {
@@ -58,13 +63,21 @@ func (s *lateSource) Bars(_ context.Context, req tickflow.BarRequest) ([]tickflo
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.calls++
+	s.asked = append(s.asked, [2]tickflow.TradingDay{req.From, req.To})
+	if s.cancel != nil && req.From == s.cancelOn {
+		s.cancel()
+		s.cancel = nil
+	}
+	for _, d := range lateDays {
+		if d >= req.From && d <= req.To && s.fail[d] > 0 {
+			s.fail[d]--
+			return nil, errors.New("lateSource: 这一块造的失败")
+		}
+	}
 	var out []tickflow.Bar
 	for _, d := range lateDays {
 		if d < req.From || d > req.To {
 			continue
-		}
-		if s.fail[d] {
-			return nil, errors.New("lateSource: 这一块造的失败")
 		}
 		if !s.give[d] {
 			continue
@@ -74,6 +87,26 @@ func (s *lateSource) Bars(_ context.Context, req tickflow.BarRequest) ([]tickflo
 			TradingDay: d, Open: 1, High: 1, Low: 1, Close: float64(d % 100), Volume: 1})
 	}
 	return out, nil
+}
+
+func (s *lateSource) take() [][2]tickflow.TradingDay {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	a := s.asked
+	s.asked = nil
+	return a
+}
+
+func sameBlocks(a, b [][2]tickflow.TradingDay) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (s *lateSource) count() int {
@@ -112,7 +145,12 @@ func newLateRig(t *testing.T, src *lateSource) *lateRig {
 
 func (r *lateRig) sync(label string, from, to tickflow.TradingDay, now int64, maxFails int, allowErr bool) tickflow.SyncReport {
 	r.t.Helper()
-	rep, err := r.syn.Sync(context.Background(), tickflow.SyncRequest{
+	return r.syncCtx(context.Background(), label, from, to, now, maxFails, allowErr)
+}
+
+func (r *lateRig) syncCtx(ctx context.Context, label string, from, to tickflow.TradingDay, now int64, maxFails int, allowErr bool) tickflow.SyncReport {
+	r.t.Helper()
+	rep, err := r.syn.Sync(ctx, tickflow.SyncRequest{
 		Symbol: lateSym, Period: tickflow.Daily, From: from, To: to, MaxConsecutiveFails: maxFails}, now)
 	r.t.Logf("%s：err=%v · Requested=%v · Bars=%d · Halt=%v · Gaps=%v · HeldBack=%q · coverage=%v",
 		label, err, rep.Requested, rep.Bars, rep.Halt, rep.Gaps, rep.HeldBack, r.store.Coverage())
@@ -253,6 +291,15 @@ func TestEmptyChunkTailIsRegisteredByLaterChunk(t *testing.T) {
 			t.Errorf("① %s 是 %v，期望「拉过确认没有」（其后 0806 拉到了根）", d, k)
 		}
 	}
+	if errs, verr := r.store.VerifyCoverage(); verr != nil || len(errs) != 1 {
+		t.Errorf("① VerifyCoverage=%v,%v，期望一段且无错 —— 挂起并进下一块之后登记出去的 Bars/Days 要等于盘上", errs, verr)
+	} else {
+		for k, e := range errs {
+			if e != nil {
+				t.Errorf("① 段 %v 走查没过：%v —— 挂起并进下一块之后登记出去的 Bars/Days 与盘上不符", k, e)
+			}
+		}
+	}
 	before := src.count()
 	rep2 := r.sync("② 同一请求再跑", 20200803, 20200806, dayStartMs(20200807), 0, false)
 	if n := src.count() - before; n != 0 || rep2.Halt != tickflow.HaltAllCovered {
@@ -270,34 +317,178 @@ func TestEmptyDaySandwichedInOneChunkIsRegistered(t *testing.T) {
 	}
 }
 
-// guard: 挂起不许接过一块没拉成的 —— 否则没拉成的那天会被一起登记成「拉过确认没有」。
-func TestHeldBackDaysDoNotJumpAFailedChunk(t *testing.T) {
+// guard: 一块失败一次而重试成功 ⇒ 挂起不丢，照样被更晚的根夹住登记（勘误四之后失败重试同一块，挂起与下一块仍紧挨）。
+func TestHeldBackSurvivesARetriedChunk(t *testing.T) {
 	src := &lateSource{batch: 1,
 		give: map[tickflow.TradingDay]bool{20200803: true, 20200806: true},
-		fail: map[tickflow.TradingDay]bool{20200805: true}}
+		fail: map[tickflow.TradingDay]int{20200805: 1}}
 	r := newLateRig(t, src)
-	// 块：0803(有) 0804(空) 0805(失败，预算 1 次) 0806(有)。now＝0807 00:00 UTC ⇒ 年龄帮不上忙。
-	rep := r.sync("中间一块失败", 20200803, 20200806, dayStartMs(20200807), 1, true)
-	if covered(r.store, 20200805) {
-		t.Errorf("没拉成的 0805 被登记进了 coverage（%v）—— 挂起的 0804 接过了失败的那一块", r.store.Coverage())
+	// 块：0803(有) 0804(空) 0805(失败一次，重试得空) 0806(有)。now＝0807 00:00 UTC ⇒ 年龄帮不上忙。
+	rep := r.sync("0805 失败一次", 20200803, 20200806, dayStartMs(20200807), 1, false)
+	want := [][2]tickflow.TradingDay{{20200803, 20200803}, {20200804, 20200804}, {20200805, 20200805}, {20200805, 20200805}, {20200806, 20200806}}
+	if got := src.take(); !sameBlocks(got, want) {
+		t.Errorf("请求序列 %v，期望 %v", got, want)
 	}
-	if covered(r.store, 20200804) {
-		t.Errorf("0804 被登记了（%v）—— 紧接着它的那一块没拉成，它没有更晚的证据", r.store.Coverage())
+	if cov := r.store.Coverage(); len(cov) != 1 || cov[0].From != 20200803 || cov[0].To != 20200806 {
+		t.Errorf("coverage=%v，期望一段 [0803,0806]", cov)
+	}
+	for _, d := range []tickflow.TradingDay{20200804, 20200805} {
+		if k := kindOf(rep, d); k != tickflow.GapConfirmedEmpty {
+			t.Errorf("%s 是 %v，期望「拉过确认没有」（其后 0806 拉到了根）", d, k)
+		}
+	}
+	if len(rep.HeldBack) != 0 {
+		t.Errorf("HeldBack=%q，期望空", rep.HeldBack)
+	}
+}
+
+// guard: 挂起在「预算耗尽」出口上被点名，且不登记（K=1 恒失败、K=0 一次失败各一格）。
+func TestHeldBackIsReportedOnBudgetExit(t *testing.T) {
+	for _, k := range []int{1, 0} {
+		src := &lateSource{batch: 1,
+			give: map[tickflow.TradingDay]bool{20200803: true},
+			fail: map[tickflow.TradingDay]int{20200805: 1000}}
+		r := newLateRig(t, src)
+		rep := r.sync("0805 恒失败", 20200803, 20200806, dayStartMs(20200807), k, true)
+		if rep.Halt != tickflow.HaltBudget {
+			t.Fatalf("K=%d 前提不成立：Halt=%v，期望预算耗尽", k, rep.Halt)
+		}
+		if covered(r.store, 20200804) || len(rep.HeldBack) != 1 || !strings.Contains(rep.HeldBack[0], "2020-08-04") {
+			t.Errorf("K=%d 预算耗尽时 coverage=%v HeldBack=%q，期望 0804 不登记且 HeldBack 恰好一条点名它", k, r.store.Coverage(), rep.HeldBack)
+		}
+	}
+}
+
+// guard: 挂起在「取消」出口上被点名，且不登记。
+// ⚠️ 落盘失败、扩 coverage 失败两条出口上的 HeldBack 没有测试（难造）；代码里那两句 holdBack 由读代码核。
+func TestHeldBackIsReportedOnCancelExit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	src := &lateSource{batch: 1, give: map[tickflow.TradingDay]bool{20200803: true},
+		cancelOn: 20200805, cancel: cancel}
+	r := newLateRig(t, src)
+	// 块：0803(有) 0804(空，挂起) 0805(空，这次请求里被取消 ⇒ 并进挂起) ⇒ 循环顶看到取消。
+	rep := r.syncCtx(ctx, "0805 那次请求里取消", 20200803, 20200806, dayStartMs(20200807), 0, true)
+	if rep.Halt != tickflow.HaltContext {
+		t.Fatalf("前提不成立：Halt=%v，期望被取消", rep.Halt)
+	}
+	if covered(r.store, 20200804) || len(rep.HeldBack) != 1 || !strings.Contains(rep.HeldBack[0], "2020-08-04..2020-08-05") {
+		t.Errorf("取消时 coverage=%v HeldBack=%q，期望 0804 不登记且 HeldBack 恰好一条点名 0804..0805", r.store.Coverage(), rep.HeldBack)
+	}
+}
+
+// guard: 挂起不许跨过一个已覆盖的交易日接进下一块 —— 否则登记出去的段与已有 coverage 重叠，而根已经落盘（孤儿记录）。
+// 这是勘误四之后「不紧挨」唯一还走得到的来历：请求的 From 早于已有 coverage。
+func TestHeldBackDaysDoNotJumpACoveredDay(t *testing.T) {
+	src := &lateSource{batch: 1, give: map[tickflow.TradingDay]bool{20200805: true, 20200806: true}}
+	r := newLateRig(t, src)
+	r.sync("① 先同步 0805", 20200805, 20200805, dayStartMs(20200807), 0, false)
+	// ② From=0804：want = [0804 0806]（0805 已覆盖）。0804 空 ⇒ 挂起；0806 与它隔着 0805 ⇒ 丢弃挂起。
+	rep := r.sync("② From=0804 To=0806", 20200804, 20200806, dayStartMs(20200807), 0, true)
+	if cov := r.store.Coverage(); len(cov) != 1 || cov[0].From != 20200805 || cov[0].To != 20200806 || rep.Halt != tickflow.HaltDone {
+		t.Errorf("② coverage=%v Halt=%v，期望一段 [0805,0806]、跑完 —— 挂起跨过了已覆盖的 0805", cov, rep.Halt)
 	}
 	if len(rep.HeldBack) != 1 || !strings.Contains(rep.HeldBack[0], "2020-08-04") {
-		t.Errorf("HeldBack=%q，期望恰好一条且点名 2020-08-04", rep.HeldBack)
+		t.Errorf("② HeldBack=%q，期望恰好一条点名 0804", rep.HeldBack)
+	}
+}
+
+// guard: 整块挂起之后照常请求下一块（循环只在末尾前进；整块挂起那一支漏了前进 ⇒ 同一块无限循环）。
+func TestWholeChunkHeldBackAdvancesToNextChunk(t *testing.T) {
+	src := &lateSource{batch: 1, give: map[tickflow.TradingDay]bool{20200803: true, 20200805: true}}
+	r := newLateRig(t, src)
+	rep := r.sync("0804 整块空", 20200803, 20200805, dayStartMs(20200806), 0, false)
+	want := [][2]tickflow.TradingDay{{20200803, 20200803}, {20200804, 20200804}, {20200805, 20200805}}
+	if got := src.take(); !sameBlocks(got, want) {
+		t.Errorf("请求序列 %v，期望 %v", got, want)
+	}
+	if k := kindOf(rep, 20200804); k != tickflow.GapConfirmedEmpty {
+		t.Errorf("0804 是 %v，期望「拉过确认没有」", k)
+	}
+}
+
+// guard: 年龄数的是 d 之后【请求区间内部也算】的已收盘交易日 —— To=0 时请求末端就是最后一个已收盘日，
+// 只数末端之后的话尾巴永远长不到 5，年龄上限在这条主路上整个失效。逐天断言。
+func TestEmptyTailAgeCapWithToZero(t *testing.T) {
+	src := &lateSource{batch: tickflow.BatchDaysUnbounded, give: map[tickflow.TradingDay]bool{20200803: true}}
+	r := newLateRig(t, src)
+	// now＝0815 00:00 UTC ⇒ To=0 裁到 0814。尾巴 0804..0814 共 9 个交易日全空。
+	// d 之后已收盘：0804 8 · 0805 7 · 0806 6 · 0807 5 · 0810 4 · 0811 3 · 0812 2 · 0813 1 · 0814 0
+	rep := r.sync("To=0，尾巴 9 天全空", 20200803, 0, dayStartMs(20200815), 0, false)
+	if rep.Requested[1] != 20200814 {
+		t.Fatalf("前提不成立：请求末端 %s，期望 0814", rep.Requested[1])
+	}
+	for _, d := range []tickflow.TradingDay{20200804, 20200805, 20200806, 20200807} {
+		if k := kindOf(rep, d); k != tickflow.GapConfirmedEmpty {
+			t.Errorf("%s 是 %v，期望「拉过确认没有」（其后已收盘 ≥ 5 个交易日）", d, k)
+		}
+	}
+	for _, d := range []tickflow.TradingDay{20200810, 20200811, 20200812, 20200813, 20200814} {
+		if k := kindOf(rep, d); k != tickflow.GapNeverFetched {
+			t.Errorf("%s 是 %v，期望「没拉过」（其后已收盘 < 5 个交易日）", d, k)
+		}
+	}
+	if len(rep.HeldBack) != 1 || !strings.Contains(rep.HeldBack[0], "2020-08-10..2020-08-14") {
+		t.Errorf("HeldBack=%q，期望恰好一条点名 0810..0814", rep.HeldBack)
+	}
+}
+
+// guard: 尾巴年龄不够 ⇒ 不登记；再同步一次请求仍包含它们、仍不登记；等年龄够了 ⇒ 登记；之后 0 请求。
+func TestHeldBackTailAgesIntoRegistration(t *testing.T) {
+	src := &lateSource{batch: tickflow.BatchDaysUnbounded, give: map[tickflow.TradingDay]bool{20200803: true}}
+	r := newLateRig(t, src)
+	tail := []tickflow.TradingDay{20200804, 20200805, 20200806}
+	kinds := func(rep tickflow.SyncReport) []tickflow.GapKind {
+		var ks []tickflow.GapKind
+		for _, d := range tail {
+			ks = append(ks, kindOf(rep, d))
+		}
+		return ks
+	}
+	nf := []tickflow.GapKind{tickflow.GapNeverFetched, tickflow.GapNeverFetched, tickflow.GapNeverFetched}
+	ce := []tickflow.GapKind{tickflow.GapConfirmedEmpty, tickflow.GapConfirmedEmpty, tickflow.GapConfirmedEmpty}
+	same := func(a, b []tickflow.GapKind) bool {
+		for i := range a {
+			if a[i] != b[i] {
+				return false
+			}
+		}
+		return len(a) == len(b)
 	}
 
-	// 预算耗尽那条出口：挂起同样不登记，而且报告里要说出来（出口不走循环末尾那一句）。
-	src2 := &lateSource{batch: 1,
-		give: map[tickflow.TradingDay]bool{20200803: true},
-		fail: map[tickflow.TradingDay]bool{20200805: true}}
-	r2 := newLateRig(t, src2)
-	rep2 := r2.sync("0805 失败而预算为 0", 20200803, 20200806, dayStartMs(20200807), 0, true)
-	if rep2.Halt != tickflow.HaltBudget {
-		t.Fatalf("前提不成立：Halt=%v，期望预算耗尽", rep2.Halt)
+	// ① now＝0807 00:00 UTC：0804 之后已收盘 2 个 ⇒ 全挂起。
+	rep1 := r.sync("① 年龄不够", 20200803, 20200806, dayStartMs(20200807), 0, false)
+	if got := src.take(); !sameBlocks(got, [][2]tickflow.TradingDay{{20200803, 20200806}}) || !same(kinds(rep1), nf) {
+		t.Errorf("① 请求 %v 类别 %v，期望 [[0803 0806]] 与三天「没拉过」", got, kinds(rep1))
 	}
-	if covered(r2.store, 20200804) || len(rep2.HeldBack) != 1 || !strings.Contains(rep2.HeldBack[0], "2020-08-04") {
-		t.Errorf("预算耗尽时 coverage=%v HeldBack=%q，期望 0804 不登记且 HeldBack 恰好一条点名它", r2.store.Coverage(), rep2.HeldBack)
+	// ② 同一时刻再跑：请求块包含尾巴，仍挂起。
+	rep2 := r.sync("② 仍不够", 20200803, 20200806, dayStartMs(20200807), 0, false)
+	if got := src.take(); !sameBlocks(got, [][2]tickflow.TradingDay{{20200804, 20200806}}) || !same(kinds(rep2), nf) {
+		t.Errorf("② 请求 %v 类别 %v，期望 [[0804 0806]] 与三天「没拉过」", got, kinds(rep2))
+	}
+	// ③ now＝0815 00:00 UTC：0806 之后已收盘 6 个 ⇒ 三天都登记。
+	rep3 := r.sync("③ 年龄够了", 20200803, 20200806, dayStartMs(20200815), 0, false)
+	if got := src.take(); !sameBlocks(got, [][2]tickflow.TradingDay{{20200804, 20200806}}) || !same(kinds(rep3), ce) || len(rep3.HeldBack) != 0 {
+		t.Errorf("③ 请求 %v 类别 %v HeldBack=%q，期望 [[0804 0806]]、三天「拉过确认没有」、无挂起", got, kinds(rep3), rep3.HeldBack)
+	}
+	// ④ 再跑 ⇒ 0 请求。
+	rep4 := r.sync("④ 再跑", 20200803, 20200806, dayStartMs(20200815), 0, false)
+	if got := src.take(); len(got) != 0 || rep4.Halt != tickflow.HaltAllCovered {
+		t.Errorf("④ 请求 %v Halt=%v，期望 0 次与「全部覆盖过」", got, rep4.Halt)
+	}
+}
+
+// guard: 年龄只数【日历覆盖之内】的已收盘交易日 —— now 远在日历末端之后，尾巴年龄也涨不过日历末端 ⇒ 仍挂起、每次重拉。
+// 方向是吵（多拉），接受；日历要随时间续上，否则尾巴永远重拉。
+func TestAgeCapStopsAtCalendarEnd(t *testing.T) {
+	src := &lateSource{batch: tickflow.BatchDaysUnbounded, give: map[tickflow.TradingDay]bool{20200803: true}}
+	r := newLateRig(t, src)
+	// 日历末端 0814；now＝2020-10-01。0810 之后在日历里只有 4 个交易日。
+	rep := r.sync("now 远在日历之后", 20200803, 20200814, dayStartMs(20201001), 0, false)
+	if k := kindOf(rep, 20200807); k != tickflow.GapConfirmedEmpty {
+		t.Errorf("0807 是 %v，期望「拉过确认没有」（日历里其后 5 个）", k)
+	}
+	if k := kindOf(rep, 20200810); k != tickflow.GapNeverFetched {
+		t.Errorf("0810 是 %v，期望「没拉过」—— 日历里其后只有 4 个交易日，日历外的日子不数", k)
 	}
 }

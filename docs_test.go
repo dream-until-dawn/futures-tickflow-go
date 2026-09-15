@@ -903,6 +903,7 @@ func TestCarrierCensus(t *testing.T) {
 // ⚠️ 上一版这里写的是「**这是这个方案唯一的洞**」。代价二被发现之后那句就不成立了，
 // 已删。**一个「唯一」是最容易过期的措辞——它把「我现在只想到一个」写成了「只有一个」。**
 var guardNames = []string{
+	`TestAgeCapStopsAtCalendarEnd`,
 	`TestAppendBarsRejectsOutOfOrder`,
 	`TestBackfillAfterVerifyDoesNotPoisonTheStore`,
 	`TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances`,
@@ -918,6 +919,7 @@ var guardNames = []string{
 	`TestEmptyChunkTailIsRegisteredByLaterChunk`,
 	`TestEmptyDaySandwichedInOneChunkIsRegistered`,
 	`TestEmptyTailAgeCapBoundary`,
+	`TestEmptyTailAgeCapWithToZero`,
 	`TestEveryQuotedRuleIsRegistered`,
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestEverySyncRequestFieldIsRead`,
@@ -932,7 +934,11 @@ var guardNames = []string{
 	`TestGuardsStillExist`,
 	`TestHaltNoTradingDaysAndAllCoveredAreDistinguishable`,
 	`TestHaltReasonAgreesWithEveryChannel`,
-	`TestHeldBackDaysDoNotJumpAFailedChunk`,
+	`TestHeldBackDaysDoNotJumpACoveredDay`,
+	`TestHeldBackIsReportedOnBudgetExit`,
+	`TestHeldBackIsReportedOnCancelExit`,
+	`TestHeldBackSurvivesARetriedChunk`,
+	`TestHeldBackTailAgesIntoRegistration`,
 	`TestHighWaterChain`,
 	`TestHighWaterProvenance`,
 	`TestHighWaterRuleAdjacency`,
@@ -966,6 +972,7 @@ var guardNames = []string{
 	`TestRootErrorSentinelsAreDisposed`,
 	`TestScanReadErrorYieldsNoPartialResult`,
 	`TestScriptsWrapBothStreams`,
+	`TestSinaFlippingDailyRowIsRegisteredOnlyWhenItStays`,
 	`TestSinaLateDailyRowIsFetchedOnceItAppears`,
 	`TestSortednessHoldsAfterVerify`,
 	`TestSourceTableCoversEveryCapsImplementor`,
@@ -991,6 +998,7 @@ var guardNames = []string{
 	`TestVerifyIsNotReadOnlyAndSpanMustComeFromCoverage`,
 	`TestVerifyTraceWordingMatchesGapKinds`,
 	`TestWalkAgreesWithVerifyCoverage`,
+	`TestWholeChunkHeldBackAdvancesToNextChunk`,
 	`TestWholeLibraryErrorIsAttributedToEverySpan`,
 }
 
