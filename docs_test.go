@@ -905,8 +905,10 @@ func TestCarrierCensus(t *testing.T) {
 var guardNames = []string{
 	`TestAppendBarsRejectsOutOfOrder`,
 	`TestBackfillAfterVerifyDoesNotPoisonTheStore`,
+	`TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances`,
 	`TestCarrierCensus`,
 	`TestCarriersHaveNoHTMLComments`,
+	`TestConsecutiveFailsResetAfterARetrySucceeds`,
 	`TestContentLocatorCheckerItself`,
 	`TestContentLocatorsResolve`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
@@ -915,6 +917,7 @@ var guardNames = []string{
 	`TestEveryQuotedRuleIsRegistered`,
 	`TestEveryRuleSectionHasAnAnchor`,
 	`TestEverySyncRequestFieldIsRead`,
+	`TestFailedChunkIsRetriedNotSkipped`,
 	`TestFifthColumnNamesExist`,
 	`TestGapKindRenameHasAnErratum`,
 	`TestGateTierLegendIsHonest`,
