@@ -32,8 +32,10 @@ type holeSource struct {
 	mu       sync.Mutex
 	failLeft map[tickflow.TradingDay]int
 	asked    [][2]tickflow.TradingDay
-	cancelOn tickflow.TradingDay // 块首为它的那一次请求里调 cancel（造「重试之间被取消」）
+	cancelOn tickflow.TradingDay // 块首为它的第 cancelNth 次请求里调 cancel（造「重试之间被取消」；cancelNth 为 0 时按 1）
+	cancelNth int
 	cancel   context.CancelFunc
+	seenOn   int
 }
 
 func (s *holeSource) Caps(tickflow.ProductKey) tickflow.Capabilities {
@@ -51,7 +53,10 @@ func (s *holeSource) Bars(_ context.Context, req tickflow.BarRequest) ([]tickflo
 	defer s.mu.Unlock()
 	s.asked = append(s.asked, [2]tickflow.TradingDay{req.From, req.To})
 	if s.cancel != nil && req.From == s.cancelOn {
-		s.cancel()
+		s.seenOn++
+		if n := s.cancelNth; s.seenOn == n || (n == 0 && s.seenOn == 1) {
+			s.cancel()
+		}
 	}
 	if s.failLeft[req.From] > 0 {
 		s.failLeft[req.From]--
@@ -168,7 +173,7 @@ func TestFailedChunkIsRetriedNotSkipped(t *testing.T) {
 	}
 }
 
-// guard: 预算用完 ⇒ HaltBudget，失败块及其后一块都不登记；下一次同步从失败块起、能一路前进。
+// guard: 预算用完 ⇒ HaltBudget，失败块及其后所有块都不登记；下一次同步从失败块起、能一路前进。
 func TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances(t *testing.T) {
 	src := &holeSource{failLeft: map[tickflow.TradingDay]int{20200805: 2}}
 	syn, store := newHoleRig(t, src)
@@ -244,5 +249,25 @@ func TestContextCanceledBetweenRetriesRegistersNothingAfter(t *testing.T) {
 	_, err2, asked2 := holeSync(t, syn, store, src, "② 不再取消，To=0811", 20200811, 1)
 	if err2 != nil || len(asked2) == 0 || asked2[0] != [2]tickflow.TradingDay{20200805, 20200806} || !oneSpan(store, 20200803, 20200811, 7) {
 		t.Errorf("② err=%v 请求序列 %v 覆盖 %v，期望 nil、从 [0805,0806] 起、一段 [0803,0811] 7 根", err2, asked2, store.Coverage())
+	}
+}
+
+// guard: 一块恒失败、预算很大（K=10）、第 2 次请求里被取消 ⇒ 取消在下一次重试之前生效：HaltContext、那一块恰好请求 2 次、之后不登记。
+// ⚠️ 挡的是「重试路径不看 ctx」：那样取消要推迟到预算用完，报的是 HaltBudget。
+func TestContextCanceledDuringPersistentFailureStopsBeforeBudget(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	src := &holeSource{failLeft: map[tickflow.TradingDay]int{20200805: 1000}, cancelOn: 20200805, cancelNth: 2, cancel: cancel}
+	syn, store := newHoleRig(t, src)
+	rep, err, asked := holeSyncCtx(ctx, t, syn, store, src, "0805 恒失败、K=10、第 2 次请求里取消", 20200810, 10)
+	want := [][2]tickflow.TradingDay{{20200803, 20200804}, {20200805, 20200806}, {20200805, 20200806}}
+	if !sameAsked(asked, want) {
+		t.Errorf("请求序列 %v，期望 %v —— 失败块应恰好请求 2 次，取消之后不再重试", asked, want)
+	}
+	if !errors.Is(err, context.Canceled) || rep.Halt != tickflow.HaltContext {
+		t.Errorf("err=%v Halt=%v，期望 context.Canceled 与 HaltContext —— 取消被推迟到了预算用完", err, rep.Halt)
+	}
+	if !oneSpan(store, 20200803, 20200804, 2) {
+		t.Errorf("覆盖 %v，期望只到失败块之前 [0803,0804]", store.Coverage())
 	}
 }

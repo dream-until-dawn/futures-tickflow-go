@@ -913,6 +913,7 @@ var guardNames = []string{
 	`TestContentLocatorCheckerItself`,
 	`TestContentLocatorsResolve`,
 	`TestContextCanceledBetweenRetriesRegistersNothingAfter`,
+	`TestContextCanceledDuringPersistentFailureStopsBeforeBudget`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
 	`TestDaysWithBarsEqualsHasBars`,
 	`TestDocLinksResolve`,
