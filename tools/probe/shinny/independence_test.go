@@ -40,6 +40,7 @@ var mustNotImportLibrary = []string{
 	"diffrefetch.go", // v0.6 片二前置：本地删快照后同一连接重要同一段，服务端还发不发 —— 量外部协议，不许拿本库判定
 	"clientuse.go",   // v0.6 片 A 前置：websocket 握手走不走传进去的 http.Client —— 量依赖库与外部服务，不许拿本库判定
 	"edge.go",        // v0.6 片 A 前置：具体合约 1m 的协议边界（过期 / 上市前 / 不存在 / 郑商所码 / 未来）—— 量外部协议，不许拿本库判定
+	"damatrix.go",    // v0.6 D-A 重裁前补量：主连/近月/远月/新上市一年的夜盘四类 —— 归日规则写在文件里，不许拿本库判定
 }
 
 func TestProbesDoNotImportLibrary(t *testing.T) {
