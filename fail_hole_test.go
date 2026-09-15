@@ -29,13 +29,13 @@ var holeDays = []tickflow.TradingDay{20200803, 20200804, 20200805, 20200806, 202
 
 // holeSource 按块给根（每个交易日一根），记下每次被请求的块；failLeft[块首] 次数内对那一块报错。
 type holeSource struct {
-	mu       sync.Mutex
-	failLeft map[tickflow.TradingDay]int
-	asked    [][2]tickflow.TradingDay
-	cancelOn tickflow.TradingDay // 块首为它的第 cancelNth 次请求里调 cancel（造「重试之间被取消」；cancelNth 为 0 时按 1）
+	mu        sync.Mutex
+	failLeft  map[tickflow.TradingDay]int
+	asked     [][2]tickflow.TradingDay
+	cancelOn  tickflow.TradingDay // 块首为它的第 cancelNth 次请求里调 cancel（造「重试之间被取消」；cancelNth 为 0 时按 1）
 	cancelNth int
-	cancel   context.CancelFunc
-	seenOn   int
+	cancel    context.CancelFunc
+	seenOn    int
 }
 
 func (s *holeSource) Caps(tickflow.ProductKey) tickflow.Capabilities {
