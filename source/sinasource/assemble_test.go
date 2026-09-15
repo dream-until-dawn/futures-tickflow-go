@@ -175,6 +175,27 @@ func TestSettleNaNSurvivesAssembly(t *testing.T) {
 	}
 }
 
+// 新浪日线没有成交额字段 ⇒ Turnover 必须是 NaN，不是 0（用户 2026-09-15 裁定；v0.6.0 之前是零值 0）。
+// ⛔ 这一格补上之前全仓没有任何测试看新浪源的 Turnover（改成 NaN 之后全量测试一格不变 ⇒ 那一格没人守）。
+func TestTurnoverIsNaNNotZero(t *testing.T) {
+	rows, err := ParseDaily(read(t, "daily_RB2610.jsonp"))
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	bars, err := AssembleDaily(rows, testCal(t), rbReq(), nowAfter)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if len(bars) == 0 {
+		t.Fatal("一根都没有 —— 下面的循环恒绿")
+	}
+	for _, b := range bars {
+		if !math.IsNaN(b.Turnover) {
+			t.Fatalf("%s 那根的 Turnover=%v —— 新浪日线没有成交额，应当是 NaN（「源不给」不是「成交额为 0」）", b.TradingDay, b.Turnover)
+		}
+	}
+}
+
 // —— 三、四条「不静默」 ——
 
 func TestUncoveredRangeIsAnErrorNotAPartialResult(t *testing.T) {
