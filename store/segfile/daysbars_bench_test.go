@@ -285,3 +285,20 @@ func BenchmarkWalkWholeSpan(b *testing.B) {
 		}
 	}
 }
+
+// BenchmarkVerifyCoverageWholeLibrary 量【真的 VerifyCoverage】整库一遍（(y) 读法改造前后各跑一次）。
+// 跑法：go test ./store/segfile/ -run XXX -bench VerifyCoverageWholeLibrary -benchtime=1x -count=3
+func BenchmarkVerifyCoverageWholeLibrary(b *testing.B) {
+	s, span := openSyntheticStore(b)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res, err := s.VerifyCoverage()
+		if err != nil {
+			b.Fatal(err)
+		}
+		// 前提自检：合成库是好的 ⇒ 那一段必须通过；一个「什么都没核」的实现也会很快，但它给不出这个 nil。
+		if e, ok := res[span.Key()]; !ok || e != nil {
+			b.Fatalf("合成库上 VerifyCoverage 没通过：ok=%v err=%v —— 读数作废", ok, e)
+		}
+	}
+}
