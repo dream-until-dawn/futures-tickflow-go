@@ -26,6 +26,14 @@ import (
 // SHFE.rb 每天 345 根。按 probe.md 6.20 的读数，具体合约整个寿命的 id 数是
 // SHFE.rb2605 82,769（已到期，全寿命）· CZCE.TA701 145,142（尚未到期，截至 2026-09-14 21:31）⇒ 这一档与之同量级。
 //
+// ✅ (y) 读法改造前后（2026-09-15，同机，三次运行，底座 a3126fa → (y) 分支）：
+//
+//	                   改造前（逐条 ReadAt）          改造后（缓冲顺序读）
+//	DaysWithBars 一次  258–313 ms                    5 ms
+//	VerifyCoverage 一次 258–312 ms                   4–5 ms
+//	原样再跑 Sync      542–575 ms                    9–11 ms
+//	往后多一天 Sync    529–601 ms                    15 ms
+//
 // 跑法（一次拉 9 万根，固定 1 次）：
 //
 //	go test ./source/shinnysource/ -run XXX -bench SyncScanCost -benchtime=1x -count=3

@@ -5587,3 +5587,36 @@ CZCE.TA701    未到期，截至 2026-09-14 21:31 id 数 145,142
 ```
 📎 核法这一片已经只有一份（`segfile.coverageChecker`，Walk 与 VerifyCoverage 共用）⇒ (y) 只动读法。
 
+#### (y) 落地（2026-09-15）：DaysWithBars / VerifyCoverage 换缓冲读 —— 读数、等价格、㉒ 后继重估
+
+⚠️ **本节上面「二、决定：v0.6 不换算法、不加缓存」原文不改**：换的是 I/O 读法，不是算法（仍是整库一遍、结论形状不变），也没有加缓存。
+
+```
+读法  store/segfile.scanRecords（64 KiB 缓冲顺序读、长度取开始那一刻、不动偏移）—— Walk / VerifyCoverage / DaysWithBars 三处共用
+      参照实现故意不动：Verify(span) 与 HasBars → dayHasRecords 仍是逐条 ReadAt（两对等价性测试靠这个差别才不空）
+核法  coverageChecker（片 B 起就是一份）
+
+读数（同机同次，-benchtime=1x -count=3；合成库、页缓存热、Windows —— 下界，同问四那句）
+                                   改造前                       改造后
+890k DaysWithBarsWholeSpan         2858 / 2932 / 3027 ms        52.3 / 51.6 / 54.1 ms
+890k VerifyCoverageWholeLibrary    2676 / 2709 / 2613 ms        64.7 / 45.1 / 58.7 ms
+一合约一年真 Sync（scan_cost）
+  DaysWithBars 一次                258–313 ms                   5 ms
+  VerifyCoverage 一次              258–312 ms                   4–5 ms
+  往后多一天一次 Sync              529–601 ms                   15 ms
+```
+⇒ 上面二·七那张表「日常增量一次 Sync 约 0.7 s，几乎全是这两遍」**在 (y) 之后不再成立**：那 0.7 s 几乎全是逐条 ReadAt 的系统调用。
+
+**等价格重跑与补格**：
+- `TestVerifyCoverageMatchesVerifyPerSpan` 补「第二段多一条（bars）」「第二段少一天（days）」两格。片 B 变异 W3 下这个文件原来一格不红。
+- `TestDaysWithBarsEqualsHasBars` 的库补构造要求四：至少一段的最后一天有根。变异「区间上界 <= 改 <」原来在它上面 0 红。
+- `TestWalkAgreesWithVerifyCoverage` 六格原样通过。
+
+**㉒ 后继的两个前提，分开写**：
+```
+甲 扫描代价   主连一遍 45–65 ms 量级（890k 合成库）⇒ 「主连会让每次 Sync 慢几秒」不再成立
+乙 语义       「一个库只装一个合约」—— 记录数被合约寿命封顶、跨合约拼接不进同一个库；扫描变快不改变它
+⇒ TestIntradaySourcesRejectContinuousBeforeNetwork 留着，理由换成乙；它的失败报文同步改成指向 v0.7 那个产品决定
+```
+⚠️ 段数多时 DaysWithBars 每段扫一遍整个文件，这一格仍然没量；单遍变快之后，它的代价按「段数 × 约 50 ms（890k）」算。这是推论。
+

@@ -145,6 +145,15 @@ func TestVerifyCoverageMatchesVerifyPerSpan(t *testing.T) {
 			appendRaw(t, dir, tickflow.Bar{Ts: 99, TsEnd: 100, TradingDay: tradingDays[0],
 				Open: 1, High: 1, Low: 1, Close: 1, Volume: 1})
 		}, errRecordDisorder},
+		// ⛔ 下面两格是 (y)（2026-09-15）补的：片 B 变异 W3（去掉计数比较）下本文件一格都没红 ——
+		// 红的是根包两条经 VerifyCoverage 的测试。⇒ 等价性这一对原来只覆盖【全库错误】，没覆盖【逐段计数】。
+		// ⚠️ 两格都只坏第二段（[d3,d4]）；第一段在两边都必须是 nil —— 断言在下面按段分开写。
+		{"第二段多一条（bars 对不上）", func(t *testing.T, dir string) {
+			appendRaw(t, dir, bar(tradingDays[4], int64(tradingDays[4])+1))
+		}, errBarsMismatch},
+		{"第二段少一天（bars 相同而 days 对不上）", func(t *testing.T, dir string) {
+			overwriteRecord(t, dir, 2, bar(tradingDays[4], int64(tradingDays[4])-1))
+		}, errDaysMismatch},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -175,11 +184,13 @@ func TestVerifyCoverageMatchesVerifyPerSpan(t *testing.T) {
 			if err != nil {
 				t.Fatalf("新读法跑不起来：%v", err)
 			}
-			for _, sp := range cov {
+			// 逐段计数那两格只坏第二段；全库错误归给每一段。
+			perSpan := errors.Is(c.want, errBarsMismatch) || errors.Is(c.want, errDaysMismatch)
+			for j, sp := range cov {
 				got := res[sp.Key()]
 				ref := s.Verify(sp) // ← 参照实现，一段一遍全扫
 				switch {
-				case c.want == nil:
+				case c.want == nil || (perSpan && j == 0):
 					if got != nil || ref != nil {
 						t.Errorf("%v 健康库上却报了：新=%v 旧=%v", sp, got, ref)
 					}

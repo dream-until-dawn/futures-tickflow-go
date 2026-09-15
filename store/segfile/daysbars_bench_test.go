@@ -37,6 +37,14 @@ import (
 //
 //	go test ./store/segfile/ -run XXX -bench DaysWithBars -benchmem -benchtime=1x -count=4
 //
+// ⚠️ **(y)（2026-09-15）之后 DaysWithBars 的读法变了**（缓冲顺序读，与 Walk / VerifyCoverage 共用 scanRecords）⇒
+// 下面这组 2026-09-10 的读数是**逐条 ReadAt 时**的，原样留作记述；`HasBars`（参照实现）读法没变。
+// (y) 前后同机同次（-benchtime=1x -count=3）：
+//
+//	DaysWithBarsWholeSpan       2858 / 2932 / 3027 ms  ⇒  52.3 / 51.6 / 54.1 ms
+//	VerifyCoverageWholeLibrary  2676 / 2709 / 2613 ms  ⇒  64.7 / 45.1 / 58.7 ms
+//	WalkWholeSpan（读法没变）    44.9 / 47.9 / 46.0 ms  ⇒  45.4 / 45.5 / 55.4 ms
+//
 // —— 读数（2026-09-10，AMD Ryzen 7 5700X，windows/amd64，N = 890,000）——
 //
 //	命令  go test ./store/segfile/ -run XXX -bench 'DaysWithBars|HasBars' -benchtime=1x -count=3
@@ -282,6 +290,23 @@ func BenchmarkWalkWholeSpan(b *testing.B) {
 		// 前提自检：一个空转的 Walk 跑得飞快 —— 回调数必须等于整库条数（而 Walk 自己也比过 .meta 的 Bars/Days）。
 		if n != benchBars {
 			b.Fatalf("回调 %d 次，应为 %d —— 这组读数量的是一条空转的路径", n, benchBars)
+		}
+	}
+}
+
+// BenchmarkVerifyCoverageWholeLibrary 量【真的 VerifyCoverage】整库一遍（(y) 读法改造前后各跑一次）。
+// 跑法：go test ./store/segfile/ -run XXX -bench VerifyCoverageWholeLibrary -benchtime=1x -count=3
+func BenchmarkVerifyCoverageWholeLibrary(b *testing.B) {
+	s, span := openSyntheticStore(b)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		res, err := s.VerifyCoverage()
+		if err != nil {
+			b.Fatal(err)
+		}
+		// 前提自检：合成库是好的 ⇒ 那一段必须通过；一个「什么都没核」的实现也会很快，但它给不出这个 nil。
+		if e, ok := res[span.Key()]; !ok || e != nil {
+			b.Fatalf("合成库上 VerifyCoverage 没通过：ok=%v err=%v —— 读数作废", ok, e)
 		}
 	}
 }
