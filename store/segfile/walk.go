@@ -134,6 +134,10 @@ func (s *Store) Walk(from, to tickflow.TradingDay, fn func(tickflow.Bar) bool) e
 	n := CountRecords(st.Size())
 	// ⛔ 长度取【开始这一刻】的文件大小；只用 SectionReader（ReadAt），**不动文件偏移**。
 	// AppendBars 今天自己会先 Seek 到尾（store.go），而那不是 Walk 可以动偏移的理由：它是另一处的防线。
+	// ⚠️ **「长度取开始那一刻」这一条没有测试守着**（片 B 评审 2026-09-14 补打的变异 R2：长度改成 1<<62、读到 EOF ⇒ 全模块一格不红）。
+	// 不补的理由：要守它就得在扫描期间追加；而缓冲一次读 64 KiB，小库在第一次回调之前就整个进了缓冲，
+	// 追加进来的根不论长度怎么取都读不到 ⇒ 要么造一个大于缓冲的库并在回调里追加（越出上面写明的「并发不安全」射程），
+	// 要么就是一个时绿时红的测试。**写在这里，免得下一个人以为有人守着。**
 	r := bufio.NewReaderSize(io.NewSectionReader(s.dat, 0, n*RecordSize), walkBufSize)
 	buf := make([]byte, RecordSize)
 	c := newCoverageChecker(cov)
