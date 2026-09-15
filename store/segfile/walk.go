@@ -111,13 +111,22 @@ const walkBufSize = 64 << 10
 //	长度  取【开始这一刻】的文件大小（Stat）；只用 SectionReader（ReadAt），**不动文件偏移**
 //	      ⚠️ 「长度取开始那一刻」**没有测试守着**，理由见 Walk 里那段（片 B 评审补打的变异 R2）
 //	错误  Stat 失败 ⇒ statErr 非 nil（调用方据此区分「跑不起来」）；读或解某一条失败 ⇒ 带条号报
+//
+// scanReaderAt 是 scanRecords 读数据的来源 —— 包内测试缝，生产上恒为 s.dat。
+//
+// ⛔ 它存在的理由（(y) 评审 2026-09-15，变异 Z4）：DecodeBar 在一条完整记录上从不报错，
+// 而长度取开始那一刻 ⇒ 不改代码造不出「读到一半出错」。没有这条缝，
+// 「DaysWithBars 读错误时交出半张表、err 为 nil」这个变异全模块 0 红。
+// ⚠️ 只替换【读数据】这一处；Stat 仍走 s.dat（长度的来源不变）。参照实现不走它。
+var scanReaderAt = func(s *Store) io.ReaderAt { return s.dat }
+
 func (s *Store) scanRecords(fn func(i int64, b tickflow.Bar) bool) (statErr, readErr error) {
 	st, err := s.dat.Stat()
 	if err != nil {
 		return err, nil
 	}
 	n := CountRecords(st.Size())
-	r := bufio.NewReaderSize(io.NewSectionReader(s.dat, 0, n*RecordSize), walkBufSize)
+	r := bufio.NewReaderSize(io.NewSectionReader(scanReaderAt(s), 0, n*RecordSize), walkBufSize)
 	buf := make([]byte, RecordSize)
 	for i := int64(0); i < n; i++ {
 		if _, err := io.ReadFull(r, buf); err != nil {
