@@ -24,7 +24,7 @@ import (
 	"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource"
 )
 
-// guard: ㉒ 的后继 —— 日内源必须在连网之前拒掉主连（一个库＝一个合约，扫描代价才有上界）。
+// guard: ㉒ 的后继 —— 日内源必须在连网之前拒掉主连（守的是「一个库＝一个合约」这条语义前提；扫描代价那条 (y) 之后已不成立）。
 // TestIntradaySourcesRejectContinuousBeforeNetwork 是 ㉒ 那条到期条件【到期之后】的后继。
 //
 // ✅ **2026-09-14 ㉒ 到期了**（v0.6 片 A：`source/shinnysource` 声明 1m），照它自己写的处置走了三步：
@@ -37,6 +37,15 @@ import (
 //	      日常增量（往后多一天）一次 Sync 702–728 ms，几乎全是这两遍
 //	二、决定：**v0.6 不换算法、不加缓存**，写进 docs/design.md 二十·七
 //	三、到期条件换成后继（本测试），并把「那个决定成立的前提」钉住：
+//
+// ✅ **2026-09-15 (y) 读法改造之后，这条后继的两个前提分开重估**（design.md 二十·七「(y) 落地」）：
+//
+//	甲 扫描代价  DaysWithBars / VerifyCoverage 换成缓冲顺序读 ⇒ 890,000 根一遍 45–65 ms（之前 2.6–3.0 s）；
+//	             一合约一年每次 Sync 两遍各约 5 ms，日常增量一次 Sync 15 ms（之前 529–601 ms）
+//	             ⇒ **「主连会让每次 Sync 慢几秒」这一条已经不成立**
+//	乙 语义      「一个库只装一个合约」：记录数被合约寿命封顶、跨合约拼接的序列不进同一个库
+//	             ⇒ **扫描变快不改变这一条**；主连是否落库是 v0.7（continuous ＋ derived）的产品决定
+//	⇒ 这条测试**留着**，理由从甲换成乙。上面「决定」那两行是甲那时的读数，原样留作记述。
 //
 // ⛔ **前提是「一个库装一个合约」**：记录数被合约寿命封顶（probe.md 6.20：SHFE.rb2605 全寿命 82,769 个 id）。
 // **主连（YearMon == 0）没有这个上界** —— `KQ.m@SHFE.rb` 已有 892,005 根，而且每天都在长（6.13）。
@@ -187,11 +196,11 @@ func continuousIntradayViolations(t *testing.T, sources []capsSource, products [
 				err := s.bars(context.Background(), &http.Client{Transport: rt}, req)
 				if err == nil || rt.n > 0 {
 					violations = append(violations, fmt.Sprintf("源 %s 对 %v 的日内周期 %v：拿主连去要 ⇒ 错误=%v · 连网 %d 次。\n"+
-						"【㉒ 的后继到期了】v0.6「不换算法、不加缓存」的决定，前提是一个库只装一个合约（记录数被合约寿命封顶）；"+
-						"主连没有这个上界（KQ.m@SHFE.rb 已 892,005 根）。\n"+
+						"【㉒ 的后继到期了】这条后继今天守的是语义前提「一个库只装一个合约」（记录数被合约寿命封顶、跨合约拼接不进同一个库）；"+
+						"扫描代价那条前提在 (y) 之后已不成立（890k 一遍 45–65 ms，design.md 二十·七）。\n"+
 						"处置不是改这条测试，是：\n"+
-						"  一、按主连那一档重量每次 Sync 的 DaysWithBars ＋ VerifyCoverage（890k 一档每遍约 2.5 s，design.md 二十）\n"+
-						"  二、决定换算法还是加缓存，写进 docs/design.md 二十·七\n"+
+						"  一、确认「主连 / 跨合约序列落库」是不是一个已经做出的产品决定（v0.7 continuous ＋ derived 那一档，design.md §十五）\n"+
+						"  二、是 ⇒ 把这条后继改成「主连只许进专门的库」一类的判据，并写进 design.md 二十·七\n"+
 						"  三、再回来改这条测试", s.name, k, p, err, rt.n))
 				}
 			}

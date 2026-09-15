@@ -97,9 +97,42 @@ func (c *coverageChecker) result() map[tickflow.SpanKey]error {
 	return out
 }
 
-// walkBufSize 是 Walk 的读缓冲。读数（片 B 设计信，2026-09-14，合成库 890,000 根、页缓存热、Windows）：
+// walkBufSize 是整库扫描的读缓冲。读数（片 B 设计信，2026-09-14，合成库 890,000 根、页缓存热、Windows）：
 // 逐条 ReadAt 一遍 2.9–3.3 s，64 KiB 缓冲顺序读＋逐条核 54–60 ms。
 const walkBufSize = 64 << 10
+
+// scanRecords 按文件顺序把每一条记录交给 fn（第 i 条、解好的 Bar）；fn 返回 false 就停。
+//
+// ⛔ **读法只有这一份**（(y)，2026-09-15）：Walk、VerifyCoverage、DaysWithBars 都走它 ——
+// 片 B 评审那条「读法两份、核法一份」是过渡形状；(y) 把读法也收成一份，核法仍是 coverageChecker。
+// ⚠️ 参照实现**故意不走它**：`Verify(span)` 与 `HasBars`/`dayHasRecords` 仍是逐条 ReadAt ——
+// 两边都走新读法的话，等价性测试是空的（equivalence_test.go / verify_coverage_test.go 那两对）。
+//
+//	长度  取【开始这一刻】的文件大小（Stat）；只用 SectionReader（ReadAt），**不动文件偏移**
+//	      ⚠️ 「长度取开始那一刻」**没有测试守着**，理由见 Walk 里那段（片 B 评审补打的变异 R2）
+//	错误  Stat 失败 ⇒ statErr 非 nil（调用方据此区分「跑不起来」）；读或解某一条失败 ⇒ 带条号报
+func (s *Store) scanRecords(fn func(i int64, b tickflow.Bar) bool) (statErr, readErr error) {
+	st, err := s.dat.Stat()
+	if err != nil {
+		return err, nil
+	}
+	n := CountRecords(st.Size())
+	r := bufio.NewReaderSize(io.NewSectionReader(s.dat, 0, n*RecordSize), walkBufSize)
+	buf := make([]byte, RecordSize)
+	for i := int64(0); i < n; i++ {
+		if _, err := io.ReadFull(r, buf); err != nil {
+			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
+		}
+		b, err := DecodeBar(buf)
+		if err != nil {
+			return nil, fmt.Errorf("segfile: 解第 %d 条记录失败: %w", i, err)
+		}
+		if !fn(i, b) {
+			return nil, nil
+		}
+	}
+	return nil, nil
+}
 
 // errWalkRange Walk 的区间不整个落在某一段 coverage 里。
 var errWalkRange = errors.New("segfile: Walk 的区间不整个落在任何一段 coverage 里")
@@ -127,37 +160,29 @@ func (s *Store) Walk(from, to tickflow.TradingDay, fn func(tickflow.Bar) bool) e
 			errWalkRange, from, to, cov)
 	}
 
-	st, err := s.dat.Stat()
-	if err != nil {
-		return fmt.Errorf("segfile: Walk 取文件大小失败: %w", err)
-	}
-	n := CountRecords(st.Size())
-	// ⛔ 长度取【开始这一刻】的文件大小；只用 SectionReader（ReadAt），**不动文件偏移**。
-	// AppendBars 今天自己会先 Seek 到尾（store.go），而那不是 Walk 可以动偏移的理由：它是另一处的防线。
+	// ⛔ 读法在 scanRecords（长度取开始那一刻、不动偏移）。
 	// ⚠️ **「长度取开始那一刻」这一条没有测试守着**（片 B 评审 2026-09-14 补打的变异 R2：长度改成 1<<62、读到 EOF ⇒ 全模块一格不红）。
 	// 不补的理由：要守它就得在扫描期间追加；而缓冲一次读 64 KiB，小库在第一次回调之前就整个进了缓冲，
 	// 追加进来的根不论长度怎么取都读不到 ⇒ 要么造一个大于缓冲的库并在回调里追加（越出上面写明的「并发不安全」射程），
 	// 要么就是一个时绿时红的测试。**写在这里，免得下一个人以为有人守着。**
-	r := bufio.NewReaderSize(io.NewSectionReader(s.dat, 0, n*RecordSize), walkBufSize)
-	buf := make([]byte, RecordSize)
 	c := newCoverageChecker(cov)
 	deliver := true
-	for i := int64(0); i < n; i++ {
-		if _, err := io.ReadFull(r, buf); err != nil {
-			return fmt.Errorf("segfile: Walk 读第 %d 条记录失败: %w", i, err)
-		}
-		b, err := DecodeBar(buf)
-		if err != nil {
-			return fmt.Errorf("segfile: Walk 解第 %d 条记录失败: %w", i, err)
-		}
+	statErr, readErr := s.scanRecords(func(i int64, b tickflow.Bar) bool {
 		// ⛔ 先核、再回调：没核过的记录不交出去。
 		if !c.feed(i, b) {
-			break
+			return false
 		}
 		// ⛔ fn 返回 false 只停回调，扫描照样走完 —— 结论照给。
 		if deliver && b.TradingDay >= from && b.TradingDay <= to {
 			deliver = fn(b)
 		}
+		return true
+	})
+	if statErr != nil {
+		return fmt.Errorf("segfile: Walk 取文件大小失败: %w", statErr)
+	}
+	if readErr != nil {
+		return fmt.Errorf("segfile: Walk：%w", readErr)
 	}
 
 	res := c.result()

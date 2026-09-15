@@ -575,26 +575,15 @@ func (s *Store) Verify(span tickflow.Span) error {
 // 二、它是这个新读法的**参照实现** —— 两边都走新代码的话，等价性测试是空的。
 func (s *Store) VerifyCoverage() (map[tickflow.SpanKey]error, error) {
 	cov := s.meta.Coverage
-	st, err := s.dat.Stat()
-	if err != nil {
-		return nil, err // ⇒ 契约三：跑不起来时第一个返回值必须是 nil map
-	}
-	n := CountRecords(st.Size())
-	buf := make([]byte, RecordSize)
-	// ⛔ 核法在 coverageChecker 里（walk.go），与 Walk 共用一份 —— 片 B 评审：读法两份，核法一份。
-	// 读法这里仍是逐条 ReadAt（改读法登记为 (y)，另起一片带等价格与重量）。
+	// ⛔ 核法在 coverageChecker、读法在 scanRecords（walk.go），都与 Walk 共用一份。
+	// (y)（2026-09-15）之前这里是逐条 ReadAt；参照实现 Verify(span) 仍是逐条 ReadAt，等价性测试靠这个差别才不空。
 	c := newCoverageChecker(cov)
-	for i := int64(0); i < n; i++ {
-		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
-			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
-		}
-		b, derr := DecodeBar(buf)
-		if derr != nil {
-			return nil, derr
-		}
-		if !c.feed(i, b) {
-			break
-		}
+	statErr, readErr := s.scanRecords(c.feed)
+	if statErr != nil {
+		return nil, statErr // ⇒ 契约三：跑不起来时第一个返回值必须是 nil map
+	}
+	if readErr != nil {
+		return nil, readErr // 读盘失败同样是「这一遍跑不起来」⇒ nil map
 	}
 	out := c.result()
 	for key, e := range out {
@@ -703,24 +692,20 @@ func (s *Store) DaysWithBars(span tickflow.Span) (map[tickflow.TradingDay]bool, 
 		return nil, fmt.Errorf("%w: [%s, %s] 这一段还没走查过",
 			tickflow.ErrSpanUnverified, reg.From, reg.To)
 	}
-	st, err := s.dat.Stat()
-	if err != nil {
-		return nil, err
-	}
-	n := CountRecords(st.Size())
-	buf := make([]byte, RecordSize)
+	// ⛔ 读法在 scanRecords（walk.go，与 Walk / VerifyCoverage 共用）；(y) 之前这里是逐条 ReadAt。
+	// 参照实现 HasBars → dayHasRecords 仍是逐条 ReadAt（equivalence_test.go 那一对靠这个差别才不空）。
 	out := make(map[tickflow.TradingDay]bool)
-	for i := int64(0); i < n; i++ {
-		if _, err := s.dat.ReadAt(buf, i*RecordSize); err != nil {
-			return nil, fmt.Errorf("segfile: 读第 %d 条记录失败: %w", i, err)
-		}
-		b, err := DecodeBar(buf)
-		if err != nil {
-			return nil, err
-		}
+	statErr, readErr := s.scanRecords(func(_ int64, b tickflow.Bar) bool {
 		if b.TradingDay >= span.From && b.TradingDay <= span.To {
 			out[b.TradingDay] = true
 		}
+		return true
+	})
+	if statErr != nil {
+		return nil, statErr
+	}
+	if readErr != nil {
+		return nil, readErr
 	}
 	return out, nil
 }

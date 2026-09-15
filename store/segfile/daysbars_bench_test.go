@@ -37,6 +37,14 @@ import (
 //
 //	go test ./store/segfile/ -run XXX -bench DaysWithBars -benchmem -benchtime=1x -count=4
 //
+// ⚠️ **(y)（2026-09-15）之后 DaysWithBars 的读法变了**（缓冲顺序读，与 Walk / VerifyCoverage 共用 scanRecords）⇒
+// 下面这组 2026-09-10 的读数是**逐条 ReadAt 时**的，原样留作记述；`HasBars`（参照实现）读法没变。
+// (y) 前后同机同次（-benchtime=1x -count=3）：
+//
+//	DaysWithBarsWholeSpan       2858 / 2932 / 3027 ms  ⇒  52.3 / 51.6 / 54.1 ms
+//	VerifyCoverageWholeLibrary  2676 / 2709 / 2613 ms  ⇒  64.7 / 45.1 / 58.7 ms
+//	WalkWholeSpan（读法没变）    44.9 / 47.9 / 46.0 ms  ⇒  45.4 / 45.5 / 55.4 ms
+//
 // —— 读数（2026-09-10，AMD Ryzen 7 5700X，windows/amd64，N = 890,000）——
 //
 //	命令  go test ./store/segfile/ -run XXX -bench 'DaysWithBars|HasBars' -benchtime=1x -count=3

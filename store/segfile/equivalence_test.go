@@ -62,6 +62,9 @@ func testCal(t *testing.T) tickflow.Calendar {
 //	     **重复记录正是两者最可能分岔的地方**
 //	三、跨两段
 //	   —— 新读法按段答，而段的边界是它独有的概念；单段测不到「段外的记录不进结果」
+//	四、至少一段的【最后一天】有根（(y) 2026-09-15 补）
+//	   —— 上一版两段的末日（0806、0814）恰好都没根 ⇒ 变异「区间上界 <= 改 <」（漏掉段末那一天）
+//	     **在这条测试上 0 红**，红的是别处两条经 Syncer 的测试。**边界那一天没有根，边界就没被测到。**
 func buildStore(t *testing.T) (*Store, []tickflow.Span) {
 	t.Helper()
 	s, truncated, err := Open(t.TempDir(), tickflow.Daily)
@@ -84,7 +87,7 @@ func buildStore(t *testing.T) (*Store, []tickflow.Span) {
 		}
 	}
 	// 段一 [0805, 0807]：0805 有根（**两条**，其中一条是重复追加）、0806 无根、0807 有根
-	// 段二 [0812, 0814]：0812 无根、0813 有根、0814 无根
+	// 段二 [0812, 0814]：0812 无根、0813 有根、0814 有根（段末那一天，构造要求四）
 	// ⛔ **顺序是硬约束**：`Verify` 要求记录按交易日【非降序】
 	// （报文：「记录的交易日不是非降序」）。我第一版把重复的那条放在后面一天之后
 	// ⇒ 走查当场拒绝。⇒ 重复追加要**在序**。
@@ -93,6 +96,7 @@ func buildStore(t *testing.T) (*Store, []tickflow.Span) {
 		{bar(20200805, 1)},
 		{bar(20200805, 2)}, // ← 0805 第二次追加，仍在序
 		{bar(20200813, 4)},
+		{bar(20200814, 5)}, // ← 段二最后一天（构造要求四）
 	}
 	for _, b := range batches {
 		if err := s.AppendBars(b); err != nil {
@@ -108,7 +112,7 @@ func buildStore(t *testing.T) (*Store, []tickflow.Span) {
 	// 🔴 教训：**我给出去的 Span 是【输入】，不是【读回来的状态】** —— 库会规整它。
 	for _, sp := range []tickflow.Span{
 		{From: 20200805, To: 20200806, Bars: 2, Days: 1},
-		{From: 20200812, To: 20200814, Bars: 1, Days: 1},
+		{From: 20200812, To: 20200814, Bars: 2, Days: 2},
 	} {
 		if err := s.CommitSpan(cal, eqKey, sp, OutcomeComplete); err != nil {
 			t.Fatalf("提交 %s..%s 失败：%v", sp.From, sp.To, err)
