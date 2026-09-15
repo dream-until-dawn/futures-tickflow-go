@@ -87,8 +87,17 @@ func TestTurnoverCoexistenceAndRefetchRecipe(t *testing.T) {
 		t.Fatalf("前提：升级后同步 [0904,0908] 应只拉 0908 一根且 Complete：Bars=%d Complete=%v Incidents=%q", rep.Bars, rep.Complete(), rep.Incidents())
 	}
 	got := turnovers(t, st2, 20260904, 20260908)
-	if got[20260904] != 0 || got[20260907] != 0 || !math.IsNaN(got[20260908]) {
-		t.Errorf("并存那句：旧日子应仍是 0、新日子是 NaN，实得 %v", got)
+	// ⛔ 三天都得在：map 缺键读出来就是 0 ⇒ 「旧记录读不回来」会冒充「读回来是 0」（评审方变异 M2：只读 0908 ⇒ 原来 0 红）。
+	if len(got) != 3 {
+		t.Fatalf("并存那句：读回 %d 天，应为 3（0904 · 0907 · 0908）：%v", len(got), got)
+	}
+	for _, d := range []tickflow.TradingDay{20260904, 20260907} {
+		if v, ok := got[d]; !ok || v != 0 {
+			t.Errorf("并存那句：旧日子 %s 应仍在且是 0，实得 ok=%v v=%v", d, ok, v)
+		}
+	}
+	if v, ok := got[20260908]; !ok || !math.IsNaN(v) {
+		t.Errorf("并存那句：新日子 20260908 应在且是 NaN，实得 ok=%v v=%v", ok, v)
 	}
 	st2.Close()
 
