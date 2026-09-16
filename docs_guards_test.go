@@ -2937,3 +2937,129 @@ func TestReadmeHasNoScheduleTable(t *testing.T) {
 			"  两份各自过期过一次 —— 要改排期，改 design.md。", len(hits), strings.Join(hits, " "))
 	}
 }
+
+// —— 文档里写的测试名，必须在仓里真的存在 ——
+//
+// ⛔ 由来（2026-09-16，两天里第二次栽在同一格）：
+//
+//	一  我给评审方的信里写「漏一个时 `TestGapKindsAreDisposed` 会先红」—— **那个测试不存在**，
+//	    对方拿我给的名字去跑、`-run` 匹配不上、三格全「没红」，差一步就写成「你的依据不成立」
+//	二  docs/design.md 里写着「读数：`TestHeldBackDaysDoNotJumpAFailedChunk` 日志里 coverage 为 …」
+//	    —— 晚到行重做时那个测试被拆成了三格，而这一行没跟着改；**评审方 grep 出来的，不是我**
+//
+// 🔴 两次的形状是同一个：**那个名字是【给读数背书的那句话】，而它比读数本身更少被核** ——
+// 它出现在读数的旁边而不是读数的位置上，看起来在「解释」，于是没人去查它。
+// ⇒ 这条守卫把「去 grep 一次」从一句自觉变成一次求值。
+//
+// ⚠️ 射程（写清楚，别让它看起来比判据宽）：
+//
+//	认    文档里形如 TestXxx 的标识符（首字母大写、跟在 Test 之后），在任一 _test.go 里有 `func TestXxx(`
+//	不认  子测试名（`TestX/子格`）—— 只核斜杠之前那一段
+//	不认  测试**没有**被文档提到这件事（那不是这条守卫的问题）
+//	不认  名字对而【那个测试断言的东西变了】—— 名字在、内容漂开，这条守卫看不见
+func TestTestNamesInDocsExist(t *testing.T) {
+	// ⛔ 例外表：**每一条都要写为什么**（同 syncer_test.go 那张 noTrace 的规矩）。
+	skip := map[string]string{
+		"TestHeldBackDaysDoNotJumpAFailedChunk": "design.md「登记 (x)」那段 2026-09-16 的更正，" +
+			"记的正是【这个名字在仓里不存在】这件事 —— 把它从文档里删掉，那次更正就没有了载荷",
+		"TestImports": "不是测试名，是 `go list` 的字段（Imports / TestImports / XTestImports），" +
+			"docs/design.md 记 store/segfile 的 importer 读数时引的是那三个字段",
+		"XTestImports": "同上，`go list` 的字段",
+		"TestHasBarsExpiryConditionNotYetDue": "design.md 二十·七 那句写的是它【当时】按设计红了；" +
+			"它在同一片（0dbfa38）里被后继替换掉了，紧跟着的补注记的正是【今天仓里没有它】这件事",
+	}
+
+	have := map[string]bool{}
+	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || !strings.HasSuffix(p, "_test.go") {
+			return err
+		}
+		b, rerr := os.ReadFile(p)
+		if rerr != nil {
+			return rerr
+		}
+		for _, m := range regexp.MustCompile(`func (Test[A-Za-z0-9_]+)\(`).FindAllStringSubmatch(string(b), -1) {
+			have[m[1]] = true
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// 前提自检（防空转）：一个测试名都没收到时，下面整圈都在问一张空表。
+	if len(have) < 100 {
+		t.Fatalf("只收到 %d 个测试名 —— 捞法多半坏了（本仓的测试数远不止此），读数作废", len(have))
+	}
+
+	mentioned := map[string][]string{} // 名字 → 出现在哪些文档
+	err = filepath.Walk("docs", func(p string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || !strings.HasSuffix(p, ".md") {
+			return err
+		}
+		b, rerr := os.ReadFile(p)
+		if rerr != nil {
+			return rerr
+		}
+		for _, m := range regexp.MustCompile(`\bTest[A-Za-z0-9_]+`).FindAllString(string(b), -1) {
+			mentioned[m] = append(mentioned[m], p)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(mentioned) < 20 {
+		t.Fatalf("docs 里只捞到 %d 个测试名 —— 捞法多半坏了，读数作废", len(mentioned))
+	}
+
+	for name, where := range mentioned {
+		if have[name] {
+			continue
+		}
+		// ⚠️ 以下划线结尾的是**前缀/通配**，不是名字（文档里写 `TestKnownDefect_`、`TestInvariantA1_…`、
+		// `go test -list 'TestKnownDefect_.*'`）⇒ 它们指的是一族，核不了单个名字。
+		if strings.HasSuffix(name, "_") {
+			continue
+		}
+		if why := skip[name]; why != "" {
+			continue // 例外要有理由；理由不参与判定，它写在 skip 表里给读的人
+		}
+		t.Errorf("文档里写着 %s（%s），而【仓里没有这个测试】（全仓 _test.go 里找不到 func %s）。\n"+
+			"  ⇒ 多半是那个测试被改名或拆掉了，而引它的那句话没跟着改 ——\n"+
+			"     照那句话去跑的人会拿到「没红」，并把它读成「这条依据不成立」。\n"+
+			"  ⇒ 改文档里的名字；若那句话记录的正是【它不存在】，把它连同理由加进本测试的 skip 表。",
+			name, strings.Join(where, " "), name)
+	}
+	for name := range skip {
+		if have[name] {
+			t.Errorf("%s 在 skip 表里（理由：它不存在），而仓里现在【有】这个测试 —— 例外过期了，删掉它", name)
+		}
+	}
+}
+
+// TestTestNamesCheckerItself 是上面那条的对照组 —— 判定逻辑必须自己被喂一次已知答案。
+//
+// 三格：真存在的名字 · 不存在的名字 · 子测试写法（斜杠之后那段不参与）。
+func TestTestNamesCheckerItself(t *testing.T) {
+	have := map[string]bool{"TestTestNamesInDocsExist": true}
+	cases := []struct {
+		name string
+		text string
+		want bool // 期望「报出问题」
+	}{
+		{"真存在", "见 `TestTestNamesInDocsExist`", false},
+		{"不存在", "见 `TestNoSuchGuardEverExisted`", true},
+		{"子测试", "见 `TestTestNamesInDocsExist/某一格`", false},
+	}
+	for _, c := range cases {
+		bad := false
+		for _, m := range regexp.MustCompile(`\bTest[A-Za-z0-9_]+`).FindAllString(c.text, -1) {
+			if !have[m] {
+				bad = true
+			}
+		}
+		if bad != c.want {
+			t.Errorf("%s：判定 %v，期望 %v —— 判定逻辑与上面那条守卫不是同一套", c.name, bad, c.want)
+		}
+	}
+}
