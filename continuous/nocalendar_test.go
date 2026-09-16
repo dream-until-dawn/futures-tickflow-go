@@ -30,6 +30,10 @@ import (
 //
 //	守不住  调用方在外面用日历筛过 bars 再喂进来 ⇒ 由 `Continuous.Days`（天轴交出去）接住
 //	守不住  收进来的接口恰好带 `Calendar()` 方法**而我们不调用** —— 不调用就不构成依赖
+//	守不住  ⛔ **本包自己重抄一个与日历同形的接口**（方法集一样、名字不带 Calendar、不 import）——
+//	        按名字判的守卫看不见它（评审方 2026-09-16 打的 C4 格：rc=0 不红）
+//	        ⇒ 真出现时接住它的是 code review 与「本包只收【数据】、不收【提供者】」这条习惯，**不是这条守卫**
+//	        ⚠️ 写出来的价值在于：**别让后来的人把「守卫绿」读成「本包没有日历依赖」**
 //	不认    _test.go（测试要造输入，允许提到它；本文件自己就是）
 
 // calendarMentions 收「这一份源码里对日历的依赖」：标识符命中与 import 命中各一份。
@@ -47,8 +51,19 @@ func calendarMentions(src string) (idents []string, imports []string, err error)
 		if uerr != nil {
 			return nil, nil, uerr
 		}
-		if strings.Contains(p, "/calendar/") || strings.HasSuffix(p, "/calendar") {
-			imports = append(imports, p)
+		// ⛔ **按【路径段】判，且段前缀匹配**（评审方 2026-09-16 定，我认）：
+		// 上一版写的是「含 `/calendar/` 或以 `/calendar` 结尾」⇒ `.../calendar_util` 这种**漏掉**。
+		// 两个方向的代价不对称 ——
+		//
+		//	漏    日历依赖悄悄进来而守卫绿 ⇒ 静默，而那正是这条守卫存在的全部理由
+		//	误伤  一个真不是日历的包被挡 ⇒ 当场红，加一条带理由的例外就结了 ⇒ 吵
+		//
+		// 本仓一贯取「吵而不丢」⇒ 宁可误伤。
+		for _, seg := range strings.Split(p, "/") {
+			if strings.HasPrefix(seg, "calendar") {
+				imports = append(imports, p)
+				break
+			}
 		}
 	}
 	ast.Inspect(f, func(n ast.Node) bool {
@@ -109,6 +124,11 @@ func TestCalendarMentionsCheckerItself(t *testing.T) {
 		{"参数里带 Calendar", "package p\n\nimport tickflow \"github.com/dream-until-dawn/futures-tickflow-go\"\n\nfunc f(cal tickflow.Calendar) {}\n", true, false},
 		{"import 了而变量名不叫那个", "package p\n\nimport \"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded\"\n\nvar x = embedded.New\n", false, true},
 		{"只在注释与字符串里提到", "package p\n\n// 这里写 Calendar 只是说明\nvar s = \"Calendar\"\n", false, false},
+		// ⛔ 这一格钉的是「按路径段前缀匹配」那条：上一版的判法在这里【不命中】（漏）。
+		{"import 的是 calendar_util", "package p\n\nimport \"example.com/x/calendar_util\"\n\nvar y = calendar_util.F\n", false, true},
+		// ⚠️ 与它对照：某一段【含有】calendar 而不以它开头（如 mycalendar）⇒ 不命中。
+		// 这一格记的是**射程**，不是保护：真出现一个叫 mycalendar 的日历包时，这条守卫漏它。
+		{"段不以 calendar 开头", "package p\n\nimport \"example.com/x/mycalendar\"\n\nvar z = mycalendar.F\n", false, false},
 	}
 	for _, c := range cases {
 		ids, imps, err := calendarMentions(c.src)
