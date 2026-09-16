@@ -3493,12 +3493,22 @@ type ContinuousSpec struct {
     Adjust  AdjustMethod // 怎么复权
 }
 
+// ContractDay 是某个具体合约在某个交易日的那几个数——换月规则要看的全部输入。
+// ⛔ 它不含日历：「这一天算不算交易日」在本包里由【库里有没有根】回答。
+type ContractDay struct {
+    Symbol       tickflow.Symbol
+    Day          tickflow.TradingDay
+    Volume       float64
+    OpenInterest float64
+    Expiry       tickflow.TradingDay // 0 ＝ 不知道（参考数据没给），不许当成一个日期用
+}
+
 type RollRule interface {
     // Pick 在给定交易日，从候选合约里选出主力。
-    Pick(day TradingDay, cands []ContractDay) (symbol string, ok bool)
+    Pick(day tickflow.TradingDay, cands []ContractDay) (tickflow.Symbol, bool)
 }
 // 内置：ByOpenInterest / ByVolume / ByOIAndVolume（两者都最大才换）/
-//       FixedDaysBeforeExpiry(n)
+//       FixedBarDaysBeforeExpiry(n)
 
 type AdjustMethod int
 const (
@@ -3510,21 +3520,43 @@ const (
 )
 ```
 
+⚠️ **两处与初稿不同，各有理由**（2026-09-16 落地时定）：
+
+```
+一  Pick 返回 tickflow.Symbol，不是 string —— 本仓 Symbol 是具名类型，与 Bar.Symbol / BarRequest.Symbol 对齐；
+    裸串会让 "rb2610" / "SHFE.rb2610" / "RB2610" 三种写法都编译得过
+二  FixedDaysBeforeExpiry ⇒ **FixedBarDaysBeforeExpiry**：它数的是【库里有根的日子】，不是日历交易日。
+    库缺一天时两者给出不同的换月日 —— 处置分岔 ⇒ 不该共用「交易日」这个名字（评审方 2026-09-16 提，我认）
+```
+
 产出**不只是拼好的序列，还有接缝**：
 
 ```go
 type Continuous struct {
-    Bars  []Bar
+    Bars  []tickflow.Bar
     Rolls []Roll
+    Days  []tickflow.TradingDay // 本次拼接用的【天轴】：库里实际有根的交易日，升序
+}
+
+// CountedSpan 是换月规则实际数到的那一段——数了几天、从哪天数到哪天。
+type CountedSpan struct {
+    From, To tickflow.TradingDay
+    Days     int
 }
 
 type Roll struct {
-    Day       TradingDay // 换月发生在哪个交易日
-    From, To  string  // 旧合约 → 新合约
+    Day       tickflow.TradingDay // 换月发生在哪个交易日
+    From, To  tickflow.Symbol // 旧合约 → 新合约
     Basis     float64 // 换月当日两个合约的价差（基差）
     Factor    float64 // 复权因子
+    Counted   CountedSpan // 定这个换月点时实际数到的那一段
 }
 ```
+
+⛔ **`Days` 与 `Counted` 是后加的两格，理由是【约定要能被查出违反】**：本包的天轴是「库里有根的交易日」，
+库里缺一天 ⇒ 按天数的规则会数错，而那是调用方违反约定（那一段里有「没拉过」的日子）造成的。
+不交出去 ⇒ **违反在上游、报错在下游、中间没有痕迹**；交出去 ⇒ 下游当场看得出「它数的 20 天里只有 18 天」。
+⚠️ `Days` 的两端同时是**天轴的范围**：库里只拉了近月时起点晚于真实上市日，而起点附近数不满 n 天**不会报错**。
 
 **接缝必须交出去。** 回测引擎需要知道哪几天的收益来自换月而不是行情，
 以及换月本身是要付成本的（平旧开新，两笔手续费加两次冲击成本）。

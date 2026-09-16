@@ -2957,6 +2957,10 @@ func TestReadmeHasNoScheduleTable(t *testing.T) {
 //	不认  子测试名（`TestX/子格`）—— 只核斜杠之前那一段
 //	不认  测试**没有**被文档提到这件事（那不是这条守卫的问题）
 //	不认  名字对而【那个测试断言的东西变了】—— 名字在、内容漂开，这条守卫看不见
+//	⛔ 不认  **`docs/` 之外的 .md**：仓根的 CONTRIBUTING.md 与 README.md 没核
+//	         （评审方 2026-09-16 在 main 上量过：CONTRIBUTING.md 提到 8 个名字，其中 TestGuards / TestHighWater
+//	         是 `-run TestHighWater|TestGuards` 里的运行前缀、不是名字；README.md 提到 1 个，存在）
+//	         ⇒ 今天那两处不是错；扩覆盖之前先把这一句写清楚 —— 射程写明比覆盖扩大更急
 func TestTestNamesInDocsExist(t *testing.T) {
 	// ⛔ 例外表：**每一条都要写为什么**（同 syncer_test.go 那张 noTrace 的规矩）。
 	skip := map[string]string{
@@ -3000,7 +3004,7 @@ func TestTestNamesInDocsExist(t *testing.T) {
 		if rerr != nil {
 			return rerr
 		}
-		for _, m := range regexp.MustCompile(`\bTest[A-Za-z0-9_]+`).FindAllString(string(b), -1) {
+		for _, m := range testNamesIn(string(b)) {
 			mentioned[m] = append(mentioned[m], p)
 		}
 		return nil
@@ -3037,6 +3041,15 @@ func TestTestNamesInDocsExist(t *testing.T) {
 	}
 }
 
+// testNamesIn 从一段文本里捞出形如 TestXxx 的名字。
+//
+// ⛔ **守卫与对照组共用这一份**（评审方 2026-09-16 那条）：上一版对照组自己又抄了一遍这条正则 ⇒
+// 判法哪天改了（比如加上处理 `-run` 前缀），**对照组不会跟着红，它仍在验自己那份副本**。
+// 📎 本仓那条「对照组与验证器自己也要验」的又一格：验的必须是【本体】。
+func testNamesIn(text string) []string {
+	return regexp.MustCompile(`\bTest[A-Za-z0-9_]+`).FindAllString(text, -1)
+}
+
 // TestTestNamesCheckerItself 是上面那条的对照组 —— 判定逻辑必须自己被喂一次已知答案。
 //
 // 三格：真存在的名字 · 不存在的名字 · 子测试写法（斜杠之后那段不参与）。
@@ -3053,7 +3066,7 @@ func TestTestNamesCheckerItself(t *testing.T) {
 	}
 	for _, c := range cases {
 		bad := false
-		for _, m := range regexp.MustCompile(`\bTest[A-Za-z0-9_]+`).FindAllString(c.text, -1) {
+		for _, m := range testNamesIn(c.text) { // ⇐ 调的是本体，不是再抄一份
 			if !have[m] {
 				bad = true
 			}
