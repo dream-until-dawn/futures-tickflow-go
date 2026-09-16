@@ -3270,6 +3270,34 @@ cd tools/probe/shinny && go run .
 **处置**：官方源只做**可选的对账通道**（中金所可直连，其余留接口不实现），
 不作为主数据源。主线仍是新浪 + 天勤。
 
+### 七之一 ⛔ 中金所对「那天没有数据」返回的是 **HTTP 200 ＋ HTML 错误页**，不是 404（2026-09-16）
+
+起因：勘误三（晚到行）的射程里我写过一句推论 ——「`cffexsource` 没量，它对非 200 报错而不是当成没有，
+晚出数多半表现为报错」。**那句话的理由是错的**：这个站点根本不给非 200。
+
+```
+底座    直接 GET（标准库，UA 写 futures-tickflow-go probe），2026-09-16 08:26 CST
+        http://www.cffex.com.cn/sj/hqsj/rtj/<YYYYMM>/<DD>/index.xml
+
+09-16（当天，日盘还没开）   HTTP 200 · 2132 字节 · 开头 `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"…`
+09-15（已收盘）             HTTP 200 · 493552 字节 · 开头 `<?xml version="1.0" encoding="UTF-8"?> <dailydatas>…`
+09-11（已收盘）             HTTP 200 · 489938 字节 · 同上
+09-12（周六，非交易日）      HTTP 200 · 2132 字节 · 同 09-16（同一张 HTML）
+09-30（未来）               HTTP 200 · 2132 字节 · 同上
+```
+
+⇒ **挡住它的不是 HTTP 码，是 XML 校验。** 同一份响应体喂给 `cffexsource.ParseDaily`（同日实测）：
+
+```
+0 行 · err = cffexsource: 响应不是预期的 XML——可能是那天休市（没有这份文件或文档为空），
+      也可能被 WAF 挡了或拿到了错误页：XML syntax error on line 6: invalid UTF-8（前 80 字节：那张 HTML 的开头）
+```
+
+⇒ 「那天还没出数」在 `cffexsource` 上表现为 **`Bars` 报错**，不是「0 根」⇒ 不会被登记成「拉过确认没有」。
+⚠️ 而那条保护**写在解析器里**（`fetchDay` 的非 200 检查在这一格上一次都没生效过）—— 判据挪到 HTTP 码上就会漏。
+⚠️ 射程：一天、五个日期、没有区分「休市」与「当天还没出数」（两者拿到同一张 2132 字节的 HTML）。
+⇒ 推论（没量）：合约已到期而那天有数据时，XML 在而该合约不在其中 ⇒ `AssembleDay` 给 `found=false` ⇒ 0 根 ⇒ 走挂起那条路（勘误三）。
+
 ---
 
 ## 八、这轮探测改变了哪些原本的设想
