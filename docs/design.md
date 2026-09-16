@@ -5690,6 +5690,11 @@ for n, s in scan(cur):
 
 `source/shinnysource` 声明 1m ⇒ `TestHasBarsExpiryConditionNotYetDue` 按设计红了。它的处置是三步，逐步照做：
 
+📌 **2026-09-16 补注（上面那句原文不改）**：那颗测试**今天不在仓里了** —— 它在同一片（`0dbfa38`）里被后继替换：
+`hasbars_expiry_test.go` 现在是 `TestIntradaySourcesRejectContinuousBeforeNetwork` 与标定格 `TestContinuousIntradayViolationsCanFail`。
+⇒ 照上面那句去 `-run TestHasBarsExpiryConditionNotYetDue` 的人会拿到「没有测试被选中」，而那与「测试全过」在退出码上是同一个字节。
+（这一处是新守卫 `TestTestNamesInDocsExist` 抓出来的，不是人读出来的。）
+
 #### 一、答那一问：日内落库之后，每次 Sync 的两遍整库扫描受不受得了
 
 **量的，不是推的**：`source/shinnysource/scan_cost_bench_test.go` —— 真 `Syncer` ＋ 真 `segfile` ＋ 本源对离线复刻的天勤；
@@ -5808,7 +5813,19 @@ CZCE.TA701    未到期，截至 2026-09-14 21:31 id 数 145,142
 ⇒ 库只往后长，没登记的日子后面不会已有登记（洞除外，而洞补不进去）⇒ 块尾空的日子挂起、接进紧挨着的下一块一起登记。
 ⇒ 隔着没拉成的块或已覆盖的日子 ⇒ 丢弃挂起（接过去会把没拉成的日子一起登记成「确认没有」，突变 L6 实测就是这样）。
 
-⚠️ **既有、未修**：某块拉取失败而预算允许继续时，后面的块照登 ⇒ 留洞 ⇒ 洞里的日子补不进去。读数：`TestHeldBackDaysDoNotJumpAFailedChunk` 日志里 coverage 为 `[{0803 0803} {0806 0806}]`。没有端到端量「下一次同步撞上它会怎样」。
+✅ **（2026-09-16 更正，上面这段原文不改）** 这里原先写着三句话，**三句现在都不成立**（评审方在 main afbe2fc 上核出，我复核一致）：
+
+```
+原文一 「既有、未修」                                 ⇒ 已在 v0.6 修：失败重试同一块（勘误四），见下一小节「登记：失败块跳过留洞」
+原文二 「读数：TestHeldBackDaysDoNotJumpAFailedChunk」 ⇒ ⛔ **这个测试名在仓里不存在**（全仓 grep 只命中这一行文档自己）。
+        晚到行重做时它被拆成了三格；今天现存的是 late_row_holdback_test.go 的
+        TestHeldBackSurvivesARetriedChunk · TestHeldBackIsReportedOnBudgetExit · TestHeldBackDaysDoNotJumpACoveredDay
+原文三 「没有端到端量」                                ⇒ 量过了：评审方 2026-09-15 在 d7f2d9a 与 e553d09 上各跑一次
+        （① 留洞 ② 源恢复之后仍报「交易日倒退」、0811 从未被请求 ③ 同 ②），读数在 v0.6.0 发布说明勘误四
+```
+
+📎 本仓那条的又一例：**凡写「读数：`TestXxx`」，把那个名字当成待核的名字 grep 一次** ——
+那个名字是**给读数背书的那句话**，而它比读数本身更少被核；这一次它在文档里活了一天多。
 ⚠️ **前提**：旧的一份响应是新的一份的前缀（少末尾几行）。中间缺行时，某天会被更晚的根夹住而误登记。2026-09-15 的读数与前缀一致，没专门量。
 
 #### 登记：失败块跳过留洞（2026-09-15，v0.6 之内修；勘误四）

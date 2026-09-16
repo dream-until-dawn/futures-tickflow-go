@@ -985,6 +985,8 @@ var guardNames = []string{
 	`TestTagV041SelfCheckOneStillWorks`,
 	`TestTagV041SelfCheckTwoHasAnErratum`,
 	`TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta`,
+	`TestTestNamesCheckerItself`,
+	`TestTestNamesInDocsExist`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
