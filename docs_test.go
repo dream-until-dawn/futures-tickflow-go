@@ -914,6 +914,7 @@ var guardNames = []string{
 	`TestContentLocatorsResolve`,
 	`TestContextCanceledBetweenRetriesRegistersNothingAfter`,
 	`TestContextCanceledDuringPersistentFailureStopsBeforeBudget`,
+	`TestContinuousDoesNotDependOnCalendar`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
 	`TestDaysWithBarsEqualsHasBars`,
 	`TestDocLinksResolve`,

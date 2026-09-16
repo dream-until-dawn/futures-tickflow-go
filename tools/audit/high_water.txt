@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 100
+guards 101
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -448,3 +448,4 @@ guards 100
 # 来历 2026-09-15 guards 97 自 89 自动：重造时表长大（89 -> 97）；本次新增：TestAgeCapStopsAtCalendarEnd TestEmptyTailAgeCapWithToZero TestHeldBackDaysDoNotJumpACoveredDay TestHeldBackIsReportedOnBudgetExit TestHeldBackIsReportedOnCancelExit TestHeldBackSurvivesARetriedChunk TestHeldBackTailAgesIntoRegistration TestSinaFlippingDailyRowIsRegisteredOnlyWhenItStays TestWholeChunkHeldBackAdvancesToNextChunk；本次移除：TestHeldBackDaysDoNotJumpAFailedChunk
 # 来历 2026-09-16 guards 98 自 97 自动：重造时表长大（97 -> 98）；本次新增：TestContextCanceledDuringPersistentFailureStopsBeforeBudget
 # 来历 2026-09-16 guards 100 自 98 自动：重造时表长大（98 -> 100）；本次新增：TestTestNamesCheckerItself TestTestNamesInDocsExist
+# 来历 2026-09-16 guards 101 自 100 自动：重造时表长大（100 -> 101）；本次新增：TestContinuousDoesNotDependOnCalendar
