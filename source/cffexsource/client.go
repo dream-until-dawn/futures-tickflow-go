@@ -181,6 +181,9 @@ func (c *Client) fetchDay(ctx context.Context, d tickflow.TradingDay) ([]byte, e
 		return nil, fmt.Errorf("cffexsource: 请求 %s 失败：%w", d, err)
 	}
 	defer rs.Body.Close()
+	// ⚠️ 这一格【至今一次都没生效过】（2026-09-16 实测，probe.md 七之一）：中金所对「那天没有数据」
+	// 返回的是 **HTTP 200 ＋ 一张 2132 字节的 HTML 错误页**，不是 404 —— 真正挡住它的是 ParseDaily 的 XML 校验。
+	// ⇒ 留着它是因为它守的是另一族（真出 4xx/5xx 时别把那天读成「没有数据」），**但别把判据挪到 HTTP 码上**。
 	if rs.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("cffexsource: %s 返回 HTTP %d——"+
 			"不当成「那天没有数据」：那会被 coverage 记成「拉过、确认没有」；"+
