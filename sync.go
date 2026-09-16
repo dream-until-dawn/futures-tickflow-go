@@ -984,7 +984,7 @@ func (s *Syncer) fetch(ctx context.Context, req SyncRequest, k ProductKey,
 	chunks [][]TradingDay, days []TradingDay, aged func(TradingDay) int, rep *SyncReport) ([]TradingDay, int, HaltReason, error) {
 
 	consecutive := 0
-	attempts := 0
+	attempts := 0 // 调用 Bars 的次数，含重试
 	var synced [2]TradingDay
 	var syncedDays []TradingDay
 
