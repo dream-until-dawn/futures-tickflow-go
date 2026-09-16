@@ -903,10 +903,14 @@ func TestCarrierCensus(t *testing.T) {
 // ⚠️ 上一版这里写的是「**这是这个方案唯一的洞**」。代价二被发现之后那句就不成立了，
 // 已删。**一个「唯一」是最容易过期的措辞——它把「我现在只想到一个」写成了「只有一个」。**
 var guardNames = []string{
+	`TestAdjustNeverTouchesVolumeOrOpenInterest`,
 	`TestAgeCapStopsAtCalendarEnd`,
 	`TestAppendBarsRejectsOutOfOrder`,
+	`TestBackAdjustKeepsHistoryForwardAdjustKeepsLatest`,
 	`TestBackfillAfterVerifyDoesNotPoisonTheStore`,
 	`TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances`,
+	`TestBuildGivesBarsRollsAndDays`,
+	`TestBuildRejectsNonAscendingDays`,
 	`TestCarrierCensus`,
 	`TestCarriersHaveNoHTMLComments`,
 	`TestConsecutiveFailsResetAfterARetrySucceeds`,
@@ -915,6 +919,7 @@ var guardNames = []string{
 	`TestContextCanceledBetweenRetriesRegistersNothingAfter`,
 	`TestContextCanceledDuringPersistentFailureStopsBeforeBudget`,
 	`TestContinuousDoesNotDependOnCalendar`,
+	`TestCountedSpanReachesTheRoll`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
 	`TestDaysWithBarsEqualsHasBars`,
 	`TestDocLinksResolve`,
@@ -927,6 +932,7 @@ var guardNames = []string{
 	`TestEverySyncRequestFieldIsRead`,
 	`TestFailedChunkIsRetriedNotSkipped`,
 	`TestFifthColumnNamesExist`,
+	`TestFixedBarDaysRejectsUnknownExpiry`,
 	`TestGapKindRenameHasAnErratum`,
 	`TestGateTierLegendIsHonest`,
 	`TestGoListImportRulerWorks`,
@@ -952,6 +958,7 @@ var guardNames = []string{
 	`TestMergeOwnDiffStaysInsideWhitelist`,
 	`TestMergeRecordCriterion`,
 	`TestMergeRecordPrecedesWhatItLicenses`,
+	`TestMissingDayShowsUpInCountedSpan`,
 	`TestMissingRecordsAbortsBeforePlanning`,
 	`TestMissingRecordsNamesAreOneFamily`,
 	`TestNoConflictMarkersInDocs`,
