@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 101
+guards 111
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -449,3 +449,5 @@ guards 101
 # 来历 2026-09-16 guards 98 自 97 自动：重造时表长大（97 -> 98）；本次新增：TestContextCanceledDuringPersistentFailureStopsBeforeBudget
 # 来历 2026-09-16 guards 100 自 98 自动：重造时表长大（98 -> 100）；本次新增：TestTestNamesCheckerItself TestTestNamesInDocsExist
 # 来历 2026-09-16 guards 101 自 100 自动：重造时表长大（100 -> 101）；本次新增：TestContinuousDoesNotDependOnCalendar
+# 来历 2026-09-16 guards 108 自 101 自动：重造时表长大（101 -> 108）；本次新增：TestAdjustNeverTouchesVolumeOrOpenInterest TestBackAdjustKeepsHistoryForwardAdjustKeepsLatest TestBuildGivesBarsRollsAndDays TestBuildRejectsNonAscendingDays TestCountedSpanReachesTheRoll TestFixedBarDaysRejectsUnknownExpiry TestMissingDayShowsUpInCountedSpan
+# 来历 2026-09-16 guards 111 自 108 自动：重造时表长大（108 -> 111）；本次新增：TestBasisDependsOnWhetherOldContractStillHasABar TestBuildRejectsUnusableRollPrice TestNoPickDaysAreNamed
