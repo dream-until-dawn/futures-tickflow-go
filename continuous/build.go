@@ -232,3 +232,27 @@ func adjust(c *Continuous, m AdjustMethod) {
 		// ⚠️ Volume / OpenInterest / Turnover 一律不动 —— 有测试钉着。
 	}
 }
+
+// ContractAt 交出**第 i 根属于哪个合约**。
+//
+// ⛔ 它存在的理由：`tickflow.Bar` 里没有 Symbol（按合约分文件存）⇒ 拼好的序列自己说不出这件事。
+// 上一版把这句话写在 `First` 的注释里（「由 First 与 Rolls 推出来」）—— 而**一句能推的注释不会自己变红**：
+// 下一个人改了 `Rolls` 的语义，那句话静静变假（评审方 2026-09-16 指出，我认）。
+// ⇒ 把它变成一个**会被测试钉住的方法**：推法只有这一处，谁改了 Rolls 就会在这里当场对不上。
+//
+// ⚠️ 射程：i 越界或序列为空 ⇒ 返回零值与 false；
+// 它按**交易日**找那一段（`Rolls[k].Day` 是换月发生的那一天，那一天起属于 `Rolls[k].To`）。
+func (c Continuous) ContractAt(i int) (tickflow.Symbol, bool) {
+	if i < 0 || i >= len(c.Bars) {
+		return tickflow.Symbol{}, false
+	}
+	sym := c.First
+	for _, r := range c.Rolls {
+		if r.Day <= c.Bars[i].TradingDay {
+			sym = r.To
+			continue
+		}
+		break
+	}
+	return sym, sym != tickflow.Symbol{}
+}
