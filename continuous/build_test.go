@@ -64,23 +64,32 @@ func TestBuildGivesBarsRollsAndDays(t *testing.T) {
 }
 
 // guard: 复权只动价格 —— 四种方式下 Volume 与 OpenInterest 逐根不变（§八「三条容易踩的」之二）。
+//
+// ⛔ **基线取自【喂进去的那一份】，不取自 Build**（评审方 2026-09-16 造的 B3 格抓住的）：
+// 上一版拿 `Build(..., NoAdjust)` 当基线，而 `NoAdjust` 也走 `adjust()` ⇒
+// **一个对所有路径一视同仁的改动（连 NoAdjust 一起改 Volume），基线跟着一起变，断言恒真**：
+//
+//	只改复权那几支   ⇒ 红 ✅
+//	连 NoAdjust 一起改 ⇒ 绿 ⛔ 量真的被改了，而测试说没事
+//
+// 📎 本仓那条「对照组与验证器自己也要验」的又一形态 —— 这次坏的不是断言，是**基线的出处**。
 func TestAdjustNeverTouchesVolumeOrOpenInterest(t *testing.T) {
-	raw, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: NoAdjust}, threeDays())
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, m := range []AdjustMethod{RatioBack, RatioFwd, DiffBack, DiffFwd} {
-		got, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, threeDays())
+	in := threeDays()
+	// 基线：喂进去的那一份里，每天【被选中那个合约】的量与持仓。与被测函数无关。
+	wantVol := []float64{5, 6, 9}
+	wantOI := []float64{100, 100, 100}
+	for _, m := range []AdjustMethod{NoAdjust, RatioBack, RatioFwd, DiffBack, DiffFwd} {
+		got, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, in)
 		if err != nil {
 			t.Fatalf("Adjust=%d：%v", m, err)
 		}
-		if len(got.Bars) != len(raw.Bars) {
-			t.Fatalf("Adjust=%d：根数变了（%d ⇒ %d）", m, len(raw.Bars), len(got.Bars))
+		if len(got.Bars) != len(wantVol) {
+			t.Fatalf("Adjust=%d：%d 根，期望 %d", m, len(got.Bars), len(wantVol))
 		}
 		for i := range got.Bars {
-			if got.Bars[i].Volume != raw.Bars[i].Volume || got.Bars[i].OpenInterest != raw.Bars[i].OpenInterest {
-				t.Errorf("Adjust=%d 第 %d 根：量/持仓被动了（%v/%v ⇒ %v/%v）—— 量是手数，没有复权的含义",
-					m, i, raw.Bars[i].Volume, raw.Bars[i].OpenInterest, got.Bars[i].Volume, got.Bars[i].OpenInterest)
+			if got.Bars[i].Volume != wantVol[i] || got.Bars[i].OpenInterest != wantOI[i] {
+				t.Errorf("Adjust=%d 第 %d 根：量/持仓 %v/%v，而喂进去的是 %v/%v —— 量是手数，没有复权的含义",
+					m, i, got.Bars[i].Volume, got.Bars[i].OpenInterest, wantVol[i], wantOI[i])
 			}
 		}
 	}
@@ -225,5 +234,83 @@ func TestMissingDayShowsUpInCountedSpan(t *testing.T) {
 		t.Errorf("缺一天之后数到 %d 天，完整时 %d 天 —— 期望正好少一天；\n"+
 			"  ⇒ 看不出少了几天的话，违反在上游、报错在下游、中间没有痕迹",
 			hole.Rolls[0].Counted.Days, full.Rolls[0].Counted.Days)
+	}
+}
+
+// guard: 换月这一刻的价格用不了（0 或非有限）⇒ **源头拒**，不让四种复权各自改编。
+//
+// ⛔ 由来（评审方 2026-09-16 造输入量的）：同一份「旧合约收盘 ＝ 0」的输入，四种方式各错各的 ——
+// RatioBack 静默变成没复权 · RatioFwd 把早段乘成 0 · DiffBack 把最新那根变成 0 · DiffFwd 把早段抬高。
+// ⇒ 「给 Factor 兜底」不够：Basis 同样被毒到。而 **0 是一个看起来正常的价格**，
+// 它会变成一整条被清零或被抬高的序列，**全程不报错**。
+func TestBuildRejectsUnusableRollPrice(t *testing.T) {
+	a, b := sym(2601), sym(2605)
+	in := threeDays()
+	// 换月那天（0805）旧合约的收盘改成 0。
+	old := in[2].Bars[a]
+	old.Close = 0
+	in[2].Bars[a] = old
+	for _, m := range []AdjustMethod{NoAdjust, RatioBack, RatioFwd, DiffBack, DiffFwd} {
+		_, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, in)
+		if !errors.Is(err, ErrRollPriceUnusable) {
+			t.Errorf("Adjust=%d：err=%v，期望 ErrRollPriceUnusable —— 四种方式都该在同一处停下", m, err)
+		}
+	}
+	_ = b
+}
+
+// guard: 规则说「这一天没有主力」⇒ 那一天要**留声**（NoPick），而不是与「那天真没数据」同形。
+//
+// ⛔ 这一格钉的是 v0.6 勘误三那一族：下游（derived）要从「这一天有没有根」判夜盘，
+// 规则造成的空洞若不留声，它会把「规则说不清」读成「那天没开」。
+func TestNoPickDaysAreNamed(t *testing.T) {
+	a, b := sym(2601), sym(2605)
+	in := threeDays()
+	// 0804：持仓最大是 a，成交最大是 b ⇒ ByOIAndVolume 说不清。
+	in[1].Cands = []ContractDay{{Symbol: a, OpenInterest: 100, Volume: 10}, {Symbol: b, OpenInterest: 10, Volume: 100}}
+	c, err := Build(ContinuousSpec{Roll: ByOIAndVolume{}, Adjust: NoAdjust}, in)
+	if err != nil {
+		t.Fatalf("Build 出错：%v", err)
+	}
+	if len(c.NoPick) != 1 || c.NoPick[0] != 20200804 {
+		t.Errorf("NoPick=%v，期望恰好点名 0804 —— 不留声的话，它与「那天真没数据」在下游同形", c.NoPick)
+	}
+	if len(c.Days) != 3 {
+		t.Errorf("Days=%v，期望三天都在 —— 天轴记的是「库里有这一天」，不是「这一天有主力」", c.Days)
+	}
+	if len(c.Bars) != 2 {
+		t.Errorf("Bars=%d 根，期望 2（0804 不产出）", len(c.Bars))
+	}
+}
+
+// guard: `Basis` 的两种取法**不是同一件事** —— 换月日旧合约还有根 vs 已经没根，各算各的。
+//
+// ⚠️ 这一格不判哪个对，只把差别钉住：两条路给出的 Basis/Factor 必须不等；
+// 相等的话，那条分支就是死的（而注释里却写着它有意义）。
+func TestBasisDependsOnWhetherOldContractStillHasABar(t *testing.T) {
+	a, b := sym(2601), sym(2605)
+	withOld := threeDays() // 0805 两个合约都有根：旧 1000 新 1100 ⇒ Basis 100
+	noOld := threeDays()   // 0805 旧合约没根 ⇒ 退回它前一天的收盘
+	noOld[2].Bars = map[tickflow.Symbol]tickflow.Bar{b: bar(20200805, b, 1100, 9, 100)}
+	old := withOld[2].Bars[a]
+	old.Close = 900 // 让两条路真的分开：当天 900，而前一天是 1000
+	withOld[2].Bars[a] = old
+
+	c1, err1 := Build(ContinuousSpec{Roll: ByOpenInterest{}}, withOld)
+	c2, err2 := Build(ContinuousSpec{Roll: ByOpenInterest{}}, noOld)
+	if err1 != nil || err2 != nil {
+		t.Fatalf("Build 出错：%v / %v", err1, err2)
+	}
+	if len(c1.Rolls) != 1 || len(c2.Rolls) != 1 {
+		t.Fatalf("接缝数不对：%d / %d", len(c1.Rolls), len(c2.Rolls))
+	}
+	if c1.Rolls[0].Basis == c2.Rolls[0].Basis {
+		t.Errorf("两条路算出同一个 Basis（%v）—— 那条分支是死的，而注释里写着它有意义", c1.Rolls[0].Basis)
+	}
+	if c1.Rolls[0].Basis != 200 { // 1100 − 900（当天旧合约的收盘）
+		t.Errorf("旧合约当天有根时 Basis=%v，期望 200（1100 − 900）", c1.Rolls[0].Basis)
+	}
+	if c2.Rolls[0].Basis != 100 { // 1100 − 1000（旧合约前一天的收盘）
+		t.Errorf("旧合约当天没根时 Basis=%v，期望 100（1100 − 1000）", c2.Rolls[0].Basis)
 	}
 }

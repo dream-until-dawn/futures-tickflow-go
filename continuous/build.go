@@ -3,6 +3,7 @@ package continuous
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 )
@@ -29,6 +30,20 @@ var (
 
 	// ErrNoBarForPick 规则选出了某个合约，而这一天没有它的那一根。
 	ErrNoBarForPick = errors.New("continuous: 规则选出的合约在这一天没有根")
+
+	// ErrRollPriceUnusable 换月这一刻，两边的价格里有一个用不了（0 或非有限）。
+	//
+	// 🔴 **判在源头，不给四种复权各自兜底**（评审方 2026-09-16 造输入量出来的，我认）：
+	// 同一份「旧合约收盘 ＝ 0」的输入，四种方式**各错各的** ——
+	//
+	//	RatioBack  静默变成「没复权」（那是我原来写的兜底）
+	//	RatioFwd   早段价格**全被乘成 0**（这一支根本没有兜底）
+	//	DiffBack   最新那一根变成 0（Basis ＝ 1100 − 0）
+	//	DiffFwd    早段价格被抬高 1100
+	//
+	// ⇒ 「给 Factor 兜底」根本不够：`Basis` 同样被毒到。而 **0 是一个看起来正常的价格**（结算价那一格记过同族），
+	// 它会变成一整条被清零或被抬高的序列，**全程不报错**。⇒ 在算这次换月时就拒。
+	ErrRollPriceUnusable = errors.New("continuous: 换月这一刻的价格用不了（0 或非有限），拒绝据此算基差与复权因子")
 )
 
 // DayBars 是**某一个交易日**递给本包的全部东西：那天在市的候选，以及它们各自的那一根。
@@ -97,8 +112,11 @@ func Build(spec ContinuousSpec, in []DayBars) (Continuous, error) {
 		out.Days = append(out.Days, d.Day)
 		sym, ok := spec.Roll.Pick(d.Day, d.Cands)
 		if !ok {
-			// 规则说这一天没有主力（例如候选为空）：这一天不产出根，也不算换月。
-			// ⚠️ 而这一天**仍在天轴上** —— 天轴记的是「库里有这一天」，不是「这一天有主力」。
+			// 规则说这一天没有主力（候选为空，或 ByOIAndVolume 那种「说不清就不猜」）：
+			// 这一天不产出根，也不算换月，**而它要留声** —— 否则规则造成的空洞与「那天真没数据」同形，
+			// 下游（derived）会把前者读成后者（v0.6 勘误三那一族）。
+			// ⚠️ 这一天**仍在天轴上** —— 天轴记的是「库里有这一天」，不是「这一天有主力」。
+			out.NoPick = append(out.NoPick, d.Day)
 			continue
 		}
 		bar, has := d.Bars[sym]
@@ -114,10 +132,12 @@ func Build(spec ContinuousSpec, in []DayBars) (Continuous, error) {
 			if ob, ok := d.Bars[prev]; ok {
 				oldClose = ob.Close
 			}
-			roll.Basis = bar.Close - oldClose
-			if oldClose != 0 {
-				roll.Factor = bar.Close / oldClose
+			if !usablePrice(oldClose) || !usablePrice(bar.Close) {
+				return out, fmt.Errorf("%w：%s 从 %s 换到 %s，旧收盘 %v 新收盘 %v",
+					ErrRollPriceUnusable, d.Day, prev, sym, oldClose, bar.Close)
 			}
+			roll.Basis = bar.Close - oldClose
+			roll.Factor = bar.Close / oldClose
 			if cr, ok := spec.Roll.(CountingRule); ok {
 				roll.Counted = cr.Counted()
 			}
@@ -131,6 +151,11 @@ func Build(spec ContinuousSpec, in []DayBars) (Continuous, error) {
 	}
 	adjust(&out, spec.Adjust)
 	return out, nil
+}
+
+// usablePrice 判「这个价格能不能拿来算基差与复权因子」：非 0、且有限。
+func usablePrice(v float64) bool {
+	return v != 0 && !math.IsNaN(v) && !math.IsInf(v, 0)
 }
 
 func checkAscending(in []DayBars) error {
@@ -175,13 +200,13 @@ func adjust(c *Continuous, m AdjustMethod) {
 	switch m {
 	case RatioBack, DiffBack:
 		// 基准是第 0 段（最早）⇒ 第 k 段要抵掉它之前每一次换月带来的跳。
+		//
+		// ⛔ 这里**没有**「Factor 为 0 就不乘」那种兜底了：源头（Build）已经拒掉用不了的价格
+		// （`ErrRollPriceUnusable`）⇒ 留着兜底反而让人以为这一格被处理过，而它只在四支里的一支上存在。
 		for k := 1; k <= n; k++ {
 			r := c.Rolls[k-1]
 			if m == RatioBack {
-				mul[k] = mul[k-1]
-				if r.Factor != 0 {
-					mul[k] = mul[k-1] / r.Factor
-				}
+				mul[k] = mul[k-1] / r.Factor
 			} else {
 				add[k] = add[k-1] - r.Basis
 			}
