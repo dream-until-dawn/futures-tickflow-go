@@ -3500,8 +3500,10 @@ type ContractDay struct {
     Day          tickflow.TradingDay
     Volume       float64
     OpenInterest float64
-    Expiry       tickflow.TradingDay // 0 ＝ 不知道（参考数据没给），不许当成一个日期用
+    Expiry       tickflow.TradingDay // ExpiryUnknown（＝0）⇒ 不知道（参考数据没给）
 }
+
+const ExpiryUnknown tickflow.TradingDay = 0
 
 type RollRule interface {
     // Pick 在给定交易日，从候选合约里选出主力。
@@ -3527,6 +3529,10 @@ const (
     裸串会让 "rb2610" / "SHFE.rb2610" / "RB2610" 三种写法都编译得过
 二  FixedDaysBeforeExpiry ⇒ **FixedBarDaysBeforeExpiry**：它数的是【库里有根的日子】，不是日历交易日。
     库缺一天时两者给出不同的换月日 —— 处置分岔 ⇒ 不该共用「交易日」这个名字（评审方 2026-09-16 提，我认）
+三  Expiry 的「不知道」具名成 ExpiryUnknown（＝0）。留零值可以，因为它的来源是【参考数据没给】——
+    那是一个合法状态，与本仓别处「忘了填与真值分不开」那一类不同。条件是三样（评审方 2026-09-16 定）：
+    具名常量 · 规则侧拿到它【返回错误】而不是跳过候选（跳过会把「不知道」悄悄变成「不参与换月」）· 一格测试钉住第二样。
+    🔴 排序那半句写死：0 比任何真实交易日都小 ⇒ 按 Expiry 排序会**默默把「不知道」排到最前** ⇒ 排序前先摘出去或当场拒
 ```
 
 产出**不只是拼好的序列，还有接缝**：
