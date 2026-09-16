@@ -314,3 +314,30 @@ func TestBasisDependsOnWhetherOldContractStillHasABar(t *testing.T) {
 		t.Errorf("旧合约当天没根时 Basis=%v，期望 100（1100 − 1000）", c2.Rolls[0].Basis)
 	}
 }
+
+// guard: 「每一根属于哪个合约」要能被算出来，而不是靠一句注释说它能推。
+//
+// ⛔ 由来（评审方 2026-09-16）：`First` 的注释里写着「由 First 与 Rolls 推出来」——
+// **一句能推的注释不会自己变红**；改了 Rolls 的语义，那句话静静变假。⇒ 推法落成 ContractAt，并钉在这里。
+func TestContractAtFollowsTheRolls(t *testing.T) {
+	a, b := sym(2601), sym(2605)
+	c, err := Build(ContinuousSpec{Roll: ByOpenInterest{}}, threeDays())
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []tickflow.Symbol{a, a, b} // 0803/0804 是 2601，0805 换到 2605
+	for i := range want {
+		got, ok := c.ContractAt(i)
+		if !ok || got != want[i] {
+			t.Errorf("第 %d 根属于 %v（ok=%v），期望 %v", i, got, ok, want[i])
+		}
+	}
+	if _, ok := c.ContractAt(len(want)); ok {
+		t.Errorf("越界的下标给了 ok=true —— 越界要答「不知道」，不许答一个合约")
+	}
+	// 一条从不换月的序列：每一根都是 First。
+	one := Continuous{First: a, Bars: []tickflow.Bar{bar(20200803, a, 1, 1, 1)}}
+	if got, ok := one.ContractAt(0); !ok || got != a {
+		t.Errorf("不换月的序列第 0 根给了 %v（ok=%v），期望 %v —— 这正是没有 First 就答不出的那一格", got, ok, a)
+	}
+}
