@@ -20,7 +20,7 @@ import (
 //
 // 每一天按下面的**先后次序**判，先命中的先定：
 //
-//	一  库侧有洞（Hole）          ⇒ 无结论，原因 ＝ 洞的种类（同一天两种洞都有 ⇒ 记【永久洞】：它需要人处置，挂起不用）
+//	一  库侧有洞（Hole）          ⇒ 无结论，原因 ＝ 洞的种类（同一天两种洞都有 ⇒ 记【永久洞】：它需要人处置，尾部未登记再同步一次就行）
 //	二  规则没给出主力（NoPick）   ⇒ 无结论，原因 ＝ NoPick
 //	三  否则取那一天的主力合约，看它的夜盘观测：
 //	      有夜盘根且量 > 0 ⇒ a · 有夜盘根而量 0 ⇒ b · 没有夜盘根 ⇒ c
@@ -37,7 +37,7 @@ type NightObs struct {
 	NightVolume float64 // 那些根的成交量合计
 }
 
-// Hole 是库侧点名的一个「没有读数」的交易日。Reason 只许是 ReasonHeldBack 或 ReasonNeverFetched。
+// Hole 是库侧点名的一个「没有读数」的交易日。Reason 只许是 ReasonTailUnregistered 或 ReasonNeverFetched。
 //
 // ⚠️ 调用方负责把「每份合约的洞」摊平成「哪几天有洞」：哪些合约算数（例如到期之后那一截不算，probe.md 6.31）
 // 是调用方的判断，本包不收库、也看不见合约的存续期。
@@ -65,10 +65,10 @@ type Report struct {
 	From, To tickflow.TradingDay // 被问的那一段（抄自 Input）—— Compare 据它判 base 快照有没有越界
 	Days     []DayVerdict        // 升序，每个被判的交易日一条
 
-	Traded, ZeroVolume, Absent int // a · b · c
-	NoVerdict                  int // 无结论合计
-	HeldBack, NeverFetched     int // 其中库侧挂起 · 永久洞
-	NoPick                     int // 其中规则没给出主力
+	Traded, ZeroVolume, Absent     int // a · b · c
+	NoVerdict                      int // 无结论合计
+	TailUnregistered, NeverFetched int // 其中尾部未登记 · 永久洞
+	NoPick                         int // 其中规则没给出主力
 
 	// OthersHadNight 是【主连那天没有夜盘量，而同一天别的合约有】的那些天 —— 判据假阳的形状。
 	// ⛔ 只记录、不改结论（6.21 证伪的是「按具体合约判」；品种级这条只是还没被证伪，而这是它可能垮的方向）。
@@ -80,8 +80,8 @@ var (
 	ErrNightObsMissing = errors.New("derived: 主力合约那一天没有夜盘观测")
 	// ErrNightObsDuplicate 是同一合约同一天给了两条观测。
 	ErrNightObsDuplicate = errors.New("derived: 同一合约同一天有两条夜盘观测")
-	// ErrHoleReason 是洞的原因不是「挂起」或「永久洞」。
-	ErrHoleReason = errors.New("derived: 洞的原因只许是挂起或永久洞")
+	// ErrHoleReason 是洞的原因不是「尾部未登记」或「永久洞」。
+	ErrHoleReason = errors.New("derived: 洞的原因只许是尾部未登记或永久洞")
 	// ErrWindowInvalid 是被问的那一段没填或不合法（From/To 不合法，或 From 晚于 To）。
 	ErrWindowInvalid = errors.New("derived: 被问的那一段（From/To）没填或不合法")
 	// ErrOutsideWindow 是主连天轴或洞落在被问的那一段之外 —— 输入与调用方声明的窗口对不上。
@@ -142,7 +142,7 @@ func Judge(in Input) (Report, error) {
 
 	holes := map[tickflow.TradingDay]NoVerdictReason{}
 	for _, h := range in.Holes {
-		if h.Reason != ReasonHeldBack && h.Reason != ReasonNeverFetched {
+		if h.Reason != ReasonTailUnregistered && h.Reason != ReasonNeverFetched {
 			return Report{}, fmt.Errorf("%w：%s 的原因是「%s」", ErrHoleReason, h.Day, h.Reason)
 		}
 		if holes[h.Day] != ReasonNeverFetched { // 两种都有 ⇒ 记永久洞
@@ -236,8 +236,8 @@ func Judge(in Input) (Report, error) {
 		case NoVerdict:
 			rep.NoVerdict++
 			switch r {
-			case ReasonHeldBack:
-				rep.HeldBack++
+			case ReasonTailUnregistered:
+				rep.TailUnregistered++
 			case ReasonNeverFetched:
 				rep.NeverFetched++
 			case ReasonNoPick:
@@ -258,8 +258,8 @@ func (r Report) Summary() string {
 	if n > 0 {
 		pct = 100 * float64(r.NoVerdict) / float64(n)
 	}
-	fmt.Fprintf(&b, "无结论 %d 天（%.1f%%）：库侧挂起 %d · 永久洞 %d · 规则没给出主力 %d\n",
-		r.NoVerdict, pct, r.HeldBack, r.NeverFetched, r.NoPick)
+	fmt.Fprintf(&b, "无结论 %d 天（%.1f%%）：尾部未登记 %d · 永久洞 %d · 规则没给出主力 %d\n",
+		r.NoVerdict, pct, r.TailUnregistered, r.NeverFetched, r.NoPick)
 	fmt.Fprintf(&b, "主连无量而别的合约有量 %d 天 %v\n", len(r.OthersHadNight), r.OthersHadNight)
 	for _, d := range r.Days {
 		if d.Verdict == NoVerdict {

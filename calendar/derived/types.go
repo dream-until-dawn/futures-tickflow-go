@@ -73,9 +73,10 @@ func (v Verdict) String() string {
 //
 // ⛔ 三种原因**处置不同**，所以不许合成一个：
 //
-//	ReasonHeldBack      暂时的：下次同步会重拉那几天，来了就落盘，过了年龄上限仍没有就登记成「拉过确认没有」⇒ 不用处置
-//	ReasonNeverFetched  永久的：库不会自己补（洞是永久的）⇒ 要么接受，要么删文件从早到晚重拉
-//	ReasonNoPick        规则那一天说不清主力（持仓最大与成交最大不是同一个）⇒ 与库无关，重拉也没用
+//	ReasonTailUnregistered  暂时的：落在该合约最后一段 coverage 之后、还没登记 —— 可能是上次同步挂起，也可能是还没同步到；
+//	                        两者处置相同：再同步一次（下一次同步会接着往后拉，库层测试 TestHeldBackTailAgesIntoRegistration 等实测过）
+//	ReasonNeverFetched      永久的：落在两段 coverage 之间或第一段之前 —— 库只往后长、补不进去 ⇒ 要么接受，要么删文件从早到晚重拉
+//	ReasonNoPick            规则那一天说不清主力（持仓最大与成交最大不是同一个）⇒ 与库无关，重拉也没用
 //
 // 判两个东西该不该共用一个名字，看处置分不分岔 —— 这三种在「这一天没有读数」上长得一模一样，而处置三分。
 type NoVerdictReason int
@@ -83,8 +84,11 @@ type NoVerdictReason int
 const (
 	// ReasonNone 是零值：只允许出现在「判过了」的那几档上。
 	ReasonNone NoVerdictReason = iota
-	// ReasonHeldBack 见类型注释。
-	ReasonHeldBack
+	// ReasonTailUnregistered 见类型注释。
+	//
+	// ⚠️ 2026-09-17 由 ReasonHeldBack 改名（评审方）：分类按【相对 coverage 的位置】，不按年龄 ——
+	// HeldBack 只活在那一次同步的报文里、不落库；库里读得到的只有「最后一段之后没登记」，它窄不成「挂起」。
+	ReasonTailUnregistered
 	// ReasonNeverFetched 见类型注释。
 	ReasonNeverFetched
 	// ReasonNoPick 见类型注释。
@@ -96,8 +100,8 @@ func (r NoVerdictReason) String() string {
 	switch r {
 	case ReasonNone:
 		return "无"
-	case ReasonHeldBack:
-		return "库侧挂起（暂时）"
+	case ReasonTailUnregistered:
+		return "尾部未登记（挂起或还没同步到）"
 	case ReasonNeverFetched:
 		return "库侧没拉过（永久洞）"
 	case ReasonNoPick:
@@ -153,7 +157,7 @@ func NewDayVerdict(day tickflow.TradingDay, v Verdict, r NoVerdictReason) (DayVe
 		if r == ReasonNone {
 			return DayVerdict{}, fmt.Errorf("%w（%w）：%s —— 三种原因处置不同，不许省略", ErrNoVerdictWithoutReason, ErrReasonMismatch, day)
 		}
-		if r != ReasonHeldBack && r != ReasonNeverFetched && r != ReasonNoPick {
+		if r != ReasonTailUnregistered && r != ReasonNeverFetched && r != ReasonNoPick {
 			return DayVerdict{}, fmt.Errorf("%w：%s 的原因 %s 不在已知的三种里", ErrReasonMismatch, day, r)
 		}
 	default:

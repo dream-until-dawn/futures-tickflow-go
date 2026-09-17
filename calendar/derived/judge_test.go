@@ -158,9 +158,9 @@ func TestJudgeReproducesTable630(t *testing.T) {
 	}
 
 	if len(rep.Days) != 241 || rep.Traded != 230 || rep.ZeroVolume != 0 || rep.Absent != 6 ||
-		rep.NoVerdict != 5 || rep.NoPick != 5 || rep.HeldBack != 0 || rep.NeverFetched != 0 || len(rep.OthersHadNight) != 0 {
-		t.Errorf("与 6.30 那张表不符：判了 %d（241）· a %d（230）· b %d（0）· c %d（6）· 无结论 %d（5，其中 NoPick %d 要 5、挂起 %d 要 0、永久洞 %d 要 0）· 主连无量而别的合约有量 %d（0）",
-			len(rep.Days), rep.Traded, rep.ZeroVolume, rep.Absent, rep.NoVerdict, rep.NoPick, rep.HeldBack, rep.NeverFetched, len(rep.OthersHadNight))
+		rep.NoVerdict != 5 || rep.NoPick != 5 || rep.TailUnregistered != 0 || rep.NeverFetched != 0 || len(rep.OthersHadNight) != 0 {
+		t.Errorf("与 6.30 那张表不符：判了 %d（241）· a %d（230）· b %d（0）· c %d（6）· 无结论 %d（5，其中 NoPick %d 要 5、尾部未登记 %d 要 0、永久洞 %d 要 0）· 主连无量而别的合约有量 %d（0）",
+			len(rep.Days), rep.Traded, rep.ZeroVolume, rep.Absent, rep.NoVerdict, rep.NoPick, rep.TailUnregistered, rep.NeverFetched, len(rep.OthersHadNight))
 	}
 	var gotC []tickflow.TradingDay
 	for _, dv := range rep.Days {
@@ -187,21 +187,21 @@ func TestJudgeReproducesTable630(t *testing.T) {
 func TestJudgeHolesComeFirstAndAreNamed(t *testing.T) {
 	in := build630(t)
 	in.Holes = []Hole{
-		{Day: 20251009, Reason: ReasonHeldBack},     // 本来是 c ⇒ 洞优先
-		{Day: 20251201, Reason: ReasonHeldBack},     // 本来是 NoPick ⇒ 洞优先
-		{Day: 20260105, Reason: ReasonHeldBack},     // 同一天两种洞 ⇒ 永久洞（挂起在前）
-		{Day: 20260105, Reason: ReasonNeverFetched}, //
-		{Day: 20260224, Reason: ReasonNeverFetched}, // 同一天两种洞 ⇒ 永久洞（永久洞在前）
-		{Day: 20260224, Reason: ReasonHeldBack},     // ⛔ 只有这一种顺序，「后来者胜」才会判错（评审方式突变 J4 第一次落在等价输入上）
-		{Day: 20260101, Reason: ReasonNeverFetched}, // 不在天轴上（元旦）⇒ 仍要交出来
+		{Day: 20251009, Reason: ReasonTailUnregistered}, // 本来是 c ⇒ 洞优先
+		{Day: 20251201, Reason: ReasonTailUnregistered}, // 本来是 NoPick ⇒ 洞优先
+		{Day: 20260105, Reason: ReasonTailUnregistered}, // 同一天两种洞 ⇒ 永久洞（尾部未登记在前）
+		{Day: 20260105, Reason: ReasonNeverFetched},     //
+		{Day: 20260224, Reason: ReasonNeverFetched},     // 同一天两种洞 ⇒ 永久洞（永久洞在前）
+		{Day: 20260224, Reason: ReasonTailUnregistered}, // ⛔ 只有这一种顺序，「后来者胜」才会判错（评审方式突变 J4 第一次落在等价输入上）
+		{Day: 20260101, Reason: ReasonNeverFetched},     // 不在天轴上（元旦）⇒ 仍要交出来
 	}
 	rep, err := Judge(in)
 	if err != nil {
 		t.Fatal(err)
 	}
 	want := map[tickflow.TradingDay]NoVerdictReason{
-		20251009: ReasonHeldBack,
-		20251201: ReasonHeldBack,
+		20251009: ReasonTailUnregistered,
+		20251201: ReasonTailUnregistered,
 		20260105: ReasonNeverFetched,
 		20260224: ReasonNeverFetched,
 		20260101: ReasonNeverFetched,
@@ -220,13 +220,13 @@ func TestJudgeHolesComeFirstAndAreNamed(t *testing.T) {
 			t.Errorf("%s：得 %s/%s，要 无结论/%s", d, dv.Verdict, dv.Reason, r)
 		}
 	}
-	if len(rep.Days) != 242 || rep.HeldBack != 2 || rep.NeverFetched != 3 || rep.NoPick != 4 || rep.Absent != 3 {
-		t.Errorf("报数：判了 %d（242）· 挂起 %d（2）· 永久洞 %d（3）· NoPick %d（4）· c %d（3）",
-			len(rep.Days), rep.HeldBack, rep.NeverFetched, rep.NoPick, rep.Absent)
+	if len(rep.Days) != 242 || rep.TailUnregistered != 2 || rep.NeverFetched != 3 || rep.NoPick != 4 || rep.Absent != 3 {
+		t.Errorf("报数：判了 %d（242）· 尾部未登记 %d（2）· 永久洞 %d（3）· NoPick %d（4）· c %d（3）",
+			len(rep.Days), rep.TailUnregistered, rep.NeverFetched, rep.NoPick, rep.Absent)
 	}
 	s := rep.Summary()
 	// 占比：9 / 242 ＝ 3.7% —— 与零点那格（5/241）分母不同，分母写错时至少一格会红
-	for _, frag := range []string{"无结论 9 天（3.7%）", "库侧挂起 2", "永久洞 3", "规则没给出主力 4", "无结论 2026-01-01：库侧没拉过（永久洞）"} {
+	for _, frag := range []string{"无结论 9 天（3.7%）", "尾部未登记 2", "永久洞 3", "规则没给出主力 4", "无结论 2026-01-01：库侧没拉过（永久洞）"} {
 		if !strings.Contains(s, frag) {
 			t.Errorf("Summary 里缺「%s」：\n%s", frag, s)
 		}
@@ -298,7 +298,7 @@ func TestJudgeWindow(t *testing.T) {
 		{"From 晚于 To", 20260911, 20250915, nil, ErrWindowInvalid},
 		{"天轴越出右边（To 早于主连最后一天）", 20250915, 20260910, nil, ErrOutsideWindow},
 		{"天轴越出左边（From 晚于主连第一天）", 20250916, 20260911, nil, ErrOutsideWindow},
-		{"洞越出窗口", 20250915, 20260911, []Hole{{Day: 20260914, Reason: ReasonHeldBack}}, ErrOutsideWindow},
+		{"洞越出窗口", 20250915, 20260911, []Hole{{Day: 20260914, Reason: ReasonTailUnregistered}}, ErrOutsideWindow},
 	}
 	for _, c := range cases {
 		in := build630(t)
