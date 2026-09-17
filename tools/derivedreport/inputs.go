@@ -168,6 +168,12 @@ func readLibrary(root string, spans []span, from, to tickflow.TradingDay) (libra
 		if _, ragged := segfile.TailCheck(fi.Size()); ragged != 0 {
 			return lr, fmt.Errorf("%s：%s 有 %d 字节残尾（不足一条记录）—— 打开它会截断文件，工具只读，停；残尾交给同步层处置", sp.sym, dat, ragged)
 		}
+		// ⛔ .dat 有记录而 .meta 不在 ⇒ 孤儿记录（盘上有根、没有记账）—— 评审方 L2：
+		// 原来会被当成「一段 coverage 都没有」⇒ 全是尾部未登记 ⇒ 退出 3、处置「再同步一次」；
+		// 而同步层面对的是一份记录已经在盘上的「新库」，照着做是错的 ⇒ 结构层不过，停。
+		if _, err := os.Stat(filepath.Join(dir, "1m.meta")); os.IsNotExist(err) && fi.Size() > 0 {
+			return lr, fmt.Errorf("%s：%s 有 %d 条记录而 1m.meta 不存在 —— 孤儿记录（盘上有根、没有记账），不是「还没同步」，停", sp.sym, dat, fi.Size()/segfile.RecordSize)
+		}
 		lr.modTime[sp.sym] = fi.ModTime()
 		st, trunc, err := segfile.Open(dir, tickflow.MustIntraday(1))
 		if err != nil {
@@ -177,29 +183,34 @@ func readLibrary(root string, spans []span, from, to tickflow.TradingDay) (libra
 			st.Close()
 			return lr, fmt.Errorf("%s：开库时截断了 %d 字节 —— 上面核的时候还没有残尾，库在工具运行时被改了，停", sp.sym, trunc)
 		}
+		// ⛔ Open 量到的两件，显式核（评审方 L1：原来工具从不看 OpenState）：
+		//	LegacyMeta      .meta 没有 format —— v0.3 之前写的、语义未知的 coverage（D2a 要人决定）⇒ 不许当成「拉过」
+		//	MissingRecords  coverage 声称的根比盘上多 ⇒ 数据缺了而账还在 —— 原来靠 Walk 碰巧红出来，这里写成显式的核
+		ostate := st.OpenState()
+		if ostate.LegacyMeta {
+			st.Close()
+			return lr, fmt.Errorf("%s：1m.meta 是旧 .meta（没有 format 字段）—— 那份 coverage 的语义未知，不许当成「拉过」，停；交给同步层（D2a）处置", sp.sym)
+		}
+		if ostate.MissingRecords > 0 {
+			st.Close()
+			return lr, fmt.Errorf("%s：coverage 声称的根比盘上少了 %d 条 —— 数据缺了而账还在，停；交给同步层处置", sp.sym, ostate.MissingRecords)
+		}
 		cov := st.Coverage()
 		lr.coverage[sp.sym] = cov
 		var bars []tickflow.Bar
 		for _, c := range cov {
-			a, b := c.From, c.To
-			if a < from {
-				a = from
-			}
-			if b > to {
-				b = to
-			}
-			if a > b {
-				continue
-			}
-			// 整段 Walk、在回调里按窗口过滤：Walk 要求区间整个落在一段 coverage 里，整段最稳；段与窗口不相交的已在上面跳过
+			// 每一段都整段 Walk、在回调里按窗口过滤：Walk 要求区间整个落在一段 coverage 里；
+			// ⛔ 与窗口不相交的段也要走 —— 「最后一根」要按全部根算（见回调里那句）
 			err := st.Walk(c.From, c.To, func(bar tickflow.Bar) bool {
+				// ⛔ 最后一根按【全部根】算，不按窗口：到期放行要拿它去对「最后交易日」——
+				// 窗口若整个落在到期之后，按窗口算它就是 0，到期合约的空档全被当成洞（整天无结论）
+				if bar.TradingDay > lr.lastBar[sp.sym] {
+					lr.lastBar[sp.sym] = bar.TradingDay
+				}
 				if bar.TradingDay < from || bar.TradingDay > to {
 					return true
 				}
 				bars = append(bars, bar)
-				if bar.TradingDay > lr.lastBar[sp.sym] {
-					lr.lastBar[sp.sym] = bar.TradingDay
-				}
 				m := lr.agg[bar.TradingDay]
 				if m == nil {
 					m = map[tickflow.Symbol]*dayAgg{}

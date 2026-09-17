@@ -66,7 +66,8 @@ func sym(ym int) tickflow.Symbol {
 }
 
 // dayPlan 是某份合约某天怎么造：night < 0 ⇒ 不造夜盘根。
-type dayPlan struct{ night, day, oi float64 }
+// oiFirst 非 0 时，当天【第一根】的持仓用它，其余根用 oi —— 造「日内持仓变化」用（评审方 P7）。
+type dayPlan struct{ night, day, oi, oiFirst float64 }
 
 // commit 是一次写入并提交的一段 coverage：[from, to] 里 plans 给了的天落根，其余天确认为空。
 type commit struct {
@@ -104,6 +105,9 @@ func writeContract(t *testing.T, root string, cal tickflow.Calendar, s tickflow.
 				bars = append(bars, bar(at(d, 0, 30), p.night/2), bar(at(d, 0, 31), p.night-p.night/2)) // 00:30 算夜盘（<04:00）
 			}
 			bars = append(bars, bar(at(d, 9, 0), p.day/2), bar(at(d, 9, 1), p.day-p.day/2))
+			if p.oiFirst != 0 {
+				bars[0].OpenInterest = p.oiFirst
+			}
 			if err := st.AppendBars(bars); err != nil {
 				t.Fatalf("%s %s 落盘：%v", s, d, err)
 			}
@@ -247,7 +251,8 @@ func TestZeroPointTable630ExitsTwoAndIsReadOnly(t *testing.T) {
 	if code != exitDiffs {
 		t.Fatalf("退出码 %d，要 %d（有差异）\n%s", code, exitDiffs, out)
 	}
-	for _, frag := range []string{"判了 241 天 · a（夜盘有量）230 · b（有根无量）0 · c（没有夜盘根）6", "无结论 5 天（2.1%）", "== 差异（6 条） =="} {
+	for _, frag := range []string{"判了 241 天 · a（夜盘有量）230 · b（有根无量）0 · c（没有夜盘根）6", "无结论 5 天（2.1%）", "== 差异（6 条） ==",
+		"2025-10-09 · base 有夜盘 · 观测没有夜盘根 · 观测 c（没有夜盘根） · 先查：查交易所年度休市安排"} { // 处置提示也有人守（评审方 P9）
 		if !strings.Contains(out, frag) {
 			t.Errorf("报文里缺「%s」：\n%s", frag, out)
 		}
@@ -456,7 +461,7 @@ func TestBrokenLibraryStopsNotFoldedIntoHoles(t *testing.T) {
 		want string
 	}{
 		{"截掉半条记录（残尾：打开它会截断文件）", segfile.RecordSize / 2, "残尾"},
-		{"截掉一整条记录（coverage 核不上）", segfile.RecordSize, "Walk"},
+		{"截掉一整条记录（盘上少记录，coverage 还在）", segfile.RecordSize, "少了"},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			dir := t.TempDir()
