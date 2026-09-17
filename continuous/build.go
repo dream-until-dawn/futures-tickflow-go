@@ -92,6 +92,14 @@ func Build(spec ContinuousSpec, in []DayBars) (Continuous, error) {
 	if spec.Roll == nil {
 		return out, errors.New("continuous: ContinuousSpec.Roll 是 nil —— 没有换月规则就没有主连")
 	}
+	switch spec.Adjust {
+	case RatioBack, DiffBack, NoAdjust:
+	case RatioFwd, DiffFwd:
+		out.RewritesHistory = "前复权以最新价为基准：下一次换月之后，这条序列的全部历史价格都会变 ⇒ 同一段历史今天跑与换月后跑结果不同；要可复现请用后复权"
+	default:
+		// 不拒的话，它在 adjust 里一支都不命中 ⇒ 静默变成不复权
+		return out, fmt.Errorf("continuous: ContinuousSpec.Adjust ＝ %d 不是已知的复权方式", int(spec.Adjust))
+	}
 	if err := checkAscending(in); err != nil {
 		return out, err
 	}

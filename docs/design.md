@@ -3514,12 +3514,13 @@ type RollRule interface {
 
 type AdjustMethod int
 const (
-    NoAdjust   AdjustMethod = iota // 不复权（= 新浪 RB0 的口径）
-    RatioBack                       // 后复权·比例
-    RatioFwd                        // 前复权·比例
+    RatioBack  AdjustMethod = iota // 后复权·比例 —— 零值，即默认（用户 2026-09-17 裁，见下「三条容易踩的」之一）
     DiffBack                        // 后复权·价差
-    DiffFwd                         // 前复权·价差
+    RatioFwd                        // 前复权·比例（结果带 RewritesHistory）
+    DiffFwd                         // 前复权·价差（结果带 RewritesHistory）
+    NoAdjust                        // 不复权（= 新浪 RB0 的口径）
 )
+// ⚠️ 2026-09-17 之前零值是 NoAdjust（上面这块当时写的也是 NoAdjust 在首位）——与下面「默认用后复权」各说各的，发版前对表发现。
 ```
 
 ⚠️ **两处与初稿不同，各有理由**（2026-09-16 落地时定）：
@@ -3574,6 +3575,32 @@ type Roll struct {
 前复权以最新价为基准，于是**每换一次月，全部历史价格都会变**。
 同一段历史、同一个策略，今天跑和下个月跑**结果不同**——而且不报错。
 这对「回测可复现」是致命的。后复权以最早为基准，历史一经生成就不再变。
+
+📌 **落到代码（2026-09-17，v0.7 发版前对表）**：这一条原先只在文档里 —— 代码的零值是 `NoAdjust`、前复权没有任何警告，
+而 `continuous/types.go` 的注释写着「『推荐后复权』是一句文档，不是一个默认值」。两边各说各的，没有被记成一处有意的不同。
+用户三问三裁，问句与所选项逐字照录：
+
+```
+问    主连复权的默认值，设计文档和代码对不上：文档写「默认后复权，前复权要显式选且会警告」，代码是「不填就不复权，前复权没有警告」。v0.7 发版前按哪边统一？
+选    「改代码，照文档走」
+
+问    默认的后复权，用比例还是价差？文档只写了「默认后复权」，没说是哪一种。零值会指向你选的那一种。
+选    「比例后复权 RatioBack（推荐）」
+
+问    前复权的「警告」做成什么样？本库没有日志设施，得选一个出口。
+选    「结果里带一个具名字段（推荐）」
+```
+⇒ 落成：
+```
+零值        RatioBack（比例后复权）；不复权要显式选 NoAdjust
+警告        Continuous.RewritesHistory：选了前复权就非空（与这一次有没有换月无关），否则为空；形状照 NoPick / HeldBack —— 不进错误，只留声
+顺带        不在五个已知值里的 AdjustMethod ⇒ Build 报错（否则复权那一步一支都不命中，静默变成不复权）
+钉住        TestZeroAdjustIsRatioBack（输入要能分开比例与价差：threeDays 上两者恰好相等，加了一天）·
+            TestForwardAdjustCarriesWarning（有换月 / 不换月两片）· TestUnknownAdjustIsRejected
+射程        调用方不读 RewritesHistory 就看不见警告；本库没有日志出口
+兼容        continuous 在 v0.7.0 之前从未发布 ⇒ 常量值与零值的改动不影响任何已发布的调用方；
+            仓内唯一的生产调用方 tools/derivedreport 显式写了 NoAdjust，行为不变
+```
 
 **二、复权只动价格，不动成交量与持仓量。**
 量是手数，没有复权的含义。库里有测试锁住这一条。
