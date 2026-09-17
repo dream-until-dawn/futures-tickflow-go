@@ -11,17 +11,21 @@ import (
 	"testing"
 )
 
-// —— 本包「只读不写」的两道守卫（design.md §十五「开工条件二的回答」四格之二） ——
+// —— 本包「只读不写」的三道守卫（design.md §十五「开工条件二的回答」四格之二） ——
 //
 // 三道各管一层：
 //
 //	签名层  TestDerivedTakesDataNotProviders  导出函数的参数里不许出现提供者
 //	调用层  TestDerivedNeverCallsStoreWriters  非测试源码里不许出现写库的方法名
-//	导入层  TestDerivedImportsNoFetchers       非测试源码不许 import 联网或取数的包（net · net/… · 本仓 source/ store/ refdata/）
+//	导入层  TestDerivedImportsOnlyAllowed      非测试源码只许 import 白名单里的包（本仓根包 · continuous · 标准库纯计算包）
 //
 // ⛔ 导入层是评审方 2026-09-17 打 D2/D3 打出来的：签名层只认 root 的提供者名、store/ source/ 下的类型、接口与 any；
 // 调用层只认三个写库方法名 ⇒ 一个 `*http.Client` 参数（具体类型、不在 store/ source/ 下）或一次 `http.Get`，
 // **前两道都看不见** —— 而输入约定写的是「只收数据、不自己去取」，`*http.Client` 恰恰是最直接的「自己去取」。
+//
+// ⛔ 它第一版是**禁表**（禁 net · net/… · source/ store/ refdata/），评审方随即打了 R1–R3，全绿：
+// import github.com/coder/websocket（**本仓自己就在用它连天勤**）· crypto/tls · os/exec ⇒ 禁表的形状决定了它永远在追。
+// ⇒ 翻成**白名单**：失败方向由「漏报 ⇒ 静默」换成「误伤 ⇒ 当场红、加一条带理由的白名单项」—— 本仓一贯取吵。
 //
 // 每一道的判法都**先在合成源码上出声**（TestReadonlyCheckersThemselves），再拿去判本包 ——
 // 判法与对照组共用同一个函数（本仓那条：对照组验的必须是本体）。
@@ -33,7 +37,7 @@ import (
 //	判不了  一个具体类型里藏着提供者字段 —— 参数类型是具体的，签名层看不见
 //	判不了  经一个名字不同的方法转手去写（调用层按名字判）
 //	判不了  按名字反射调用写方法（reflect…MethodByName("CommitSpan")）—— 评审方 D5；不为它加守卫：按字符串猜方法名，误伤面大
-//	判不了  经 os 直接开文件读写库目录（os 不在禁表里：禁了它误伤太大）
+//	（原先那条「判不了：经 os 直接读写库目录」—— 白名单里没有 os ⇒ 现在挡住了）
 //	不认    非导出函数（签名层）与 _test.go（三道都不认：测试要造输入）
 
 // providerNames 是 tickflow 根包里「能去取数 / 能去写」的那几个类型名。
@@ -53,22 +57,28 @@ var storeWriters = map[string]bool{
 
 const modulePath = "github.com/dream-until-dawn/futures-tickflow-go"
 
-// fetcherImports 交出这个文件里「能联网或能取数」的 import 路径。它**共用**给守卫与对照组。
-//
-//	net 与 net/ 下任何包（net/http · net/url …；按前缀判，宁可多拒）
-//	本仓 source/ · store/ · refdata/ 下任何包（它们是取数层 / 库本身 / 取数的参考数据）
-func fetcherImports(f *ast.File) []string {
+// allowedImports 是 derived 非测试源码**只许** import 的包。⛔ 每加一条都要写理由：它为什么不能取数、不能写。
+var allowedImports = map[string]string{
+	modulePath:                 "本仓根包：类型层（Bar · TradingDay · Symbol …）；它也声明 Store / Calendar 接口，而【收】它们由签名层挡",
+	modulePath + "/continuous": "主连拼接：只收数据不收提供者（它自己有同形守卫）；derived 要吃它的 Days / NoPick / Rolls",
+	"errors":                   "标准库纯计算：哨兵",
+	"fmt":                      "标准库纯计算：报文",
+	"sort":                     "标准库纯计算：排序",
+	"strings":                  "标准库纯计算：拼报文",
+	"time":                     "标准库：墙钟换算（判夜盘时刻）；⚠️ 它也能 time.Now() —— 取「现在」不是取数，放行",
+	"math":                     "标准库纯计算",
+}
+
+// disallowedImports 交出这个文件里**不在白名单里**的 import 路径。它**共用**给守卫与对照组。
+func disallowedImports(f *ast.File) []string {
 	var out []string
 	for _, im := range f.Imports {
 		p, err := strconv.Unquote(im.Path.Value)
 		if err != nil {
+			out = append(out, im.Path.Value+"（解析不了的 import 路径 ⇒ 按不许算）")
 			continue
 		}
-		switch {
-		case p == "net" || strings.HasPrefix(p, "net/"):
-			out = append(out, p)
-		case strings.HasPrefix(p, modulePath+"/source/"), strings.HasPrefix(p, modulePath+"/store/"),
-			strings.HasPrefix(p, modulePath+"/refdata/"):
+		if _, ok := allowedImports[p]; !ok {
 			out = append(out, p)
 		}
 	}
@@ -228,14 +238,15 @@ func TestDerivedNeverCallsStoreWriters(t *testing.T) {
 	}
 }
 
-func TestDerivedImportsNoFetchers(t *testing.T) {
+func TestDerivedImportsOnlyAllowed(t *testing.T) {
 	files, hits := sourceFiles(t), 0
-	defer func() { t.Logf("导入层：查了 %d 个源文件，命中 %d 处", len(files), hits) }()
+	defer func() { t.Logf("导入层：查了 %d 个源文件，白名单外命中 %d 处", len(files), hits) }()
 	for _, f := range files {
-		for _, p := range fetcherImports(f) {
+		for _, p := range disallowedImports(f) {
 			hits++
-			t.Errorf("本包非测试源码 import 了 %q —— derived 只收数据、不自己去取（design.md §十五「derived 的输入约定」与「开工条件二的回答」）。\n"+
-				"  ⇒ 要数据，由调用方取好、摊平成快照递进来。", p)
+			t.Errorf("本包非测试源码 import 了白名单外的 %q —— derived 只收数据、不自己去取（design.md §十五「derived 的输入约定」与「开工条件二的回答」）。\n"+
+				"  ⇒ 要数据，由调用方取好、摊平成快照递进来。\n"+
+				"  ⇒ 真的只是纯计算 ⇒ 加进 allowedImports，并写清它为什么不能取数、不能写。", p)
 		}
 	}
 }
@@ -284,20 +295,29 @@ func TestReadonlyCheckersThemselves(t *testing.T) {
 		src  string
 		want int
 	}{
-		{"import net/http", "package p\nimport \"net/http\"\nvar _ = http.Get\n", 1},
-		{"import net", "package p\nimport \"net\"\nvar _ = net.Dial\n", 1},
-		{"import net/url（前缀判，宁可多拒）", "package p\nimport \"net/url\"\nvar _ = url.Parse\n", 1},
-		{"import 本仓 source/shinnysource", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource\"\nvar _ = shinnysource.New\n", 1},
-		{"import 本仓 store/segfile", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/store/segfile\"\nvar _ = segfile.Open\n", 1},
+		{"import net/http", "package p\nimport \"net/http\"\n", 1},
+		{"import github.com/coder/websocket（本仓自己在用的 ws 客户端，R1）", "package p\nimport \"github.com/coder/websocket\"\n", 1},
+		{"import crypto/tls（R2）", "package p\nimport \"crypto/tls\"\n", 1},
+		{"import os/exec（R3）", "package p\nimport \"os/exec\"\n", 1},
+		{"import os（直接读写库目录）", "package p\nimport \"os\"\n", 1},
+		{"import 本仓 source/shinnysource", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource\"\n", 1},
+		{"import 本仓 store/segfile", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/store/segfile\"\n", 1},
 		{"import 本仓 refdata/shinnyref", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/refdata/shinnyref\"\n", 1},
-		{"分组里 net/http 与 source/ 各一 ⇒ 2 处", "package p\nimport (\n\t\"net/http\"\n\t\"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource\"\n)\n", 2},
-		{"别名导入 net/http", "package p\nimport h \"net/http\"\nvar _ = h.Get\n", 1},
+		{"import 本仓 calendar/embedded（derived 收的是摊平的快照，不是日历实现）", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded\"\n", 1},
+		{"分组里白名单外两个 ⇒ 2 处", "package p\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"os/exec\"\n)\n", 2},
+		{"别名导入 net/http 也算", "package p\nimport h \"net/http\"\n", 1},
+		{"点导入与下划线导入也算 ⇒ 2 处", "package p\nimport (\n\t. \"net/http\"\n\t_ \"crypto/tls\"\n)\n", 2},
 
-		{"import 本仓根包（类型层）", "package p\n" + tf, 0},
-		{"import fmt / errors / sort", "package p\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sort\"\n)\n", 0},
-		{"import 本仓 continuous（数据加工，不取数）", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/continuous\"\n", 0},
-		{"名字像但不是 net：netip 之外的 example.com/net", "package p\nimport \"example.com/net\"\n", 0},
+		{"import 本仓根包", "package p\n" + tf, 0},
+		{"import 本仓 continuous", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/continuous\"\n", 0},
+		{"import errors/fmt/math/sort/strings/time", "package p\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"math\"\n\t\"sort\"\n\t\"strings\"\n\t\"time\"\n)\n", 0},
 		{"注释里写 net/http（不算）", "package p\n// 这里不许 import \"net/http\"\n", 0},
+	}
+	// 白名单自检：本包当前真实用到的 import 必须全在白名单里（否则上面「不报」那几格证明不了今天的本包能过）
+	for _, p := range []string{"errors", "fmt", modulePath} {
+		if _, ok := allowedImports[p]; !ok {
+			t.Errorf("白名单缺了本包今天就在用的 %q", p)
+		}
 	}
 	fset := token.NewFileSet()
 	for _, c := range imp {
@@ -305,7 +325,7 @@ func TestReadonlyCheckersThemselves(t *testing.T) {
 		if err != nil {
 			t.Fatalf("导入层 %s：解析失败 %v", c.name, err)
 		}
-		if got := fetcherImports(f); len(got) != c.want {
+		if got := disallowedImports(f); len(got) != c.want {
 			t.Errorf("导入层 %s：命中 %d 处 %v，期望 %d", c.name, len(got), got, c.want)
 		}
 	}
