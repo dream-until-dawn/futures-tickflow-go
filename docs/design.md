@@ -4721,6 +4721,19 @@ base 日历（只读：拿它的「这一天是不是交易日」「标称夜盘
 ⛔ 主力那天没有观测 ⇒ 报 `ErrNightObsMissing`，不许判成 c）＋ `Report.Summary` 逐次印无结论天数与占比、三种原因各几天、逐天列出；
 零点 `TestJudgeReproducesTable630` —— 期望值取自 probe.md 6.30 那张读数表（输入是按表造的合成数据，那份真库已删）。
 **不与 base 比、不出差异清单**：那要一份摊平的 base 快照做输入，下一颗。
+📌 **同日落差异清单**（`calendar/derived/compare.go`）：base 以摊平快照 `BaseDay{Day, Night}` 进来（调用方替 base 答完这一段）；
+`Compare(Report, []BaseDay)` 交出五种差异（base 有夜盘·观测 c · base 有夜盘·观测 b · base 无夜盘·观测 a ·
+base 是交易日·观测一根都没有且无洞 · 观测有根·base 不认）；**无结论不是差异**（它们在 Report 里逐天列着）；只比快照窗口。
+零点 `TestCompareReproducesTables624And630`：6.24（base 那 6 天都给夜盘）× 6.30（c 恰好那 6 天）⇒ 差异恰好 6 条、NoPick 5 天不在其中。
+⛔ 产物不回灌：差异清单交给人看。
+📌 **评审方退回后改三处**（2026-09-17）：
+① **窗口（真缺陷，探针 W）**：报告只带 Days 时，base 快照比报告宽 ⇒ 越出的那几天被报成「base 是交易日而观测一根都没有」——
+   调用方的窗口错位被说成「那天没交易」（base 取到今天、库只同步到昨天就是这个形状）。
+   ⇒ `Input` 与 `Report` 带上**被问的那一段** `From/To`（必填，输入越出它就报 `ErrOutsideWindow`）；
+   `Compare` 在 base 快照越出那一段时**报错** `ErrBaseOutsideReport`，**不静默取交集**（取交集不报假差异，却把错位藏起来）。
+② **base 无夜盘 · 观测 b** 定为**差异**、单独一种 `BaseNoNightObservedZeroVolume`：落在夜盘时段的根 base 的时段表生不出来，量 0 也一样；
+   而 b 可能是占位根，处置与 a 不同 ⇒ 不并进 a 那一格。
+③ 升序有人守：补一条只在 base 侧、排在所有观测差异前面的日子。
 
 **落到代码时的一道守卫（下一颗，写实现时一起）**：
 
