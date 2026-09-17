@@ -152,6 +152,10 @@ func TestJudgeReproducesTable630(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Logf("\n%s", rep.Summary())
+	// ⛔ 「让蚕食看得见」的那个数本身也要有人守（评审方 K1：分母写成「判过了的天」全绿）：5 / 241 ＝ 2.1%
+	if s := rep.Summary(); !strings.Contains(s, "无结论 5 天（2.1%）") {
+		t.Errorf("Summary 里的无结论占比不对（要「无结论 5 天（2.1%%）」＝ 5/241）：\n%s", s)
+	}
 
 	if len(rep.Days) != 241 || rep.Traded != 230 || rep.ZeroVolume != 0 || rep.Absent != 6 ||
 		rep.NoVerdict != 5 || rep.NoPick != 5 || rep.HeldBack != 0 || rep.NeverFetched != 0 || len(rep.OthersHadNight) != 0 {
@@ -221,7 +225,8 @@ func TestJudgeHolesComeFirstAndAreNamed(t *testing.T) {
 			len(rep.Days), rep.HeldBack, rep.NeverFetched, rep.NoPick, rep.Absent)
 	}
 	s := rep.Summary()
-	for _, frag := range []string{"库侧挂起 2", "永久洞 3", "规则没给出主力 4", "无结论 2026-01-01：库侧没拉过（永久洞）"} {
+	// 占比：9 / 242 ＝ 3.7% —— 与零点那格（5/241）分母不同，分母写错时至少一格会红
+	for _, frag := range []string{"无结论 9 天（3.7%）", "库侧挂起 2", "永久洞 3", "规则没给出主力 4", "无结论 2026-01-01：库侧没拉过（永久洞）"} {
 		if !strings.Contains(s, frag) {
 			t.Errorf("Summary 里缺「%s」：\n%s", frag, s)
 		}

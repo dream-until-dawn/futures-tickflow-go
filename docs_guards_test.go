@@ -1597,7 +1597,9 @@ func repoStatusFacts(root string) (statusFacts, error) {
 // ⚠️ 射程：
 //
 //	判不了  类型/目录在根包之外（例如某个子包里的导出类型 `Feed`）—— 其余名只看顶层目录与根包
-//	判不了  描述栏里提到的名字（只核主语栏）
+//	判不了  描述栏里提到的【非路径】名字（只核主语栏）
+//	⚠️ 反过来：描述栏里若写了一个**带斜杠的路径**，它仍会被当成状态主语去核（整行都核，与扩之前一致）——
+//	        这是有意保留的行为，别以为描述栏整个不核（评审方 2026-09-17 补）
 //	判不了  「有东西」≠「做完了」：✅ 与 🚧 在这里是同一侧（有代码即可），细分不核
 //	不认    表格行以外的散文（见本测试头部那处假阳性）
 func statusTokenIssue(raw string, inSubject, done, notYet bool, f statusFacts) (issue string, judged bool) {
