@@ -4717,6 +4717,10 @@ base 日历（只读：拿它的「这一天是不是交易日」「标称夜盘
 📌 **同日补第三道与一个哨兵**（评审方 D2/D3/D4 打出来的，判据本体之前必补）：导入层 `TestDerivedImportsOnlyAllowed`
 （一个 `*http.Client` 参数或一次 `http.Get`，前两道都看不见；⚠️ 第一版是禁表，评审方 R1–R3 打穿：import coder/websocket · crypto/tls · os/exec 全绿 ⇒ 翻成**白名单**：只许本仓根包 · continuous · 标准库纯计算包，每条带理由 —— 失败方向由「漏报静默」换成「误伤吵」）；
 `ErrNoVerdictWithoutReason`（「无结论却没带原因」原来与「原因不认识」共用一个哨兵，删掉那一支测试照绿 —— 被后面那一支遮住了）。
+📌 **同日落判据本体**（`calendar/derived/judge.go`）：`Judge` 逐天判（先后：库侧有洞 ⇒ 无结论 · NoPick ⇒ 无结论 · 主力夜盘观测 ⇒ a/b/c；
+⛔ 主力那天没有观测 ⇒ 报 `ErrNightObsMissing`，不许判成 c）＋ `Report.Summary` 逐次印无结论天数与占比、三种原因各几天、逐天列出；
+零点 `TestJudgeReproducesTable630` —— 期望值取自 probe.md 6.30 那张读数表（输入是按表造的合成数据，那份真库已删）。
+**不与 base 比、不出差异清单**：那要一份摊平的 base 快照做输入，下一颗。
 
 **落到代码时的一道守卫（下一颗，写实现时一起）**：
 
@@ -4735,6 +4739,8 @@ base 日历（只读：拿它的「这一天是不是交易日」「标称夜盘
 乙  derived 与 `calendar/embedded` 的关系：D-B 规则照旧（交易日由 base 裁、观测只报差异），
     而「差异怎么报、谁来处置」没写过
 丙  `TestKnownDefect_EmbeddedCannotSeeSuspendedNight` 这颗已知缺陷的钉子，v0.7 落地时是拔掉还是改写
+    📌 **2026-09-17 已答：不拔，改写它的注释** —— derived 只读不写、产物不回灌 ⇒ 这条钉子不会因 derived 落地而变红；
+       它钉的仍是真缺陷。修它要把交易所成文的年度休市安排作为另一个入口注入 calendar/embedded，要人拍板，不在 v0.7
 ```
 
 ## 十六、v0.4 之零：动手前对表 —— 出【三处硬冲突】，而它们指向同一件没做的事
