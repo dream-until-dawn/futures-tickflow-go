@@ -27,7 +27,7 @@
 | `source/shinnysource` | ✅ **具体合约的 1m 已通**（v0.6 片 A）：token／名称服务（HTTPS）→ websocket DIFF 翻页 → `Bar`，实现 `tickflow.Source` 与 `tickflow.CalendarHolder`。⚠️ **只做具体合约的 1m**（主连拒掉）；日历只覆盖 2020-05-06 之后（H2），更早的不会被请求；**实时推送不做**（v0.10） |
 | `Syncer`（根包 `syncer.go` / `sync.go`） | ✅ 已发布 |
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
-| `continuous` | 🚧 **v0.7 进行中、未发布**：类型 · 拼接（`Build`）· `ContractAt` 与两道包级守卫（不碰日历 · 只收数据不收提供者）已落；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外 |
+| `continuous` | 🚧 **v0.7 进行中、未发布**：类型 · 拼接（`Build`）· `ContractAt` 与两道包级守卫（不碰日历 · 只收数据不收提供者）已落；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外（📌 同日已扩：主语栏里的 .go 名与其余名字也核，见 `statusTokenIssue`） |
 | `calendar/derived` | 🚧 **v0.7 第一颗**：只落结论类型（a/b/c ＋ 带原因的「无结论」）与两道「只读」守卫；**判据本体尚未落** |
 | `indicator` · `Feed` | ❌ **尚未开始** |
 
