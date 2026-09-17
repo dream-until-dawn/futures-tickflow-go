@@ -201,6 +201,8 @@ func readLibrary(root string, spans []span, from, to tickflow.TradingDay) (libra
 		for _, c := range cov {
 			// 每一段都整段 Walk、在回调里按窗口过滤：Walk 要求区间整个落在一段 coverage 里；
 			// ⛔ 与窗口不相交的段也要走 —— 「最后一根」要按全部根算（见回调里那句）
+			// ⚠️ 代价（评审方 2026-09-17）：segfile.Walk 没有 seek 索引、每次从文件头扫到尾 ⇒ 扫描次数 ＝ 段数 × 整个文件。
+			//    今天每份合约通常只有一段，无所谓；段多了会线性变慢 —— 别以为这里只走了窗口内的段
 			err := st.Walk(c.From, c.To, func(bar tickflow.Bar) bool {
 				// ⛔ 最后一根按【全部根】算，不按窗口：到期放行要拿它去对「最后交易日」——
 				// 窗口若整个落在到期之后，按窗口算它就是 0，到期合约的空档全被当成洞（整天无结论）
