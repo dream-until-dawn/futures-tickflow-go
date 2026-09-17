@@ -4981,6 +4981,8 @@ type Settler interface {
                   姊妹仓在 500 根 ETH 日线上**实测**的逐位收敛点（它的 docs/contract.md 那张表）：
                     EMA(20) TV / CN 320 / 337 · RSI(14) TV / CN 452 / 458 · MACD(12,26,9) TV / CN 470 / **428** · KDJ(9,3,3) CN 95
                   ⚠️ MACD/CN 在姊妹仓里**有两个值**：docs/contract.md 实测表写 428，indicator_api.go 注释表写 421 —— 两个都列，本节取 428（实测表）
+                  📌 **2026-09-17 更正（上面一行原文不改）**：**不是姊妹仓自己不一致，是量的路不同** —— probe.md 6.33 标定一在同一份 500 根 ETH 上
+                     分路量出 MACD/CN dif 421 · dea 428 · hist 428（TV 442 / 470 / 470）：indicator_api.go 的 421 是 dif，contract.md 表里的 428 是各路最大
     ⇒ 预言：在**单个合约**的整段日线上，EMA / RSI / MACD **两套口径都从头到尾没有收敛**（View.Ready 在 v0.9 会恒为假），
             而且值**取决于从哪一根开始喂**：CN 用首个样本播种，TV 用前 n 根的简单平均播种 —— 两种播种都绑在起点上
             ⇒ 同一份合约从上市首日喂与从库里第一根喂，给出不同的数（KDJ/CN 95 根，预言**不含**它）
