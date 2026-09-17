@@ -117,8 +117,15 @@ type DayVerdict struct {
 var (
 	// ErrVerdictUnset 是交出了零值档位。
 	ErrVerdictUnset = errors.New("derived: 结论没填（VerdictUnset）")
-	// ErrReasonMismatch 是档位与原因对不上：无结论却没带原因，或判过了却带着原因。
+	// ErrReasonMismatch 是档位与原因对不上：无结论却没带原因，或判过了却带着原因，或原因不认识。
 	ErrReasonMismatch = errors.New("derived: 结论与原因对不上")
+	// ErrNoVerdictWithoutReason 是「无结论却没带原因」——它**同时**也是 ErrReasonMismatch（两个哨兵都认）。
+	//
+	// ⛔ 单独给它一个名字，是说给调用方听的：三种原因处置不同，**漏写原因**与**原因写了个不认识的**是两种错，
+	// 调用方要能分开。
+	// 由来（评审方 2026-09-17 打的 D4）：这一支原来只返回 ErrReasonMismatch，而后面「原因不在已知三种里」那一支
+	// 对 ReasonNone 也返回同一个哨兵 ⇒ 把这一支整个删掉，被断言的量不变、测试全绿 —— 它被后面那一支**遮住**了。
+	ErrNoVerdictWithoutReason = errors.New("derived: 无结论却没带原因")
 	// ErrDayInvalid 是交易日不合法。
 	ErrDayInvalid = errors.New("derived: 交易日不合法")
 )
@@ -144,7 +151,7 @@ func NewDayVerdict(day tickflow.TradingDay, v Verdict, r NoVerdictReason) (DayVe
 		}
 	case NoVerdict:
 		if r == ReasonNone {
-			return DayVerdict{}, fmt.Errorf("%w：%s 无结论却没带原因 —— 三种原因处置不同，不许省略", ErrReasonMismatch, day)
+			return DayVerdict{}, fmt.Errorf("%w（%w）：%s —— 三种原因处置不同，不许省略", ErrNoVerdictWithoutReason, ErrReasonMismatch, day)
 		}
 		if r != ReasonHeldBack && r != ReasonNeverFetched && r != ReasonNoPick {
 			return DayVerdict{}, fmt.Errorf("%w：%s 的原因 %s 不在已知的三种里", ErrReasonMismatch, day, r)
