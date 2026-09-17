@@ -1,0 +1,204 @@
+package indicator
+
+import "math"
+
+// smoother 是「递归平均」的统一实现：y ← y + α(x − y)。
+//
+// EMA 与 Wilder 平滑是同一套递推，只是 α 不同——EMA 取 2/(n+1)，Wilder 取
+// 1/n。而两套口径的分歧【全部】落在播种上：TradingView 用前 n 个样本的简单
+// 平均起头，国内软件用首个样本起头。
+//
+// 把这两件事收在一个类型里，是因为它们本就是一回事。EMA、MACD、RSI 三个指标
+// 在 TV 与 CN 下的差别，追到底都是这里的 seedN 不同——分散到三处各写一遍，
+// 就会显得像三条独立的规则，而它只有一条。
+type smoother struct {
+	alpha float64
+	seedN int
+
+	acc   float64
+	cnt   int
+	val   float64
+	ready bool
+}
+
+// newSmoother 构造一个递归平均器。n 是指标周期，用于决定播种样本数。
+func newSmoother(alpha float64, n int, conv Convention) *smoother {
+	seed := 1
+	if conv == TV {
+		seed = n
+	}
+	return &smoother{alpha: alpha, seedN: seed}
+}
+
+// emaAlpha 是 EMA 的平滑系数。
+func emaAlpha(n int) float64 { return 2 / (float64(n) + 1) }
+
+// wilderAlpha 是 Wilder 平滑的系数，也就是通达信 SMA(X,N,1) 的系数。
+func wilderAlpha(n int) float64 { return 1 / float64(n) }
+
+// update 喂入一个样本。播种未完成时返回 (NaN, false)。
+func (s *smoother) update(x float64) (float64, bool) {
+	if !s.ready {
+		s.acc += x
+		s.cnt++
+		if s.cnt < s.seedN {
+			return math.NaN(), false
+		}
+		s.val = s.acc / float64(s.cnt)
+		s.ready = true
+		return s.val, true
+	}
+	// 写成 val += α(x-val) 而不是 α·x + (1-α)·val：数学上等价，
+	// 但前者在 α 很小时误差更小，长序列上差别会累出来。
+	s.val += s.alpha * (x - s.val)
+	return s.val, true
+}
+
+// settleEps 是「播种痕迹已可忽略」的判据。
+//
+// 递归平均的初值影响按 (1-α)^k 衰减，数学上【永远不为零】，所以「收敛」必须挑一个
+// 阈值。
+//
+// 取 1e-15 而不是一个更宽松的数，是为了让 Settle() 处的残差落到 float64 舍入量级（约 2.2e-16）附近。
+// 取 1e-12 的话算出来的根数会比实测的逐位收敛点少几十根（EMA(20) 少 59、RSI(14) 少 83，姊妹仓 ETH 实测）。
+// （这个值与姊妹仓相同，照搬未改。）
+//
+// ⛔ 但它【不保证】Settle() 处逐位相等（docs/probe.md 6.34，与姊妹仓注释原话不同）：
+// 逐位稳定点跟着数据的数值与舍入走 —— RB0 日线上 RSI14/CN 要 525 根，而 Settle() 是 469；
+// 同一段价格乘 100 就要 537，收紧到 1e-17 也挡不住。⇒ 契约是「Settle() 处与全量只差几个 ULP」，
+// indicator/settle_test.go 的 settleTol 断言这个界（2e-15）。
+const settleEps = 1e-15
+
+// settle 返回播种痕迹衰减到 settleEps 以下所需的样本数。
+func (s *smoother) settle() int {
+	if s.alpha >= 1 {
+		return s.seedN // α=1 时新值完全覆盖旧值，播种痕迹一步就没了
+	}
+	k := math.Log(settleEps) / math.Log(1-s.alpha)
+	return s.seedN + int(math.Ceil(k))
+}
+
+func (s *smoother) reset() {
+	s.acc, s.cnt, s.val, s.ready = 0, 0, 0, false
+}
+
+// window 是定长滑动窗口。
+//
+// 它只存值，统计量每次现算——见包注释里「与批量结果一致」那一段：
+// 增量维护累加和会随步数累积浮点漂移，几百万根之后就和批量定义对不上了。
+type window struct {
+	buf  []float64
+	i    int
+	fill int
+}
+
+func newWindow(size int) *window { return &window{buf: make([]float64, size)} }
+
+func (w *window) push(x float64) {
+	w.buf[w.i] = x
+	w.i = (w.i + 1) % len(w.buf)
+	if w.fill < len(w.buf) {
+		w.fill++
+	}
+}
+
+func (w *window) full() bool { return w.fill == len(w.buf) }
+
+func (w *window) size() int { return len(w.buf) }
+
+// at 取窗口内第 k 新的值，k=0 是最新的一根。
+func (w *window) at(k int) float64 {
+	return w.buf[((w.i-1-k)%len(w.buf)+len(w.buf))%len(w.buf)]
+}
+
+// chrono 按【时间顺序】遍历窗口，从最旧的一根到最新的一根。
+//
+// 不直接遍历 w.buf 是因为那是【物理顺序】——环形缓冲的旋转位置取决于已经推入了
+// 多少根，于是同一份数据从不同起点喂进来，累加顺序就不同，浮点结果会差最后一位。
+// 窗口类指标在数学上只依赖窗口里那 n 根，本该与起点无关；按物理顺序累加会把这条
+// 性质破坏掉，而破坏的方式极其隐蔽：值只差 1 ULP，却足以在恰好相等的比较上翻面。
+//
+// 这是拿两份数据分别实测收敛点时照出来的：KDJ 的 TV 口径在一份数据上 13 根收敛、
+// 另一份要 14 根，而它是纯窗口指标，不该有这种差别。
+// 按时间顺序遍历要走两段连续区间：w.i 指向下一个要写的位置，满窗时就是最旧的
+// 那一格，所以 buf[i:] 是较旧的一半、buf[:i] 是较新的一半。
+//
+// 写成两段 range 而不是一个带取模的循环，也不用回调：取模每元素一次，实测让
+// MA(20) 从 11ns 涨到 35ns；两段连续区间既保住顺序，又让编译器照常向量化。
+func (w *window) mean() float64 {
+	var sum float64
+	for _, v := range w.buf[w.i:] {
+		sum += v
+	}
+	for _, v := range w.buf[:w.i] {
+		sum += v
+	}
+	return sum / float64(len(w.buf))
+}
+
+// stdPop 是【总体】标准差（除以 n），不是样本标准差（除以 n-1）。
+//
+// 布林带两套口径都用总体标准差。用样本标准差在 20 周期上会让带宽偏大约
+// 2.6%——一眼看不出来，却足以让开平仓点位错开。
+func (w *window) stdPop() float64 {
+	m := w.mean()
+	var sum float64
+	for _, v := range w.buf[w.i:] {
+		d := v - m
+		sum += d * d
+	}
+	for _, v := range w.buf[:w.i] {
+		d := v - m
+		sum += d * d
+	}
+	return math.Sqrt(sum / float64(len(w.buf)))
+}
+
+// meanAbsDev 是平均绝对偏差，CCI 用它作分母。
+func (w *window) meanAbsDev() float64 {
+	m := w.mean()
+	var sum float64
+	for _, v := range w.buf[w.i:] {
+		sum += math.Abs(v - m)
+	}
+	for _, v := range w.buf[:w.i] {
+		sum += math.Abs(v - m)
+	}
+	return sum / float64(len(w.buf))
+}
+
+func (w *window) max() float64 {
+	m := math.Inf(-1)
+	for _, v := range w.buf {
+		if v > m {
+			m = v
+		}
+	}
+	return m
+}
+
+func (w *window) min() float64 {
+	m := math.Inf(1)
+	for _, v := range w.buf {
+		if v < m {
+			m = v
+		}
+	}
+	return m
+}
+
+func (w *window) reset() {
+	for i := range w.buf {
+		w.buf[i] = 0
+	}
+	w.i, w.fill = 0, 0
+}
+
+func nan1() []float64 { return []float64{math.NaN()} }
+
+func fillNaN(s []float64) []float64 {
+	for i := range s {
+		s[i] = math.NaN()
+	}
+	return s
+}

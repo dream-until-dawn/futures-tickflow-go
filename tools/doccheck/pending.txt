@@ -93,10 +93,6 @@
 AggClockGrid      v0.9.0  AggRule 的成员：时钟网格〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
 AggTradingAxis    v0.9.0  AggRule 的成员：交易时间轴 + 相位〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
 
-# ---- v0.8：indicator（自姊妹项目 okx-tickflow-go v1.4.2 移植）----
-Indicator     v0.8.0  流式指标接口，根包 indicator_api.go；签名与姊妹仓只差 Update(Candle) ⇒ Update(Bar)〔design.md §十五「v0.8 起手」一〕
-Settler       v0.8.0  Indicator 的可选扩展：值收敛所需根数；v0.8 无生产消费者，v0.9 Feed 用〔design.md §十五「v0.8 起手」一〕
-
 # ---- v0.9：随 Feed / 多周期（原 v0.5；聚合口径要等深度分钟落地才有意义，而深度分钟今在 v0.6）----
 AggRule       v0.9.0  时钟网格 / 交易时间轴两套；**默认取哪套未验，不设默认**〔原 v0.5.0；用户 2026-09-13 裁：v0.5 给已落地的硬化，AggRule 跟 Feed/多周期走 ⇒ v0.9，见 design.md §十五〕
 
