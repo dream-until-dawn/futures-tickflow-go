@@ -124,7 +124,7 @@ func build630(t *testing.T) Input {
 	if err != nil {
 		t.Fatalf("造输入时 Build 失败：%v", err)
 	}
-	return Input{Main: c, Nights: nights}
+	return Input{From: table630Days[0], To: table630Days[len(table630Days)-1], Main: c, Nights: nights}
 }
 
 func TestJudgeReproducesTable630(t *testing.T) {
@@ -274,6 +274,42 @@ func TestJudgeRejectsBadInput(t *testing.T) {
 	in.Nights = append(in.Nights, in.Nights[0])
 	if _, err := Judge(in); !errors.Is(err, ErrNightObsDuplicate) {
 		t.Errorf("重复观测：期望 ErrNightObsDuplicate，实得 %v", err)
+	}
+}
+
+// 被问的那一段（评审方探针 W 的上游）：必填、要合法、输入不许越出它；报告要把它带出去。
+func TestJudgeWindow(t *testing.T) {
+	in := build630(t)
+	rep, err := Judge(in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rep.From != 20250915 || rep.To != 20260911 {
+		t.Errorf("报告带出的窗口 [%s, %s]，要 [2025-09-15, 2026-09-11]", rep.From, rep.To)
+	}
+
+	cases := []struct {
+		name     string
+		from, to tickflow.TradingDay
+		holes    []Hole
+		want     error
+	}{
+		{"没填窗口", 0, 0, nil, ErrWindowInvalid},
+		{"From 晚于 To", 20260911, 20250915, nil, ErrWindowInvalid},
+		{"天轴越出右边（To 早于主连最后一天）", 20250915, 20260910, nil, ErrOutsideWindow},
+		{"天轴越出左边（From 晚于主连第一天）", 20250916, 20260911, nil, ErrOutsideWindow},
+		{"洞越出窗口", 20250915, 20260911, []Hole{{Day: 20260914, Reason: ReasonHeldBack}}, ErrOutsideWindow},
+	}
+	for _, c := range cases {
+		in := build630(t)
+		in.From, in.To, in.Holes = c.from, c.to, c.holes
+		got, err := Judge(in)
+		if !errors.Is(err, c.want) {
+			t.Errorf("%s：期望 %v，实得 %v", c.name, c.want, err)
+		}
+		if got.Days != nil || got.From != 0 {
+			t.Errorf("%s：报了错却同时交出非零报告 —— 调用方忘了看 err 时会拿到它", c.name)
+		}
 	}
 }
 

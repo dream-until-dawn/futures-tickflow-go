@@ -48,6 +48,13 @@ type Hole struct {
 
 // Input 是判据本体的全部输入 —— 三样都是**数据**，不是提供者。
 type Input struct {
+	// From / To 是调用方**问的那一段**（闭区间，交易日）—— 它取数、同步、拼主连用的就是这一段。
+	//
+	// ⛔ 必填，而且是 Report 的一部分：Report 若只带 Days，下游分不开「这一段里那天真没根」与「根本没问到那一天」——
+	// 评审方 2026-09-17 的探针 W：报告只有 03-02、base 快照给 03-02…03-04 ⇒ 差异清单把 03-03/03-04 说成「那天没交易」，
+	// 而那两天只是没被问到（base 取到今天、库只同步到昨天，就是这个形状）⇒ 本仓那条老病：报错指向数据，而真因在调用方。
+	From, To tickflow.TradingDay
+
 	Main   continuous.Continuous // 品种级主连（未复权，design.md 读数计划第②样）
 	Nights []NightObs            // 各合约逐天的夜盘观测（至少要覆盖主力合约有根的每一天）
 	Holes  []Hole                // 库侧的洞
@@ -55,7 +62,8 @@ type Input struct {
 
 // Report 是判据本体的产物：逐天结论 ＋ 「让蚕食看得见」的报数。
 type Report struct {
-	Days []DayVerdict // 升序，每个被判的交易日一条
+	From, To tickflow.TradingDay // 被问的那一段（抄自 Input）—— Compare 据它判 base 快照有没有越界
+	Days     []DayVerdict        // 升序，每个被判的交易日一条
 
 	Traded, ZeroVolume, Absent int // a · b · c
 	NoVerdict                  int // 无结论合计
@@ -74,6 +82,10 @@ var (
 	ErrNightObsDuplicate = errors.New("derived: 同一合约同一天有两条夜盘观测")
 	// ErrHoleReason 是洞的原因不是「挂起」或「永久洞」。
 	ErrHoleReason = errors.New("derived: 洞的原因只许是挂起或永久洞")
+	// ErrWindowInvalid 是被问的那一段没填或不合法（From/To 不合法，或 From 晚于 To）。
+	ErrWindowInvalid = errors.New("derived: 被问的那一段（From/To）没填或不合法")
+	// ErrOutsideWindow 是主连天轴或洞落在被问的那一段之外 —— 输入与调用方声明的窗口对不上。
+	ErrOutsideWindow = errors.New("derived: 输入里有日子落在被问的那一段之外")
 )
 
 // NightObsOf 把一个合约的 1m 根按交易日聚成夜盘观测。
@@ -111,7 +123,11 @@ type obsKey struct {
 
 // Judge 按品种级主连逐天判夜盘，交出逐天结论与报数。
 func Judge(in Input) (Report, error) {
-	var rep Report
+	if !in.From.Valid() || !in.To.Valid() || in.From > in.To {
+		return Report{}, fmt.Errorf("%w：[%d, %d]", ErrWindowInvalid, int32(in.From), int32(in.To))
+	}
+	rep := Report{From: in.From, To: in.To}
+	outside := func(d tickflow.TradingDay) bool { return d < in.From || d > in.To }
 
 	obs := map[obsKey]NightObs{}
 	nightByDay := map[tickflow.TradingDay][]NightObs{}
@@ -151,9 +167,15 @@ func Judge(in Input) (Report, error) {
 	// 被判的天 ＝ 主连天轴 ∪ 洞所在的天（洞可能让那一天根本进不了天轴，而它仍要被逐天印出来）
 	daySet := map[tickflow.TradingDay]bool{}
 	for _, d := range in.Main.Days {
+		if outside(d) {
+			return Report{}, fmt.Errorf("%w：主连天轴上的 %s 不在 [%s, %s] 里", ErrOutsideWindow, d, in.From, in.To)
+		}
 		daySet[d] = true
 	}
 	for d := range holes {
+		if outside(d) {
+			return Report{}, fmt.Errorf("%w：洞 %s 不在 [%s, %s] 里", ErrOutsideWindow, d, in.From, in.To)
+		}
 		daySet[d] = true
 	}
 	days := make([]tickflow.TradingDay, 0, len(daySet))
