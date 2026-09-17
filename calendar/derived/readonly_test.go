@@ -13,20 +13,28 @@ import (
 
 // —— 本包「只读不写」的两道守卫（design.md §十五「开工条件二的回答」四格之二） ——
 //
-// 两道各管一层：
+// 三道各管一层：
 //
 //	签名层  TestDerivedTakesDataNotProviders  导出函数的参数里不许出现提供者
 //	调用层  TestDerivedNeverCallsStoreWriters  非测试源码里不许出现写库的方法名
+//	导入层  TestDerivedImportsNoFetchers       非测试源码不许 import 联网或取数的包（net · net/… · 本仓 source/ store/ refdata/）
+//
+// ⛔ 导入层是评审方 2026-09-17 打 D2/D3 打出来的：签名层只认 root 的提供者名、store/ source/ 下的类型、接口与 any；
+// 调用层只认三个写库方法名 ⇒ 一个 `*http.Client` 参数（具体类型、不在 store/ source/ 下）或一次 `http.Get`，
+// **前两道都看不见** —— 而输入约定写的是「只收数据、不自己去取」，`*http.Client` 恰恰是最直接的「自己去取」。
 //
 // 每一道的判法都**先在合成源码上出声**（TestReadonlyCheckersThemselves），再拿去判本包 ——
 // 判法与对照组共用同一个函数（本仓那条：对照组验的必须是本体）。
 //
-// ⚠️ 射程（两道加起来仍守不住的，写在这儿免得有人以为「只读」被机械地保证了）：
+// ⚠️ 射程（三道加起来仍守不住的，写在这儿免得有人以为「只读」被机械地保证了）：
 //
 //	判不了  调用方在外面写好库、再把结果递进来（那不是本包写的）
+//	判不了  调用方递进来一个 func() []Bar 的闭包、闭包里联网 —— 那是回调，按设计放行
 //	判不了  一个具体类型里藏着提供者字段 —— 参数类型是具体的，签名层看不见
 //	判不了  经一个名字不同的方法转手去写（调用层按名字判）
-//	不认    非导出函数与 _test.go（测试要造输入）
+//	判不了  按名字反射调用写方法（reflect…MethodByName("CommitSpan")）—— 评审方 D5；不为它加守卫：按字符串猜方法名，误伤面大
+//	判不了  经 os 直接开文件读写库目录（os 不在禁表里：禁了它误伤太大）
+//	不认    非导出函数（签名层）与 _test.go（三道都不认：测试要造输入）
 
 // providerNames 是 tickflow 根包里「能去取数 / 能去写」的那几个类型名。
 var providerNames = map[string]bool{
@@ -44,6 +52,28 @@ var storeWriters = map[string]bool{
 }
 
 const modulePath = "github.com/dream-until-dawn/futures-tickflow-go"
+
+// fetcherImports 交出这个文件里「能联网或能取数」的 import 路径。它**共用**给守卫与对照组。
+//
+//	net 与 net/ 下任何包（net/http · net/url …；按前缀判，宁可多拒）
+//	本仓 source/ · store/ · refdata/ 下任何包（它们是取数层 / 库本身 / 取数的参考数据）
+func fetcherImports(f *ast.File) []string {
+	var out []string
+	for _, im := range f.Imports {
+		p, err := strconv.Unquote(im.Path.Value)
+		if err != nil {
+			continue
+		}
+		switch {
+		case p == "net" || strings.HasPrefix(p, "net/"):
+			out = append(out, p)
+		case strings.HasPrefix(p, modulePath+"/source/"), strings.HasPrefix(p, modulePath+"/store/"),
+			strings.HasPrefix(p, modulePath+"/refdata/"):
+			out = append(out, p)
+		}
+	}
+	return out
+}
 
 // providerParams 交出这个文件里【导出函数 / 方法】参数中像提供者的类型，形如「F 收了 tickflow.Store」。
 //
@@ -198,7 +228,19 @@ func TestDerivedNeverCallsStoreWriters(t *testing.T) {
 	}
 }
 
-// TestReadonlyCheckersThemselves 是两道守卫的对照组 —— 判法先在已知答案上出声，**命中数要精确**，不只是「报没报」。
+func TestDerivedImportsNoFetchers(t *testing.T) {
+	files, hits := sourceFiles(t), 0
+	defer func() { t.Logf("导入层：查了 %d 个源文件，命中 %d 处", len(files), hits) }()
+	for _, f := range files {
+		for _, p := range fetcherImports(f) {
+			hits++
+			t.Errorf("本包非测试源码 import 了 %q —— derived 只收数据、不自己去取（design.md §十五「derived 的输入约定」与「开工条件二的回答」）。\n"+
+				"  ⇒ 要数据，由调用方取好、摊平成快照递进来。", p)
+		}
+	}
+}
+
+// TestReadonlyCheckersThemselves 是三道守卫的对照组 —— 判法先在已知答案上出声，**命中数要精确**，不只是「报没报」。
 func TestReadonlyCheckersThemselves(t *testing.T) {
 	const tf = `import tickflow "github.com/dream-until-dawn/futures-tickflow-go"` + "\n"
 	sig := []struct {
@@ -237,7 +279,36 @@ func TestReadonlyCheckersThemselves(t *testing.T) {
 		{"只读方法 Walk", "package p\nfunc f(s S) { s.Walk() }\n", 0},
 		{"注释里提到 AppendBars（不算）", "package p\n// AppendBars 是库的写方法\nfunc f() {}\n", 0},
 	}
+	imp := []struct {
+		name string
+		src  string
+		want int
+	}{
+		{"import net/http", "package p\nimport \"net/http\"\nvar _ = http.Get\n", 1},
+		{"import net", "package p\nimport \"net\"\nvar _ = net.Dial\n", 1},
+		{"import net/url（前缀判，宁可多拒）", "package p\nimport \"net/url\"\nvar _ = url.Parse\n", 1},
+		{"import 本仓 source/shinnysource", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource\"\nvar _ = shinnysource.New\n", 1},
+		{"import 本仓 store/segfile", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/store/segfile\"\nvar _ = segfile.Open\n", 1},
+		{"import 本仓 refdata/shinnyref", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/refdata/shinnyref\"\n", 1},
+		{"分组里 net/http 与 source/ 各一 ⇒ 2 处", "package p\nimport (\n\t\"net/http\"\n\t\"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource\"\n)\n", 2},
+		{"别名导入 net/http", "package p\nimport h \"net/http\"\nvar _ = h.Get\n", 1},
+
+		{"import 本仓根包（类型层）", "package p\n" + tf, 0},
+		{"import fmt / errors / sort", "package p\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sort\"\n)\n", 0},
+		{"import 本仓 continuous（数据加工，不取数）", "package p\nimport \"github.com/dream-until-dawn/futures-tickflow-go/continuous\"\n", 0},
+		{"名字像但不是 net：netip 之外的 example.com/net", "package p\nimport \"example.com/net\"\n", 0},
+		{"注释里写 net/http（不算）", "package p\n// 这里不许 import \"net/http\"\n", 0},
+	}
 	fset := token.NewFileSet()
+	for _, c := range imp {
+		f, err := parser.ParseFile(fset, "x.go", c.src, 0)
+		if err != nil {
+			t.Fatalf("导入层 %s：解析失败 %v", c.name, err)
+		}
+		if got := fetcherImports(f); len(got) != c.want {
+			t.Errorf("导入层 %s：命中 %d 处 %v，期望 %d", c.name, len(got), got, c.want)
+		}
+	}
 	for _, c := range sig {
 		f, err := parser.ParseFile(fset, "x.go", c.src, 0)
 		if err != nil {
