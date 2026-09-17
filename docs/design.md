@@ -4711,6 +4711,10 @@ base 日历（只读：拿它的「这一天是不是交易日」「标称夜盘
     derived 的报文逐次印出这个占比，由用户判够不够
 ```
 
+📌 **2026-09-17 已落（第一颗代码）**：`calendar/derived` 只落结论类型（`Verdict` 四种 ＋ `NoVerdictReason` 三种原因，经 `NewDayVerdict` 核验）
+与两道守卫 —— 签名层 `TestDerivedTakesDataNotProviders` · 调用层 `TestDerivedNeverCallsStoreWriters` · 两者的对照组 `TestReadonlyCheckersThemselves`；
+突变读数见送审信与提交说明。判据本体尚未落。
+
 **落到代码时的一道守卫（下一颗，写实现时一起）**：
 
 ```
