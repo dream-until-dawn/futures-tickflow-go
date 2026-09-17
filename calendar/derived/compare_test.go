@@ -58,18 +58,18 @@ func mkDV(t *testing.T, d tickflow.TradingDay, v Verdict, r NoVerdictReason) Day
 // ⇒ 02-27 必然不在第一位 ⇒ 删掉排序**必红**，不会时红时绿；03-13 这第二条只在 base 侧的，排序后本来就在最后。
 func TestCompareKinds(t *testing.T) {
 	rep := Report{From: 20260226, To: 20260410, Days: []DayVerdict{
-		mkDV(t, 20260226, NightAbsent, ReasonNone),       // base 窗口（02-27 起）之外 ⇒ 不参与
-		mkDV(t, 20260302, NightAbsent, ReasonNone),       // base 有夜盘 ⇒ 差异
-		mkDV(t, 20260303, NightZeroVolume, ReasonNone),   // base 有夜盘 ⇒ 差异（与上一种分开）
-		mkDV(t, 20260304, NightTraded, ReasonNone),       // base 无夜盘 ⇒ 差异
-		mkDV(t, 20260305, NightTraded, ReasonNone),       // base 有夜盘 ⇒ 一致
-		mkDV(t, 20260306, NightAbsent, ReasonNone),       // base 无夜盘 ⇒ 一致
-		mkDV(t, 20260307, NightTraded, ReasonNone),       // 周六，base 不认 ⇒ 差异
-		mkDV(t, 20260308, NoVerdict, ReasonNeverFetched), // ⛔ 无结论而 base 不认（周日）⇒ 仍不是差异（突变 C1 第一次全绿就是缺这一格）
-		mkDV(t, 20260310, NoVerdict, ReasonNoPick),       // 无结论 ⇒ 不是差异
-		mkDV(t, 20260311, NoVerdict, ReasonHeldBack),     // 无结论 ⇒ 不是差异（base 认这一天）
-		mkDV(t, 20260312, NightZeroVolume, ReasonNone),   // ⛔ base 无夜盘而观测 b ⇒ 差异（评审方 M7 问出来的那一格）
-		mkDV(t, 20260401, NightAbsent, ReasonNone),       // base 窗口（到 03-13）之外 ⇒ 不参与
+		mkDV(t, 20260226, NightAbsent, ReasonNone),           // base 窗口（02-27 起）之外 ⇒ 不参与
+		mkDV(t, 20260302, NightAbsent, ReasonNone),           // base 有夜盘 ⇒ 差异
+		mkDV(t, 20260303, NightZeroVolume, ReasonNone),       // base 有夜盘 ⇒ 差异（与上一种分开）
+		mkDV(t, 20260304, NightTraded, ReasonNone),           // base 无夜盘 ⇒ 差异
+		mkDV(t, 20260305, NightTraded, ReasonNone),           // base 有夜盘 ⇒ 一致
+		mkDV(t, 20260306, NightAbsent, ReasonNone),           // base 无夜盘 ⇒ 一致
+		mkDV(t, 20260307, NightTraded, ReasonNone),           // 周六，base 不认 ⇒ 差异
+		mkDV(t, 20260308, NoVerdict, ReasonNeverFetched),     // ⛔ 无结论而 base 不认（周日）⇒ 仍不是差异（突变 C1 第一次全绿就是缺这一格）
+		mkDV(t, 20260310, NoVerdict, ReasonNoPick),           // 无结论 ⇒ 不是差异
+		mkDV(t, 20260311, NoVerdict, ReasonTailUnregistered), // 无结论 ⇒ 不是差异（base 认这一天）
+		mkDV(t, 20260312, NightZeroVolume, ReasonNone),       // ⛔ base 无夜盘而观测 b ⇒ 差异（评审方 M7 问出来的那一格）
+		mkDV(t, 20260401, NightAbsent, ReasonNone),           // base 窗口（到 03-13）之外 ⇒ 不参与
 	}}
 	base := []BaseDay{
 		{Day: 20260227, Night: true}, // ⛔ 报告里没有这一天、且排在所有观测差异前面 ⇒ 守排序
@@ -128,6 +128,11 @@ func TestCompareRefusesBaseWiderThanReport(t *testing.T) {
 	// 报告没带窗口 ⇒ 也报错
 	if _, err := Compare(Report{Days: rep.Days}, []BaseDay{{Day: 20260302, Night: true}}); !errors.Is(err, ErrReportWindowUnset) {
 		t.Errorf("报告没带窗口：期望 ErrReportWindowUnset，实得 %v", err)
+	}
+	// 报告窗口倒置 ⇒ ErrReportWindowUnset（评审方 W4：删掉 `rep.From > rep.To` 那半句原来全绿 ——
+	// 倒置时任何 base 日子都会越界，于是错误换成了 ErrBaseOutsideReport、测试照绿；这一格把哨兵钉住）
+	if _, err := Compare(Report{From: 20260303, To: 20260302, Days: rep.Days}, []BaseDay{{Day: 20260302, Night: true}}); !errors.Is(err, ErrReportWindowUnset) {
+		t.Errorf("报告窗口倒置：期望 ErrReportWindowUnset，实得 %v", err)
 	}
 	// 正好等宽 ⇒ 不报错
 	if _, err := Compare(rep, []BaseDay{{Day: 20260302, Night: true}}); err != nil {

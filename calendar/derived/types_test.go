@@ -21,7 +21,7 @@ func TestNewDayVerdictRules(t *testing.T) {
 		{"a 档不带原因 ⇒ 放行", d, NightTraded, ReasonNone, nil},
 		{"b 档不带原因 ⇒ 放行", d, NightZeroVolume, ReasonNone, nil},
 		{"c 档不带原因 ⇒ 放行", d, NightAbsent, ReasonNone, nil},
-		{"无结论带挂起 ⇒ 放行", d, NoVerdict, ReasonHeldBack, nil},
+		{"无结论带尾部未登记 ⇒ 放行", d, NoVerdict, ReasonTailUnregistered, nil},
 		{"无结论带永久洞 ⇒ 放行", d, NoVerdict, ReasonNeverFetched, nil},
 		{"无结论带 NoPick ⇒ 放行", d, NoVerdict, ReasonNoPick, nil},
 
