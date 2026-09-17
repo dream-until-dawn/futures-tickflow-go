@@ -56,6 +56,7 @@ futures-tickflow-go/
 ├── sync.go              Syncer：按 coverage 只拉缺失区间
 ├── feed.go              Feed / View：可步进的多周期视图
 ├── indicator_api.go     Indicator 接口（别名指向 indicator 子包）
+│                        📌 2026-09-18：上一行说反了 —— 接口本体在根包，indicator 子包里的 Indicator 是它的别名（v0.8 已落）
 │
 ├── calendar/
 │   ├── embedded/        内置：标称时段模板（带生效区间）+ 交易日表
@@ -3652,6 +3653,10 @@ v.IsRollDay()  // 今天是不是换月日
 MACD(12,26,9)/CN 的 `Warmup()` 报 1 而实际要 428 根才逐位收敛，
 只预读 4 根时值错一倍。**这是递推本身的性质，与市场无关**，直接适用。
 `Feed` 的自动预热按 `Settle` 算，`View.Ready()` 按「已收敛」判。
+
+📌 **2026-09-18（上面原文不改；probe.md 6.34）**：「已收敛」在本库的含义是**「与从头喂到底只差几个 ULP」**，不是逐位相等 ——
+逐位稳定点跟着数据的数值与舍入走，`Settle()` 封不住它（RB0 上 RSI14 稳定点 508 / 525，`Settle()` 482 / 469）。
+测试断言 `Settle()` 处相对误差 ≤ 2e-15。v0.9 的 `View.Ready()` 照这个含义判。
 
 ---
 
