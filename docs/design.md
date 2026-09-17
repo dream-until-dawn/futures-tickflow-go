@@ -4174,7 +4174,7 @@ open(f, "wb").write(raw)        # 还原：写回去，不是「反向替换」
 | v0.4 | `refdata`(天勤) ＋ **`Store` 的「周期进身份」**（修那个假绿；读口子不加＝零调用点） | ✅ `v0.4.0`（2026-09-10 发布；tag 对象 `2700d314…` → commit `f218ae6…`）＋ `v0.4.1`（2026-09-11；tag 对象 `be7fc801…` → commit `cb2a531…`） —— ⚠️ `calendar/derived` 09-10 **挪到 v0.5**（用户裁，理由见 §十六），09-13 **随天勤源顺延到 v0.6**（见下「版本号的两次裁决」），09-15 **再挪到 v0.7**（见下「第三次裁决」） |
 | v0.5 | 已落地的硬化：`Syncer` / `store/segfile` / 审计仪器（**含破坏性 API 变更**，逐条见 [release/v0.5.0.md](release/v0.5.0.md)） | ✅ `v0.5.0`（2026-09-13 发布；tag 对象 `211ec3c7…` → commit `e553d09…`） |
 | v0.6 | `source/shinnysource`——深度分钟历史（**鉴权与协议已探通**）＋ `segfile` 的逐根读（`(*segfile.Store).Walk`，**不进 `tickflow.Store` 接口**，见下「第四次裁决」） | ✅ `v0.6.0`（2026-09-16 发布；tag 对象 `7b63cc66…` → commit `cdf74a3…`；正文 sha256 `141654bd…`）—— ⚠️ `calendar/derived` 09-15 **挪到 v0.7**（用户裁，见下「第三次裁决」） |
-| v0.7 | `continuous`——换月、复权、接缝 ＋ **`calendar/derived`**（判夜盘开没开要品种级连续序列，而那正是这一档的东西；probe.md 6.21） | 待办 —— 开工条件三条见下「v0.7 起手」 |
+| v0.7 | `continuous`——换月、复权、接缝 ＋ **`calendar/derived`**（判夜盘开没开要品种级连续序列，而那正是这一档的东西；probe.md 6.21） | ✅ `v0.7.0`（2026-09-17 发布；tag 对象 `abdb32a5…` → commit `9af79be…`；正文 sha256 `7ebfe550…`）—— ⚠️ `calendar/derived` **只报差异、不产出日历**（开工前定，见下「v0.7 起手」）；`calendar/embedded` 看不见停夜盘的缺陷**仍在**（「还没定」丙）；主连默认复权 09-17 **改成比例后复权**（用户裁，见 §八） |
 | v0.8 | `indicator`（自姊妹项目移植 + 口径实测） | 待办 |
 | v0.9 | `Feed` / `View` / 多周期（`AggRule` 聚合口径随它走） | 待办 |
 | v0.10 | 实时：`shinnysource` 的推送通道 + `Feed.Push` | 待办 |
