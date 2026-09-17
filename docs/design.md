@@ -4714,8 +4714,8 @@ base 日历（只读：拿它的「这一天是不是交易日」「标称夜盘
 📌 **2026-09-17 已落（第一颗代码）**：`calendar/derived` 只落结论类型（`Verdict` 四种 ＋ `NoVerdictReason` 三种原因，经 `NewDayVerdict` 核验）
 与两道守卫 —— 签名层 `TestDerivedTakesDataNotProviders` · 调用层 `TestDerivedNeverCallsStoreWriters` · 两者的对照组 `TestReadonlyCheckersThemselves`；
 突变读数见送审信与提交说明。判据本体尚未落。
-📌 **同日补第三道与一个哨兵**（评审方 D2/D3/D4 打出来的，判据本体之前必补）：导入层 `TestDerivedImportsNoFetchers`
-（非测试源码不许 import net · net/… · 本仓 source/ store/ refdata/ —— 一个 `*http.Client` 参数或一次 `http.Get`，前两道都看不见）；
+📌 **同日补第三道与一个哨兵**（评审方 D2/D3/D4 打出来的，判据本体之前必补）：导入层 `TestDerivedImportsOnlyAllowed`
+（一个 `*http.Client` 参数或一次 `http.Get`，前两道都看不见；⚠️ 第一版是禁表，评审方 R1–R3 打穿：import coder/websocket · crypto/tls · os/exec 全绿 ⇒ 翻成**白名单**：只许本仓根包 · continuous · 标准库纯计算包，每条带理由 —— 失败方向由「漏报静默」换成「误伤吵」）；
 `ErrNoVerdictWithoutReason`（「无结论却没带原因」原来与「原因不认识」共用一个哨兵，删掉那一支测试照绿 —— 被后面那一支遮住了）。
 
 **落到代码时的一道守卫（下一颗，写实现时一起）**：
