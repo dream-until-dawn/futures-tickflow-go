@@ -77,22 +77,29 @@ type RollRule interface {
 
 // AdjustMethod 是复权方式。
 //
-// ⛔ **默认（零值）是不复权**，而「推荐后复权」是一句文档，不是一个默认值：
-// 前复权以最新价为基准 ⇒ **每换一次月，全部历史价格都会变** ⇒ 同一段历史同一个策略，今天跑与下月跑结果不同，
-// 而且不报错。这对「回测可复现」是致命的（§八「三条容易踩的」之一）。
+// ⛔ **默认（零值）是比例后复权 `RatioBack`**（用户 2026-09-17 裁：照 §八「三条容易踩的」之一，默认后复权；
+// 后复权里取比例）。在那之前零值是 `NoAdjust`，而 §八 写的是「默认后复权」—— 文档与代码各说各的，发版前对表才发现。
+//
+//	为什么默认后复权  前复权以最新价为基准 ⇒ **每换一次月，全部历史价格都会变** ⇒ 同一段历史同一个策略，
+//	                  今天跑与下月跑结果不同，而且不报错。这对「回测可复现」是致命的
+//	为什么是比例      换月前后的涨跌幅保持真实、价格恒为正；价差后复权在换月多了之后晚段（越新的价格）可能被减到很小甚至为负
+//	前复权            要显式选，且结果里带警告（`Continuous.RewritesHistory`）
+//	不复权            也要显式选 `NoAdjust`（＝ 新浪 RB0 的口径；换月日有 1.5–1.7pp 的假收益）
+//
+// ⚠️ 不在下面五个值里的 `AdjustMethod`，`Build` 报错 —— 否则它在复权那一步一支都不命中，**静默变成不复权**。
 type AdjustMethod int
 
 const (
-	// NoAdjust 不复权（＝ 新浪 RB0 的口径）。
-	NoAdjust AdjustMethod = iota
-	// RatioBack 后复权·比例。
-	RatioBack
-	// RatioFwd 前复权·比例。
-	RatioFwd
+	// RatioBack 后复权·比例。**零值，即默认。**
+	RatioBack AdjustMethod = iota
 	// DiffBack 后复权·价差。
 	DiffBack
-	// DiffFwd 前复权·价差。
+	// RatioFwd 前复权·比例。⚠️ 结果带 `RewritesHistory`。
+	RatioFwd
+	// DiffFwd 前复权·价差。⚠️ 结果带 `RewritesHistory`。
 	DiffFwd
+	// NoAdjust 不复权（＝ 新浪 RB0 的口径）。
+	NoAdjust
 )
 
 // CountedSpan 是**换月规则实际数到的那一段** —— 数了几天、从哪天数到哪天。
@@ -149,6 +156,14 @@ type Continuous struct {
 	//
 	// ⚠️ 形状照 v0.6 的 `SyncReport.HeldBack`：**不进错误，只留声**；那几天仍留在 `Days` 里（天轴记的是库里有这一天）。
 	NoPick []tickflow.TradingDay
+
+	// RewritesHistory 是前复权的**警告**：非空 ⇒ 这条序列是前复权的，**下一次换月之后，它的全部历史价格都会变**。
+	// 内容是给人读的一句话。后复权与不复权时为空。
+	//
+	// ⛔ 形状照 `NoPick` 与 v0.6 的 `SyncReport.HeldBack`：**不进错误，只留声**（用户 2026-09-17 裁：警告放在结果的具名字段里）。
+	// ⚠️ 只要选了前复权就非空 —— 与这一次拼出来有没有换月点无关：历史会不会变取决于【将来】还换不换月。
+	// ⚠️ 射程：调用方不读这个字段，就看不见这条警告；本库没有日志出口。
+	RewritesHistory string
 
 	// Days 是本次拼接用的【天轴】：库里实际有根的交易日，升序。
 	//

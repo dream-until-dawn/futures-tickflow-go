@@ -936,6 +936,7 @@ var guardNames = []string{
 	`TestFailedChunkIsRetriedNotSkipped`,
 	`TestFifthColumnNamesExist`,
 	`TestFixedBarDaysRejectsUnknownExpiry`,
+	`TestForwardAdjustCarriesWarning`,
 	`TestGapKindRenameHasAnErratum`,
 	`TestGateTierLegendIsHonest`,
 	`TestGoListImportRulerWorks`,
@@ -1000,6 +1001,7 @@ var guardNames = []string{
 	`TestTagV041SelfCheckTwoLosesItsMeaningWithoutMeta`,
 	`TestTestNamesCheckerItself`,
 	`TestTestNamesInDocsExist`,
+	`TestUnknownAdjustIsRejected`,
 	`TestUnknownClassIsNotReadAndIsLoud`,
 	`TestUnverifiedSpanDoesNotHealByRunningAgain`,
 	`TestUnverifiedSpanRefusesBothReads`,
@@ -1016,6 +1018,7 @@ var guardNames = []string{
 	`TestWalkAgreesWithVerifyCoverage`,
 	`TestWholeChunkHeldBackAdvancesToNextChunk`,
 	`TestWholeLibraryErrorIsAttributedToEverySpan`,
+	`TestZeroAdjustIsRatioBack`,
 }
 
 // funcTestRe 抠出一份 _test.go 里所有顶层测试函数的名字。

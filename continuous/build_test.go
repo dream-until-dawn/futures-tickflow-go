@@ -101,7 +101,7 @@ func TestAdjustNeverTouchesVolumeOrOpenInterest(t *testing.T) {
 // 两者的差别就在**哪一端不动**，而那正是可复现与否的分界。
 func TestBackAdjustKeepsHistoryForwardAdjustKeepsLatest(t *testing.T) {
 	in := threeDays()
-	raw, _ := Build(ContinuousSpec{Roll: ByOpenInterest{}}, in)
+	raw, _ := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: NoAdjust}, in)
 	first, last := raw.Bars[0].Close, raw.Bars[len(raw.Bars)-1].Close
 
 	for _, m := range []AdjustMethod{RatioBack, DiffBack} {
@@ -339,5 +339,96 @@ func TestContractAtFollowsTheRolls(t *testing.T) {
 	one := Continuous{First: a, Bars: []tickflow.Bar{bar(20200803, a, 1, 1, 1)}}
 	if got, ok := one.ContractAt(0); !ok || got != a {
 		t.Errorf("不换月的序列第 0 根给了 %v（ok=%v），期望 %v —— 这正是没有 First 就答不出的那一格", got, ok, a)
+	}
+}
+
+// fourDays 是 threeDays 再加一天 0806：新合约收盘 1210。
+// ⛔ 为什么要这一天：threeDays 上比例后复权（1100 / 1.1）与价差后复权（1100 − 100）在换月日恰好都是 1000 ——
+// 那片输入分不开两者，「零值是比例还是价差」在它上面判不出来。0806 上两者分开：1210 / 1.1 ＝ 1100 vs 1210 − 100 ＝ 1110。
+func fourDays() []DayBars {
+	a, b := sym(2601), sym(2605)
+	in := threeDays()
+	return append(in, DayBars{Day: 20200806,
+		Cands: []ContractDay{{Symbol: a, OpenInterest: 10, Volume: 10}, {Symbol: b, OpenInterest: 100, Volume: 100}},
+		Bars:  map[tickflow.Symbol]tickflow.Bar{a: bar(20200806, a, 1000, 1, 10), b: bar(20200806, b, 1210, 9, 100)}})
+}
+
+// guard: 不填 Adjust ＝ 比例后复权（用户 2026-09-17 裁；§八「三条容易踩的」之一）。
+//
+// 三方都要分开，否则这一格判不出零值指向哪一个：零值 ＝ RatioBack 逐根相等 · ≠ DiffBack · ≠ NoAdjust。
+func TestZeroAdjustIsRatioBack(t *testing.T) {
+	in := fourDays()
+	build := func(spec ContinuousSpec) Continuous {
+		t.Helper()
+		c, err := Build(spec, in)
+		if err != nil {
+			t.Fatalf("Build(%+v) 出错：%v", spec, err)
+		}
+		return c
+	}
+	zero := build(ContinuousSpec{Roll: ByOpenInterest{}})
+	ratio := build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: RatioBack})
+	diff := build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: DiffBack})
+	none := build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: NoAdjust})
+
+	// 前提：这片输入真的把三者分开了（否则下面三条断言没有判别力）
+	last := len(in) - 1
+	if ratio.Bars[last].Close == diff.Bars[last].Close || ratio.Bars[last].Close == none.Bars[last].Close {
+		t.Fatalf("输入分不开三者：比例 %v 价差 %v 不复权 %v", ratio.Bars[last].Close, diff.Bars[last].Close, none.Bars[last].Close)
+	}
+	if math.Abs(ratio.Bars[last].Close-1100) > 1e-9 {
+		t.Fatalf("比例后复权最后一根 %v，期望 1100（1210 / 1.1）—— 前提的算术不对", ratio.Bars[last].Close)
+	}
+	for i := range zero.Bars {
+		if zero.Bars[i].Close != ratio.Bars[i].Close {
+			t.Errorf("第 %d 根：零值给 %v，比例后复权给 %v —— 零值不是 RatioBack", i, zero.Bars[i].Close, ratio.Bars[i].Close)
+		}
+	}
+	if zero.RewritesHistory != "" {
+		t.Errorf("零值（后复权）带了前复权警告：%q", zero.RewritesHistory)
+	}
+}
+
+// guard: 前复权的警告在结果里 —— 只要选了前复权就非空，后复权与不复权为空（用户 2026-09-17 裁：具名字段）。
+//
+// ⚠️ 两片输入：有换月的 fourDays，与**一次都不换月**的那片 —— 警告与这一次有没有换月无关（历史会不会变看将来）。
+func TestForwardAdjustCarriesWarning(t *testing.T) {
+	a := sym(2601)
+	noRoll := []DayBars{{Day: 20200803, Cands: []ContractDay{{Symbol: a, OpenInterest: 1, Volume: 1}},
+		Bars: map[tickflow.Symbol]tickflow.Bar{a: bar(20200803, a, 1000, 1, 1)}}}
+	for name, in := range map[string][]DayBars{"有换月": fourDays(), "不换月": noRoll} {
+		for _, m := range []AdjustMethod{RatioBack, DiffBack, RatioFwd, DiffFwd, NoAdjust} {
+			c, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, in)
+			if err != nil {
+				t.Fatalf("%s · 方式 %d：Build 出错 %v", name, m, err)
+			}
+			fwd := m == RatioFwd || m == DiffFwd
+			if fwd && c.RewritesHistory == "" {
+				t.Errorf("%s · 前复权（%d）没有警告 —— 调用方拿到一条会被改写的序列而看不出来", name, m)
+			}
+			if !fwd && c.RewritesHistory != "" {
+				t.Errorf("%s · 方式 %d 不是前复权，却带了警告：%q", name, m, c.RewritesHistory)
+			}
+		}
+	}
+}
+
+// guard: 不在五个已知值里的 AdjustMethod ⇒ Build 报错。
+// 不拒的话它在 adjust 里一支都不命中 ⇒ **静默变成不复权**。标定：五个已知值都不报错（上一格已跑）。
+//
+// ⚠️ 「比已知最大值大一」从五个值里现取，不写 `NoAdjust + 1`：那样暗含「NoAdjust 排最后」，
+// 常量一换序它就拿一个已知值当未知值去测（实测：把 NoAdjust 挪到零值的突变下，这一格因此误红）。
+func TestUnknownAdjustIsRejected(t *testing.T) {
+	maxKnown := RatioBack
+	for _, m := range []AdjustMethod{RatioBack, DiffBack, RatioFwd, DiffFwd, NoAdjust} {
+		if m > maxKnown {
+			maxKnown = m
+		}
+	}
+	for _, m := range []AdjustMethod{maxKnown + 1, -1, 99} {
+		c, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, fourDays())
+		if err == nil {
+			t.Errorf("Adjust ＝ %d 没有报错（Bars 最后一根 %v）—— 未知的复权方式会静默变成不复权", int(m), c.Bars[len(c.Bars)-1].Close)
+		}
 	}
 }
