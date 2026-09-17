@@ -17,11 +17,12 @@ import (
 //
 // ⚠️ 与姊妹仓不同的两处（docs/design.md §十五「v0.8 起手」、docs/probe.md 6.33）：
 //
-//	基线数据   姊妹仓用 500 根 ETH 日线；本库用新浪 RB0 日线的末 1000 根（未复权）
-//	measureSettle  多一格「退化：开头价格重复」—— 见 errDegenerateStart
+//	基线数据       姊妹仓用 500 根 ETH 日线；本库用新浪 RB0 日线的末 1000 根（未复权）
+//	measureSettle  量【逐位稳定点】而不是「第一个逐位相等」；多一格「退化：开头价格重复」—— 见 errDegenerateStart
+//	Settle 契约    不是「≥ 逐位收敛点」，是「Settle() 处相对误差 ≤ settleTol」—— 见 settleTol（docs/probe.md 6.34）
 
 // settleBaseLen 是收敛基线取 RB0 末尾多少根。
-// RB0 全量上量出的最大收敛点是 506（RSI14/CN，6.33）⇒ 取 1000 留够余量，又不至于让 O(n²) 的扫描太慢。
+// RB0 上量出的最大逐位稳定点是 525（RSI14/CN，6.34）⇒ 取 1000 留够余量，又不至于让 O(n²) 的扫描太慢。
 const settleBaseLen = 1000
 
 func settleBase(t *testing.T) []tickflow.Bar {
@@ -44,12 +45,29 @@ func settleBase(t *testing.T) []tickflow.Bar {
 // ⚠️ 射程：只认【收盘价】重复（EMA / MACD / RSI 的输入）。读 High / Low 的指标（KDJ / CCI）若有别的退化形状，这里不判。
 var errDegenerateStart = errors.New("退化：开头价格重复 —— 逐位相等是播种值碰巧不变，不是收敛")
 
-// measureSettle 实测「预读多少根之后，末根的值与从头喂到底【逐位相等】」。
-// 不用容差——容差要挑一个数，而挑多少本身就是要论证的东西。
+// settleTol 是 Settle() 那一根上允许的相对误差 |部分 − 全量| / max(1, |全量|)。
 //
-//	(n, nil)                  真前缀里第一个逐位相等的预读根数（n < 根数）
-//	(-1, nil)                 没有任何真前缀逐位相等 ⇒ 这份数据上没收敛
-//	(n, errDegenerateStart)   找到的那个相等是开头价格重复造成的，**不许当收敛点用**
+// ⛔ 为什么不是 0（与姊妹仓不同；docs/probe.md 6.34，评审方 2026-09-17 判定 C）：
+// 「Settle() ≥ 逐位收敛点」这个契约**不可满足** —— 逐位稳定点跟着数据的数值与舍入走：
+// 同一段 RB0 价格只乘 100 或乘 0.01，RSI14/CN 的稳定点就在 511–537 之间移动，而 Settle() 只由递推系数算出（469）。
+// 把 settleEps 收紧到 1e-17（Settle ≈ 531）也挡不住 ×100 那份的 537。
+//
+// ⇒ Settle() 不动（仍照搬），契约改成「在 Settle() 处与全量只差几个 ULP 量级」，这里断言那个界：
+//
+//	1e-14   读数：四份数据（RB0 末 1000 · 首 1000 · 末 1000 ×100 · ×0.01）× 13 路，Settle() 处实测最大 1.07e-15（全是 RSI）
+//	        留 10 倍余量。它对任何用途都无意义（几个 ULP），v0.9 的预热照 Settle() 读就够
+const settleTol = 1e-14
+
+// measureSettle 实测【逐位稳定点】：最小的预读根数 n，使得从 n 到「根数 − 1」的**每一个**预读量，
+// 末根的值都与从头喂到底逐位相等。不用容差 —— 这是读数，不是判据（判据见 settleTol）。
+//
+// ⚠️ 与姊妹仓不同：姊妹仓量的是「第一个逐位相等」，而逐位相等**不单调** —— 舍入会让值碰巧相等之后又分开
+// （RB0 上 RSI14/TV 在 453 相等、480–500 又不等、505 起才一直相等，docs/probe.md 6.34）⇒ 它会低估。
+// 这里从最长的真前缀往短扫，扫到第一个不等为止。
+//
+//	(n, nil)                  逐位稳定点（n < 根数）
+//	(-1, nil)                 最长的真前缀（丢掉第一根）就已经不等 ⇒ 这份数据上值取决于起点
+//	(n, errDegenerateStart)   那个「稳定」是开头价格重复造成的，**不许当收敛点用**
 //
 // 末根为 NaN（数据比 Warmup 还短）⇒ Fatal，**不折成 -1**：「数据不够长」与「没收敛」是两种状态。
 func measureSettle(t *testing.T, mk func() Indicator, cs []tickflow.Bar, field int) (int, error) {
@@ -59,39 +77,41 @@ func measureSettle(t *testing.T, mk func() Indicator, cs []tickflow.Bar, field i
 	if math.IsNaN(want) {
 		t.Fatalf("基线数据不够长，末根仍是 NaN")
 	}
-	for pre := 1; pre < len(cs); pre++ {
+	stable := -1
+	for pre := len(cs) - 1; pre >= 1; pre-- {
 		part := Compute(mk(), cs[len(cs)-pre:])
 		if part[len(part)-1][field] != want {
-			continue
+			break
 		}
-		dropped := len(cs) - pre
-		repeated := true
-		for _, c := range cs[:dropped] {
-			if c.Close != cs[dropped].Close {
-				repeated = false
-				break
-			}
-		}
-		if repeated {
-			return pre, errDegenerateStart
-		}
-		return pre, nil
+		stable = pre
 	}
-	return -1, nil
+	if stable < 0 {
+		return -1, nil
+	}
+	dropped := len(cs) - stable
+	for _, c := range cs[:dropped] {
+		if c.Close != cs[dropped].Close {
+			return stable, nil
+		}
+	}
+	return stable, errDegenerateStart
 }
 
-// TestSettleCoversActualConvergence 是 Settler 的核心契约：
-// **Settle() 报的根数必须真的够用。**
-//
-// 期望值不写死——当场实测出逐位收敛点再比。写死的话，改了 settleEps 或换了
-// 基线数据，这条测试要么假绿要么假红。
-func TestSettleCoversActualConvergence(t *testing.T) {
-	cs := settleBase(t)
+// relErrAt 是「只预读 n 根」时末根与全量的相对误差 |部分 − 全量| / max(1, |全量|)。
+func relErrAt(mk func() Indicator, cs []tickflow.Bar, n, field int) float64 {
+	full := Compute(mk(), cs)
+	part := Compute(mk(), cs[len(cs)-n:])
+	a, b := part[len(part)-1][field], full[len(full)-1][field]
+	return math.Abs(a-b) / math.Max(1, math.Abs(b))
+}
 
-	// 【每一路输出都要验】。多输出指标的各路收敛速度未必相同——KDJ 的 J = 3K-2D
-	// 会把 K 与 D 的残差放大，只验 .k 就漏掉了。（姊妹仓这条测试最初只验第一路，
-	// 是下游报了 kdj.j 的数才补全的，一补就照出个真 bug。）
-	for _, c := range []struct {
+// settleCases 是 Settle 契约要验的全部指标（每一路都验：多输出指标各路收敛速度未必相同 ——
+// KDJ 的 J = 3K-2D 会把 K 与 D 的残差放大，只验 .k 就漏掉了；姊妹仓这条最初只验第一路，是下游报了 kdj.j 的数才补全的）。
+func settleCases() []struct {
+	name string
+	mk   func() Indicator
+} {
+	return []struct {
 		name string
 		mk   func() Indicator
 	}{
@@ -106,27 +126,61 @@ func TestSettleCoversActualConvergence(t *testing.T) {
 		{"RSI(14)/CN", func() Indicator { return RSI(14, CN) }},
 		{"MACD/TV", func() Indicator { return MACD(12, 26, 9, TV) }},
 		{"MACD/CN", func() Indicator { return MACD(12, 26, 9, CN) }},
-	} {
+	}
+}
+
+// TestSettleCoversActualConvergence 是 Settler 的契约（判定 C，见 settleTol）：
+// **只预读 Settle() 根时，末根与从头喂到底的相对误差 ≤ settleTol。**
+//
+// 逐位稳定点照印成读数，**不与 Settle() 比大小**（它跟着数据的数值走，不可能被一个只由系数算出的数封顶）。
+// ⚠️ 这一格因此不再挡「Settle() 过于保守」—— 姊妹仓原有的 declared > measured*3+80 依赖逐位点当尺子，一并去掉。
+func TestSettleCoversActualConvergence(t *testing.T) {
+	cs := settleBase(t)
+	maxRel := 0.0
+	for _, c := range settleCases() {
 		declared := tickflow.IndicatorSettle(c.mk())
 		for field, key := range Keys(c.mk()) {
 			t.Run(c.name+"/"+key, func(t *testing.T) {
-				measured, err := measureSettle(t, c.mk, cs, field)
-				if err != nil {
-					t.Fatalf("基线上量出 %d 根，但 %v —— 换一段基线", measured, err)
+				rel := relErrAt(c.mk, cs, declared, field)
+				if rel > maxRel {
+					maxRel = rel
 				}
-				if measured < 0 {
-					t.Fatalf("%d 根之内没收敛，基线不够长", len(cs))
+				if rel > settleTol {
+					t.Errorf("只预读 Settle()=%d 根时相对误差 %.3g > %g —— 照它预热，值还没收敛", declared, rel, settleTol)
 				}
-				if declared < measured {
-					t.Errorf("Settle() 报 %d，实测要 %d 根才逐位收敛——报少了 %d 根，"+
-						"照它预热会预热不足", declared, measured, measured-declared)
-				}
-				// 也不该离谱地保守：多读几百根 K 线是要花时间和内存的。
-				if declared > measured*3+80 {
-					t.Errorf("Settle() 报 %d，实测只要 %d——过于保守了", declared, measured)
-				}
-				t.Logf("Warmup %d / Settle %d / 实测 %d", c.mk().Warmup(), declared, measured)
+				stable, err := measureSettle(t, c.mk, cs, field)
+				t.Logf("Warmup %d / Settle %d / 逐位稳定点 %d（%v）/ Settle 处相对误差 %.3g",
+					c.mk().Warmup(), declared, stable, err, rel)
 			})
+		}
+	}
+	t.Logf("Settle 处相对误差最大 %.3g（界 %g）", maxRel, settleTol)
+}
+
+// TestMeasureSettleIsStablePoint 钉住量法：measureSettle 返回的 n 之后**每一个**预读量都逐位相等，n − 1 不等。
+// 姊妹仓的「第一个逐位相等」在 RSI14/TV 上返回 453，而 480 不等 —— 它过不了这一格。
+func TestMeasureSettleIsStablePoint(t *testing.T) {
+	cs := settleBase(t)
+	for _, c := range settleCases() {
+		for field, key := range Keys(c.mk()) {
+			n, err := measureSettle(t, c.mk, cs, field)
+			if err != nil || n < 1 {
+				t.Fatalf("%s/%s：基线上量出 (%d, %v)，基线不够长或退化", c.name, key, n, err)
+			}
+			full := Compute(c.mk(), cs)
+			want := full[len(full)-1][field]
+			for pre := n; pre < len(cs); pre++ {
+				part := Compute(c.mk(), cs[len(cs)-pre:])
+				if part[len(part)-1][field] != want {
+					t.Fatalf("%s/%s：measureSettle 报 %d，而预读 %d 根时不逐位相等 —— 那不是稳定点", c.name, key, n, pre)
+				}
+			}
+			if n > 1 {
+				part := Compute(c.mk(), cs[len(cs)-(n-1):])
+				if part[len(part)-1][field] == want {
+					t.Errorf("%s/%s：measureSettle 报 %d，而 %d 也逐位相等 —— 报大了", c.name, key, n, n-1)
+				}
+			}
 		}
 	}
 }
@@ -134,8 +188,8 @@ func TestSettleCoversActualConvergence(t *testing.T) {
 // TestSingleContractDailyDoesNotSettle 钉住 v0.8 起手 甲（docs/probe.md 6.33）：
 // 单个合约的整段日线短于递归类指标的收敛根数 ⇒ 值取决于从哪一根开始喂，不会收敛。
 //
-// ⚠️ 判的是「measureSettle 返回 -1 且不是退化」，不是「根数 < Settle()」：Settle() 是上界，
-// 拿上界当门槛会留一段「已经收敛却仍小于 Settle()」的区间（评审方 2026-09-17 指出）。
+// ⚠️ 判的是「measureSettle 返回 -1 且不是退化」，不是「根数 < Settle()」：拿 Settle() 当门槛会留一段
+// 「已经收敛却仍小于 Settle()」的区间（评审方 2026-09-17 指出）；而且 Settle() 本就不是逐位收敛点的上界（6.34）。
 //
 // 对照两格，缺一格这条测试就没有判别力：
 //
@@ -298,13 +352,12 @@ func TestOnlyWarmupIsBadlyInsufficient(t *testing.T) {
 	t.Logf("只按 Warmup 预读 %d 根：MACD.dif = %.4f，收敛值 %.4f，相对误差 %.2f",
 		warm, got, want, rel)
 
-	// 按 Settle 预热则应当已经逐位收敛。
+	// 按 Settle 预热则相对误差应当 ≤ settleTol（不要求逐位相等，见 settleTol）。
 	settle := tickflow.IndicatorSettle(mk())
 	if settle >= len(cs) {
 		t.Skipf("基线只有 %d 根，装不下 Settle() 要的 %d 根", len(cs), settle)
 	}
-	part = Compute(mk(), cs[len(cs)-settle:])
-	if part[len(part)-1][0] != want {
-		t.Errorf("按 Settle() 预读 %d 根仍未逐位收敛", settle)
+	if r := relErrAt(mk, cs, settle, 0); r > settleTol {
+		t.Errorf("按 Settle() 预读 %d 根，相对误差 %.3g 仍 > %g", settle, r, settleTol)
 	}
 }

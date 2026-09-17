@@ -29,9 +29,10 @@
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
 | `continuous` | ✅ **v0.7 已落**：拼接 `Build`（天轴 `Days` · 接缝 `Rolls`（含 `Counted`）· `First` / `ContractAt` · 规则说不清的天 `NoPick`）· 换月规则四条（`ByOpenInterest` / `ByVolume` / `ByOIAndVolume` / `FixedBarDaysBeforeExpiry`）· 复权四种＋不复权（零值＝比例后复权 `RatioBack`；前复权带警告 `RewritesHistory`）· 两道包级守卫（不碰日历 · 只收数据不收提供者）。⚠️ **不落库、没有 `View`**（`RawClose` / `Contract()` 是 v0.9 的承诺）；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外（📌 同日已扩：主语栏里的 .go 名与其余名字也核，见 `statusTokenIssue`） |
 | `calendar/derived` | ✅ **v0.7 已落**：从 1m 主连逐天判夜盘（`Judge`：a 有量 · b 有根无量 · c 没有夜盘根 · 带原因的「无结论」）· 与注入日历比出差异清单（`Compare`）· 差异报告工具 `tools/derivedreport`（退出码 0 / 2 差异 / 3 无判出的天 / 1 失败）· 三道「只读」守卫。⚠️ **只报差异、不产出日历、不改 base**（交易日由调用方注入的日历裁，D-B）；真实库上跑过一次（rb 一年，probe.md 6.32） |
-| `indicator` · `Feed` | ❌ **尚未开始** |
+| `indicator` | ✅ **v0.8 已落**：根包接口 `Indicator` / `Settler`（`Update` 吃 `Bar`）· 内置七个 MA EMA MACD KDJ RSI CCI BOLL（自姊妹项目 okx-tickflow-go v1.4.2 移植，公式与两套口径照搬）· 默认口径 CN（用户定，未实测国内期货软件）· `Compute` / `ComputeField`。⚠️ `Settle()` **不保证逐位相等**，契约是「Settle() 处相对误差 ≤ 1e-14」（probe.md 6.34）；**没有消费方**（Feed 在 v0.9） |
+| `Feed` | ❌ **尚未开始** |
 
-⇒ 「能力」一节里指向 `indicator` `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**（v0.7）；
+⇒ 「能力」一节里指向 `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**（v0.7），指向 `indicator` 的同理（v0.8）；
 指向 `source/shinnysource` 的那一行**只有「深度分钟」一半已实现**（具体合约、1m、≥ 2020-05-06），**「实时」仍是承诺**；
 指向 `Period` `calendar/embedded` `store/segfile` `source/sinasource` `Syncer` 的行**已有实现，并且有测试**；
 `refdata/shinnyref` 只到解码与取数层（说明列里哪几项已落地，以 design.md §十九 为准）。
@@ -60,7 +61,7 @@
 | 落盘，目录自选 | `store/segfile` | 88 字节定长记录 |
 | 增量同步 | `Syncer` | 按**交易日**记 coverage |
 | **主力连续 + 换月复权** | `continuous` | 复权四种＋不复权（**默认比例后复权**），**并交出接缝** |
-| 指标 | `indicator` | 自姊妹项目移植（v0.8）；**默认口径 CN，照搬姊妹仓配置（用户 2026-09-17 定，未实测国内期货软件）** |
+| 指标 | `indicator` | 自姊妹项目移植（v0.8）；**默认口径 CN，照搬姊妹仓配置（用户 2026-09-17 定，未实测国内期货软件）**。⚠️ 单个合约日线上递归类指标不收敛（见下「已知风险」） |
 | 可步进的多周期视图 | `Feed` | 主周期步进，辅周期只给最后一根已收盘的 |
 | 实盘复用同一套代码 | `Feed.Push` | `store` 传 nil 即纯实盘形态 |
 | 喂给记账内核 | `adapter/` | 独立嵌套模块，主模块不依赖 `decimal`。**口径对齐见 design.md 第十二节，部分待定** |
@@ -217,6 +218,8 @@ var CST = time.FixedZone("CST", 8*3600)
 | **主力连续未复权** | **是**（序列平滑无标记） | 每个换月点凭空 **1.5–1.7pp** 收益/亏损（区间随持仓而定），17 年上百个 | 用 `continuous` 自建并取 `Rolls`；新浪 `RB0` 只作对账 |
 | **前复权会改写历史** | **是** | 同一段历史、同一策略，今天跑与下月跑**结果不同** | 默认（零值）比例后复权 `RatioBack`。要前复权必须显式选，且结果里带警告 `Continuous.RewritesHistory`（不读这个字段就看不见） |
 | **拿复权价去算钱** | **是** | 手续费 / 保证金 / 涨跌停全错（后复权价位是虚构的） | **信号用复权价，成交用真实价**。这是本库对下游最重要的约定。⚠️ **`RawClose` 还不存在**：它是 v0.9 `View` 的承诺；今天的做法是 `Continuous.ContractAt(i)` 拿到第 i 根属于哪个合约，再回那个合约自己的库读原始根 |
+| **在单个合约的日线上算递归类指标**（EMA / RSI / MACD，两套口径） | **是**（每一根都有数，看不出没收敛） | 一份期货合约只活约一年：rb 合约日线 236–243 根（probe.md 6.33，35 份已到期合约），短于这三个指标的收敛根数 ⇒ **值取决于从哪一根开始喂，不会收敛**；同一份合约从上市首日喂与从库里第一根喂，给出不同的数 | 要收敛的值，喂主连（`continuous`）。窗口类（MA / BOLL / CCI）与 KDJ 不受影响（KDJ/CN 实测 83–111 根就收敛）。⚠️ 主连选前复权时 `RewritesHistory` 非空，指标值也随换月整段改写 |
+| **锁板段上的指标读数读反**（涨跌停、`O == H == L == C` 连续多根） | **是**（按约定给出中性值，不报错） | 照搬姊妹仓的平盘约定：窗口内高低相等 ⇒ KDJ 的 RSV 取 50、K / D / J 趋向 50；CCI 给 0；RSI 两边都为 0 时给 50 —— 读起来是「不强不弱」，而**锁涨停正是最强的行情**（锁跌停同理反向） | 记下不改（用户 2026-09-17 裁：照搬姊妹仓配置）。遇到锁板段，**看价格与涨跌停价，不看这几个指标**；`indicator/futures_test.go` 的 `TestLockLimitNoInfAndFlatConventions` 钉着这组约定 |
 | **时段表过期**（交易所改夜盘） | **半**（`BarBound.Anomalous` 会标，但要有人看） | 夜盘变长时，第一根日盘会装**超过一个周期**（实测：60m 装 90 分钟），而收盘标签序列与覆盖检查**都正常** | `Bars` 把超出的残段单独冲刷成一根，不摊进网格；上界不变量 `TestBarsNeverExceedOnePeriod` 锁住；矛盾本身由 `Day.TemplateMismatch` 按【交易日】判，当天每一根都标 `Anomalous`，v0.3 的 `Misaligned` 扫这一位 |
 | **交易所【永久取消】某品种夜盘** | **是**（按设计静默，`Day` 这一级不可分辨） | `TemplateMismatch` 永远 `false`（它豁免 `actual == 0`），`Phase` 继续按陈旧标称算——沪银日盘一直给 `09:30/10:45/13:45/14:45/15:00`，而实际已是 `10:00/11:15/14:15/15:00`：**每一根都错 30 分钟，永远** | 单日停（长假）与永久取消在一天之内长得一样，**区分需要序列**：连续 N 个交易日 `actual == 0` 应判为模板过期而非长假。承接版本 **v0.3 `Syncer`**（它才持有交易日序列）。现由 `TestKnownDefect_PermanentNightCancellationLooksLikeHoliday` 钉住 |
 | **模板过期的标志按周期漏报** | **是**（漏掉的那些看起来完全正常） | 判据若按【取模后的余数】比，同一个「标称 330 / 实际 310」在 15m/30m 报、5m/60m/90m 不报 | 判据比【分钟数】不比余数，且提到交易日一级——标志挂的层级要和事实所在的层级一致 |
