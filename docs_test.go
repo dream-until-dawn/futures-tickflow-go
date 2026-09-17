@@ -990,6 +990,7 @@ var guardNames = []string{
 	`TestSortednessHoldsAfterVerify`,
 	`TestSourceTableCoversEveryCapsImplementor`,
 	`TestStatusClaimsMatchRepo`,
+	`TestStatusTokenIssueItself`,
 	`TestStoreBreachAbortsWhileUnrunnableDoesNot`,
 	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,

@@ -1529,6 +1529,160 @@ func hasLibraryGo(path string) bool {
 
 var backtickPath = regexp.MustCompile("`([^`]+)`")
 
+// statusFacts 是规则二要对照的仓库事实：一次量好，判法只读它（对照组可以喂合成的）。
+type statusFacts struct {
+	// hasLibraryGo：某条路径（目录或文件）下有没有非测试 .go
+	hasLibraryGo func(path string) bool
+	// topDirs：顶层目录名的小写 → 原名（只收下面有非测试 .go 的）
+	topDirs map[string]string
+	// rootTypes：根包非测试源码里声明的导出类型名
+	rootTypes map[string]bool
+}
+
+// repoStatusFacts 量出真仓库的事实。
+func repoStatusFacts(root string) (statusFacts, error) {
+	f := statusFacts{hasLibraryGo: hasLibraryGo, topDirs: map[string]string{}, rootTypes: map[string]bool{}}
+	ents, err := os.ReadDir(root)
+	if err != nil {
+		return f, err
+	}
+	fset := token.NewFileSet()
+	for _, e := range ents {
+		name := e.Name()
+		if e.IsDir() {
+			if !strings.HasPrefix(name, ".") && hasLibraryGo(filepath.Join(root, name)) {
+				f.topDirs[strings.ToLower(name)] = name
+			}
+			continue
+		}
+		if !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") {
+			continue
+		}
+		af, perr := parser.ParseFile(fset, filepath.Join(root, name), nil, 0)
+		if perr != nil {
+			return f, fmt.Errorf("%s 解析失败：%w", name, perr)
+		}
+		for _, d := range af.Decls {
+			gd, ok := d.(*ast.GenDecl)
+			if !ok || gd.Tok != token.TYPE {
+				continue
+			}
+			for _, sp := range gd.Specs {
+				if ts, ok := sp.(*ast.TypeSpec); ok && ts.Name.IsExported() {
+					f.rootTypes[ts.Name.Name] = true
+				}
+			}
+		}
+	}
+	if len(f.rootTypes) == 0 || len(f.topDirs) == 0 {
+		return f, fmt.Errorf("根包导出类型 %d 个、顶层带代码目录 %d 个 —— 有一个是 0 ⇒ 量法多半坏了", len(f.rootTypes), len(f.topDirs))
+	}
+	return f, nil
+}
+
+// statusTokenIssue 判 contract.md §〇 一条状态行里的一个反引号 token。它**共用**给守卫与对照组。
+//
+// 交出：issue（非空 ⇒ 过期）· judged（这个 token 在不在射程里 —— 在射程里才算「核了一条」）。
+//
+// 三种 token 各有一个可测量的定义（2026-09-17 扩：`continuous` 那行过期约 1 天，而旧判法只核带斜杠的路径）：
+//
+//	带斜杠   `calendar/embedded` `source/*`  ⇒ 那条路径下有没有非测试 .go；✅ 须有 · ❌ 须无
+//	.go 名   `source.go` `sync.go`          ⇒ 仓库根下那个文件；✅ 须存在 · ❌ 须不存在
+//	其余     `continuous` `Bar` `Feed`       ⇒ 「有东西」＝ 同名顶层目录下有非测试 .go（**大小写不敏感**，`Feed` 对 `feed/`）
+//	                                         **或** 根包里有同名的导出类型声明；✅ 须有 · ❌ 须无
+//
+// ⛔ .go 名与其余名**只核这一行的第一栏（主语）**；带斜杠的路径仍核整行（与扩之前一致，射程不缩）。
+// 由来：扩的第一版核整行 ⇒ 描述栏里的 `v0.1.0` `Build` `tradingday` `TestStatusClaimsMatchRepo` 全被当成主语，15 处假阳。
+//
+// ⚠️ 射程：
+//
+//	判不了  类型/目录在根包之外（例如某个子包里的导出类型 `Feed`）—— 其余名只看顶层目录与根包
+//	判不了  描述栏里提到的名字（只核主语栏）
+//	判不了  「有东西」≠「做完了」：✅ 与 🚧 在这里是同一侧（有代码即可），细分不核
+//	不认    表格行以外的散文（见本测试头部那处假阳性）
+func statusTokenIssue(raw string, inSubject, done, notYet bool, f statusFacts) (issue string, judged bool) {
+	// ⚠️ 先判斜杠、再剥通配 —— 顺序反了的话 `source/*` 剥成 `source`，
+	// 就会被当成不带斜杠的名字去比顶层目录，**而它恰恰是最该按路径核的一行**。
+	// 这个洞是对照组抓到的：把 `source/*` 标成 ✅，守卫不红。
+	var exists bool
+	var what string
+	switch {
+	case strings.Contains(raw, "/"):
+		tok := strings.TrimSuffix(raw, "/*")
+		exists, what = f.hasLibraryGo(tok), "那条路径下"
+		raw = tok
+	case !inSubject:
+		return "", false // 描述栏里的非路径名字：射程之外
+	case strings.HasSuffix(raw, ".go"):
+		exists, what = f.hasLibraryGo(raw), "仓库根下那个文件"
+	default:
+		_, dir := f.topDirs[strings.ToLower(raw)]
+		exists = dir || f.rootTypes[raw]
+		what = "同名顶层目录（大小写不敏感）或根包导出类型"
+	}
+	switch {
+	case done && !exists:
+		return fmt.Sprintf("把 `%s` 标成 ✅/🚧，而%s没有对应的非测试代码。", raw, what), true
+	case notYet && exists:
+		return fmt.Sprintf("把 `%s` 标成 ❌【尚未开始】，而%s已经有非测试代码了。", raw, what), true
+	}
+	return "", true
+}
+
+// TestStatusTokenIssueItself 是规则二判法的对照组 —— 喂合成事实，判法先在已知答案上出声。
+//
+// ⚠️ 由来：规则二原先**没有对照组**，只有注释里「对照组抓到过 `source/*`」的叙述 —— 叙述不是对照组。
+func TestStatusTokenIssueItself(t *testing.T) {
+	f := statusFacts{
+		hasLibraryGo: func(p string) bool {
+			return map[string]bool{"calendar/embedded": true, "source": true, "sync.go": true}[p]
+		},
+		topDirs:   map[string]string{"continuous": "continuous", "feedx": "FeedX"},
+		rootTypes: map[string]bool{"Bar": true, "Syncer": true},
+	}
+	cases := []struct {
+		raw          string
+		inSubject    bool
+		done, notYet bool
+		wantJudged   bool
+		wantIssue    bool
+	}{
+		// 带斜杠（主语栏或描述栏都核）
+		{"calendar/embedded", true, true, false, true, false},
+		{"calendar/derived", true, true, false, true, true},  // ✅ 而没有代码
+		{"calendar/embedded", true, false, true, true, true}, // ❌ 而已有代码
+		{"source/*", true, true, false, true, false},         // 先判斜杠再剥通配
+		{"calendar/derived", false, true, false, true, true}, // 描述栏里的路径也核（射程不缩）
+		// .go 名
+		{"sync.go", true, true, false, true, false},
+		{"source.go", true, true, false, true, true},
+		{"sync.go", true, false, true, true, true},
+		// 其余名：顶层目录（大小写不敏感）
+		{"continuous", true, false, true, true, true}, // ⛔ 2026-09-17 真实过期的那一格
+		{"continuous", true, true, false, true, false},
+		{"FEEDX", true, false, true, true, true}, // 大小写不敏感
+		{"indicator", true, false, true, true, false},
+		// 其余名：根包导出类型
+		{"Bar", true, true, false, true, false},
+		{"Syncer", true, true, false, true, false},
+		{"Feed", true, true, false, true, true}, // ✅ 而既无目录也无类型
+		{"Syncer", true, false, true, true, true},
+		// 描述栏里的非路径名字：射程之外（扩的第一版就是在这里出了 15 处假阳）
+		{"v0.1.0", false, true, false, false, false},
+		{"Build", false, true, false, false, false},
+		{"continuous", false, false, true, false, false},
+	}
+	for _, c := range cases {
+		issue, judged := statusTokenIssue(c.raw, c.inSubject, c.done, c.notYet, f)
+		if judged != c.wantJudged {
+			t.Errorf("`%s`（主语栏=%v）：在射程里=%v，期望 %v", c.raw, c.inSubject, judged, c.wantJudged)
+		}
+		if (issue != "") != c.wantIssue {
+			t.Errorf("`%s`（✅=%v ❌=%v）：判出问题=%v（%q），期望 %v", c.raw, c.done, c.notYet, issue != "", issue, c.wantIssue)
+		}
+	}
+}
+
 // TestStatusClaimsMatchRepo 守两条，都只认【表格行】，不认散文。
 //
 // ⚠️ 「只认表格行」不是取巧，是**一处已经存在的假阳性**逼出来的：
@@ -1539,15 +1693,15 @@ var backtickPath = regexp.MustCompile("`([^`]+)`")
 //
 //	一、整仓级：任何 `.md` 的表格行里，不得出现 noCodeYetClaims 里的措辞
 //	           —— 除非库代码真的是 0。
-//	二、包级：  contract.md §〇 状态表里【含斜杠的反引号路径】，
-//	           标 ✅ ⇒ 那条路径下必须有非测试 `.go`；标 ❌ ⇒ 必须没有。
+//	二、包级：  contract.md §〇 状态表里的反引号 token（带斜杠的路径 · .go 文件名 · 其余名字，定义见 statusTokenIssue），
+//	           标 ✅/🚧 ⇒ 必须有对应的非测试代码；标 ❌ ⇒ 必须没有。
 //
 // ⚠️ 射程（照例写明它不比什么）：
 //
 //	堵的     表格行里的整仓级「还没有代码」措辞；§〇 里【带路径】的 ✅/❌ 行
 //	不堵的   散文里的同类说法 —— 结构上分不开，见上面那处假阳性
-//	不堵的   不含斜杠的 token（`Syncer` `Feed` `refdata`）——它们是类型名或未定形状，
-//	         「存在」在文件系统上没有对应物；要堵得先给它们一个可测量的定义
+//	（原先「不堵的：不含斜杠的 token —— 『存在』在文件系统上没有对应物」—— 2026-09-17 给了定义并堵上：
+//	 `continuous` 那行标着「尚未开始」而代码已进仓约 1 天，旧判法全程没出声。定义见 statusTokenIssue）
 //	不堵的   ✅ 行上的**行数/测试数**（833 行、43 个测试）—— 那是数，会自己变旧，
 //	         而给每个数配一台机器的代价大于它挡住的错。**写下来，别假装它被守着。**
 func TestStatusClaimsMatchRepo(t *testing.T) {
@@ -1630,6 +1784,10 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 		t.Fatal("docs/contract.md 里找不到 `## 〇` 那一节 —— 规则二无处可扫，恒绿")
 	}
 
+	facts, ferr := repoStatusFacts(".")
+	if ferr != nil {
+		t.Fatalf("量不出仓库事实：%v —— 量不出就不许判状态行对不对", ferr)
+	}
 	checked := 0
 	for i := lo; i < hi; i++ {
 		ln := all[i]
@@ -1645,24 +1803,24 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 		if done == notYet { // 两个都有或都没有 ⇒ 不是一条状态行
 			continue
 		}
+		// 第一栏是这一行的【主语】；其余栏是描述（版本号、字段名、测试名……）
+		subject := ""
+		if cells := strings.Split(ln, "|"); len(cells) > 1 {
+			subject = cells[1]
+		}
+		seenTok := map[string]bool{} // 同一行里同一个 token 只判一次（描述栏常会复述主语）
 		for _, m := range backtickPath.FindAllStringSubmatch(ln, -1) {
-			raw := m[1]
-			// ⚠️ 先判斜杠、再剥通配 —— 顺序反了的话 `source/*` 剥成 `source`，
-			// 就会被下面这条「不含斜杠 ⇒ 射程之外」判出去，**而它恰恰是最该核的一行**。
-			// 这个洞是对照组抓到的：把 `source/*` 标成 ✅，守卫不红。
-			if !strings.Contains(raw, "/") {
-				continue // 射程之外：见上面那条说明
+			if seenTok[m[1]] {
+				continue
 			}
-			tok := strings.TrimSuffix(raw, "/*")
-			checked++
-			exists := hasLibraryGo(tok)
-			if done && !exists {
-				t.Errorf("docs/contract.md:%d 把 `%s` 标成 ✅，"+
-					"而那条路径下没有任何非测试 .go。\n  行：%s", i+1, tok, strings.TrimSpace(ln))
+			seenTok[m[1]] = true
+			inSubject := strings.Contains(subject, "`"+m[1]+"`")
+			issue, judged := statusTokenIssue(m[1], inSubject, done, notYet, facts)
+			if judged {
+				checked++
 			}
-			if notYet && exists {
-				t.Errorf("docs/contract.md:%d 把 `%s` 标成 ❌【尚未开始】，"+
-					"而那条路径下已经有非测试 .go 了。\n  行：%s", i+1, tok, strings.TrimSpace(ln))
+			if issue != "" {
+				t.Errorf("docs/contract.md:%d %s\n  行：%s", i+1, issue, strings.TrimSpace(ln))
 			}
 		}
 	}
@@ -1670,8 +1828,8 @@ func TestStatusClaimsMatchRepo(t *testing.T) {
 		t.Fatal("§〇 里一条带路径的状态行都没扫到 —— 规则二在空集上恒绿，先修判据")
 	}
 
-	t.Logf("库代码 %d 文件 / %d 行；扫过 %d 个 .md 的 %d 行表格；§〇 里核了 %d 条带路径的状态",
-		files, lines, len(mdFiles), rows, checked)
+	t.Logf("库代码 %d 文件 / %d 行；扫过 %d 个 .md 的 %d 行表格；§〇 里核了 %d 个状态 token（根包导出类型 %d 个 · 顶层带代码目录 %d 个）",
+		files, lines, len(mdFiles), rows, checked, len(facts.rootTypes), len(facts.topDirs))
 }
 
 // —— 印出来的消息里不许有 Markdown 的 `**` ——
