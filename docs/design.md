@@ -4955,7 +4955,7 @@ v0.8 一档：`indicator`（自 `C:\VScodeProject\okx-tickflow-go` 的 `indicato
 选项       Named · Convention 本身是 Option；参数不合法 panic（姊妹仓 mustPositive，理由：参数是写死的常量，写错是编程错误）
 不搬       examples/ · 姊妹仓 Feed / View 相关 · okx_convention_test.go 的「外部已核对」含义（见零）
 测试三层   reference_test（朴素批量实现逐根对照）· golden_test（真实行情锁基线）· settle_test（实测逐位收敛点 ≤ Settle()）
-           📌 2026-09-17 改（上面一行原文不改；probe.md 6.34 判定 C）：settle_test 断言「Settle() 处相对误差 ≤ 1e-14」，逐位稳定点只印成读数、不与 Settle() 比大小
+           📌 2026-09-17 改（上面一行原文不改；probe.md 6.34 判定 C）：settle_test 断言「Settle() 处相对误差 ≤ 1e-14」，逐位稳定点只印成读数、不与 Settle() 比大小（📌 09-18：界收紧为 2e-15，1e-14 放过了「Settle 少报几十根」，见 probe.md 6.34 第五节）
            ＋ indicator_test（手算格 · 平盘 · NaN 不是 0 · Reset · 命名 · 口径选择 · 坏参数 panic）＋ concurrent_test（默认口径的并发读写）
 ```
 
@@ -5023,7 +5023,7 @@ type Settler interface {
        （姊妹仓那张表本身就注明「实测 500 根 ETH」）；而用户实际会喂的是本库主连，默认 RatioBack（09-17 刚改）
        ⇒ 戊的读数射程只到「RB0 未复权」；要覆盖 RatioBack 主连得另拼一条长序列再量，v0.8 不做，写在这里
     📌 **2026-09-17 读数：戊垮了**（probe.md 6.34）—— RSI14/CN 首个相等 506 > Settle() 469；按稳定点 RSI 两套口径都 > Settle()。
-       评审方判：B1 / B2 不做（B1 被 ×100 那份的 537 反证）；A 量法改量稳定点；C 契约改成「Settle() 处与全量只差几个 ULP，断言 ≤ 1e-14」，
+       评审方判：B1 / B2 不做（B1 被 ×100 那份的 537 反证）；A 量法改量稳定点；C 契约改成「Settle() 处与全量只差几个 ULP，断言 ≤ 1e-14」，（📌 09-18：界收紧为 2e-15，1e-14 放过了「Settle 少报几十根」，见 probe.md 6.34 第五节）
        Settle() 与 settleEps 不动。上面「会垮」一行原文不改，戊按判对记「垮」
 ```
 

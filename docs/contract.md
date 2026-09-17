@@ -29,7 +29,7 @@
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
 | `continuous` | ✅ **v0.7 已落**：拼接 `Build`（天轴 `Days` · 接缝 `Rolls`（含 `Counted`）· `First` / `ContractAt` · 规则说不清的天 `NoPick`）· 换月规则四条（`ByOpenInterest` / `ByVolume` / `ByOIAndVolume` / `FixedBarDaysBeforeExpiry`）· 复权四种＋不复权（零值＝比例后复权 `RatioBack`；前复权带警告 `RewritesHistory`）· 两道包级守卫（不碰日历 · 只收数据不收提供者）。⚠️ **不落库、没有 `View`**（`RawClose` / `Contract()` 是 v0.9 的承诺）；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外（📌 同日已扩：主语栏里的 .go 名与其余名字也核，见 `statusTokenIssue`） |
 | `calendar/derived` | ✅ **v0.7 已落**：从 1m 主连逐天判夜盘（`Judge`：a 有量 · b 有根无量 · c 没有夜盘根 · 带原因的「无结论」）· 与注入日历比出差异清单（`Compare`）· 差异报告工具 `tools/derivedreport`（退出码 0 / 2 差异 / 3 无判出的天 / 1 失败）· 三道「只读」守卫。⚠️ **只报差异、不产出日历、不改 base**（交易日由调用方注入的日历裁，D-B）；真实库上跑过一次（rb 一年，probe.md 6.32） |
-| `indicator` | ✅ **v0.8 已落**：根包接口 `Indicator` / `Settler`（`Update` 吃 `Bar`）· 内置七个 MA EMA MACD KDJ RSI CCI BOLL（自姊妹项目 okx-tickflow-go v1.4.2 移植，公式与两套口径照搬）· 默认口径 CN（用户定，未实测国内期货软件）· `Compute` / `ComputeField`。⚠️ `Settle()` **不保证逐位相等**，契约是「Settle() 处相对误差 ≤ 1e-14」（probe.md 6.34）；**没有消费方**（Feed 在 v0.9） |
+| `indicator` | ✅ **v0.8 已落**：根包接口 `Indicator` / `Settler`（`Update` 吃 `Bar`）· 内置七个 MA EMA MACD KDJ RSI CCI BOLL（自姊妹项目 okx-tickflow-go v1.4.2 移植，公式与两套口径照搬）· 默认口径 CN（用户定，未实测国内期货软件）· `Compute` / `ComputeField`。⚠️ `Settle()` **不保证逐位相等**，契约是「Settle() 处相对误差 ≤ 2e-15」（probe.md 6.34；09-18 由 1e-14 收紧）；**没有消费方**（Feed 在 v0.9） |
 | `Feed` | ❌ **尚未开始** |
 
 ⇒ 「能力」一节里指向 `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**（v0.7），指向 `indicator` 的同理（v0.8）；

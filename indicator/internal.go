@@ -66,7 +66,7 @@ func (s *smoother) update(x float64) (float64, bool) {
 // ⛔ 但它【不保证】Settle() 处逐位相等（docs/probe.md 6.34，与姊妹仓注释原话不同）：
 // 逐位稳定点跟着数据的数值与舍入走 —— RB0 日线上 RSI14/CN 要 525 根，而 Settle() 是 469；
 // 同一段价格乘 100 就要 537，收紧到 1e-17 也挡不住。⇒ 契约是「Settle() 处与全量只差几个 ULP」，
-// indicator/settle_test.go 的 settleTol 断言这个界（1e-14）。
+// indicator/settle_test.go 的 settleTol 断言这个界（2e-15）。
 const settleEps = 1e-15
 
 // settle 返回播种痕迹衰减到 settleEps 以下所需的样本数。
