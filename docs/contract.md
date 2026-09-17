@@ -27,9 +27,11 @@
 | `source/shinnysource` | ✅ **具体合约的 1m 已通**（v0.6 片 A）：token／名称服务（HTTPS）→ websocket DIFF 翻页 → `Bar`，实现 `tickflow.Source` 与 `tickflow.CalendarHolder`。⚠️ **只做具体合约的 1m**（主连拒掉）；日历只覆盖 2020-05-06 之后（H2），更早的不会被请求；**实时推送不做**（v0.10） |
 | `Syncer`（根包 `syncer.go` / `sync.go`） | ✅ 已发布 |
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
-| `calendar/derived` · `continuous` · `indicator` · `Feed` | ❌ **尚未开始** |
+| `continuous` | 🚧 **v0.7 进行中、未发布**：类型 · 拼接（`Build`）· `ContractAt` 与两道包级守卫（不碰日历 · 只收数据不收提供者）已落；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外 |
+| `calendar/derived` | 🚧 **v0.7 第一颗**：只落结论类型（a/b/c ＋ 带原因的「无结论」）与两道「只读」守卫；**判据本体尚未落** |
+| `indicator` · `Feed` | ❌ **尚未开始** |
 
-⇒ 「能力」一节里指向 `calendar/derived` `continuous` `indicator` `Feed` 的行**都还是承诺**；
+⇒ 「能力」一节里指向 `indicator` `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**、且尚未发布；
 指向 `source/shinnysource` 的那一行**只有「深度分钟」一半已实现**（具体合约、1m、≥ 2020-05-06），**「实时」仍是承诺**；
 指向 `Period` `calendar/embedded` `store/segfile` `source/sinasource` `Syncer` 的行**已有实现，并且有测试**；
 `refdata/shinnyref` 只到解码与取数层（说明列里哪几项已落地，以 design.md §十九 为准）。
