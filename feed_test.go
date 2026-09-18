@@ -157,16 +157,19 @@ func TestFeedRejectsBadConfig(t *testing.T) {
 		name    string
 		mut     func(*tickflow.FeedConfig)
 		isUnset bool
+		says    string // 报文必须含的字样（空 ⇒ 不查）
 	}{
-		{"AggRule 零值", func(c *tickflow.FeedConfig) { c.Rule = 0 }, true},
-		{"nil 日历", func(c *tickflow.FeedConfig) { c.Calendar = nil }, false},
-		{"From > To", func(c *tickflow.FeedConfig) { c.From, c.To = c.To, c.From }, false},
-		{"From 为 0", func(c *tickflow.FeedConfig) { c.From = 0 }, false},
-		{"指标挂在不存在的周期", func(c *tickflow.FeedConfig) { c.Indicators["15m"] = []tickflow.Indicator{indicator.MA(3)} }, false},
-		{"同一实例挂两次", func(c *tickflow.FeedConfig) { c.Indicators["1d"] = []tickflow.Indicator{shared, shared} }, false},
-		{"主周期 Weekly", func(c *tickflow.FeedConfig) { c.Base = tickflow.Weekly }, false},
-		{"主周期 nil", func(c *tickflow.FeedConfig) { c.Base = nil }, false},
-		{"Lookback 为负", func(c *tickflow.FeedConfig) { c.Lookback = -1 }, false},
+		{"AggRule 零值", func(c *tickflow.FeedConfig) { c.Rule = 0 }, true, ""},
+		{"nil 日历", func(c *tickflow.FeedConfig) { c.Calendar = nil }, false, ""},
+		{"From > To", func(c *tickflow.FeedConfig) { c.From, c.To = c.To, c.From }, false, ""},
+		{"From 为 0", func(c *tickflow.FeedConfig) { c.From = 0 }, false, ""},
+		{"指标挂在不存在的周期", func(c *tickflow.FeedConfig) { c.Indicators["15m"] = []tickflow.Indicator{indicator.MA(3)} }, false, ""},
+		// ⚠️ 同一实例挂两次必然也同名 ⇒「两个指标同名」那条检查也会报；而两条的处置相反 ——
+		// 同名的处置是「改名」，而给同一个实例改名两边一起改、什么都没解决。⇒ 报文必须说的是「同一个实例」
+		{"同一实例挂两次", func(c *tickflow.FeedConfig) { c.Indicators["1d"] = []tickflow.Indicator{shared, shared} }, false, "同一个实例"},
+		{"主周期 Weekly", func(c *tickflow.FeedConfig) { c.Base = tickflow.Weekly }, false, ""},
+		{"主周期 nil", func(c *tickflow.FeedConfig) { c.Base = nil }, false, ""},
+		{"Lookback 为负", func(c *tickflow.FeedConfig) { c.Lookback = -1 }, false, ""},
 	}
 	for _, c := range cases {
 		cfg := good()
@@ -178,6 +181,9 @@ func TestFeedRejectsBadConfig(t *testing.T) {
 		}
 		if got := errors.Is(err, tickflow.ErrAggRuleUnset); got != c.isUnset {
 			t.Errorf("%s：errors.Is(err, ErrAggRuleUnset) = %v，应为 %v（err=%v）", c.name, got, c.isUnset, err)
+		}
+		if c.says != "" && !strings.Contains(err.Error(), c.says) {
+			t.Errorf("%s：报文 %q 没说「%s」—— 处置会被引到别的方向", c.name, err, c.says)
 		}
 	}
 }
