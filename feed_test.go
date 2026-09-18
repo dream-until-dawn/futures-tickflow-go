@@ -522,3 +522,66 @@ func BenchmarkFeedNext(b *testing.B) {
 		f.Close()
 	}
 }
+
+// guard: 日内主周期的预热按「每个交易日的格子数」往前数（F2）—— 1m、MA(600)，一天 555 根（au：夜盘 330 ＋ 日盘 225），
+// 要往前跨两天才够；第一步 Ready 为真、MA 与从头喂的那一遍相等。对照：同一配置不预热时第一步 Ready 为假。
+func TestFeedIntradayWarmupCountsCellsPerDay(t *testing.T) {
+	days := synthDays // 周四 · 周五 · 周一 · 周二
+	cal, err := embedded.New(days)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var bars []tickflow.Bar
+	perDay := 0
+	for _, d := range days[1:] { // 首日没有夜盘（embedded 的首日取不到前一交易日），不进库
+		day, err := cal.DayOf(keyAU, d)
+		if err != nil {
+			t.Fatal(err)
+		}
+		bs := synthDay(day, nil)
+		perDay = len(bs)
+		bars = append(bars, bs...)
+	}
+	const n = 600
+	// 判别力：600 根要跨过不止一天（否则按天数与按格子数给出同一个起点）
+	if !(perDay < n && n < 2*perDay) {
+		t.Fatalf("判别力不在场：每天 %d 根，MA(%d) 应在一天与两天之间", perDay, n)
+	}
+	from, to := days[3], days[3]
+	cfg := func(noWarm bool) tickflow.FeedConfig {
+		return tickflow.FeedConfig{Key: keyAU, Calendar: cal, Base: tickflow.MustIntraday(1), Rule: tickflow.AggTradingAxis,
+			From: from, To: to, NoAutoWarmup: noWarm, Indicators: map[string][]tickflow.Indicator{"1m": {indicator.MA(n)}}}
+	}
+	firstStep := func(noWarm bool) tickflow.View {
+		f, err := tickflow.NewFeed(sliceWalker{bars}, cfg(noWarm))
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { f.Close() })
+		if !f.Next() {
+			t.Fatalf("第一步没走出来：%v", f.Err())
+		}
+		return f.View()
+	}
+	if v := firstStep(true); v.Ready() {
+		t.Fatal("对照失败：不预热时第一步 Ready 为真")
+	}
+	v := firstStep(false)
+	if !v.Ready() {
+		t.Fatalf("自动预热后第一步 Ready 为假 —— 预热没数够 %d 根（每天 %d 格）", n, perDay)
+	}
+	// 从头算那一刻的 MA：第一步那根之前（含）的 n 根收盘均值
+	idx := -1
+	for i, b := range bars {
+		if b.Ts == v.Ts() {
+			idx = i
+		}
+	}
+	sum := 0.0
+	for _, b := range bars[idx-n+1 : idx+1] {
+		sum += b.Close
+	}
+	if want := sum / n; relErr(v.Ind("ma600"), want) > 1e-12 {
+		t.Errorf("第一步 MA600 %v，从头算 %v", v.Ind("ma600"), want)
+	}
+}

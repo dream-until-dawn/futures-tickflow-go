@@ -952,6 +952,7 @@ var guardNames = []string{
 	`TestFailedChunkIsRetriedNotSkipped`,
 	`TestFeedAutoWarmupReachesSettle`,
 	`TestFeedBrokenLibraryDeliversNothing`,
+	`TestFeedIntradayWarmupCountsCellsPerDay`,
 	`TestFeedLibraryChangedBetweenPasses`,
 	`TestFeedRangeMustLieInOneSpan`,
 	`TestFeedReadyFlipsAtSettleOnLongSeries`,
