@@ -940,10 +940,16 @@ func TestHighWaterChain(t *testing.T) {
 			// 为什么要求 <前值> ＝ 最大值：调低是从【当时的高水位】往下调，不是从链上随便哪一个旧值；
 			// 否则一行「自 5 调低」就能把任何值洗成合法。
 			if err == nil && len(f) >= 8 && f[7] == "调低" {
-				if frm != s.max || val >= frm {
-					t.Errorf("high_water.txt:%d 调低记录不自洽：%q %d 自 %d，而此前见过的最大值是 %d。\n"+
-						"格式是「# 来历 <日期> <名字> <新值> 自 <此前最大值> 调低 <说明>」，<新值> 要小于 <此前最大值>。",
+				// 两支各有自己的报文（评审方 2026-09-18：两支共用一句话时，突变表分不开是哪一支红的）。
+				if frm != s.max {
+					t.Errorf("high_water.txt:%d 调低记录不自洽【前值不是此前最大值】：%q %d 自 %d，而此前见过的最大值是 %d。\n"+
+						"格式是「# 来历 <日期> <名字> <新值> 自 <此前最大值> 调低 <说明>」。",
 						i+1, name, val, frm, s.max)
+					continue
+				}
+				if val >= frm {
+					t.Errorf("high_water.txt:%d 调低记录不自洽【新值不小于前值】：%q %d 自 %d —— 调低行的 <新值> 必须小于 <此前最大值>。",
+						i+1, name, val, frm)
 					continue
 				}
 				s.max = val
