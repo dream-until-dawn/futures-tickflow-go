@@ -159,38 +159,44 @@ func Aggregate(r AggRule, p IntradayPeriod, tmpl SessionTemplate, d Day, bars []
 	var out []Bar
 	j := 0
 	for _, bd := range bounds {
-		var agg Bar
-		n, covered := 0, 0
+		i := j
 		for ; j < len(bars) && bars[j].Ts < bd.Close; j++ {
-			b := bars[j]
-			if b.Ts < bd.Open || b.TsEnd > bd.Close {
+			if b := bars[j]; b.Ts < bd.Open || b.TsEnd > bd.Close {
 				return nil, fmt.Errorf("tickflow: Aggregate 有一根 [%d, %d) 不整个落在 %s 的任何一个格子里（低周期与这套格子不相容）", b.Ts, b.TsEnd, r)
 			}
-			if n == 0 {
-				agg = Bar{Ts: bd.Open, TsEnd: bd.Close, TradingDay: d.Num, Open: b.Open, High: b.High, Low: b.Low, Settle: math.NaN()}
-			}
-			agg.High = math.Max(agg.High, b.High)
-			agg.Low = math.Min(agg.Low, b.Low)
-			agg.Close = b.Close
-			agg.Volume += b.Volume
-			agg.Turnover += b.Turnover
-			agg.OpenInterest = b.OpenInterest
-			agg.Flags |= b.Flags &^ FlagAggregated
-			covered += BarBound{Open: b.Ts, Close: b.TsEnd}.Minutes(d)
-			n++
 		}
-		if n == 0 {
-			continue // 规则一
+		if agg, ok := aggCell(bd, d, bars[i:j]); ok {
+			out = append(out, agg)
 		}
-		agg.Flags |= FlagAggregated
-		if covered < bd.Minutes(d) {
-			agg.Flags |= FlagPartial // 规则二
-		}
-		out = append(out, agg)
 	}
 	if j < len(bars) {
 		b := bars[j]
 		return nil, fmt.Errorf("tickflow: Aggregate 有一根 [%d, %d) 不落在 %s 的任何一个格子里", b.Ts, b.TsEnd, r)
 	}
 	return out, nil
+}
+
+// aggCell 把已知整个落在格子 bd 里的输入聚成一根（字段取法与完整性三条见 Aggregate）。
+// 输入为空 ⇒ ok=false（规则一：不出根）。Aggregate 与 Feed 的辅周期共用它 —— 两处的聚合口径必须是同一份代码。
+func aggCell(bd BarBound, d Day, in []Bar) (Bar, bool) {
+	if len(in) == 0 {
+		return Bar{}, false // 规则一
+	}
+	agg := Bar{Ts: bd.Open, TsEnd: bd.Close, TradingDay: d.Num, Open: in[0].Open, High: in[0].High, Low: in[0].Low, Settle: math.NaN()}
+	covered := 0
+	for _, b := range in {
+		agg.High = math.Max(agg.High, b.High)
+		agg.Low = math.Min(agg.Low, b.Low)
+		agg.Close = b.Close
+		agg.Volume += b.Volume
+		agg.Turnover += b.Turnover
+		agg.OpenInterest = b.OpenInterest
+		agg.Flags |= b.Flags &^ FlagAggregated
+		covered += BarBound{Open: b.Ts, Close: b.TsEnd}.Minutes(d)
+	}
+	agg.Flags |= FlagAggregated
+	if covered < bd.Minutes(d) {
+		agg.Flags |= FlagPartial // 规则二
+	}
+	return agg, true
 }
