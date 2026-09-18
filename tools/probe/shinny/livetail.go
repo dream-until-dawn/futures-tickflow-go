@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -56,6 +57,19 @@ func showMs(ms int64) string {
 	return time.UnixMilli(ms).In(cst).Format("2006-01-02 15:04:05.000 -0700")
 }
 
+// outputInsideRepo 报告 path 是否落在仓库里（仓库根按 ../../.. 算，与 dotenv 同一取法；Windows 路径大小写不敏感）。
+func outputInsideRepo(path string) bool {
+	root, err := filepath.Abs(filepath.Join("..", "..", ".."))
+	if err != nil {
+		return true // 算不出仓库根就当在里面（失败方向是「不落盘」）
+	}
+	out, err := filepath.Abs(path)
+	if err != nil {
+		return true
+	}
+	return strings.HasPrefix(strings.ToLower(out), strings.ToLower(root+string(filepath.Separator)))
+}
+
 func w32tm() string {
 	out, err := exec.Command("w32tm", "/query", "/status").CombinedOutput()
 	if err != nil {
@@ -71,6 +85,11 @@ func probeLiveTail(md, tok string) {
 	}
 	if *tailOut == "" {
 		report(name, "FAIL", "要给 -tail-out（落盘文件，放 scratchpad，不进仓）")
+		return
+	}
+	// 落盘路径在仓库里就拒绝（评审方 2026-09-18）：原始帧不进仓，一次 git add -A 就会把它带进去
+	if outputInsideRepo(*tailOut) {
+		report(name, "FAIL", "-tail-out 落在仓库里（"+*tailOut+"）—— 原始帧不进仓，换到仓库外")
 		return
 	}
 	f, err := os.Create(*tailOut)
@@ -133,14 +152,20 @@ type tailResult struct {
 	underlying       string
 	bars             int     // 记录期间新出现的根（首帧那批历史不算）
 	changes, resends int     // 真改了 · 重发未变
-	a1, a2, a3       []int64 // L−C · L−N · 末根 L−C（毫秒）
+	a1, a2, a3       []int64 // L−C · L−N · 末根 L−C（毫秒；L 与 N 是本机收到时刻）
 	a1Pos, a2Pos     int
-	frameGap         []int64 // 相邻帧间隔
-	b1               int64   // 相邻两次「有真改动」的帧的最大间隔
-	b2               []int64 // 本机收到 − 服务器行情时刻
-	endIDs           []string
-	calibID          int64
-	calibOK          bool // 找到了标定目标（id 0 是合法值，不能拿 calibID == 0 当「没找到」）
+	// 服务器时刻版（用户 2026-09-18 裁：以服务器时刻为准，不动本机系统设置）：
+	// Ls ＝ 最后一次真改那一帧里 quote.datetime（交易所那笔成交的时刻）；不经本机时钟
+	a1s, a3s []int64 // Ls−C · 末根 Ls−C
+	a1sPos   int
+	noSrv    int     // 真改动发生时还没有任何 quote.datetime 可用的次数（这些根不进 a1s / a3s）
+	b1s      int64   // 交易时段内（按服务器时刻）相邻两次真改动的最大间隔（本机收到时刻之差）
+	frameGap []int64 // 相邻帧间隔
+	b1       int64   // 相邻两次「有真改动」的帧的最大间隔
+	b2       []int64 // 本机收到 − 服务器行情时刻
+	endIDs   []string
+	calibID  int64
+	calibOK  bool // 找到了标定目标（id 0 是合法值，不能拿 calibID == 0 当「没找到」）
 }
 
 // sameVal 按位比（字段缺失时 num 给 NaN，而 NaN != NaN —— 直接用 == 会把每次重发都算成「真改了」）。
@@ -167,8 +192,12 @@ func analyzeTail(frames []tailFrame) tailResult {
 	var r tailResult
 	snap := map[string]any{}
 	durKey := strconv.FormatInt(tailDur, 10)
-	last := map[int64]barVal{}  // 每根最近一次的值
-	lastL := map[int64]int64{}  // 每根最后一次真改的本机时刻
+	last := map[int64]barVal{} // 每根最近一次的值
+	lastL := map[int64]int64{} // 每根最后一次真改的本机时刻
+	lastS := map[int64]int64{} // 每根最后一次真改时的服务器时刻（quote.datetime）；0 ＝ 那时还没有
+	var srvNow int64           // 最近一次解析出的 quote.datetime（毫秒）
+	type chg struct{ recv, srv int64 }
+	var changeFrames []chg
 	born := map[int64]int64{}   // 每根第一次出现的本机时刻
 	dt := map[int64]int64{}     // 每根 datetime（毫秒）
 	initial := map[int64]bool{} // 开始记录时已经收盘的根（view_width 带来的历史，不算记录期间的）
@@ -204,6 +233,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 			if s, ok := q["datetime"].(string); ok {
 				if t, err := time.ParseInLocation("2006-01-02 15:04:05.000000", s, cst); err == nil {
 					r.b2 = append(r.b2, fr.RecvMs-t.UnixMilli())
+					srvNow = t.UnixMilli()
 				}
 			}
 		}
@@ -221,7 +251,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 				if dt[id]+60000 <= frames[0].RecvMs {
 					initial[id] = true
 				}
-				last[id], lastL[id] = v, fr.RecvMs
+				last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
 				changed = true
 				continue
 			}
@@ -230,7 +260,10 @@ func analyzeTail(frames []tailFrame) tailResult {
 				continue
 			}
 			r.changes++
-			last[id], lastL[id] = v, fr.RecvMs
+			last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
+			if srvNow == 0 {
+				r.noSrv++
+			}
 			changed = true
 		}
 		if changed {
@@ -238,6 +271,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 				r.b1 = fr.RecvMs - lastChangeFrame
 			}
 			lastChangeFrame = fr.RecvMs
+			changeFrames = append(changeFrames, chg{fr.RecvMs, srvNow})
 		}
 		if ser := obj(snap, "klines", tailSym, durKey); ser != nil {
 			if e, ok := ser["trading_day_end_id"].(float64); ok {
@@ -256,10 +290,30 @@ func analyzeTail(frames []tailFrame) tailResult {
 	}
 	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
 	r.bars = len(ids)
+	// 交易时段（按服务器时刻）：记录期间出现的根里最早的开盘到最晚的收盘
+	if len(ids) > 0 {
+		lo, hi := dt[ids[0]], dt[ids[0]]+60000 // 按 datetime 取最早开盘与最晚收盘，不依赖 id 的顺序
+		for _, id := range ids {
+			lo, hi = min(lo, dt[id]), max(hi, dt[id]+60000)
+		}
+		for i := 1; i < len(changeFrames); i++ {
+			a, b := changeFrames[i-1], changeFrames[i]
+			if a.srv >= lo && b.srv <= hi && a.srv != 0 && b.recv-a.recv > r.b1s {
+				r.b1s = b.recv - a.recv
+			}
+		}
+	}
 	for _, id := range ids {
 		C := dt[id] + 60000
 		L := lastL[id]
+		Ls, hasS := lastS[id], lastS[id] != 0
 		if n, ok := born[id+1]; ok {
+			if hasS {
+				r.a1s = append(r.a1s, Ls-C)
+				if Ls-C > 0 {
+					r.a1sPos++
+				}
+			}
 			r.a1 = append(r.a1, L-C)
 			if L-C > 0 {
 				r.a1Pos++
@@ -273,6 +327,9 @@ func analyzeTail(frames []tailFrame) tailResult {
 			}
 		} else {
 			r.a3 = append(r.a3, L-C)
+			if hasS {
+				r.a3s = append(r.a3s, Ls-C)
+			}
 		}
 	}
 	return r
@@ -301,8 +358,11 @@ func ceilSec(ms int64) int64 { return (ms + 999) / 1000 }
 // calibrate 造一帧：calibID 那根在「收盘 ＋ 5 秒」又改了一次（收盘价 ＋1）—— 必须让 A1、A2 各多报一根。
 func calibrate(frames []tailFrame, id, closeMs int64) []tailFrame {
 	durKey := strconv.FormatInt(tailDur, 10)
-	patch := map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
-		"data": map[string]any{strconv.FormatInt(id, 10): map[string]any{"close": 1e9}}}}}}}}
+	srv := time.UnixMilli(closeMs + 5000).In(cst).Format("2006-01-02 15:04:05.000000")
+	patch := map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": srv}},
+		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+			"data": map[string]any{strconv.FormatInt(id, 10): map[string]any{"close": 1e9}}}}}}}}
 	raw, _ := json.Marshal(patch)
 	at := closeMs + 5000
 	out := append([]tailFrame(nil), frames...)
@@ -362,10 +422,11 @@ func probeLiveAnalyze() {
 			}
 		}
 		c := analyzeTail(calibrate(frames, r.calibID, closeMs))
+		fmt.Printf("标定 服务器时刻版 基线 A1s>0 %d ⇒ 造帧后 %d\n", r.a1sPos, c.a1sPos)
 		fmt.Printf("标定 目标 id %d（收盘 %s）· 基线 A1>0 %d · A2>0 %d ⇒ 造帧后 A1>0 %d · A2>0 %d\n",
 			r.calibID, showMs(closeMs), r.a1Pos, r.a2Pos, c.a1Pos, c.a2Pos)
 		st := "PASS"
-		if !(c.a1Pos == r.a1Pos+1 && c.a2Pos == r.a2Pos+1) {
+		if !(c.a1Pos == r.a1Pos+1 && c.a2Pos == r.a2Pos+1 && c.a1sPos == r.a1sPos+1) {
 			st = "FAIL"
 		}
 		report(name+"-calib", st, "A1 / A2 必须各多报一根")
@@ -378,25 +439,27 @@ func probeLiveAnalyze() {
 	fmt.Printf("A1 L−C     %s · L−C>0 的根 %d\n", dist(r.a1), r.a1Pos)
 	fmt.Printf("A2 L−N     %s · L−N>0 的根 %d\n", dist(r.a2), r.a2Pos)
 	fmt.Printf("A3 末根 L−C %s\n", dist(r.a3))
-	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒\n", r.b1)
+	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 交易时段内（按服务器时刻）%d 毫秒\n", r.b1, r.b1s)
+	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 真改动时还没有服务器时刻 %d 次\n", dist(r.a1s), r.a1sPos, r.noSrv)
+	fmt.Printf("A3s 末根 Ls−C（服务器时刻）%s\n", dist(r.a3s))
 	fmt.Printf("B2 本机收到 − 服务器行情时刻 %s\n", dist(r.b2))
 	// 判别力
 	if r.bars < 30 {
 		report(name, "FAIL", fmt.Sprintf("判别力不在场：记录期间新出现的根 %d < 30 ⇒ 整次作废", r.bars))
 		return
 	}
-	if r.a1Pos == 0 {
+	if r.a1sPos == 0 {
 		fmt.Println("⚠️ 没见过「收盘之后才到」的改动（射程：一个时段、一个品种、一天）")
 	}
 	// 判对（6.36 三，事先写死）
 	if r.a2Pos == 0 {
 		fmt.Println("判对 甲：A2 里「下一根出现后仍被改」0 根 ⇒ 判据一（下一根已出现 ⇒ 上一根不再变）在这次取数里成立")
 	} else {
-		fmt.Printf("判对 甲：A2 里「下一根出现后仍被改」%d 根 ⇒ 判据一不成立；判据二容差 ＝ ceil(A1 最大 %d ms) ×2 ＝ %d 秒\n", r.a2Pos, maxOf(r.a1), 2*ceilSec(maxOf(r.a1)))
+		fmt.Printf("判对 甲：A2 里「下一根出现后仍被改」%d 根 ⇒ 判据一不成立；判据二容差 ＝ ceil(A1s 最大 %d ms) ×2 ＝ %d 秒（服务器时刻，用户裁）\n", r.a2Pos, maxOf(r.a1s), 2*ceilSec(max(0, maxOf(r.a1s))))
 	}
-	if len(r.a3) > 0 {
-		fmt.Printf("判对 末根宽限 ＝ ceil(A3 最大 %d ms) ×2 ＝ %d 秒\n", maxOf(r.a3), 2*ceilSec(maxOf(r.a3)))
+	if len(r.a3s) > 0 {
+		fmt.Printf("判对 末根宽限 ＝ ceil(A3s 最大 %d ms) ×2 ＝ %d 秒（服务器时刻；负数取 0）\n", maxOf(r.a3s), 2*ceilSec(max(0, maxOf(r.a3s))))
 	}
-	fmt.Printf("判对 乙 N ＝ ceil(B1 %d ms 折分钟) ×2 ＝ %d 分钟\n", r.b1, 2*int64(math.Ceil(float64(r.b1)/60000)))
+	fmt.Printf("判对 乙 N ＝ ceil(时段内 B1 %d ms 折分钟) ×2 ＝ %d 分钟\n", r.b1s, 2*int64(math.Ceil(float64(r.b1s)/60000)))
 	report(name, "PASS", "读数见上")
 }

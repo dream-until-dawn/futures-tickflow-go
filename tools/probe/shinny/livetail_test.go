@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"testing"
+	"time"
 )
 
 // synthTail 造一段推送帧：T0 之后 n 根 1m，每根在开盘后 0.5 秒出现、收盘前 1 秒改一次；
@@ -113,5 +116,80 @@ func TestLiveTailSendsOnlyMarketAids(t *testing.T) {
 		if !allow[m[1]] {
 			t.Errorf("livetail.go 里出现了不在白名单的 aid %q", m[1])
 		}
+	}
+}
+
+// skewed 模拟本机时钟比服务器慢 skew 毫秒（2026-09-18 夜盘那种形状）：synthTail 的时间轴当【服务器】时刻
+// （K 线的 datetime 就在这条轴上），每帧补一个 quote.datetime ＝ 服务器时刻，而本机收到时刻 ＝ 服务器时刻 − skew。
+// ⚠️ 第一版只改了 quote.datetime、没挪本机收到时刻 ⇒ K 线 datetime 与本机时刻仍在同一条轴上，「本机慢」根本没造出来（这格当场红在前提上）。
+func skewed(frames []tailFrame, skew int64) []tailFrame {
+	out := make([]tailFrame, len(frames))
+	for i, fr := range frames {
+		var m map[string]any
+		json.Unmarshal(fr.Raw, &m)
+		srv := time.UnixMilli(fr.RecvMs).In(cst).Format("2006-01-02 15:04:05.000000")
+		data := m["data"].([]any)
+		data = append(data, map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": srv}}})
+		m["data"] = data
+		raw, _ := json.Marshal(m)
+		out[i] = tailFrame{RecvMs: fr.RecvMs - skew, Raw: raw}
+	}
+	return out
+}
+
+// guard: 以服务器时刻为准（用户 2026-09-18 裁：不动本机系统设置）—— 本机慢 2.4 秒时，本机版 A1 把「收盘后 2 秒又改」掩盖成负数，
+// 服务器时刻版 A1s 照样量出 +2 秒；A2（只比本机时刻）不受影响。对照：本机不慢时两版一致。
+func TestLiveAnalyzeServerTimeSurvivesSlowLocalClock(t *testing.T) {
+	const t0 = int64(1789000000000)
+	base := synthTail(t0, 40, map[int64]bool{5: true}, nil)
+	even := analyzeTail(skewed(base, 0))
+	if maxOf(even.a1) != 2000 || maxOf(even.a1s) != 2000 {
+		t.Fatalf("对照失败：本机不慢时 A1 最大 %d · A1s 最大 %d，应都为 2000", maxOf(even.a1), maxOf(even.a1s))
+	}
+	slow := analyzeTail(skewed(base, 2400))
+	if maxOf(slow.a1) >= 0 || slow.a1Pos != 0 {
+		t.Fatalf("前提没成立：本机慢 2.4 秒时本机版 A1 最大 %d、>0 的根 %d —— 应被掩盖成负数、0 根", maxOf(slow.a1), slow.a1Pos)
+	}
+	if maxOf(slow.a1s) != 2000 || slow.a1sPos != 1 {
+		t.Errorf("服务器时刻版 A1s 最大 %d、>0 的根 %d，应为 2000 与 1（不受本机时钟影响）", maxOf(slow.a1s), slow.a1sPos)
+	}
+	if slow.a2Pos != even.a2Pos || maxOf(slow.a2) != maxOf(even.a2) {
+		t.Errorf("A2 受了本机时钟影响：慢 %d/%d · 不慢 %d/%d", slow.a2Pos, maxOf(slow.a2), even.a2Pos, maxOf(even.a2))
+	}
+}
+
+// guard: -tail-out 落在仓库里就拒绝（原始帧不进仓）—— 判定按绝对路径前缀，大小写不敏感（Windows）。
+func TestLiveTailRefusesOutputInsideRepo(t *testing.T) {
+	root, _ := filepath.Abs(filepath.Join("..", "..", ".."))
+	inside := filepath.Join(root, "tools", "probe", "shinny", "scratchpad", "x.jsonl")
+	outside := filepath.Join(os.TempDir(), "x.jsonl")
+	if !outputInsideRepo(inside) {
+		t.Errorf("%s 在仓库里，而没被认出来", inside)
+	}
+	if !outputInsideRepo(strings.ToUpper(inside)) {
+		t.Errorf("大写的仓库内路径没被认出来（Windows 路径大小写不敏感）")
+	}
+	if outputInsideRepo(outside) {
+		t.Errorf("%s 在仓库外，却被当成仓库内", outside)
+	}
+}
+
+// guard: 乙的空档只算交易时段内（6.36 写的「按日历说在交易时段过滤」；2026-09-18 夜盘工具第一版没过滤，41 秒的开盘前等待被当成空档）——
+// 开盘前 90 秒来一帧上一段遗留的根 ⇒ 不分时段的 B1 ＝ 90 秒；时段内的 B1s ＝ 合成数据自己的 58.5 秒（每根开盘后 0.5 秒出现、59 秒再改）。
+// ⚠️ 第一版只提前 41 秒：它比时段内本来就有的 58.5 秒短，不是最大值 ⇒ 过滤与否分不开（这格当场红在断言上）。
+func TestLiveAnalyzeGapOnlyInsideSession(t *testing.T) {
+	const t0 = int64(1789000000000)
+	durKey := strconv.FormatInt(tailDur, 10)
+	// 上一段的根（十小时前，早已收盘）——真实取数里 20:59 连上时推来的就是这种
+	old := map[string]any{"datetime": float64(t0-10*3600000) * 1e6, "open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0, "volume": 1.0, "close_oi": 1.0, "open_oi": 1.0}
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{"-600": old}}}}}}})
+	frames := append([]tailFrame{{RecvMs: t0 - 89500, Raw: raw}}, synthTail(t0, 40, nil, nil)...)
+	r := analyzeTail(skewed(frames, 0))
+	if r.b1 != 90000 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应为 90000（开盘前那段等待）", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("时段内 B1s %d，应为 58500（不含开盘前那 90 秒）", r.b1s)
 	}
 }
