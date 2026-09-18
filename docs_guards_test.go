@@ -2123,6 +2123,10 @@ var errorSentinelDisposition = map[string]sentinelDisposition{
 	// ⚠️ 2026-09-18 v0.9 新增：ErrAggRuleUnset【不进缺口分类】—— 调用方没选聚合口径（参数错误），与库里的数据无关。
 	"ErrAggRuleUnset": {0, "不进缺口分类 —— AggRule 零值（调用方没选聚合口径）；参数错误，与数据状态无关"},
 
+	// ⚠️ 2026-09-18 v0.9 F-a 新增：ErrFeedVoided【不进缺口分类】—— Feed 第二遍 Walk 报错（两遍之间库变了），
+	// 它说的是「这一次步进交出去的根作废」，不是对某一天要不要拉的分类；底层错误由 errors.Is 另认。
+	"ErrFeedVoided": {0, "不进缺口分类 —— Feed 两遍 Walk 之间库变了，本次步进过的根作废；底层错误另经 errors.Is 认"},
+
 	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
 	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。
