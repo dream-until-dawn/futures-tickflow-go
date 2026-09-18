@@ -315,12 +315,18 @@ def m_lower_legal(s):
 
 
 def m_lower_bad_from(s):
-    """D1：前值取一个【在集合里、但不是 running max】的值 X（X > N-1，所以只越「前值 ＝ 最大值」这一条）。"""
-    cur, n, vals = _lower_parts(s)
-    xs = sorted(v for v in vals if v > n - 1 and v != n)
-    assert xs, "guards 名下找不到一个 > N-1 且 ≠ N 的历史值 —— 这一格造不出来，停手"
-    s = _sub(s, "\n" + cur + "\n", "\nguards %d\n" % (n - 1))
-    return s.rstrip("\n") + "\n# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D1：前值不是此前最大值\n" % (n - 1, xs[0])
+    """D1：先合法调低一次（N-1 自 N），再写「N-2 自 N 调低」—— N 在集合里、但此刻的 running max 是 N-1，
+    且 N-2 < N ⇒ 只越「前值 ＝ 最大值」这一条。
+
+    ⛔ 上一版是在【现有历史】里找一个 > N-1 且 ≠ N 的值：它只在 guards 刚被调低过（120 → 119）时碰巧存在，
+    guards 一抬（v0.9 聚合那颗 119 → 128）就造不出来 —— 与 C4 写死 275 同一种病（输入绑在当前历史的形状上）。
+    ⇒ 改成自己造出那个形状，不再依赖历史。
+    """
+    cur, n, _ = _lower_parts(s)
+    s = _sub(s, "\n" + cur + "\n", "\nguards %d\n" % (n - 2))
+    return (s.rstrip("\n")
+            + "\n# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D1 的前置：一次合法调低\n" % (n - 1, n)
+            + "# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D1：前值不是此前最大值\n" % (n - 2, n))
 
 
 def m_lower_not_lower(s):
