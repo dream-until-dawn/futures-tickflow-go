@@ -3073,6 +3073,11 @@ design.md §十五「v0.10 起手」二·甲 / 乙 与开工条件三。用户 2
           · 序列节点上的 last_id / trading_day_start_id / trading_day_end_id
           原始帧逐行落盘（scratchpad，不进仓），读数由离线程序从落盘文件算，联网那次只负责记
 本机时钟  取数前后各记一次 w32tm /query /status（NTP 源与偏差）；天勤帧里若有服务器时刻字段，逐帧记下与本机收到时刻的差
+墙钟规矩  （评审方 2026-09-18 要求；起因：本机 Git Bash 里 `TZ=Asia/Shanghai date` 不认时区名，**静默回落 UTC、格式照样正确**，
+          我据此报了一个错八小时的「现在」—— 实测三行：`date '+%T %z'` 16:49:33 +0800 · `TZ=Asia/Shanghai date '+%T %z'` 08:49:33 +0000 · `date -u` 08:49:33 UTC）
+          Go 里比较一律用 time.Now() 的毫秒时间戳，不经时区名；显示用固定偏移 tickflow.CST（time.FixedZone("CST", 8*3600)）
+          shell 里一律 `date -u` 或 `+%s`，不用 `TZ=…`
+          ⛔ 读数里印时刻时同时印偏移（%z）；**偏移不是 +0800 的当读数作废** —— 这是这把尺子的标定
 ```
 
 #### 二、算什么（离线，从落盘帧）
