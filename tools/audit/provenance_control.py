@@ -62,7 +62,19 @@ def write(p, s):
     open(p, "w", encoding="utf-8", newline="\n").write(s)
 
 
-def guard(work, name="TestHighWaterProvenance"):
+def guard(work, name="TestHighWaterProvenance", tag=None):
+    """跑那条守卫，返回四态之一；给了 tag 时，FAIL 还要求输出里含 tag，否则记成 FAIL-无标签。
+
+    tag 的用处（评审方 2026-09-18，调低判据那两格）：一条守卫里有两支会红时，
+    只看 PASS/FAIL 分不出红的是哪一支 —— **另一支会替着满足「该红」**。
+    """
+    got, out = _guard(work, name)
+    if got == FAIL and tag is not None and tag not in out:
+        return FAIL + "-无标签"
+    return got
+
+
+def _guard(work, name):
     """跑那条守卫，返回四态之一。
 
     ⚠️ 收 name 是因为 high_water.txt 上现在有【两条】守卫：
@@ -72,16 +84,17 @@ def guard(work, name="TestHighWaterProvenance"):
     """
     v = subprocess.run(["go", "vet", "./..."], cwd=work, capture_output=True, timeout=300)
     if v.returncode != 0:
-        return BUILD
+        return BUILD, ""
     try:
         p = subprocess.run(
             ["go", "test", "-run", name, "-count=1", "."],
             cwd=work, capture_output=True, timeout=300)
     except subprocess.TimeoutExpired:
-        return TIME
-    if "[build failed]" in (p.stdout + p.stderr).decode("utf-8", "replace"):
-        return BUILD
-    return PASS if p.returncode == 0 else FAIL
+        return TIME, ""
+    out = (p.stdout + p.stderr).decode("utf-8", "replace")
+    if "[build failed]" in out:
+        return BUILD, out
+    return (PASS if p.returncode == 0 else FAIL), out
 
 
 # ── 各格的变异。每个函数拿到 high_water.txt 的原文，返回改过的原文。──
@@ -239,6 +252,46 @@ def m_chain_val_below_other(s):
     return _sub(s, ln, ln.replace(" 合流 %s " % f[6], " 合流 999 ", 1))
 
 
+def _lower_parts(s, key="guards"):
+    """调低三格共用：当前值行、当前值 N、该名字历来出现过的值集合。"""
+    cur, n = _cur(s, key)
+    vals = set()
+    for ln in s.splitlines():
+        f = ln.strip().split()
+        if len(f) >= 5 and f[0] == "#" and f[1] == "来历" and f[3] == key:
+            try:
+                vals.add(int(f[4]))
+            except ValueError:
+                pass
+    return cur, n, vals
+
+
+def m_lower_legal(s):
+    """D0：一次【合法】的调低 —— 当前值 N → N-1，链尾补「N-1 自 N 调低」。期望绿。
+
+    它是 D1/D2 的标定：没有它，D1/D2 的红可能只是「凡调低行都红」。
+    （前提：链尾的 running max 就是当前值 N —— 最后一行来历 == 当前值由 Provenance 钉着。）
+    """
+    cur, n, _ = _lower_parts(s)
+    s = _sub(s, "\n" + cur + "\n", "\nguards %d\n" % (n - 1))
+    return s.rstrip("\n") + "\n# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D0：合法调低\n" % (n - 1, n)
+
+
+def m_lower_bad_from(s):
+    """D1：前值取一个【在集合里、但不是 running max】的值 X（X > N-1，所以只越「前值 ＝ 最大值」这一条）。"""
+    cur, n, vals = _lower_parts(s)
+    xs = sorted(v for v in vals if v > n - 1 and v != n)
+    assert xs, "guards 名下找不到一个 > N-1 且 ≠ N 的历史值 —— 这一格造不出来，停手"
+    s = _sub(s, "\n" + cur + "\n", "\nguards %d\n" % (n - 1))
+    return s.rstrip("\n") + "\n# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D1：前值不是此前最大值\n" % (n - 1, xs[0])
+
+
+def m_lower_not_lower(s):
+    """D2：链尾加「N 自 N 调低」、当前值不动 ⇒ 前值 ＝ 最大值、当前值 ＝ 最后一行，只越「新值 < 前值」这一条。"""
+    _, n, _ = _lower_parts(s)
+    return s.rstrip("\n") + "\n# 来历 2026-09-18 guards %d 自 %d 调低 对照组 D2：新值不小于前值\n" % (n, n)
+
+
 CASES = [
     ("0    基线：一个字不改",                                    m_baseline,   PASS),
     ("E1   只调低当前值（rules -1），不补来历",                    m_lower,      FAIL),
@@ -257,6 +310,10 @@ CASES = [
     ("C5   链-追加一行【落在合流窗口里】的来历",                    m_chain_under_window, PASS, "TestHighWaterChain"),
     ("C6   链-合流行的值低于【此前见过的最大值】",                   m_chain_val_below_prior, FAIL, "TestHighWaterChain"),
     ("C7   链-合流行的值低于【另一侧最大值】（不越前一条界）",         m_chain_val_below_other, FAIL, "TestHighWaterChain"),
+    # 调低（2026-09-18 与规则同一条分支进来）：第 5 个元素是 FAIL 时输出里必须含的标签
+    ("D0   调低-合法：N-1 自 N（标定）",                          m_lower_legal,      PASS, "TestHighWaterChain"),
+    ("D1   调低-前值不是此前最大值",                              m_lower_bad_from,   FAIL, "TestHighWaterChain", "【前值不是此前最大值】"),
+    ("D2   调低-新值不小于前值（N 自 N）",                         m_lower_not_lower,  FAIL, "TestHighWaterChain", "【新值不小于前值】"),
 ]
 
 NOTE = {
@@ -301,7 +358,7 @@ def main():
             open(hw, "wb").write(orig)
             assert open(hw, "rb").read() == orig, "还原失败，停手"
             write(hw, mutate(read(hw)))
-            got = guard(dst, which)
+            got = guard(dst, which, case[4] if len(case) > 4 else None)
             ok = got == want
             bad += 0 if ok else 1
             print("%-46s %-6s %-6s %s" % (label, want, got, "✅" if ok else "❌ 不符"))
