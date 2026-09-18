@@ -2120,6 +2120,9 @@ var errorSentinelDisposition = map[string]sentinelDisposition{
 	// 不是 Sync 对某一天的分类；消费方（Feed）据它分岔「没拉过 ⇒ 去同步」与「坏了 ⇒ 停」。
 	"ErrWalkOutsideCoverage": {0, "不进缺口分类 —— Walk 读的区间不整个落在一段 coverage 里（没拉过）；与「数据坏了」分开"},
 
+	// ⚠️ 2026-09-18 v0.9 新增：ErrAggRuleUnset【不进缺口分类】—— 调用方没选聚合口径（参数错误），与库里的数据无关。
+	"ErrAggRuleUnset": {0, "不进缺口分类 —— AggRule 零值（调用方没选聚合口径）；参数错误，与数据状态无关"},
+
 	// ⚠️ ErrClosed 是唯一一个【不进缺口分类】的：它回答的是「这一【时刻】在不在时段内」，
 	// 而缺口分类问的是「这一【天】要不要拉」。两者不同维度 ——
 	// 写在这儿而不是省略，是因为**「它不属于那个分类」本身就是一个要被写下来的决定**。

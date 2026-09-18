@@ -31,6 +31,7 @@
 | `calendar/derived` | ✅ **v0.7 已落**：从 1m 主连逐天判夜盘（`Judge`：a 有量 · b 有根无量 · c 没有夜盘根 · 带原因的「无结论」）· 与注入日历比出差异清单（`Compare`）· 差异报告工具 `tools/derivedreport`（退出码 0 / 2 差异 / 3 无判出的天 / 1 失败）· 三道「只读」守卫。⚠️ **只报差异、不产出日历、不改 base**（交易日由调用方注入的日历裁，D-B）；真实库上跑过一次（rb 一年，probe.md 6.32） |
 | `indicator` | ✅ **v0.8 已落**：根包接口 `Indicator` / `Settler`（`Update` 吃 `Bar`）· 内置七个 MA EMA MACD KDJ RSI CCI BOLL（自姊妹项目 okx-tickflow-go v1.4.2 移植，公式与两套口径照搬）· 默认口径 CN（用户定，未实测国内期货软件）· `Compute` / `ComputeField`。⚠️ `Settle()` **不保证逐位相等**，契约是「Settle() 处相对误差 ≤ 2e-15」（probe.md 6.34；09-18 由 1e-14 收紧）；**没有消费方**（Feed 在 v0.9） |
 | `BarWalker`（根包 `walker.go`） | ✅ **v0.9 已落**：Feed 读根的**消费方窄接口**（`Coverage` ＋ `Walk`），**不嵌入、不改 `tickflow.Store`**（用户 2026-09-18 裁 U4）⇒ 只实现 Store 的第三方类型照样编译，但喂不了 Feed。Walk 契约写在接口注释：区间整个落在一段 coverage 里 · 升序 · 先核（任何一处坏对任何区间都可报错）· 停只停回调 · 报错则已回调的全部作废 · 可无 seek 索引 · 不要求并发安全。`*segfile.Store` 满足它（编译期断言）|
+| `AggRule`（根包 `agg.go`，连同函数 Aggregate） | ✅ **v0.9 已落（聚合那一层，Feed 还没接上）**：两套口径 `AggTradingAxis`（交易时间轴 ＋ 相位，边界 ＝ `IntradayPeriod.Bars`）· `AggClockGrid`（时钟网格，格子不按时段裁剪，**只收整除 480 分钟的周期**——对齐零点未验）；**零值不合法** ⇒ `ErrAggRuleUnset`（用户 2026-09-18 裁 U1：不设默认）。完整性三条：零根格子不出根 · 缺分钟带 `FlagPartial`（**只对给零成交占位根的源成立**：天勤给、新浪很可能不给）· 满的不带。对账射程：交易时间轴的标签对新浪 48 / 48（fixture 在根目录 testdata/sina635，6.35 那次取数的原样字节），数值对朴素参考；时钟网格只有合成数据与天勤标签的文字读数（U3）|
 | `Feed` | ❌ **尚未开始** |
 
 ⇒ 「能力」一节里指向 `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**（v0.7），指向 `indicator` 的同理（v0.8）；

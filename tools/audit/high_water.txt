@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 119
+guards 127
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -466,3 +466,4 @@ guards 119
 # 来历 2026-09-18 guards 117 自 116 自动：重造时表长大（116 -> 117）；本次新增：TestBarWalkerRejectsRangeOutsideCoverage
 # 来历 2026-09-18 guards 120 自 117 自动：重造时表长大（117 -> 120）；本次新增：TestBarWalkerChecksWholeLibraryBeforeDelivering TestBarWalkerStopEarlyStillConcludes TestStoreOnlyTypeIsNotBarWalker
 # 来历 2026-09-18 guards 119 自 120 调低 手动：删掉 TestStoreOnlyTypeIsNotBarWalker —— 评审方 2026-09-18 指出它在 Go 里恒真、没有判别力（Store 没动由 diff 证实；「Walk 进 Store 即破坏」由突变 B 读数承担）
+# 来历 2026-09-18 guards 127 自 119 自动：重造时表长大（119 -> 127）；本次新增：TestAggClockGridMatchesShinnyReading TestAggFridayNightIntoMonday TestAggRuleOneEmptyCellYieldsNoBar TestAggRuleThreeCompleteCellIsNotFlagged TestAggRuleTwoPartialCellIsFlagged TestAggRuleZeroIsRejected TestAggTradingAxisMatchesSina635 TestSina635FixturesUntouched
