@@ -26,12 +26,21 @@
 rules 341
 anchors 61
 census 5
-guards 120
+guards 119
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
 #
 #     # 来历 <日期> <名字> <抬到多少> <一句话>
+#
+# 【手动调低】的格式（2026-09-18 落地；在此之前链上没有任何一种行能合法地往下走，
+# 而报错里那句「补一行来历」是一句为假的处置 —— 第一次真要调低时才撞上）：
+#
+#     # 来历 <日期> <名字> <新值> 自 <此前最大值> 调低 <说明>
+#
+#   <此前最大值> 必须【等于】链上此前的 running max（从当时的高水位往下调，不是从随便哪个旧值）；
+#   TestHighWaterChain 与 rebuild_docs_test.py 的 chainBreaks 各认一份。
+#   ⚠️ 它的价值上界与下面那条相同：挡「忘了说」，挡不住「说了假话」。
 #
 # ⚠️ 只增不改：写下的来历行不会被改写、不会被删（rebuild 里有断言顶着）。
 #
@@ -456,3 +465,4 @@ guards 120
 # 来历 2026-09-17 guards 116 自 113 自动：重造时表长大（113 -> 116）；本次新增：TestForwardAdjustCarriesWarning TestUnknownAdjustIsRejected TestZeroAdjustIsRatioBack
 # 来历 2026-09-18 guards 117 自 116 自动：重造时表长大（116 -> 117）；本次新增：TestBarWalkerRejectsRangeOutsideCoverage
 # 来历 2026-09-18 guards 120 自 117 自动：重造时表长大（117 -> 120）；本次新增：TestBarWalkerChecksWholeLibraryBeforeDelivering TestBarWalkerStopEarlyStillConcludes TestStoreOnlyTypeIsNotBarWalker
+# 来历 2026-09-18 guards 119 自 120 调低 手动：删掉 TestStoreOnlyTypeIsNotBarWalker —— 评审方 2026-09-18 指出它在 Go 里恒真、没有判别力（Store 没动由 diff 证实；「Walk 进 Store 即破坏」由突变 B 读数承担）

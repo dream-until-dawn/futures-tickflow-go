@@ -144,7 +144,8 @@ func (s *Store) scanRecords(fn func(i int64, b tickflow.Bar) bool) (statErr, rea
 }
 
 // errWalkRange Walk 的区间不整个落在某一段 coverage 里。
-var errWalkRange = errors.New("segfile: Walk 的区间不整个落在任何一段 coverage 里")
+// 它包着 tickflow.ErrWalkOutsideCoverage（BarWalker 契约「前置」要的哨兵），消费方用 errors.Is 判，不比字符串。
+var errWalkRange = fmt.Errorf("segfile: Walk 的区间不整个落在任何一段 coverage 里: %w", tickflow.ErrWalkOutsideCoverage)
 
 // *Store 满足 tickflow.BarWalker（Feed 读根的口子，v0.9）—— 编译期钉住：改了 Walk / Coverage 的签名，这一行先编译不过。
 var _ tickflow.BarWalker = (*Store)(nil)

@@ -1,6 +1,7 @@
 package tickflow_test
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,8 +67,8 @@ func TestBarWalkerRejectsRangeOutsideCoverage(t *testing.T) {
 	}
 	called := 0
 	err = w.Walk(20260105, 20260109, func(tickflow.Bar) bool { called++; return true })
-	if err == nil {
-		t.Fatalf("空库上 Walk 一个区间没有报错 —— 契约「前置」要求区间整个落在某一段 coverage 里")
+	if !errors.Is(err, tickflow.ErrWalkOutsideCoverage) {
+		t.Fatalf("空库上 Walk 一个区间：err=%v，应 errors.Is ErrWalkOutsideCoverage —— 契约「前置」", err)
 	}
 	if called != 0 {
 		t.Errorf("报错了还回调了 %d 根", called)
@@ -77,8 +78,8 @@ func TestBarWalkerRejectsRangeOutsideCoverage(t *testing.T) {
 	defer lib.Close()
 	w = lib
 	called = 0
-	if err := w.Walk(walkerDays[1], walkerDays[3], func(tickflow.Bar) bool { called++; return true }); err == nil {
-		t.Errorf("跨过两段之间空档的区间没有报错 —— 空档是「没拉过」")
+	if err := w.Walk(walkerDays[1], walkerDays[3], func(tickflow.Bar) bool { called++; return true }); !errors.Is(err, tickflow.ErrWalkOutsideCoverage) {
+		t.Errorf("跨过两段之间空档的区间：err=%v，应 errors.Is ErrWalkOutsideCoverage —— 空档是「没拉过」", err)
 	}
 	if called != 0 {
 		t.Errorf("跨空档报错了还回调了 %d 根", called)
@@ -124,8 +125,13 @@ func TestBarWalkerChecksWholeLibraryBeforeDelivering(t *testing.T) {
 		t.Fatalf("前提没成立：重开截掉了 %d 字节 ⇒ 坏记录没留住", truncated)
 	}
 	var w tickflow.BarWalker = store
-	if err := w.Walk(walkerDays[0], walkerDays[1], func(tickflow.Bar) bool { return true }); err == nil {
-		t.Errorf("另一段里有坏记录，而 Walk 好的那一段没有报错 —— 契约「先核」：任何一处坏，对任何区间都可以报错")
+	err = w.Walk(walkerDays[0], walkerDays[1], func(tickflow.Bar) bool { return true })
+	if err == nil {
+		t.Fatalf("另一段里有坏记录，而 Walk 好的那一段没有报错 —— 契约「先核」：任何一处坏，对任何区间都可以报错")
+	}
+	// 两种状态不许共用一个判断：坏了 ≠ 没拉过
+	if errors.Is(err, tickflow.ErrWalkOutsideCoverage) {
+		t.Errorf("数据坏了的错误 Is 了 ErrWalkOutsideCoverage：%v —— 消费方会把「坏了」当成「没拉过」去重拉", err)
 	}
 }
 
@@ -138,32 +144,5 @@ func TestBarWalkerStopEarlyStillConcludes(t *testing.T) {
 	err := w.Walk(walkerDays[0], walkerDays[1], func(tickflow.Bar) bool { called++; return false })
 	if err != nil || called != 1 {
 		t.Errorf("fn 第一根返回 false：(err=%v, 回调 %d)，期望 (nil, 1) —— 停只停回调，结论照给", err, called)
-	}
-}
-
-// storeOnly 只实现 tickflow.Store，不实现 BarWalker 的 Walk。
-type storeOnly struct{}
-
-func (storeOnly) Coverage() []tickflow.Span { return nil }
-func (storeOnly) DaysWithBars(tickflow.Span) (map[tickflow.TradingDay]bool, error) {
-	return nil, nil
-}
-func (storeOnly) AppendBars([]tickflow.Bar) error { return nil }
-func (storeOnly) CommitSpan(tickflow.Calendar, tickflow.ProductKey, tickflow.Span, tickflow.Outcome) error {
-	return nil
-}
-func (storeOnly) VerifyCoverage() (map[tickflow.SpanKey]error, error) { return nil, nil }
-func (storeOnly) OpenState() tickflow.OpenState                       { return tickflow.OpenState{} }
-func (storeOnly) DiscardCoverage() error                              { return nil }
-func (storeOnly) Close() error                                        { return nil }
-
-// 编译期：只实现 Store 的类型照样是 Store —— BarWalker 没有改 Store，不是破坏性变更。
-var _ tickflow.Store = storeOnly{}
-
-// guard: 「不是破坏性变更」—— 只实现 Store 的类型照样编译（上面那行编译期断言），且它**不是** BarWalker（两个集合）。
-func TestStoreOnlyTypeIsNotBarWalker(t *testing.T) {
-	var s tickflow.Store = storeOnly{}
-	if _, ok := s.(tickflow.BarWalker); ok {
-		t.Fatalf("只实现 Store 的类型被当成了 BarWalker —— 那说明 Store 里含了 Walk，窄接口的射程写错了")
 	}
 }

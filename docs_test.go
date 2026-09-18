@@ -996,7 +996,6 @@ var guardNames = []string{
 	`TestStatusClaimsMatchRepo`,
 	`TestStatusTokenIssueItself`,
 	`TestStoreBreachAbortsWhileUnrunnableDoesNot`,
-	`TestStoreOnlyTypeIsNotBarWalker`,
 	`TestSuccessfulMultiChunkSyncReportsNoFalseGap`,
 	`TestSyncerOverRealSegfileStore_ThreeValuedAnswerSurvivesTheSeam`,
 	`TestTagRecipesPinVerbatimCleanup`,

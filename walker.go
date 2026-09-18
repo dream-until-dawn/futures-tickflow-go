@@ -1,5 +1,7 @@
 package tickflow
 
+import "errors"
+
 // BarWalker 是逐根读库的口子：Feed（v0.9）从这里读根。
 //
 // ⛔ 它是**消费方定义的窄接口**，不是 Store 的一部分（用户 2026-09-18 裁，design.md §十五「v0.9 起手」U4 乙）：
@@ -9,8 +11,10 @@ package tickflow
 //
 // —— Walk 的契约（从 (*segfile.Store).Walk 的语义提上来；v0.7「还没定」甲 ⚠️ 那一句要求进接口前先写成契约）——
 //
-//	前置    [from, to] 必须整个落在 Coverage() 的**某一段**里；否则报错。
-//	        段外、或跨过两段之间的空档 ＝「没拉过」，不是「没核过」—— 报错里要能分开这两句
+//	前置    [from, to] 必须整个落在 Coverage() 的**某一段**里；否则返回的错误 errors.Is(err, ErrWalkOutsideCoverage)。
+//	        段外、或跨过两段之间的空档 ＝「没拉过」，不是「没核过」—— 两种状态不许共用一个判断：
+//	        **数据坏了（先核没过）的错误不许 Is 这个哨兵**。消费方据此分岔：没拉过 ⇒ 提示去同步；坏了 ⇒ 停
+//	        （评审方 2026-09-18 指出：只写「报错里分得开」而不给哨兵，这条在消费方那一侧不可检，只能比字符串）
 //	顺序    按交易日（其次按时刻）升序回调
 //	先核    实现要在回调之前核过它交出去的数据（segfile 是「逐条先核全库」）；
 //	        ⚠️ 这意味着库里**任何一处**坏，对任何 [from, to] 都可以报错 —— 哪怕坏的那一段与 [from, to] 不相交
@@ -24,3 +28,7 @@ type BarWalker interface {
 	Coverage() []Span
 	Walk(from, to TradingDay, fn func(Bar) bool) error
 }
+
+// ErrWalkOutsideCoverage：Walk 的区间不整个落在某一段 coverage 里 ＝「没拉过」（不是「坏了」）。
+// BarWalker 的实现在前置不满足时返回的错误要 errors.Is 它；先核没过（数据坏了）的错误不许 Is 它。
+var ErrWalkOutsideCoverage = errors.New("tickflow: Walk 的区间不整个落在任何一段 coverage 里（没拉过，不是坏了）")

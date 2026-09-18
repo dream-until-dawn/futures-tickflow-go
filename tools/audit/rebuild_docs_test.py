@@ -225,6 +225,17 @@ def chainBreaks(lines):
             run[name] = val
             continue
         prev = run.get(name)
+        # 手动调低：`自 <前值> 调低 <说明>`，<前值> 必须等于此前最大值（与 TestHighWaterChain 同一条，理由写在那边）
+        if len(f) >= 8 and f[5] == "自" and f[7] == "调低":
+            try:
+                frm = int(f[6])
+            except ValueError:
+                frm = None
+            if prev is None or frm != prev or val >= frm:
+                breaks.append((i + 1, name, val, prev if prev is not None else -1))
+                continue
+            run[name] = val
+            continue
         if prev is not None and val < prev and not (name in allow and val <= allow[name]):
             breaks.append((i + 1, name, val, prev))
         run[name] = max(prev if prev is not None else 0, val)
@@ -251,7 +262,8 @@ def refuseIfChainBroken(lines):
     print("          %s" % MERGE_FORMAT, file=sys.stderr)
     print("        <值> 填合流之后的最大值，<另一侧的最大值> 填被接进来那一侧的最高点。",
           file=sys.stderr)
-    print("     ② 有人手动把某个数改小了却没说 ⇒ 补一行来历，写明为什么。", file=sys.stderr)
+    print("     ② 有人手动把某个数改小了却没说 ⇒ 补一行调低记录，写明为什么：", file=sys.stderr)
+    print("          # 来历 <日期> <名字> <新值> 自 <此前最大值> 调低 <说明>", file=sys.stderr)
     print("", file=sys.stderr)
     print("   ⚠️ 插入是【只增】：不要去改已有的那些行，diff 里不该出现减号。",
           file=sys.stderr)
