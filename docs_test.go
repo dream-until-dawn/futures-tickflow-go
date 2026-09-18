@@ -957,6 +957,7 @@ var guardNames = []string{
 	`TestFeedDailyWalkerAlignsByTradingDay`,
 	`TestFeedDailyWalkerChangedBetweenPasses`,
 	`TestFeedDailyWalkerOutsideCoverage`,
+	`TestFeedFlushesUnclosedCellOnDayChange`,
 	`TestFeedIntradayExtraClosesOnCalendar`,
 	`TestFeedIntradayWarmupCountsCellsPerDay`,
 	`TestFeedLibraryChangedBetweenPasses`,

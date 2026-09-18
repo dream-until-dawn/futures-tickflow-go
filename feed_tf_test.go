@@ -263,7 +263,11 @@ func TestFeedRejectsBadExtra(t *testing.T) {
 			c.Base = tickflow.Daily
 			c.Extra = []tickflow.Period{tickflow.MustIntraday(60)}
 		}, ""},
-		"辅周期不是整数倍": {func(c *tickflow.FeedConfig) { c.Extra = []tickflow.Period{tickflow.MustIntraday(12)} }, ""},
+		// ⚠️ 指标要一起清掉：否则报的是「指标挂在不存在的周期」，这一格就没测到整数倍（突变 B6 量出来的）
+		"辅周期不是整数倍": {func(c *tickflow.FeedConfig) {
+			c.Extra = []tickflow.Period{tickflow.MustIntraday(12)}
+			c.Indicators = nil
+		}, "整数倍"},
 		"辅周期短于主周期": {func(c *tickflow.FeedConfig) { c.Extra = []tickflow.Period{tickflow.MustIntraday(1)} }, ""},
 		"周期重复": {func(c *tickflow.FeedConfig) {
 			c.Extra = []tickflow.Period{tickflow.MustIntraday(15), tickflow.MustIntraday(15)}
@@ -460,5 +464,42 @@ func TestFeedRejectsBaseBarAcrossExtraCell(t *testing.T) {
 	}
 	if f.Err() == nil || !strings.Contains(f.Err().Error(), "不相容") {
 		t.Errorf("跨格子的主周期根没被拦：Err()=%v", f.Err())
+	}
+}
+
+// guard: 换日时冲刷前一天没收的格子 —— 当天尾巴缺根（14:45–15:00 没有），14:00 那格在当天等不到收盘那根；
+// 下一个交易日的第一根到来时它收盘（日历边界早已过去）、带 FlagPartial，不被丢掉（突变 B11 量出这一步原来没人走到）。
+func TestFeedFlushesUnclosedCellOnDayChange(t *testing.T) {
+	cal := auCal(t)
+	const d = tickflow.TradingDay(20260907)
+	bars := auBars(t, cal, synthDays, 1, func(ts int64) bool { return ts >= at(d, 14, 45) && ts < at(d, 15, 0) })
+	cfg := tickflow.FeedConfig{Key: keyAU, Calendar: cal, Base: tickflow.MustIntraday(1), Extra: []tickflow.Period{tickflow.MustIntraday(60)},
+		Rule: tickflow.AggClockGrid, From: d, To: synthDays[3], NoAutoWarmup: true}
+	f, err := tickflow.NewFeed(sliceWalker{bars}, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	sawLast, sawNext := false, false
+	for f.Next() {
+		v := f.TF("60m")
+		switch b := f.View().Bar(); {
+		case b.Ts == at(d, 14, 44): // 当天最后一根（14:45 起缺）：14:00 那格还没收盘
+			sawLast = true
+			if v.Ts() != at(d, 13, 0) {
+				t.Errorf("当天最后一根时 TF(60m) 给 %s，应仍是 13:00 那格", hm(v.Ts()))
+			}
+		case b.TradingDay == synthDays[3] && !sawNext: // 下一个交易日的第一根
+			sawNext = true
+			if !v.Valid() || v.Ts() != at(d, 14, 0) || !v.Bar().Flags.Has(tickflow.FlagPartial) {
+				t.Errorf("换日第一根时 TF(60m) 给 %s partial=%v，应为前一天 14:00 那格且带 FlagPartial", hm(v.Ts()), v.Bar().Flags.Has(tickflow.FlagPartial))
+			}
+		}
+	}
+	if err := f.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if !sawLast || !sawNext {
+		t.Fatalf("判别力不在场：走到当天最后一根 %v · 走到换日第一根 %v", sawLast, sawNext)
 	}
 }
