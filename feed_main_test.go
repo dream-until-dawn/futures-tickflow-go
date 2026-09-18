@@ -1,6 +1,7 @@
 package tickflow_test
 
 import (
+	"errors"
 	"math"
 	"strings"
 	"testing"
@@ -181,5 +182,27 @@ func TestFeedMainIndicatorsUseAdjustedPrice(t *testing.T) {
 			}
 		}
 		k++
+	}
+}
+
+// guard: continuous 的 Walker() 守 BarWalker 契约（经由接口调）—— 越段 ⇒ Is ErrWalkOutsideCoverage、一根都不回调；
+// 停 ⇒ fn 返回 false 之后不再回调、结论照给 nil。对照：段内整段回调 len(Bars) 根（突变 C9 / C10 量出这两条原来没人守）。
+func TestContinuousWalkerHonorsBarWalkerContract(t *testing.T) {
+	c, err := continuous.Build(continuous.ContinuousSpec{Product: "SHFE.rb", Roll: continuous.ByOpenInterest{}}, mainInput())
+	if err != nil {
+		t.Fatal(err)
+	}
+	var w tickflow.BarWalker = c.Walker()
+	n := 0
+	if err := w.Walk(mainDays[0], mainDays[4], func(tickflow.Bar) bool { n++; return true }); err != nil || n != len(c.Bars) {
+		t.Fatalf("对照失败：段内 (err=%v, 回调 %d)，期望 (nil, %d)", err, n, len(c.Bars))
+	}
+	n = 0
+	if err := w.Walk(mainDays[0], 20200810, func(tickflow.Bar) bool { n++; return true }); !errors.Is(err, tickflow.ErrWalkOutsideCoverage) || n != 0 {
+		t.Errorf("越段：(err=%v, 回调 %d)，应 Is ErrWalkOutsideCoverage 且一根不回调", err, n)
+	}
+	n = 0
+	if err := w.Walk(mainDays[0], mainDays[4], func(tickflow.Bar) bool { n++; return false }); err != nil || n != 1 {
+		t.Errorf("fn 第一根返回 false：(err=%v, 回调 %d)，期望 (nil, 1) —— 停只停回调、结论照给", err, n)
 	}
 }

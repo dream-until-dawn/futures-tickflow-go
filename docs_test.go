@@ -937,6 +937,7 @@ var guardNames = []string{
 	`TestContextCanceledBetweenRetriesRegistersNothingAfter`,
 	`TestContextCanceledDuringPersistentFailureStopsBeforeBudget`,
 	`TestContinuousDoesNotDependOnCalendar`,
+	`TestContinuousWalkerHonorsBarWalkerContract`,
 	`TestContractAtFollowsTheRolls`,
 	`TestCountedSpanReachesTheRoll`,
 	`TestCrashBetweenWritesIsDetectedEvenThoughSyncSucceeds`,
