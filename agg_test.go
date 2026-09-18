@@ -515,8 +515,8 @@ func TestAggRuleOneEmptyCellYieldsNoBar(t *testing.T) {
 	for _, r := range []tickflow.AggRule{tickflow.AggTradingAxis, tickflow.AggClockGrid} {
 		p := tickflow.MustIntraday(60)
 		bs, _ := r.Bounds(p, tmpl, day)
-		// 「整个落在夜盘里」按【交易分钟】判，不按格子边界：时钟网格的格子不按时段裁剪，
-		// 02:00–03:00 那格的边界越过了 02:30，而它装的交易分钟全在夜盘里
+		// 「整个落在夜盘里」按【交易分钟】判，不按格子边界 —— 判据不依赖格子 Close 怎么取
+		//（第一版时钟网格的 Close 不裁，02:00 那格的边界越过了 02:30，按边界判会漏掉它）
 		onlyNight := func(open, close int64) bool {
 			if close <= nightEnd {
 				return true
@@ -679,5 +679,195 @@ func TestAggFridayNightIntoMonday(t *testing.T) {
 	}
 	if b := seen[sat02]; b.Volume != func() float64 { r, _ := naiveSynth(bars, sat02, sat0230); return r.v }() || b.Flags.Has(tickflow.FlagPartial) {
 		t.Errorf("时钟网格周六 02:00 那格 V=%v flags=%b，应只装 02:00–02:30 那 30 根、不带 FlagPartial", b.Volume, b.Flags)
+	}
+}
+
+// ── 评审方 2026-09-18 对 c22ef24 补的五格（突变 R2 / R3 / R4 / R7 / R8 当时没红）与时钟网格 Close ──
+
+func findBound(bs []tickflow.BarBound, open int64) (tickflow.BarBound, bool) {
+	for _, b := range bs {
+		if b.Open == open {
+			return b, true
+		}
+	}
+	return tickflow.BarBound{}, false
+}
+
+// guard: 时钟网格的 Close ＝ 格子里最后一个交易分钟的结束时刻（按日历时段，不按数据）——
+// 60m 11:00 那格收 11:30、夜盘 02:00 那格收 02:30、10:00 那格仍收 11:00（对照）；30m 10:00 那格收 10:15；
+// 11:15–11:30 缺根时 11:00 那根的 TsEnd 仍是 11:30（带 FlagPartial）。
+func TestAggClockGridCloseIsLastTradingMinute(t *testing.T) {
+	const d = tickflow.TradingDay(20260907)
+	day, tmpl := mustDay(t, synthDays, keyAU, d)
+	sat := tickflow.TradingDay(20260905)
+	b60, err := tickflow.AggClockGrid.Bounds(tickflow.MustIntraday(60), tmpl, day)
+	if err != nil {
+		t.Fatal(err)
+	}
+	b30, err := tickflow.AggClockGrid.Bounds(tickflow.MustIntraday(30), tmpl, day)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cases := []struct {
+		name        string
+		bs          []tickflow.BarBound
+		step        int64 // 格子长度（毫秒）
+		open, close int64
+	}{
+		{"60m 10:00（对照：格子终点就是交易终点）", b60, 3600000, at(d, 10, 0), at(d, 11, 0)},
+		{"60m 11:00", b60, 3600000, at(d, 11, 0), at(d, 11, 30)},
+		{"60m 夜盘 02:00", b60, 3600000, at(sat, 2, 0), at(sat, 2, 30)},
+		{"30m 10:00", b30, 1800000, at(d, 10, 0), at(d, 10, 15)},
+	}
+	// 判别力在前：后三格的期望收盘确实早于格子终点（否则「裁没裁」判不出来）；对照格两者相等
+	for i, c := range cases {
+		if cut := c.close < c.open+c.step; cut != (i > 0) {
+			t.Fatalf("判别力不在场：%s 期望收盘 %s、格子终点 %s", c.name, hm(c.close), hm(c.open+c.step))
+		}
+	}
+	for _, c := range cases {
+		b, ok := findBound(c.bs, c.open)
+		if !ok {
+			t.Errorf("%s：没有这一格", c.name)
+			continue
+		}
+		if b.Close != c.close {
+			t.Errorf("%s：Close %s，应为 %s（格子里最后一个交易分钟的结束时刻）", c.name, hm(b.Close), hm(c.close))
+		}
+	}
+	// 按日历、不按数据：11:15–11:30 那 15 根不给，11:00 那根的 TsEnd 仍是 11:30
+	bars := synthDay(day, func(ts int64) bool { return ts >= at(d, 11, 15) && ts < at(d, 11, 30) })
+	got, err := tickflow.Aggregate(tickflow.AggClockGrid, tickflow.MustIntraday(60), tmpl, day, bars)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, b := range got {
+		if b.Ts == at(d, 11, 0) {
+			found = true
+			if b.TsEnd != at(d, 11, 30) || !b.Flags.Has(tickflow.FlagPartial) {
+				t.Errorf("11:00 那根缺尾 15 分钟：TsEnd %s flags=%b，应为 11:30 且带 FlagPartial —— TsEnd 不许跟着数据走", hm(b.TsEnd), b.Flags)
+			}
+		}
+	}
+	if !found {
+		t.Error("缺尾那天没有 11:00 那根")
+	}
+}
+
+// guard: Turnover 求和、OpenInterest 取末根（6.35 的对照只比 OHLCV，新浪 Turnover 是 NaN、OI 不在比较里 ⇒ 这两条原来没人守）。
+func TestAggTurnoverSumsAndOITakesLast(t *testing.T) {
+	day, tmpl := mustDay(t, synthDays, keyAU, 20260907)
+	bars := synthDay(day, nil)
+	for i := range bars {
+		bars[i].Turnover = float64(1000 + 37*i%101) // 有限、各根不同
+	}
+	for _, r := range []tickflow.AggRule{tickflow.AggTradingAxis, tickflow.AggClockGrid} {
+		got, err := tickflow.Aggregate(r, tickflow.MustIntraday(60), tmpl, day, bars)
+		if err != nil {
+			t.Fatal(err)
+		}
+		checked := 0
+		for _, b := range got {
+			var in []tickflow.Bar
+			for _, x := range bars {
+				if x.Ts >= b.Ts && x.TsEnd <= b.TsEnd {
+					in = append(in, x)
+				}
+			}
+			// 判别力：格子里至少两根，且首末 OI 不同（否则「取末根」与「取首根」分不开）
+			if len(in) < 2 || in[0].OpenInterest == in[len(in)-1].OpenInterest {
+				continue
+			}
+			checked++
+			sum := 0.0
+			for _, x := range in {
+				sum += x.Turnover
+			}
+			if b.Turnover != sum {
+				t.Errorf("%s %s：Turnover %v，应为 %d 根之和 %v", r, hm(b.Ts), b.Turnover, len(in), sum)
+			}
+			if b.OpenInterest != in[len(in)-1].OpenInterest {
+				t.Errorf("%s %s：OpenInterest %v，应取末根 %v（首根 %v）", r, hm(b.Ts), b.OpenInterest, in[len(in)-1].OpenInterest, in[0].OpenInterest)
+			}
+		}
+		if checked == 0 {
+			t.Fatalf("%s：判别力不在场 —— 没有一格装了两根以上且首末 OI 不同", r)
+		}
+	}
+}
+
+// guard: 输入自带的 FlagPartial 往上传 —— 格子本身装满（规则二不触发）、而其中一根输入带 FlagPartial ⇒ 输出带。
+func TestAggInputPartialPropagates(t *testing.T) {
+	const d = tickflow.TradingDay(20260907)
+	day, tmpl := mustDay(t, synthDays, keyAU, d)
+	bars := synthDay(day, nil)
+	target := at(d, 13, 45) // 日盘里一个装满的格子中间
+	p := tickflow.MustIntraday(60)
+	cellOf := func(out []tickflow.Bar) *tickflow.Bar {
+		for i := range out {
+			if out[i].Ts <= target && target < out[i].TsEnd {
+				return &out[i]
+			}
+		}
+		return nil
+	}
+	// 对照在前：不打标时那一格不带 FlagPartial（格子装满，规则二不触发）
+	clean, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, bars)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c := cellOf(clean); c == nil || c.Flags.Has(tickflow.FlagPartial) {
+		t.Fatalf("对照失败：干净输入上那一格 %v", c)
+	}
+	marked := 0
+	for i := range bars {
+		if bars[i].Ts == target {
+			bars[i].Flags |= tickflow.FlagPartial
+			marked++
+		}
+	}
+	if marked != 1 {
+		t.Fatalf("前提没成立：打标了 %d 根", marked)
+	}
+	got, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, bars)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c := cellOf(got); c == nil || !c.Flags.Has(tickflow.FlagPartial) {
+		t.Errorf("输入里一根带 FlagPartial，而装它的那一格 %v 没带 —— 不完整没往上传", c)
+	}
+}
+
+// guard: 输入重叠或乱序 ⇒ Aggregate 报错（「不满足就报错，不猜」）。
+func TestAggRejectsOverlapOrDisorder(t *testing.T) {
+	day, tmpl := mustDay(t, synthDays, keyAU, 20260907)
+	bars := synthDay(day, nil)
+	p := tickflow.MustIntraday(60)
+	// 对照在前：原样输入不报错
+	if _, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, bars); err != nil {
+		t.Fatalf("对照失败：干净输入报错 %v", err)
+	}
+	dup := append(append(append([]tickflow.Bar{}, bars[:100]...), bars[99]), bars[100:]...) // 第 99 根重复一次 ⇒ 重叠
+	swap := append([]tickflow.Bar{}, bars...)
+	swap[200], swap[201] = swap[201], swap[200] // 相邻两根对调 ⇒ 乱序
+	for name, in := range map[string][]tickflow.Bar{"重叠": dup, "乱序": swap} {
+		if out, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, in); err == nil {
+			t.Errorf("%s的输入没有报错，出了 %d 根", name, len(out))
+		}
+	}
+}
+
+// guard: 输入里有一根的 TradingDay 不是 d ⇒ Aggregate 报错（「不满足就报错，不猜」）。
+func TestAggRejectsForeignTradingDay(t *testing.T) {
+	day, tmpl := mustDay(t, synthDays, keyAU, 20260907)
+	bars := synthDay(day, nil)
+	p := tickflow.MustIntraday(60)
+	if _, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, bars); err != nil {
+		t.Fatalf("对照失败：干净输入报错 %v", err)
+	}
+	bars[150].TradingDay = 20260908
+	if out, err := tickflow.Aggregate(tickflow.AggTradingAxis, p, tmpl, day, bars); err == nil {
+		t.Errorf("有一根属于 20260908，而 Aggregate(20260907) 没有报错，出了 %d 根", len(out))
 	}
 }

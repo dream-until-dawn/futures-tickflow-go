@@ -63,8 +63,15 @@ const cstOffsetMs = 8 * 3600 * 1000
 // Bounds 给出交易日 d 在规则 r、周期 p 下的全部格子边界，升序、左闭右开。
 //
 //	AggTradingAxis  ＝ p.Bars(tmpl, d)，原样
-//	AggClockGrid    与 d.Sessions 相交的每个时钟格子一根：[格子起点, 格子终点)，**不按时段裁剪**
-//	                （10:00 那根 60m 的 Close 是 11:00，而它装的是 10:00–10:15 ＋ 10:30–11:00；装了多少用 Minutes）
+//	AggClockGrid    与 d.Sessions 相交的每个时钟格子一根：Open ＝ 格子起点（＝ 天勤的开盘标签），
+//	                Close ＝ min(格子终点, **按 d.Sessions 算出的**格子里最后一个交易分钟的结束时刻)
+//	                例：60m 的 10:00 那格 [10:00, 11:00)（装 10:00–10:15 ＋ 10:30–11:00）· 11:00 那格 [11:00, 11:30) ·
+//	                夜盘 02:00 那格 [02:00, 02:30) · 30m 的 10:00 那格 [10:00, 10:15)
+//
+// ⛔ Close 按【日历时段】裁，不按数据里最后一根算（评审方 2026-09-18 定）：
+// 按数据算的话，残格子的 TsEnd 会跟着缺数据移动 ⇒ 同一个格子两次聚合 TsEnd 不同。
+// ⛔ 而它也不能是格子终点（v0.9-agg 第一版是）：TsEnd 的语义是「收盘墙钟时刻」，11:00 那格 11:30 就收了；
+// 取 12:00 会让 Feed 判「已收盘」落后两小时（design.md §十·二「不能落后」）。天勤只给开盘标签，格子终点那个取法没有读数支撑。
 //
 // 模板与实际矛盾（Day.TemplateMismatch）时两套都整天标 Anomalous —— 那是交易日一级的事实，与规则无关。
 func (r AggRule) Bounds(p IntradayPeriod, tmpl SessionTemplate, d Day) ([]BarBound, error) {
@@ -84,10 +91,12 @@ func (r AggRule) Bounds(p IntradayPeriod, tmpl SessionTemplate, d Day) ([]BarBou
 	var out []BarBound
 	for _, s := range d.Sessions {
 		for c := floorTo(s.Start+cstOffsetMs, step) - cstOffsetMs; c < s.End; c += step {
+			end := min(c+step, s.End) // 这一段在这个格子里的最后一个交易分钟的结束时刻
 			if n := len(out); n > 0 && out[n-1].Open == c {
-				continue // 同一个格子里的第二段（10:00 格子里的 10:30–11:00）
+				out[n-1].Close = max(out[n-1].Close, end) // 同一个格子里的第二段（10:00 格子里的 10:30–11:00）
+				continue
 			}
-			out = append(out, BarBound{Open: c, Close: c + step, Full: true})
+			out = append(out, BarBound{Open: c, Close: end, Full: true})
 		}
 	}
 	if _, _, bad := d.TemplateMismatch(tmpl); bad {
