@@ -906,6 +906,7 @@ var guardNames = []string{
 	`TestAdjustNeverTouchesVolumeOrOpenInterest`,
 	`TestAgeCapStopsAtCalendarEnd`,
 	`TestAggClockGridMatchesShinnyReading`,
+	`TestAggClockGridRejectsUnalignedPeriod`,
 	`TestAggFridayNightIntoMonday`,
 	`TestAggRuleOneEmptyCellYieldsNoBar`,
 	`TestAggRuleThreeCompleteCellIsNotFlagged`,

@@ -469,6 +469,26 @@ func TestAggClockGridMatchesShinnyReading(t *testing.T) {
 	}
 }
 
+// guard: 时钟网格只收整除 480 分钟的周期（对齐零点未验：北京零点与 UTC 零点差 480 分钟，整除时两者切出同一套格子）——
+// 90m / 180m 报错，不替未验的那一问选答案；交易时间轴不受这条限制。
+func TestAggClockGridRejectsUnalignedPeriod(t *testing.T) {
+	day, tmpl := mustDay(t, synthDays, keyAU, 20260907)
+	// 判别力在前：同一天 60m / 120m / 240m 收下（整除 480），交易时间轴 90m 也收下
+	for _, p := range []int{60, 120, 240} {
+		if _, err := tickflow.AggClockGrid.Bounds(tickflow.MustIntraday(p), tmpl, day); err != nil {
+			t.Fatalf("对照失败：时钟网格 %dm（整除 480）报错 %v", p, err)
+		}
+	}
+	if _, err := tickflow.AggTradingAxis.Bounds(tickflow.MustIntraday(90), tmpl, day); err != nil {
+		t.Fatalf("对照失败：交易时间轴 90m 报错 %v", err)
+	}
+	for _, p := range []int{90, 180} {
+		if bs, err := tickflow.AggClockGrid.Bounds(tickflow.MustIntraday(p), tmpl, day); err == nil {
+			t.Errorf("时钟网格 %dm（不整除 480）没有报错，给出了 %d 格 —— 对齐零点没验，不该替它选", p, len(bs))
+		}
+	}
+}
+
 // ── 丙：停夜盘的那一夜（合成，6.24 / 6.25 那种形状：日历说有夜盘、1m 夜盘一根都没有） ──
 
 // noNight 造一天：日历（embedded）说有夜盘，而 1m 只有日盘的根。
