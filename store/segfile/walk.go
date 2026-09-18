@@ -146,6 +146,9 @@ func (s *Store) scanRecords(fn func(i int64, b tickflow.Bar) bool) (statErr, rea
 // errWalkRange Walk 的区间不整个落在某一段 coverage 里。
 var errWalkRange = errors.New("segfile: Walk 的区间不整个落在任何一段 coverage 里")
 
+// *Store 满足 tickflow.BarWalker（Feed 读根的口子，v0.9）—— 编译期钉住：改了 Walk / Coverage 的签名，这一行先编译不过。
+var _ tickflow.BarWalker = (*Store)(nil)
+
 // Walk 按文件顺序把 [from, to] 里的记录逐根交给 fn；**同一遍扫描里把整个库核一遍**（v0.6 片 B）。
 //
 // 它是库的**读口子**：calendar/derived 要逐根看 Ts 与 Volume，只读每天首末根不够（probe.md 6.13 c″、6.21）。

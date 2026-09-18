@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 116
+guards 117
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -454,3 +454,4 @@ guards 116
 # 来历 2026-09-16 guards 112 自 111 自动：重造时表长大（111 -> 112）；本次新增：TestContractAtFollowsTheRolls
 # 来历 2026-09-17 guards 113 自 112 自动：重造时表长大（112 -> 113）；本次新增：TestStatusTokenIssueItself
 # 来历 2026-09-17 guards 116 自 113 自动：重造时表长大（113 -> 116）；本次新增：TestForwardAdjustCarriesWarning TestUnknownAdjustIsRejected TestZeroAdjustIsRatioBack
+# 来历 2026-09-18 guards 117 自 116 自动：重造时表长大（116 -> 117）；本次新增：TestBarWalkerRejectsRangeOutsideCoverage

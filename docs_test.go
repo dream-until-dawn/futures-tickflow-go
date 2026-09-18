@@ -908,6 +908,7 @@ var guardNames = []string{
 	`TestAppendBarsRejectsOutOfOrder`,
 	`TestBackAdjustKeepsHistoryForwardAdjustKeepsLatest`,
 	`TestBackfillAfterVerifyDoesNotPoisonTheStore`,
+	`TestBarWalkerRejectsRangeOutsideCoverage`,
 	`TestBasisDependsOnWhetherOldContractStillHasABar`,
 	`TestBudgetExhaustedRegistersNothingAfterAndNextSyncAdvances`,
 	`TestBuildGivesBarsRollsAndDays`,
