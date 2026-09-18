@@ -68,10 +68,36 @@ def guard(work, name="TestHighWaterProvenance", tag=None):
     tag 的用处（评审方 2026-09-18，调低判据那两格）：一条守卫里有两支会红时，
     只看 PASS/FAIL 分不出红的是哪一支 —— **另一支会替着满足「该红」**。
     """
-    got, out = _guard(work, name)
+    got, out = _chain_py(work) if name == CHAIN_PY else _guard(work, name)
     if got == FAIL and tag is not None and tag not in out:
         return FAIL + "-无标签"
     return got
+
+
+# 链判据的【第二份实现】：rebuild_docs_test.py 的 chainBreaks（写盘之前拦追加用）。
+# 它与 TestHighWaterChain 是同一条判据的两份代码，而「分岔本身没有守卫」（chainBreaks 的 docstring）
+# ⇒ 至少让它吃同一批变异输入（评审方 2026-09-18）。chainBreaks 只返回断链元组、不带报文 ⇒ 这一侧的格没有标签可判。
+CHAIN_PY = "chainBreaks"
+
+_CHAIN_PY_SRC = (
+    "import sys; sys.path.insert(0, 'tools/audit'); import rebuild_docs_test as r; "
+    "b = r.chainBreaks(open('tools/audit/high_water.txt', encoding='utf-8').read().splitlines()); "
+    "print(b); sys.exit(3 if b else 0)")
+
+
+def _chain_py(work):
+    """在副本里对变异后的 high_water.txt 跑 chainBreaks：有断链 ⇒ FAIL，空 ⇒ PASS，其他退出码 ⇒ BUILD（没测到）。"""
+    try:
+        p = subprocess.run([sys.executable, "-c", _CHAIN_PY_SRC], cwd=work, capture_output=True, timeout=300)
+    except subprocess.TimeoutExpired:
+        return TIME, ""
+    out = (p.stdout + p.stderr).decode("utf-8", "replace")
+    # ⚠️ 退出码 1 是 Python 自己的异常（import 失败等）——那是「没测到」，不许读成「断链了」
+    if p.returncode == 3:
+        return FAIL, out
+    if p.returncode == 0:
+        return PASS, out
+    return BUILD, out
 
 
 def _guard(work, name):
@@ -217,9 +243,20 @@ def m_chain_new_break(s):
     """C4：末尾追加一行【比 running max 低、也低不过合流罩着的范围】的来历。
 
     模拟的是「又合并了一次，而没人写合流记录」。
-    值取 275：低于 rules 的 running max，又高于那条合流记录的 271 ⇒ 罩不住。
+    值取【rules 名下所有合流记录的另一侧最大值里最大的那个 + 1】：低于 running max（当前值），又罩不住。
+
+    ⛔ 这一格原来写死 275（2026-09-09 时合流窗口只到 271）；同一天第二条合流记录把窗口放到 286，
+    275 落进窗口 ⇒ 这一格从那天起期望 FAIL、实测 PASS，**而没人发现，直到 2026-09-18**
+    （它一直在 main 上不符，而自检只看 D 格那几行）。⇒ 现算，不写死；造不出来就停手。
     """
-    return s + "# 来历 2026-09-09 rules 275 自动：假装又合了一次，而没写合流记录\n"
+    cur, n = _cur(s, "rules")
+    others = [int(ln.split()[6]) for ln in s.splitlines()
+              if ln.strip().split()[:2] == ["#", "来历"] and len(ln.split()) >= 7
+              and ln.split()[3] == "rules" and ln.split()[5] == "合流"]
+    assert others, "rules 名下没有合流记录 —— 这一格是冲着合流窗口去的，造不出来"
+    v = max(others) + 1
+    assert v < n, "合流窗口之上、running max 之下没有空位（窗口 %d，当前 %d）" % (max(others), n)
+    return s + "# 来历 2026-09-09 rules %d 自动：假装又合了一次，而没写合流记录\n" % v
 
 
 def m_chain_under_window(s):
@@ -314,6 +351,12 @@ CASES = [
     ("D0   调低-合法：N-1 自 N（标定）",                          m_lower_legal,      PASS, "TestHighWaterChain"),
     ("D1   调低-前值不是此前最大值",                              m_lower_bad_from,   FAIL, "TestHighWaterChain", "【前值不是此前最大值】"),
     ("D2   调低-新值不小于前值（N 自 N）",                         m_lower_not_lower,  FAIL, "TestHighWaterChain", "【新值不小于前值】"),
+    # 同一批输入喂给第二份实现（chainBreaks）；P0 是它的基线
+    ("P0   py 链-基线：一个字不改",                               m_chain_baseline,   PASS, CHAIN_PY),
+    ("P4   py 链-同 C4",                                        m_chain_new_break,  FAIL, CHAIN_PY),
+    ("PD0  py 调低-合法（标定）",                                 m_lower_legal,      PASS, CHAIN_PY),
+    ("PD1  py 调低-前值不是此前最大值",                           m_lower_bad_from,   FAIL, CHAIN_PY),
+    ("PD2  py 调低-新值不小于前值",                               m_lower_not_lower,  FAIL, CHAIN_PY),
 ]
 
 NOTE = {
