@@ -965,6 +965,7 @@ var guardNames = []string{
 	`TestFeedMainIndicatorsUseAdjustedPrice`,
 	`TestFeedMainModeBoundaries`,
 	`TestFeedMainNoAdjustRawEqualsClose`,
+	`TestFeedMainTakesBarsOnlyFromMain`,
 	`TestFeedMainViewMethods`,
 	`TestFeedRangeMustLieInOneSpan`,
 	`TestFeedReadyFlipsAtSettleOnLongSeries`,

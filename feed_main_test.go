@@ -55,7 +55,7 @@ func mainFeed(t *testing.T, adj continuous.AdjustMethod, inds ...tickflow.Indica
 	cfg := tickflow.FeedConfig{Key: keyRB, Calendar: cal, Base: tickflow.Daily, Rule: tickflow.AggTradingAxis,
 		From: mainDays[0], To: mainDays[len(mainDays)-1], Main: c, Lookback: 1,
 		Indicators: map[string][]tickflow.Indicator{"1d": inds}}
-	f, err := tickflow.NewFeed(c.Walker(), cfg)
+	f, err := tickflow.NewFeed(nil, cfg) // 主连模式：根由 Main 供
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -162,7 +162,7 @@ func TestFeedMainModeBoundaries(t *testing.T) {
 	cfg := base
 	cfg.Main = c
 	cfg.Base = tickflow.MustIntraday(1)
-	if _, err := tickflow.NewFeed(c.Walker(), cfg); err == nil || !strings.Contains(err.Error(), "主连") {
+	if _, err := tickflow.NewFeed(nil, cfg); err == nil || !strings.Contains(err.Error(), "主连") {
 		t.Errorf("主连模式配日内主周期：err=%v，应报错并说明是主连模式的限制", err)
 	}
 }
@@ -204,5 +204,36 @@ func TestContinuousWalkerHonorsBarWalkerContract(t *testing.T) {
 	n = 0
 	if err := w.Walk(mainDays[0], mainDays[4], func(tickflow.Bar) bool { n++; return false }); err != nil || n != 1 {
 		t.Errorf("fn 第一根返回 false：(err=%v, 回调 %d)，期望 (nil, 1) —— 停只停回调、结论照给", err, n)
+	}
+}
+
+// guard: 主连模式的根只从 Main 来（评审方 2026-09-18）—— 另传一个非 nil 的 src ⇒ NewFeed 报错；
+// 典型错配：src 是比例后复权拼的那个、Main 是不复权拼的那个 ⇒ 步进一套价格、RawClose 答另一套，而不报错（静默算错钱）。
+// 对照：src 传 nil、只给 Main ⇒ 正常步进。
+func TestFeedMainTakesBarsOnlyFromMain(t *testing.T) {
+	build := func(adj continuous.AdjustMethod) continuous.Continuous {
+		c, err := continuous.Build(continuous.ContinuousSpec{Product: "SHFE.rb", Roll: continuous.ByOpenInterest{}, Adjust: adj}, mainInput())
+		if err != nil {
+			t.Fatal(err)
+		}
+		return c
+	}
+	ratio, none := build(continuous.RatioBack), build(continuous.NoAdjust)
+	cal, _ := embedded.New(mainDays)
+	cfg := tickflow.FeedConfig{Key: keyRB, Calendar: cal, Base: tickflow.Daily, Rule: tickflow.AggTradingAxis,
+		From: mainDays[0], To: mainDays[4], NoAutoWarmup: true, Main: none}
+	f, err := tickflow.NewFeed(nil, cfg)
+	if err != nil {
+		t.Fatalf("对照失败：主连模式 src 为 nil 时 NewFeed 报错 %v", err)
+	}
+	n := 0
+	for f.Next() {
+		n++
+	}
+	if err := f.Close(); err != nil || n != len(mainDays) {
+		t.Fatalf("对照失败：走了 %d 步，err=%v", n, err)
+	}
+	if _, err := tickflow.NewFeed(ratio.Walker(), cfg); err == nil || !strings.Contains(err.Error(), "主连") {
+		t.Errorf("主连模式另传了 src（比例后复权的那个，而 Main 是不复权的）：err=%v，应报错并说明根由 Main 供", err)
 	}
 }

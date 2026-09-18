@@ -5335,6 +5335,12 @@ F5  主连模式（U2：View 四方法进 v0.9）
       Contract()   ContractAt(i)
       IsRollDay()  该交易日 ∈ Rolls[].Day
       Basis()      换月日给 Roll.Basis，其余日 NaN（不给 0：0 是一个看起来正常的基差）
+    📌 F-c 落地（2026-09-18，上面原文不改）：
+      依赖方向  continuous 用根包的 Bar ⇒ 根包里放窄接口 MainSource（MainAt ＋ Walker）与值类型 MainDay，continuous.Continuous 实现它（与 Indicator 同理）
+      根只从 Main 来  主连模式下 NewFeed 的 src 必须为 nil，根由 Main.Walker() 供（评审方 2026-09-18 定）——
+                      两处各传一次、靠调用方保证是同一个 Continuous 的话，传错（例如 src 是比例后复权的、Main 是不复权的）
+                      就步进一套价格、RawClose 答另一套，而不报错：「成交用真实价」押在了调用方的记性上
+      射程  NoPick 那几天（规则说不清主力）不在 Continuous.Bars 里 ⇒ 主连 Feed 不步进这几天，指标看到的天轴缺这几天
     ⚠️用户 U5  日内主连（1m 按每天的主力合约拼、按复权因子缩放）进不进 v0.9：
       我的倾向  不进 v0.9。理由：它要一套新的拼接（日内换月时刻、夜盘归属、复权因子作用在分钟价上），
                是 continuous 的新功能，不是 Feed 的；v0.9 的主连 Feed 只做日线，射程写明

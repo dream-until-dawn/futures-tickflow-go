@@ -35,7 +35,7 @@ type FeedConfig struct {
 
 	// Main 给了 ⇒ **主连模式**：主周期必须是 Daily（于是也没有辅周期）；View 的四个主连方法
 	// （RawClose · Contract · IsRollDay · Basis）按主周期那根的交易日问它（F5）。
-	// continuous.Continuous 实现它，src 用同一个 Continuous 的 Walker()。
+	// continuous.Continuous 实现它。⛔ 主连模式下根由 Main.Walker() 供，NewFeed 的 src 必须传 nil（传了就报错）。
 	// ⚠️ 日内主连 v0.9 不做（用户 2026-09-18 裁 U5）。
 	Main MainSource
 
@@ -127,12 +127,21 @@ type extra struct {
 	prev   TradingDay // walker 时：day 之前的那个交易日（首日之前没有 ⇒ 0）
 }
 
-// NewFeed 构造一个 Feed。src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）。
+// NewFeed 构造一个 Feed。非主连模式下 src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）；
+// 主连模式（cfg.Main 非 nil）下 src 必须为 nil，根由 cfg.Main.Walker() 供。
 //
 // ⛔ 用完必须 Close（defer f.Close()）：它释放第二遍 Walk 的协程，并交出第二遍的结论（见 Close）。
 func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
+	// 主连模式：根只从 Main 来（评审方 2026-09-18）—— 两处各传一次、靠调用方保证是同一个 Continuous，
+	// 传错时步进一套价格、RawClose 答另一套，而不报错：「成交用真实价」就押在了调用方的记性上
+	if cfg.Main != nil {
+		if src != nil {
+			return nil, errors.New("tickflow: 主连模式（FeedConfig.Main）的根由 Main 供，src 必须传 nil —— 两处各给一个，传错了步进的价格与 RawClose 会来自两条不同的主连")
+		}
+		src = cfg.Main.Walker()
+	}
 	if src == nil {
-		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），nil 源什么都读不到")
+		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），非主连模式下 nil 源什么都读不到")
 	}
 	if err := cfg.Rule.check(); err != nil {
 		return nil, err
@@ -771,6 +780,9 @@ type MainDay struct {
 // 根包再 import continuous 就成环了 —— 与 Indicator 放在根包是同一个理由。
 type MainSource interface {
 	MainAt(d TradingDay) (MainDay, bool)
+	// Walker 交出拼好的（复权后的）序列 —— 主连模式下 Feed 的根**只从这里来**（NewFeed 的 src 必须为 nil），
+	// 于是步进的价格与四方法答的事实出自同一条主连，由库保证，不靠调用方
+	Walker() BarWalker
 }
 
 func (v View) mainDay() (MainDay, bool) {
