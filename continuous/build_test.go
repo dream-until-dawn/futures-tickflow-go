@@ -432,3 +432,32 @@ func TestUnknownAdjustIsRejected(t *testing.T) {
 		}
 	}
 }
+
+// guard: RawClose 是复权之前记下的未复权收盘 —— 四种复权下都与 NoAdjust 的 Bars.Close 逐根相等，
+// 且至少一种复权下 Bars.Close 与它不同（判别力在前：否则这一格判不出「记在复权之前还是之后」）。
+func TestRawCloseIsPreAdjust(t *testing.T) {
+	in := fourDays()
+	none, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: NoAdjust}, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	differs := false
+	for _, m := range []AdjustMethod{RatioBack, DiffBack, RatioFwd, DiffFwd} {
+		c, err := Build(ContinuousSpec{Roll: ByOpenInterest{}, Adjust: m}, in)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(c.RawClose) != len(c.Bars) {
+			t.Fatalf("复权 %d：RawClose %d 个，Bars %d 根", m, len(c.RawClose), len(c.Bars))
+		}
+		for i := range c.Bars {
+			differs = differs || c.Bars[i].Close != c.RawClose[i]
+			if c.RawClose[i] != none.Bars[i].Close {
+				t.Errorf("复权 %d 第 %d 根：RawClose %v，未复权收盘 %v", m, i, c.RawClose[i], none.Bars[i].Close)
+			}
+		}
+	}
+	if !differs {
+		t.Fatal("判别力不在场：四种复权下 Bars.Close 都与 RawClose 相等")
+	}
+}

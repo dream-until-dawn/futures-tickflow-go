@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 154
+guards 159
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -474,3 +474,4 @@ guards 154
 # 来历 2026-09-18 guards 145 自 144 自动：重造时表长大（144 -> 145）；本次新增：TestFeedCloseReportsVoided
 # 来历 2026-09-18 guards 153 自 145 自动：重造时表长大（145 -> 153）；本次新增：TestFeedDailyVisibilityJumpsAt1500 TestFeedDailyWalkerAlignsByTradingDay TestFeedDailyWalkerChangedBetweenPasses TestFeedDailyWalkerOutsideCoverage TestFeedIntradayExtraClosesOnCalendar TestFeedRejectsBadExtra TestFeedRejectsBaseBarAcrossExtraCell TestFeedWarmupCountsExtraCells
 # 来历 2026-09-18 guards 154 自 153 自动：重造时表长大（153 -> 154）；本次新增：TestFeedFlushesUnclosedCellOnDayChange
+# 来历 2026-09-18 guards 159 自 154 自动：重造时表长大（154 -> 159）；本次新增：TestFeedMainIndicatorsUseAdjustedPrice TestFeedMainModeBoundaries TestFeedMainNoAdjustRawEqualsClose TestFeedMainViewMethods TestRawCloseIsPreAdjust

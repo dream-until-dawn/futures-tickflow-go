@@ -173,4 +173,12 @@ type Continuous struct {
 	//	二  天轴的**两端取决于库的覆盖范围**（库里只拉了近月 ⇒ 起点晚于真实上市日）
 	//	    ⇒ 起点附近按天数的规则会**数不满 n 天，而它不会报错** ⇒ 起止要看得见：Days[0] 与 Days[len-1]
 	Days []tickflow.TradingDay
+
+	// RawClose 是 Bars 每一根的**未复权**收盘价，与 Bars 一一对应 ——
+	// §八「信号用复权价，成交用真实价」的真实价那一半（Feed 的 View.RawClose 读它）。
+	//
+	// ⛔ 由 Build 在复权**之前**记下，不由 Rolls 与复权方式反推（design.md §十五「v0.9 起手」五 F5）：
+	// 反推要把四种复权的逆运算各写一遍，而那是四份会各自漂的代码；记下来只有一份。
+	// ⚠️ 不复权（NoAdjust）时它与 Bars[i].Close 逐根相等。
+	RawClose []float64
 }
