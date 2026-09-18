@@ -209,6 +209,11 @@ func TestFeedRangeMustLieInOneSpan(t *testing.T) {
 		if !errors.Is(err, tickflow.ErrWalkOutsideCoverage) {
 			t.Errorf("%s [%s, %s]：err=%v，应 errors.Is ErrWalkOutsideCoverage", name, r[0], r[1], err)
 		}
+		// ⚠️ 只看 Is 不够：Walk 自己的前置也报这个哨兵，而那条路径上 NewFeed 的报文是「核库没过」——
+		// 把「没拉过」说成了「坏了」。报文必须给出对的处置（突变 F4 量出来的）
+		if err != nil && !strings.Contains(err.Error(), "先同步") {
+			t.Errorf("%s：报文 %q 没提示「先同步」", name, err)
+		}
 	}
 }
 
