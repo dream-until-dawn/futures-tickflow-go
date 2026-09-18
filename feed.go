@@ -76,6 +76,8 @@ type Feed struct {
 }
 
 // NewFeed 构造一个 Feed。src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）。
+//
+// ⛔ 用完必须 Close（defer f.Close()）：它释放第二遍 Walk 的协程，并交出第二遍的结论（见 Close）。
 func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
 	if src == nil {
 		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），nil 源什么都读不到")
@@ -264,14 +266,22 @@ func (f *Feed) Ready() bool { return f.base.ready() }
 // Err 返回步进中发生的错误；正常走完为 nil。
 func (f *Feed) Err() error { return f.err }
 
-// Close 释放第二遍 Walk。⚠️ 中途调用时 Walk 仍要扫到底才返回（契约「停」）。
+// Close 释放第二遍 Walk，并**交出它的结论**；返回值与之后的 Err() 一致。
+//
+// ⛔ 用完必须 Close（defer f.Close()）：不 Close 就丢掉的 Feed，iter.Pull 背后那个协程会一直挂着。
+// ⛔ 中途 break 的用户同样用过那些根 ⇒ stop 之后（iter.Pull 的 stop 会等 seq 返回，第二遍的结论此时在手）
+// 结论非 nil 就返回 ErrFeedVoided，并写进 Err()（评审方 2026-09-18：不许因为没走到底就拿不到「作废」）。
+// ⚠️ 中途调用时 Walk 仍要扫到底才返回（契约「停」）。
 func (f *Feed) Close() error {
 	if f.closed {
-		return nil
+		return f.err
 	}
 	f.closed = true
 	f.stop()
-	return nil
+	if f.walked != nil && f.err == nil {
+		f.err = fmt.Errorf("%w: %w", ErrFeedVoided, f.walked)
+	}
+	return f.err
 }
 
 // ── 单周期序列 ──

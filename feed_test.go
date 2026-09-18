@@ -596,3 +596,34 @@ func TestFeedIntradayWarmupCountsCellsPerDay(t *testing.T) {
 		t.Errorf("第一步 MA600 %v，从头算 %v", v.Ind("ma600"), want)
 	}
 }
+
+// guard: 中途 Close 也交出第二遍的结论（评审方 2026-09-18）—— 两遍之间写坏库、只走一步就 Close ⇒ Close 的返回与 Err() 都 Is ErrFeedVoided；
+// 中途 break 的用户同样用过那些根，不许因为没走到底就拿不到「作废」。对照：不改库时 Close 返回 nil。
+func TestFeedCloseReportsVoided(t *testing.T) {
+	run := func(corrupt bool) (closeErr, err error) {
+		lib, dir := walkerLib(t)
+		defer lib.Close()
+		f, err := tickflow.NewFeed(lib, walkerCfg(t, walkerDays[0], walkerDays[1]))
+		if err != nil {
+			t.Fatalf("NewFeed：%v", err)
+		}
+		if corrupt {
+			corruptSecondSpan(t, dir)
+		}
+		if !f.Next() {
+			t.Fatalf("第一步没走出来：%v", f.Err())
+		}
+		closeErr = f.Close()
+		return closeErr, f.Err()
+	}
+	if c, e := run(false); c != nil || e != nil {
+		t.Fatalf("对照失败：不改库时 Close=%v Err=%v，应都为 nil", c, e)
+	}
+	c, e := run(true)
+	if !errors.Is(c, tickflow.ErrFeedVoided) {
+		t.Errorf("两遍之间写坏库、走一步就 Close：Close 返回 %v，应 errors.Is ErrFeedVoided", c)
+	}
+	if !errors.Is(e, tickflow.ErrFeedVoided) {
+		t.Errorf("同上：Err() 为 %v，应与 Close 一致", e)
+	}
+}
