@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 133
+guards 145
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -469,3 +469,6 @@ guards 133
 # 来历 2026-09-18 guards 127 自 119 自动：重造时表长大（119 -> 127）；本次新增：TestAggClockGridMatchesShinnyReading TestAggFridayNightIntoMonday TestAggRuleOneEmptyCellYieldsNoBar TestAggRuleThreeCompleteCellIsNotFlagged TestAggRuleTwoPartialCellIsFlagged TestAggRuleZeroIsRejected TestAggTradingAxisMatchesSina635 TestSina635FixturesUntouched
 # 来历 2026-09-18 guards 128 自 127 自动：重造时表长大（127 -> 128）；本次新增：TestAggClockGridRejectsUnalignedPeriod
 # 来历 2026-09-18 guards 133 自 128 自动：重造时表长大（128 -> 133）；本次新增：TestAggClockGridCloseIsLastTradingMinute TestAggInputPartialPropagates TestAggRejectsForeignTradingDay TestAggRejectsOverlapOrDisorder TestAggTurnoverSumsAndOITakesLast
+# 来历 2026-09-18 guards 143 自 133 自动：重造时表长大（133 -> 143）；本次新增：TestFeedAutoWarmupReachesSettle TestFeedBrokenLibraryDeliversNothing TestFeedLibraryChangedBetweenPasses TestFeedRangeMustLieInOneSpan TestFeedReadyFlipsAtSettleOnLongSeries TestFeedReadyNeverOnSingleContractDaily TestFeedRejectsBadConfig TestFeedRejectsIndicatorWidthMismatch TestFeedViewLookbackAndHandles TestFeedWarmupClampedToSpanStart
+# 来历 2026-09-18 guards 144 自 143 自动：重造时表长大（143 -> 144）；本次新增：TestFeedIntradayWarmupCountsCellsPerDay
+# 来历 2026-09-18 guards 145 自 144 自动：重造时表长大（144 -> 145）；本次新增：TestFeedCloseReportsVoided
