@@ -33,6 +33,12 @@ type FeedConfig struct {
 	// 它同样先核后流、同样只收单段；第二遍报错同样经 Err() 报 ErrFeedVoided。
 	DailyWalker BarWalker
 
+	// Main 给了 ⇒ **主连模式**：主周期必须是 Daily（于是也没有辅周期）；View 的四个主连方法
+	// （RawClose · Contract · IsRollDay · Basis）按主周期那根的交易日问它（F5）。
+	// continuous.Continuous 实现它。⛔ 主连模式下根由 Main.Walker() 供，NewFeed 的 src 必须传 nil（传了就报错）。
+	// ⚠️ 日内主连 v0.9 不做（用户 2026-09-18 裁 U5）。
+	Main MainSource
+
 	// Rule 是聚合口径。⛔ **必填，零值 ⇒ ErrAggRuleUnset** —— 不论有没有日内辅周期
 	// （用户 2026-09-18 裁：照「构造 Feed 不给就报错」的字面，不放宽）。
 	Rule AggRule
@@ -121,12 +127,21 @@ type extra struct {
 	prev   TradingDay // walker 时：day 之前的那个交易日（首日之前没有 ⇒ 0）
 }
 
-// NewFeed 构造一个 Feed。src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）。
+// NewFeed 构造一个 Feed。非主连模式下 src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）；
+// 主连模式（cfg.Main 非 nil）下 src 必须为 nil，根由 cfg.Main.Walker() 供。
 //
 // ⛔ 用完必须 Close（defer f.Close()）：它释放第二遍 Walk 的协程，并交出第二遍的结论（见 Close）。
 func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
+	// 主连模式：根只从 Main 来（评审方 2026-09-18）—— 两处各传一次、靠调用方保证是同一个 Continuous，
+	// 传错时步进一套价格、RawClose 答另一套，而不报错：「成交用真实价」就押在了调用方的记性上
+	if cfg.Main != nil {
+		if src != nil {
+			return nil, errors.New("tickflow: 主连模式（FeedConfig.Main）的根由 Main 供，src 必须传 nil —— 两处各给一个，传错了步进的价格与 RawClose 会来自两条不同的主连")
+		}
+		src = cfg.Main.Walker()
+	}
 	if src == nil {
-		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），nil 源什么都读不到")
+		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），非主连模式下 nil 源什么都读不到")
 	}
 	if err := cfg.Rule.check(); err != nil {
 		return nil, err
@@ -166,6 +181,12 @@ func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
 		names = append(names, name)
 		perDay = append(perDay, pd)
 	}
+	if cfg.Main != nil {
+		// 辅周期不用另查：日线主周期本来就不许有辅周期（checkExtra 已拦）
+		if cfg.Base != Period(Daily) {
+			return nil, fmt.Errorf("tickflow: 主连模式（FeedConfig.Main）只收日线主周期（日内主连 v0.9 不做）；收到主周期 %v", cfg.Base)
+		}
+	}
 	if cfg.DailyWalker != nil && !hasDaily {
 		return nil, errors.New("tickflow: 给了 DailyWalker，而 Extra 里没有 Daily —— 它读出来没有地方放")
 	}
@@ -201,6 +222,7 @@ func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
 		needs[i] = max(s.settle, s.warmup) + cfg.Lookback
 		if i == 0 {
 			f.base = s
+			s.main = cfg.Main
 			continue
 		}
 		p := cfg.Extra[i-1]
@@ -578,6 +600,7 @@ func (f *Feed) Close() error {
 
 // series 是一个周期上的环形缓冲：根一份，指标各占一列（照搬姊妹仓 tfSeries）。
 type series struct {
+	main   MainSource // 主连模式时主周期那条序列带着它；其余为 nil
 	name   string
 	inds   []Indicator
 	widths []int
@@ -686,6 +709,8 @@ func (v View) Prev(n int) View { return View{s: v.s, abs: v.abs - int64(n)} }
 
 // Ready 报告本周期的指标是否已预读够 Settle() 根 —— 「已收敛」在本库的含义是
 // 与从头喂到底只差几个 ULP（契约 C，≤ 2e-15），不是逐位相等（design.md §九 补注）。
+//
+// ⚠️ 它读的是序列【当前】的状态，不是取这个视图那一步的：把视图存下来、走了几步再调，答案会变（评审方 2026-09-18 提）。
 func (v View) Ready() bool { return v.s != nil && v.s.ready() }
 
 // Defined 报告指标值已有定义（不是 NaN），但不保证已收敛。比 Ready 弱。
@@ -737,6 +762,62 @@ func (v View) At(h Handle) float64 {
 		return math.NaN()
 	}
 	return v.s.cols[h.col][int(v.abs%int64(v.s.capN))]
+}
+
+// ── 主连模式（F5）──
+
+// MainDay 是主连在某个交易日的那几个事实（View 的四个主连方法读它）。
+type MainDay struct {
+	Contract Symbol  // 那一根属于哪个合约 —— 下单用它
+	RawClose float64 // 未复权收盘价 —— 成交用它（复权价只拿来算信号，§八）
+	RollDay  bool    // 这一天是不是换月日
+	Basis    float64 // 换月日两合约的价差；不是换月日为 NaN
+}
+
+// MainSource 回答「主连在交易日 d 的那几个事实」。continuous.Continuous 实现它。
+//
+// ⚠️ 为什么是根包里的一个接口，而不是直接收 continuous.Continuous：continuous 要用根包的 Bar，
+// 根包再 import continuous 就成环了 —— 与 Indicator 放在根包是同一个理由。
+type MainSource interface {
+	MainAt(d TradingDay) (MainDay, bool)
+	// Walker 交出拼好的（复权后的）序列 —— 主连模式下 Feed 的根**只从这里来**（NewFeed 的 src 必须为 nil），
+	// 于是步进的价格与四方法答的事实出自同一条主连，由库保证，不靠调用方
+	Walker() BarWalker
+}
+
+func (v View) mainDay() (MainDay, bool) {
+	if !v.Valid() || v.s.main == nil {
+		return MainDay{}, false
+	}
+	return v.s.main.MainAt(v.TradingDay())
+}
+
+// RawClose 返回这一根的**未复权**收盘价（成交用它）；不是主连模式、视图无效或主连里没有这一天 ⇒ NaN。
+func (v View) RawClose() float64 {
+	if m, ok := v.mainDay(); ok {
+		return m.RawClose
+	}
+	return math.NaN()
+}
+
+// Contract 返回这一根属于哪个合约；不是主连模式、视图无效或主连里没有这一天 ⇒ (零值, false)。
+func (v View) Contract() (Symbol, bool) {
+	m, ok := v.mainDay()
+	return m.Contract, ok
+}
+
+// IsRollDay 报告这一天是不是换月日（那一天的收益有一部分来自换月、不是行情；换月本身要付两笔成本）。
+func (v View) IsRollDay() bool {
+	m, ok := v.mainDay()
+	return ok && m.RollDay
+}
+
+// Basis 返回换月日两合约的价差；不是换月日、不是主连模式或视图无效 ⇒ NaN（不给 0：0 是一个看起来正常的基差）。
+func (v View) Basis() float64 {
+	if m, ok := v.mainDay(); ok {
+		return m.Basis
+	}
+	return math.NaN()
 }
 
 // Handle 是预解析过的指标键名，绑定在某个周期上。

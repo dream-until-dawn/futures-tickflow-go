@@ -155,6 +155,7 @@ func Build(spec ContinuousSpec, in []DayBars) (Continuous, error) {
 			out.First = sym // 第一段的合约：没有它，一条不换月的序列说不出自己拼的是谁
 		}
 		out.Bars = append(out.Bars, bar)
+		out.RawClose = append(out.RawClose, bar.Close) // 复权之前记下（adjust 只改 Bars）
 		prev, rawPrev = sym, bar.Close
 	}
 	adjust(&out, spec.Adjust)
