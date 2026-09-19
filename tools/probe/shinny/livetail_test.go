@@ -254,6 +254,41 @@ func TestLiveDExcludesStaleQuote(t *testing.T) {
 	}
 }
 
+// guard: Post 的边界是「晚于 C」不是「不早于 C」（评审方补，9/18 夜最常见的形状）——
+// 第 2 处末根（11:30）一次改动带 quote.datetime 恰好 ＝ C ⇒ Post 不计、为 0；对照：同一处再加一次 C ＋ 1 ms 的改动 ⇒ Post ＝ 1。
+func TestLivePostExcludesExactlyAtClose(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	fr := synthDaySession(0)
+	base := analyzeTail(fr)
+	if len(base.segs) != 3 || base.segs[1].label != "11:30" || base.segs[1].post != 0 {
+		t.Fatalf("前提没成立：%+v", base.segs)
+	}
+	sg := base.segs[1]
+	change := func(frames []tailFrame, at int64, close float64) []tailFrame {
+		raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+			"quotes": map[string]any{tailSym: map[string]any{"datetime": time.UnixMilli(at).In(cst).Format("2006-01-02 15:04:05.000000")}},
+			"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+				"data": map[string]any{strconv.FormatInt(sg.id, 10): map[string]any{"close": close}}}}}}}})
+		return insertFrame(frames, tailFrame{RecvMs: at, Raw: raw})
+	}
+	at := change(fr, sg.c, 101.0)
+	postOf := func(frames []tailFrame) int {
+		for _, x := range analyzeTail(frames).segs {
+			if x.id == sg.id {
+				return x.post
+			}
+		}
+		t.Fatalf("末根 id %d 没认出", sg.id)
+		return -1
+	}
+	if got := postOf(at); got != 0 {
+		t.Errorf("quote.datetime 恰好 ＝ C 的改动：Post %d，应为 0（C 本身不算「之后」）", got)
+	}
+	if got := postOf(change(at, sg.c+1, 101.5)); got != 1 {
+		t.Errorf("对照：再加一次 C ＋ 1 ms 的改动后 Post %d，应为 1", got)
+	}
+}
+
 // guard: 6.37 的标定本身能过（第 2 处末根 C＋3 秒又改 ⇒ post ＋1、E_loc 变大；旧报价不进 D）。
 func TestLiveCalibrate637(t *testing.T) {
 	fr := synthDaySession(2400)
