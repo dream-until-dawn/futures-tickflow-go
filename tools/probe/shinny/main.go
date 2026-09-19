@@ -1683,6 +1683,15 @@ func main() {
 	}
 	fmt.Println()
 
+	// 离线分析不联网、不要凭证：放在凭证检查之前（probe.md 6.36）
+	probeLiveAnalyze()
+	if optIn("shinny-live-analyze") {
+		if failed > 0 {
+			os.Exit(1)
+		}
+		return
+	}
+
 	user, pw := dotenv()
 	secret := clientSecret()
 	if user == "" || pw == "" || secret == "" {
@@ -1738,7 +1747,8 @@ func main() {
 	probeClientUse(md, tok)
 	probeEdge(md, tok)
 	probeDAMatrix(md, tok)
-	if optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") || optIn("shinny-edge") || optIn("shinny-da-matrix") {
+	probeLiveTail(md, tok)
+	if optIn("shinny-live-tail") || optIn("shinny-ua") || optIn("shinny-page") || optIn("shinny-b-sinadays") || optIn("shinny-read-timeout") || optIn("shinny-chunk-mem") || optIn("shinny-diff-refetch") || optIn("shinny-client-use") || optIn("shinny-edge") || optIn("shinny-da-matrix") {
 		if failed > 0 {
 			os.Exit(1)
 		}
