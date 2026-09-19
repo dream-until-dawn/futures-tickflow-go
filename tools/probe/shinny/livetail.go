@@ -21,7 +21,6 @@ import (
 	"math"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -70,12 +69,47 @@ func outputInsideRepo(path string) bool {
 	return strings.HasPrefix(strings.ToLower(out), strings.ToLower(root+string(filepath.Separator)))
 }
 
-func w32tm() string {
-	out, err := exec.Command("w32tm", "/query", "/status").CombinedOutput()
+// openmdURL 是天勤公开的合约表（refdata/shinnyref 的 DefaultURL；公开端点，不鉴权、不走账户）。
+const openmdURL = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
+
+// openmdUnderlying 取 KQ.m 主连【此刻】映射到的具体合约（合约表里的 underlying_symbol）。
+// ⚠️ 它是取的那一刻的快照：取数开始、结束各取一次，两次一样才能说「这段时间映射没变」。
+func openmdUnderlying() (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, openmdURL, nil)
+	req.Header.Set("User-Agent", uaSelf)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "w32tm 失败：" + err.Error() + " " + strings.TrimSpace(string(out))
+		return "", err
 	}
-	return strings.TrimSpace(string(out))
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("HTTP %d", resp.StatusCode)
+	}
+	var all map[string]json.RawMessage
+	if err := json.NewDecoder(resp.Body).Decode(&all); err != nil {
+		return "", fmt.Errorf("解合约表失败：%w", err)
+	}
+	var e struct {
+		Underlying string `json:"underlying_symbol"`
+	}
+	raw, ok := all[tailSym]
+	if !ok {
+		return "", fmt.Errorf("合约表里没有 %s", tailSym)
+	}
+	if err := json.Unmarshal(raw, &e); err != nil || e.Underlying == "" {
+		return "", fmt.Errorf("%s 那一条没有 underlying_symbol", tailSym)
+	}
+	return e.Underlying, nil
+}
+
+func showUnderlying() string {
+	u, err := openmdUnderlying()
+	if err != nil {
+		return "没取到（" + err.Error() + "）"
+	}
+	return u
 }
 
 func probeLiveTail(md, tok string) {
@@ -101,7 +135,7 @@ func probeLiveTail(md, tok string) {
 	w := bufio.NewWriter(f)
 	defer w.Flush()
 	fmt.Printf("开始 %s（本机）· 记 %d 分钟 · %s 1m · 只用行情通道\n", showMs(time.Now().UnixMilli()), *tailMin, tailSym)
-	fmt.Printf("w32tm（取数前）：\n%s\n", w32tm())
+	fmt.Printf("KQ.m 映射（openmd 合约表，取数前）：%s\n", showUnderlying())
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*tailMin)*time.Minute)
 	defer cancel()
@@ -139,13 +173,27 @@ func probeLiveTail(md, tok string) {
 		frames++
 	}
 	fmt.Printf("结束 %s（本机）· 落盘 %d 帧 → %s\n", showMs(time.Now().UnixMilli()), frames, *tailOut)
-	fmt.Printf("w32tm（取数后）：\n%s\n", w32tm())
+	fmt.Printf("KQ.m 映射（openmd 合约表，取数后）：%s\n", showUnderlying())
 	report(name, "PASS", fmt.Sprintf("记了 %d 帧；读数用 -only shinny-live-analyze -tail-in 算", frames))
 }
 
 // ── 离线分析 ──
 
 type barVal struct{ o, h, l, c, v, coi, ooi float64 }
+
+// segEnd 是一处时段末根（6.37）：收盘时刻 C 落在 10:15 · 11:30 · 15:00 的那一根。
+type segEnd struct {
+	label      string // "10:15" …
+	id         int64
+	c          int64
+	eLoc, eSrv int64 // 最后一次真改：本机收到 − C · quote.datetime − C
+	post       int   // C 之后（按 quote.datetime > C）还改这一根的次数
+	postLoc    int   // 同上，按本机收到时刻 > C
+	hasNext    bool  // 下一根出现在记录里
+}
+
+// segEndLabels 是 rb 日盘的三个时段末根的收盘时刻（6.37 按 C 认，不按「下一根多久才来」认）。
+var segEndLabels = map[string]bool{"10:15": true, "11:30": true, "15:00": true}
 
 type tailResult struct {
 	frames, rtn      int
@@ -158,8 +206,13 @@ type tailResult struct {
 	// Ls ＝ 最后一次真改那一帧里 quote.datetime（交易所那笔成交的时刻）；不经本机时钟
 	a1s, a3s []int64 // Ls−C · 末根 Ls−C
 	a1sPos   int
-	noSrv    int     // 真改动发生时还没有任何 quote.datetime 可用的次数（这些根不进 a1s / a3s）
-	b1s      int64   // 交易时段内（按服务器时刻）相邻两次真改动的最大间隔（本机收到时刻之差）
+	noSrv    int   // 真改动发生时还没有任何 quote.datetime 可用的次数（这些根不进 a1s / a3s）
+	b1s      int64 // 交易时段内（按服务器时刻）相邻两次真改动的最大间隔（本机收到时刻之差）
+	// 6.37：D ＝ 本机收到 − quote.datetime，只取本帧带了 quote.datetime、且它不早于记录期间第一根开盘的帧（旧报价排除，事先写死）
+	d        []int64
+	dStale   int // 被排除的旧报价帧数
+	segs     []segEnd
+	tdNote   string  // TradingDay（推论，见 tradingDayGuess）
 	frameGap []int64 // 相邻帧间隔
 	b1       int64   // 相邻两次「有真改动」的帧的最大间隔
 	b2       []int64 // 本机收到 − 服务器行情时刻
@@ -198,6 +251,8 @@ func analyzeTail(frames []tailFrame) tailResult {
 	var srvNow int64           // 最近一次解析出的 quote.datetime（毫秒）
 	type chg struct{ recv, srv int64 }
 	var changeFrames []chg
+	events := map[int64][]chg{} // 每根：出现与每次真改的（本机收到, quote.datetime）
+	var quoteFrames []chg       // 本帧带了 quote.datetime 的帧
 	born := map[int64]int64{}   // 每根第一次出现的本机时刻
 	dt := map[int64]int64{}     // 每根 datetime（毫秒）
 	initial := map[int64]bool{} // 开始记录时已经收盘的根（view_width 带来的历史，不算记录期间的）
@@ -216,7 +271,13 @@ func analyzeTail(frames []tailFrame) tailResult {
 		}
 		r.rtn++
 		touched := map[int64]bool{}
+		quoteHere := false
 		for _, d := range m.Data {
+			if q := obj(d, "quotes", tailSym); q != nil {
+				if _, ok := q["datetime"]; ok {
+					quoteHere = true
+				}
+			}
 			if kd := obj(d, "klines", tailSym, durKey, "data"); kd != nil {
 				for k := range kd {
 					if id, err := strconv.ParseInt(k, 10, 64); err == nil {
@@ -234,6 +295,9 @@ func analyzeTail(frames []tailFrame) tailResult {
 				if t, err := time.ParseInLocation("2006-01-02 15:04:05.000000", s, cst); err == nil {
 					r.b2 = append(r.b2, fr.RecvMs-t.UnixMilli())
 					srvNow = t.UnixMilli()
+					if quoteHere {
+						quoteFrames = append(quoteFrames, chg{fr.RecvMs, srvNow})
+					}
 				}
 			}
 		}
@@ -252,6 +316,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 					initial[id] = true
 				}
 				last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
+				events[id] = append(events[id], chg{fr.RecvMs, srvNow})
 				changed = true
 				continue
 			}
@@ -261,6 +326,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 			}
 			r.changes++
 			last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
+			events[id] = append(events[id], chg{fr.RecvMs, srvNow})
 			if srvNow == 0 {
 				r.noSrv++
 			}
@@ -301,6 +367,33 @@ func analyzeTail(frames []tailFrame) tailResult {
 			if a.srv >= lo && b.srv <= hi && a.srv != 0 && b.recv-a.recv > r.b1s {
 				r.b1s = b.recv - a.recv
 			}
+		}
+		// D：旧报价（quote.datetime 早于记录期间第一根开盘）不进（6.37 事先写死；6.36 那个 21598052 ms 就是它）
+		for _, q := range quoteFrames {
+			if q.srv < lo {
+				r.dStale++
+				continue
+			}
+			r.d = append(r.d, q.recv-q.srv)
+		}
+		r.tdNote = tradingDayGuess(lo)
+		for _, id := range ids {
+			C := dt[id] + 60000
+			label := time.UnixMilli(C).In(cst).Format("15:04")
+			if !segEndLabels[label] {
+				continue
+			}
+			sg := segEnd{label: label, id: id, c: C, eLoc: lastL[id] - C, eSrv: lastS[id] - C}
+			for _, e := range events[id][1:] { // [0] 是出现，不算改
+				if e.srv > C {
+					sg.post++
+				}
+				if e.recv > C {
+					sg.postLoc++
+				}
+			}
+			_, sg.hasNext = born[id+1]
+			r.segs = append(r.segs, sg)
 		}
 	}
 	for _, id := range ids {
@@ -345,6 +438,50 @@ func dist(xs []int64) string {
 	return fmt.Sprintf("n=%d 最小 %d · 中位 %d · 95 分位 %d · 最大 %d（毫秒）", len(s), s[0], q(0.5), q(0.95), s[len(s)-1])
 }
 
+// pct 取分位（p ∈ [0,1]）；空切片给 0。
+func pct(xs []int64, p float64) int64 {
+	if len(xs) == 0 {
+		return 0
+	}
+	s := append([]int64(nil), xs...)
+	sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })
+	return s[int(math.Min(float64(len(s)-1), math.Floor(p*float64(len(s)))))]
+}
+
+func minOf(xs []int64) int64 {
+	m := int64(math.MaxInt64)
+	for _, x := range xs {
+		m = min(m, x)
+	}
+	return m
+}
+
+func abs64(x int64) int64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+// segGrace 是 6.37 三的宽限公式（事先写死）：G ＝ 2 × ceil_sec( max(0, E_loc) ＋ max(0, 最大 D) ＋ |最小 D| )。
+func segGrace(eLoc int64, d []int64) int64 {
+	return 2 * ceilSec(max(0, eLoc)+max(0, maxOf(d))+abs64(minOf(d)))
+}
+
+// tradingDayGuess 按「18:00 之后的根属于下一个工作日」给出记录期间第一根的交易日 —— **推论**：
+// 没查日历（本工具不 import 本库），长假前后会错；读数里照实标「推论」。
+func tradingDayGuess(firstOpenMs int64) string {
+	t := time.UnixMilli(firstOpenMs).In(cst)
+	d := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, cst)
+	if t.Hour() >= 18 {
+		d = d.AddDate(0, 0, 1)
+	}
+	for d.Weekday() == time.Saturday || d.Weekday() == time.Sunday {
+		d = d.AddDate(0, 0, 1)
+	}
+	return d.Format("2006-01-02") + "（推论：18:00 之后属下一个工作日，没查日历）"
+}
+
 func maxOf(xs []int64) int64 {
 	m := int64(math.MinInt64)
 	for _, x := range xs {
@@ -369,6 +506,47 @@ func calibrate(frames []tailFrame, id, closeMs int64) []tailFrame {
 	i := sort.Search(len(out), func(i int) bool { return out[i].RecvMs > at })
 	out = append(out[:i], append([]tailFrame{{RecvMs: at, Raw: raw}}, out[i:]...)...)
 	return out
+}
+
+// calibrate637 做 6.37 的两格标定：
+//
+//	一  第 2 处时段末根在 C ＋ 3 秒又改一次（带 quote.datetime ＝ C ＋ 3 秒）⇒ 它的 post 必须 0 → 1、E_loc 必须变大
+//	二  一帧旧报价（quote.datetime 比第一根开盘早一小时）⇒ 不许进 D（D 的条数不变、被排除的旧报价 ＋1）
+func calibrate637(frames []tailFrame, base tailResult) (bool, string) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	sg := base.segs[1]
+	at := sg.c + 3000
+	patch := map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": time.UnixMilli(at).In(cst).Format("2006-01-02 15:04:05.000000")}},
+		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+			"data": map[string]any{strconv.FormatInt(sg.id, 10): map[string]any{"close": 1e9}}}}}}}}
+	raw, _ := json.Marshal(patch)
+	fr := insertFrame(frames, tailFrame{RecvMs: at, Raw: raw})
+	c1 := analyzeTail(fr)
+	var got segEnd
+	for _, x := range c1.segs {
+		if x.id == sg.id {
+			got = x
+		}
+	}
+	ok1 := got.post == sg.post+1 && got.eLoc > sg.eLoc
+	// 二：旧报价（放在记录中段，本机收到时刻取中位帧）
+	mid := frames[len(frames)/2].RecvMs + 1
+	stale := time.UnixMilli(frames[0].RecvMs - 3600000).In(cst).Format("2006-01-02 15:04:05.000000")
+	raw2, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": stale}}}}})
+	c2 := analyzeTail(insertFrame(frames, tailFrame{RecvMs: mid, Raw: raw2}))
+	ok2 := len(c2.d) == len(base.d) && c2.dStale == base.dStale+1
+	why := fmt.Sprintf("第 2 处末根（%s）造帧后 post %d→%d、E_loc %d→%d；旧报价造帧后 D %d→%d 条、排除 %d→%d",
+		sg.label, sg.post, got.post, sg.eLoc, got.eLoc, len(base.d), len(c2.d), base.dStale, c2.dStale)
+	return ok1 && ok2, why
+}
+
+// insertFrame 按本机收到时刻插入一帧（保持升序）。
+func insertFrame(frames []tailFrame, x tailFrame) []tailFrame {
+	out := append([]tailFrame(nil), frames...)
+	i := sort.Search(len(out), func(i int) bool { return out[i].RecvMs > x.RecvMs })
+	return append(out[:i], append([]tailFrame{x}, out[i:]...)...)
 }
 
 func readFrames(path string) ([]tailFrame, error) {
@@ -430,6 +608,16 @@ func probeLiveAnalyze() {
 			st = "FAIL"
 		}
 		report(name+"-calib", st, "A1 / A2 必须各多报一根")
+		if len(r.segs) >= 2 {
+			ok637, why := calibrate637(frames, r)
+			st := "PASS"
+			if !ok637 {
+				st = "FAIL"
+			}
+			report(name+"-calib-637", st, why)
+		} else {
+			fmt.Printf("（6.37 的标定要至少两处时段末根，这份记录里只有 %d 处 ⇒ 跳过）\n", len(r.segs))
+		}
 		return
 	}
 	fmt.Printf("帧 %d（rtn_data %d）· 首帧 %s · 末帧 %s\n", r.frames, r.rtn, showMs(frames[0].RecvMs), showMs(frames[len(frames)-1].RecvMs))
@@ -442,7 +630,13 @@ func probeLiveAnalyze() {
 	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 交易时段内（按服务器时刻）%d 毫秒\n", r.b1, r.b1s)
 	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 真改动时还没有服务器时刻 %d 次\n", dist(r.a1s), r.a1sPos, r.noSrv)
 	fmt.Printf("A3s 末根 Ls−C（服务器时刻）%s\n", dist(r.a3s))
-	fmt.Printf("B2 本机收到 − 服务器行情时刻 %s\n", dist(r.b2))
+	fmt.Printf("B2 本机收到 − 服务器行情时刻（全部帧，含旧报价）%s\n", dist(r.b2))
+	fmt.Printf("D  本机收到 − quote.datetime（本帧带 quote、且不早于第一根开盘）%s · 99 分位 %d · 排除的旧报价帧 %d\n", dist(r.d), pct(r.d, 0.99), r.dStale)
+	fmt.Printf("TradingDay %s\n", r.tdNote)
+	for i, sg := range r.segs {
+		fmt.Printf("末根 %d  C %s · id %d · E_loc %d · E_srv %d · C 之后还改 %d 次（按 quote）/ %d 次（按本机）· 下一根出现 %v · G ＝ %d 秒\n",
+			i+1, showMs(sg.c), sg.id, sg.eLoc, sg.eSrv, sg.post, sg.postLoc, sg.hasNext, segGrace(sg.eLoc, r.d))
+	}
 	// 判别力
 	if r.bars < 30 {
 		report(name, "FAIL", fmt.Sprintf("判别力不在场：记录期间新出现的根 %d < 30 ⇒ 整次作废", r.bars))
@@ -461,5 +655,34 @@ func probeLiveAnalyze() {
 		fmt.Printf("判对 末根宽限 ＝ ceil(A3s 最大 %d ms) ×2 ＝ %d 秒（服务器时刻；负数取 0）\n", maxOf(r.a3s), 2*ceilSec(max(0, maxOf(r.a3s))))
 	}
 	fmt.Printf("判对 乙 N ＝ ceil(时段内 B1 %d ms 折分钟) ×2 ＝ %d 分钟\n", r.b1s, 2*int64(math.Ceil(float64(r.b1s)/60000)))
+	// 6.37 的判别力（只在这份记录里出现了时段末根时才印）
+	if len(r.segs) > 0 {
+		miss := []string{}
+		for _, want := range []string{"10:15", "11:30", "15:00"} {
+			found := false
+			for _, sg := range r.segs {
+				if sg.label == want {
+					found = true
+					if want != "15:00" && !sg.hasNext {
+						miss = append(miss, want+" 的下一根没出现")
+					}
+				}
+			}
+			if !found {
+				miss = append(miss, want+" 那根不在记录里")
+			}
+		}
+		if r.bars < 300 {
+			miss = append(miss, fmt.Sprintf("根数 %d < 300", r.bars))
+		}
+		if len(r.d) < 1000 {
+			miss = append(miss, fmt.Sprintf("进 D 的帧 %d < 1000", len(r.d)))
+		}
+		if len(miss) > 0 {
+			fmt.Printf("⛔ 6.37 判别力不在场：%s ⇒ 这次的 G 作废\n", strings.Join(miss, " · "))
+		} else {
+			fmt.Println("6.37 判别力在场：三处末根都在 · 前两处的下一根都出现 · 根数 ≥ 300 · 进 D 的帧 ≥ 1000")
+		}
+	}
 	report(name, "PASS", "读数见上")
 }

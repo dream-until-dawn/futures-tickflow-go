@@ -193,3 +193,90 @@ func TestLiveAnalyzeGapOnlyInsideSession(t *testing.T) {
 		t.Errorf("时段内 B1s %d，应为 58500（不含开盘前那 90 秒）", r.b1s)
 	}
 }
+
+// synthDaySession 造 rb 一个日盘（09:00–10:15 · 10:30–11:30 · 13:30–15:00，2026-09-21 +0800）的 1m 推送帧，
+// 每根开盘后 0.5 秒出现、收盘前 1 秒改一次；时间轴当服务器时刻，本机收到 ＝ 服务器 − skew（经 skewed）。
+func synthDaySession(skew int64) []tailFrame {
+	durKey := strconv.FormatInt(tailDur, 10)
+	day := time.Date(2026, 9, 21, 0, 0, 0, 0, cst)
+	segs := [][2]int{{9*60 + 0, 10*60 + 15}, {10*60 + 30, 11*60 + 30}, {13*60 + 30, 15 * 60}}
+	var out []tailFrame
+	id := int64(1000)
+	for _, sg := range segs {
+		for m := sg[0]; m < sg[1]; m++ {
+			open := day.Add(time.Duration(m) * time.Minute).UnixMilli()
+			full := map[string]any{"datetime": float64(open) * 1e6, "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.0, "volume": 1.0, "close_oi": 5.0, "open_oi": 5.0}
+			for _, x := range []struct {
+				at int64
+				f  map[string]any
+			}{{open + 500, full}, {open + 59000, map[string]any{"close": 100.5, "volume": 2.0}}} {
+				raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+					"data": map[string]any{strconv.FormatInt(id, 10): x.f}}}}}}})
+				out = append(out, tailFrame{RecvMs: x.at, Raw: raw})
+			}
+			id++
+		}
+	}
+	return skewed(out, skew)
+}
+
+// guard: 6.37 的三处时段末根按 C 认出（10:15 · 11:30 · 15:00），前两处的下一根出现、15:00 那处没有；
+// 本机慢 2.4 秒时 E_loc ＝ −1000 − 2400（收盘前 1 秒最后一次改、再减本机慢的那 2.4 秒）、E_srv ＝ −1000。
+func TestLiveSegmentEnds(t *testing.T) {
+	r := analyzeTail(synthDaySession(2400))
+	if len(r.segs) != 3 {
+		t.Fatalf("认出 %d 处时段末根，应为 3", len(r.segs))
+	}
+	for i, want := range []string{"10:15", "11:30", "15:00"} {
+		sg := r.segs[i]
+		if sg.label != want || sg.hasNext != (want != "15:00") || sg.eSrv != -1000 || sg.eLoc != -3400 || sg.post != 0 {
+			t.Errorf("第 %d 处：%+v，应为 %s · 下一根出现 %v · E_srv −1000 · E_loc −3400 · post 0", i+1, sg, want, want != "15:00")
+		}
+	}
+	if len(r.d) == 0 || maxOf(r.d) != -2400 || minOf(r.d) != -2400 {
+		t.Errorf("D 应全为 −2400（本机慢 2.4 秒），得 n=%d 最小 %d 最大 %d", len(r.d), minOf(r.d), maxOf(r.d))
+	}
+}
+
+// guard: D 排除旧报价（6.37 事先写死）—— 开盘前一帧带着上一时段的 quote.datetime ⇒ 不进 D、计入被排除；对照：不加这一帧时被排除 0。
+func TestLiveDExcludesStaleQuote(t *testing.T) {
+	fr := synthDaySession(0)
+	base := analyzeTail(fr)
+	if base.dStale != 0 {
+		t.Fatalf("对照失败：干净的合成日被排除了 %d 帧", base.dStale)
+	}
+	stale := time.Date(2026, 9, 18, 23, 0, 0, 0, cst).Format("2006-01-02 15:04:05.000000")
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": stale}}}}})
+	pre := time.Date(2026, 9, 21, 8, 59, 30, 0, cst).UnixMilli()
+	r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: pre, Raw: raw}))
+	if r.dStale != 1 || len(r.d) != len(base.d) {
+		t.Errorf("旧报价：排除 %d 帧、D %d 条（对照 %d 条），应排除 1、D 条数不变", r.dStale, len(r.d), len(base.d))
+	}
+}
+
+// guard: 6.37 的标定本身能过（第 2 处末根 C＋3 秒又改 ⇒ post ＋1、E_loc 变大；旧报价不进 D）。
+func TestLiveCalibrate637(t *testing.T) {
+	fr := synthDaySession(2400)
+	ok, why := calibrate637(fr, analyzeTail(fr))
+	if !ok {
+		t.Errorf("6.37 标定没过：%s", why)
+	}
+}
+
+// guard: G 的公式（6.37 三，事先写死）：2 × ceil_sec( max(0, E_loc) ＋ max(0, 最大 D) ＋ |最小 D| )。
+func TestSegGraceFormula(t *testing.T) {
+	cases := []struct {
+		eLoc int64
+		d    []int64
+		want int64
+	}{
+		{-3400, []int64{-2600, -2300}, 2 * 3}, // 本机慢：E_loc 取 0，最大 D 取 0，|最小 D| 2.6 秒 ⇒ 3 秒 ×2
+		{1500, []int64{-2600, 400}, 2 * 5},    // 1.5 ＋ 0.4 ＋ 2.6 ＝ 4.5 ⇒ 5 秒 ×2
+		{0, []int64{0}, 0},
+	}
+	for _, c := range cases {
+		if got := segGrace(c.eLoc, c.d); got != c.want {
+			t.Errorf("segGrace(%d, %v) ＝ %d，应为 %d", c.eLoc, c.d, got, c.want)
+		}
+	}
+}
