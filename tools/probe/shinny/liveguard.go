@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -23,7 +24,7 @@ const (
 	guardLoP  = 0.01         // 偏慢告警看 1 分位
 )
 
-// guardEval 是一次判定：高端 ＝ 99 分位 ＋ guardKLag；低端 ＝ 1 分位。
+// guardEval 是一次判定：高端 ＝ guardHigh ＋ guardKLag；低端 ＝ guardLow（取秩见 guardHigh / guardLow）。
 type guardEval struct {
 	recv, s0 int64
 	hi, lo   int64
@@ -48,7 +49,7 @@ func guardEvals(ss []skewSample) []guardEval {
 		win[j] = s.d
 		e := guardEval{recv: s.recv, s0: s.s0}
 		if len(win) >= guardK {
-			e.hi, e.lo, e.judged = lowSorted(win, guardHiP)+guardKLag, lowSorted(win, guardLoP), true
+			e.hi, e.lo, e.judged = guardHigh(win)+guardKLag, guardLow(win), true
 		}
 		out = append(out, e)
 	}
@@ -58,6 +59,25 @@ func guardEvals(ss []skewSample) []guardEval {
 		}
 	}
 	return out
+}
+
+// guardHigh / guardLow：窗口（升序）里的高端 / 低端（评审方 09-21 取秩修正，design.md L6 📌）——
+//
+//	高端  第 min(ceil(0.99·n), n − 1) 个（从小往大数，1 起）⇒ 任何 n 下都至少去掉最大的那一个
+//	低端  第 max(ceil(0.01·n), 2) 个                         ⇒ 任何 n 下都至少去掉最小的那一个
+//
+// 第一版按最近秩取第 ceil(p·n) 个：n ≤ 100 时 99 分位就是最大值、1 分位就是最小值 ⇒ 30 ≤ n ≤ 100 时单帧尖峰照样触发
+// （6.38 六的读数暴露：高端最大 1244 出在窗口 n＝30 的那一刻）。调用方保证 n ≥ guardK（≥ 2）。
+func guardHigh(win []int64) int64 {
+	n := len(win)
+	r := min(int(math.Ceil(guardHiP*float64(n))), n-1)
+	return win[r-1]
+}
+
+func guardLow(win []int64) int64 {
+	n := len(win)
+	r := max(int(math.Ceil(guardLoP*float64(n))), 2)
+	return win[r-1]
 }
 
 // guardSummary 是一天的读数。
@@ -115,8 +135,8 @@ func probeLiveGuard() {
 		report(name, "FAIL", "要给 -tail-in（9/21 日盘）与 -skew-other（9/18 夜盘）")
 		return
 	}
-	fmt.Printf("参数（评审方定）G %d · 余量 %d · 窗口 %ds · K %d · 高端 %g 分位 ＋ 余量 > G/2 ⇒ 停 · %g 分位 < −G/2 ⇒ 告警\n",
-		guardG, guardKLag, guardW/1000, guardK, guardHiP*100, guardLoP*100)
+	fmt.Printf("参数（评审方定）G %d · 余量 %d · 窗口 %ds · K %d · 高端 第 min(ceil(%g·n), n−1) 个 ＋ 余量 > G/2 ⇒ 停 · 低端 第 max(ceil(%g·n), 2) 个 < −G/2 ⇒ 告警\n",
+		guardG, guardKLag, guardW/1000, guardK, guardHiP, guardLoP)
 	calibOK := false
 	for i, path := range []string{*tailIn, *skewOther} {
 		frames, err := readFrames(path)

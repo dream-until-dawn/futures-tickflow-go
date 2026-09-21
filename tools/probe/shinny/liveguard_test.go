@@ -33,6 +33,33 @@ func TestGuardSingleSpikeDoesNotStop(t *testing.T) {
 	}
 }
 
+// guard: 样本刚够 K（n＝30）时单帧尖峰也不停 —— 30 个样本 D＝0、其中一个 ＋5000：高端取第 min(ceil(0.99·30), 30−1)＝29 小的（0）⇒ 不停。
+// ca41201 的「99 分位」在 n ≤ 100 时就是最大值（ceil(0.99·n)＝n），这一格在那里红（评审方 09-21 修正，6.38 六的读数暴露）。
+func TestGuardSingleSpikeAtThirtyDoesNotStop(t *testing.T) {
+	g := guardJudge(guardEvals(skewSamples(guardSeg(30, func(i int) int64 {
+		if i == 5 {
+			return 5000
+		}
+		return 0
+	}), 0)))
+	if g.judged != 1 || g.stops != 0 || g.maxHi != guardKLag {
+		t.Errorf("n＝30、单帧 ＋5000：判 %d 次 · 停 %d 次 · 高端 %d，应判 1 次、不停、高端 0 ＋ %d", g.judged, g.stops, g.maxHi, guardKLag)
+	}
+}
+
+// guard: 低端对称 —— n＝30、D＝0、其中一个 −5000：低端取第 max(ceil(0.01·30), 2)＝2 小的（0）⇒ 不告警。
+func TestGuardSingleDipAtThirtyDoesNotWarn(t *testing.T) {
+	g := guardJudge(guardEvals(skewSamples(guardSeg(30, func(i int) int64 {
+		if i == 5 {
+			return -5000
+		}
+		return 0
+	}), 0)))
+	if g.judged != 1 || g.warns != 0 || g.minLo != 0 {
+		t.Errorf("n＝30、单帧 −5000：判 %d 次 · 告警 %d 次 · 低端 %d，应判 1 次、不告警、低端 0", g.judged, g.warns, g.minLo)
+	}
+}
+
 // guard: 持续的高端要停 —— D 恒为 1900：高端 ＝ 1900 ＋ 200 ＝ 2100 > G/2 ＝ 2000 ⇒ 停；
 // 去掉余量（1900 ≤ 2000）或门槛换成 G（2100 < 4000）都不停 —— 评审方要求的头两条突变由这一格红。
 func TestGuardSustainedHighStops(t *testing.T) {
