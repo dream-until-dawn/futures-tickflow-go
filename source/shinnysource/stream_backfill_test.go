@@ -177,3 +177,65 @@ func TestLiveIDGapAfterSegmentEnd(t *testing.T) {
 		t.Errorf("200 交出后下一段从 202 起：%v，应 Is ErrIDGap、报文带缺 id 201", err)
 	}
 }
+
+// —— L8 重连（liveCore 那一半；联网那一半在 live_net_test.go）——
+
+// rcCore：起始格 9:30；推送来了 100–102，交出 100、101；然后重连（本机时刻 at）。
+func rcCore(t *testing.T, at int64) *liveCore {
+	t.Helper()
+	c := newLiveCore(testCalendar(t), liveSym, bfM, LiveOptions{})
+	for _, id := range []int64{100, 101, 102} {
+		mustFeed(t, c, bfM+(id-100)*60000+100, kFrame(id, bfM+(id-100)*60000, 3000+float64(id-100), ""))
+	}
+	if c.lastID != 101 {
+		t.Fatalf("前提没成立：交出到 id %d，应到 101", c.lastID)
+	}
+	c.reconnected(at)
+	return c
+}
+
+// guard: L8 —— 重连后新推送从 106 起 ⇒ 等补齐（不交、不报跳号），要 [101 的开盘 ＋ 1 分钟, 106 的开盘)；
+// 历史补回来的第一根不是 102 ⇒ ErrIDGap（报文带应接上的 102）；补对了 ⇒ 102 … 106 紧接交出。
+func TestLiveReconnectResyncs(t *testing.T) {
+	at := bfM + 7*60000
+	c := rcCore(t, at)
+	// 状态断言：「重连后没进 resync」与「进了 resync 却不等补齐」从外面看是同一张脸（都在下一帧报跳号，突变实测）⇒ 这里先分开
+	if !c.resync {
+		t.Fatalf("交出过之后重连：resync 应为真（接缝换成 lastID＋1）")
+	}
+	if out := mustFeed(t, c, at+100, kFrame(106, bfM+6*60000, 3006, "")); len(out) != 0 {
+		t.Fatalf("重连后没补齐：交出 %d 根，应为 0", len(out))
+	}
+	mustFeed(t, c, at+200, kFrame(107, bfM+7*60000, 3007, ""))
+	from, to, need := c.needBackfill()
+	if !need || from != bfM+2*60000 || to != bfM+6*60000 {
+		t.Fatalf("needBackfill ＝ %s, %s, %v；应为 9:32, 9:36, true", fmtTs(from), fmtTs(to), need)
+	}
+	if err := c.backfill(fakeHist(103, 104, 105)); !errors.Is(err, ErrIDGap) || !strings.Contains(err.Error(), "id 102") {
+		t.Errorf("历史从 103 起：%v，应 Is ErrIDGap、报文带应接上的 id 102", err)
+	}
+	if err := c.backfill(fakeHist(102, 103, 104, 105)); err != nil {
+		t.Fatal(err)
+	}
+	out := mustTick(t, c, at+300)
+	if len(out) != 5 || out[0].Ts != bfM+2*60000 || out[4].Ts != bfM+6*60000 {
+		t.Errorf("补上之后交出 %d 根（%+v），应为 9:32 … 9:36 五根", len(out), out)
+	}
+}
+
+// guard: L8 —— 新连接上再做一次启动自检，而且按「这条连接上第一帧带根的」触发：
+// 只带报价的帧不触发（重连后 rows 里还有旧根，按「rows 非空」触发会拿旧根判出快照过旧）；
+// 新连接给的当前那根过旧 ⇒ ErrStaleSnapshot。冻结计时从重连这一刻起算（断开期间不算没有改动）。
+func TestLiveReconnectRechecks(t *testing.T) {
+	at := bfM + 10*60000 // 9:40 重连：离 101 交出已 8 分钟 > N
+	c := rcCore(t, at)
+	if _, err := c.feed(at+100, qFrame(at)); err != nil {
+		t.Fatalf("重连后第一帧只带报价：%v，应不报（不拿旧根做启动自检）", err)
+	}
+	if _, err := c.tick(at + 60000); err != nil {
+		t.Fatalf("重连后 1 分钟：%v，应不报冻结（计时从重连起算）", err)
+	}
+	if _, err := c.feed(at+60100, kFrame(102, bfM+2*60000, 3002, "")); !errors.Is(err, ErrStaleSnapshot) {
+		t.Errorf("新连接的当前那根是 9:32（本机 9:41）：%v，应 ErrStaleSnapshot", err)
+	}
+}

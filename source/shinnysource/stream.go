@@ -21,7 +21,7 @@ import (
 // ⛔ 它不 import Feed、Feed 也不认识它（L1：源判完结，Feed 只收已完结的根）。
 //
 // ⛔ 约定（评审方 09-21）：liveCore 任何「不交」都必须归到这几种原因之一 —— 等 k＋1 · 等 C＋G · 早于 startAt ·
-// 等起步补齐（L12，P-b2 加：推送里最早的根晚于起始格、历史通道还没补上）；此外的一律报错。
+// 等起步补齐（L12，P-b2 加：推送里最早的根晚于起始格、历史通道还没补上；重连后等接上 lastID＋1 也归这一种，L8）；此外的一律报错。
 // （5c89c1d 有两处违反：只留最近 8 根交出值 ⇒ 更早的根被改静默吞掉；id 跳号 ⇒ 永远不交、也不报）
 
 var (
@@ -56,6 +56,8 @@ type LiveOptions struct {
 	G time.Duration
 	// FreezeN 是冻结判定：时段内超过它没有任何真改动 ⇒ 停。默认 2 分钟（probe.md 6.36 / 6.37：B1s 4005 / 6010 ms ⇒ N 2 分钟）。
 	FreezeN time.Duration
+	// Reconnects 是推送连接断一次最多重连几次（L8；退避 1 s、2 s、4 s …）。0 ⇒ 3。都失败 ⇒ ErrDisconnected。
+	Reconnects int
 }
 
 // 本机偏差告警（L6 甲，design.md L6 📌）的参数 —— 评审方直接定，不从读数里挑、不许按读数调。
@@ -77,6 +79,7 @@ type liveCore struct {
 	rows    map[int64]Row // 每个 id 最近一次的值
 	firstID int64         // 第一根交出的 id（0 ＝ 还没交过）；[firstID, lastID] 里的根都交出过 ⇒ 值变即 L5
 	filled  bool          // 起步接缝已接上（L12）：startAt 那一格在 rows 里了（推送自带，或历史通道补上）
+	resync  bool          // 重连之后、新连接还没接上 lastID＋1（L8：与起步同一条「先补齐、再接推送」，只是接缝从起始格换成 lastID＋1）
 	lastID  int64         // 已交出（或早于起点而跳过）的最后一根的 id
 	started bool          // 启动自检做过
 	lastChg int64         // 最后一次真改动（诞生或值变）的本机时刻
@@ -143,11 +146,13 @@ func (c *liveCore) feed(recv int64, raw []byte) ([]tickflow.Bar, error) {
 		ids = append(ids, id)
 	}
 	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	gotRow := false
 	for _, id := range ids {
 		b := obj(data, strconv.FormatInt(id, 10))
 		if b == nil {
 			continue // 离窗（null 删键）：不算改动
 		}
+		gotRow = true
 		row, err := parseRow(id, b)
 		if err != nil {
 			return nil, fmt.Errorf("shinnysource: 推送里的根：%w", err)
@@ -164,7 +169,7 @@ func (c *liveCore) feed(recv int64, raw []byte) ([]tickflow.Bar, error) {
 		c.rows[id] = row
 		c.lastChg = recv
 	}
-	if !c.started && len(c.rows) > 0 {
+	if !c.started && gotRow { // 这条连接上第一帧带根的（重连后 rows 里还有旧根 ⇒ 不能按「rows 非空」判）
 		c.started = true
 		if err := c.startupCheck(recv); err != nil {
 			return nil, err
@@ -240,6 +245,13 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 // startReady（L12）：起步接缝接上了没有。没给起始格（startAt 为 0）⇒ 接上；
 // 否则 rows 里开盘 ≥ startAt 的最早那根：就是 startAt ⇒ 接上；更晚 ⇒ 等历史通道补（needBackfill / backfill）；一根都没有 ⇒ 等推送。
 func (c *liveCore) startReady() bool {
+	if c.resync {
+		_, _, need := c.needBackfill()
+		if _, ok := c.rows[c.lastID+1]; ok && !need {
+			c.resync = false
+		}
+		return !c.resync
+	}
 	if c.filled || c.startAt == 0 {
 		return true
 	}
@@ -262,7 +274,21 @@ func (c *liveCore) earliestFrom(from int64) (int64, bool) {
 }
 
 // needBackfill（L12 第二步）：推送里开盘 ≥ 起始格的最早那根晚于起始格 ⇒ 要向历史通道要 [from, to)（毫秒）。
+//
+// 重连之后（resync）：新推送里 id > lastID 的最早那根不是 lastID＋1 ⇒ 要 [已交出那根的开盘 ＋ 1 分钟, 它)。
 func (c *liveCore) needBackfill() (from, to int64, need bool) {
+	if c.resync {
+		first, ok := int64(-1), false
+		for id := range c.rows {
+			if id > c.lastID && (!ok || id < first) {
+				first, ok = id, true
+			}
+		}
+		if !ok || first == c.lastID+1 {
+			return 0, 0, false
+		}
+		return c.rows[c.lastID].Datetime/1e6 + 60000, c.rows[first].Datetime / 1e6, true
+	}
 	if c.filled || c.startAt == 0 {
 		return 0, 0, false
 	}
@@ -313,7 +339,15 @@ func (c *liveCore) backfill(rows []Row) error {
 		}
 		fill = append(fill, r)
 	}
-	if len(fill) == 0 || fill[0].Datetime/1e6 != from {
+	if c.resync {
+		if len(fill) == 0 || fill[0].ID != c.lastID+1 {
+			first := "（一根都没有）"
+			if len(fill) > 0 {
+				first = fmt.Sprintf("id %d（开盘 %s）", fill[0].ID, fmtTs(fill[0].Datetime/1e6))
+			}
+			return fmt.Errorf("%w：重连后历史通道补回来的第一根是 %s，应接上已交出的 id %d 之后的 id %d", ErrIDGap, first, c.lastID, c.lastID+1)
+		}
+	} else if len(fill) == 0 || fill[0].Datetime/1e6 != from {
 		first := "（一根都没有）"
 		if len(fill) > 0 {
 			first = fmtTs(fill[0].Datetime / 1e6)
@@ -332,7 +366,27 @@ func (c *liveCore) backfill(rows []Row) error {
 		c.rows[r.ID] = r
 	}
 	c.filled = true
+	c.resync = false
 	return nil
+}
+
+// reconnected（L8）：换了一条推送连接。新连接的快照从空开始；还没交出的根（id > lastID）丢掉 —— 新连接会重发或由历史通道补，
+// 留着的话它们与新推送之间的空档会被当成跳号。交出过的根留着：新连接重发它们时照 L5 比值（跨重连的修正也查得到）。
+// 启动自检在新连接上再做一次；冻结计时从重连这一刻重新起算。
+func (c *liveCore) reconnected(now int64) {
+	c.snap = map[string]any{}
+	for id := range c.rows {
+		if id > c.lastID {
+			delete(c.rows, id)
+		}
+	}
+	c.started = false
+	c.lastChg = now
+	if c.firstID != 0 {
+		c.resync = true
+	} else {
+		c.filled = false
+	}
 }
 
 // isSegmentEnd：b 的收盘时刻是它那个交易日某一段的收盘（10:15 · 11:30 · 15:00 · 23:00 …，按日历认，不写死）。
