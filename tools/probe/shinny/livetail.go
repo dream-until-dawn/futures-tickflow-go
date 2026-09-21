@@ -898,7 +898,7 @@ func probeLiveAnalyze() {
 	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 同一段时段内 %d 毫秒 · 跨段那几对落在时段内的部分 最大 %d 毫秒（本机时刻减段端点，受 D 影响）\n", r.b1, r.b1s, r.b1x)
 	fmt.Printf("A1s Ls−C（服务器时刻，区间）下界 %s · 上界 %s · 确定 >0 的根 %d · 可能 >0 的根 %d · 服务器时刻不明的真改动 %d 次（还没见过报价帧；不进 A1s / A3s）\n", dist(r.a1s), dist(r.a1sHi), r.a1sPos, r.a1sMaybe, r.noSrv)
 	fmt.Printf("K 线帧距前一报价帧（只带 klines 的帧，本机间隔 ＝ 投递延迟；戊的上界偏宽就是它）%s · 99 分位 %d · 99.9 分位 %d\n", dist(r.kLag), pct(r.kLag, 0.99), pct(r.kLag, 0.999))
-	fmt.Printf("帧的组成（rtn_data）只带 klines %d · 只带 quote %d · 两者同帧 %d · 都没有 %d ⇒ K 线改动的服务器时刻 ＝ 最近报价帧的 quote.datetime ＋ 本机间隔（外推）\n", r.fK, r.fQ, r.fBoth, r.fNone)
+	fmt.Printf("帧的组成（rtn_data）只带 klines %d · 只带 quote %d · 两者同帧 %d · 都没有 %d ⇒ K 线单独成帧时服务器时刻只知道区间 [最近报价帧的 quote.datetime, 它 ＋ 本机间隔]\n", r.fK, r.fQ, r.fBoth, r.fNone)
 	far := make([]string, len(r.farQuote))
 	for i, ms := range r.farQuote {
 		far[i] = showMs(ms)
