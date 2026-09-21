@@ -262,6 +262,86 @@ func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
 	}
 }
 
+// guard: 跨段那一对不进 B1s，但两端各自落在时段内的部分另记一列 b1x（评审方 2026-09-21 待办 ①）——
+// 合成日盘：每段最后一次改动在服务器 xx:xx:59（段尾前 1 秒）、下一段第一次改动在段首后 0.5 秒
+// ⇒ 本机不慢：前一端 1000 ms、后一端 500 ms ⇒ b1x ＝ 1000；本机慢 2.4 秒：前一端 3400、后一端 −1900 ⇒ b1x ＝ 3400（它受 D 影响，照实）。
+func TestLiveB1xCrossSegmentPortion(t *testing.T) {
+	for _, c := range []struct{ skew, want int64 }{{0, 1000}, {2400, 3400}} {
+		r := analyzeTail(synthDaySession(c.skew))
+		if r.b1s != 58500 {
+			t.Fatalf("本机慢 %d：前提没成立，B1s %d，应为 58500", c.skew, r.b1s)
+		}
+		if r.b1x != c.want {
+			t.Errorf("本机慢 %d：b1x %d，应为 %d", c.skew, r.b1x, c.want)
+		}
+	}
+	// 后一端较大：10:30 那根的诞生帧晚到 2.5 秒（本机 10:30:03.000，本机不慢）⇒ 后一端 3000 > 前一端 1000 ⇒ b1x ＝ 3000
+	// （⚠️ 第一版是把诞生帧删掉：那根第一次出现的帧只带 close / volume、没有 datetime，开盘时刻无从判段，工具照实给 60500 —— 构造错，不是产品错）
+	open := time.Date(2026, 9, 21, 10, 30, 0, 500*1e6, cst).UnixMilli()
+	var fr []tailFrame
+	var late tailFrame
+	for _, f := range synthDaySession(0) {
+		if f.RecvMs == open {
+			late = tailFrame{RecvMs: open + 2500, Raw: f.Raw}
+			continue
+		}
+		fr = append(fr, f)
+	}
+	if late.Raw == nil {
+		t.Fatal("前提没成立：没找到 10:30 那根的诞生帧")
+	}
+	if r := analyzeTail(insertFrame(fr, late)); r.b1x != 3000 {
+		t.Errorf("10:30 那根诞生帧晚到 2.5 秒：b1x %d，应为 3000（段首到第一次改动）", r.b1x)
+	}
+}
+
+// guard: 两端都不在时段里的那一对也不进 B1s（评审方突变 M9：去掉 okA && okB 只留段号相等 ⇒ 时段外的段号都是 0，被当成同一段）——
+// 08:26:40 起 40 根（09:00 之前的都在时段外），删掉第 5–10 根的帧 ⇒ 时段外出现一个约 6 分钟的空档，它不许进 B1s。
+func TestLiveB1sIgnoresOutOfSessionPairs(t *testing.T) {
+	const t0 = int64(1789000000000)
+	var fr []tailFrame
+	for _, f := range synthTail(t0, 40, nil, nil) {
+		if k := (f.RecvMs - t0) / 60000; k >= 5 && k <= 10 {
+			continue
+		}
+		fr = append(fr, f)
+	}
+	r := analyzeTail(skewed(fr, 0))
+	if r.b1 < 6*60000 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应有约 6 分钟的空档", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（时段外的空档不算）", r.b1s)
+	}
+}
+
+// guard: 服务器时刻只取本帧带 quote 的（评审方 2026-09-21 待办 ③）—— 11:29 那根收盘后 2 秒又改一次，所在帧不带 quote，
+// 快照里的 quote.datetime 还停在 11:29:59（陈旧）。旧取法把它记成收盘前 1 秒：按 quote 的 Post 0、E_srv −1000，
+// 一次真的收盘后改动被报成了收盘前（c586d72 上实测：post 0 · postLoc 1 · E_srv −1000）。
+// 现在：服务器时刻不明 ⇒ 不进 Post / A1s / E_srv，单独计数（postUnk ＋1、noSrv ＋1）；按本机的 postLoc 照数 1。
+func TestLiveServerTimeIgnoresStaleQuote(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	base := synthDaySession(0)
+	c := time.Date(2026, 9, 21, 11, 30, 0, 0, cst).UnixMilli()
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.9}}}}}}}})
+	b := analyzeTail(base)
+	r := analyzeTail(insertFrame(base, tailFrame{RecvMs: c + 2000, Raw: raw}))
+	if b.noSrv != 0 || b.segs[1].postUnk != 0 || !b.segs[1].eSrvOK {
+		t.Fatalf("前提没成立：干净的合成日（每帧带 quote）noSrv %d · postUnk %d · E_srv 明 %v", b.noSrv, b.segs[1].postUnk, b.segs[1].eSrvOK)
+	}
+	sg := r.segs[1]
+	if sg.postLoc != 1 {
+		t.Fatalf("前提没成立：按本机 postLoc %d，应为 1", sg.postLoc)
+	}
+	if sg.post != 0 || sg.postUnk != 1 || sg.eSrvOK {
+		t.Errorf("11:30 那根：post %d · postUnk %d · E_srv 明 %v，应为 0 · 1 · false", sg.post, sg.postUnk, sg.eSrvOK)
+	}
+	if r.noSrv != b.noSrv+1 || len(r.a1s) != len(b.a1s)-1 {
+		t.Errorf("noSrv %d→%d · A1s n %d→%d，应 ＋1 · −1（这根的最后一次改动服务器时刻不明，不进 A1s）", b.noSrv, r.noSrv, len(b.a1s), len(r.a1s))
+	}
+}
+
 // guard: rbSegment 的边界 —— 两端都含（15:00:00.000 在、15:00:00.001 不在）；段与段不同号；不同自然日不同号。
 func TestRbSegmentBounds(t *testing.T) {
 	at := func(d, h, m, s, ms int) int64 {

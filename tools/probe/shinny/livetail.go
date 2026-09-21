@@ -224,7 +224,9 @@ type segEnd struct {
 	id         int64
 	c          int64
 	eLoc, eSrv int64 // 最后一次真改：本机收到 − C · quote.datetime − C
-	post       int   // C 之后（按 quote.datetime > C）还改这一根的次数
+	eSrvOK     bool  // 最后一次真改所在帧带了 quote（否则 eSrv 不明）
+	post       int   // C 之后（按 quote.datetime > C）还改这一根的次数；只数本帧带 quote 的改动
+	postUnk    int   // 这一根出现之后、服务器时刻不明（本帧不带 quote）的真改动次数 —— 它们不进 post
 	postLoc    int   // 同上，按本机收到时刻 > C
 	hasNext    bool  // 下一根出现在记录里
 }
@@ -241,14 +243,21 @@ var rbSessions = [][2]int{{9 * 60, 10*60 + 15}, {10*60 + 30, 11*60 + 30}, {13*60
 // 乙的 B1s 只比同一段里相邻的两次真改动：段与段之间的空档（小节休息、午休、日夜盘之间）不是「推送停了」。
 // ⚠️ 6.37 读数：第一版按「记录期间最早开盘到最晚收盘」一整段取，日盘的午休 7200543 ms 被算成了时段内的空档。
 func rbSegment(ms int64) (int64, bool) {
+	key, _, _, ok := rbSegBounds(ms)
+	return key, ok
+}
+
+// rbSegBounds 同 rbSegment，另给出那一段的起止（毫秒时间戳，钟面按 +0800）。
+func rbSegBounds(ms int64) (key, start, end int64, ok bool) {
 	t := time.UnixMilli(ms).In(cst)
 	of := int64(((t.Hour()*60+t.Minute())*60+t.Second())*1000) + int64(t.Nanosecond()/1e6)
+	day := ms - of
 	for i, s := range rbSessions {
 		if of >= int64(s[0])*60000 && of <= int64(s[1])*60000 {
-			return int64(t.Year()*10000+int(t.Month())*100+t.Day())*10 + int64(i), true
+			return int64(t.Year()*10000+int(t.Month())*100+t.Day())*10 + int64(i), day + int64(s[0])*60000, day + int64(s[1])*60000, true
 		}
 	}
-	return 0, false
+	return 0, 0, 0, false
 }
 
 type tailResult struct {
@@ -262,8 +271,9 @@ type tailResult struct {
 	// Ls ＝ 最后一次真改那一帧里 quote.datetime（交易所那笔成交的时刻）；不经本机时钟
 	a1s, a3s []int64 // Ls−C · 末根 Ls−C
 	a1sPos   int
-	noSrv    int   // 真改动发生时还没有任何 quote.datetime 可用的次数（这些根不进 a1s / a3s）
-	b1s      int64 // 交易时段内（按服务器时刻）相邻两次真改动的最大间隔（本机收到时刻之差）
+	noSrv    int   // 服务器时刻不明的真改动次数：所在帧不带 quote.datetime（含还没见过任何 quote 的）；这些改动不进 a1s / a3s / eSrv / post
+	b1s      int64 // 同一段交易时段里相邻两次真改动的最大间隔（本机收到时刻之差）
+	b1x      int64 // 跨段那几对落在时段内的部分的最大值（本机时刻减段端点；受 D 影响）
 	// 6.37：D ＝ 本机收到 − quote.datetime，只取本帧带了 quote.datetime、且它不早于记录期间第一根开盘的帧（旧报价排除，事先写死）
 	d        []int64
 	dStale   int // 被排除的旧报价帧数
@@ -358,6 +368,13 @@ func analyzeTail(frames []tailFrame) tailResult {
 				}
 			}
 		}
+		// 服务器时刻只取【本帧带了 quote.datetime】的：不带 quote 的帧里快照的 quote.datetime 停在上一次带 quote 的时刻，是陈旧的
+		// （6.37 读数：13:30 那根 13:29:59.850 诞生的那一帧，快照里还是 11:29:59.900）⇒ 这样的改动记作「服务器时刻不明」（0），
+		// 不进 A1s / A3s / E_srv / 按 quote 的 Post，并单独计数（评审方 2026-09-21 待办 ③：两个都做）。
+		var srvHere int64
+		if quoteHere {
+			srvHere = srvNow
+		}
 		data := obj(snap, "klines", tailSym, durKey, "data")
 		changed := false
 		var frameBar int64
@@ -373,8 +390,8 @@ func analyzeTail(frames []tailFrame) tailResult {
 				if dt[id]+60000 <= frames[0].RecvMs {
 					initial[id] = true
 				}
-				last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
-				events[id] = append(events[id], chg{fr.RecvMs, srvNow})
+				last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvHere
+				events[id] = append(events[id], chg{fr.RecvMs, srvHere})
 				changed = true
 				frameBar = max(frameBar, dt[id])
 				continue
@@ -384,9 +401,9 @@ func analyzeTail(frames []tailFrame) tailResult {
 				continue
 			}
 			r.changes++
-			last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
-			events[id] = append(events[id], chg{fr.RecvMs, srvNow})
-			if srvNow == 0 {
+			last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvHere
+			events[id] = append(events[id], chg{fr.RecvMs, srvHere})
+			if srvHere == 0 {
 				r.noSrv++
 			}
 			changed = true
@@ -417,7 +434,9 @@ func analyzeTail(frames []tailFrame) tailResult {
 	}
 	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
 	r.bars = len(ids)
-	// 交易时段（按服务器时刻）：记录期间出现的根里最早的开盘到最晚的收盘，且两次改动落在 rb 同一段时段里（rbSegment）
+	// 乙的 B1s：只比【同一段】里相邻的两次改动；段按被改那根自己的开盘时刻判（rbSegBounds）。
+	// 跨段（或有一端不在时段里）的那一对不进 B1s —— 但段与段之间若推送停了，停在两段各自时段内的那部分 B1s 看不见（评审方 2026-09-21 指出）
+	// ⇒ 另记 b1x：这些对里，前一端到它那段段尾、后一端从它那段段首，落在时段内的部分（本机时刻减段端点，受本机偏差 D 影响）。
 	if len(ids) > 0 {
 		lo, hi := dt[ids[0]], dt[ids[0]]+60000 // 按 datetime 取最早开盘与最晚收盘，不依赖 id 的顺序
 		for _, id := range ids {
@@ -426,11 +445,19 @@ func analyzeTail(frames []tailFrame) tailResult {
 		for i := 1; i < len(changeFrames); i++ {
 			a, b := changeFrames[i-1], changeFrames[i]
 			// 判段按被改那根自己的开盘时刻（服务器给的 K 线 datetime），不按快照里的 quote.datetime：
-			// 不带 quote 的帧里它是陈旧的 —— 6.37 读数：13:30 那根 13:29:59.850 诞生那一帧，快照里还是 11:29:59.900
-			sa, okA := rbSegment(changeBar[i-1])
-			sb, okB := rbSegment(changeBar[i])
-			if a.srv >= lo && b.srv <= hi && a.srv != 0 && okA && okB && sa == sb && b.recv-a.recv > r.b1s {
-				r.b1s = b.recv - a.recv
+			// 不带 quote 的帧里它是陈旧的 —— 6.37 读数：13:30 那根 13:29:59.850 诞生那一帧，快照里还是 11:29:59.900。
+			// （原先的 lo/hi 与 a.srv != 0 两道守卫是按 quote.datetime 判段时的，判段不再用它，删掉 —— 评审方突变 M11 全绿即此）
+			sa, _, aEnd, okA := rbSegBounds(changeBar[i-1])
+			sb, bStart, _, okB := rbSegBounds(changeBar[i])
+			if okA && okB && sa == sb {
+				r.b1s = max(r.b1s, b.recv-a.recv)
+				continue
+			}
+			if okA {
+				r.b1x = max(r.b1x, aEnd-a.recv)
+			}
+			if okB {
+				r.b1x = max(r.b1x, b.recv-bStart)
 			}
 		}
 		// D：旧报价（quote.datetime 早于记录期间第一根开盘）不进（6.37 事先写死；6.36 那个 21598052 ms 就是它）
@@ -448,9 +475,11 @@ func analyzeTail(frames []tailFrame) tailResult {
 			if !segEndLabels[label] {
 				continue
 			}
-			sg := segEnd{label: label, id: id, c: C, eLoc: lastL[id] - C, eSrv: lastS[id] - C}
+			sg := segEnd{label: label, id: id, c: C, eLoc: lastL[id] - C, eSrv: lastS[id] - C, eSrvOK: lastS[id] != 0}
 			for _, e := range events[id][1:] { // [0] 是出现，不算改
-				if e.srv > C {
+				if e.srv == 0 {
+					sg.postUnk++ // 服务器时刻不明：算不进按 quote 的 Post，也不当成 C 之前
+				} else if e.srv > C {
 					sg.post++
 				}
 				if e.recv > C {
@@ -636,7 +665,13 @@ func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
 			continue
 		}
 		touched := map[int64]bool{}
+		quoteHere := false
 		for _, d := range m.Data {
+			if q := obj(d, "quotes", tailSym); q != nil {
+				if _, ok := q["datetime"]; ok {
+					quoteHere = true
+				}
+			}
 			if kd := obj(d, "klines", tailSym, durKey, "data"); kd != nil {
 				for k := range kd {
 					if x, err := strconv.ParseInt(k, 10, 64); err == nil {
@@ -653,6 +688,10 @@ func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
 				}
 			}
 		}
+		var srvHere int64 // 与 analyzeTail 同一取法：只认本帧带 quote 的服务器时刻
+		if quoteHere {
+			srvHere = srvNow
+		}
 		data := obj(snap, "klines", tailSym, durKey, "data")
 		for x := range touched {
 			b := obj(data, strconv.FormatInt(x, 10))
@@ -662,13 +701,13 @@ func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
 			v := barVal{num(b["open"]), num(b["high"]), num(b["low"]), num(b["close"]), num(b["volume"]), num(b["close_oi"]), num(b["open_oi"])}
 			s, seen := bars[x]
 			if !seen {
-				bars[x] = &bar{v: v, born: fr.RecvMs, open: int64(num(b["datetime"])) / 1e6, lastL: fr.RecvMs, lastS: srvNow}
+				bars[x] = &bar{v: v, born: fr.RecvMs, open: int64(num(b["datetime"])) / 1e6, lastL: fr.RecvMs, lastS: srvHere}
 				continue
 			}
 			if sameVal(v, s.v) {
 				continue
 			}
-			s.v, s.lastL, s.lastS = v, fr.RecvMs, srvNow
+			s.v, s.lastL, s.lastS = v, fr.RecvMs, srvHere
 		}
 	}
 	ids := make([]int64, 0, len(bars))
@@ -807,15 +846,19 @@ func probeLiveAnalyze() {
 	fmt.Printf("A1 L−C     %s · L−C>0 的根 %d\n", dist(r.a1), r.a1Pos)
 	fmt.Printf("A2 L−N     %s · L−N>0 的根 %d\n", dist(r.a2), r.a2Pos)
 	fmt.Printf("A3 末根 L−C %s\n", dist(r.a3))
-	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 交易时段内（按服务器时刻）%d 毫秒\n", r.b1, r.b1s)
-	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 真改动时还没有服务器时刻 %d 次\n", dist(r.a1s), r.a1sPos, r.noSrv)
+	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 同一段时段内 %d 毫秒 · 跨段那几对落在时段内的部分 最大 %d 毫秒（本机时刻减段端点，受 D 影响）\n", r.b1, r.b1s, r.b1x)
+	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 服务器时刻不明的真改动 %d 次（所在帧不带 quote；不进 A1s / A3s）\n", dist(r.a1s), r.a1sPos, r.noSrv)
 	fmt.Printf("A3s 末根 Ls−C（服务器时刻）%s\n", dist(r.a3s))
 	fmt.Printf("B2 本机收到 − 服务器行情时刻（全部帧，含旧报价）%s\n", dist(r.b2))
 	fmt.Printf("D  本机收到 − quote.datetime（本帧带 quote、且不早于第一根开盘）%s · 99 分位 %d · 排除的旧报价帧 %d\n", dist(r.d), pct(r.d, 0.99), r.dStale)
 	fmt.Printf("TradingDay %s\n", r.tdNote)
 	for i, sg := range r.segs {
-		fmt.Printf("末根 %d  C %s · id %d · E_loc %d · E_srv %d · C 之后还改 %d 次（按 quote）/ %d 次（按本机）· 下一根出现 %v · G ＝ %d 秒\n",
-			i+1, showMs(sg.c), sg.id, sg.eLoc, sg.eSrv, sg.post, sg.postLoc, sg.hasNext, segGrace(sg.eLoc, r.d))
+		eSrv := "不明（最后一次真改所在帧不带 quote）"
+		if sg.eSrvOK {
+			eSrv = strconv.FormatInt(sg.eSrv, 10)
+		}
+		fmt.Printf("末根 %d  C %s · id %d · E_loc %d · E_srv %s · C 之后还改 %d 次（按 quote）/ %d 次（按本机）· 服务器时刻不明的改动 %d 次 · 下一根出现 %v · G ＝ %d 秒\n",
+			i+1, showMs(sg.c), sg.id, sg.eLoc, eSrv, sg.post, sg.postLoc, sg.postUnk, sg.hasNext, segGrace(sg.eLoc, r.d))
 	}
 	// 判别力
 	if r.bars < 30 {
