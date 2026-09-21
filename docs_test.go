@@ -1017,6 +1017,7 @@ var guardNames = []string{
 	`TestLiveBackfillNotNeededWhenPushCoversStart`,
 	`TestLiveBackfillOverlapMismatch`,
 	`TestLiveBackfillShortHistory`,
+	`TestLiveBackfillSkipsLiveCurrentBar`,
 	`TestLiveClockGuard`,
 	`TestLiveCorrectionAfterDelivery`,
 	`TestLiveCorrectionOfOldDeliveredBar`,

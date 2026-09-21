@@ -36,8 +36,12 @@ var (
 	// ErrIDGap：bar id 跳号 —— 推送里 k＋1 没来而更大的 id 已经来了；交出过之后下一根不是 lastID＋1；或历史通道补回来的与推送接不上（L12）。天勤的 id 在一个序列里连续 ⇒ 不猜、不跳过：停下来问（与 Feed 的 ErrPushGap 同一种处置）。
 	ErrIDGap = errors.New("shinnysource: bar id 跳号")
 
-	// ErrStartGap：起步补不齐 —— 历史通道补回来的第一根不是起始格（L12；补回来的与推送接不上 ⇒ ErrIDGap，同一根两条通道值不同 ⇒ ErrCorrectedAfterDelivery）。
+	// ErrStartGap：起步补不齐 —— 历史通道补回来的第一根不是起始格（L12；补回来的与推送接不上 ⇒ ErrIDGap，同一根两条通道值不同 ⇒ ErrChannelsDisagree）。
 	ErrStartGap = errors.New("shinnysource: 起步补不齐（第一根不是起始格）")
+
+	// ErrChannelsDisagree：起步时历史通道与推送对同一根（两边都已完结）给了不同的值（L12 三）。此时一根都还没交出、Feed 没动过 ⇒
+	// 处置是隔一会儿重新起步；与 ErrCorrectedAfterDelivery（交出之后又变，要 Close → Sync → 重建）处置不同，所以不共用名字。
+	ErrChannelsDisagree = errors.New("shinnysource: 起步时历史通道与推送对同一根给了不同的值")
 
 	// ErrSuspectedFreeze：日历说在交易时段，而时段内超过 N 没有任何真改动（L7 中途）。
 	ErrSuspectedFreeze = errors.New("shinnysource: 交易时段内超过 N 没有任何真改动（疑似推送冻结）")
@@ -271,7 +275,7 @@ func (c *liveCore) needBackfill() (from, to int64, need bool) {
 
 // backfill（L12 第二、三步）：把历史通道拉回来的行并进来。
 //
-//	只收开盘在 [startAt, 推送最早那根) 里的；更早的、更新的（推送还没发到）都不要；落在推送已有的 id 上的 ⇒ 与推送逐位比，不等报 L5（同一根两条通道给了两个值）
+//	只收开盘在 [startAt, 推送最早那根) 里的；更早的、更新的（推送还没发到）都不要；落在推送已有的 id 上的 ⇒ 两边都已完结（推送里 id＋1 已在）才逐位比，不等报 ErrChannelsDisagree；推送里还在变的当前根跳过
 //	补回来的第一根必须是起始格（否则 ErrStartGap）；补回来的 id 必须连续、且最后一根接上推送最早那根（否则 ErrIDGap）
 //
 // ⚠️ 起始格必须是一个交易分钟（Feed 最后一根之后那一格的第一分钟，由 Feed 给出）；给了休市时刻 ⇒ 永远等不到它 ⇒ 这里报 ErrStartGap。
@@ -296,8 +300,11 @@ func (c *liveCore) backfill(rows []Row) error {
 			continue
 		}
 		if old, ok := c.rows[r.ID]; ok {
-			if !sameRow(old, r) {
-				return fmt.Errorf("%w：id %d（开盘 %s）历史通道 %s，推送 %s —— 同一根两条通道给了两个值", ErrCorrectedAfterDelivery, r.ID, fmtTs(ts), showRow(r), showRow(old))
+			// 只比两边都已完结的（推送里 id＋1 已在 ⇒ 判据一）；推送里还在变的当前根跳过、以推送为准 ——
+			// 真的 fetch 拉到「此刻」，给回来的最后一根几乎总是那根当前根，两边取自不同时刻，不等是常态（评审方 09-21 实测误停）。
+			// 跳过不漏：它交出之后若再变，L5 的 [firstID, lastID] 那条查得到。
+			if _, done := c.rows[r.ID+1]; done && !sameRow(old, r) {
+				return fmt.Errorf("%w：id %d（开盘 %s）历史通道 %s，推送 %s", ErrChannelsDisagree, r.ID, fmtTs(ts), showRow(r), showRow(old))
 			}
 			continue
 		}

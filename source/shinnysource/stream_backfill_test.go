@@ -132,14 +132,29 @@ func TestLiveBackfillIDGap(t *testing.T) {
 	}
 }
 
-// guard: L12 三 —— 历史与推送同一个 id 值不同 ⇒ 按 L5 报（同一根两条通道给了两个值），报文带两边的值。
+// guard: L12 三 —— 两边都已完结的重叠根（105：推送里 106 已在）值不同 ⇒ ErrChannelsDisagree，报文带两边的值；
+// 不借 ErrCorrectedAfterDelivery（此时一根都没交出，处置是重新起步，不是 L5 的 Close → Sync → 重建）。
 func TestLiveBackfillOverlapMismatch(t *testing.T) {
 	c := bfCore(t)
 	rows := fakeHist(101, 102, 103, 104)
 	bad := hRow(105, 3999)
 	err := c.backfill(append(rows, bad))
-	if !errors.Is(err, ErrCorrectedAfterDelivery) || !strings.Contains(err.Error(), "C 3999") || !strings.Contains(err.Error(), "C 3005") {
-		t.Errorf("历史的 105 收 3999、推送收 3005：%v，应 Is ErrCorrectedAfterDelivery、报文带两边的值", err)
+	if !errors.Is(err, ErrChannelsDisagree) || errors.Is(err, ErrCorrectedAfterDelivery) || !strings.Contains(err.Error(), "C 3999") || !strings.Contains(err.Error(), "C 3005") {
+		t.Errorf("历史的 105 收 3999、推送收 3005：%v，应 Is ErrChannelsDisagree、不 Is ErrCorrectedAfterDelivery、报文带两边的值", err)
+	}
+}
+
+// guard: L12 三的射程 —— 推送里还在变的当前根（106，107 还没来）不比：真的 fetch 拉到「此刻」，给回来的最后一根就是它，
+// 值取自较早时刻（收 3005.5，推送已到 3006）⇒ 不报、以推送为准，补齐照常（评审方 09-21 实测：比它就误停）。
+func TestLiveBackfillSkipsLiveCurrentBar(t *testing.T) {
+	c := bfCore(t)
+	err := c.backfill(append(fakeHist(101, 102, 103, 104, 105), hRow(106, 3005.5)))
+	if err != nil {
+		t.Fatalf("历史给了当前根 106 的较早值：%v，应不报", err)
+	}
+	out := mustTick(t, c, bfM+7*60000)
+	if len(out) != 5 || c.rows[106].Close != 3006 {
+		t.Errorf("交出 %d 根、106 收 %g；应交 9:31–9:35 五根、106 仍以推送为准（3006）", len(out), c.rows[106].Close)
 	}
 }
 
