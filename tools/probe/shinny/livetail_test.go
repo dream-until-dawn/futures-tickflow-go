@@ -194,6 +194,46 @@ func TestLiveAnalyzeGapOnlyInsideSession(t *testing.T) {
 	}
 }
 
+// guard: 乙的 B1s 不跨时段（6.37 读数：日盘午休 7200543 ms 被当成了时段内的空档）——
+// 合成日盘（带服务器时刻、本机慢 2.4 秒）：不分时段的 B1 ＝ 午休那段（前提）；B1s ＝ 时段内自己的 58.5 秒。
+func TestLiveB1sExcludesSessionBreaks(t *testing.T) {
+	r := analyzeTail(synthDaySession(2400))
+	if r.b1 != 7201500 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应为 7201500（11:29:59 → 13:30:00.5 的午休）", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（小节休息与午休都不算）", r.b1s)
+	}
+}
+
+// guard: rbSegment 的边界 —— 两端都含（15:00:00.000 在、15:00:00.001 不在）；段与段不同号；不同自然日不同号。
+func TestRbSegmentBounds(t *testing.T) {
+	at := func(d, h, m, s, ms int) int64 {
+		return time.Date(2026, 9, d, h, m, s, ms*1e6, cst).UnixMilli()
+	}
+	cases := []struct {
+		ms int64
+		ok bool
+	}{
+		{at(21, 8, 59, 59, 999), false}, {at(21, 9, 0, 0, 0), true}, {at(21, 10, 15, 0, 0), true}, {at(21, 10, 15, 0, 1), false},
+		{at(21, 10, 29, 59, 999), false}, {at(21, 10, 30, 0, 0), true}, {at(21, 11, 30, 0, 0), true}, {at(21, 12, 0, 0, 0), false},
+		{at(21, 13, 30, 0, 0), true}, {at(21, 15, 0, 0, 0), true}, {at(21, 15, 0, 0, 1), false},
+		{at(21, 21, 0, 0, 0), true}, {at(21, 23, 0, 0, 0), true}, {at(21, 23, 0, 0, 1), false},
+	}
+	for _, c := range cases {
+		if _, ok := rbSegment(c.ms); ok != c.ok {
+			t.Errorf("%s：在时段里 %v，应为 %v", showMs(c.ms), ok, c.ok)
+		}
+	}
+	a, _ := rbSegment(at(21, 10, 0, 0, 0))
+	b, _ := rbSegment(at(21, 10, 45, 0, 0))
+	c, _ := rbSegment(at(21, 14, 0, 0, 0))
+	d, _ := rbSegment(at(22, 14, 0, 0, 0))
+	if a == b || b == c || c == d {
+		t.Errorf("段号应两两不同：09:00 段 %d · 10:30 段 %d · 13:30 段 %d · 次日 13:30 段 %d", a, b, c, d)
+	}
+}
+
 // synthDaySession 造 rb 一个日盘（09:00–10:15 · 10:30–11:30 · 13:30–15:00，2026-09-21 +0800）的 1m 推送帧，
 // 每根开盘后 0.5 秒出现、收盘前 1 秒改一次；时间轴当服务器时刻，本机收到 ＝ 服务器 − skew（经 skewed）。
 func synthDaySession(skew int64) []tailFrame {

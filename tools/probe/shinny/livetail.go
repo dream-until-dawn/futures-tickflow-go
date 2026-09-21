@@ -2,7 +2,7 @@ package main
 
 // v0.10 起手 甲 / 乙 的读数（probe.md 6.36；判对先落文，评审方 2026-09-18 16:50:45 +0800 作证）。
 //
-//	go run . -only shinny-live-tail -tail-min 75 -tail-out <文件>     联网：记一个连续时段的推送帧（到点自己断开）
+//	go run . -only shinny-live-tail -tail-end 2026-09-21T15:05:00+08:00 -tail-out <文件>     联网：记推送帧，到墙钟那一刻自己断开
 //	go run . -only shinny-live-analyze -tail-in <文件>                离线：只读落盘文件，算 A1 A2 A3 B1 B2 与判对
 //	go run . -only shinny-live-analyze -tail-in <文件> -tail-calib     标定：造一次「收盘后 5 秒又改」，A1 / A2 必须各多报一根
 //
@@ -31,7 +31,7 @@ import (
 )
 
 var (
-	tailMin   = flag.Int("tail-min", 75, "shinny-live-tail 记多少分钟（到点自己断开）")
+	tailEnd   = flag.String("tail-end", "", "shinny-live-tail 到这一刻断开（RFC3339，带偏移，如 2026-09-21T15:05:00+08:00）；用户授权窗口的终点")
 	tailOut   = flag.String("tail-out", "", "shinny-live-tail 的落盘文件（JSONL；不进仓）")
 	tailIn    = flag.String("tail-in", "", "shinny-live-analyze 读的落盘文件")
 	tailCalib = flag.Bool("tail-calib", false, "shinny-live-analyze 做标定")
@@ -70,12 +70,16 @@ func outputInsideRepo(path string) bool {
 }
 
 // openmdURL 是天勤公开的合约表（refdata/shinnyref 的 DefaultURL；公开端点，不鉴权、不走账户）。
-const openmdURL = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
+var openmdURL = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
+
+// openmdTimeout 是取一次合约表的上限（评审方 2026-09-21 裁：20 秒，取不到就记「没取到」继续）。
+// 6.37 读数：3 分钟的旧上限在这台机器上两次都耗尽、都没取到，且第一版把它放在连上行情之前，3 分钟算进了授权窗口。
+var openmdTimeout = 20 * time.Second
 
 // openmdUnderlying 取 KQ.m 主连【此刻】映射到的具体合约（合约表里的 underlying_symbol）。
 // ⚠️ 它是取的那一刻的快照：取数开始、结束各取一次，两次一样才能说「这段时间映射没变」。
 func openmdUnderlying() (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), openmdTimeout)
 	defer cancel()
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, openmdURL, nil)
 	req.Header.Set("User-Agent", uaSelf)
@@ -126,6 +130,15 @@ func probeLiveTail(md, tok string) {
 		report(name, "FAIL", "-tail-out 落在仓库里（"+*tailOut+"）—— 原始帧不进仓，换到仓库外")
 		return
 	}
+	// 授权窗口的终点由墙钟硬截（评审方 2026-09-21 裁）：ctx 的截止时刻就是 -tail-end，连拨号在内都受它管；
+	// 不再由「分钟数」推终点 —— 6.37 那天前面耽误的 3 分钟（openmd）就这样被加到了终点上，越过了对用户说的 15:05。
+	end, err := tailDeadline(*tailEnd, time.Now())
+	if err != nil {
+		report(name, "FAIL", err.Error())
+		return
+	}
+	ctx, cancel := context.WithDeadline(context.Background(), end)
+	defer cancel()
 	f, err := os.Create(*tailOut)
 	if err != nil {
 		report(name, "FAIL", err.Error())
@@ -133,12 +146,8 @@ func probeLiveTail(md, tok string) {
 	}
 	defer f.Close()
 	w := bufio.NewWriter(f)
-	defer w.Flush()
-	fmt.Printf("开始 %s（本机）· 记 %d 分钟 · %s 1m · 只用行情通道\n", showMs(time.Now().UnixMilli()), *tailMin, tailSym)
-	fmt.Printf("KQ.m 映射（openmd 合约表，取数前）：%s\n", showUnderlying())
+	fmt.Printf("开始 %s（本机）· 到 %s 断开 · %s 1m · 只用行情通道\n", showMs(time.Now().UnixMilli()), showMs(end.UnixMilli()), tailSym)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*tailMin)*time.Minute)
-	defer cancel()
 	c, _, err := websocket.Dial(ctx, md, &websocket.DialOptions{
 		CompressionMode: websocket.CompressionNoContextTakeover,
 		HTTPHeader:      http.Header{"User-Agent": {uaSelf}, "Accept": {"application/json"}, "Authorization": {"Bearer " + tok}},
@@ -158,6 +167,10 @@ func probeLiveTail(md, tok string) {
 		report(name, "FAIL", err.Error())
 		return
 	}
+	// 取数前那次 openmd 挪到连上行情之后、放后台（评审方 2026-09-21 裁）：它不再占授权窗口的开头，也不挡收帧 ——
+	// 在收帧循环里同步去取，服务器那边会攒帧，本机收到时刻就不是真的收到时刻了。
+	before := make(chan string, 1)
+	go func() { before <- showUnderlying() }()
 	frames := 0
 	for {
 		if err := send(map[string]any{"aid": "peek_message"}); err != nil {
@@ -165,16 +178,40 @@ func probeLiveTail(md, tok string) {
 		}
 		_, msg, err := c.Read(ctx)
 		if err != nil {
-			break // 到点（ctx 超时）或断线；读数照记，断线本身也是乙要看的
+			break // 到点（ctx 截止）或断线；读数照记，断线本身也是乙要看的
 		}
 		line, _ := json.Marshal(tailFrame{RecvMs: time.Now().UnixMilli(), Raw: msg})
 		w.Write(line)
 		w.WriteByte('\n')
 		frames++
 	}
+	c.CloseNow()
 	fmt.Printf("结束 %s（本机）· 落盘 %d 帧 → %s\n", showMs(time.Now().UnixMilli()), frames, *tailOut)
-	fmt.Printf("KQ.m 映射（openmd 合约表，取数后）：%s\n", showUnderlying())
+	// 先落盘、关文件，再去取数后那次 openmd（公开端点、不走账户；6.37 那天它在 Flush 之前，文件 mtime 晚了 3 分钟）
+	if err := w.Flush(); err != nil {
+		report(name, "FAIL", "落盘失败: "+err.Error())
+		return
+	}
+	f.Close()
+	fmt.Printf("KQ.m 映射（openmd 合约表，连上行情之后）：%s\n", <-before)
+	fmt.Printf("KQ.m 映射（openmd 合约表，断开之后）：%s\n", showUnderlying())
 	report(name, "PASS", fmt.Sprintf("记了 %d 帧；读数用 -only shinny-live-analyze -tail-in 算", frames))
+}
+
+// tailDeadline 解析 -tail-end：必须给、必须是带偏移的 RFC3339、必须晚于现在。
+// 不接受「分钟数」—— 终点是用户授权的那个墙钟时刻，不是从开工那一刻往后推的。
+func tailDeadline(s string, now time.Time) (time.Time, error) {
+	if s == "" {
+		return time.Time{}, fmt.Errorf("要给 -tail-end（断开的墙钟时刻，RFC3339 带偏移，如 2026-09-21T15:05:00+08:00）")
+	}
+	end, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("-tail-end %q 不是带偏移的 RFC3339：%v", s, err)
+	}
+	if !end.After(now) {
+		return time.Time{}, fmt.Errorf("-tail-end %s 不晚于现在 %s", showMs(end.UnixMilli()), showMs(now.UnixMilli()))
+	}
+	return end, nil
 }
 
 // ── 离线分析 ──
@@ -194,6 +231,25 @@ type segEnd struct {
 
 // segEndLabels 是 rb 日盘的三个时段末根的收盘时刻（6.37 按 C 认，不按「下一根多久才来」认）。
 var segEndLabels = map[string]bool{"10:15": true, "11:30": true, "15:00": true}
+
+// rbSessions 是 rb 现行的交易时段（+0800 钟面，分钟）。本文件不 import 本库，这里写死；来源：
+// 日盘 ＝ calendar/embedded/embedded.go 的 dayCommodity（09:00-10:15 / 10:30-11:30 / 13:30-15:00），
+// 夜盘 ＝ 同文件 rb 的夜盘分钟数 120（21:00–23:00）。
+var rbSessions = [][2]int{{9 * 60, 10*60 + 15}, {10*60 + 30, 11*60 + 30}, {13*60 + 30, 15 * 60}, {21 * 60, 23 * 60}}
+
+// rbSegment 报告服务器时刻 ms 落在哪一段交易时段（段号 ＝ 自然日 × 10 ＋ 段序；两端都含）；不在任何一段里 ⇒ ok 为 false。
+// 乙的 B1s 只比同一段里相邻的两次真改动：段与段之间的空档（小节休息、午休、日夜盘之间）不是「推送停了」。
+// ⚠️ 6.37 读数：第一版按「记录期间最早开盘到最晚收盘」一整段取，日盘的午休 7200543 ms 被算成了时段内的空档。
+func rbSegment(ms int64) (int64, bool) {
+	t := time.UnixMilli(ms).In(cst)
+	of := int64(((t.Hour()*60+t.Minute())*60+t.Second())*1000) + int64(t.Nanosecond()/1e6)
+	for i, s := range rbSessions {
+		if of >= int64(s[0])*60000 && of <= int64(s[1])*60000 {
+			return int64(t.Year()*10000+int(t.Month())*100+t.Day())*10 + int64(i), true
+		}
+	}
+	return 0, false
+}
 
 type tailResult struct {
 	frames, rtn      int
@@ -356,7 +412,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 	}
 	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
 	r.bars = len(ids)
-	// 交易时段（按服务器时刻）：记录期间出现的根里最早的开盘到最晚的收盘
+	// 交易时段（按服务器时刻）：记录期间出现的根里最早的开盘到最晚的收盘，且两次改动落在 rb 同一段时段里（rbSegment）
 	if len(ids) > 0 {
 		lo, hi := dt[ids[0]], dt[ids[0]]+60000 // 按 datetime 取最早开盘与最晚收盘，不依赖 id 的顺序
 		for _, id := range ids {
@@ -364,7 +420,9 @@ func analyzeTail(frames []tailFrame) tailResult {
 		}
 		for i := 1; i < len(changeFrames); i++ {
 			a, b := changeFrames[i-1], changeFrames[i]
-			if a.srv >= lo && b.srv <= hi && a.srv != 0 && b.recv-a.recv > r.b1s {
+			sa, okA := rbSegment(a.srv)
+			sb, okB := rbSegment(b.srv)
+			if a.srv >= lo && b.srv <= hi && a.srv != 0 && okA && okB && sa == sb && b.recv-a.recv > r.b1s {
 				r.b1s = b.recv - a.recv
 			}
 		}
