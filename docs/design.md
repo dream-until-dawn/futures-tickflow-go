@@ -5577,8 +5577,12 @@ L8  断线与补洞（二·戊）—— 与起步共用一条路径（L12）
     ⚠️ 读数先行：断线之后推送通道是从哪一根重新开始发、补回来的根与推送里的同一根是否逐位相等 —— 要在盘中实测（V1，取数前问用户）
     📌 P-c 落地（source/shinnysource/live.go ＋ stream.go reconnected；读数还没取 —— 下面是按 L12 同一条路写的，断线读数来了再核）：
        Live.Next：推送连接（subscribe_quote ＋ set_chart view_width 30 ＋ peek_message）；读 goroutine 给每帧打上【收到那一刻】的本机时刻；
-         让时间走用 Ticker（不用每轮重置的 Timer：帧比 liveTick 密时 Timer 一直不响 ⇒ 冻结永远不判，突变实测）
+         每次醒来（有帧，或 liveTick 到）先按收到顺序把帧全喂完、再 tick ⇒ 帧再密冻结也照判（cff2188 只在计时器响时 tick，突变实测）
+         读协程从不因调用方阻塞：帧进一个不阻塞的队列、peek 照发（评审方 09-21：cff2188 用容量 64 的通道，调用方一慢服务器就攒帧，
+         收到时刻整段推迟 ⇒ 假的 ErrClockSkew，实测）；收下没处理的超过 liveQueueMax（10000）⇒ ErrConsumerStalled（不静默丢帧）
        断了 ⇒ 重连 Reconnects 次（默认 3，退避 1 / 2 / 4 秒），都失败 ⇒ ErrDisconnected；报错之后 Next 一直返回同一个错
+       ctx 到期不算 Live 的错（重连退避中、补齐中都一样）：「换了连接」绑在 connect 上（只要之前连上过就先告诉 liveCore），不绑在重连循环里；
+         补齐中 ctx 到期不粘，每一轮 Next 都再问一次要不要补齐；第一次连上时冻结计时也从连上这一刻起（不从段首）
        重连时 liveCore：快照清空 · 丢掉还没交出的根（id > lastID，留着会与新推送之间的空档被当成跳号）· 交出过的留着（新连接重发它们时照 L5 比值 ⇒ 跨重连的修正查得到）·
          新连接上再做一次启动自检（按「这条连接上第一帧带根的」触发，不按 rows 非空）· 冻结计时从重连起算 ·
          交出过 ⇒ 接缝从起始格换成 lastID＋1（resync）：新推送最早那根不是它 ⇒ 历史通道补 [已交出那根 ＋ 1 分钟, 新推送最早那根)，第一根不是 lastID＋1 ⇒ ErrIDGap

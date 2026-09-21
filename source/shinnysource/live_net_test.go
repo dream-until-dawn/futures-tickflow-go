@@ -226,7 +226,8 @@ func TestLiveNetReconnectGivesUp(t *testing.T) {
 
 // guard: 帧来得比 liveTick 密时时间照样走 —— 冻结判定只在 tick 里做（feed 只顺带交根）：9:30 那根之后
 // K 线再没动过、只连着来只带报价的帧（间隔远小于 liveTick），本机已到 9:33（> N）⇒ 照样报 ErrSuspectedFreeze。
-// 每轮重置一个 Timer 的写法在这里一直等不到它响 ⇒ 冻结永远不判（这一格就是为它写的）。
+// 「只在计时器响时 tick ＋ 每轮重置一个 Timer」的写法在这里一直等不到它响 ⇒ 冻结永远不判（这一格就是为它写的；
+// 现在每次醒来都 tick，计时器换成每轮一个 Timer 已是等价写法 ⇒ 突变改为「醒来之后不 tick」）。
 // （段末根不靠这一条：帧里的 feed 会拿收到时刻去 deliver，帧再密也交得出去。）
 func TestLiveNetTicksUnderFrameFlood(t *testing.T) {
 	m := at2(2026, 9, 4, 9, 30, 0, 0)
@@ -259,5 +260,110 @@ func TestLiveNetTicksUnderFrameFlood(t *testing.T) {
 	defer cancel()
 	if _, err := r.live.Next(ctx); !errors.Is(err, ErrSuspectedFreeze) {
 		t.Fatalf("帧不断、K 线不动、本机已过 N：1 秒内 %v，应 ErrSuspectedFreeze（liveTick 50 ms）", err)
+	}
+}
+
+// —— ctx 到期与背压（评审方 09-21 读代码推出的三处，先红后修）——
+
+// guard: ctx 在重连退避期间到期 ⇒ 不算 Live 的错；换一个 ctx 再调 Next，照样按「换了连接」接上 lastID＋1
+// （liveCore 得知道换了连接 —— 这件事绑在连接上，不绑在重连循环里：cff2188 绑在 redial 的循环里，退避时 ctx 一到期就跳过了）。
+func TestLiveNetCtxExpiresDuringBackoff(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	r := newNetRig(t, m, LiveOptions{FreezeN: time.Hour})
+	liveBackoff = func(int) time.Duration { return 300 * time.Millisecond }
+	i := r.id(t, m)
+	r.clock.Store(r.ts(i+2) + 10000)
+	r.send(span(i, i+2), nil)
+	r.drop()
+	r.next(t, r.ts(i), r.ts(i+1))
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	_, err := r.live.Next(ctx)
+	cancel()
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("退避期间 ctx 到期：%v，应返回 ctx 的错", err)
+	}
+	r.clock.Store(r.ts(i+8) + 10000)
+	r.send(span(i+6, i+8), nil)
+	var want []int64
+	for k := int64(2); k <= 7; k++ {
+		want = append(want, r.ts(i+k))
+	}
+	r.next(t, want...)
+}
+
+// guard: ctx 在补齐（历史通道）期间到期 ⇒ 返回 ctx 的错、不粘住；换一个 ctx 再调 Next，补齐照常完成、不重不漏。
+func TestLiveNetCtxExpiresDuringFill(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	r := newNetRig(t, m, LiveOptions{})
+	i := r.id(t, m)
+	r.fs.mu.Lock()
+	r.fs.histDelay = 400 * time.Millisecond
+	r.fs.mu.Unlock()
+	r.clock.Store(r.ts(i+7) + 10000)
+	r.send(span(i+5, i+7), nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Millisecond)
+	b, err := r.live.Next(ctx)
+	cancel()
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("补齐期间 ctx 到期：%s · %v，应返回 ctx 的错", fmtTs(b.Ts), err)
+	}
+	r.fs.mu.Lock()
+	r.fs.histDelay = 0
+	r.fs.mu.Unlock()
+	var want []int64
+	for k := int64(0); k <= 6; k++ {
+		want = append(want, r.ts(i+k))
+	}
+	r.next(t, want...)
+}
+
+// guard: 调用方一段时间不取（策略在算）⇒ 读协程照读、照发 peek，帧上的本机收到时刻是真的收到时刻。
+// 本机在 T1 收到 200 帧报价（quote.datetime ＝ T1，D ≈ 0），调用方到 T1 ＋ 3 秒才来取：
+// 时刻若被推迟到取的那一刻，D 整段抬到 3000 ms ＞ G/2 ⇒ 一次假的 ErrClockSkew（cff2188：通道容量 64 满了读协程就停）。
+func TestLiveNetSlowConsumerKeepsRecvTime(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	r := newNetRig(t, m, LiveOptions{})
+	i := r.id(t, m)
+	t1 := m + 60500
+	r.clock.Store(t1)
+	r.send(span(i, i+1), nil)
+	r.next(t, m) // 连上、交出 9:30；之后调用方「去算别的」：不调 Next
+	q := map[string]any{"quotes": map[string]any{liveSym.Native(): map[string]any{"datetime": fmtMs(t1) + "000"}}}
+	for k := 0; k < 200; k++ {
+		r.fs.push <- pushCmd{data: q}
+	}
+	r.send([]int64{i + 2}, nil)
+	time.Sleep(300 * time.Millisecond) // 服务端在 T1 这段时间里把帧全写出去了
+	r.clock.Store(t1 + 3000)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	if b, err := r.live.Next(ctx); err != nil || b.Ts != r.ts(i+1) {
+		t.Fatalf("调用方晚 3 秒来取：%s · %v，应交出 9:31、不报（帧上的时刻是收到时刻，不是取的时刻）", fmtTs(b.Ts), err)
+	}
+}
+
+// guard: 读协程不阻塞的代价是内存 ⇒ 收下没处理的帧超过 liveQueueMax ⇒ ErrConsumerStalled（明确报，不静默丢帧），并粘住。
+func TestLiveNetStalledConsumerIsAnError(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	r := newNetRig(t, m, LiveOptions{})
+	old := liveQueueMax
+	liveQueueMax = 20
+	t.Cleanup(func() { liveQueueMax = old })
+	i := r.id(t, m)
+	t1 := m + 60500
+	r.clock.Store(t1)
+	r.send(span(i, i+1), nil)
+	r.next(t, m)
+	q := map[string]any{"quotes": map[string]any{liveSym.Native(): map[string]any{"datetime": fmtMs(t1) + "000"}}}
+	for k := 0; k < 50; k++ {
+		r.fs.push <- pushCmd{data: q}
+	}
+	time.Sleep(300 * time.Millisecond)
+	err := r.nextErr(t)
+	if !errors.Is(err, ErrConsumerStalled) || !strings.Contains(err.Error(), "已收下 20 帧") {
+		t.Fatalf("调用方不取、帧超过上限 20：%v，应 Is ErrConsumerStalled、报文带「已收下 20 帧」", err)
+	}
+	if again := r.nextErr(t); again != err {
+		t.Errorf("再调 Next：%v，应返回同一个错", again)
 	}
 }

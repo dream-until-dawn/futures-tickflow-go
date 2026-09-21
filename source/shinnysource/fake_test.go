@@ -56,7 +56,8 @@ type fakeServer struct {
 	// 之后照 push 里的指令逐条发（所有推送连接共用一条指令队列，一条连接用到 drop 为止）
 	push      chan pushCmd
 	pushConns int
-	mdDown    bool // 行情握手一律回 503（重连失败那一格）
+	mdDown    bool          // 行情握手一律回 503（重连失败那一格）
+	histDelay time.Duration // 历史窗口（带 focus / left 的 set_chart）回之前先等这么久（补齐期间 ctx 到期那一格）
 }
 
 // pushCmd 是推送连接上的一条指令：发一帧 rtn_data（data 是它的一个元素），或断开这条连接。
@@ -179,7 +180,15 @@ func (fs *fakeServer) handleMD(w http.ResponseWriter, r *http.Request) {
 			fs.mu.Lock()
 			fs.setCharts = append(fs.setCharts, m)
 			stallAfter := fs.stallAfterPage
+			delay := fs.histDelay
 			fs.mu.Unlock()
+			if delay > 0 {
+				select {
+				case <-time.After(delay):
+				case <-ctx.Done():
+					return
+				}
+			}
 			charts++
 			pending = append(pending, fs.window(m, sent))
 			if stallAfter > 0 && charts > stallAfter {
