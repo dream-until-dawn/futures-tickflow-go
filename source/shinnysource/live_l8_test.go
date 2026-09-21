@@ -28,10 +28,13 @@ import (
 
 // v0.10 L8 断线读数与 Live 实跑（probe.md 6.39；判对先落文）。连真天勤，点名才跑：
 //
-//	TICKFLOW_LIVE=1 TICKFLOW_L8_OUT=<仓库外的目录> \
+//	TICKFLOW_LIVE=1 TICKFLOW_L8_OUT=<仓库外的目录> TICKFLOW_L8_INS=<事先定的主力合约，如 SHFE.rb2701> \
 //	TICKFLOW_L8_BEGIN=2026-09-22T08:59:30+08:00 TICKFLOW_L8_DROP=2026-09-22T09:15:00+08:00 \
 //	TICKFLOW_L8_END=2026-09-22T09:30:10+08:00 TICKFLOW_L8_START=2026-09-21T21:00:00+08:00 \
-//	go test ./source/shinnysource/ -run TestLiveL8Real -v -timeout 14h
+//	go test ./source/shinnysource/ -run '^TestLiveL8Real$' -count=1 -v -timeout 0
+//
+// ⛔ -timeout 0（或 ≥ 14h）：这一格先等到 BEGIN 再跑半小时，go test 默认 10 分钟就 panic —— 测试开头断言 t.Deadline()。
+// ⛔ 合约由 TICKFLOW_L8_INS 事先定（用户可见）；公开合约表只作对照，取不到不影响起跑。
 //
 // ⛔ 边界：只用行情通道（鉴权 · 名称服务 · set_chart / subscribe_quote / peek_message）＋ 一次公开合约表（不用账户）。
 // ⛔ 落盘文件必须在仓库外；只报缺了哪几个键名，不打印任何凭证值。
@@ -310,7 +313,7 @@ func (c *l8Counter) RoundTrip(r *http.Request) (*http.Response, error) {
 
 func l8Env(t *testing.T) map[string]string {
 	t.Helper()
-	keys := []string{"TICKFLOW_L8_OUT", "TICKFLOW_L8_BEGIN", "TICKFLOW_L8_DROP", "TICKFLOW_L8_END", "TICKFLOW_L8_START"}
+	keys := []string{"TICKFLOW_L8_OUT", "TICKFLOW_L8_INS", "TICKFLOW_L8_BEGIN", "TICKFLOW_L8_DROP", "TICKFLOW_L8_END", "TICKFLOW_L8_START"}
 	v := map[string]string{}
 	var missing []string
 	for _, k := range keys {
@@ -388,17 +391,33 @@ func TestLiveL8Real(t *testing.T) {
 	if !(begin < drop && drop+30000 < end) {
 		t.Fatalf("时刻次序不对：BEGIN < DROP、DROP ＋ 30 秒 < END")
 	}
-	if w := time.Until(time.UnixMilli(begin)); w > 0 {
-		t.Logf("等到 %s（还有 %v）", fmtMs(begin), w.Round(time.Second))
-		time.Sleep(w)
+	if dl, ok := t.Deadline(); ok && dl.Before(time.UnixMilli(end).Add(5*time.Minute)) {
+		t.Fatalf("go test 的期限 %s 早于 END ＋ 5 分钟 —— 用 -timeout 0（或 ≥ 14h）", dl.Format(time.RFC3339))
+	}
+	sym, err := tickflow.ParseSymbol(env["TICKFLOW_L8_INS"])
+	if err != nil {
+		t.Fatalf("TICKFLOW_L8_INS：%v", err)
+	}
+	// 按墙钟等（每秒看一次）：time.Sleep 走单调时钟，机器夜里挂起过的话会醒晚
+	if time.Now().UnixMilli() < begin {
+		t.Logf("等到 %s（按墙钟每秒看一次）", fmtMs(begin))
+	}
+	for time.Now().UnixMilli() < begin {
+		time.Sleep(time.Second)
+	}
+	if now := time.Now().UnixMilli(); now > begin+30000 {
+		t.Fatalf("醒来时已是 %s，晚于 BEGIN ＋ 30 秒 —— 窗口错位，不联网", fmtMs(now))
 	}
 	ctx := context.Background()
 	uctx, cancel := context.WithTimeout(ctx, 20*time.Second)
-	sym, err := l8Underlying(uctx)
-	cancel()
-	if err != nil {
-		t.Fatalf("取主力合约：%v", err)
+	if u, err := l8Underlying(uctx); err != nil {
+		t.Logf("公开合约表（只作对照）没取到：%v —— 照 TICKFLOW_L8_INS 跑", err)
+	} else if u != sym {
+		t.Logf("⚠️ 公开合约表说主力是 %s，与 TICKFLOW_L8_INS %s 不同 —— 照 TICKFLOW_L8_INS 跑（写进读数）", u.Native(), sym.Native())
+	} else {
+		t.Logf("公开合约表与 TICKFLOW_L8_INS 一致：%s", sym.Native())
 	}
+	cancel()
 	ins := sym.Native()
 	t.Logf("合约 %s · 起始格 %s · 甲断 %s · 乙断 %s · 结束 %s", ins, fmtMs(start), fmtMs(drop), fmtMs(drop+30000), fmtMs(end))
 
@@ -491,6 +510,11 @@ func TestLiveL8Real(t *testing.T) {
 		defer live.Close()
 		dropped := false
 		for time.Now().UnixMilli() < end {
+			// 到点就断，不等 Next 超时（那一刻若一直有根交出，Next 不会超时）
+			if !dropped && time.Now().UnixMilli() >= drop+30000 && live.conn != nil {
+				live.conn.CloseNow() // 主动断一次（L8）
+				dropped = true
+			}
 			dl := end
 			if !dropped {
 				dl = drop + 30000
@@ -539,6 +563,34 @@ func TestLiveL8Real(t *testing.T) {
 		t.Fatalf("分析：%v", err)
 	}
 	l8Report(t, res)
+	l8Lag(t, cal, sym, livePath)
+}
+
+// l8Lag：L4 在实盘上的第一份读数（只印，不作判据）—— 交出时刻 − 收盘，非末根与时段末根分开（与回放那一行同一口径）。
+func l8Lag(t *testing.T, cal tickflow.Calendar, sym tickflow.Symbol, livePath string) {
+	t.Helper()
+	f, err := os.Open(livePath)
+	if err != nil {
+		t.Logf("L4 读数：%v", err)
+		return
+	}
+	defer f.Close()
+	c := newLiveCore(cal, sym, 0, LiveOptions{})
+	var lag, seg []int64
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		var o l8Out
+		if json.Unmarshal(sc.Bytes(), &o) != nil {
+			continue
+		}
+		d := o.When - (o.Ts + 60000)
+		if end, _ := c.isSegmentEnd(tickflow.Bar{TsEnd: o.Ts + 60000, TradingDay: tickflow.TradingDay(o.Day)}); end {
+			seg = append(seg, d)
+		} else {
+			lag = append(lag, d)
+		}
+	}
+	t.Logf("L4 读数（交出时刻 − 收盘，本机，毫秒；起步补齐那一批是一次交出的，偏大属实）：非末根 %s · 时段末根 %v", distMs(lag), seg)
 }
 
 // l8AnalyzeFiles 从落盘文件读回来再分析（与离线复算同一条路）。
