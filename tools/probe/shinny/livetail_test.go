@@ -323,6 +323,178 @@ func TestPower637FullDayNotVoidedByBarCount(t *testing.T) {
 	}
 }
 
+// withPreOpenResend 在合成日盘上加一帧：下一时段开盘前 150 ms（13:29:59.850），整根原值重发上一时段末根（11:29 开盘那根，id 1134）。
+// 这是 6.37 那天真实数据里的形状（11:30 那根在 13:29:59.850 被整根重发），合成数据原先没有。
+func withPreOpenResend(fr []tailFrame, skew int64) []tailFrame {
+	durKey := strconv.FormatInt(tailDur, 10)
+	day := time.Date(2026, 9, 21, 0, 0, 0, 0, cst)
+	open := day.Add(11*time.Hour + 29*time.Minute).UnixMilli()
+	full := map[string]any{"datetime": float64(open) * 1e6, "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.5, "volume": 2.0, "close_oi": 5.0, "open_oi": 5.0}
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): full}}}}}}})
+	at := day.Add(13*time.Hour+29*time.Minute+59*time.Second+850*time.Millisecond).UnixMilli() - skew
+	return insertFrame(fr, tailFrame{RecvMs: at, Raw: raw})
+}
+
+// guard: 6.36 标定挑目标（评审方裁「甲」）—— 第一根、第二根自己就 A1 > 0（6.37 那天第一根就是这样）⇒ 跳过它们，挑 id 2，且标定过；
+// 对照：干净的帧 ⇒ 挑 id 1（id 0 开盘早于第一帧，只看到了半截）。旧挑法（第一根下一根出现过的）在前一种上挑 id 0、A1 加不上去。
+func TestCalib636SkipsBarsAlreadyLate(t *testing.T) {
+	const t0 = int64(1789000000000)
+	for _, c := range []struct {
+		late   map[int64]bool
+		wantID int64
+	}{{map[int64]bool{0: true, 1: true}, 2}, {nil, 1}} {
+		fr := synthTail(t0, 40, c.late, nil)
+		id, _, found := calibTarget(fr)
+		if !found || id != c.wantID {
+			t.Errorf("晚改 %v：挑中 id %d（找到 %v），应为 %d", c.late, id, found, c.wantID)
+		}
+		if found, ok, why := calib636(fr, analyzeTail(fr)); !found || !ok {
+			t.Errorf("晚改 %v：6.36 标定没过：%s", c.late, why)
+		}
+	}
+}
+
+// guard: calibTarget 的 A2、A1s 两个条件各有一种它们独自挡住的形状（本机慢 2.4 秒，skewed 给每帧带上服务器时刻）——
+//
+//	A2：id 0 一次改动的服务器时刻是 C − 0.1 秒（没晚于收盘），却在下一根出现之后 0.3 秒才送到（网络慢了这一帧）
+//	    ⇒ A1 − 1.6 秒 ≤ 0、A1s − 0.1 秒 ≤ 0，只有 A2 ＋0.3 秒 > 0 ⇒ 挑 id 1
+//	    （本机偏差恒定时 A2 > 0 必带着 A1s > 0，只有「这一帧晚到」才让 A2 单独 > 0）
+//	A1s：id 0 在服务器 C ＋ 0.3 秒一改 ⇒ 本机 C − 2.1 秒收到：A1、A2 都 ≤ 0，A1s ＋0.3 秒 > 0 ⇒ 挑 id 1
+func TestCalib636TargetNeedsA2AndA1sRoom(t *testing.T) {
+	const t0, skew = int64(1789000000000), int64(2400)
+	durKey := strconv.FormatInt(tailDur, 10)
+	c0 := t0 + 60000
+	slow, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": time.UnixMilli(c0 - 100).In(cst).Format("2006-01-02 15:04:05.000000")}},
+		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{"data": map[string]any{"0": map[string]any{"close": 100.6}}}}}}}})
+	fr := insertFrame(skewed(synthTail(t0, 40, nil, nil), skew), tailFrame{RecvMs: c0 + 500 - skew + 300, Raw: slow})
+	if b := analyzeTail(fr); b.a2Pos != 1 || b.a1Pos != 0 || b.a1sPos != 0 {
+		t.Fatalf("A2 那格前提没成立：A1>0 %d · A2>0 %d · A1s>0 %d，应为 0 · 1 · 0", b.a1Pos, b.a2Pos, b.a1sPos)
+	}
+	if id, _, found := calibTarget(fr); !found || id != 1 {
+		t.Errorf("A2 那格：挑中 id %d（找到 %v），应为 1", id, found)
+	}
+	if found, ok, why := calib636(fr, analyzeTail(fr)); !found || !ok {
+		t.Errorf("A2 那格：6.36 标定没过：%s", why)
+	}
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": time.UnixMilli(c0 + 300).In(cst).Format("2006-01-02 15:04:05.000000")}},
+		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{"data": map[string]any{"0": map[string]any{"close": 100.6}}}}}}}})
+	fr2 := insertFrame(skewed(synthTail(t0, 40, nil, nil), skew), tailFrame{RecvMs: c0 + 300 - skew, Raw: raw})
+	if id, _, found := calibTarget(fr2); !found || id != 1 {
+		t.Errorf("A1s 那格：挑中 id %d（找到 %v），应为 1", id, found)
+	}
+	if found, ok, why := calib636(fr2, analyzeTail(fr2)); !found || !ok {
+		t.Errorf("A1s 那格：6.36 标定没过：%s", why)
+	}
+}
+
+// guard: calibTarget 的 A1 条件独自挡住的形状 —— 6.37 那天的真形状：id 1 在收盘后 0.2 秒又改了一次，而下一根 0.5 秒才出现
+// ⇒ A1 ＋0.2 秒 > 0、A2 − 0.3 秒 ≤ 0（A2 挡不住它）⇒ 跳过，挑 id 2。
+func TestCalib636TargetNeedsA1Room(t *testing.T) {
+	const t0 = int64(1789000000000)
+	durKey := strconv.FormatInt(tailDur, 10)
+	c1 := t0 + 2*60000
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{"1": map[string]any{"close": 100.6}}}}}}}})
+	fr := insertFrame(synthTail(t0, 40, nil, nil), tailFrame{RecvMs: c1 + 200, Raw: raw})
+	base := analyzeTail(fr)
+	if base.a1Pos != 1 || base.a2Pos != 0 {
+		t.Fatalf("前提没成立：A1>0 %d · A2>0 %d，应为 1 · 0", base.a1Pos, base.a2Pos)
+	}
+	if id, _, found := calibTarget(fr); !found || id != 2 {
+		t.Errorf("挑中 id %d（找到 %v），应为 2", id, found)
+	}
+	if found, ok, why := calib636(fr, base); !found || !ok {
+		t.Errorf("6.36 标定没过：%s", why)
+	}
+}
+
+// guard: 6.36 那格的造帧也是持续的 —— 目标那根收盘很久之后被整根原值重发一次 ⇒ 真改动仍只 ＋1（不持续则 ＋2：造一次、冲回一次）。
+func TestCalib636SurvivesLaterResendOfTarget(t *testing.T) {
+	const t0 = int64(1789000000000)
+	fr := synthTail(t0, 40, nil, nil)
+	id, _, found := calibTarget(fr)
+	if !found {
+		t.Fatal("标定目标找不到")
+	}
+	durKey := strconv.FormatInt(tailDur, 10)
+	open := t0 + id*60000
+	full := map[string]any{"datetime": float64(open) * 1e6, "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.5, "volume": 2.0, "close_oi": 5.0, "open_oi": 5.0}
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(id, 10): full}}}}}}})
+	fr = insertFrame(fr, tailFrame{RecvMs: open + 10*60000, Raw: raw})
+	base := analyzeTail(fr)
+	if base.changes != analyzeTail(synthTail(t0, 40, nil, nil)).changes {
+		t.Fatalf("前提没成立：那次整根原值重发被算成了真改动")
+	}
+	if found, ok, why := calib636(fr, base); !found || !ok {
+		t.Errorf("6.36 标定没过：%s", why)
+	}
+}
+
+// guard: 两格标定造出来的值是持续的（评审方裁「乙」）—— 下一时段开盘前整根原值重发上一时段末根，不许把造出来的值冲回去。
+// 基线：那次重发算「重发未变」、post 仍 0；标定：6.37 那格 post 只 ＋1、E_loc 是 C ＋ 3 秒（不是被拉到 13:29:59）。
+func TestCalib637SurvivesPreOpenResend(t *testing.T) {
+	const skew = 2400
+	plain := analyzeTail(synthDaySession(skew))
+	fr := withPreOpenResend(synthDaySession(skew), skew)
+	base := analyzeTail(fr)
+	if base.resends != plain.resends+1 || base.segs[1].post != 0 {
+		t.Fatalf("前提没成立：重发未变 %d（对照 %d）· 11:30 那根 post %d，应为对照 ＋1 · 0", base.resends, plain.resends, base.segs[1].post)
+	}
+	if ok, why := calibrate637(fr, base); !ok {
+		t.Errorf("6.37 标定没过：%s", why)
+	}
+	if found, ok, why := calib636(fr, base); !found || !ok {
+		t.Errorf("6.36 标定没过：%s", why)
+	}
+}
+
+// guard: persist 只改 at 之后、带这根 close 的帧；at 之前的、别的根的、null 帧都不动。
+func TestPersistRewritesOnlyLaterCloseOfThatBar(t *testing.T) {
+	const t0 = int64(1789000000000)
+	fr := synthTail(t0, 5, nil, nil)
+	const id = int64(2)
+	at := t0 + id*60000 + 60000 // 这根收盘时刻
+	out := persist(fr, id, at, 1e9)
+	changed := 0
+	for i := range fr {
+		if string(fr[i].Raw) != string(out[i].Raw) {
+			changed++
+			if fr[i].RecvMs <= at {
+				t.Errorf("at 之前的帧被改了：%s", fr[i].Raw)
+			}
+		}
+	}
+	if changed != 0 {
+		t.Errorf("synthTail 里 id %d 在收盘之后不再出现，应一帧不改，改了 %d 帧", id, changed)
+	}
+	// 在它之后补一帧原值重发、一帧别的根、一帧 null ⇒ 只有第一帧被改
+	durKey := strconv.FormatInt(tailDur, 10)
+	mk := func(bid int64, v any) json.RawMessage {
+		b, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+			"data": map[string]any{strconv.FormatInt(bid, 10): v}}}}}}})
+		return b
+	}
+	extra := []tailFrame{{RecvMs: at + 1000, Raw: mk(id, map[string]any{"close": 100.5})}, {RecvMs: at + 2000, Raw: mk(id+1, map[string]any{"close": 100.5})}, {RecvMs: at + 3000, Raw: mk(id, nil)}}
+	fr2 := fr
+	for _, x := range extra {
+		fr2 = insertFrame(fr2, x)
+	}
+	out2 := persist(fr2, id, at, 1e9)
+	var diff []int64
+	for i := range fr2 {
+		if string(fr2[i].Raw) != string(out2[i].Raw) {
+			diff = append(diff, fr2[i].RecvMs-at)
+		}
+	}
+	if len(diff) != 1 || diff[0] != 1000 {
+		t.Errorf("被改的帧（相对 at 的毫秒）%v，应只有 [1000]", diff)
+	}
+}
+
 // guard: 6.37 的标定本身能过（第 2 处末根 C＋3 秒又改 ⇒ post ＋1、E_loc 变大；旧报价不进 D）。
 func TestLiveCalibrate637(t *testing.T) {
 	fr := synthDaySession(2400)

@@ -492,7 +492,8 @@ func maxOf(xs []int64) int64 {
 
 func ceilSec(ms int64) int64 { return (ms + 999) / 1000 }
 
-// calibrate 造一帧：calibID 那根在「收盘 ＋ 5 秒」又改了一次（收盘价 ＋1）—— 必须让 A1、A2 各多报一根。
+// calibrate 造一帧：id 那根在「收盘 ＋ 5 秒」又改了一次（收盘价改成 1e9）—— 必须让 A1、A2、A1s 各多报一根。
+// 造出来的值是持续的（见 persist）：之后记录里凡带这根 close 的帧，close 都是 1e9。
 func calibrate(frames []tailFrame, id, closeMs int64) []tailFrame {
 	durKey := strconv.FormatInt(tailDur, 10)
 	srv := time.UnixMilli(closeMs + 5000).In(cst).Format("2006-01-02 15:04:05.000000")
@@ -502,10 +503,142 @@ func calibrate(frames []tailFrame, id, closeMs int64) []tailFrame {
 			"data": map[string]any{strconv.FormatInt(id, 10): map[string]any{"close": 1e9}}}}}}}}
 	raw, _ := json.Marshal(patch)
 	at := closeMs + 5000
+	return insertFrame(persist(frames, id, at, 1e9), tailFrame{RecvMs: at, Raw: raw})
+}
+
+// persist 让造出来的值「持续」（2026-09-21 评审方裁「乙」）：at 之后，记录里凡带 id 那根 close 的帧，close 一律改成 v；
+// null 帧照旧（离窗）。这才像服务器真改了值 —— 之后的重发带的是新值。
+// 不这样做，真实数据里的「整根原值重发」（6.37 读数：11:30 那根在 13:29:59.850 被整根重发）会把造出来的值冲回原值，
+// 分析器照实把这次「改回来」数成第二次改动，标定就红在构造上。
+func persist(frames []tailFrame, id, at int64, v float64) []tailFrame {
+	durKey := strconv.FormatInt(tailDur, 10)
+	key := strconv.FormatInt(id, 10)
 	out := append([]tailFrame(nil), frames...)
-	i := sort.Search(len(out), func(i int) bool { return out[i].RecvMs > at })
-	out = append(out[:i], append([]tailFrame{{RecvMs: at, Raw: raw}}, out[i:]...)...)
+	for i := range out {
+		if out[i].RecvMs <= at {
+			continue
+		}
+		var m map[string]any
+		if json.Unmarshal(out[i].Raw, &m) != nil {
+			continue
+		}
+		hit := false
+		data, _ := m["data"].([]any)
+		for _, d := range data {
+			dm, _ := d.(map[string]any)
+			if b := obj(dm, "klines", tailSym, durKey, "data", key); b != nil {
+				if _, ok := b["close"]; ok {
+					b["close"] = v
+					hit = true
+				}
+			}
+		}
+		if hit {
+			out[i].Raw, _ = json.Marshal(m)
+		}
+	}
 	return out
+}
+
+// calibTarget 挑 6.36 标定的目标（2026-09-21 评审方裁「甲」）：按 id 升序，第一根满足
+//
+//	开盘时刻不早于记录的第一帧（录制开头那根只看到了半截，view_width 带来的历史也在这里排除）
+//	下一根出现在记录里
+//	A1 ≤ 0、A2 ≤ 0、A1s ≤ 0（有服务器时刻时）—— 三个计数各有可加的余地
+//
+// 旧挑法是「第一根下一根出现过的」：6.37 那天它挑中的正好是本来就 A1 > 0 的那根，造帧后加不上去。
+// 这里独立重放一遍（只读 merge / obj / sameVal / num，不经 analyzeTail）：挑错只会让标定红，不会让它假绿 ——
+// 判绿的仍是「造帧后三个计数各 ＋1」。
+func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
+	if len(frames) == 0 {
+		return 0, 0, false
+	}
+	durKey := strconv.FormatInt(tailDur, 10)
+	type bar struct {
+		v            barVal
+		born, open   int64
+		lastL, lastS int64
+	}
+	bars := map[int64]*bar{}
+	snap := map[string]any{}
+	var srvNow int64
+	for _, fr := range frames {
+		var m struct {
+			Aid  string           `json:"aid"`
+			Data []map[string]any `json:"data"`
+		}
+		if json.Unmarshal(fr.Raw, &m) != nil || m.Aid != "rtn_data" {
+			continue
+		}
+		touched := map[int64]bool{}
+		for _, d := range m.Data {
+			if kd := obj(d, "klines", tailSym, durKey, "data"); kd != nil {
+				for k := range kd {
+					if x, err := strconv.ParseInt(k, 10, 64); err == nil {
+						touched[x] = true
+					}
+				}
+			}
+			merge(snap, d)
+		}
+		if q := obj(snap, "quotes", tailSym); q != nil {
+			if s, ok := q["datetime"].(string); ok {
+				if t, err := time.ParseInLocation("2006-01-02 15:04:05.000000", s, cst); err == nil {
+					srvNow = t.UnixMilli()
+				}
+			}
+		}
+		data := obj(snap, "klines", tailSym, durKey, "data")
+		for x := range touched {
+			b := obj(data, strconv.FormatInt(x, 10))
+			if b == nil {
+				continue
+			}
+			v := barVal{num(b["open"]), num(b["high"]), num(b["low"]), num(b["close"]), num(b["volume"]), num(b["close_oi"]), num(b["open_oi"])}
+			s, seen := bars[x]
+			if !seen {
+				bars[x] = &bar{v: v, born: fr.RecvMs, open: int64(num(b["datetime"])) / 1e6, lastL: fr.RecvMs, lastS: srvNow}
+				continue
+			}
+			if sameVal(v, s.v) {
+				continue
+			}
+			s.v, s.lastL, s.lastS = v, fr.RecvMs, srvNow
+		}
+	}
+	ids := make([]int64, 0, len(bars))
+	for x := range bars {
+		ids = append(ids, x)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	for _, x := range ids {
+		b := bars[x]
+		next, has := bars[x+1]
+		if !has || b.open < frames[0].RecvMs {
+			continue
+		}
+		c := b.open + 60000
+		if b.lastL-c > 0 || b.lastL-next.born > 0 || (b.lastS != 0 && b.lastS-c > 0) {
+			continue
+		}
+		return x, c, true
+	}
+	return 0, 0, false
+}
+
+// calib636 做 6.36 的标定：挑目标（calibTarget）→ 造帧（calibrate）→ A1、A2、A1s 必须各多报一根。
+func calib636(frames []tailFrame, base tailResult) (found, ok bool, why string) {
+	id, closeMs, found := calibTarget(frames)
+	if !found {
+		return false, false, "标定目标找不到（没有一根：开盘不早于第一帧 · 下一根出现过 · A1 ≤ 0 · A2 ≤ 0 · A1s ≤ 0）⇒ 标定作废"
+	}
+	c := analyzeTail(calibrate(frames, id, closeMs))
+	// 真改动恰好 ＋1：造的是一次改动。三个计数是「每根一个布尔」，之后的原值重发把值冲回去时它们照样 ＋1，
+	// 只有这一条看得见（persist 漏了 ⇒ ＋2）。
+	ok = c.a1Pos == base.a1Pos+1 && c.a2Pos == base.a2Pos+1 && c.a1sPos == base.a1sPos+1 && c.changes == base.changes+1
+	why = fmt.Sprintf("目标 id %d（收盘 %s）· 基线 A1>0 %d · A2>0 %d · A1s>0 %d · 真改动 %d ⇒ 造帧后 %d · %d · %d · %d（必须各 ＋1）",
+		id, showMs(closeMs), base.a1Pos, base.a2Pos, base.a1sPos, base.changes, c.a1Pos, c.a2Pos, c.a1sPos, c.changes)
+	return true, ok, why
 }
 
 // calibrate637 做 6.37 的两格标定：
@@ -521,7 +654,7 @@ func calibrate637(frames []tailFrame, base tailResult) (bool, string) {
 		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
 			"data": map[string]any{strconv.FormatInt(sg.id, 10): map[string]any{"close": 1e9}}}}}}}}
 	raw, _ := json.Marshal(patch)
-	fr := insertFrame(frames, tailFrame{RecvMs: at, Raw: raw})
+	fr := insertFrame(persist(frames, sg.id, at, 1e9), tailFrame{RecvMs: at, Raw: raw})
 	c1 := analyzeTail(fr)
 	var got segEnd
 	for _, x := range c1.segs {
@@ -580,34 +713,16 @@ func probeLiveAnalyze() {
 	}
 	r := analyzeTail(frames)
 	if *tailCalib {
-		if !r.calibOK {
-			report(name, "FAIL", "标定目标找不到（没有一根的下一根出现过）⇒ 标定作废")
+		found, ok, why := calib636(frames, r)
+		if !found {
+			report(name, "FAIL", why)
 			return
 		}
-		// 找目标那根的收盘时刻：重放一次拿 datetime
-		var closeMs int64
-		for _, fr := range frames {
-			var m struct {
-				Data []map[string]any `json:"data"`
-			}
-			json.Unmarshal(fr.Raw, &m)
-			for _, d := range m.Data {
-				if b := obj(d, "klines", tailSym, strconv.FormatInt(tailDur, 10), "data", strconv.FormatInt(r.calibID, 10)); b != nil {
-					if v, ok := b["datetime"].(float64); ok {
-						closeMs = int64(v)/1e6 + 60000
-					}
-				}
-			}
-		}
-		c := analyzeTail(calibrate(frames, r.calibID, closeMs))
-		fmt.Printf("标定 服务器时刻版 基线 A1s>0 %d ⇒ 造帧后 %d\n", r.a1sPos, c.a1sPos)
-		fmt.Printf("标定 目标 id %d（收盘 %s）· 基线 A1>0 %d · A2>0 %d ⇒ 造帧后 A1>0 %d · A2>0 %d\n",
-			r.calibID, showMs(closeMs), r.a1Pos, r.a2Pos, c.a1Pos, c.a2Pos)
 		st := "PASS"
-		if !(c.a1Pos == r.a1Pos+1 && c.a2Pos == r.a2Pos+1 && c.a1sPos == r.a1sPos+1) {
+		if !ok {
 			st = "FAIL"
 		}
-		report(name+"-calib", st, "A1 / A2 必须各多报一根")
+		report(name+"-calib", st, why)
 		if len(r.segs) >= 2 {
 			ok637, why := calibrate637(frames, r)
 			st := "PASS"
