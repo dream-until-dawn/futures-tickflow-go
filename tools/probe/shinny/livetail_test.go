@@ -260,10 +260,10 @@ func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
 	if r2.b1s != 58500 {
 		t.Errorf("同一帧也改了 11:29 那根：B1s %d，应仍为 58500", r2.b1s)
 	}
-	// 外推（评审方裁③「丁」）：这一帧不带 quote，前一个报价帧是 11:29:59（服务器）⇒ 外推 ＝ 13:30:00.5 ⇒ 11:30 那根这次改动在收盘后，Post 1；
-	// 快照取法会停在 11:29:59、Post 0。「距前一报价帧 > 1000 ms」那一列正好是这一帧。
-	if sg := r2.segs[1]; sg.post != 1 || sg.eSrv != 7200500 {
-		t.Errorf("11:30 那根：Post %d · E_srv %d，应为 1 · 7200500（外推到 13:30:00.5）", sg.post, sg.eSrv)
+	// 区间（评审方裁③「戊」）：这一帧不带 quote，前一个报价帧是 11:29:59（服务器）⇒ 这次改动的服务器时刻 ∈ [11:29:59, 13:30:00.5]
+	// ⇒ 11:30 那根：确定 0 · 可能 1，E_srv [−1000, 7200500]。「距前一报价帧 > 1000 ms」那一列正好是这一帧。
+	if sg := r2.segs[1]; sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -1000 || sg.eSrvHi != 7200500 {
+		t.Errorf("11:30 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−1000, 7200500]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
 	}
 	if len(r2.farQuote) != 1 || r2.farQuote[0] != first {
 		t.Errorf("距前一报价帧 > 1000 ms 的 K 线改动帧 %v，应只有午休后那一帧 %s", r2.farQuote, showMs(first))
@@ -324,6 +324,10 @@ func TestLiveFrameCompositionCounts(t *testing.T) {
 	if r.fK != 1 || r.fBoth != b.fBoth-1 || r.fQ != 1 || r.fNone != 0 {
 		t.Errorf("只 klines %d · 同帧 %d（原 %d）· 只 quote %d · 都没有 %d，应为 1 · 原−1 · 1 · 0", r.fK, r.fBoth, b.fBoth, r.fQ, r.fNone)
 	}
+	// 投递延迟那一列（K 线帧距前一报价帧）：只带 klines 的那一帧（09:50:00.5）距前一报价帧（09:49:59.0）1500 ms
+	if want := fr[100].RecvMs - fr[99].RecvMs; len(r.kLag) != 1 || r.kLag[0] != want || want != 1500 {
+		t.Errorf("K 线帧距前一报价帧 %v，应只有一条 1500（本帧 %s · 前一帧 %s）", r.kLag, showMs(fr[100].RecvMs), showMs(fr[99].RecvMs))
+	}
 }
 
 // guard: 跨段那一对不进 B1s，但两端各自落在时段内的部分另记一列 b1x（评审方 2026-09-21 待办 ①）——
@@ -379,12 +383,11 @@ func TestLiveB1sIgnoresOutOfSessionPairs(t *testing.T) {
 	}
 }
 
-// guard: K 线单独成帧时，服务器时刻从最近的报价帧外推（评审方 2026-09-21 裁③「丁」）——
+// guard: K 线单独成帧时，服务器时刻只知道一个区间（评审方 2026-09-21 裁③「戊」）——
 // 11:29 那根收盘后 2 秒（11:30:02）在一帧不带 quote 的帧里又改一次；前一个报价帧是 11:29:59。
-// 快照取法记成 11:29:59 ⇒ Post 0、E_srv −1000：一次真的收盘后改动被报成收盘前（c586d72 上实测：post 0 · postLoc 1 · E_srv −1000）。
-// c735c59 的「只认本帧带 quote」⇒ 不明（postUnk 1）—— 真实数据里 K 线与报价几乎从不同帧，它把 99.9% 的服务器时刻扔掉了。
-// 外推 ＝ 11:29:59 ＋ 3 秒 ＝ 11:30:02 ⇒ Post 1、E_srv ＋2000、A1s>0 多一根；postUnk 0。
-func TestLiveServerTimeExtrapolatesFromLastQuote(t *testing.T) {
+// ⇒ 服务器时刻 ∈ [11:29:59, 11:30:02]：确定 0 · 可能 1 · E_srv [−1000, 2000]；A1s 可能 >0 多一根、确定 >0 不变。
+// 快照取法（c586d72）报 Post 0 · E_srv −1000，当成确定在收盘前 —— 说错；丁（95dc571）报确定 1 —— 在 10:15 那种形状上也会说错。
+func TestLiveServerTimeIntervalFromLastQuote(t *testing.T) {
 	durKey := strconv.FormatInt(tailDur, 10)
 	base := synthDaySession(0)
 	c := time.Date(2026, 9, 21, 11, 30, 0, 0, cst).UnixMilli()
@@ -392,25 +395,64 @@ func TestLiveServerTimeExtrapolatesFromLastQuote(t *testing.T) {
 		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.9}}}}}}}})
 	b := analyzeTail(base)
 	r := analyzeTail(insertFrame(base, tailFrame{RecvMs: c + 2000, Raw: raw}))
-	if b.segs[1].post != 0 || b.a1sPos != 0 {
-		t.Fatalf("前提没成立：干净的合成日 11:30 那根 post %d · A1s>0 %d，应为 0 · 0", b.segs[1].post, b.a1sPos)
+	if b.segs[1].post != 0 || b.segs[1].postMaybe != 0 || b.a1sPos != 0 || b.a1sMaybe != 0 {
+		t.Fatalf("前提没成立：干净的合成日 11:30 那根 确定 %d · 可能 %d · A1s 确定 %d · 可能 %d，应都为 0", b.segs[1].post, b.segs[1].postMaybe, b.a1sPos, b.a1sMaybe)
 	}
 	sg := r.segs[1]
 	if sg.postLoc != 1 {
 		t.Fatalf("前提没成立：按本机 postLoc %d，应为 1", sg.postLoc)
 	}
-	if sg.post != 1 || sg.postUnk != 0 || !sg.eSrvOK || sg.eSrv != 2000 {
-		t.Errorf("11:30 那根：post %d · postUnk %d · E_srv 明 %v · E_srv %d，应为 1 · 0 · true · 2000", sg.post, sg.postUnk, sg.eSrvOK, sg.eSrv)
+	if sg.post != 0 || sg.postMaybe != 1 || sg.postUnk != 0 || !sg.eSrvOK || sg.eSrv != -1000 || sg.eSrvHi != 2000 {
+		t.Errorf("11:30 那根：确定 %d · 可能 %d · 不明 %d · E_srv 明 %v [%d, %d]，应为 0 · 1 · 0 · true [−1000, 2000]", sg.post, sg.postMaybe, sg.postUnk, sg.eSrvOK, sg.eSrv, sg.eSrvHi)
 	}
-	if r.a1sPos != b.a1sPos+1 || r.noSrv != b.noSrv {
-		t.Errorf("A1s>0 %d→%d · noSrv %d→%d，应 ＋1 · 不变", b.a1sPos, r.a1sPos, b.noSrv, r.noSrv)
+	if r.a1sPos != b.a1sPos || r.a1sMaybe != b.a1sMaybe+1 || r.noSrv != b.noSrv {
+		t.Errorf("A1s 确定 %d→%d · 可能 %d→%d · noSrv %d→%d，应 不变 · ＋1 · 不变", b.a1sPos, r.a1sPos, b.a1sMaybe, r.a1sMaybe, b.noSrv, r.noSrv)
+	}
+}
+
+// guard: 10:15 那格的形状（6.37 读数，原始帧核定：收盘前 10 ms 的同一笔成交）——
+// 报价帧本机 10:14:58.964 到、quote.datetime 10:14:59.990；36 ms 后 K 线帧（不带 quote）改 10:14 那根（id 1074）。
+// ⇒ 服务器时刻 ∈ [10:14:59.990, 10:15:00.026]：确定 0 · 可能 1 · E_srv [−10, 26]。
+// 丁（外推，95dc571）把它报成确定在收盘后（Post 1）—— 投递延迟被当成了服务器时间。
+func TestLivePostIntervalAtCloseEdge(t *testing.T) {
+	fr := synthDaySession(0)
+	last := time.Date(2026, 9, 21, 10, 14, 59, 0, cst).UnixMilli() // 10:14 那根最后一次改动那一帧（合成里本机不慢）
+	hit := 0
+	for i := range fr {
+		if fr[i].RecvMs != last {
+			continue
+		}
+		var m map[string]any
+		json.Unmarshal(fr[i].Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		fr[i].Raw, _ = json.Marshal(m)
+		hit++
+	}
+	if hit != 1 {
+		t.Fatalf("前提没成立：10:14:59 那一帧找到 %d 帧", hit)
+	}
+	q, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": "2026-09-21 10:14:59.990000"}}}}})
+	r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: last - 36, Raw: q}))
+	sg := r.segs[0]
+	if sg.label != "10:15" || sg.postLoc != 0 {
+		t.Fatalf("前提没成立：%s 那根按本机 postLoc %d，应为 10:15 · 0", sg.label, sg.postLoc)
+	}
+	if sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -10 || sg.eSrvHi != 26 {
+		t.Errorf("10:15 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−10, 26]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
 	}
 }
 
 // guard: 收盘后单独成帧的改动，按服务器时刻也要算「收盘后」（评审方 2026-09-21 裁③「丁：外推」时给的反例）——
 // 15:00 收盘后报价帧不再来；14:59 那根（id 1224）在 15:00:05 单独成帧又改一次。
-// 快照取法记成前一个报价帧的 14:59:59 ⇒ Post 0；「跨段即不明」（乙）也认不出（同一段）；
-// 外推 ＝ 14:59:59 ＋（15:00:05 − 14:59:59）＝ 15:00:05 ⇒ Post 1、E_srv ＋5000。
+// 快照取法记成前一个报价帧的 14:59:59 ⇒ Post 0、E_srv −1000，当成确定在收盘前 —— 说错；「跨段即不明」（乙）也认不出（同一段）。
+// 戊（区间）⇒ 服务器时刻 ∈ [14:59:59, 15:00:05]：确定 0 · 可能 1 · E_srv [−1000, 5000]；按本机 postLoc 1。
+// （丁 95dc571 报确定 1：对这一格对，但同一个外推在 10:15 那格把收盘前 10 ms 的成交也报成了确定收盘后。）
 func TestLivePostAfterCloseInKlineOnlyFrame(t *testing.T) {
 	durKey := strconv.FormatInt(tailDur, 10)
 	c := time.Date(2026, 9, 21, 15, 0, 0, 0, cst).UnixMilli()
@@ -421,8 +463,8 @@ func TestLivePostAfterCloseInKlineOnlyFrame(t *testing.T) {
 	if sg.label != "15:00" || sg.postLoc != 1 {
 		t.Fatalf("前提没成立：%s 那根按本机 postLoc %d，应为 15:00 · 1", sg.label, sg.postLoc)
 	}
-	if sg.post != 1 || sg.eSrv != 5000 {
-		t.Errorf("15:00 那根：Post（按服务器时刻）%d · E_srv %d，应为 1 · 5000（收盘后 5 秒）", sg.post, sg.eSrv)
+	if sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -1000 || sg.eSrvHi != 5000 {
+		t.Errorf("15:00 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−1000, 5000]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
 	}
 }
 
