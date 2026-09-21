@@ -307,6 +307,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 	var srvNow int64           // 最近一次解析出的 quote.datetime（毫秒）
 	type chg struct{ recv, srv int64 }
 	var changeFrames []chg
+	var changeBar []int64       // 与 changeFrames 平行：这一帧里被改的根中最晚的开盘时刻（毫秒；服务器给的，判段用它）
 	events := map[int64][]chg{} // 每根：出现与每次真改的（本机收到, quote.datetime）
 	var quoteFrames []chg       // 本帧带了 quote.datetime 的帧
 	born := map[int64]int64{}   // 每根第一次出现的本机时刻
@@ -359,6 +360,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 		}
 		data := obj(snap, "klines", tailSym, durKey, "data")
 		changed := false
+		var frameBar int64
 		for id := range touched {
 			b := obj(data, strconv.FormatInt(id, 10))
 			if b == nil {
@@ -374,6 +376,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 				last[id], lastL[id], lastS[id] = v, fr.RecvMs, srvNow
 				events[id] = append(events[id], chg{fr.RecvMs, srvNow})
 				changed = true
+				frameBar = max(frameBar, dt[id])
 				continue
 			}
 			if sameVal(v, last[id]) {
@@ -387,6 +390,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 				r.noSrv++
 			}
 			changed = true
+			frameBar = max(frameBar, dt[id])
 		}
 		if changed {
 			if lastChangeFrame != 0 && fr.RecvMs-lastChangeFrame > r.b1 {
@@ -394,6 +398,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 			}
 			lastChangeFrame = fr.RecvMs
 			changeFrames = append(changeFrames, chg{fr.RecvMs, srvNow})
+			changeBar = append(changeBar, frameBar)
 		}
 		if ser := obj(snap, "klines", tailSym, durKey); ser != nil {
 			if e, ok := ser["trading_day_end_id"].(float64); ok {
@@ -420,8 +425,10 @@ func analyzeTail(frames []tailFrame) tailResult {
 		}
 		for i := 1; i < len(changeFrames); i++ {
 			a, b := changeFrames[i-1], changeFrames[i]
-			sa, okA := rbSegment(a.srv)
-			sb, okB := rbSegment(b.srv)
+			// 判段按被改那根自己的开盘时刻（服务器给的 K 线 datetime），不按快照里的 quote.datetime：
+			// 不带 quote 的帧里它是陈旧的 —— 6.37 读数：13:30 那根 13:29:59.850 诞生那一帧，快照里还是 11:29:59.900
+			sa, okA := rbSegment(changeBar[i-1])
+			sb, okB := rbSegment(changeBar[i])
 			if a.srv >= lo && b.srv <= hi && a.srv != 0 && okA && okB && sa == sb && b.recv-a.recv > r.b1s {
 				r.b1s = b.recv - a.recv
 			}

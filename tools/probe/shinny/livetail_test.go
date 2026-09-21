@@ -206,6 +206,62 @@ func TestLiveB1sExcludesSessionBreaks(t *testing.T) {
 	}
 }
 
+// guard: 一次改动属于哪一段，按被改那根自己的开盘时刻判，不按快照里的 quote.datetime ——
+// 6.37 读数：13:30 那根在本机 13:29:59.850 诞生，那一帧不带 quote，快照里的 quote.datetime 还停在午休前的 11:29:59.900
+// ⇒ 按它判段，午休前后两次改动落在同一段，7200543 ms 又被算进了 B1s。合成：把午休后第一帧的 quote 去掉。
+func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
+	const skew = 2400
+	fr := synthDaySession(skew)
+	first := time.Date(2026, 9, 21, 13, 30, 0, 500*1e6, cst).UnixMilli() - skew
+	hit := 0
+	for i := range fr {
+		if fr[i].RecvMs != first {
+			continue
+		}
+		var m map[string]any
+		json.Unmarshal(fr[i].Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		fr[i].Raw, _ = json.Marshal(m)
+		hit++
+	}
+	if hit != 1 {
+		t.Fatalf("前提没成立：午休后第一帧找到 %d 帧，应为 1", hit)
+	}
+	r := analyzeTail(fr)
+	if r.b1 != 7201500 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应为 7201500", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（午休后第一帧不带 quote，也不许把午休算进来）", r.b1s)
+	}
+	// 同一帧里既改了上一段的末根（11:29 那根，id 1134）、又诞生了新根 ⇒ 这一帧按较晚那根（13:30）判段；按较早那根判，午休又被算进来
+	durKey := strconv.FormatInt(tailDur, 10)
+	extra, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.7}}}}}}}})
+	for i := range fr {
+		if fr[i].RecvMs == first {
+			var m, e map[string]any
+			json.Unmarshal(fr[i].Raw, &m)
+			json.Unmarshal(extra, &e)
+			m["data"] = append(m["data"].([]any), e["data"].([]any)...)
+			fr[i].Raw, _ = json.Marshal(m)
+		}
+	}
+	r2 := analyzeTail(fr)
+	if r2.changes != r.changes+1 {
+		t.Fatalf("前提没成立：真改动 %d，应比上面多 1（%d）", r2.changes, r.changes)
+	}
+	if r2.b1s != 58500 {
+		t.Errorf("同一帧也改了 11:29 那根：B1s %d，应仍为 58500", r2.b1s)
+	}
+}
+
 // guard: rbSegment 的边界 —— 两端都含（15:00:00.000 在、15:00:00.001 不在）；段与段不同号；不同自然日不同号。
 func TestRbSegmentBounds(t *testing.T) {
 	at := func(d, h, m, s, ms int) int64 {
