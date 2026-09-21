@@ -260,6 +260,70 @@ func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
 	if r2.b1s != 58500 {
 		t.Errorf("同一帧也改了 11:29 那根：B1s %d，应仍为 58500", r2.b1s)
 	}
+	// 外推（评审方裁③「丁」）：这一帧不带 quote，前一个报价帧是 11:29:59（服务器）⇒ 外推 ＝ 13:30:00.5 ⇒ 11:30 那根这次改动在收盘后，Post 1；
+	// 快照取法会停在 11:29:59、Post 0。「距前一报价帧 > 1000 ms」那一列正好是这一帧。
+	if sg := r2.segs[1]; sg.post != 1 || sg.eSrv != 7200500 {
+		t.Errorf("11:30 那根：Post %d · E_srv %d，应为 1 · 7200500（外推到 13:30:00.5）", sg.post, sg.eSrv)
+	}
+	if len(r2.farQuote) != 1 || r2.farQuote[0] != first {
+		t.Errorf("距前一报价帧 > 1000 ms 的 K 线改动帧 %v，应只有午休后那一帧 %s", r2.farQuote, showMs(first))
+	}
+}
+
+// guard: 一个报价帧都还没见过时，服务器时刻不明 —— 不进 Post / A1s / E_srv，单独计数（noSrv、末根 postUnk）。
+// 合成日盘去掉全部 quote ⇒ 每根出现之后那一次改动都不明：三处末根 postUnk 各 1、E_srv 不明；noSrv ＝ 全部真改动；A1s 空。
+func TestLiveServerTimeUnknownBeforeAnyQuote(t *testing.T) {
+	var fr []tailFrame
+	for _, f := range synthDaySession(0) {
+		var m map[string]any
+		json.Unmarshal(f.Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		raw, _ := json.Marshal(m)
+		fr = append(fr, tailFrame{RecvMs: f.RecvMs, Raw: raw})
+	}
+	r := analyzeTail(fr)
+	if r.fQ != 0 || r.fBoth != 0 || r.changes == 0 {
+		t.Fatalf("前提没成立：只 quote %d · 同帧 %d · 真改动 %d", r.fQ, r.fBoth, r.changes)
+	}
+	if r.noSrv != r.changes || len(r.a1s) != 0 {
+		t.Errorf("noSrv %d（真改动 %d）· A1s n %d，应为 全部 · 0", r.noSrv, r.changes, len(r.a1s))
+	}
+	for _, sg := range r.segs {
+		if sg.postUnk != 1 || sg.eSrvOK || sg.post != 0 {
+			t.Errorf("%s：postUnk %d · E_srv 明 %v · post %d，应为 1 · false · 0", sg.label, sg.postUnk, sg.eSrvOK, sg.post)
+		}
+	}
+}
+
+// guard: 帧的组成由工具自己数（评审方要求：分帧是③取法的前提，数要有可复现的来源，不留在仓外脚本里）——
+// 合成日盘每帧都带 quote（skewed）⇒ 全是「两者同帧」；去掉一帧的 quote ⇒ 只带 klines ＋1、同帧 −1；再加一帧只带 quote ⇒ 只带 quote ＋1。
+func TestLiveFrameCompositionCounts(t *testing.T) {
+	fr := synthDaySession(0)
+	b := analyzeTail(fr)
+	if b.fBoth != b.rtn || b.fK != 0 || b.fQ != 0 || b.fNone != 0 {
+		t.Fatalf("前提没成立：干净的合成日 同帧 %d / rtn %d · 只 klines %d · 只 quote %d · 都没有 %d", b.fBoth, b.rtn, b.fK, b.fQ, b.fNone)
+	}
+	var m map[string]any
+	json.Unmarshal(fr[100].Raw, &m)
+	var keep []any
+	for _, d := range m["data"].([]any) {
+		if _, q := d.(map[string]any)["quotes"]; !q {
+			keep = append(keep, d)
+		}
+	}
+	m["data"] = keep
+	fr[100].Raw, _ = json.Marshal(m)
+	q, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": "2026-09-21 10:00:00.100000"}}}}})
+	r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: time.Date(2026, 9, 21, 10, 0, 0, 100*1e6, cst).UnixMilli(), Raw: q}))
+	if r.fK != 1 || r.fBoth != b.fBoth-1 || r.fQ != 1 || r.fNone != 0 {
+		t.Errorf("只 klines %d · 同帧 %d（原 %d）· 只 quote %d · 都没有 %d，应为 1 · 原−1 · 1 · 0", r.fK, r.fBoth, b.fBoth, r.fQ, r.fNone)
+	}
 }
 
 // guard: 跨段那一对不进 B1s，但两端各自落在时段内的部分另记一列 b1x（评审方 2026-09-21 待办 ①）——
@@ -315,11 +379,12 @@ func TestLiveB1sIgnoresOutOfSessionPairs(t *testing.T) {
 	}
 }
 
-// guard: 服务器时刻只取本帧带 quote 的（评审方 2026-09-21 待办 ③）—— 11:29 那根收盘后 2 秒又改一次，所在帧不带 quote，
-// 快照里的 quote.datetime 还停在 11:29:59（陈旧）。旧取法把它记成收盘前 1 秒：按 quote 的 Post 0、E_srv −1000，
-// 一次真的收盘后改动被报成了收盘前（c586d72 上实测：post 0 · postLoc 1 · E_srv −1000）。
-// 现在：服务器时刻不明 ⇒ 不进 Post / A1s / E_srv，单独计数（postUnk ＋1、noSrv ＋1）；按本机的 postLoc 照数 1。
-func TestLiveServerTimeIgnoresStaleQuote(t *testing.T) {
+// guard: K 线单独成帧时，服务器时刻从最近的报价帧外推（评审方 2026-09-21 裁③「丁」）——
+// 11:29 那根收盘后 2 秒（11:30:02）在一帧不带 quote 的帧里又改一次；前一个报价帧是 11:29:59。
+// 快照取法记成 11:29:59 ⇒ Post 0、E_srv −1000：一次真的收盘后改动被报成收盘前（c586d72 上实测：post 0 · postLoc 1 · E_srv −1000）。
+// c735c59 的「只认本帧带 quote」⇒ 不明（postUnk 1）—— 真实数据里 K 线与报价几乎从不同帧，它把 99.9% 的服务器时刻扔掉了。
+// 外推 ＝ 11:29:59 ＋ 3 秒 ＝ 11:30:02 ⇒ Post 1、E_srv ＋2000、A1s>0 多一根；postUnk 0。
+func TestLiveServerTimeExtrapolatesFromLastQuote(t *testing.T) {
 	durKey := strconv.FormatInt(tailDur, 10)
 	base := synthDaySession(0)
 	c := time.Date(2026, 9, 21, 11, 30, 0, 0, cst).UnixMilli()
@@ -327,18 +392,37 @@ func TestLiveServerTimeIgnoresStaleQuote(t *testing.T) {
 		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.9}}}}}}}})
 	b := analyzeTail(base)
 	r := analyzeTail(insertFrame(base, tailFrame{RecvMs: c + 2000, Raw: raw}))
-	if b.noSrv != 0 || b.segs[1].postUnk != 0 || !b.segs[1].eSrvOK {
-		t.Fatalf("前提没成立：干净的合成日（每帧带 quote）noSrv %d · postUnk %d · E_srv 明 %v", b.noSrv, b.segs[1].postUnk, b.segs[1].eSrvOK)
+	if b.segs[1].post != 0 || b.a1sPos != 0 {
+		t.Fatalf("前提没成立：干净的合成日 11:30 那根 post %d · A1s>0 %d，应为 0 · 0", b.segs[1].post, b.a1sPos)
 	}
 	sg := r.segs[1]
 	if sg.postLoc != 1 {
 		t.Fatalf("前提没成立：按本机 postLoc %d，应为 1", sg.postLoc)
 	}
-	if sg.post != 0 || sg.postUnk != 1 || sg.eSrvOK {
-		t.Errorf("11:30 那根：post %d · postUnk %d · E_srv 明 %v，应为 0 · 1 · false", sg.post, sg.postUnk, sg.eSrvOK)
+	if sg.post != 1 || sg.postUnk != 0 || !sg.eSrvOK || sg.eSrv != 2000 {
+		t.Errorf("11:30 那根：post %d · postUnk %d · E_srv 明 %v · E_srv %d，应为 1 · 0 · true · 2000", sg.post, sg.postUnk, sg.eSrvOK, sg.eSrv)
 	}
-	if r.noSrv != b.noSrv+1 || len(r.a1s) != len(b.a1s)-1 {
-		t.Errorf("noSrv %d→%d · A1s n %d→%d，应 ＋1 · −1（这根的最后一次改动服务器时刻不明，不进 A1s）", b.noSrv, r.noSrv, len(b.a1s), len(r.a1s))
+	if r.a1sPos != b.a1sPos+1 || r.noSrv != b.noSrv {
+		t.Errorf("A1s>0 %d→%d · noSrv %d→%d，应 ＋1 · 不变", b.a1sPos, r.a1sPos, b.noSrv, r.noSrv)
+	}
+}
+
+// guard: 收盘后单独成帧的改动，按服务器时刻也要算「收盘后」（评审方 2026-09-21 裁③「丁：外推」时给的反例）——
+// 15:00 收盘后报价帧不再来；14:59 那根（id 1224）在 15:00:05 单独成帧又改一次。
+// 快照取法记成前一个报价帧的 14:59:59 ⇒ Post 0；「跨段即不明」（乙）也认不出（同一段）；
+// 外推 ＝ 14:59:59 ＋（15:00:05 − 14:59:59）＝ 15:00:05 ⇒ Post 1、E_srv ＋5000。
+func TestLivePostAfterCloseInKlineOnlyFrame(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	c := time.Date(2026, 9, 21, 15, 0, 0, 0, cst).UnixMilli()
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+60+89, 10): map[string]any{"close": 100.9}}}}}}}})
+	r := analyzeTail(insertFrame(synthDaySession(0), tailFrame{RecvMs: c + 5000, Raw: raw}))
+	sg := r.segs[2]
+	if sg.label != "15:00" || sg.postLoc != 1 {
+		t.Fatalf("前提没成立：%s 那根按本机 postLoc %d，应为 15:00 · 1", sg.label, sg.postLoc)
+	}
+	if sg.post != 1 || sg.eSrv != 5000 {
+		t.Errorf("15:00 那根：Post（按服务器时刻）%d · E_srv %d，应为 1 · 5000（收盘后 5 秒）", sg.post, sg.eSrv)
 	}
 }
 

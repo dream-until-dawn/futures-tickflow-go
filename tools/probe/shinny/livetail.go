@@ -224,9 +224,9 @@ type segEnd struct {
 	id         int64
 	c          int64
 	eLoc, eSrv int64 // 最后一次真改：本机收到 − C · quote.datetime − C
-	eSrvOK     bool  // 最后一次真改所在帧带了 quote（否则 eSrv 不明）
+	eSrvOK     bool  // 最后一次真改的服务器时刻明（本帧带 quote，或能从最近的报价帧外推）
 	post       int   // C 之后（按 quote.datetime > C）还改这一根的次数；只数本帧带 quote 的改动
-	postUnk    int   // 这一根出现之后、服务器时刻不明（本帧不带 quote）的真改动次数 —— 它们不进 post
+	postUnk    int   // 这一根出现之后、服务器时刻不明（还没见过任何报价帧）的真改动次数 —— 它们不进 post
 	postLoc    int   // 同上，按本机收到时刻 > C
 	hasNext    bool  // 下一根出现在记录里
 }
@@ -271,9 +271,13 @@ type tailResult struct {
 	// Ls ＝ 最后一次真改那一帧里 quote.datetime（交易所那笔成交的时刻）；不经本机时钟
 	a1s, a3s []int64 // Ls−C · 末根 Ls−C
 	a1sPos   int
-	noSrv    int   // 服务器时刻不明的真改动次数：所在帧不带 quote.datetime（含还没见过任何 quote 的）；这些改动不进 a1s / a3s / eSrv / post
-	b1s      int64 // 同一段交易时段里相邻两次真改动的最大间隔（本机收到时刻之差）
-	b1x      int64 // 跨段那几对落在时段内的部分的最大值（本机时刻减段端点；受 D 影响）
+	noSrv    int     // 服务器时刻不明的真改动次数：还没见过任何报价帧时的改动；这些改动不进 a1s / a3s / eSrv / post
+	fK, fQ   int     // rtn_data 帧的组成：只带本品种 1m klines · 只带本品种 quote.datetime
+	fBoth    int     // 两者同帧
+	fNone    int     // 都没有
+	farQuote []int64 // 距前一报价帧 > 1000 ms 的 K 线改动帧（本机收到时刻）—— 外推用得远的地方
+	b1s      int64   // 同一段交易时段里相邻两次真改动的最大间隔（本机收到时刻之差）
+	b1x      int64   // 跨段那几对落在时段内的部分的最大值（本机时刻减段端点；受 D 影响）
 	// 6.37：D ＝ 本机收到 − quote.datetime，只取本帧带了 quote.datetime、且它不早于记录期间第一根开盘的帧（旧报价排除，事先写死）
 	d        []int64
 	dStale   int // 被排除的旧报价帧数
@@ -311,10 +315,11 @@ func analyzeTail(frames []tailFrame) tailResult {
 	var r tailResult
 	snap := map[string]any{}
 	durKey := strconv.FormatInt(tailDur, 10)
-	last := map[int64]barVal{} // 每根最近一次的值
-	lastL := map[int64]int64{} // 每根最后一次真改的本机时刻
-	lastS := map[int64]int64{} // 每根最后一次真改时的服务器时刻（quote.datetime）；0 ＝ 那时还没有
-	var srvNow int64           // 最近一次解析出的 quote.datetime（毫秒）
+	last := map[int64]barVal{}            // 每根最近一次的值
+	lastL := map[int64]int64{}            // 每根最后一次真改的本机时刻
+	lastS := map[int64]int64{}            // 每根最后一次真改时的服务器时刻（quote.datetime）；0 ＝ 那时还没有
+	var srvNow int64                      // 最近一次解析出的 quote.datetime（毫秒）
+	var lastQuoteRecv, lastQuoteSrv int64 // 最近一个【本帧带 quote】的报价帧：本机收到时刻 · 它的 quote.datetime
 	type chg struct{ recv, srv int64 }
 	var changeFrames []chg
 	var changeBar []int64       // 与 changeFrames 平行：这一帧里被改的根中最晚的开盘时刻（毫秒；服务器给的，判段用它）
@@ -364,16 +369,32 @@ func analyzeTail(frames []tailFrame) tailResult {
 					srvNow = t.UnixMilli()
 					if quoteHere {
 						quoteFrames = append(quoteFrames, chg{fr.RecvMs, srvNow})
+						lastQuoteRecv, lastQuoteSrv = fr.RecvMs, srvNow
 					}
 				}
 			}
 		}
-		// 服务器时刻只取【本帧带了 quote.datetime】的：不带 quote 的帧里快照的 quote.datetime 停在上一次带 quote 的时刻，是陈旧的
-		// （6.37 读数：13:30 那根 13:29:59.850 诞生的那一帧，快照里还是 11:29:59.900）⇒ 这样的改动记作「服务器时刻不明」（0），
-		// 不进 A1s / A3s / E_srv / 按 quote 的 Post，并单独计数（评审方 2026-09-21 待办 ③：两个都做）。
+		// 帧的组成（天勤把报价与 K 线分帧推：6.37 读数 9/21 同帧 16 / 34233）
+		switch {
+		case len(touched) > 0 && quoteHere:
+			r.fBoth++
+		case len(touched) > 0:
+			r.fK++
+		case quoteHere:
+			r.fQ++
+		default:
+			r.fNone++
+		}
+		// 服务器时刻（评审方 2026-09-21 裁③「丁：外推」）：
+		//   本帧带 quote ⇒ 就是它；不带 ⇒ 最近一个报价帧的 quote.datetime ＋（本帧本机收到 − 那个报价帧本机收到）
+		// 快照取法（直接用最近那个 quote.datetime）在报价帧停了之后是陈旧的：收盘后 5 秒单独成帧的改动会被记成收盘前 ——
+		// 外推只用本机量出的间隔（本机时刻不准，量间隔是准的）。还没见过任何报价帧 ⇒ 不明（0）。
 		var srvHere int64
-		if quoteHere {
-			srvHere = srvNow
+		switch {
+		case quoteHere:
+			srvHere = lastQuoteSrv
+		case lastQuoteRecv != 0:
+			srvHere = lastQuoteSrv + (fr.RecvMs - lastQuoteRecv)
 		}
 		data := obj(snap, "klines", tailSym, durKey, "data")
 		changed := false
@@ -416,6 +437,10 @@ func analyzeTail(frames []tailFrame) tailResult {
 			lastChangeFrame = fr.RecvMs
 			changeFrames = append(changeFrames, chg{fr.RecvMs, srvNow})
 			changeBar = append(changeBar, frameBar)
+			// 外推用得有多远：只计数、逐条列本机时刻，不改判定（评审方裁：1000 ms 不当开关）
+			if !quoteHere && lastQuoteRecv != 0 && fr.RecvMs-lastQuoteRecv > 1000 {
+				r.farQuote = append(r.farQuote, fr.RecvMs)
+			}
 		}
 		if ser := obj(snap, "klines", tailSym, durKey); ser != nil {
 			if e, ok := ser["trading_day_end_id"].(float64); ok {
@@ -478,7 +503,7 @@ func analyzeTail(frames []tailFrame) tailResult {
 			sg := segEnd{label: label, id: id, c: C, eLoc: lastL[id] - C, eSrv: lastS[id] - C, eSrvOK: lastS[id] != 0}
 			for _, e := range events[id][1:] { // [0] 是出现，不算改
 				if e.srv == 0 {
-					sg.postUnk++ // 服务器时刻不明：算不进按 quote 的 Post，也不当成 C 之前
+					sg.postUnk++ // 服务器时刻不明（还没见过报价帧）：算不进按服务器时刻的 Post，也不当成 C 之前
 				} else if e.srv > C {
 					sg.post++
 				}
@@ -655,7 +680,7 @@ func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
 	}
 	bars := map[int64]*bar{}
 	snap := map[string]any{}
-	var srvNow int64
+	var srvNow, lastQuoteRecv, lastQuoteSrv int64
 	for _, fr := range frames {
 		var m struct {
 			Aid  string           `json:"aid"`
@@ -685,12 +710,18 @@ func calibTarget(frames []tailFrame) (id, closeMs int64, ok bool) {
 			if s, ok := q["datetime"].(string); ok {
 				if t, err := time.ParseInLocation("2006-01-02 15:04:05.000000", s, cst); err == nil {
 					srvNow = t.UnixMilli()
+					if quoteHere {
+						lastQuoteRecv, lastQuoteSrv = fr.RecvMs, srvNow
+					}
 				}
 			}
 		}
-		var srvHere int64 // 与 analyzeTail 同一取法：只认本帧带 quote 的服务器时刻
-		if quoteHere {
-			srvHere = srvNow
+		var srvHere int64 // 与 analyzeTail 同一取法：本帧带 quote 就是它，否则从最近的报价帧外推
+		switch {
+		case quoteHere:
+			srvHere = lastQuoteSrv
+		case lastQuoteRecv != 0:
+			srvHere = lastQuoteSrv + (fr.RecvMs - lastQuoteRecv)
 		}
 		data := obj(snap, "klines", tailSym, durKey, "data")
 		for x := range touched {
@@ -847,13 +878,19 @@ func probeLiveAnalyze() {
 	fmt.Printf("A2 L−N     %s · L−N>0 的根 %d\n", dist(r.a2), r.a2Pos)
 	fmt.Printf("A3 末根 L−C %s\n", dist(r.a3))
 	fmt.Printf("B1 相邻两次真改动的最大间隔 %d 毫秒（不分时段）· 同一段时段内 %d 毫秒 · 跨段那几对落在时段内的部分 最大 %d 毫秒（本机时刻减段端点，受 D 影响）\n", r.b1, r.b1s, r.b1x)
-	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 服务器时刻不明的真改动 %d 次（所在帧不带 quote；不进 A1s / A3s）\n", dist(r.a1s), r.a1sPos, r.noSrv)
+	fmt.Printf("A1s Ls−C（服务器时刻）%s · Ls−C>0 的根 %d · 服务器时刻不明的真改动 %d 次（还没见过报价帧；不进 A1s / A3s）\n", dist(r.a1s), r.a1sPos, r.noSrv)
+	fmt.Printf("帧的组成（rtn_data）只带 klines %d · 只带 quote %d · 两者同帧 %d · 都没有 %d ⇒ K 线改动的服务器时刻 ＝ 最近报价帧的 quote.datetime ＋ 本机间隔（外推）\n", r.fK, r.fQ, r.fBoth, r.fNone)
+	far := make([]string, len(r.farQuote))
+	for i, ms := range r.farQuote {
+		far[i] = showMs(ms)
+	}
+	fmt.Printf("距前一报价帧 > 1000 ms 的 K 线改动帧 %d 个（外推用得远；只计数，不改判定）%v\n", len(r.farQuote), far)
 	fmt.Printf("A3s 末根 Ls−C（服务器时刻）%s\n", dist(r.a3s))
 	fmt.Printf("B2 本机收到 − 服务器行情时刻（全部帧，含旧报价）%s\n", dist(r.b2))
 	fmt.Printf("D  本机收到 − quote.datetime（本帧带 quote、且不早于第一根开盘）%s · 99 分位 %d · 排除的旧报价帧 %d\n", dist(r.d), pct(r.d, 0.99), r.dStale)
 	fmt.Printf("TradingDay %s\n", r.tdNote)
 	for i, sg := range r.segs {
-		eSrv := "不明（最后一次真改所在帧不带 quote）"
+		eSrv := "不明（还没见过报价帧）"
 		if sg.eSrvOK {
 			eSrv = strconv.FormatInt(sg.eSrv, 10)
 		}
