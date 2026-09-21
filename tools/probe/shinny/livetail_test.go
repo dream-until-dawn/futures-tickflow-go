@@ -260,6 +260,212 @@ func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
 	if r2.b1s != 58500 {
 		t.Errorf("同一帧也改了 11:29 那根：B1s %d，应仍为 58500", r2.b1s)
 	}
+	// 区间（评审方裁③「戊」）：这一帧不带 quote，前一个报价帧是 11:29:59（服务器）⇒ 这次改动的服务器时刻 ∈ [11:29:59, 13:30:00.5]
+	// ⇒ 11:30 那根：确定 0 · 可能 1，E_srv [−1000, 7200500]。「距前一报价帧 > 1000 ms」那一列正好是这一帧。
+	if sg := r2.segs[1]; sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -1000 || sg.eSrvHi != 7200500 {
+		t.Errorf("11:30 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−1000, 7200500]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
+	}
+	if len(r2.farQuote) != 1 || r2.farQuote[0] != first {
+		t.Errorf("距前一报价帧 > 1000 ms 的 K 线改动帧 %v，应只有午休后那一帧 %s", r2.farQuote, showMs(first))
+	}
+}
+
+// guard: 一个报价帧都还没见过时，服务器时刻不明 —— 不进 Post / A1s / E_srv，单独计数（noSrv、末根 postUnk）。
+// 合成日盘去掉全部 quote ⇒ 每根出现之后那一次改动都不明：三处末根 postUnk 各 1、E_srv 不明；noSrv ＝ 全部真改动；A1s 空。
+func TestLiveServerTimeUnknownBeforeAnyQuote(t *testing.T) {
+	var fr []tailFrame
+	for _, f := range synthDaySession(0) {
+		var m map[string]any
+		json.Unmarshal(f.Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		raw, _ := json.Marshal(m)
+		fr = append(fr, tailFrame{RecvMs: f.RecvMs, Raw: raw})
+	}
+	r := analyzeTail(fr)
+	if r.fQ != 0 || r.fBoth != 0 || r.changes == 0 {
+		t.Fatalf("前提没成立：只 quote %d · 同帧 %d · 真改动 %d", r.fQ, r.fBoth, r.changes)
+	}
+	if r.noSrv != r.changes || len(r.a1s) != 0 {
+		t.Errorf("noSrv %d（真改动 %d）· A1s n %d，应为 全部 · 0", r.noSrv, r.changes, len(r.a1s))
+	}
+	for _, sg := range r.segs {
+		if sg.postUnk != 1 || sg.eSrvOK || sg.post != 0 {
+			t.Errorf("%s：postUnk %d · E_srv 明 %v · post %d，应为 1 · false · 0", sg.label, sg.postUnk, sg.eSrvOK, sg.post)
+		}
+	}
+}
+
+// guard: 帧的组成由工具自己数（评审方要求：分帧是③取法的前提，数要有可复现的来源，不留在仓外脚本里）——
+// 合成日盘每帧都带 quote（skewed）⇒ 全是「两者同帧」；去掉一帧的 quote ⇒ 只带 klines ＋1、同帧 −1；再加一帧只带 quote ⇒ 只带 quote ＋1。
+func TestLiveFrameCompositionCounts(t *testing.T) {
+	fr := synthDaySession(0)
+	b := analyzeTail(fr)
+	if b.fBoth != b.rtn || b.fK != 0 || b.fQ != 0 || b.fNone != 0 {
+		t.Fatalf("前提没成立：干净的合成日 同帧 %d / rtn %d · 只 klines %d · 只 quote %d · 都没有 %d", b.fBoth, b.rtn, b.fK, b.fQ, b.fNone)
+	}
+	var m map[string]any
+	json.Unmarshal(fr[100].Raw, &m)
+	var keep []any
+	for _, d := range m["data"].([]any) {
+		if _, q := d.(map[string]any)["quotes"]; !q {
+			keep = append(keep, d)
+		}
+	}
+	m["data"] = keep
+	fr[100].Raw, _ = json.Marshal(m)
+	q, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": "2026-09-21 10:00:00.100000"}}}}})
+	r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: time.Date(2026, 9, 21, 10, 0, 0, 100*1e6, cst).UnixMilli(), Raw: q}))
+	if r.fK != 1 || r.fBoth != b.fBoth-1 || r.fQ != 1 || r.fNone != 0 {
+		t.Errorf("只 klines %d · 同帧 %d（原 %d）· 只 quote %d · 都没有 %d，应为 1 · 原−1 · 1 · 0", r.fK, r.fBoth, b.fBoth, r.fQ, r.fNone)
+	}
+	// 投递延迟那一列（K 线帧距前一报价帧）：只带 klines 的那一帧（09:50:00.5）距前一报价帧（09:49:59.0）1500 ms
+	if want := fr[100].RecvMs - fr[99].RecvMs; len(r.kLag) != 1 || r.kLag[0] != want || want != 1500 {
+		t.Errorf("K 线帧距前一报价帧 %v，应只有一条 1500（本帧 %s · 前一帧 %s）", r.kLag, showMs(fr[100].RecvMs), showMs(fr[99].RecvMs))
+	}
+}
+
+// guard: 跨段那一对不进 B1s，但两端各自落在时段内的部分另记一列 b1x（评审方 2026-09-21 待办 ①）——
+// 合成日盘：每段最后一次改动在服务器 xx:xx:59（段尾前 1 秒）、下一段第一次改动在段首后 0.5 秒
+// ⇒ 本机不慢：前一端 1000 ms、后一端 500 ms ⇒ b1x ＝ 1000；本机慢 2.4 秒：前一端 3400、后一端 −1900 ⇒ b1x ＝ 3400（它受 D 影响，照实）。
+func TestLiveB1xCrossSegmentPortion(t *testing.T) {
+	for _, c := range []struct{ skew, want int64 }{{0, 1000}, {2400, 3400}} {
+		r := analyzeTail(synthDaySession(c.skew))
+		if r.b1s != 58500 {
+			t.Fatalf("本机慢 %d：前提没成立，B1s %d，应为 58500", c.skew, r.b1s)
+		}
+		if r.b1x != c.want {
+			t.Errorf("本机慢 %d：b1x %d，应为 %d", c.skew, r.b1x, c.want)
+		}
+	}
+	// 后一端较大：10:30 那根的诞生帧晚到 2.5 秒（本机 10:30:03.000，本机不慢）⇒ 后一端 3000 > 前一端 1000 ⇒ b1x ＝ 3000
+	// （⚠️ 第一版是把诞生帧删掉：那根第一次出现的帧只带 close / volume、没有 datetime，开盘时刻无从判段，工具照实给 60500 —— 构造错，不是产品错）
+	open := time.Date(2026, 9, 21, 10, 30, 0, 500*1e6, cst).UnixMilli()
+	var fr []tailFrame
+	var late tailFrame
+	for _, f := range synthDaySession(0) {
+		if f.RecvMs == open {
+			late = tailFrame{RecvMs: open + 2500, Raw: f.Raw}
+			continue
+		}
+		fr = append(fr, f)
+	}
+	if late.Raw == nil {
+		t.Fatal("前提没成立：没找到 10:30 那根的诞生帧")
+	}
+	if r := analyzeTail(insertFrame(fr, late)); r.b1x != 3000 {
+		t.Errorf("10:30 那根诞生帧晚到 2.5 秒：b1x %d，应为 3000（段首到第一次改动）", r.b1x)
+	}
+}
+
+// guard: 两端都不在时段里的那一对也不进 B1s（评审方突变 M9：去掉 okA && okB 只留段号相等 ⇒ 时段外的段号都是 0，被当成同一段）——
+// 08:26:40 起 40 根（09:00 之前的都在时段外），删掉第 5–10 根的帧 ⇒ 时段外出现一个约 6 分钟的空档，它不许进 B1s。
+func TestLiveB1sIgnoresOutOfSessionPairs(t *testing.T) {
+	const t0 = int64(1789000000000)
+	var fr []tailFrame
+	for _, f := range synthTail(t0, 40, nil, nil) {
+		if k := (f.RecvMs - t0) / 60000; k >= 5 && k <= 10 {
+			continue
+		}
+		fr = append(fr, f)
+	}
+	r := analyzeTail(skewed(fr, 0))
+	if r.b1 < 6*60000 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应有约 6 分钟的空档", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（时段外的空档不算）", r.b1s)
+	}
+}
+
+// guard: K 线单独成帧时，服务器时刻只知道一个区间（评审方 2026-09-21 裁③「戊」）——
+// 11:29 那根收盘后 2 秒（11:30:02）在一帧不带 quote 的帧里又改一次；前一个报价帧是 11:29:59。
+// ⇒ 服务器时刻 ∈ [11:29:59, 11:30:02]：确定 0 · 可能 1 · E_srv [−1000, 2000]；A1s 可能 >0 多一根、确定 >0 不变。
+// 快照取法（c586d72）报 Post 0 · E_srv −1000，当成确定在收盘前 —— 说错；丁（95dc571）报确定 1 —— 在 10:15 那种形状上也会说错。
+func TestLiveServerTimeIntervalFromLastQuote(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	base := synthDaySession(0)
+	c := time.Date(2026, 9, 21, 11, 30, 0, 0, cst).UnixMilli()
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.9}}}}}}}})
+	b := analyzeTail(base)
+	r := analyzeTail(insertFrame(base, tailFrame{RecvMs: c + 2000, Raw: raw}))
+	if b.segs[1].post != 0 || b.segs[1].postMaybe != 0 || b.a1sPos != 0 || b.a1sMaybe != 0 {
+		t.Fatalf("前提没成立：干净的合成日 11:30 那根 确定 %d · 可能 %d · A1s 确定 %d · 可能 %d，应都为 0", b.segs[1].post, b.segs[1].postMaybe, b.a1sPos, b.a1sMaybe)
+	}
+	sg := r.segs[1]
+	if sg.postLoc != 1 {
+		t.Fatalf("前提没成立：按本机 postLoc %d，应为 1", sg.postLoc)
+	}
+	if sg.post != 0 || sg.postMaybe != 1 || sg.postUnk != 0 || !sg.eSrvOK || sg.eSrv != -1000 || sg.eSrvHi != 2000 {
+		t.Errorf("11:30 那根：确定 %d · 可能 %d · 不明 %d · E_srv 明 %v [%d, %d]，应为 0 · 1 · 0 · true [−1000, 2000]", sg.post, sg.postMaybe, sg.postUnk, sg.eSrvOK, sg.eSrv, sg.eSrvHi)
+	}
+	if r.a1sPos != b.a1sPos || r.a1sMaybe != b.a1sMaybe+1 || r.noSrv != b.noSrv {
+		t.Errorf("A1s 确定 %d→%d · 可能 %d→%d · noSrv %d→%d，应 不变 · ＋1 · 不变", b.a1sPos, r.a1sPos, b.a1sMaybe, r.a1sMaybe, b.noSrv, r.noSrv)
+	}
+}
+
+// guard: 10:15 那格的形状（6.37 读数，原始帧核定：收盘前 10 ms 的同一笔成交）——
+// 报价帧本机 10:14:58.964 到、quote.datetime 10:14:59.990；36 ms 后 K 线帧（不带 quote）改 10:14 那根（id 1074）。
+// ⇒ 服务器时刻 ∈ [10:14:59.990, 10:15:00.026]：确定 0 · 可能 1 · E_srv [−10, 26]。
+// 丁（外推，95dc571）把它报成确定在收盘后（Post 1）—— 投递延迟被当成了服务器时间。
+func TestLivePostIntervalAtCloseEdge(t *testing.T) {
+	fr := synthDaySession(0)
+	last := time.Date(2026, 9, 21, 10, 14, 59, 0, cst).UnixMilli() // 10:14 那根最后一次改动那一帧（合成里本机不慢）
+	hit := 0
+	for i := range fr {
+		if fr[i].RecvMs != last {
+			continue
+		}
+		var m map[string]any
+		json.Unmarshal(fr[i].Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		fr[i].Raw, _ = json.Marshal(m)
+		hit++
+	}
+	if hit != 1 {
+		t.Fatalf("前提没成立：10:14:59 那一帧找到 %d 帧", hit)
+	}
+	q, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{"datetime": "2026-09-21 10:14:59.990000"}}}}})
+	r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: last - 36, Raw: q}))
+	sg := r.segs[0]
+	if sg.label != "10:15" || sg.postLoc != 0 {
+		t.Fatalf("前提没成立：%s 那根按本机 postLoc %d，应为 10:15 · 0", sg.label, sg.postLoc)
+	}
+	if sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -10 || sg.eSrvHi != 26 {
+		t.Errorf("10:15 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−10, 26]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
+	}
+}
+
+// guard: 收盘后单独成帧的改动，按服务器时刻也要算「收盘后」（评审方 2026-09-21 裁③「丁：外推」时给的反例）——
+// 15:00 收盘后报价帧不再来；14:59 那根（id 1224）在 15:00:05 单独成帧又改一次。
+// 快照取法记成前一个报价帧的 14:59:59 ⇒ Post 0、E_srv −1000，当成确定在收盘前 —— 说错；「跨段即不明」（乙）也认不出（同一段）。
+// 戊（区间）⇒ 服务器时刻 ∈ [14:59:59, 15:00:05]：确定 0 · 可能 1 · E_srv [−1000, 5000]；按本机 postLoc 1。
+// （丁 95dc571 报确定 1：对这一格对，但同一个外推在 10:15 那格把收盘前 10 ms 的成交也报成了确定收盘后。）
+func TestLivePostAfterCloseInKlineOnlyFrame(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	c := time.Date(2026, 9, 21, 15, 0, 0, 0, cst).UnixMilli()
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+60+89, 10): map[string]any{"close": 100.9}}}}}}}})
+	r := analyzeTail(insertFrame(synthDaySession(0), tailFrame{RecvMs: c + 5000, Raw: raw}))
+	sg := r.segs[2]
+	if sg.label != "15:00" || sg.postLoc != 1 {
+		t.Fatalf("前提没成立：%s 那根按本机 postLoc %d，应为 15:00 · 1", sg.label, sg.postLoc)
+	}
+	if sg.post != 0 || sg.postMaybe != 1 || sg.eSrv != -1000 || sg.eSrvHi != 5000 {
+		t.Errorf("15:00 那根：确定 %d · 可能 %d · E_srv [%d, %d]，应为 0 · 1 · [−1000, 5000]", sg.post, sg.postMaybe, sg.eSrv, sg.eSrvHi)
+	}
 }
 
 // guard: rbSegment 的边界 —— 两端都含（15:00:00.000 在、15:00:00.001 不在）；段与段不同号；不同自然日不同号。
