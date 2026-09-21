@@ -94,6 +94,10 @@ type Feed struct {
 	daily  *pull // DailyWalker 的第二遍；没给为 nil
 	curDay Day   // 主周期当前那根所属的交易日
 
+	basePer Period    // 主周期（Push 要按它攒 1m）
+	srcDone bool      // src 读完且第二遍核过（Next 返回 false 而 Err() 为 nil）⇒ 可以 Push
+	push    pushState // Push 的接续状态（push.go）
+
 	err    error
 	closed bool
 }
@@ -127,7 +131,7 @@ type extra struct {
 	prev   TradingDay // walker 时：day 之前的那个交易日（首日之前没有 ⇒ 0）
 }
 
-// NewFeed 构造一个 Feed。非主连模式下 src 为 nil 报错（v0.9 没有 Push，nil 源什么都做不了，F6）；
+// NewFeed 构造一个 Feed。非主连模式下 src 为 nil 报错（Push 只接在历史之后，V2 甲；没有 src 就没有可接的那一根）；
 // 主连模式（cfg.Main 非 nil）下 src 必须为 nil，根由 cfg.Main.Walker() 供。
 //
 // ⛔ 用完必须 Close（defer f.Close()）：它释放第二遍 Walk 的协程，并交出第二遍的结论（见 Close）。
@@ -141,7 +145,7 @@ func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
 		src = cfg.Main.Walker()
 	}
 	if src == nil {
-		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— v0.9 没有 Push（v0.10），非主连模式下 nil 源什么都读不到")
+		return nil, errors.New("tickflow: NewFeed 的 src 是 nil —— Push 只接在历史之后（v0.10 V2 甲：先读历史、读完再接推送），没有 src 就没有可接的那一根")
 	}
 	if err := cfg.Rule.check(); err != nil {
 		return nil, err
@@ -211,7 +215,7 @@ func NewFeed(src BarWalker, cfg FeedConfig) (*Feed, error) {
 			cfg.From, cfg.To, ErrWalkOutsideCoverage)
 	}
 
-	f := &Feed{cal: cfg.Calendar, key: cfg.Key, rule: cfg.Rule, from: cfg.From, to: cfg.To, byName: map[string]*series{}}
+	f := &Feed{cal: cfg.Calendar, key: cfg.Key, rule: cfg.Rule, from: cfg.From, to: cfg.To, basePer: cfg.Base, byName: map[string]*series{}}
 	needs := make([]int, len(names))
 	for i, name := range names {
 		s, err := newSeries(name, cfg.Indicators[name], cfg.Lookback)
@@ -372,6 +376,7 @@ func (f *Feed) Next() bool {
 		b, ok := f.main.next()
 		if !ok {
 			f.settle()
+			f.srcDone = f.err == nil
 			return false
 		}
 		if err := f.step(b); err != nil {
