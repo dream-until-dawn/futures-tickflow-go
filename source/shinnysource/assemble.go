@@ -27,48 +27,58 @@ func Assemble(rows []Row, cal tickflow.Calendar, req tickflow.BarRequest, now in
 	bars := make([]tickflow.Bar, 0, len(rows))
 	prev := int64(-1)
 	for _, row := range rows {
-		if row.Datetime%1e6 != 0 {
-			return nil, fmt.Errorf("shinnysource: id %d 的 datetime=%d 不是整毫秒", row.ID, row.Datetime)
+		if row.Datetime%1e6 == 0 && row.Datetime/1e6 <= prev {
+			return nil, fmt.Errorf("shinnysource: id %d 的开盘时刻 %s 不晚于上一根——没有按升序", row.ID, fmtTs(row.Datetime/1e6))
 		}
-		ts := row.Datetime / 1e6
-		if ts <= prev {
-			return nil, fmt.Errorf("shinnysource: id %d 的开盘时刻 %s 不晚于上一根——没有按升序", row.ID, fmtTs(ts))
-		}
-		prev = ts
-		tsEnd := ts + 60000
-		d, err := cal.DayAt(k, ts)
+		b, err := rowBar(row, cal, k)
 		if err != nil {
-			return nil, fmt.Errorf("%w：id %d 开盘于 %s，日历答：%w", ErrCalendarDisagrees, row.ID, fmtTs(ts), err)
+			return nil, err
 		}
-		inSession := false
-		for _, s := range d.Sessions {
-			if s.Contains(ts) {
-				inSession = tsEnd <= s.End
-				break
-			}
-		}
-		if !inSession {
-			return nil, fmt.Errorf("%w：id %d 开盘于 %s，收盘 %s 越过了它所在时段的收盘", ErrCalendarDisagrees, row.ID, fmtTs(ts), fmtTs(tsEnd))
-		}
-		if d.Num < req.From || d.Num > req.To {
+		prev = b.Ts
+		if b.TradingDay < req.From || b.TradingDay > req.To {
 			return nil, fmt.Errorf("%w：id %d 开盘于 %s，日历把它归到 %s，落在请求 [%s, %s] 之外",
-				ErrCalendarDisagrees, row.ID, fmtTs(ts), d.Num, req.From, req.To)
+				ErrCalendarDisagrees, row.ID, fmtTs(b.Ts), b.TradingDay, req.From, req.To)
 		}
-		if tsEnd > now {
+		if b.TsEnd > now {
 			// 升序 ⇒ 后面的只会更晚。
 			break
 		}
-		bars = append(bars, tickflow.Bar{
-			Ts: ts, TsEnd: tsEnd, TradingDay: d.Num,
-			Open: row.Open, High: row.High, Low: row.Low, Close: row.Close,
-			Volume:       row.Volume,
-			Turnover:     math.NaN(),
-			OpenInterest: row.CloseOI,
-			Settle:       math.NaN(),
-			Flags:        tickflow.FlagSrcShinny,
-		})
+		bars = append(bars, b)
 	}
 	return bars, nil
+}
+
+// rowBar 把一行 1m 变成 Bar（整毫秒 · 问日历归日 · 整根落在一个时段里 · 字段取法），不看请求区间、不看完结。
+// Assemble（历史拉取）与 Live（实时推送）共用 —— 两条路的换算是同一份代码（v0.10 P-b1 从 Assemble 里抽出，行为不变）。
+func rowBar(row Row, cal tickflow.Calendar, k tickflow.ProductKey) (tickflow.Bar, error) {
+	if row.Datetime%1e6 != 0 {
+		return tickflow.Bar{}, fmt.Errorf("shinnysource: id %d 的 datetime=%d 不是整毫秒", row.ID, row.Datetime)
+	}
+	ts := row.Datetime / 1e6
+	tsEnd := ts + 60000
+	d, err := cal.DayAt(k, ts)
+	if err != nil {
+		return tickflow.Bar{}, fmt.Errorf("%w：id %d 开盘于 %s，日历答：%w", ErrCalendarDisagrees, row.ID, fmtTs(ts), err)
+	}
+	inSession := false
+	for _, s := range d.Sessions {
+		if s.Contains(ts) {
+			inSession = tsEnd <= s.End
+			break
+		}
+	}
+	if !inSession {
+		return tickflow.Bar{}, fmt.Errorf("%w：id %d 开盘于 %s，收盘 %s 越过了它所在时段的收盘", ErrCalendarDisagrees, row.ID, fmtTs(ts), fmtTs(tsEnd))
+	}
+	return tickflow.Bar{
+		Ts: ts, TsEnd: tsEnd, TradingDay: d.Num,
+		Open: row.Open, High: row.High, Low: row.Low, Close: row.Close,
+		Volume:       row.Volume,
+		Turnover:     math.NaN(),
+		OpenInterest: row.CloseOI,
+		Settle:       math.NaN(),
+		Flags:        tickflow.FlagSrcShinny,
+	}, nil
 }
 
 func fmtTs(ms int64) string {
