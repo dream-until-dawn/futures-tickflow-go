@@ -62,7 +62,12 @@ func replayOne(t *testing.T, cal tickflow.Calendar, path string) {
 	if err := sc.Err(); err != nil || len(frames) == 0 {
 		t.Fatalf("读 %s：%d 帧 · %v", path, len(frames), err)
 	}
-	startAt := frames[0].Recv / 60000 * 60000 // 连上那一分钟起交（view_width 带来的历史不交）
+	// 起始格：连上那一分钟起的第一个交易分钟（view_width 带来的历史不交）。P-b2 起起始格必须是交易分钟（L12：
+	// 真用时由 Feed 给「最后一根的下一格」）—— 08:59 / 20:59 连上的，起始格是 09:00 / 21:00，推送窗口自带它 ⇒ 不补。
+	startAt := frames[0].Recv / 60000 * 60000
+	for i := 0; !onSession(cal, startAt) && i < 24*60; i++ {
+		startAt += 60000
+	}
 	c := newLiveCore(cal, liveSym, startAt, LiveOptions{})
 	c.ins = "KQ.m@SHFE.rb" // 封存的是主连那一路（6.36 / 6.37 取的是 KQ.m）
 	var out []replayGot
@@ -124,10 +129,24 @@ func replayOne(t *testing.T, cal tickflow.Calendar, path string) {
 	if len(out) > 0 {
 		first, last = fmtTs(out[0].b.Ts), fmtTs(out[len(out)-1].b.Ts)
 	}
-	t.Logf("%s：帧 %d · 交出 %d 根（首 %s · 末 %s）· 停在 %v", name, len(frames), len(out), first, last, stop)
+	_, _, need := c.needBackfill()
+	t.Logf("%s：帧 %d · 起始格 %s（要补齐 %v）· 交出 %d 根（首 %s · 末 %s）· 停在 %v", name, len(frames), fmtTs(startAt), need, len(out), first, last, stop)
 	t.Logf("  非末根 交出时刻 − 收盘（本机，毫秒）%s", distMs(lag))
 	t.Logf("  时段末根 交出时刻 − 收盘（本机，毫秒）%v", segLag)
 	t.Logf("  交出的值与回放结束时的最终值不同的根 %d · 偏慢告警 %d 次（最新低端 %d）", changed, w, lo)
+}
+
+func onSession(cal tickflow.Calendar, ts int64) bool {
+	d, err := cal.DayAt(liveSym.ProductKey(), ts)
+	if err != nil {
+		return false
+	}
+	for _, s := range d.Sessions {
+		if s.Contains(ts) {
+			return true
+		}
+	}
+	return false
 }
 
 func distMs(xs []int64) string {

@@ -20,7 +20,8 @@ import (
 //
 // ⛔ 它不 import Feed、Feed 也不认识它（L1：源判完结，Feed 只收已完结的根）。
 //
-// ⛔ 约定（评审方 09-21）：liveCore 任何「不交」都必须归到三种原因之一 —— 等 k＋1 · 等 C＋G · 早于 startAt；此外的一律报错。
+// ⛔ 约定（评审方 09-21）：liveCore 任何「不交」都必须归到这几种原因之一 —— 等 k＋1 · 等 C＋G · 早于 startAt ·
+// 等起步补齐（L12，P-b2 加：推送里最早的根晚于起始格、历史通道还没补上）；此外的一律报错。
 // （5c89c1d 有两处违反：只留最近 8 根交出值 ⇒ 更早的根被改静默吞掉；id 跳号 ⇒ 永远不交、也不报）
 
 var (
@@ -32,8 +33,11 @@ var (
 	// ErrClockSkew：本机时钟偏快到末根宽限 G 可能不够、会提前交出（L6 甲，评审方 09-21 裁）。
 	ErrClockSkew = errors.New("shinnysource: 本机时钟偏快 —— 末根宽限 G 的前提不成立")
 
-	// ErrIDGap：推送里 id 跳号 —— k＋1 没来，而更大的 id 已经来了（天勤的 id 在一个序列里连续）。不猜、不跳过：停下来问（与 Feed 的 ErrPushGap 同一种处置）。
-	ErrIDGap = errors.New("shinnysource: 推送里 bar id 跳号")
+	// ErrIDGap：bar id 跳号 —— 推送里 k＋1 没来而更大的 id 已经来了；交出过之后下一根不是 lastID＋1；或历史通道补回来的与推送接不上（L12）。天勤的 id 在一个序列里连续 ⇒ 不猜、不跳过：停下来问（与 Feed 的 ErrPushGap 同一种处置）。
+	ErrIDGap = errors.New("shinnysource: bar id 跳号")
+
+	// ErrStartGap：起步补不齐 —— 历史通道补回来的第一根不是起始格（L12；补回来的与推送接不上 ⇒ ErrIDGap，同一根两条通道值不同 ⇒ ErrCorrectedAfterDelivery）。
+	ErrStartGap = errors.New("shinnysource: 起步补不齐（第一根不是起始格）")
 
 	// ErrSuspectedFreeze：日历说在交易时段，而时段内超过 N 没有任何真改动（L7 中途）。
 	ErrSuspectedFreeze = errors.New("shinnysource: 交易时段内超过 N 没有任何真改动（疑似推送冻结）")
@@ -68,6 +72,7 @@ type liveCore struct {
 	snap    map[string]any
 	rows    map[int64]Row // 每个 id 最近一次的值
 	firstID int64         // 第一根交出的 id（0 ＝ 还没交过）；[firstID, lastID] 里的根都交出过 ⇒ 值变即 L5
+	filled  bool          // 起步接缝已接上（L12）：startAt 那一格在 rows 里了（推送自带，或历史通道补上）
 	lastID  int64         // 已交出（或早于起点而跳过）的最后一根的 id
 	started bool          // 启动自检做过
 	lastChg int64         // 最后一次真改动（诞生或值变）的本机时刻
@@ -185,6 +190,9 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 		}
 	}
 	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	if !c.startReady() {
+		return nil, nil // 等起步补齐（L12）
+	}
 	var out []tickflow.Bar
 	for _, id := range ids {
 		row := c.rows[id]
@@ -195,6 +203,11 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 		if b.Ts < c.startAt {
 			c.lastID = id // 早于起点的（view_width 带来的历史）不交，也不再看
 			continue
+		}
+		// 交出过之后，下一根必须是 lastID＋1（评审方 09-21 补：段末根按 C＋G 交出之后，下一段来的若不是 lastID＋1，
+		// 「当前这一根的 k＋1」那条检查照不到它 —— 跳过的那根从没被查过）
+		if c.firstID != 0 && id != c.lastID+1 {
+			return out, fmt.Errorf("%w：上一根交出的是 id %d，下一根来的是 id %d（开盘 %s），缺 id %d", ErrIDGap, c.lastID, id, fmtTs(b.Ts), c.lastID+1)
 		}
 		_, nextSeen := c.rows[id+1]
 		done := nextSeen
@@ -218,6 +231,101 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 		}
 	}
 	return out, nil
+}
+
+// startReady（L12）：起步接缝接上了没有。没给起始格（startAt 为 0）⇒ 接上；
+// 否则 rows 里开盘 ≥ startAt 的最早那根：就是 startAt ⇒ 接上；更晚 ⇒ 等历史通道补（needBackfill / backfill）；一根都没有 ⇒ 等推送。
+func (c *liveCore) startReady() bool {
+	if c.filled || c.startAt == 0 {
+		return true
+	}
+	min, ok := c.earliestFrom(c.startAt)
+	if ok && min == c.startAt {
+		c.filled = true
+	}
+	return c.filled
+}
+
+// earliestFrom：rows 里开盘 ≥ from 的最早那根的开盘时刻。
+func (c *liveCore) earliestFrom(from int64) (int64, bool) {
+	best, ok := int64(0), false
+	for _, r := range c.rows {
+		if ts := r.Datetime / 1e6; ts >= from && (!ok || ts < best) {
+			best, ok = ts, true
+		}
+	}
+	return best, ok
+}
+
+// needBackfill（L12 第二步）：推送里开盘 ≥ 起始格的最早那根晚于起始格 ⇒ 要向历史通道要 [from, to)（毫秒）。
+func (c *liveCore) needBackfill() (from, to int64, need bool) {
+	if c.filled || c.startAt == 0 {
+		return 0, 0, false
+	}
+	min, ok := c.earliestFrom(c.startAt)
+	if !ok || min == c.startAt {
+		return 0, 0, false
+	}
+	return c.startAt, min, true
+}
+
+// backfill（L12 第二、三步）：把历史通道拉回来的行并进来。
+//
+//	只收开盘在 [startAt, 推送最早那根) 里的；更早的、更新的（推送还没发到）都不要；落在推送已有的 id 上的 ⇒ 与推送逐位比，不等报 L5（同一根两条通道给了两个值）
+//	补回来的第一根必须是起始格（否则 ErrStartGap）；补回来的 id 必须连续、且最后一根接上推送最早那根（否则 ErrIDGap）
+//
+// ⚠️ 起始格必须是一个交易分钟（Feed 最后一根之后那一格的第一分钟，由 Feed 给出）；给了休市时刻 ⇒ 永远等不到它 ⇒ 这里报 ErrStartGap。
+// ⚠️ 前提：历史通道与推送通道的 bar id 是同一套编号（都来自天勤同一条 K 线序列；推论，实盘那一次要验）。
+func (c *liveCore) backfill(rows []Row) error {
+	from, to, need := c.needBackfill()
+	if !need {
+		return nil
+	}
+	pushFirst := int64(-1)
+	for id, r := range c.rows {
+		if r.Datetime/1e6 == to {
+			pushFirst = id
+		}
+	}
+	sorted := append([]Row(nil), rows...)
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i].ID < sorted[j].ID })
+	var fill []Row
+	for _, r := range sorted {
+		ts := r.Datetime / 1e6
+		if ts < from {
+			continue
+		}
+		if old, ok := c.rows[r.ID]; ok {
+			if !sameRow(old, r) {
+				return fmt.Errorf("%w：id %d（开盘 %s）历史通道 %s，推送 %s —— 同一根两条通道给了两个值", ErrCorrectedAfterDelivery, r.ID, fmtTs(ts), showRow(r), showRow(old))
+			}
+			continue
+		}
+		if ts >= to {
+			continue // 比推送最早那根还新、推送还没发到的：不从历史通道收，等推送（只收 [from, to)）
+		}
+		fill = append(fill, r)
+	}
+	if len(fill) == 0 || fill[0].Datetime/1e6 != from {
+		first := "（一根都没有）"
+		if len(fill) > 0 {
+			first = fmtTs(fill[0].Datetime / 1e6)
+		}
+		return fmt.Errorf("%w：历史通道补回来的第一根是 %s，起始格是 %s", ErrStartGap, first, fmtTs(from))
+	}
+	for i := 1; i < len(fill); i++ {
+		if fill[i].ID != fill[i-1].ID+1 {
+			return fmt.Errorf("%w：历史通道补回来的 id %d 之后是 %d", ErrIDGap, fill[i-1].ID, fill[i].ID)
+		}
+	}
+	if last := fill[len(fill)-1].ID; last+1 != pushFirst {
+		return fmt.Errorf("%w：历史通道补回来的最后一根 id %d，推送最早那根 id %d —— 接不上", ErrIDGap, last, pushFirst)
+	}
+	for _, r := range fill {
+		c.rows[r.ID] = r
+	}
+	c.filled = true
+	return nil
 }
 
 // isSegmentEnd：b 的收盘时刻是它那个交易日某一段的收盘（10:15 · 11:30 · 15:00 · 23:00 …，按日历认，不写死）。
