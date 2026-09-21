@@ -5483,7 +5483,7 @@ L1  分层：源判完结，Feed 只收已完结的根
                         判完结 · 交出后的修正 · 冻结 · 本机偏差 · 断线补洞 —— 全在这一层
     Feed.Push(b Bar)    根包；只做输入校验与步进（与 Next 同一个 step），**不判完结**（F7：Feed 只收已完结的根，这条在实时路径上不变）
     连接两者的是调用方：for b := range live { feed.Push(b) } —— shinnysource 不 import Feed，Feed 不认识任何源（模块分开）
-    📌 P-a 实现（2026-09-21，待评审方认）：签名改成 Push(b Bar) (stepped bool, err error)。
+    📌 P-a 实现（2026-09-21，评审方 09-21 认）：签名改成 Push(b Bar) (stepped bool, err error)。
        理由：用户裁了主周期可以长于 1m（L2）⇒ 主周期 15m 时 15 次 Push 只有 1 次步进；只回 error 的话，调用方要自己比 View 的时刻才知道
        这一次该不该跑策略逻辑。stepped 为真 ⇔ View / TF / 指标前进了一根主周期
 

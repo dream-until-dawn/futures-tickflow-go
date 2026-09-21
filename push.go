@@ -18,7 +18,8 @@ var ErrPushGap = errors.New("tickflow: Push 跳格了 —— 推入的这根不�
 // pushState 是 Push 的接续状态。
 type pushState struct {
 	started bool
-	lastTs  int64      // 上一根推入的 1m 的开盘时刻（起步时：src 最后一根主周期根的最后一分钟）—— 用来认「重复」
+	pushed  bool       // 至少有一根 Push 成功过 ⇒ lastTs 才是「推过的那根」
+	lastTs  int64      // 上一根推入的 1m 的开盘时刻 —— 用来认「重复」（pushed 为假时不用：起步时早于接续点的根不是推过的）
 	nextTs  int64      // 下一根必须是这一分钟
 	nextDay TradingDay // ……且属于这个交易日
 	day     Day        // nextDay 那一天（缓存）
@@ -82,6 +83,9 @@ func (f *Feed) Push(b Bar) (stepped bool, err error) {
 	}
 	if b.Ts != st.nextTs {
 		switch {
+		case !st.pushed && b.Ts < st.nextTs:
+			// 起步后还没推成过：早于接续点的那一分钟是 src 里的（主周期更长时甚至不在 src 里），不是「推过的」（评审方 09-21）
+			return false, fmt.Errorf("tickflow: Push 的这根 %s 早于接续点 %s（src 已含到 %s 之前）", showTs(b.Ts), showTs(st.nextTs), showTs(st.nextTs))
 		case b.Ts == st.lastTs:
 			return false, fmt.Errorf("tickflow: Push 重复了 —— %s 那根已经推过（下一格应是 %s）", showTs(b.Ts), showTs(st.nextTs))
 		case b.Ts < st.nextTs:
@@ -108,7 +112,7 @@ func (f *Feed) Push(b Bar) (stepped bool, err error) {
 	}
 
 	// ── 以下改状态（上面任一处报错都走不到这里）──
-	st.lastTs, st.nextTs, st.nextDay, st.day, st.nextErr = b.Ts, nextTs, nextDay, nd, nextErr
+	st.pushed, st.lastTs, st.nextTs, st.nextDay, st.day, st.nextErr = true, b.Ts, nextTs, nextDay, nd, nextErr
 	if !aggBase {
 		f.push = st
 		if err := f.step(b); err != nil {
@@ -139,6 +143,12 @@ func (f *Feed) pushAnchor() (pushState, error) {
 		return pushState{}, errors.New("tickflow: src 一根主周期根都没有 —— 不知道 Push 该从哪一格接（v0.10 只做「先读历史、再接推送」）")
 	}
 	last := f.base.view().Bar()
+	// src 末根不完整 ⇒ 不许接（评审方 2026-09-21 实测）：盘中 Sync 完、主周期 15m 时末根大概率就是这个形状 ——
+	// 接上的话，这一格停在不完整的值上、后面照常步进，格子里剩下的分钟永远进不来，也没有任何报错
+	if last.Flags&FlagPartial != 0 {
+		return pushState{}, fmt.Errorf("tickflow: src 最后一根 [%s, %s) 带 FlagPartial —— src 截在了格子中间（多半是盘中拉的），Push 接不上："+
+			"把 NewFeed 的 src 截到上一个完整的格子，剩下的交给源侧从历史通道补（shinnysource.Live 的起步补齐）", showTs(last.Ts), showTs(last.TsEnd))
+	}
 	d, err := f.cal.DayOf(f.key, last.TradingDay)
 	if err != nil {
 		return pushState{}, fmt.Errorf("tickflow: Push 起步问不到 %s 那一天的时段: %w", last.TradingDay, err)

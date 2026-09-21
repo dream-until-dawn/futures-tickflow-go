@@ -516,6 +516,77 @@ func TestFeedPushLastCoveredMinute(t *testing.T) {
 	}
 }
 
+// guard: src 最后一根主周期根不完整（FlagPartial）⇒ 起步报错，不静默接上（评审方 2026-09-21 实测）——
+// 0904 的 1m 截到 09:37、按交易时间轴聚成 15m 当 src ⇒ 末根 [09:30, 09:45) 只含 09:30–09:36、带 FlagPartial。
+// 第一版把它当完结根：09:37–09:43 报「乱序」、09:44 报「重复」（假话）、09:45 起收下 ⇒ Feed 里 09:30 那根停在 7 分钟的值上、不报错。
+// 现在：推任何一根都报「src 截在了格子中间」，报错前后快照相同。
+func TestFeedPushRejectsPartialSrcTail(t *testing.T) {
+	cal := auCal(t)
+	day, err := cal.DayOf(keyAU, 20260904)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpl, err := cal.Template(keyAU, 20260904)
+	if err != nil {
+		t.Fatal(err)
+	}
+	all := synthDay(day, nil)
+	var part []tickflow.Bar
+	for _, b := range all {
+		if b.TsEnd <= at(20260904, 9, 37) {
+			part = append(part, b)
+		}
+	}
+	src, err := tickflow.Aggregate(tickflow.AggTradingAxis, tickflow.MustIntraday(15), tmpl, day, part)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if last := src[len(src)-1]; hm(last.Ts) != "09-04 09:30" || last.Flags&tickflow.FlagPartial == 0 {
+		t.Fatalf("前提没成立：src 末根 %s flags %d，应为 09:30 那根、带 FlagPartial", hm(last.Ts), last.Flags)
+	}
+	f, err := tickflow.NewFeed(sliceWalker{src}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(15), nil, 20260904))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	drain(t, f)
+	s0 := takeSnap(f)
+	for _, b := range all {
+		if b.TsEnd <= at(20260904, 9, 37) || b.Ts > at(20260904, 9, 45) {
+			continue
+		}
+		if _, err := f.Push(b); err == nil || !strings.Contains(err.Error(), "格子中间") {
+			t.Errorf("Push %s：%v，应报「src 截在了格子中间」", hm(b.Ts), err)
+		}
+		if takeSnap(f) != s0 {
+			t.Fatalf("Push %s 报错之后状态变了", hm(b.Ts))
+		}
+	}
+}
+
+// guard: 起步时早于接续点的根报「早于接续点」，不说「已经推过」—— 那一分钟是 src 里的（或主周期更长时根本不在 src 里），不是推过的
+// （评审方 2026-09-21：第一版起步即重推 src 末根那一分钟，报「那根已经推过」）。对照：真推过的那根再推一次 ⇒ 报「推过」。
+func TestFeedPushAnchorMessageIsNotPushed(t *testing.T) {
+	one, _ := aggDays(t, tickflow.AggTradingAxis, 1, synthDays)
+	k := cutAt(t, one, 20260904, clock(2026, 9, 4, 9, 37))
+	f, err := tickflow.NewFeed(sliceWalker{one[:k]}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(1), nil, 20260904))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	drain(t, f)
+	_, err = f.Push(one[k-1])
+	if err == nil || strings.Contains(err.Error(), "推过") || !strings.Contains(err.Error(), "接续点") {
+		t.Errorf("起步即重推 src 末根那一分钟：%v，应报「早于接续点」、不许说「推过」", err)
+	}
+	if _, err := f.Push(one[k]); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.Push(one[k]); err == nil || !strings.Contains(err.Error(), "推过") {
+		t.Errorf("对照：真推过的那根再推一次：%v，应报「推过」", err)
+	}
+}
+
 // ── 读数 ──
 
 // BenchmarkFeedPush：Push 一步的纳秒数（主周期 1m 每推一步；15m 每推一根 1m，15 根步进一次）。与 BenchmarkFeedNext 同一张表。
