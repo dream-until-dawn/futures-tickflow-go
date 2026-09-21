@@ -448,6 +448,69 @@ func TestLivePostIntervalAtCloseEdge(t *testing.T) {
 	}
 }
 
+// guard: 本帧带 quote 时服务器时刻是点值、两端相等（评审方突变 N3：「本帧带 quote 也当区间、上界 ＋100 ms」⇒ 全绿，没有格守）——
+// 10:14 那根在 C − 50 ms 一帧同时带 quote（datetime ＝ C − 50 ms）与 K 线改动 ⇒ E_srv [−50, −50]、确定 0、可能 0。
+func TestLiveServerTimePointWhenQuoteInFrame(t *testing.T) {
+	durKey := strconv.FormatInt(tailDur, 10)
+	c := time.Date(2026, 9, 21, 10, 15, 0, 0, cst).UnixMilli()
+	raw, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{
+		"quotes": map[string]any{tailSym: map[string]any{"datetime": time.UnixMilli(c - 50).In(cst).Format("2006-01-02 15:04:05.000000")}},
+		"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+			"data": map[string]any{strconv.FormatInt(1000+74, 10): map[string]any{"close": 100.8}}}}}}}})
+	r := analyzeTail(insertFrame(synthDaySession(0), tailFrame{RecvMs: c - 50, Raw: raw}))
+	sg := r.segs[0]
+	if sg.label != "10:15" || sg.eLoc != -50 {
+		t.Fatalf("前提没成立：%s 那根 E_loc %d，应为 10:15 · −50", sg.label, sg.eLoc)
+	}
+	if sg.eSrv != -50 || sg.eSrvHi != -50 || sg.post != 0 || sg.postMaybe != 0 {
+		t.Errorf("10:15 那根：E_srv [%d, %d] · 确定 %d · 可能 %d，应为 [−50, −50] · 0 · 0", sg.eSrv, sg.eSrvHi, sg.post, sg.postMaybe)
+	}
+}
+
+// guard: 「距前一报价帧 > 1000 ms」那一列的阈值（评审方突变 N5：阈值写成 100 ms ⇒ 全绿，没有格守）——
+// 09:50 那根收盘前那次改动的帧去掉 quote，前面插一个只带报价的帧，间隔 500 / 1000 / 1001 ms ⇒ 只有 1001 进这一列（严格大于）。
+func TestLiveFarQuoteThreshold(t *testing.T) {
+	change := time.Date(2026, 9, 21, 9, 50, 59, 0, cst).UnixMilli()
+	for _, c := range []struct {
+		lag  int64
+		want bool
+	}{{500, false}, {1000, false}, {1001, true}} {
+		fr := synthDaySession(0)
+		hit := 0
+		for i := range fr {
+			if fr[i].RecvMs != change {
+				continue
+			}
+			var m map[string]any
+			json.Unmarshal(fr[i].Raw, &m)
+			var keep []any
+			for _, d := range m["data"].([]any) {
+				if _, q := d.(map[string]any)["quotes"]; !q {
+					keep = append(keep, d)
+				}
+			}
+			m["data"] = keep
+			fr[i].Raw, _ = json.Marshal(m)
+			hit++
+		}
+		if hit != 1 {
+			t.Fatalf("前提没成立：09:50:59 那一帧找到 %d 帧", hit)
+		}
+		q, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"quotes": map[string]any{tailSym: map[string]any{
+			"datetime": time.UnixMilli(change - c.lag).In(cst).Format("2006-01-02 15:04:05.000000")}}}}})
+		r := analyzeTail(insertFrame(fr, tailFrame{RecvMs: change - c.lag, Raw: q}))
+		got := false
+		for _, ms := range r.farQuote {
+			if ms == change {
+				got = true
+			}
+		}
+		if got != c.want {
+			t.Errorf("间隔 %d ms：进 >1000 ms 那一列 %v，应为 %v（该列 %v）", c.lag, got, c.want, r.farQuote)
+		}
+	}
+}
+
 // guard: 收盘后单独成帧的改动，按服务器时刻也要算「收盘后」（评审方 2026-09-21 裁③「丁：外推」时给的反例）——
 // 15:00 收盘后报价帧不再来；14:59 那根（id 1224）在 15:00:05 单独成帧又改一次。
 // 快照取法记成前一个报价帧的 14:59:59 ⇒ Post 0、E_srv −1000，当成确定在收盘前 —— 说错；「跨段即不明」（乙）也认不出（同一段）。
