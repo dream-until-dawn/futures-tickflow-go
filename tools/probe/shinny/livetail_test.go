@@ -194,6 +194,102 @@ func TestLiveAnalyzeGapOnlyInsideSession(t *testing.T) {
 	}
 }
 
+// guard: 乙的 B1s 不跨时段（6.37 读数：日盘午休 7200543 ms 被当成了时段内的空档）——
+// 合成日盘（带服务器时刻、本机慢 2.4 秒）：不分时段的 B1 ＝ 午休那段（前提）；B1s ＝ 时段内自己的 58.5 秒。
+func TestLiveB1sExcludesSessionBreaks(t *testing.T) {
+	r := analyzeTail(synthDaySession(2400))
+	if r.b1 != 7201500 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应为 7201500（11:29:59 → 13:30:00.5 的午休）", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（小节休息与午休都不算）", r.b1s)
+	}
+}
+
+// guard: 一次改动属于哪一段，按被改那根自己的开盘时刻判，不按快照里的 quote.datetime ——
+// 6.37 读数：13:30 那根在本机 13:29:59.850 诞生，那一帧不带 quote，快照里的 quote.datetime 还停在午休前的 11:29:59.900
+// ⇒ 按它判段，午休前后两次改动落在同一段，7200543 ms 又被算进了 B1s。合成：把午休后第一帧的 quote 去掉。
+func TestLiveB1sSurvivesStaleQuoteAfterBreak(t *testing.T) {
+	const skew = 2400
+	fr := synthDaySession(skew)
+	first := time.Date(2026, 9, 21, 13, 30, 0, 500*1e6, cst).UnixMilli() - skew
+	hit := 0
+	for i := range fr {
+		if fr[i].RecvMs != first {
+			continue
+		}
+		var m map[string]any
+		json.Unmarshal(fr[i].Raw, &m)
+		var keep []any
+		for _, d := range m["data"].([]any) {
+			if _, q := d.(map[string]any)["quotes"]; !q {
+				keep = append(keep, d)
+			}
+		}
+		m["data"] = keep
+		fr[i].Raw, _ = json.Marshal(m)
+		hit++
+	}
+	if hit != 1 {
+		t.Fatalf("前提没成立：午休后第一帧找到 %d 帧，应为 1", hit)
+	}
+	r := analyzeTail(fr)
+	if r.b1 != 7201500 {
+		t.Fatalf("前提没成立：不分时段的 B1 %d，应为 7201500", r.b1)
+	}
+	if r.b1s != 58500 {
+		t.Errorf("B1s %d，应为 58500（午休后第一帧不带 quote，也不许把午休算进来）", r.b1s)
+	}
+	// 同一帧里既改了上一段的末根（11:29 那根，id 1134）、又诞生了新根 ⇒ 这一帧按较晚那根（13:30）判段；按较早那根判，午休又被算进来
+	durKey := strconv.FormatInt(tailDur, 10)
+	extra, _ := json.Marshal(map[string]any{"aid": "rtn_data", "data": []any{map[string]any{"klines": map[string]any{tailSym: map[string]any{durKey: map[string]any{
+		"data": map[string]any{strconv.FormatInt(1000+75+59, 10): map[string]any{"close": 100.7}}}}}}}})
+	for i := range fr {
+		if fr[i].RecvMs == first {
+			var m, e map[string]any
+			json.Unmarshal(fr[i].Raw, &m)
+			json.Unmarshal(extra, &e)
+			m["data"] = append(m["data"].([]any), e["data"].([]any)...)
+			fr[i].Raw, _ = json.Marshal(m)
+		}
+	}
+	r2 := analyzeTail(fr)
+	if r2.changes != r.changes+1 {
+		t.Fatalf("前提没成立：真改动 %d，应比上面多 1（%d）", r2.changes, r.changes)
+	}
+	if r2.b1s != 58500 {
+		t.Errorf("同一帧也改了 11:29 那根：B1s %d，应仍为 58500", r2.b1s)
+	}
+}
+
+// guard: rbSegment 的边界 —— 两端都含（15:00:00.000 在、15:00:00.001 不在）；段与段不同号；不同自然日不同号。
+func TestRbSegmentBounds(t *testing.T) {
+	at := func(d, h, m, s, ms int) int64 {
+		return time.Date(2026, 9, d, h, m, s, ms*1e6, cst).UnixMilli()
+	}
+	cases := []struct {
+		ms int64
+		ok bool
+	}{
+		{at(21, 8, 59, 59, 999), false}, {at(21, 9, 0, 0, 0), true}, {at(21, 10, 15, 0, 0), true}, {at(21, 10, 15, 0, 1), false},
+		{at(21, 10, 29, 59, 999), false}, {at(21, 10, 30, 0, 0), true}, {at(21, 11, 30, 0, 0), true}, {at(21, 12, 0, 0, 0), false},
+		{at(21, 13, 30, 0, 0), true}, {at(21, 15, 0, 0, 0), true}, {at(21, 15, 0, 0, 1), false},
+		{at(21, 21, 0, 0, 0), true}, {at(21, 23, 0, 0, 0), true}, {at(21, 23, 0, 0, 1), false},
+	}
+	for _, c := range cases {
+		if _, ok := rbSegment(c.ms); ok != c.ok {
+			t.Errorf("%s：在时段里 %v，应为 %v", showMs(c.ms), ok, c.ok)
+		}
+	}
+	a, _ := rbSegment(at(21, 10, 0, 0, 0))
+	b, _ := rbSegment(at(21, 10, 45, 0, 0))
+	c, _ := rbSegment(at(21, 14, 0, 0, 0))
+	d, _ := rbSegment(at(22, 14, 0, 0, 0))
+	if a == b || b == c || c == d {
+		t.Errorf("段号应两两不同：09:00 段 %d · 10:30 段 %d · 13:30 段 %d · 次日 13:30 段 %d", a, b, c, d)
+	}
+}
+
 // synthDaySession 造 rb 一个日盘（09:00–10:15 · 10:30–11:30 · 13:30–15:00，2026-09-21 +0800）的 1m 推送帧，
 // 每根开盘后 0.5 秒出现、收盘前 1 秒改一次；时间轴当服务器时刻，本机收到 ＝ 服务器 − skew（经 skewed）。
 func synthDaySession(skew int64) []tailFrame {
