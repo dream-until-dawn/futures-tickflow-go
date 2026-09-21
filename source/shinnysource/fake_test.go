@@ -1,6 +1,7 @@
 package shinnysource
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -51,11 +52,23 @@ type fakeServer struct {
 	stallAfterPage int  // >0 ⇒ 第 N 个 set_chart 之后不再回任何消息
 	dropID         int64
 	dropIDSet      bool // 发窗时故意漏掉这个 id
+	// 推送模式（v0.10 P-c）：set_chart 既没有 focus_datetime 也没有 left_kline_id ⇒ 这条连接是推送通道，
+	// 之后照 push 里的指令逐条发（所有推送连接共用一条指令队列，一条连接用到 drop 为止）
+	push      chan pushCmd
+	pushConns int
+	mdDown    bool          // 行情握手一律回 503（重连失败那一格）
+	histDelay time.Duration // 历史窗口（带 focus / left 的 set_chart）回之前先等这么久（补齐期间 ctx 到期那一格）
+}
+
+// pushCmd 是推送连接上的一条指令：发一帧 rtn_data（data 是它的一个元素），或断开这条连接。
+type pushCmd struct {
+	data map[string]any
+	drop bool
 }
 
 func newFakeServer(t *testing.T) *fakeServer {
 	t.Helper()
-	fs := &fakeServer{t: t, series: map[string][]fakeBar{}}
+	fs := &fakeServer{t: t, series: map[string][]fakeBar{}, push: make(chan pushCmd, 1024)}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/auth", fs.handleAuth)
 	mux.HandleFunc("/ns", fs.handleNS)
@@ -107,7 +120,12 @@ func (fs *fakeServer) handleMD(w http.ResponseWriter, r *http.Request) {
 	fs.handshakes++
 	fs.uas = append(fs.uas, r.Header.Get("User-Agent"))
 	reject := fs.rejectFirstTok && r.Header.Get("Authorization") == "Bearer tok-1"
+	down := fs.mdDown
 	fs.mu.Unlock()
+	if down {
+		http.Error(w, "md down", http.StatusServiceUnavailable)
+		return
+	}
 	if reject {
 		http.Error(w, "token expired", http.StatusUnauthorized)
 		return
@@ -153,10 +171,24 @@ func (fs *fakeServer) handleMD(w http.ResponseWriter, r *http.Request) {
 		case "peek_message":
 			peeking = true
 		case "set_chart":
+			_, f := m["focus_datetime"]
+			_, l := m["left_kline_id"]
+			if !f && !l {
+				fs.servePush(ctx, write)
+				return
+			}
 			fs.mu.Lock()
 			fs.setCharts = append(fs.setCharts, m)
 			stallAfter := fs.stallAfterPage
+			delay := fs.histDelay
 			fs.mu.Unlock()
+			if delay > 0 {
+				select {
+				case <-time.After(delay):
+				case <-ctx.Done():
+					return
+				}
+			}
 			charts++
 			pending = append(pending, fs.window(m, sent))
 			if stallAfter > 0 && charts > stallAfter {
@@ -165,6 +197,28 @@ func (fs *fakeServer) handleMD(w http.ResponseWriter, r *http.Request) {
 		}
 		if !flush() {
 			return
+		}
+	}
+}
+
+// servePush 照指令队列发推送帧，遇 drop 断开（返回即 CloseNow）。
+// ⚠️ 不按 peek_message 节流（真的服务端只在 peek 之后推）：被测的是 Live 怎么吃帧、断了怎么接，不是节流。
+func (fs *fakeServer) servePush(ctx context.Context, write func(any) bool) {
+	fs.mu.Lock()
+	fs.pushConns++
+	fs.mu.Unlock()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case cmd := <-fs.push:
+			if cmd.drop {
+				time.Sleep(20 * time.Millisecond) // 让已写出的帧先到
+				return
+			}
+			if !write(map[string]any{"aid": "rtn_data", "data": []any{cmd.data}}) {
+				return
+			}
 		}
 	}
 }

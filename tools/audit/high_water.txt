@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 187
+guards 200
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -483,3 +483,5 @@ guards 187
 # 来历 2026-09-21 guards 180 自 178 自动：重造时表长大（178 -> 180）；本次新增：TestLiveCorrectionOfOldDeliveredBar TestLiveIDGapIsAnError
 # 来历 2026-09-21 guards 186 自 180 自动：重造时表长大（180 -> 186）；本次新增：TestLiveBackfillFillsThenPushContinues TestLiveBackfillIDGap TestLiveBackfillNotNeededWhenPushCoversStart TestLiveBackfillOverlapMismatch TestLiveBackfillShortHistory TestLiveIDGapAfterSegmentEnd
 # 来历 2026-09-21 guards 187 自 186 自动：重造时表长大（186 -> 187）；本次新增：TestLiveBackfillSkipsLiveCurrentBar
+# 来历 2026-09-21 guards 196 自 187 自动：重造时表长大（187 -> 196）；本次新增：TestLiveNetBackfillsFromHistory TestLiveNetCorrectionAcrossReconnect TestLiveNetReconnectBackfills TestLiveNetReconnectGivesUp TestLiveNetReconnectResumes TestLiveNetSegmentEndByTicker TestLiveNetTicksUnderFrameFlood TestLiveReconnectRechecks TestLiveReconnectResyncs
+# 来历 2026-09-21 guards 200 自 196 自动：重造时表长大（196 -> 200）；本次新增：TestLiveNetCtxExpiresDuringBackoff TestLiveNetCtxExpiresDuringFill TestLiveNetSlowConsumerKeepsRecvTime TestLiveNetStalledConsumerIsAnError
