@@ -108,6 +108,44 @@ func TestLiveCorrectionAfterDelivery(t *testing.T) {
 	}
 }
 
+// guard: L5 的射程是【所有交出过的根】，不是「最近几根」（评审方 09-21 实测：5c89c1d 只留最近 8 根，连交 10 根后改最早那根 ⇒ 不报）——
+// 拿判据一（「交出后不会再变」）去限定检验判据一的范围，是循环论证。对照：早于起点、从没交出的根被改了值 ⇒ 不报。
+func TestLiveCorrectionOfOldDeliveredBar(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	c := newLiveCore(testCalendar(t), liveSym, m+60000, LiveOptions{})
+	mustFeed(t, c, m+100, kFrame(99, m, 2999, "")) // 早于起点（view_width 带来的历史那种）
+	for i := int64(0); i <= 10; i++ {
+		mustFeed(t, c, m+60000+i*60000+100, kFrame(100+i, m+60000+i*60000, 3000+float64(i), ""))
+	}
+	if c.lastID != 109 {
+		t.Fatalf("前提没成立：已交出到 id %d，应到 109", c.lastID)
+	}
+	if _, err := c.feed(m+12*60000, kFrame(99, m, 2000, "")); err != nil {
+		t.Errorf("对照：从没交出的 id 99 改了值：%v，应不报", err)
+	}
+	_, err := c.feed(m+12*60000+100, kFrame(100, m+60000, 3999, ""))
+	if !errors.Is(err, ErrCorrectedAfterDelivery) || !strings.Contains(err.Error(), "C 3000") || !strings.Contains(err.Error(), "C 3999") {
+		t.Errorf("连交 10 根后改最早那根（id 100）：%v，应 Is ErrCorrectedAfterDelivery、报文带改前 C 3000 与改后 C 3999", err)
+	}
+}
+
+// guard: id 跳号 ⇒ 报错，不永远沉默（评审方 09-21 实测：5c89c1d 在 101 缺时交 0 根、feed 与 tick 都不报）——
+// 「不交」只能归到三种原因之一：等 k＋1 · 等 C＋G · 早于起点；k＋1 不在而更大的 id 已经来了，不是这三种里的任何一种。
+func TestLiveIDGapIsAnError(t *testing.T) {
+	c := newLiveCore(testCalendar(t), liveSym, 0, LiveOptions{})
+	m := at2(2026, 9, 4, 9, 30, 0, 0)
+	mustFeed(t, c, m+100, kFrame(100, m, 3000, ""))
+	var err error
+	for i := int64(2); i <= 6 && err == nil; i++ {
+		if _, err = c.feed(m+i*60000+100, kFrame(100+i, m+i*60000, 3000, "")); err == nil {
+			_, err = c.tick(m + i*60000 + 30000)
+		}
+	}
+	if !errors.Is(err, ErrIDGap) || !strings.Contains(err.Error(), "101") {
+		t.Errorf("100 之后缺 101、102 起照来：%v，应 Is ErrIDGap 且报出缺的 id 101", err)
+	}
+}
+
 // guard: L6 —— 持续偏快 ⇒ ErrClockSkew；偏慢 ⇒ 只计数告警、不停；n＝30 里单帧尖峰 ⇒ 不停（取秩修正）。
 func TestLiveClockGuard(t *testing.T) {
 	base := at2(2026, 9, 4, 9, 40, 0, 0)

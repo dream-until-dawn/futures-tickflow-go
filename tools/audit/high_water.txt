@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 178
+guards 180
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -480,3 +480,4 @@ guards 178
 # 来历 2026-09-21 guards 169 自 161 自动：重造时表长大（161 -> 169）；本次新增：TestFeedPushEqualsSrc1m TestFeedPushEqualsSrcDaily TestFeedPushEqualsSrcLongerBase TestFeedPushFirstBarMustStartNextCell TestFeedPushLastCoveredMinute TestFeedPushRefusesWrongState TestFeedPushRejectsBadBarsWithoutSideEffects TestFeedPushRejectsSrcFromAnotherRule
 # 来历 2026-09-21 guards 171 自 169 自动：重造时表长大（169 -> 171）；本次新增：TestFeedPushAnchorMessageIsNotPushed TestFeedPushRejectsPartialSrcTail
 # 来历 2026-09-21 guards 178 自 171 自动：重造时表长大（171 -> 178）；本次新增：TestLiveClockGuard TestLiveCorrectionAfterDelivery TestLiveDeliversWhenNextAppears TestLiveFreezeOnlyCountsSessionTime TestLiveResendDoesNotResetFreeze TestLiveSegmentEndWaitsG TestLiveStartupCheck
+# 来历 2026-09-21 guards 180 自 178 自动：重造时表长大（178 -> 180）；本次新增：TestLiveCorrectionOfOldDeliveredBar TestLiveIDGapIsAnError

@@ -19,6 +19,9 @@ import (
 // 所以能用合成帧与落盘帧离线验证。连推送通道、起步补齐（L12）、重连（L8）在它外面。
 //
 // ⛔ 它不 import Feed、Feed 也不认识它（L1：源判完结，Feed 只收已完结的根）。
+//
+// ⛔ 约定（评审方 09-21）：liveCore 任何「不交」都必须归到三种原因之一 —— 等 k＋1 · 等 C＋G · 早于 startAt；此外的一律报错。
+// （5c89c1d 有两处违反：只留最近 8 根交出值 ⇒ 更早的根被改静默吞掉；id 跳号 ⇒ 永远不交、也不报）
 
 var (
 	// ErrCorrectedAfterDelivery：一根交出之后，上游对同一个 bar id 又发了不同的值（L5）。
@@ -28,6 +31,9 @@ var (
 
 	// ErrClockSkew：本机时钟偏快到末根宽限 G 可能不够、会提前交出（L6 甲，评审方 09-21 裁）。
 	ErrClockSkew = errors.New("shinnysource: 本机时钟偏快 —— 末根宽限 G 的前提不成立")
+
+	// ErrIDGap：推送里 id 跳号 —— k＋1 没来，而更大的 id 已经来了（天勤的 id 在一个序列里连续）。不猜、不跳过：停下来问（与 Feed 的 ErrPushGap 同一种处置）。
+	ErrIDGap = errors.New("shinnysource: 推送里 bar id 跳号")
 
 	// ErrSuspectedFreeze：日历说在交易时段，而时段内超过 N 没有任何真改动（L7 中途）。
 	ErrSuspectedFreeze = errors.New("shinnysource: 交易时段内超过 N 没有任何真改动（疑似推送冻结）")
@@ -61,8 +67,8 @@ type liveCore struct {
 
 	snap    map[string]any
 	rows    map[int64]Row // 每个 id 最近一次的值
-	lastID  int64         // 已交出的最后一根的 id（0 ＝ 还没交过）
-	given   map[int64]Row // 已交出的根交出时的值（L5 比值用；只留最近的几根）
+	firstID int64         // 第一根交出的 id（0 ＝ 还没交过）；[firstID, lastID] 里的根都交出过 ⇒ 值变即 L5
+	lastID  int64         // 已交出（或早于起点而跳过）的最后一根的 id
 	started bool          // 启动自检做过
 	lastChg int64         // 最后一次真改动（诞生或值变）的本机时刻
 
@@ -83,7 +89,7 @@ func newLiveCore(cal tickflow.Calendar, sym tickflow.Symbol, startAt int64, opt 
 		n = 2 * time.Minute
 	}
 	return &liveCore{cal: cal, key: sym.ProductKey(), ins: sym.Native(), g: g.Milliseconds(), n: n.Milliseconds(), startAt: startAt,
-		snap: map[string]any{}, rows: map[int64]Row{}, given: map[int64]Row{}, winSeg: -1}
+		snap: map[string]any{}, rows: map[int64]Row{}, winSeg: -1}
 }
 
 // feed 吃一帧：更新快照、查修正、喂 L6 的窗口、做启动自检，交出因「下一根出现」而完结的根（L4）。
@@ -141,11 +147,13 @@ func (c *liveCore) feed(recv int64, raw []byte) ([]tickflow.Bar, error) {
 		if seen && sameRow(old, row) {
 			continue // 原值重发（6.37：上一段末根在下一段开盘前被整根重发）⇒ 不算改动
 		}
+		// L5 的射程是所有交出过的根（不是「最近几根」：拿判据一去限定检验判据一的范围是循环论证）。
+		// 交出之后 c.rows[id] 就停在交出时的值（之后一改就报、不再写回）⇒ 不必另存一份
+		if c.firstID != 0 && id >= c.firstID && id <= c.lastID {
+			return nil, fmt.Errorf("%w：id %d（开盘 %s）交出时 %s，现在 %s", ErrCorrectedAfterDelivery, id, fmtTs(row.Datetime/1e6), showRow(old), showRow(row))
+		}
 		c.rows[id] = row
 		c.lastChg = recv
-		if g, ok := c.given[id]; ok && !sameRow(g, row) {
-			return nil, fmt.Errorf("%w：id %d（开盘 %s）交出时 %s，现在 %s", ErrCorrectedAfterDelivery, id, fmtTs(row.Datetime/1e6), showRow(g), showRow(row))
-		}
 	}
 	if !c.started && len(c.rows) > 0 {
 		c.started = true
@@ -190,6 +198,9 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 		}
 		_, nextSeen := c.rows[id+1]
 		done := nextSeen
+		if !done && ids[len(ids)-1] > id+1 {
+			return out, fmt.Errorf("%w：id %d（开盘 %s）之后缺 id %d，而已经来了 id %d", ErrIDGap, id, fmtTs(b.Ts), id+1, ids[len(ids)-1])
+		}
 		if !done {
 			end, err := c.isSegmentEnd(b)
 			if err != nil {
@@ -202,8 +213,9 @@ func (c *liveCore) deliver(now int64) ([]tickflow.Bar, error) {
 		}
 		out = append(out, b)
 		c.lastID = id
-		c.given[id] = row
-		delete(c.given, id-8) // 只留最近几根：更早的「下一根」早已出现，判据一两天 0 例
+		if c.firstID == 0 {
+			c.firstID = id
+		}
 	}
 	return out, nil
 }
