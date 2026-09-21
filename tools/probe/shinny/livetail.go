@@ -657,32 +657,44 @@ func probeLiveAnalyze() {
 	fmt.Printf("判对 乙 N ＝ ceil(时段内 B1 %d ms 折分钟) ×2 ＝ %d 分钟\n", r.b1s, 2*int64(math.Ceil(float64(r.b1s)/60000)))
 	// 6.37 的判别力（只在这份记录里出现了时段末根时才印）
 	if len(r.segs) > 0 {
-		miss := []string{}
-		for _, want := range []string{"10:15", "11:30", "15:00"} {
-			found := false
-			for _, sg := range r.segs {
-				if sg.label == want {
-					found = true
-					if want != "15:00" && !sg.hasNext {
-						miss = append(miss, want+" 的下一根没出现")
-					}
-				}
-			}
-			if !found {
-				miss = append(miss, want+" 那根不在记录里")
-			}
-		}
-		if r.bars < 300 {
-			miss = append(miss, fmt.Sprintf("根数 %d < 300", r.bars))
-		}
-		if len(r.d) < 1000 {
-			miss = append(miss, fmt.Sprintf("进 D 的帧 %d < 1000", len(r.d)))
-		}
-		if len(miss) > 0 {
+		if miss := power637(r); len(miss) > 0 {
 			fmt.Printf("⛔ 6.37 判别力不在场：%s ⇒ 这次的 G 作废\n", strings.Join(miss, " · "))
 		} else {
-			fmt.Println("6.37 判别力在场：三处末根都在 · 前两处的下一根都出现 · 根数 ≥ 300 · 进 D 的帧 ≥ 1000")
+			fmt.Printf("6.37 判别力在场：三处末根都在 · 前两处的下一根都出现 · 判据一复核的根 %d ≥ %d · 进 D 的帧 ≥ 1000\n", len(r.a2), minA2For637)
 		}
 	}
 	report(name, "PASS", "读数见上")
+}
+
+// minA2For637 是判据一复核那一格要的样本：「下一根出现在记录里」的根（即 A2 的条数）。
+//
+// 它替掉了原先的「根数 ≥ 300」（2026-09-21 取数期间、分析之前改，评审方裁；封存 md5 见 probe.md 6.37）：
+// rb 日盘三段共 225 分钟，r.bars 又不含首帧那批历史 ⇒ 日盘一根不漏也只有 225 根，300 在授权窗口里恒不可满足。
+// 这是算术，与当天的数据无关。100 按算术定（给 A2 一个与 6.36 夜盘同量级的样本），不是按当天的读数。
+const minA2For637 = 100
+
+// power637 列出 6.37 判别力缺的项（空 ⇒ 在场）：三处末根都在 · 前两处的下一根都出现 · A2 的根 ≥ minA2For637 · 进 D 的帧 ≥ 1000。
+func power637(r tailResult) []string {
+	miss := []string{}
+	for _, want := range []string{"10:15", "11:30", "15:00"} {
+		found := false
+		for _, sg := range r.segs {
+			if sg.label == want {
+				found = true
+				if want != "15:00" && !sg.hasNext {
+					miss = append(miss, want+" 的下一根没出现")
+				}
+			}
+		}
+		if !found {
+			miss = append(miss, want+" 那根不在记录里")
+		}
+	}
+	if len(r.a2) < minA2For637 {
+		miss = append(miss, fmt.Sprintf("判据一复核的根（下一根出现在记录里）%d < %d", len(r.a2), minA2For637))
+	}
+	if len(r.d) < 1000 {
+		miss = append(miss, fmt.Sprintf("进 D 的帧 %d < 1000", len(r.d)))
+	}
+	return miss
 }

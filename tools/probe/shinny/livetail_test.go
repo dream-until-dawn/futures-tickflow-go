@@ -289,6 +289,40 @@ func TestLivePostExcludesExactlyAtClose(t *testing.T) {
 	}
 }
 
+// power637In 造一份判别力其余三条都满足的读数（三处末根在、前两处下一根出现、D 1000 帧），只让 bars 与 A2 的条数变。
+func power637In(bars, a2 int) tailResult {
+	return tailResult{
+		bars: bars,
+		a2:   make([]int64, a2),
+		d:    make([]int64, 1000),
+		segs: []segEnd{{label: "10:15", hasNext: true}, {label: "11:30", hasNext: true}, {label: "15:00"}},
+	}
+}
+
+// guard: 6.37 判别力的样本门槛是「A2 的根 ≥ 100」（2026-09-21 分析之前改，评审方裁）——
+// 99 ⇒ 缺且只缺这一条；100 ⇒ 在场。
+func TestPower637A2Threshold(t *testing.T) {
+	miss := power637(power637In(225, 99))
+	if len(miss) != 1 || !strings.Contains(miss[0], "判据一复核") {
+		t.Errorf("A2 99 根：缺 %q，应只缺「判据一复核」一条", miss)
+	}
+	if miss := power637(power637In(225, 100)); len(miss) != 0 {
+		t.Errorf("A2 100 根：缺 %q，应在场", miss)
+	}
+}
+
+// guard: 旧门槛「根数 ≥ 300」已删 —— rb 日盘一根不漏也只有 225 根（synthDaySession 量出来就是 225），
+// 它不许再让一个满日盘作废。
+func TestPower637FullDayNotVoidedByBarCount(t *testing.T) {
+	r := analyzeTail(synthDaySession(0))
+	if r.bars != 225 {
+		t.Fatalf("前提没成立：合成满日盘 bars %d，应为 225", r.bars)
+	}
+	if miss := power637(power637In(r.bars, r.bars-1)); len(miss) != 0 {
+		t.Errorf("满日盘（bars %d · A2 %d）：缺 %q，应在场", r.bars, r.bars-1, miss)
+	}
+}
+
 // guard: 6.37 的标定本身能过（第 2 处末根 C＋3 秒又改 ⇒ post ＋1、E_loc 变大；旧报价不进 D）。
 func TestLiveCalibrate637(t *testing.T) {
 	fr := synthDaySession(2400)
