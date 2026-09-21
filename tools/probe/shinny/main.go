@@ -1685,7 +1685,8 @@ func main() {
 
 	// 离线分析不联网、不要凭证：放在凭证检查之前（probe.md 6.36）
 	probeLiveAnalyze()
-	if optIn("shinny-live-analyze") {
+	probeLiveSkew()
+	if optIn("shinny-live-analyze") || optIn("shinny-live-skew") {
 		if failed > 0 {
 			os.Exit(1)
 		}
