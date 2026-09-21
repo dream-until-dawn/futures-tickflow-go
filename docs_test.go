@@ -1010,6 +1010,7 @@ var guardNames = []string{
 	`TestIDPatternAcceptsShapesTheTableDoesNotYetHave`,
 	`TestIntradaySourcesRejectContinuousBeforeNetwork`,
 	`TestInvariantCoverageMatchesTable`,
+	`TestL8AnalyzeCalibration`,
 	`TestLandingCarriersStillCarry`,
 	`TestLateRowIsNotRegisteredAndIsFetchedLater`,
 	`TestLiveBackfillFillsThenPushContinues`,
