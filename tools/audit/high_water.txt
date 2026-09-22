@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 214
+guards 216
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -491,3 +491,4 @@ guards 214
 # 来历 2026-09-22 guards 207 自 206 自动：重造时表长大（206 -> 207）；本次新增：TestPostHolidayWithoutNoNight
 # 来历 2026-09-22 guards 212 自 207 自动：重造时表长大（207 -> 212）；本次新增：TestNoNightAfterClearsDerivedDiff TestNoNightAfterDerivedViews TestNoNightAfterKeyIsTheAnnouncedEvening TestNoNightAfterPhaseUnchanged TestNoNightAfterValidation
 # 来历 2026-09-22 guards 214 自 212 自动：重造时表长大（212 -> 214）；本次新增：TestNoNightEveningFaces TestNoNightPostHolidayMorningAndMixedCalendars
+# 来历 2026-09-22 guards 216 自 214 自动：重造时表长大（214 -> 216）；本次新增：TestMarkdownTableColumnsMatchHeader TestTableColumnCheckerItself
