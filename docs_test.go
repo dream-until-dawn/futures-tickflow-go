@@ -975,6 +975,8 @@ var guardNames = []string{
 	`TestFeedPushEqualsSrcDaily`,
 	`TestFeedPushEqualsSrcLongerBase`,
 	`TestFeedPushFirstBarMustStartNextCell`,
+	`TestFeedPushFromIsWhatPushAccepts`,
+	`TestFeedPushFromRefusesLikePush`,
 	`TestFeedPushLastCoveredMinute`,
 	`TestFeedPushRefusesWrongState`,
 	`TestFeedPushRejectsBadBarsWithoutSideEffects`,

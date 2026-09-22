@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 204
+guards 206
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -487,3 +487,4 @@ guards 204
 # 来历 2026-09-21 guards 200 自 196 自动：重造时表长大（196 -> 200）；本次新增：TestLiveNetCtxExpiresDuringBackoff TestLiveNetCtxExpiresDuringFill TestLiveNetSlowConsumerKeepsRecvTime TestLiveNetStalledConsumerIsAnError
 # 来历 2026-09-21 guards 201 自 200 自动：重造时表长大（200 -> 201）；本次新增：TestL8AnalyzeCalibration
 # 来历 2026-09-22 guards 204 自 201 自动：重造时表长大（201 -> 204）；本次新增：TestAssembleWaitsForNextOrGrace TestCloseGraceIsFourSeconds TestCutoffCountCalibration
+# 来历 2026-09-22 guards 206 自 204 自动：重造时表长大（204 -> 206）；本次新增：TestFeedPushFromIsWhatPushAccepts TestFeedPushFromRefusesLikePush
