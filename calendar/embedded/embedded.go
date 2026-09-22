@@ -400,6 +400,9 @@ type options struct {
 //
 // 日子必须在注入的交易日里，否则 New 报错。它是注入的最后一个交易日时不报错：它影响的那一天不在本日历的覆盖里，
 // 任何查询都够不到它（DayOf / DayAt / Walk 在覆盖之外都答 ErrUncovered）⇒ 不会给出错的答案。
+//
+// 另一个边角（评审方 2026-09-22 指出）：X 恰好是覆盖起点 cf 的前一个注入日（只用来给 cf 的夜盘定基准的那一天）⇒ cf 的夜盘被删，
+// 覆盖窗口的下界随之变成 cf 的日盘开盘；那段并不存在的夜盘里的时刻，DayAt 答 ErrUncovered 而不是 ErrClosed —— 方向是「答不了」，不给错的答案。
 func NoNightAfter(days ...tickflow.TradingDay) Option {
 	return func(o *options) { o.noNightAfter = append(o.noNightAfter, days...) }
 }
