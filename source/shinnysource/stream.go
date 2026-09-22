@@ -95,7 +95,7 @@ type liveCore struct {
 func newLiveCore(cal tickflow.Calendar, sym tickflow.Symbol, startAt int64, opt LiveOptions) *liveCore {
 	g, n := opt.G, opt.FreezeN
 	if g == 0 {
-		g = 4 * time.Second
+		g = CloseGrace
 	}
 	if n == 0 {
 		n = 2 * time.Minute
