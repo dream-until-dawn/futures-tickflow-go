@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 207
+guards 212
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -489,3 +489,4 @@ guards 207
 # 来历 2026-09-22 guards 204 自 201 自动：重造时表长大（201 -> 204）；本次新增：TestAssembleWaitsForNextOrGrace TestCloseGraceIsFourSeconds TestCutoffCountCalibration
 # 来历 2026-09-22 guards 206 自 204 自动：重造时表长大（204 -> 206）；本次新增：TestFeedPushFromIsWhatPushAccepts TestFeedPushFromRefusesLikePush
 # 来历 2026-09-22 guards 207 自 206 自动：重造时表长大（206 -> 207）；本次新增：TestPostHolidayWithoutNoNight
+# 来历 2026-09-22 guards 212 自 207 自动：重造时表长大（207 -> 212）；本次新增：TestNoNightAfterClearsDerivedDiff TestNoNightAfterDerivedViews TestNoNightAfterKeyIsTheAnnouncedEvening TestNoNightAfterPhaseUnchanged TestNoNightAfterValidation

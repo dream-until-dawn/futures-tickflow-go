@@ -373,6 +373,35 @@ type Calendar struct {
 	coverFrom tickflow.TradingDay
 	coverTo   tickflow.TradingDay
 	coverOK   bool // 注入的交易日里有没有落在 baseFrom 之后的
+
+	// noNightAfter：这些交易日收盘之后的那个晚上不开夜盘（NoNightAfter 注入；v0.11）。
+	// 夜盘挂在「上一个交易日」的自然日上（DayOf）⇒ 查的就是 days[i-1]，键与公告里「X 日晚上」的 X 是同一个日子。
+	noNightAfter map[tickflow.TradingDay]bool
+}
+
+// Option 是 New 的可选配置（v0.11 起）。
+type Option func(*options)
+
+type options struct {
+	noNightAfter []tickflow.TradingDay
+}
+
+// NoNightAfter 注入「停夜盘名单」：这些交易日【收盘之后的那个晚上】不开夜盘。
+//
+// ⛔ **照交易所《休市安排》原文里的日期抄**：原文写「9月30日（星期三）晚上不进行夜盘交易」⇒ 传 20260930。
+// 被去掉的夜盘属于它之后的那个交易日（夜盘属于下一个交易日）：NoNightAfter(20260930) ⇒ DayOf(20261008) 没有夜盘段，
+// 而 20260930 自己的夜盘（9/29 晚上）照旧。键定成公告日期，是为了让「照公告抄」这条最常见的路写不出错
+// （design.md「v0.11 起手」甲 · 评审方 M2）。⚠️ 反方向的错写得出来：把节后首日（20261008）当键传进来，
+// 删的就是 10/8 晚上、属于 10/9 的那段 —— 本包分不出来。
+//
+// 它是一份【按交易日】的名单，对全部有夜盘的品种生效；哪家交易所哪天不同步，表达不了。
+// 名单来自交易所每年一发的文件，本包不内置、不从交易日列表推（用户 2026-09-22 裁：由调用方注入）。
+// 不给 ⇒ 与 v0.10 逐位相同（长假前一晚多给一段并不存在的夜盘，contract.md 风险表那一行）。
+//
+// 日子必须在注入的交易日里，否则 New 报错。它是注入的最后一个交易日时不报错：它影响的那一天不在本日历的覆盖里，
+// 任何查询都够不到它（DayOf / DayAt / Walk 在覆盖之外都答 ErrUncovered）⇒ 不会给出错的答案。
+func NoNightAfter(days ...tickflow.TradingDay) Option {
+	return func(o *options) { o.noNightAfter = append(o.noNightAfter, days...) }
 }
 
 // New 构造一个 Calendar。
@@ -380,7 +409,9 @@ type Calendar struct {
 // tradingDays 必须非空——本包**不维护节假日表**，也不从工作日近似
 // （用工作日近似会在每个长假前后错一次，而那正是保证金上调的时候）。
 // calendar/derived 会从日线序列反推真值。
-func New(tradingDays []tickflow.TradingDay) (*Calendar, error) {
+//
+// opts：v0.11 起可选注入停夜盘名单（NoNightAfter）。变参 ⇒ 调用处源码兼容；函数值用法（var f = embedded.New）签名变了。
+func New(tradingDays []tickflow.TradingDay, opts ...Option) (*Calendar, error) {
 	if len(tradingDays) == 0 {
 		return nil, fmt.Errorf(
 			"embedded: 必须显式给出交易日——本包不维护节假日表，也不从工作日近似。" +
@@ -402,6 +433,19 @@ func New(tradingDays []tickflow.TradingDay) (*Calendar, error) {
 		idx[d] = i
 	}
 	c := &Calendar{days: out, index: idx}
+	var o options
+	for _, opt := range opts {
+		opt(&o)
+	}
+	for _, x := range o.noNightAfter {
+		if _, ok := idx[x]; !ok {
+			return nil, fmt.Errorf("embedded: NoNightAfter(%s)：它不在注入的交易日里 —— 名单照《休市安排》里「X 日晚上不进行夜盘交易」的 X 抄，X 本身是交易日", x)
+		}
+		if c.noNightAfter == nil {
+			c.noNightAfter = map[tickflow.TradingDay]bool{}
+		}
+		c.noNightAfter[x] = true
+	}
 	// 覆盖区间只算一次：注入列表与 baseFrom 的交集，两者在 New 之后都不再变。
 	for _, d := range out {
 		if d < baseFrom {
@@ -550,7 +594,7 @@ func (c *Calendar) DayOf(k tickflow.ProductKey, num tickflow.TradingDay) (tickfl
 	}
 	var ss []tickflow.Session
 	// 夜盘挂在【上一个交易日】的自然日上——这正是「交易日 ≠ 自然日」。
-	if len(t.Night) > 0 && i > 0 {
+	if len(t.Night) > 0 && i > 0 && !c.noNightAfter[c.days[i-1]] { // 上一个交易日收盘之后那晚停了 ⇒ 不挂（NoNightAfter）
 		base := midnight(c.days[i-1])
 		for _, s := range t.Night {
 			ss = append(ss, tickflow.Session{Start: base + s.Start, End: base + s.End})
