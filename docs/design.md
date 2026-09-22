@@ -3861,6 +3861,19 @@ float64 → decimal 往返：29/29 逐位无损
 > **在这些定下来之前，`adapter/` 不动手写。** 现在写就是照着猜的接口写，
 > 猜错了返工的是 adapter 加上两边的字段名——比等一轮贵得多。
 
+📌 **2026-09-22 对表（v0.11 Q-c；上表原文不改）** —— 读的是对方工作副本 HEAD **`2d54548f4211b758337d78c36ecc9a674cb6b2ee`**
+（它的 `docs/design.md` §6.5「与上游数据层的接口约定」写于 e38f65f · 2026-09-07；§13 第 13 条「F9：Advance」写于 e4edb33 · 2026-09-17，标「实现方倾向，待评审」；
+`types/instrument.go` 与 `types/trading_day.go` 是代码）：
+
+| 待定 | 状态 | 出处（对方 2d54548） |
+|---|---|---|
+| `Advance` 的入参逐字段 | ✅ **设计层已答**：`Bar{Instrument types.InstrumentID; TradingDay types.TradingDay; Start, End time.Time; High, Low, Close decimal.Decimal}` · `Advance(bar Bar) (Advanced, error)`；K 线按 `[Start, End)`、要求 `End ≤` 所在时段的 End；`Open` / `Volume` / `Turnover` / `OpenInterest` 不要 | design.md §13 #13 F9「形状」「一根 K 线之内的顺序」；§6.5「本库只要五样」 |
+| `TradingDay` 用 `int32` 还是 `string` | ✅ **已答**：`type TradingDay int32`（yyyymmdd，具名类型）；字符串只在它的 view 层 | `types/trading_day.go:24`（代码）；design.md §6.5 |
+| 合约键取 `String()` 还是 `Native()` | ✅ **已答，而且比问的简单**：它的 `types.InstrumentID` 是结构体 `{Exchange, Product, Year, Month}`，本身就是四位规范形式（`Canonical()` ＝ 本库 `String()`，`Native()` ＝ 本库 `Native()`）⇒ 对接**按字段映射**，不经字符串；六个交易所常量两边取值相同 | `types/instrument.go:37–42 · 81–106`（代码） |
+| 涨跌停价谁供 | ✅ **已答**：它自己算（`refdata` × `MeasuredTickRounding`）；§6.5 原先允许的「`Bar` 带覆盖值」**F9 改成不收**（同一合约同一交易日不要两个来源）⇒ 本库不用补这个缺口 | design.md §13 #13 F9「不做」表（design.md:1019）；§6.5「涨跌停价本库自己算」 |
+| 要不要「按交易日打包」的视图 | ⏳ **没答**（F9 只定了逐根 `Advance`；「同一时刻多个合约的先后由引擎逐根调用决定」） | —— ⇒ 去问（用户 2026-09-22 同意，v0.11 起手 W2） |
+| （新）代码什么时候落 | ⏳ 代码里还没有 `Advance`（`grep -rn Advance --include=*.go` 排除测试：只命中 `position.go:364` 一行注释）；F9 分 F9a / F9b / F9c 三期、各自送审 | —— ⇒ 去问 |
+
 ---
 
 ### 12.6 ⛔ Go 版本对齐被打破（2026-09-14）—— 知会
@@ -3876,6 +3889,38 @@ float64 → decimal 往返：29/29 逐位无损
 ```
 
 ⇒ 回测引擎（夹在两仓中间的那个）若自己的 `go.mod` 写 1.22，拉进本库的 v0.6 之后要升到 1.23。
+
+### 12.7 `adapter/` 的设计（v0.11 Q-c，2026-09-22 写；**代码等对方 `Advance` 落地**）
+
+照 §12.4：独立嵌套模块，主模块的依赖树不受污染（本库主模块不依赖 `decimal`，对方主模块不依赖本库）。
+它 import 两边：本库根包 `tickflow`，与对方模块 `github.com/dream-until-dawn/futures-position-simulator-go`（根包名 `futsim`）及其 `types` 包（对方 2d54548）。
+adapter 模块的 go 版本取两边较高的 1.23（对方 go.mod 是 1.22，§12.6）。
+
+```
+模块      github.com/dream-until-dawn/futures-tickflow-go/adapter（adapter/go.mod；replace 指向本仓根，对方用版本号）
+函数      Bar(b tickflow.Bar, sym tickflow.Symbol) (futsim.Bar, error)       —— 一根一换，不打包（「按交易日打包」待对方答）
+换算      三处，各有来源与守卫：
+  一  合约    Symbol{Exchange, Product, YearMon} → types.InstrumentID{Exchange, Product, Year: 2000 ＋ YearMon/100, Month: YearMon%100}
+              按字段，不经字符串（两边都是四位规范形式，§12.5 对表）；Year / Month 与 Symbol.Expiry() 同一个算式
+  二  时刻    Ts / TsEnd（毫秒）→ time.UnixMilli(…).In(tickflow.CST)（固定 +08:00；对方同样不用 IANA 时区，它的 design.md §6.5「时区用固定 +08:00」）
+              ⚠️ 语义对得上：本库 [Ts, TsEnd) ＝ 对方 [Start, End)，End ＝ 时段收盘的那一根不许被当成「时段之外」（对方 F9「右开」那条，评审 20260917）
+  三  价格    High / Low / Close（float64）→ decimal.NewFromFloat(f)；守卫：NaN / ±Inf 报错
+              ⚠️ NewFromFloat 给的是「最短的往返表示」⇒ 由 JSON 文本解析出来的价格，换算后与原文逐位相同（probe.md 第十节 29/29 量的就是这件事）；
+              而**算出来的数**会带长尾（0.1＋0.2 ⇒ 0.30000000000000004）—— 复权价正是算出来的 ⇒ **adapter 只该收未复权的根**
+              （主连走 View.RawClose 那条路；contract「信号用复权价，成交用真实价」）。喂复权价进来是调用方的错，adapter 分不出来 ⇒ 写进契约，不假装有守卫
+              （「换算后 InexactFloat64() 位等于 f」那条守卫**不写**：NewFromFloat 按构造就满足它，它永远不会响）
+  TradingDay  int32 → types.TradingDay，原样（两边都是 yyyymmdd）
+不换      Open / Volume / Turnover / OpenInterest（对方不要）· Settle（它进对方的 Settle()，签名待对方 F9 之外的那一节定；§12.2 的供给不变）·
+          Flags（FlagPartial 的根照样交出去 —— 要不要拦由回测引擎决定；契约里写明）
+不做      金额（§12.4：一律在对方）· 结算触发（§12.3：引擎按 TradingDay 变化调 Settle，对方另有守卫）· 日历 JSON（§12.2 的提案另起一颗；
+          ⚠️ 若做，停夜盘要落在 days 那一层 —— v0.11 甲的 NoNightAfter 注入之后本库的 Day 就是对的）
+会被什么证伪（写代码时的测试）
+  判据一  六个交易所各一个合约：InstrumentID 的 Canonical() ＝ Symbol.String()、Native() ＝ Symbol.Native()（郑商所三位那一格必须有）
+  判据二  时刻：一根 10:14–10:15 的根 ⇒ Start 10:14、End 10:15（+08:00）；夜盘跨零点的一根（au 00:59–01:00）⇒ 自然日在次日、TradingDay 不变
+  判据三  价格：probe.md 第十节那 29 个值换算后 String() 与原文逐位相同；NaN / ±Inf 报错；
+          钉住反面：一个算出来的值（0.1＋0.2）换算后带长尾 —— 它不是守卫，是把「别喂复权价」这件事变成一格看得见的读数
+  判据四  对方的 Advance 收下 adapter 的输出而不报「时段之外」（每个时段最后一根各一格）—— 这一格要对方代码在才跑得了
+等对方的  Advance 的 Go 类型落地（F9b）· 按交易日打包要不要 · Settle 的入参
 
 ## 十三、明确不做
 
