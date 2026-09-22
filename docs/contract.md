@@ -167,10 +167,10 @@ for {
 | `shinnysource.ErrDisconnected` | 推送连接断了，重连 `Reconnects` 次都没连上 | 等网络恢复，从 `PushFrom()` 重开 `Live`（起步补齐会把断开期间的根补上） |
 | `shinnysource.ErrConsumerStalled` | 调用方太久没调 `Next` | 从 `PushFrom()` 重开；查为什么一次策略计算要这么久 |
 | `shinnysource.ErrIDGap` | bar id 跳号（推送里、交出过之后、或补回来的接不上推送） | 从 `PushFrom()` 重开；反复出现 ⇒ 把那次的报文报回来 |
-| `shinnysource.ErrStartGap` | 历史通道补回来的第一根不是起始格 | 先确认起始格取自 `PushFrom()`（给在休市时刻也会落到这里）；是的话把报文报回来 |
+| `shinnysource.ErrStartGap` | 历史通道补回来的第一根不是起始格 | 先确认起始格取自 `PushFrom()`（给在休市时刻也会落到这里）；是的话把报文报回来。⛔ **节后首日（长假前一晚停了夜盘）从 `PushFrom()` 起步必撞上**，重开不解决 —— 见风险表「`calendar/embedded` 看不见停夜盘」那一行的临时出路 |
 | `shinnysource.ErrChannelsDisagree` | 起步时历史通道与推送对同一根（两边都已完结）给了不同的值；**一根都还没交出** | 隔一会儿从 `PushFrom()` 重开 |
-| `shinnysource.ErrSuspectedFreeze` | 交易时段内超过 `FreezeN` 没有任何真改动（疑似推送冻结） | 从 `PushFrom()` 重开；那天若确实停牌，这一条会误报（误报的方向是停下来） |
-| `shinnysource.ErrStaleSnapshot` | 连上时的当前那根不在 `[now − FreezeN, now ＋ G]` 里 | 同上 |
+| `shinnysource.ErrSuspectedFreeze` | 交易时段内超过 `FreezeN` 没有任何真改动（疑似推送冻结） | 从 `PushFrom()` 重开；那天若确实停牌，这一条会误报（误报的方向是停下来）。长假前一晚（交易所停夜盘）必报 —— 那一晚别跑，见风险表「`calendar/embedded` 看不见停夜盘」 |
+| `shinnysource.ErrStaleSnapshot` | 连上时的当前那根不在 `[now − FreezeN, now ＋ G]` 里 | 同上（长假前一晚开盘后连上也会报，同上） |
 | `shinnysource.ErrClockSkew` | 本机时钟偏快到 `G` 的前提不成立（末根可能提前交出） | 先把本机对时，再重开。偏慢只告警不停：`Live.Warnings()` 给次数与最新的窗口低端 |
 | `shinnysource.ErrCorrectedAfterDelivery` | **一根交出之后又被改了值**（判据一的反例；6.36 / 6.37 / 6.39 三次取数 0 例）⇒ `Feed` 里已经步进了旧值，**改不回来** | ⛔ 不能只重开 `Live`：① `Close` 这个 `Feed`，不再用；② 等那一根定型（它收盘 ＋ `G` 之后），`Sync` 把它拉进库；③ 从库重建 `Feed`（`NewFeed`，`To` 到今天）⇒ `Next` 走完 ⇒ `PushFrom()` ⇒ 新的 `Live`。**请把这次的报文（带那根的交出值与最新值）报回来** |
 | `tickflow.ErrPushGap` | 推入的这根不紧接上一根 | `Feed` 状态没动：从 `PushFrom()` 重开 `Live`（它会补齐缺的那段） |
@@ -323,7 +323,7 @@ v0.10 实时另外明确不做：**实时主连**（主连模式的 `Feed` 不�
 | **证据里的数字被「拆解」成看起来核对过的样子** | **是**，而且**这一类没有机械守卫** | 实例：`228 = 225 + 3（夜盘 22:09/10/11）`——后半截是编的，dump 只打印了计数与首末。动机是「一个不解释的数字读起来像没查过」 | **只能靠第二方做一次算术**。本仓所有机制（探针/对照组/变异/双读/doccheck/欠条到期）**没有一个抓得到它**——别把它和别的风险当同构：**别的有一条命令能重跑，这一条没有** |
 | **文档里「尚未实现」那部分的字段不受 doccheck 守护** | **半**（实现那天才冒出来，看起来像回归其实一直在） | doccheck 的字段比对只在类型已实现时触发；白名单里的类型没有源码可比。**实例与它的对表只写在一处**：`tools/doccheck/pending.txt` 的抬头（那个例子曾有三个载体，2026-09-09 三个一起漂 ⇒ 收成一个） | 已在 `pending.txt` 抬头写明这是「用覆盖面换来的盲区」；实现那天冒出的分歧**不是新引入的** |
 | **内置时段表抄自【过期快照】** | **是**（那一族的每根 K 线边界都错，且不报错） | 实例：国债起点写成 `09:15`（实际 `09:30`），随 `v0.1.0` 发出去过。根因是 openmd 目录被截断且 `trading_time` **按合约**给，抄到了老合约那一行 | `shinny-embedded-template-matches-measured` 拿实测 1m 对**六种形状**逐个比；**「缺行」和「行是旧的」是两个独立的失效**，前者 H1 查过，后者是这次补的 |
-| **`calendar/embedded` 看不见停夜盘** | **半**（长假前后多给一段并不存在的夜盘） | 那几天的切分与判完结偏掉；**相位不受影响**（相位按标称算） | ⛔ **v0.7 没有修它**：`calendar/derived` 只把这几天**报出来**（`tools/derivedreport` 列成「base 有夜盘 · 观测没有夜盘根」），不改 base；修它要把交易所成文的年度休市安排作为另一个入口注入 `calendar/embedded`，要人拍板（design.md §十五「还没定」丙）。由 `TestKnownDefect_EmbeddedCannotSeeSuspendedNight` 钉住，改掉时会变红 |
+| **`calendar/embedded` 看不见停夜盘** | **半**（长假前后多给一段并不存在的夜盘）；实时那一侧**不静默**（报错），而照契约恢复出不来 | 那几天的切分与判完结偏掉；**相位不受影响**（相位按标称算）。**v0.10 起的实时后果**（2026 年最近的两次：**9/24 晚、9/30 晚**不开夜盘 ⇒ 节后首日 **9/28、10/8**；离线实跑，design.md「v0.11 起手」甲的动因）：A 那一晚开盘前连上 `Live` ⇒ 21:02 起 `ErrSuspectedFreeze` · B 那一晚开盘后连上 ⇒ `ErrStaleSnapshot` · ⛔ C **节后首日早上**照「报错之后怎么办」从 `PushFrom()` 重开 ⇒ `PushFrom` 给的是那段并不存在的夜盘的第一分钟 ⇒ `ErrStartGap`（历史通道一根都补不回来），**每次重开都一样**；C 不要求那晚跑过 `Live`，src 截在节前 15:00 就一定撞上 | **v0.10 的临时出路（离线验过：`source/shinnysource/posthol_test.go` 的 `TestPostHolidayWithoutNoNight`）**：那一晚与**节后首日当天都不接实时**；节后首日**收盘后** `Sync`（`To` 传 0）⇒ 当天进库；**第二个交易日**从库重建 `Feed` ⇒ `PushFrom()` 给的是那天真实的夜盘 ⇒ `Live` / `Push` 照常。⚠️ 盘中 `Sync` 拉不到节后当天（显式 `To` 含没收盘的交易日直接报错，`To`＝0 截到节前）⇒「开盘后先同步再重建」走不通。⏭ v0.11 修（用户 2026-09-22 裁：停夜盘名单由调用方注入，`embedded.NoNightAfter`，键是公告里「X 日晚上不进行夜盘交易」的 X）。⛔ **v0.7 没有修它**：`calendar/derived` 只把这几天**报出来**（`tools/derivedreport` 列成「base 有夜盘 · 观测没有夜盘根」），不改 base；修它要把交易所成文的年度休市安排作为另一个入口注入 `calendar/embedded`，要人拍板（design.md §十五「还没定」丙）。由 `TestKnownDefect_EmbeddedCannotSeeSuspendedNight` 钉住，改掉时会变红 |
 | **K 线边界多装一段交易时间** | **是**（标签序列与覆盖检查都正常） | 模板过期时一根 60m 装 90 分钟，多出来的时间是从别处偷的 | 上界不变量 `TestBarsNeverExceedOnePeriod`，与下界那条**跑在同一片输入上** |
 | **K 线边界漏掉一段交易时间** | **是**（标签序列与根数都完全正常） | v0.1 自查实例：沪银 60m 的 `02:00–02:30` 不属于任何 `[Open, Close)`，按边界聚合的下游安静少 30 分钟成交 | `TestBarsCoverEveryTradingMinute` 按分钟点，要求每一分钟**恰好**落在一根里 |
 | **混用天勤与新浪的日期** | **是** | 天勤按交易日、新浪按自然日，混用整体错位一天 | `Bar.TradingDay` 统一以交易日为准，`sinasource` 入口处转换 |
