@@ -26,7 +26,7 @@
 rules 341
 anchors 61
 census 5
-guards 200
+guards 201
 
 # ── 来历 ────────────────────────────────────────────────────────
 # 每次【自动抬高】由 tools/audit/rebuild_docs_test.py 追加一行：
@@ -485,3 +485,4 @@ guards 200
 # 来历 2026-09-21 guards 187 自 186 自动：重造时表长大（186 -> 187）；本次新增：TestLiveBackfillSkipsLiveCurrentBar
 # 来历 2026-09-21 guards 196 自 187 自动：重造时表长大（187 -> 196）；本次新增：TestLiveNetBackfillsFromHistory TestLiveNetCorrectionAcrossReconnect TestLiveNetReconnectBackfills TestLiveNetReconnectGivesUp TestLiveNetReconnectResumes TestLiveNetSegmentEndByTicker TestLiveNetTicksUnderFrameFlood TestLiveReconnectRechecks TestLiveReconnectResyncs
 # 来历 2026-09-21 guards 200 自 196 自动：重造时表长大（196 -> 200）；本次新增：TestLiveNetCtxExpiresDuringBackoff TestLiveNetCtxExpiresDuringFill TestLiveNetSlowConsumerKeepsRecvTime TestLiveNetStalledConsumerIsAnError
+# 来历 2026-09-21 guards 201 自 200 自动：重造时表长大（200 -> 201）；本次新增：TestL8AnalyzeCalibration
