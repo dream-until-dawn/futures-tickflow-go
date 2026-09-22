@@ -131,10 +131,46 @@ func nnPrepare(t *testing.T) (Config, tickflow.Calendar, tickflow.Calendar, tick
 
 // nnEvent 是甲二 / 甲三落盘的一行：交出的根或报错，连同本机时刻。
 type nnEvent struct {
-	When int64  `json:"when_ms"`
-	Kind string `json:"kind"` // bar · err
-	Ts   int64  `json:"ts,omitempty"`
-	Msg  string `json:"msg,omitempty"`
+	When  int64  `json:"when_ms"`
+	Kind  string `json:"kind"` // bar · err
+	Ts    int64  `json:"ts,omitempty"`
+	Msg   string `json:"msg,omitempty"`
+	Layer string `json:"layer,omitempty"` // 报错属于哪一层（nnLayer）
+}
+
+// nnLayer 把 Live 的报错分层（评审方 F3：连接层的错不能读成修法失败）：
+// 判定层 ＝ Live 自己按日历 / 数据判出来的（冻结 · 快照过旧 · 时钟 · 修正 · 跳号 · 起步补齐 · 两通道不一致）；
+// 连接层 ＝ 断线重连失败，以及没有归到判定层的一切（拨号、鉴权、读写）；调用方 ＝ 太久没取帧。
+func nnLayer(err error) string {
+	for _, x := range []struct {
+		e    error
+		name string
+	}{
+		{ErrSuspectedFreeze, "判定：冻结"}, {ErrStaleSnapshot, "判定：快照过旧"}, {ErrClockSkew, "判定：时钟偏快"},
+		{ErrCorrectedAfterDelivery, "判定：交出后被改"}, {ErrIDGap, "判定：跳号"}, {ErrStartGap, "判定：起步补不齐"},
+		{ErrChannelsDisagree, "判定：两通道不一致"}, {ErrConsumerStalled, "调用方：太久没取"}, {ErrDisconnected, "连接：重连失败"},
+	} {
+		if errors.Is(err, x.e) {
+			return x.name
+		}
+	}
+	return "连接：其它（未归到判定层）"
+}
+
+// guard: 报错分层先标定 —— 每个哨兵归到它该在的那一层；包了一层的照样认；不认识的一律算连接层（不许被读成「修法失败」）。
+func TestNoNightLayerCalibration(t *testing.T) {
+	for _, c := range []struct {
+		err  error
+		want string
+	}{
+		{ErrSuspectedFreeze, "判定：冻结"}, {fmt.Errorf("包一层：%w", ErrStaleSnapshot), "判定：快照过旧"},
+		{ErrDisconnected, "连接：重连失败"}, {errors.New("dial tcp: i/o timeout"), "连接：其它（未归到判定层）"},
+		{ErrConsumerStalled, "调用方：太久没取"},
+	} {
+		if got := nnLayer(c.err); got != c.want {
+			t.Errorf("nnLayer(%v) ＝ %s，应为 %s", c.err, got, c.want)
+		}
+	}
 }
 
 func TestNoNightRealEvening(t *testing.T) {
@@ -148,7 +184,7 @@ func TestNoNightRealEvening(t *testing.T) {
 		return d.Sessions[0].Start
 	}
 	startInj, startPlain := startOf(inj), startOf(plain)
-	t.Logf("合约 %s · 起始格：注入 %s · 不注入 %s · 结束 %s", ins, fmtMs(startInj), fmtMs(startPlain), fmtMs(end))
+	t.Logf("合约 %s · 起始格（两路同用）%s · 不注入日历下 10/08 第一段 %s（只印，不用）· 结束 %s", ins, fmtMs(startInj), fmtMs(startPlain), fmtMs(end))
 	mk := func(cal tickflow.Calendar) *Client {
 		c := cfg
 		c.Calendar = cal
@@ -224,7 +260,7 @@ func TestNoNightRealEvening(t *testing.T) {
 		enc := json.NewEncoder(f)
 		live, err := mk(cal).Live(sym, start, LiveOptions{})
 		if err != nil {
-			enc.Encode(nnEvent{When: time.Now().UnixMilli(), Kind: "err", Msg: err.Error()})
+			enc.Encode(nnEvent{When: time.Now().UnixMilli(), Kind: "err", Msg: err.Error(), Layer: nnLayer(err)})
 			return
 		}
 		defer live.Close()
@@ -238,14 +274,14 @@ func TestNoNightRealEvening(t *testing.T) {
 				continue
 			}
 			if !errors.Is(err, context.DeadlineExceeded) {
-				enc.Encode(nnEvent{When: now, Kind: "err", Msg: err.Error()})
+				enc.Encode(nnEvent{When: now, Kind: "err", Msg: err.Error(), Layer: nnLayer(err)})
 			}
 			return
 		}
 	}
 	wg.Add(2)
 	go run("inj", inj, startInj)
-	go run("plain", plain, startPlain)
+	go run("plain", plain, startInj) // 评审方 F1：对照只差日历这一个变量（起始格同为 10/08 09:00；不注入日历下它也是交易分钟）
 	wg.Wait()
 	t.Logf("落盘 md5：甲一 %s · 甲二 %s · 甲三 %s", fileMD5(rawPath), fileMD5(filepath.Join(out, "nn_live_inj.jsonl")), fileMD5(filepath.Join(out, "nn_live_plain.jsonl")))
 	nnReport(t, out, rawPath, ins, rawFrames, rawErr)
@@ -273,20 +309,29 @@ func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr erro
 	if err != nil {
 		t.Fatal(err)
 	}
+	// 所有连接的根都并进来（评审方：甲一若中途断线，第二条连接上的夜盘根不该漏掉；本工具的甲一不重连，断了就停、连接报错照印）
 	var rows []Row
-	if c := conns[1]; c != nil {
+	for _, c := range conns {
 		for _, r := range c.final {
 			rows = append(rows, r)
 		}
 	}
 	n, vol := nnCount(rows, nnEve, nnNightTo)
-	afterEve := 0
+	afterEve, firstK := 0, int64(0)
 	for _, r := range recs {
 		if r.Recv >= nnEve {
 			afterEve++
 		}
+		if firstK == 0 && strings.Contains(string(r.Raw), `"klines"`) {
+			firstK = r.Recv
+		}
 	}
-	t.Logf("N1 甲一：帧 %d（21:00 之后 %d）· 连接报错 %v · 夜盘时段的根 %d（量 %g）", rawFrames, afterEve, rawErr, n, vol)
+	t.Logf("N1 甲一：连接 %d 条 · 帧 %d（21:00 之后 %d）· 连接报错 %v · 夜盘时段的根 %d（量 %g）", len(conns), rawFrames, afterEve, rawErr, n, vol)
+	// 评审方 F2：第一帧带根的到达时刻决定 Live 的启动自检落在 21:00 之前还是之后（之后 ⇒ 不注入那一路报的是快照过旧而不是冻结）；
+	// Live 自己的帧不落盘，这里用甲一（同一服务器、同时连上）的时刻作近似，照实标「近似」
+	if firstK != 0 {
+		t.Logf("甲一第一帧带 K 线的到达时刻（近似甲二 / 甲三的）：%s", fmtMs(firstK))
+	}
 	for _, name := range []string{"inj", "plain"} {
 		b, _ := os.ReadFile(filepath.Join(out, "nn_live_"+name+".jsonl"))
 		bars, errs := 0, []string{}
@@ -298,7 +343,7 @@ func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr erro
 			if e.Kind == "bar" {
 				bars++
 			} else {
-				errs = append(errs, fmtMs(e.When)+" "+e.Msg)
+				errs = append(errs, fmtMs(e.When)+" 〔"+e.Layer+"〕 "+e.Msg)
 			}
 		}
 		t.Logf("%s Live（%s）：交出 %d 根 · 报错 %v", map[string]string{"inj": "N2 甲二", "plain": "N3 甲三"}[name], name, bars, errs)
