@@ -395,6 +395,10 @@ func TestWalkAscending(t *testing.T) {
 // 在那之前拔掉它，等于把「已知错」改成「不再提」。
 //
 // 相位不受影响（相位按标称算，是品种常量），受影响的是切分与判完结。
+//
+// 📌 **2026-09-22（v0.11 Q-a）：修法落了，钉子照旧不拔** —— 修法是调用方注入停夜盘名单（NoNightAfter，用户裁「调用方注入」），
+// **不注入的人得到的仍是这个缺陷**。⇒ 这一格改钉「不注入时缺陷仍在」（与 v0.10 逐位相同）；注入之后的样子由 nonight_test.go 那几格钉。
+// ⚠️ 日子是合成的：2026 年真实的节后首日是 10/8（9/30 晚停夜盘），这一格写的 10/9 只是「节后第一个注入的交易日」。
 func TestKnownDefect_EmbeddedCannotSeeSuspendedNight(t *testing.T) {
 	// 节前最后一个交易日 09-30，节后第一个 10-09。真实情况：09-30 晚无夜盘。
 	c, err := New([]tickflow.TradingDay{20260929, 20260930, 20261009})
@@ -406,9 +410,8 @@ func TestKnownDefect_EmbeddedCannotSeeSuspendedNight(t *testing.T) {
 		t.Fatalf("取不到节后第一个交易日: %v", err)
 	}
 	if got := hhmm(d.Sessions[0].Start); got != "09-30 21:00" {
-		t.Fatalf("内置实现【应当】给出这段并不存在的夜盘（已知缺陷），得到 %s；"+
-			"若这是 calendar/derived 修好的结果，"+
-			"请一并更新 DayOf 文档与 contract.md", got)
+		t.Fatalf("不注入 NoNightAfter 时，内置实现【应当】给出这段并不存在的夜盘（已知缺陷，修法是调用方注入名单），得到 %s；"+
+			"若不注入也不再给它了，那是默认行为变了（v0.10 起「不注入 ⇒ 逐位相同」的承诺）——请一并更新 DayOf / NoNightAfter 文档与 contract.md", got)
 	}
 }
 
