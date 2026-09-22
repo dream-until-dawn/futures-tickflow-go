@@ -16,9 +16,8 @@ import (
 //
 // ⚠️ 这些测试走真实计时（liveTick 5ms ＋ 协程调度），所以突变下【红哪几格】不稳定（评审方 2026-09-21 要求写明）：
 // 突变 N16（live.go 第一次连上时不把冻结计时的起点设成连上那一刻，即删掉 else 分支里的 `l.core.lastChg = l.c.cfg.Now()`）
-// 整模块每次都红，而红格集合每次不同 —— 2026-09-22 在 99428ed 上连跑 3 次：红 7 / 6 / 6 个，
-// 三次都红的只有 TestLiveNetCorrectionAcrossReconnect · TestLiveNetStalledConsumerIsAnError · TestNoNightMorningDependsOnFeedCalendar ·
-// TestPostHolidayWithoutNoNight（后两个不在本文件；9/21 那两次的集合又各不相同）。未施加时稳定全绿。
+// 整模块每次都红，而红格集合每次不同 —— 2026-09-22 共四次（99428ed 上我跑 3 次、5d999fc 上评审方跑 1 次）：每次红 6–7 个，
+// 名单四次各不相同，几次都红的交集跑一次就缩一次 ⇒ 这里不列名单（列了也会过期）。未施加时稳定全绿（评审方在 5d999fc 上 shinnysource 包 -count=10 全 ok）。
 // ⇒ 引用这条突变时写「每次都红、红格集合不稳定」，不要写死红哪几格；判它有没有守住，看「红 ≥ 1」而不是看名单相等。
 
 type netRig struct {

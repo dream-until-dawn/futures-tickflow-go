@@ -163,6 +163,8 @@ func TestNoNightEveningDependsOnLiveCalendar(t *testing.T) {
 // guard: Syncer 的日历在这两条路上不起作用 —— 同步截在节前 15:10、或跨过节后首日收盘（0907 15:10），注入与否：
 // 报告（String）与 coverage 逐项相同；跨过收盘那一次，之后用任一日历建 Feed 读回来都不报错，PushFrom ＝ 节后首日晚上 21:00（契约里的临时出路）。
 // 标定：「逐项相同」这把尺子要分得出不同 —— 换一个 Syncer 确实在意的日历（交易日表里少了最后一天 0908，「日历覆盖」随之变）⇒ 两个截止时刻读数都必须不同，否则上面的相同什么也没说明。
+// ⚠️ 射程（评审方 2026-09-22）：标定造出的差别在【覆盖区间】，不在夜盘 ⇒ 它只证明这把尺子分得出覆盖上的不同，没证明分得出夜盘造成的不同；
+// 这一格能说的只是「这两个截止时刻、这几项读数相同」，撑不起「Syncer 不用注入」—— 契约仍要求三个组件用同一个日历。
 func TestNoNightSyncerCalendarIrrelevantHere(t *testing.T) {
 	inj, plain := noNightCal(t), testCalendar(t)
 	noLast, err := embedded.New([]tickflow.TradingDay{20260903, 20260904, 20260907})
