@@ -27,8 +27,8 @@ import (
 // ⚠️ 那次扫描的脚本第一版漏了引用块（分隔行正则不接受行首的 >），报「缩进表 0 处」；拿样本标定才抓到 —— 上面的数是修过之后的。
 // ⚠️ 射程：只查「列数与表头相同」，不查内容。
 
-// tableColumnIssues 返回 text 里列数与表头不同的行（1 起的行号），以及认出了几张表。
-func tableColumnIssues(text string) (issues []string, tables int) {
+// tableColumnIssues 返回 text 里列数与表头不同的行（1 起的行号），认出了几张表，其中几张在引用块里。
+func tableColumnIssues(text string) (issues []string, tables, quoted int) {
 	lines := strings.Split(text, "\n")
 	// unquote 剥掉引用块前缀：只在（去掉前导空格之后）以 > 开头时剥；不是引用块的行原样返回
 	// （不去缩进 —— 缩进四格的是代码块，不能当表）
@@ -49,10 +49,14 @@ func tableColumnIssues(text string) (issues []string, tables int) {
 		}
 		return strings.Trim(t, "|-: \t") == ""
 	}
-	var tbl []int // 当前这张表的行号（0 起）
+	var tbl []int             // 当前这张表的行号（0 起）
+	inQuote := map[int]bool{} // 这一行原本在引用块里
 	flush := func() {
 		if len(tbl) >= 2 && isSep(lines[tbl[1]]) {
 			tables++
+			if inQuote[tbl[0]] {
+				quoted++
+			}
 			h := cols(lines[tbl[0]])
 			for _, i := range tbl {
 				if c := cols(lines[i]); c != h {
@@ -64,7 +68,9 @@ func tableColumnIssues(text string) (issues []string, tables int) {
 	}
 	fence := false
 	for i, raw := range lines {
-		l := unquote(strings.TrimSuffix(raw, "\r"))
+		r := strings.TrimSuffix(raw, "\r")
+		l := unquote(r)
+		inQuote[i] = l != r
 		lines[i] = l
 		if strings.HasPrefix(strings.TrimSpace(l), "```") {
 			flush()
@@ -78,12 +84,12 @@ func tableColumnIssues(text string) (issues []string, tables int) {
 		flush()
 	}
 	flush()
-	return issues, tables
+	return issues, tables, quoted
 }
 
 // guard: 全仓 .md 的每张表，每一行的列数都等于表头；并断言认出的表数 > 0。
 func TestMarkdownTableColumnsMatchHeader(t *testing.T) {
-	files, tables := 0, 0
+	files, tables, quoted := 0, 0, 0
 	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -103,8 +109,9 @@ func TestMarkdownTableColumnsMatchHeader(t *testing.T) {
 			return err
 		}
 		files++
-		issues, n := tableColumnIssues(string(b))
+		issues, n, q := tableColumnIssues(string(b))
 		tables += n
+		quoted += q
 		for _, is := range issues {
 			t.Errorf("%s %s —— 多半是单元格里有没转义的 `|`（行内代码里也要写成 `\\|`），或者改这一行时吃掉了一个分隔符", p, is)
 		}
@@ -117,7 +124,11 @@ func TestMarkdownTableColumnsMatchHeader(t *testing.T) {
 	if files == 0 || tables == 0 {
 		t.Fatalf("扫了 %d 份 .md、认出 %d 张表 —— 这个守卫没在守任何东西", files, tables)
 	}
-	t.Logf("扫了 %d 份 .md，认出 %d 张表", files, tables)
+	// 引用块里的表也要认得出（本仓有 9 张，design.md:235 是一张）：剥前缀那一步坏了时，全仓这一格也红，不只靠标定格（评审方 2026-09-22）
+	if quoted == 0 {
+		t.Errorf("引用块里一张表都没认出（本仓有，design.md:235 就是）—— 剥引用块前缀那一步多半坏了")
+	}
+	t.Logf("扫了 %d 份 .md，认出 %d 张表（其中引用块里 %d 张）", files, tables, quoted)
 }
 
 // guard: 列数这把尺子先标定 —— 两个方向各一格（少一列 · 多列）· 转义过的 `\|` 不报 · 围栏里的不报 · 没有分隔行的不算表 ·
@@ -138,11 +149,11 @@ func TestTableColumnCheckerItself(t *testing.T) {
 		{"引用块里的围栏也跳过", "> ```\n> | a | b |\n> |---|---|\n> | 1 |\n> ```\n", 0},
 	}
 	for _, c := range cells {
-		if got, _ := tableColumnIssues(c.text); len(got) != c.want {
+		if got, _, _ := tableColumnIssues(c.text); len(got) != c.want {
 			t.Errorf("%s：报了 %d 处 %v，应为 %d", c.name, len(got), got, c.want)
 		}
 	}
-	if _, n := tableColumnIssues("| a |\n|---|\n\n> | b |\n> |---|\n\n```\n| c |\n|---|\n```\n"); n != 2 {
-		t.Errorf("表数：认出 %d 张，应为 2（普通 1 · 引用块 1 · 围栏里的不算）", n)
+	if _, n, q := tableColumnIssues("| a |\n|---|\n\n> | b |\n> |---|\n\n```\n| c |\n|---|\n```\n"); n != 2 || q != 1 {
+		t.Errorf("表数：认出 %d 张（引用块里 %d 张），应为 2（普通 1 · 引用块 1 · 围栏里的不算）", n, q)
 	}
 }
