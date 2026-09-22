@@ -1066,6 +1066,7 @@ var guardNames = []string{
 	`TestNoNightAfterValidation`,
 	`TestNoNightCountCalibration`,
 	`TestNoNightEveningFaces`,
+	`TestNoNightLayerCalibration`,
 	`TestNoNightPostHolidayMorningAndMixedCalendars`,
 	`TestNoOrphanedSentences`,
 	`TestNoPickDaysAreNamed`,
