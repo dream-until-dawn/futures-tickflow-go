@@ -264,9 +264,15 @@ func buildMain(product string, agg map[tickflow.TradingDay]map[tickflow.Symbol]*
 
 // flattenBase 替 base 答完 [from, to] 这一段：注入表里落在窗口内的每个交易日，Night ＝ 首段起点落在 20:00 之后或 04:00 之前。
 //
+// nonight 非空 ⇒ 原样作为 embedded.NoNightAfter 注入（公告日期 X；X 的下一个交易日没有夜盘段）。
+//
 // ⚠️ 与 derived.NightObsOf 同一把尺子（开盘时刻按 CST 墙钟判时段）。
-func flattenBase(k tickflow.ProductKey, days []tickflow.TradingDay, from, to tickflow.TradingDay) ([]derived.BaseDay, error) {
-	cal, err := embedded.New(days)
+func flattenBase(k tickflow.ProductKey, days, nonight []tickflow.TradingDay, from, to tickflow.TradingDay) ([]derived.BaseDay, error) {
+	var opts []embedded.Option
+	if len(nonight) > 0 {
+		opts = append(opts, embedded.NoNightAfter(nonight...))
+	}
+	cal, err := embedded.New(days, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("用注入的交易日表造 base 日历失败：%w", err)
 	}

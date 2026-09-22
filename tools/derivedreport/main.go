@@ -7,7 +7,10 @@
 // 用法：
 //
 //	go build -o derivedreport ./tools/derivedreport
-//	./derivedreport -product SHFE.rb -from 20250915 -to 20260911 -store <库根> -days <交易日表> -spans <段文件>
+//	./derivedreport -product SHFE.rb -from 20250915 -to 20260911 -store <库根> -days <交易日表> -spans <段文件> [-nonight <停夜盘名单>]
+//
+// -nonight（v0.11 Q-f，可选）：每行一个公告日期 X ——《休市安排》原文「X 日晚上不进行夜盘交易」的 X（与 embedded.NoNightAfter 同一个键）；
+// base 用 embedded.New(交易日表, embedded.NoNightAfter(名单…)) 摊。不给 ⇒ base 与 v0.10 相同。
 //
 // 库根下每份合约一个目录，名字是合约全名（例如 SHFE.rb2601），里面是 segfile 的 1m 库。
 package main
@@ -31,12 +34,24 @@ func main() { os.Exit(run(os.Args[1:], os.Stdout, time.Now())) }
 
 // disposalHint 是处置表里「先查什么」那一栏（design.md 那一节第三段）。⛔ 每个动作都不走 derived。
 var disposalHint = map[derived.DiffKind]string{
-	derived.BaseNightObservedAbsent:       "查交易所年度休市安排；安排没说 ⇒ 疑源侧缺数 ⇒ 删该合约文件从早到晚重拉；重拉后仍同 ⇒ 记源侧确认缺，不再重拉",
+	derived.BaseNightObservedAbsent:       "查交易所年度休市安排；安排写着那一晚停 ⇒ 把公告日期（节前最后一个交易日）写进 -nonight 名单重跑；安排没说 ⇒ 疑源侧缺数 ⇒ 删该合约文件从早到晚重拉；重拉后仍同 ⇒ 记源侧确认缺，不再重拉",
 	derived.BaseNightObservedZeroVolume:   "看同一天别的合约有没有夜盘量；没有 ⇒ 疑占位根，目前没有能单独核夜盘量的第二来源 ⇒ 记为未决",
 	derived.BaseNoNightObservedTraded:     "查 embedded 品种时段表与交易所夜盘品种公告；新开了夜盘 ⇒ 改时段表（代码改动，走评审）",
 	derived.BaseNoNightObservedZeroVolume: "疑占位根 ⇒ 没有第二来源，记为未决；时段表确实过时 ⇒ 改时段表",
 	derived.BaseTradingDayNoObservation:   "查注入表来源与新浪 RB0 日线那天有没有根（按交易日对）；休市 ⇒ 改注入表；有交易 ⇒ 重拉；重拉后仍一根都没有 ⇒ 记源侧确认缺，不再重拉",
 	derived.ObservedNotBaseTradingDay:     "查注入表：漏了一天 ⇒ 改注入表",
+}
+
+// nonightHint 替换「base 无夜盘」两种差异的提示 —— 只用在【名单去掉了夜盘】的那一天上（design.md v0.11 庚 Q-f）：
+// 那一天 base 说没有夜盘，是因为名单说前一晚停；观测却有夜盘根 ⇒ 最可能是名单抄错了哪一天。
+const nonightHint = "名单说 %s 晚上停，而观测在这一天有夜盘根 ⇒ 先核名单那一行：多半把节后首日当成了公告日期（应写节前最后一个交易日）"
+
+// hintFor 选一条差异的处置提示：名单去掉了夜盘的那一天（suppressed 的键）上的「base 无夜盘」两种 ⇒ nonightHint；其余 ⇒ 处置表原文。
+func hintFor(d derived.Diff, suppressed map[tickflow.TradingDay]tickflow.TradingDay) string {
+	if x, ok := suppressed[d.Day]; ok && (d.Kind == derived.BaseNoNightObservedTraded || d.Kind == derived.BaseNoNightObservedZeroVolume) {
+		return fmt.Sprintf(nonightHint, x)
+	}
+	return disposalHint[d.Kind]
 }
 
 func run(args []string, out io.Writer, now time.Time) int {
@@ -48,6 +63,7 @@ func run(args []string, out io.Writer, now time.Time) int {
 	storeRoot := fs.String("store", "", "库根目录（必填）")
 	daysPath := fs.String("days", "", "注入的交易日表（必填）")
 	spansPath := fs.String("spans", "", "段文件：合约 段起 段止（必填）")
+	nonightPath := fs.String("nonight", "", "停夜盘名单：每行一个公告日期 X（「X 日晚上不进行夜盘交易」；可选）")
 	if err := fs.Parse(args); err != nil {
 		return exitFailed
 	}
@@ -81,6 +97,32 @@ func run(args []string, out io.Writer, now time.Time) int {
 		return fail("交易日表：%v", err)
 	}
 	fmt.Fprintf(out, "日历来源 %s（%d 天 · md5 %s）\n", *daysPath, len(days), fileMD5(*daysPath))
+	var nonight []tickflow.TradingDay
+	suppressed := map[tickflow.TradingDay]tickflow.TradingDay{} // 名单去掉了夜盘的那一天 D → 它的公告日期 X
+	if *nonightPath == "" {
+		fmt.Fprintln(out, "停夜盘名单：未给（base 每个交易日都按品种时段表给夜盘，与 v0.10 相同）")
+	} else {
+		if nonight, err = readDays(*nonightPath); err != nil {
+			return fail("停夜盘名单：%v", err)
+		}
+		fmt.Fprintf(out, "停夜盘名单 %s（%d 天 · md5 %s）\n", *nonightPath, len(nonight), fileMD5(*nonightPath))
+		idx := map[tickflow.TradingDay]int{}
+		for i, d := range days {
+			idx[d] = i
+		}
+		for _, x := range nonight {
+			i, ok := idx[x]
+			if !ok {
+				return fail("停夜盘名单里的 %s 不在交易日表里 —— 名单写的是公告日期（节前最后一个交易日），它必须是交易日", x)
+			}
+			if i == len(days)-1 {
+				fmt.Fprintf(out, "  %s → 影响的那一天不在交易日表里（%s 是表里最后一天）\n", x, x)
+				continue
+			}
+			suppressed[days[i+1]] = x
+			fmt.Fprintf(out, "  %s → 去掉的是 %s 那一天的夜盘\n", x, days[i+1])
+		}
+	}
 	spans, err := readSpans(*spansPath)
 	if err != nil {
 		return fail("段文件：%v", err)
@@ -143,7 +185,7 @@ func run(args []string, out io.Writer, now time.Time) int {
 	fmt.Fprint(out, rep.Summary())
 
 	// —— 三段：差异表 ——
-	base, err := flattenBase(pk, days, from, to)
+	base, err := flattenBase(pk, days, nonight, from, to)
 	if err != nil {
 		return fail("摊平 base：%v", err)
 	}
@@ -158,7 +200,7 @@ func run(args []string, out io.Writer, now time.Time) int {
 	counts := map[derived.DiffKind]int{}
 	for _, d := range diffs {
 		counts[d.Kind]++
-		fmt.Fprintf(out, "%s · %s · 观测 %s · 先查：%s\n", d.Day, d.Kind, d.Verdict, disposalHint[d.Kind])
+		fmt.Fprintf(out, "%s · %s · 观测 %s · 先查：%s\n", d.Day, d.Kind, d.Verdict, hintFor(d, suppressed))
 	}
 
 	// —— 尾 ——
