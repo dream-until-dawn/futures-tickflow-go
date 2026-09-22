@@ -223,6 +223,24 @@ func TestReportWording(t *testing.T) {
 			want: []string{"名字在、【签名不同】", "BatchDaysUnbounded", "文档: -1", "源码: -2"},
 		},
 		{
+			// ⛔ 以数字开头的【表达式】：两侧口径必须一致（2026-09-22，写 contract.md 的 CloseGrace 时撞上）。
+			// 文档侧 litOf 原来按首字符判「是不是字面量」⇒ `4 * time.Second` 首字符是 4 ⇒ 整个表达式当 Sig；
+			// 源码侧 litValue 按 AST 只认 BasicLit ⇒ 给空 ⇒ **一处假的「签名不同」**。与上面 -1 那一格是同一族：
+			// 两侧各写一个判据、声称「同口径」，而只有一侧是按 AST 判的。
+			name:    "以数字开头的表达式两侧口径一致（曾经假报「签名不同」）",
+			doc:     md("const CloseGrace = 4 * time.Second"),
+			src:     "import \"time\"\n\nconst CloseGrace = 4 * time.Second",
+			want:    []string{okMark},
+			notWant: []string{"签名不同", "CloseGrace"},
+		},
+		{
+			// 对照：真的字面量照比 —— 否则上一条也可能是「它不再比数字了」。
+			name: "数字字面量真的不同，仍要报",
+			doc:  md("const Width = 30"),
+			src:  "const Width = 31",
+			want: []string{"名字在、【签名不同】", "Width", "文档: 30", "源码: 31"},
+		},
+		{
 			name:    "源码里找不到、又不在白名单",
 			doc:     md("type Ghost struct {\n    A int\n}"),
 			src:     "type X int",

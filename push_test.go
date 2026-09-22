@@ -635,3 +635,106 @@ func BenchmarkFeedPush(b *testing.B) {
 		})
 	}
 }
+
+// guard: PushFrom 给的那一分钟，Push 就收；晚一分钟的报 ErrPushGap —— 主周期 1m · 15m（下一格的第一分钟）· Daily（下一个交易日的第一分钟）；
+// 推过一根之后，PushFrom 前进到下一分钟。它是 shinnysource.Live 的起始格（L12：「Feed 给出这个值」），与 Push 共用 pushCursor。
+func TestFeedPushFromIsWhatPushAccepts(t *testing.T) {
+	one, _ := aggDays(t, tickflow.AggTradingAxis, 1, synthDays)
+	idx := map[int64]int{}
+	for i, m := range one {
+		idx[m.Ts] = i
+	}
+	check := func(label string, f *tickflow.Feed) {
+		t.Helper()
+		defer f.Close()
+		drain(t, f)
+		from, err := f.PushFrom()
+		if err != nil {
+			t.Fatalf("%s：PushFrom：%v", label, err)
+		}
+		i, ok := idx[from]
+		if !ok || i+2 >= len(one) {
+			t.Fatalf("%s：PushFrom ＝ %s，不是表里的一分钟", label, hm(from))
+		}
+		if _, err := f.Push(one[i+1]); !errors.Is(err, tickflow.ErrPushGap) {
+			t.Errorf("%s：推 PushFrom 之后那一分钟 %s：%v，应 Is ErrPushGap", label, hm(one[i+1].Ts), err)
+		}
+		if _, err := f.Push(one[i]); err != nil {
+			t.Errorf("%s：推 PushFrom 那一分钟 %s：%v，应收下", label, hm(from), err)
+		}
+		if next, err := f.PushFrom(); err != nil || next != one[i+1].Ts {
+			t.Errorf("%s：推过一根之后 PushFrom ＝ %s · %v，应为 %s", label, hm(next), err, hm(one[i+1].Ts))
+		}
+	}
+	k := cutAt(t, one, 20260904, clock(2026, 9, 4, 9, 37))
+	f1, err := tickflow.NewFeed(sliceWalker{one[:k]}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(1), nil, 20260904))
+	if err != nil {
+		t.Fatal(err)
+	}
+	check("主周期 1m", f1)
+
+	_, base := aggDays(t, tickflow.AggTradingAxis, 15, synthDays)
+	f15, err := tickflow.NewFeed(sliceWalker{base[:3]}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(15), nil, base[2].TradingDay))
+	if err != nil {
+		t.Fatal(err)
+	}
+	check("主周期 15m", f15)
+
+	g, err := tickflow.NewFeed(sliceWalker{one}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(1), []tickflow.Period{tickflow.Daily}, synthDays[3]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var daily []tickflow.Bar
+	for g.Next() {
+		if v := g.TF("1d"); v.Valid() && (len(daily) == 0 || daily[len(daily)-1].TradingDay != v.TradingDay()) {
+			daily = append(daily, v.Bar())
+		}
+	}
+	g.Close()
+	fd, err := tickflow.NewFeed(sliceWalker{daily[:1]}, pushCfg(t, tickflow.AggTradingAxis, tickflow.Daily, nil, daily[0].TradingDay))
+	if err != nil {
+		t.Fatal(err)
+	}
+	check("主周期 Daily", fd)
+}
+
+// guard: PushFrom 在 Push 会因状态报错的时候原样报错（同一段 pushCursor）：src 没读完 · 已 Close · src 末根带 FlagPartial。
+func TestFeedPushFromRefusesLikePush(t *testing.T) {
+	one, _ := aggDays(t, tickflow.AggTradingAxis, 1, synthDays)
+	f, err := tickflow.NewFeed(sliceWalker{one[:100]}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(1), nil, synthDays[1]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.Next()
+	if _, err := f.PushFrom(); err == nil || !strings.Contains(err.Error(), "src 还没读完") {
+		t.Errorf("Next 没走完：PushFrom %v，应报「src 还没读完」", err)
+	}
+	for f.Next() {
+	}
+	f.Close()
+	if _, err := f.PushFrom(); err == nil || !strings.Contains(err.Error(), "Close") {
+		t.Errorf("Close 之后：PushFrom %v，应报已 Close", err)
+	}
+	cal := auCal(t)
+	day, _ := cal.DayOf(keyAU, 20260904)
+	tmpl, _ := cal.Template(keyAU, 20260904)
+	var part []tickflow.Bar
+	for _, b := range synthDay(day, nil) {
+		if b.TsEnd <= at(20260904, 9, 37) {
+			part = append(part, b)
+		}
+	}
+	src, err := tickflow.Aggregate(tickflow.AggTradingAxis, tickflow.MustIntraday(15), tmpl, day, part)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := tickflow.NewFeed(sliceWalker{src}, pushCfg(t, tickflow.AggTradingAxis, tickflow.MustIntraday(15), nil, 20260904))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer p.Close()
+	drain(t, p)
+	if _, err := p.PushFrom(); err == nil || !strings.Contains(err.Error(), "格子中间") {
+		t.Errorf("src 末根带 FlagPartial：PushFrom %v，应报「src 截在了格子中间」", err)
+	}
+}

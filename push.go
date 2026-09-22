@@ -51,32 +51,9 @@ type pushState struct {
 // ⚠️ src 里主周期根的聚合口径由写库的一方决定，Push 攒出来的按 FeedConfig.Rule；两者不一致时 Feed 只能查到
 // 「src 最后一根的收盘时刻不是 Rule 的格子收盘」这一种（起步时报错），格子相同而字段取法不同的，查不到 —— 由调用方保证同一口径。
 func (f *Feed) Push(b Bar) (stepped bool, err error) {
-	if f.err != nil {
-		return false, f.err
-	}
-	if f.closed {
-		return false, errors.New("tickflow: Feed 已经 Close，不再收 Push")
-	}
-	if f.base.main != nil {
-		return false, errors.New("tickflow: 主连模式（FeedConfig.Main）不收 Push —— v0.10 不做实时主连")
-	}
-	for _, e := range f.extras {
-		if e.walker {
-			return false, errors.New("tickflow: 日线辅周期来自 DailyWalker，实时里没有新日线 —— 改用由主周期聚合的日线（不给 DailyWalker）；" +
-				"不让 TF(\"1d\") 停在库里最后一天：停住是静默的，看起来正常、其实落后")
-		}
-	}
-	if !f.srcDone {
-		return false, errors.New("tickflow: src 还没读完（Next 还没返回 false）—— Push 只接在历史之后，两条时间线不能交错")
-	}
-	st := f.push
-	if !st.started {
-		if st, err = f.pushAnchor(); err != nil {
-			return false, err
-		}
-	}
-	if st.nextErr != nil {
-		return false, st.nextErr
+	st, err := f.pushCursor()
+	if err != nil {
+		return false, err
 	}
 	if b.Ts%60000 != 0 || b.TsEnd != b.Ts+60000 {
 		return false, fmt.Errorf("tickflow: Push 只收 1m：这根 [%s, %s) 不在 1m 格子上", showTs(b.Ts), showTs(b.TsEnd))
@@ -135,6 +112,55 @@ func (f *Feed) Push(b Bar) (stepped bool, err error) {
 		return false, err
 	}
 	return true, nil
+}
+
+// PushFrom 返回下一根 Push 必须是哪一分钟（开盘时刻，毫秒）：还没 Push 过 ⇒ src 最后一根主周期根之后那一格的第一分钟；
+// Push 过 ⇒ 上一根推入的 1m 之后日历上的下一个交易分钟。
+//
+// 它就是 shinnysource.Live 的起始格（L12：「Feed 给出这个值，调用方传给 Live」）；Live 报 ErrDisconnected / ErrConsumerStalled
+// 之后重开一个 Live 时，起始格同样取它（主周期更长时，已攒的那几分钟留在 Feed 里，新的 Live 从下一分钟接）。
+//
+// 与 Push 用同一段代码判「现在能不能收」：Push 此刻会因状态报的错（src 没读完 · 已 Close · 主连 · DailyWalker ·
+// src 末根带 FlagPartial · 口径对不上 · 日历覆盖到头 · 已作废），它原样报；不改 Feed 的任何状态。
+func (f *Feed) PushFrom() (int64, error) {
+	st, err := f.pushCursor()
+	if err != nil {
+		return 0, err
+	}
+	return st.nextTs, nil
+}
+
+// pushCursor：Push 此刻的接续状态（还没起步 ⇒ 现算起步的那一份，不写回）。Push 与 PushFrom 共用 —— 两者对「下一格」的回答不许分岔。
+func (f *Feed) pushCursor() (pushState, error) {
+	if f.err != nil {
+		return pushState{}, f.err
+	}
+	if f.closed {
+		return pushState{}, errors.New("tickflow: Feed 已经 Close，不再收 Push")
+	}
+	if f.base.main != nil {
+		return pushState{}, errors.New("tickflow: 主连模式（FeedConfig.Main）不收 Push —— v0.10 不做实时主连")
+	}
+	for _, e := range f.extras {
+		if e.walker {
+			return pushState{}, errors.New("tickflow: 日线辅周期来自 DailyWalker，实时里没有新日线 —— 改用由主周期聚合的日线（不给 DailyWalker）；" +
+				"不让 TF(\"1d\") 停在库里最后一天：停住是静默的，看起来正常、其实落后")
+		}
+	}
+	if !f.srcDone {
+		return pushState{}, errors.New("tickflow: src 还没读完（Next 还没返回 false）—— Push 只接在历史之后，两条时间线不能交错")
+	}
+	st := f.push
+	if !st.started {
+		var err error
+		if st, err = f.pushAnchor(); err != nil {
+			return pushState{}, err
+		}
+	}
+	if st.nextErr != nil {
+		return pushState{}, st.nextErr
+	}
+	return st, nil
 }
 
 // pushAnchor 算起步的接续状态：src 最后一根主周期根之后那一格的第一分钟。

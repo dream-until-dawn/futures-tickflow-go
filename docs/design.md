@@ -5660,6 +5660,8 @@ P-e  L10：Assemble 的截止改成「k＋1 已在窗里，或 now ≥ 收盘 �
      排在 P-a / P-b 之后、v0.10.0 打 tag 之前（评审方定）
 P-d  contract.md（Push / Live 的契约与风险表：L5 停下之后的恢复三步 · L2 的口径一致由调用方保证 · L10 修好之前盘中 Sync 的风险）·
      docs/release/v0.10.0.md
+     📌 P-d 落地（2026-09-22）：写契约时发现 L12 那句「Feed 给出这个值，调用方传给 Live」没有导出的取法（起始格只在 Push 内部算）
+        ⇒ 补 Feed.PushFrom（与 Push 共用同一段判断）；契约在 contract.md「实时（v0.10）」一节，发布说明 docs/release/v0.10.0.md
 ```
 
 ##### 丙、不做（本档）

@@ -472,11 +472,14 @@ func litOf(t string) string {
 	if rhs == "" {
 		return ""
 	}
-	if rhs[0] == '"' || rhs[0] == '`' || (rhs[0] >= '0' && rhs[0] <= '9') ||
-		(rhs[0] == '-' && len(rhs) > 1 && rhs[1] >= '0' && rhs[1] <= '9') {
-		return rhs
+	// 按 AST 判，与源码侧 litValue 走同一段代码（2026-09-22）：原来按首字符判，`4 * time.Second` 首字符是 4
+	// ⇒ 整个表达式被当成字面量 ⇒ 源码侧给空 ⇒ 一处假的「签名不同」。与 -1 那一格同一族：两侧各写一个判据、
+	// 注释说「同口径」—— 只有两侧【共用一段代码】时这句话才不需要再验。
+	e, err := parser.ParseExpr(rhs)
+	if err != nil {
+		return ""
 	}
-	return ""
+	return litValue([]ast.Expr{e}, 0)
 }
 
 func scanBlock(lines []string, file string, base int, out map[string]decl) {
