@@ -13,6 +13,13 @@ import (
 // v0.10 P-c：Live（live.go）走本地假服务器（fake_test.go 的推送模式 ＋ 历史窗口）的测试。不连外网。
 //
 // 数据：9/4 一整天的 1m（含 9/3 晚的夜盘），id ＝ 下标；推送帧与历史窗口取自同一张表（两条通道同一套编号，推论，实盘要验）。
+//
+// ⚠️ 这些测试走真实计时（liveTick 5ms ＋ 协程调度），所以突变下【红哪几格】不稳定（评审方 2026-09-21 要求写明）：
+// 突变 N16（live.go 第一次连上时不把冻结计时的起点设成连上那一刻，即删掉 else 分支里的 `l.core.lastChg = l.c.cfg.Now()`）
+// 整模块每次都红，而红格集合每次不同 —— 2026-09-22 在 99428ed 上连跑 3 次：红 7 / 6 / 6 个，
+// 三次都红的只有 TestLiveNetCorrectionAcrossReconnect · TestLiveNetStalledConsumerIsAnError · TestNoNightMorningDependsOnFeedCalendar ·
+// TestPostHolidayWithoutNoNight（后两个不在本文件；9/21 那两次的集合又各不相同）。未施加时稳定全绿。
+// ⇒ 引用这条突变时写「每次都红、红格集合不稳定」，不要写死红哪几格；判它有没有守住，看「红 ≥ 1」而不是看名单相等。
 
 type netRig struct {
 	fs    *fakeServer
