@@ -24,7 +24,7 @@
 | `source.go`（Source 接口 / BarRequest / Capabilities / CheckBars） | ✅ 已落契约层 |
 | `source/sinasource` | ✅ **日线链路已通**：HTTP → JSONP → 行 → `Bar`，实现 `tickflow.Source`（`Bars` / `Caps`）。⚠️ **只做日线、只做具体合约**（主连在 `Symbol` 里表达不出来）；分钟线不做（1023 硬顶且无法翻页，深度走天勤） |
 | `source/cffexsource` | ✅ **日线链路已通**：HTTP（一天一请求，用 `Calendar.Walk` 铺开）→ XML → 期货行 → `Bar`，实现 `tickflow.Source`。结算价 0 在组装层映射成 NaN；XML 自带的 `tradingday` 与日历交叉核对。⚠️ 存档实测回溯到 **2016-01-04**——它是**存档级**下界（非逐日验证），**不是按品种的答案**：那天只有 IC/IF/IH/T/TF 五个品种，对后上市的 IM/TS/TL **明知是错**（登记㉔；⛔ **2026-09-10 复核 v5 推翻了原来那条处置**：天勤 openmd 全量 47 个字段里**没有上市日**（唯一像日期的是 `expire_datetime`＝到期）⇒ **refdata 关不掉这一格**；替代出处已实测，见探针文档「复核 v5」那一节）；**全量回补≈2671 次请求** |
-| `source/shinnysource` | ✅ **具体合约的 1m 已通**（v0.6 片 A）：token／名称服务（HTTPS）→ websocket DIFF 翻页 → `Bar`，实现 `tickflow.Source` 与 `tickflow.CalendarHolder`。⚠️ **只做具体合约的 1m**（主连拒掉）；日历只覆盖 2020-05-06 之后（H2），更早的不会被请求；**实时推送不做**（v0.10） |
+| `source/shinnysource` | ✅ **具体合约的 1m 已通**（v0.6 片 A）：token／名称服务（HTTPS）→ websocket DIFF 翻页 → `Bar`，实现 `tickflow.Source` 与 `tickflow.CalendarHolder`。⚠️ **只做具体合约的 1m**（主连拒掉）；日历只覆盖 2020-05-06 之后（H2），更早的不会被请求。**v0.10 实时推送已落**：`Client.Live` ＋ `Live.Next` 交出【已完结】的 1m（契约见下「实时（v0.10）」一节）；历史拉取的截止加了 4 秒宽限（`CloseGrace`，probe.md 6.40） |
 | `Syncer`（根包 `syncer.go` / `sync.go`） | ✅ 已发布 |
 | `refdata/shinnyref` | ✅ **解码层与取数层**已发布；**零消费者**（刻意，见 design.md §十九） |
 | `continuous` | ✅ **v0.7 已落**：拼接 `Build`（天轴 `Days` · 接缝 `Rolls`（含 `Counted`）· `First` / `ContractAt` · 规则说不清的天 `NoPick`）· 换月规则四条（`ByOpenInterest` / `ByVolume` / `ByOIAndVolume` / `FixedBarDaysBeforeExpiry`）· 复权四种＋不复权（零值＝比例后复权 `RatioBack`；前复权带警告 `RewritesHistory`）· 两道包级守卫（不碰日历 · 只收数据不收提供者）。⚠️ **不落库**；主连的 `View`（`RawClose` / `Contract` / `IsRollDay` / `Basis`）由 v0.9 的 Feed 给出，`Continuous.RawClose`（复权之前记下的未复权收盘）· `MainAt` · `Walker()` 供它读；⚠️ 这一行 2026-09-17 之前一直写着「尚未开始」而代码早已进仓 —— `TestStatusClaimsMatchRepo` 没抓到它：那道守卫只核**带斜杠的路径**，`continuous` 不带斜杠 ⇒ 在射程之外（📌 同日已扩：主语栏里的 .go 名与其余名字也核，见 `statusTokenIssue`） |
@@ -32,10 +32,11 @@
 | `indicator` | ✅ **v0.8 已落**：根包接口 `Indicator` / `Settler`（`Update` 吃 `Bar`）· 内置七个 MA EMA MACD KDJ RSI CCI BOLL（自姊妹项目 okx-tickflow-go v1.4.2 移植，公式与两套口径照搬）· 默认口径 CN（用户定，未实测国内期货软件）· `Compute` / `ComputeField`。⚠️ `Settle()` **不保证逐位相等**，契约是「Settle() 处相对误差 ≤ 2e-15」（probe.md 6.34；09-18 由 1e-14 收紧）；**没有消费方**（Feed 在 v0.9） |
 | `BarWalker`（根包 `walker.go`） | ✅ **v0.9 已落**：Feed 读根的**消费方窄接口**（`Coverage` ＋ `Walk`），**不嵌入、不改 `tickflow.Store`**（用户 2026-09-18 裁 U4）⇒ 只实现 Store 的第三方类型照样编译，但喂不了 Feed。Walk 契约写在接口注释：区间整个落在一段 coverage 里 · 升序 · 先核（任何一处坏对任何区间都可报错）· 停只停回调 · 报错则已回调的全部作废 · 可无 seek 索引 · 不要求并发安全。`*segfile.Store` 满足它（编译期断言）|
 | `AggRule`（根包 `agg.go`，连同函数 Aggregate） | ✅ **v0.9 已落（聚合那一层，Feed 还没接上）**：两套口径 `AggTradingAxis`（交易时间轴 ＋ 相位，边界 ＝ `IntradayPeriod.Bars`）· `AggClockGrid`（时钟网格，Open ＝ 格子起点、Close 裁到格子里最后一个交易分钟（按日历时段），**只收整除 480 分钟的周期**——对齐零点未验）；**零值不合法** ⇒ `ErrAggRuleUnset`（用户 2026-09-18 裁 U1：不设默认）。完整性三条：零根格子不出根 · 缺分钟带 `FlagPartial`（**只对给零成交占位根的源成立**：天勤给、新浪很可能不给）· 满的不带。对账射程：交易时间轴的标签对新浪 48 / 48（fixture 在根目录 testdata/sina635，6.35 那次取数的原样字节），数值对朴素参考；时钟网格只有合成数据与天勤标签的文字读数（U3）|
-| `Feed`（根包 `feed.go`） | ✅ **v0.9 已落（实时 Push 在 v0.10）：主周期 ＋ 辅周期 ＋ 主连日线**。主连模式：`FeedConfig.Main`（`continuous.Continuous` 实现 `MainSource`；**根只从 `Main.Walker()` 来，`src` 必须传 nil**，否则报错 —— 保证步进的价格与四方法出自同一条主连；NoPick 那几天不步进）⇒ `View.RawClose` / `Contract` / `IsRollDay` / `Basis`（非换月日 NaN）；**只收日线主周期**（日内主连 v0.9 不做，用户 2026-09-18 裁 U5）。辅周期 `TF`：日内由主周期按 `AggRule` 聚合（须是主周期整数倍）、`Daily` 默认由主周期按交易日聚合（无结算价）或从 `DailyWalker` 读（带结算价；某个已收盘交易日它没有根 ⇒ 那几步 `TF` 无效，不补不猜）；**「已收盘」只看日历边界 ≤ 主周期当前 `TsEnd`**，不看数据来没来（15:00 跳变、夜盘属 T+1）；预热按各周期各自的格子数往前数。`NewFeed(src BarWalker, cfg)` · 主周期步进 `Next` · `View`（`Prev` / `Ready` / `Defined` / 取值无效给 NaN）· `Handle` ＋ `At` · 自动预热（往前按交易日数格子，早于段起点就夹到段起点，`Ready` 如实为假）· **先核后流**：构造时先 Walk 一遍只要结论（坏库 ⇒ `NewFeed` 报错、一根不交），步进走第二遍，**第二遍报错经 `Err()` 报 `ErrFeedVoided`**（两遍之间库变了，已步进的根作废；**中途 `Close` 也交出它**）· ⛔ **用完必须 `Close`**（否则第二遍的协程一直挂着 —— 单测测不稳，写进射程）· **只收单段 coverage**（越段 ⇒ `ErrWalkOutsideCoverage`）· `AggRule` 一律必填 · nil 源报错。**库扫两遍**（Walk 没有 seek）；推进一步约 80–95 ns（本机 Ryzen 7 5700X，其中约 65 ns 是 iter.Pull 的协程切换）；带 60m ＋ 1d 两个聚合辅周期约 260–300 ns |
+| `Feed`（根包 `feed.go`） | ✅ **v0.10：`Push` / `PushFrom` 已落（根包 `push.go`，读完历史之后接着收实时 1m，契约见下「实时（v0.10）」一节）。v0.9 已落：主周期 ＋ 辅周期 ＋ 主连日线**。主连模式：`FeedConfig.Main`（`continuous.Continuous` 实现 `MainSource`；**根只从 `Main.Walker()` 来，`src` 必须传 nil**，否则报错 —— 保证步进的价格与四方法出自同一条主连；NoPick 那几天不步进）⇒ `View.RawClose` / `Contract` / `IsRollDay` / `Basis`（非换月日 NaN）；**只收日线主周期**（日内主连 v0.9 不做，用户 2026-09-18 裁 U5）。辅周期 `TF`：日内由主周期按 `AggRule` 聚合（须是主周期整数倍）、`Daily` 默认由主周期按交易日聚合（无结算价）或从 `DailyWalker` 读（带结算价；某个已收盘交易日它没有根 ⇒ 那几步 `TF` 无效，不补不猜）；**「已收盘」只看日历边界 ≤ 主周期当前 `TsEnd`**，不看数据来没来（15:00 跳变、夜盘属 T+1）；预热按各周期各自的格子数往前数。`NewFeed(src BarWalker, cfg)` · 主周期步进 `Next` · `View`（`Prev` / `Ready` / `Defined` / 取值无效给 NaN）· `Handle` ＋ `At` · 自动预热（往前按交易日数格子，早于段起点就夹到段起点，`Ready` 如实为假）· **先核后流**：构造时先 Walk 一遍只要结论（坏库 ⇒ `NewFeed` 报错、一根不交），步进走第二遍，**第二遍报错经 `Err()` 报 `ErrFeedVoided`**（两遍之间库变了，已步进的根作废；**中途 `Close` 也交出它**）· ⛔ **用完必须 `Close`**（否则第二遍的协程一直挂着 —— 单测测不稳，写进射程）· **只收单段 coverage**（越段 ⇒ `ErrWalkOutsideCoverage`）· `AggRule` 一律必填 · nil 源报错。**库扫两遍**（Walk 没有 seek）；推进一步约 80–95 ns（本机 Ryzen 7 5700X，其中约 65 ns 是 iter.Pull 的协程切换）；带 60m ＋ 1d 两个聚合辅周期约 260–300 ns |
 
 ⇒ 「能力」一节里指向 `Feed` 的行**都还是承诺**；指向 `continuous` `calendar/derived` 的行**只有上表写明的那部分已落地**（v0.7），指向 `indicator` 的同理（v0.8）；
-指向 `source/shinnysource` 的那一行**只有「深度分钟」一半已实现**（具体合约、1m、≥ 2020-05-06），**「实时」仍是承诺**；
+指向 `source/shinnysource` 的那一行**两半都已实现**（具体合约、1m、≥ 2020-05-06；实时推送 v0.10，射程见「实时」一节）；
+指向 `Feed.Push` 的那一行 v0.10 已实现，而**原来那句「`store` 传 nil 即纯实盘形态」不成立**（v0.10 V2：先读历史、读完再接推送，`NewFeed` 的 src 不许是 nil）；
 指向 `Period` `calendar/embedded` `store/segfile` `source/sinasource` `Syncer` 的行**已有实现，并且有测试**；
 `refdata/shinnyref` 只到解码与取数层（说明列里哪几项已落地，以 design.md §十九 为准）。
 **标「实测」的行与本库实现无关——它们来自真实接口。**
@@ -65,7 +66,7 @@
 | **主力连续 + 换月复权** | `continuous` | 复权四种＋不复权（**默认比例后复权**），**并交出接缝** |
 | 指标 | `indicator` | 自姊妹项目移植（v0.8）；**默认口径 CN，照搬姊妹仓配置（用户 2026-09-17 定，未实测国内期货软件）**。⚠️ 单个合约日线上递归类指标不收敛（见下「已知风险」） |
 | 可步进的多周期视图 | `Feed` | 主周期步进，辅周期只给最后一根已收盘的 |
-| 实盘复用同一套代码 | `Feed.Push` | `store` 传 nil 即纯实盘形态 |
+| 实盘复用同一套代码 | `Feed.Push` | **v0.10 已落**：先用 `Next` 读完库里的历史，再 `Push` 实时的 1m（与 `Next` 走同一个步进）；⚠️ **没有「纯实盘、不带历史」的形态**（src 不许 nil，用户 2026-09-18 裁 V2 甲） |
 | 喂给记账内核 | `adapter/` | 独立嵌套模块，主模块不依赖 `decimal`。**口径对齐见 design.md 第十二节，部分待定** |
 
 ### 对外可见的常量与变量
@@ -97,6 +98,95 @@ var CST = time.FixedZone("CST", 8*3600)
 > ⇒ 这一格补的是**决定**，不是守卫：**要么写进契约，要么写明它不属于契约，
 > 而现在这样是第三种——没人决定过。**（评审方 2026-09-08 提。）
 
+### 实时（v0.10）：`Feed.Push` 与 `shinnysource.Live` 的契约
+
+设计在 design.md §十五「v0.10 起手」五（L1–L12）；读数在 probe.md 6.36 – 6.40。**射程在本节末尾，先读它再用。**
+
+```go
+// 根包 tickflow
+func (f *Feed) Push(b Bar) (stepped bool, err error)
+func (f *Feed) PushFrom() (int64, error)
+
+// source/shinnysource
+func (c *Client) Live(sym tickflow.Symbol, startAt int64, opt LiveOptions) (*Live, error)
+func (l *Live) Next(ctx context.Context) (tickflow.Bar, error)
+func (l *Live) Warnings() (count int, latestLow int64)
+func (l *Live) Close() error
+
+type LiveOptions struct {
+	G          time.Duration // 时段末根的宽限（本机时钟）；0 ⇒ CloseGrace（4 秒）
+	FreezeN    time.Duration // 时段内超过它没有真改动 ⇒ 停；0 ⇒ 2 分钟
+	Reconnects int           // 断一次最多重连几次；0 ⇒ 3（退避 1 / 2 / 4 秒）
+}
+
+const CloseGrace = 4 * time.Second
+```
+
+**用法（唯一支持的形状）**：
+
+```
+feed, err := tickflow.NewFeed(store, cfg)       // 先读历史（src 不许 nil）
+defer feed.Close()
+for feed.Next() { … }                           // 读完库里的
+if err := feed.Err(); err != nil { … }          // 第二遍核过才许 Push
+from, err := feed.PushFrom()                    // 起始格：Feed 给，不要自己算
+live, err := client.Live(sym, from, shinnysource.LiveOptions{})
+defer live.Close()
+for {
+	b, err := live.Next(ctx)                    // 只交【已完结】的 1m，按 id 紧接、不重不漏
+	if err != nil { … 见下表 }
+	stepped, err := feed.Push(b)                // stepped ⇔ 主周期前进了一根 ⇒ 这时跑策略
+	if err != nil { … 见下表 }
+}
+```
+
+**分层**：源判完结（`Live`），`Feed` 只收已完结的根、只做校验与步进；两者互不 import，由调用方接起来（L1）。
+
+| 条款 | 内容 |
+|---|---|
+| **只收 1m** | `Push` 永远收 1m；主周期更长（日内周期或 `Daily`）时按 `FeedConfig.Rule` 攒 1m，用与 `Aggregate` / 辅周期**同一个** `aggCell` 出主周期的根（L2） |
+| **`stepped`** | 主周期是 1m ⇒ 成功的 `Push` 一律为真；更长 ⇒ 只在推入那根的收盘等于当前格子收盘时为真；**报错时一律为假** |
+| **时机** | 只在 `Next` 已返回 false 且 `Err()` 为 nil 之后收；主连模式（`FeedConfig.Main`）与带 `DailyWalker` 的 Feed 不收 `Push`（实时里没有新日线 —— 停住是静默的，所以报错） |
+| **紧接** | 必须是日历上的下一个交易分钟：重复 · 乱序 · 跳格（`errors.Is(err, tickflow.ErrPushGap)`，报文写缺的第一格）· 不在 1m 格子上 · 交易日与日历不符 ⇒ 各报错，**`Feed` 的状态一格不动**（L3） |
+| **起始格** | 第一根必须是 src 最后一根主周期根【之后那一格】的第一分钟 ⇒ **用 `PushFrom()` 取，传给 `Live`**；主周期更长时不许从格子中间接（攒出来的那根会缺头） |
+| **src 末根不完整** | src 最后一根带 `FlagPartial` ⇒ `Push` / `PushFrom` 报「src 截在了格子中间」。处置：**把 `NewFeed` 的 src 截到上一个完整的格子**（`cfg.To` 往前挪一格或一天），剩下的交给 `Live` 的起步补齐。⚠️ 两种**误报**来源：停夜盘那天的格子（本来就短）· 那一格里有一根 1m 自己带 `FlagPartial`（熔断 / 停牌）—— 处置相同 |
+| **口径一致由调用方保证** | src 里主周期根的聚合口径由写库的一方决定，`Push` 攒出来的按 `FeedConfig.Rule`；`Feed` 只查得到「src 最后一根的收盘不是 Rule 的格子收盘」这一种，**格子相同而字段取法不同的查不到** |
+| **`Daily` 主周期** | src 的 `To` 必须是**最后一个已收盘的交易日**（今天盘中的日线不在库里；在的话它是半截的，按上一条报错） |
+| **`Live` 的起步** | 推送窗口（最近 30 根）盖不住起始格 ⇒ 先走历史通道补 `[起始格, 推送最早那根)`，再与推送接上；补不齐 ⇒ 报错、**一根不交**（L12） |
+| **判完结** | 非末根：下一根出现即交；时段末根：本机时刻 ≥ 收盘 ＋ `G`（L4）。⚠️ **交出时刻按本机时钟可以早于 `TsEnd`**（6.39：日盘 30 根中位早 502 ms —— 下一根比本机整分早到）⇒ **别拿本机时刻对 `Live` 交出的根跑 `CheckBars`**，它会报「TsEnd 在 now 之后」 |
+| **不落库** | `Live` 交出的根不写 `Store`；库里的这些根由之后的 `Sync` 从历史通道拉（L11） |
+| **一个 `Live` 一个合约** | 要几个开几个；**不是并发安全的**：一个 `Live` 只由一个 goroutine 调 `Next` |
+| **别太久不取** | 读协程从不因调用方阻塞（帧上的收到时刻必须是真的）；收下没处理的帧超过 10000（交易时段约一个多小时）⇒ `ErrConsumerStalled`。`Next` 之间跑策略可以，别停一个小时 |
+| **`ctx` 到期** | 不算 `Live` 的错，换一个 `ctx` 接着调（重连退避中、补齐中到期都一样）；**其余任何一个错之后 `Live` 不再可用**，之后的 `Next` 都返回同一个错 |
+| **只用行情通道** | 鉴权 · 名称服务 · websocket 的 `set_chart` / `subscribe_quote` / `peek_message`；不碰交易、下单、资金 |
+
+**报错之后怎么办**（`Feed` 在任何 `Live` 报错之后都完好 —— `Push` 报错时状态不动；恢复一律是「重开一个 `Live`，起始格取 `feed.PushFrom()`」，除非下表另写）：
+
+| 错误 | 含义 | 处置 |
+|---|---|---|
+| `shinnysource.ErrDisconnected` | 推送连接断了，重连 `Reconnects` 次都没连上 | 等网络恢复，从 `PushFrom()` 重开 `Live`（起步补齐会把断开期间的根补上） |
+| `shinnysource.ErrConsumerStalled` | 调用方太久没调 `Next` | 从 `PushFrom()` 重开；查为什么一次策略计算要这么久 |
+| `shinnysource.ErrIDGap` | bar id 跳号（推送里、交出过之后、或补回来的接不上推送） | 从 `PushFrom()` 重开；反复出现 ⇒ 把那次的报文报回来 |
+| `shinnysource.ErrStartGap` | 历史通道补回来的第一根不是起始格 | 先确认起始格取自 `PushFrom()`（给在休市时刻也会落到这里）；是的话把报文报回来 |
+| `shinnysource.ErrChannelsDisagree` | 起步时历史通道与推送对同一根（两边都已完结）给了不同的值；**一根都还没交出** | 隔一会儿从 `PushFrom()` 重开 |
+| `shinnysource.ErrSuspectedFreeze` | 交易时段内超过 `FreezeN` 没有任何真改动（疑似推送冻结） | 从 `PushFrom()` 重开；那天若确实停牌，这一条会误报（误报的方向是停下来） |
+| `shinnysource.ErrStaleSnapshot` | 连上时的当前那根不在 `[now − FreezeN, now ＋ G]` 里 | 同上 |
+| `shinnysource.ErrClockSkew` | 本机时钟偏快到 `G` 的前提不成立（末根可能提前交出） | 先把本机对时，再重开。偏慢只告警不停：`Live.Warnings()` 给次数与最新的窗口低端 |
+| `shinnysource.ErrCorrectedAfterDelivery` | **一根交出之后又被改了值**（判据一的反例；6.36 / 6.37 / 6.39 三次取数 0 例）⇒ `Feed` 里已经步进了旧值，**改不回来** | ⛔ 不能只重开 `Live`：① `Close` 这个 `Feed`，不再用；② 等那一根定型（它收盘 ＋ `G` 之后），`Sync` 把它拉进库；③ 从库重建 `Feed`（`NewFeed`，`To` 到今天）⇒ `Next` 走完 ⇒ `PushFrom()` ⇒ 新的 `Live`。**请把这次的报文（带那根的交出值与最新值）报回来** |
+| `tickflow.ErrPushGap` | 推入的这根不紧接上一根 | `Feed` 状态没动：从 `PushFrom()` 重开 `Live`（它会补齐缺的那段） |
+| `tickflow.ErrFeedVoided`（经 `Err()`） | 第二遍读库时库变了，已步进的根作废 | 同 v0.9：重建 `Feed` |
+
+**射程**（这些是读数的边界，不是保证）：
+
+```
+读数      rb 一个品种；6.36 夜盘一晚 · 6.37 日盘一天 · 6.39 日盘前半小时（Live 实跑：一次起步补齐 ＋ 一次本机主动断线）
+判据一    「下一根出现 ⇒ 上一根不再变」三次取数 0 例反例；它是 Live 判完结与 Push 不改历史的共同前提
+G ＝ 4 秒 日盘 10:15 · 11:30 · 15:00 三处末根各算、同值；夜盘末根（23:00 / 01:00 / 02:30）只有 6.36 一个样本 ⇒ 外推
+没见过    服务端主动断线 · 断线超出推送窗口（30 根）后的重连补齐（只有离线测试）· 停夜盘日的实时 · 不活跃品种
+每分钟有根 天勤不管有没有成交都给根（活跃品种的读数）；不活跃品种若某分钟真没有根，ErrPushGap / ErrIDGap 会误报（误报的方向是停下来）
+本机时钟  Live 的时段末根按本机时钟判；本机偏快由 ErrClockSkew 挡，偏慢只告警（6.36 那晚本机慢约 2.4 秒）
+```
+
 ---
 
 ## 二、边界：明确不做的
@@ -113,7 +203,9 @@ var CST = time.FixedZone("CST", 8*3600)
 | 上期 / 大商 / 郑商官方直连 | 实测被 WAF 挡（412），绕过要无头浏览器 |
 | 多进程并发**写** | 一个命名空间一个写者，第二个拿 `ErrLocked`。并发**读**支持 |
 
-`Feed` **不是并发安全的**——一个回测循环就是一条时间线。
+`Feed` **不是并发安全的**——一个回测循环就是一条时间线。`shinnysource.Live` 同样不是（一个 `Live` 一个合约、一个 goroutine 调 `Next`）。
+
+v0.10 实时另外明确不做：**实时主连**（主连模式的 `Feed` 不收 `Push`）· **纯实盘不带历史**（`NewFeed` 的 src 不许 nil）· **实时落库**（`Live` 交出的根不写 `Store`，靠之后的 `Sync`）· **一个 `Live` 推多个合约** · tick / 盘口。
 
 ---
 
@@ -252,6 +344,9 @@ var CST = time.FixedZone("CST", 8*3600)
 | **郑商所 3 位码跨十年歧义** | **是**（新浪返回 `null`，与「确实没数据」无从区分） | 拉到错误年份，或静默拿到空 | 内部一律 4 位；解析层把 `null` 与 `[]` 分开；`RegisterCentury` 可覆盖 |
 | 新浪分钟历史只有 1023 根 | 否（`Caps` 会报） | 分钟级回测深度不够 | **接天勤**（已实测 890,231 根 1m） |
 | 交易日历推不到未来 | 否（`ok=false`） | 实盘判断不了明天是否开市 | 交易所公告。**`calendar/embedded` 没有前瞻表**——它只有时段模板，交易日要调用方注入 |
+| **v0.10 之前在盘中跑过 `Sync` 的库**（L10） | **是** | `shinnysource` 的截止原来只看「`TsEnd ≤ now`」：收盘后几十毫秒内拉到的那一根可能还会再变，而它已经进了库、之后不再改。回放实测：9/21 10:03 那根，本机收盘后 60 ms 内跑一次 `Sync` 会收下成交量 2769，最终是 2781（probe.md 6.40） | v0.10 起截止改为「`TsEnd ≤ now` 且（下一根已在窗里，或 now ≥ 收盘 ＋ `CloseGrace`）」。**以前盘中同步过的库没有自动修复**：要核就拿历史通道重拉那几天与库里比（`Sync` 对已覆盖的交易日不重拉，见上面「交易所修正历史结算价」那一行的替换路径） |
+| **拿本机时刻对 `Live` 交出的根跑 `CheckBars`** | 否（会报错） | `Live` 按「下一根出现」判完结，本机偏慢时交出早于本机的 `TsEnd`（6.39：中位早 502 ms）⇒ `CheckBars(req, bars, now)` 报「TsEnd 在 now 之后」 | 别这么查；`Live` 的完结判据见上「实时」一节。要核就拿服务器时刻，或等 `TsEnd ＋ G` 之后再核 |
+| **`Live` 交出之后那根被改了**（`ErrCorrectedAfterDelivery`） | 否（停下来报错） | `Feed` 里已步进了旧值，**改不回来**；只重开 `Live` 的话 `Feed` 与之后 `Sync` 进库的那根不一致 | 照「实时」一节的三步：`Close` 这个 `Feed` → 等定型后 `Sync` → 从库重建。三次取数 0 例 —— 发生了请报回来 |
 | 未完结 K 线 | 否（本库在 `Source` 层挡掉） | — | 需要日历才判得了，所以日历是硬依赖 |
 | 停牌 / 熔断 | 否（`FlagPartial`） | — | 判定形态**尚未实测** |
 | 跨进程双写 | 否（`ErrLocked`） | — | 一个命名空间一个写者。**跨机器 / 网络文件系统无保护** |
@@ -354,6 +449,10 @@ recordSize  design.md 里命中 0 次；记录长 88 只写在【散文】里（
 
 按上面 v0.x 那条政策，这些是**允许**的；列在这里是因为
 **照着旧版文档写过代码的人需要一份清单**，而不是让他去风险表里翻。
+
+| 变更（v0.9.0 → v0.10） | 从 | 到 | 升级时会不会红 | 为什么 |
+|---|---|---|---|---|
+| `shinnysource` 的 `Bars`（经 `Assemble`）在盘中收哪几根 | 「`TsEnd ≤ now`」就收 | 还要「下一根已在这一窗里，或 now ≥ `TsEnd` ＋ `CloseGrace`（4 秒）」 | ⛔ **不会红**（签名没变） | L10：收盘后几十毫秒内那一根还会变（probe.md 6.40 回放见到一例）。**盘中 `Sync` 会比以前少收最新那一根**，下一次 `Sync` 再收；只收紧不放松（`CheckBars` 的契约不变） |
 
 | 变更 | 从 | 到 | 升级时会不会红 | 为什么 |
 |---|---|---|---|---|
