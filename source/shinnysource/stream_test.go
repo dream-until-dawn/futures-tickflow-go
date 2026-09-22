@@ -241,6 +241,12 @@ func TestLiveStartupCheck(t *testing.T) {
 	if _, err := e.feed(open-150, kFrame(100, open, 3000, "")); err != nil {
 		t.Errorf("本机 13:29:59.850（午休中）连上：%v，应不查", err)
 	}
+	// 上面那格守不住「时段外不查」：当前那根离 now 只差 150 ms，就算照查也在窗里（v0.11 Q-b 的突变「启动自检一律当在时段内」下它不红）⇒
+	// 补一格当前那根远早于 now − N 的：午休中连上、当前那根是上午最后一根 11:29 ⇒ 只要查了就是 ErrStaleSnapshot，不查才不报
+	e2 := newLiveCore(testCalendar(t), liveSym, 0, LiveOptions{})
+	if _, err := e2.feed(open-150, kFrame(100, at2(2026, 9, 4, 11, 29, 0, 0), 3000, "")); err != nil {
+		t.Errorf("本机 13:29:59.850（午休中）连上、当前那根 11:29：%v，应不查（时段外不做启动自检）", err)
+	}
 	f := newLiveCore(testCalendar(t), liveSym, 0, LiveOptions{})
 	if _, err := f.feed(now, kFrame(100, now+4001, 3000, "")); !errors.Is(err, ErrStaleSnapshot) {
 		t.Errorf("对照：当前那根开盘 now ＋ 4.001 秒（超过 ＋G）：%v，应 ErrStaleSnapshot", err)
