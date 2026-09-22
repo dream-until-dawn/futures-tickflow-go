@@ -5918,7 +5918,7 @@ adapter/ 在对方 Advance 落地之前的代码
 改什么    新增【可选】参数 -nonight <名单文件>：
             格式  每行一个 YYYYMMDD；空行与 # 开头的行忽略；严格升序、不重复（与 -days 同一个读法）
             键    公告里的日期 X（《休市安排》原文「X 日晚上不进行夜盘交易」的 X）—— 与 embedded.NoNightAfter 同一个键，原样传进去
-            给了  flattenBase 用 embedded.New(交易日表, embedded.NoNightAfter(名单…)) 摊 base；X 不在交易日表里 ⇒ New 报错 ⇒ 退出 1（报文带出那一天）
+            给了  flattenBase 用 embedded.New(交易日表, embedded.NoNightAfter(名单…)) 摊 base；X 不在交易日表里 ⇒ 读名单时就先查、不等 New ⇒ 退出 1（报文带出那一天，在结构前提之前停）
             不给  base 与今天相同 ⇒ 差异清单与退出码逐条相同；报文头多一行「停夜盘名单：未给」（明说没给，免得「没给」与「给了而没起作用」长一样）
           报文头：名单路径 · 天数 · md5，并逐个印「X → 去掉的是 D 那一天的夜盘」（D ＝ 交易日表里 X 的下一个交易日；X 是表里最后一天 ⇒ 印「影响的那一天不在表里」）
             —— 让读的人一眼核对抄的是不是公告日期（M2 那种错：把节后首日当 X）
