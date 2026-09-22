@@ -1064,6 +1064,7 @@ var guardNames = []string{
 	`TestNoNightAfterKeyIsTheAnnouncedEvening`,
 	`TestNoNightAfterPhaseUnchanged`,
 	`TestNoNightAfterValidation`,
+	`TestNoNightCountCalibration`,
 	`TestNoNightEveningFaces`,
 	`TestNoNightPostHolidayMorningAndMixedCalendars`,
 	`TestNoOrphanedSentences`,
