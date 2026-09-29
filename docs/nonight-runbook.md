@@ -33,4 +33,4 @@ python tools/probe/nonight_preflight.py --phase fetch --ins SHFE.rb2701 --out "$
 
 `python -m unittest discover -s tools/probe -p test_nonight_preflight.py -v`：3 个测试通过，覆盖有效配置、缺凭证、错误合约、仓内路径与已有证据目录。
 
-`go test ./source/shinnysource -run 'TestNoNight|TestPostHoliday' -count=1 -v`：离线用例通过；TestNoNightRealEvening 与 TestNoNightRealFetch 因未设置实跑参数 SKIP，未联网。
+`go test ./source/shinnysource -run 'NoNight|PostHoliday' -count=1 -v`：离线用例通过；TestNoNightRealEvening 与 TestNoNightRealFetch 因未设置实跑参数 SKIP，未联网。
