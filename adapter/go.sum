@@ -1,0 +1,6 @@
+github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
+github.com/coder/websocket v1.8.15/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
+github.com/dream-until-dawn/futures-position-simulator-go v0.0.0-20260923031436-6d3c7bbf3347 h1:lLf9PNisA9Jt79SIIqXBzezU9SS0Jrkc6iIA806ydGY=
+github.com/dream-until-dawn/futures-position-simulator-go v0.0.0-20260923031436-6d3c7bbf3347/go.mod h1:Sxg7NN+hj5eXHoZ2DupMp2q/ZyuWsoG4dAKLyyDioIM=
+github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp81k=
+github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=

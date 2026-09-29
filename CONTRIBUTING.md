@@ -854,11 +854,12 @@ python tools/audit/module_sweep.py && go run ./tools/doccheck
 
 #### ⛔ 为什么不再是那一行 `gofmt && vet && go test ./...`
 
-**`go test ./...` 的射程是【当前模块】，而本仓有两个：**
+**`go test ./...` 的射程是【当前模块】，而本仓有三个：**
 
 ```
 ./go.mod                        根模块
 ./tools/probe/shinny/go.mod     天勤探针（要 coder/websocket，故意独立出去）
+./adapter/go.mod                对接记账内核（decimal 与模拟器依赖隔离）
 ```
 
 实测（2026-09-09）：第二个模块里有两条守卫，**从来没有被自检链跑过**——
