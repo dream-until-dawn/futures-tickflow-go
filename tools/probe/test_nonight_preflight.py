@@ -3,6 +3,7 @@ import contextlib
 import io
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 import nonight_preflight as pre
 
@@ -36,4 +37,6 @@ class PreflightTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     unittest.main()

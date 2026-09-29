@@ -1,7 +1,9 @@
 """在临时 Git 克隆中验证 adapter 关键断言，拒绝把编译失败当成检出。"""
+import io
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -62,4 +64,6 @@ def main():
 
 
 if __name__ == "__main__":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     raise SystemExit(main())

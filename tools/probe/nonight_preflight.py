@@ -1,6 +1,7 @@
 """6.41 的离线预检：不联网、不创建录制目录、不输出凭证、不启动实跑。"""
 import argparse
 import datetime as dt
+import io
 import os
 from pathlib import Path
 import re
@@ -66,5 +67,6 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     raise SystemExit(main())
