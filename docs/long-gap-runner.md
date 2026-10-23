@@ -31,3 +31,7 @@
 ca36cb9 干净基线执行 python tools/audit/long_gap_mutations.py：忽略参照缺根、忽略交出价格错误、忽略交易日错误三项均 KILLED，对应 missing-reference、output-price、wrong-day 子测试实际变红，均为断言失败而非编译失败。临时克隆 before/after 均为 ""，baseline_rc/restored_rc 均为 0。
 
 原始帧录制另有本地假服务三格：正常截止并落盘、握手失败、文件写入失败。后二者必须报告错误，不能把空文件或错误连接当作正常结束。
+
+后续加固：JSONL 读取改为逐项 Decode 直至 EOF，拒绝尾部多余闭括号、截断、null 元数据或 null 载荷；不能用面向数组/对象的 Decoder.More 判断文件结束。当前已启动的录制二进制仍绑定 24b0f0d，未重启；完成后须对原文件再做严格流读取与独立复核，不能只采用旧二进制的内置分析结论。
+
+4ff54e8 的独立干净克隆三模块 gofmt/vet/test、还原演练和 doccheck 全过，前后 porcelain 均为 ""，指纹 e3b0c44298fc。Windows 竞态工具链复核：用临时 ASCII 联接与显式 GCC 搜索路径绕过中文链接路径后，ThreadSanitizer 运行时仍因地址分配失败退出；Docker Linux 引擎未运行。因此竞态检查继续记为环境阻断，未声称通过；临时 GCC 联接已移除，未改安装目录。

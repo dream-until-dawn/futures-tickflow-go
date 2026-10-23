@@ -204,14 +204,9 @@ func TestLiveLongGapReal(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer f.Close()
-	var recs []l8Rec
-	dec := json.NewDecoder(f)
-	for dec.More() {
-		var r l8Rec
-		if e := dec.Decode(&r); e != nil {
-			t.Fatal(e)
-		}
-		recs = append(recs, r)
+	recs, err := readGapRecords(f)
+	if err != nil {
+		t.Fatal(err)
 	}
 	conns, err := l8Parse(recs, p.sym.Native())
 	if err != nil {
