@@ -1,6 +1,7 @@
 """独立启动采集监护进程，或读取其可核验状态。"""
 import argparse
 import json
+import io
 import os
 from pathlib import Path
 import subprocess
@@ -58,6 +59,6 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     raise SystemExit(main())

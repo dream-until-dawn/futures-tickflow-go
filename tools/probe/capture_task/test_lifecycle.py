@@ -1,5 +1,6 @@
 """仅使用本地子进程的生命周期正反测试，不连接行情服务。"""
 import json
+import io
 from pathlib import Path
 import subprocess
 import sys
@@ -167,4 +168,6 @@ class LifecycleTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     unittest.main()

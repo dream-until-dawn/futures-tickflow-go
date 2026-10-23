@@ -1,5 +1,7 @@
 """验证离线执行计划，避免覆盖旧记录或监测目录外的文件。"""
 import math
+import io
+import sys
 from pathlib import Path
 
 
@@ -31,3 +33,9 @@ def validate(value):
     if result["poll_seconds"] > min(result["idle_seconds"], result["startup_seconds"]):
         raise ValueError("轮询间隔不得大于启动或空闲阈值")
     return result
+
+
+if __name__ == "__main__":
+    # 仅直接执行时配置异常输出；作为模块导入不改调用方的流。
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")

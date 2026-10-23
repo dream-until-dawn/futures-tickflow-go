@@ -42,3 +42,7 @@ launch 返回 launched 只代表监护创建请求成功，随后必须读取 st
 第一版 Windows 仅脱离控制台未验成：启动器退出后监护未完成；启用脱离父作业后又由实测检出状态文件替换 PermissionError。补齐有限共享冲突重试后，13项生命周期测试全部通过，包括启动器已退出后至少两次不同文件内容及最终内容15的检查。初次沙箱临时目录的访问拒绝属于环境失败，不计业务反例通过。
 
 跨工具调用的保留探针目录 C:\Temp\tickflow-lifecycle-proof-1792756084380：首次启动命令已退出，随后独立调用读取到 running 状态和数据21–23；最终 completed、子进程退出码0、30行数据0–29，事件顺序 waiting → running → completed。原始数据 SHA256 为 aa2a825a4b21d8a3a98535ec490c903c34af63e22c6b6860d9b691463f495864。此为本地合成写入，不是真实行情。
+
+5e8dee7 的首次全仓检查发现中文 Python 输出守卫未通过：reconfigure 不符合仓库规定的双流包裹形式。已改为只在直接入口包裹 stdout/stderr，模块导入不改调用方输出流；未放宽守卫。该轮其它模块及24项Python测试、还原演练通过，但总结果为失败，不计全绿。
+
+基线5e8dee7的仓库外突变复核位于 C:\Temp\tickflow-lifecycle-mutations-79040de8d8ed4fd988c0e9a8596e6c2d：零数据退出仍成功、忽略过期心跳、忽略停写三项全部 KILLED，均为目标断言失败，非导入/编译失败；基线与还原后均退出0。被测 worker.py SHA256 为301a1f04170fcdf49fdacd6df8c279cf45c262c01b393d854d66e80527d9bd1e。

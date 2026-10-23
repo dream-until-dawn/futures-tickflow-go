@@ -1,8 +1,10 @@
 """监护前台采集子进程，分别记录进程心跳与数据活性。"""
 import json
+import io
 import os
 from pathlib import Path
 import subprocess
+import sys
 import time
 
 TERMINAL = {"completed", "failed", "timed_out"}
@@ -129,3 +131,9 @@ def inspect(root, stale_seconds=10):
     if status["state"] not in TERMINAL and time.time() - status["heartbeat"] > stale_seconds:
         status = dict(status, state="supervisor_unknown")
     return status
+
+
+if __name__ == "__main__":
+    # 监护入口在 cli；直接执行本模块也保持异常可读，导入时不包流。
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
