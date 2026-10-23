@@ -105,7 +105,8 @@ def main(argv=None):
     names = ["reference.jsonl", "history.jsonl", "live.jsonl", "events.jsonl"]
     contents = {name: (root / "capture" / name).read_bytes() for name in names}
     before = {name: hashlib.sha256(data).hexdigest() for name, data in contents.items()}
-    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8-sig"), parse_constant=reject_constant)
+    manifest_bytes = (root / "manifest.json").read_bytes()
+    manifest = json.loads(manifest_bytes.decode("utf-8-sig"), parse_constant=reject_constant)
     log_bytes = (root / "run.log").read_bytes()
     log = log_bytes.decode("utf-8-sig")
     require("--- PASS: TestLiveLongGapReal" in log and "--- FAIL:" not in log,
@@ -121,7 +122,10 @@ def main(argv=None):
     after = {name: hashlib.sha256((root / "capture" / name).read_bytes()).hexdigest() for name in names}
     require(before == after, "分析期间原始文件改变")
     require(log_bytes == (root / "run.log").read_bytes(), "分析期间运行日志改变")
+    require(manifest_bytes == (root / "manifest.json").read_bytes(), "分析期间执行单改变")
     result.update(source_sha=manifest["sha"], sha256_before=before, sha256_after=after)
+    result.update(manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
+                  run_log_sha256=hashlib.sha256(log_bytes).hexdigest())
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

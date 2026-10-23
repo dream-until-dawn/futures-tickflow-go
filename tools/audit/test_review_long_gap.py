@@ -71,7 +71,8 @@ class ReviewTest(unittest.TestCase):
     def test_complete_and_negative_evidence(self):
         self.assertEqual(verify(*fixture())["complete_gap_rows"], 31)
         for mode in ("missing-reference", "changed-price", "wrong-day", "duplicate-output", "short-pause",
-                     "reference-reconnect", "clock-backward", "no-pre-output", "historical-only", "non-finite", "boolean-price"):
+                     "reference-reconnect", "clock-backward", "no-pre-output", "historical-only", "non-finite", "boolean-price",
+                     "insufficient-whole-bars", "rewritten-reference-label"):
             with self.subTest(mode=mode):
                 env, events, raw, hist, live = copy.deepcopy(fixture())
                 if mode == "missing-reference":
@@ -84,6 +85,9 @@ class ReviewTest(unittest.TestCase):
                     live[15] = live[14]
                 elif mode == "short-pause":
                     events[1]["when_ms"] = millis(env["RESUME"]) - 60000
+                elif mode == "insufficient-whole-bars":
+                    env["RESUME"] = "2026-10-23T14:07:00+08:00"
+                    events[1]["when_ms"] = millis(env["RESUME"]) + 200
                 elif mode == "reference-reconnect":
                     raw[15]["conn"] = 2
                 elif mode == "clock-backward":
@@ -97,6 +101,10 @@ class ReviewTest(unittest.TestCase):
                 elif mode == "boolean-price":
                     hist[15]["Close"] = live[15]["c"] = True
                     raw[15]["raw"]["data"][0]["klines"][env["INS"]]["60000000000"]["data"]["115"]["close"] = True
+                elif mode == "rewritten-reference-label":
+                    wrong = copy.deepcopy(raw[15])
+                    wrong["raw"]["data"][0]["klines"][env["INS"]]["60000000000"]["data"]["115"]["datetime"] += 60000 * 1000000
+                    raw.insert(15, wrong)
                 else:
                     hist[15]["Close"] = float("nan")
                 with self.assertRaises(ValueError):

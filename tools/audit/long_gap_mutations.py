@@ -24,6 +24,10 @@ def main():
         base = run(clone, *args)
         if before or base.returncode:
             raise SystemExit("基线失败：" + base.stdout + base.stderr)
+        python_args = (sys.executable, "-X", "utf8", "-m", "unittest", "discover", "-s", "tools/audit", "-p", "test_review_long_gap.py")
+        python_base = run(clone, *python_args)
+        if python_base.returncode:
+            raise SystemExit("Python 基线失败：" + python_base.stdout + python_base.stderr)
         file = clone / "source/shinnysource/long_gap_real_test.go"
         original = file.read_bytes()
         for name, old, new in [
@@ -42,12 +46,32 @@ def main():
                 results.append({"mutation": name, "result": "KILLED" if killed else "UNRESOLVED", "output": output})
             finally:
                 file.write_bytes(original)
+        file = clone / "tools/audit/review_long_gap.py"
+        original = file.read_bytes()
+        for name, old, new, case in [
+            ("把三十根当三十一根", "len(whole_gap) >= 31", "len(whole_gap) >= 30", "insufficient-whole-bars"),
+            ("布尔值冒充价格", "type(v) in (float, int)", "isinstance(v, (float, int))", "boolean-price"),
+            ("允许参照编号改写标签", 'item["datetime"] == fields["datetime"]', "True", "rewritten-reference-label"),
+        ]:
+            source = original.decode("utf-8")
+            if source.count(old) != 1:
+                raise SystemExit("Python 突变锚点不唯一：" + name)
+            try:
+                file.write_bytes(source.replace(old, new).encode("utf-8"))
+                p = run(clone, *python_args)
+                output = p.stdout + p.stderr
+                killed = p.returncode == 1 and "FAIL: test_complete_and_negative_evidence" in output and case in output and "AssertionError: ValueError not raised" in output
+                results.append({"mutation": name, "result": "KILLED" if killed else "UNRESOLVED", "output": output})
+            finally:
+                file.write_bytes(original)
         after = run(clone, "git", "status", "--porcelain").stdout
         restored = run(clone, *args)
-        if after or restored.returncode:
+        python_restored = run(clone, *python_args)
+        if after or restored.returncode or python_restored.returncode:
             raise SystemExit("还原失败：" + restored.stdout + restored.stderr)
     print(json.dumps({"sha": sha, "before": before, "after": after, "baseline_rc": base.returncode,
-                      "restored_rc": restored.returncode, "mutations": results}, ensure_ascii=True, indent=2))
+                      "restored_rc": restored.returncode, "python_baseline_rc": python_base.returncode,
+                      "python_restored_rc": python_restored.returncode, "mutations": results}, ensure_ascii=True, indent=2))
     return int(any(r["result"] != "KILLED" for r in results))
 
 
