@@ -88,8 +88,13 @@ def verify(env, events, raw, history, live):
             "closed_ms": closed, "restored_ms": restored, "reference_frames": len(raw)}
 
 
+def reject_constant(value):
+    raise ValueError("JSON 中包含非标准常量：" + value)
+
+
 def read_lines(data):
-    return [json.loads(line) for line in data.decode("utf-8-sig").splitlines() if line.strip()]
+    return [json.loads(line, parse_constant=reject_constant)
+            for line in data.decode("utf-8-sig").splitlines() if line.strip()]
 
 
 def main(argv=None):
@@ -100,7 +105,7 @@ def main(argv=None):
     names = ["reference.jsonl", "history.jsonl", "live.jsonl", "events.jsonl"]
     contents = {name: (root / "capture" / name).read_bytes() for name in names}
     before = {name: hashlib.sha256(data).hexdigest() for name, data in contents.items()}
-    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8-sig"))
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8-sig"), parse_constant=reject_constant)
     log_bytes = (root / "run.log").read_bytes()
     log = log_bytes.decode("utf-8-sig")
     require("--- PASS: TestLiveLongGapReal" in log and "--- FAIL:" not in log,

@@ -166,7 +166,7 @@ def main():
     print()
     print("Python 工具测试（单独一格，不算 Go 模块）：")
     pycode, pyout = run(ROOT, sys.executable, "-X", "utf8", os.path.join(HERE, "python_sweep.py"))
-    print(pyout.strip())
+    print(pyout.replace("\r\n", "\n").strip())
     pythonOK = pycode == 0
     print()
     print("生成器还原演练（单独一格，不算模块）：")

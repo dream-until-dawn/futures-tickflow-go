@@ -71,7 +71,7 @@ class ReviewTest(unittest.TestCase):
     def test_complete_and_negative_evidence(self):
         self.assertEqual(verify(*fixture())["complete_gap_rows"], 31)
         for mode in ("missing-reference", "changed-price", "wrong-day", "duplicate-output", "short-pause",
-                     "reference-reconnect", "clock-backward", "no-pre-output", "historical-only", "non-finite"):
+                     "reference-reconnect", "clock-backward", "no-pre-output", "historical-only", "non-finite", "boolean-price"):
             with self.subTest(mode=mode):
                 env, events, raw, hist, live = copy.deepcopy(fixture())
                 if mode == "missing-reference":
@@ -94,6 +94,9 @@ class ReviewTest(unittest.TestCase):
                 elif mode == "historical-only":
                     for record in raw:
                         record["recv_ms"] = millis(env["END"])
+                elif mode == "boolean-price":
+                    hist[15]["Close"] = live[15]["c"] = True
+                    raw[15]["raw"]["data"][0]["klines"][env["INS"]]["60000000000"]["data"]["115"]["close"] = True
                 else:
                     hist[15]["Close"] = float("nan")
                 with self.assertRaises(ValueError):
@@ -101,7 +104,7 @@ class ReviewTest(unittest.TestCase):
 
     def test_rejects_broken_jsonl(self):
         self.assertEqual(read_lines(b'{"ok":1}\n'), [{"ok": 1}])
-        for broken in (b'{"ok":1}\n]', b'{"ok":1}\n{', b'{"ok":1}]'):
+        for broken in (b'{"ok":1}\n]', b'{"ok":1}\n{', b'{"ok":1}]', b'{"ok":NaN}', b'{"ok":Infinity}'):
             with self.assertRaises(ValueError):
                 read_lines(broken)
 

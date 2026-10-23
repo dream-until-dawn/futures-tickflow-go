@@ -47,7 +47,9 @@ def main(argv=None):
     for directory in paths:
         print("Python 测试目录：" + directory.relative_to(ROOT).as_posix(), flush=True)
         p = subprocess.run([sys.executable, "-X", "utf8", str(Path(__file__).resolve()),
-                            "--directory", str(directory)], cwd=ROOT, timeout=120)
+                            "--directory", str(directory)], cwd=ROOT, timeout=120,
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        print(p.stdout.decode("utf-8", "replace").replace("\r\n", "\n").rstrip(), flush=True)
         bad |= p.returncode != 0
     return int(bad)
 
