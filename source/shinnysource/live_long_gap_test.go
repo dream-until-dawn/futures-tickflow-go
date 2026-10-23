@@ -67,3 +67,32 @@ func TestLiveLongGapCalibration(t *testing.T) {
 		}
 	}
 }
+
+// TestLiveDefaultRetryExhaustion 区分默认重试耗尽与受控暂停后的恢复。
+func TestLiveDefaultRetryExhaustion(t *testing.T) {
+	m := at2(2026, 9, 4, 9, 0, 0, 0)
+	r := newNetRig(t, m, LiveOptions{})
+	i := r.id(t, m)
+	r.clock.Store(r.ts(i+2) + 10000)
+	r.send(span(i, i+2), nil)
+	r.next(t, r.ts(i), r.ts(i+1))
+	r.fs.mu.Lock()
+	r.fs.mdDown = true
+	r.fs.mu.Unlock()
+	_, before := r.counts()
+	r.drop()
+	err := r.nextErr(t)
+	if !errors.Is(err, ErrDisconnected) {
+		t.Fatalf("默认重试耗尽应 ErrDisconnected，得到 %v", err)
+	}
+	if _, after := r.counts(); after-before != 3 {
+		t.Fatalf("默认重试握手 %d 次，应 3 次", after-before)
+	}
+	// 服务恢复也不能让已终止实例悄悄重新工作。
+	r.fs.mu.Lock()
+	r.fs.mdDown = false
+	r.fs.mu.Unlock()
+	if again := r.nextErr(t); again != err {
+		t.Fatalf("终止后未保留同一错误：%v", again)
+	}
+}

@@ -21,3 +21,7 @@
 819819d 的干净独立克隆三模块 gofmt/vet/test、生成器还原演练与 doccheck 通过；前后 git status --porcelain 均为 ""，还原指纹 e3b0c44298fc。新增离线校验含七项参数反例及八项完整性反例，均能拒绝；既有四项长缺口控制继续通过。竞态检查未运行成功：Windows GCC 因中文安装路径找不到 crt2.o/crtbegin.o，记为工具链阻断，不能记成通过。
 
 实跑环境变量统一为 TICKFLOW_GAP_ 加 INS、DAYS、START、BEGIN、DROP、RESUME、END、OUT；启用 TICKFLOW_GAP_REAL=1 与 TICKFLOW_LIVE=1。命令为 go test ./source/shinnysource -run '^TestLiveLongGapReal$' -count=1 -v -timeout 0。只读连通性另用 TICKFLOW_GAP_CHECK=1，筛选 '^TestGapMarketPreflight$'。
+
+录制进程已启动等待 BEGIN，代码基线 24b0f0d；证据根目录 C:\Temp\tickflow-gap-20261023-07943ea3fc174fad872bfacd9e0c4f90，含 manifest.json、run.log 及 capture 子目录。此状态不等于取数成功，必须待窗口结束审阅原始结果。
+
+路径 A 另由 TestLiveDefaultRetryExhaustion 校验：默认参数下三次握手失败，返回 ErrDisconnected；服务恢复后继续 Next 仍返回同一错误，不能把已终止实例当作可恢复实例。该离线测试通过，不外推真实服务持续不可达表现。
