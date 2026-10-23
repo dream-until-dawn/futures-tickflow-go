@@ -25,3 +25,9 @@
 录制进程已启动等待 BEGIN，代码基线 24b0f0d；证据根目录 C:\Temp\tickflow-gap-20261023-07943ea3fc174fad872bfacd9e0c4f90，含 manifest.json、run.log 及 capture 子目录。此状态不等于取数成功，必须待窗口结束审阅原始结果。
 
 路径 A 另由 TestLiveDefaultRetryExhaustion 校验：默认参数下三次握手失败，返回 ErrDisconnected；服务恢复后继续 Next 仍返回同一错误，不能把已终止实例当作可恢复实例。该离线测试通过，不外推真实服务持续不可达表现。
+
+## 分析器与录制的错误注入
+
+ca36cb9 干净基线执行 python tools/audit/long_gap_mutations.py：忽略参照缺根、忽略交出价格错误、忽略交易日错误三项均 KILLED，对应 missing-reference、output-price、wrong-day 子测试实际变红，均为断言失败而非编译失败。临时克隆 before/after 均为 ""，baseline_rc/restored_rc 均为 0。
+
+原始帧录制另有本地假服务三格：正常截止并落盘、握手失败、文件写入失败。后二者必须报告错误，不能把空文件或错误连接当作正常结束。
