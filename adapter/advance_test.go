@@ -14,7 +14,8 @@ import (
 )
 
 // 合成时段独立声明，不从 tickflow 日历或 adapter 输出反推期望。
-// 空仓与空规则刻意只验接口、时段与交易日；涨跌停查不到必须通过 Unchecked 明示。
+// 默认空规则用于接口、时段与交易日守卫；持仓用例可注入独立合成规则。
+// 涨跌停查不到必须通过 Unchecked 明示。
 func simulator(t *testing.T, supplied ...refdata.Provider) *futsim.Simulator {
 	t.Helper()
 	session := func(h1, m1, h2, m2 int) refdata.Session {
