@@ -1687,7 +1687,8 @@ func main() {
 	probeLiveAnalyze()
 	probeLiveSkew()
 	probeLiveGuard()
-	if optIn("shinny-live-analyze") || optIn("shinny-live-skew") || optIn("shinny-live-guard") {
+	probeSessionEnd()
+	if optIn("shinny-live-analyze") || optIn("shinny-live-skew") || optIn("shinny-live-guard") || optIn("shinny-session-end") {
 		if failed > 0 {
 			os.Exit(1)
 		}
