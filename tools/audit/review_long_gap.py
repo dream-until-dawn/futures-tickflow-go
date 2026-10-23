@@ -26,6 +26,7 @@ def millis(value):
 def verify(env, events, raw, history, live):
     start, end = millis(env["START"]), millis(env["END"])
     begin, drop, resume = (millis(env[k]) for k in ("BEGIN", "DROP", "RESUME"))
+    require(all(value % 60000 == 0 for value in (start, end, begin, drop, resume)), "执行单未按分钟对齐")
     require(start <= begin < drop < resume < end, "执行单时序错误")
     require(env["START"][:10] == env["END"][:10], "此复核器仅支持同日连续日盘")
     expected = list(range(start, end, 60000))
@@ -74,7 +75,7 @@ def verify(env, events, raw, history, live):
         require(reference.get("datetime") == hist["Datetime"], "参照缺根或编号不一致")
         for live_key, hist_key, raw_key in FIELDS:
             values = (output[live_key], hist[hist_key], reference.get(raw_key))
-            require(all(isinstance(v, (float, int)) and math.isfinite(v) for v in values), "价格或数量字段缺失/非有限")
+            require(all(type(v) in (float, int) and math.isfinite(v) for v in values), "价格或数量字段缺失/非有限")
             require(values[0] == values[1] == values[2], "O/H/L/C/V/OI 通道不一致")
         require(not closed < output["when_ms"] < restored, "暂停期仍交出数据")
         if ts >= closed and ts + 60000 <= restored:
@@ -91,10 +92,10 @@ def read_lines(data):
     return [json.loads(line) for line in data.decode("utf-8-sig").splitlines() if line.strip()]
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_root", type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     root = args.run_root
     names = ["reference.jsonl", "history.jsonl", "live.jsonl", "events.jsonl"]
     contents = {name: (root / "capture" / name).read_bytes() for name in names}

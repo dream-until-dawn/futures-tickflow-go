@@ -1,10 +1,14 @@
 """独立长缺口复核器的合成证据与反例，完全离线。"""
 import copy
+import contextlib
 import io
+import json
+from pathlib import Path
 import sys
+import tempfile
 import unittest
 
-from review_long_gap import millis, read_lines, verify
+from review_long_gap import main, millis, read_lines, verify
 
 
 def fixture():
@@ -33,6 +37,37 @@ def fixture():
 
 
 class ReviewTest(unittest.TestCase):
+    def test_cli_sealed_bundle_and_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "capture").mkdir()
+            env, events, raw, hist, live = fixture()
+            manifest = {key: env[key.upper()] for key in ("begin", "drop", "resume", "end")}
+            manifest.update(contract=env["INS"], sha="0" * 40)
+            def save_manifest():
+                (root / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            save_manifest()
+            for name, items in {"reference": raw, "history": hist, "live": live, "events": [env] + events}.items():
+                (root / "capture" / (name + ".jsonl")).write_text(
+                    "\n".join(json.dumps(item) for item in items), encoding="utf-8")
+            log = root / "run.log"
+            log.write_text("--- PASS: TestLiveLongGapReal\nPASS\n", encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(root)]), 0)
+            report = json.loads(output.getvalue())
+            self.assertEqual(report["complete_gap_rows"], 31)
+            self.assertEqual(report["sha256_before"], report["sha256_after"])
+            manifest["contract"] = "SHFE.rb2702"
+            save_manifest()
+            with self.assertRaises(ValueError):
+                main([str(root)])
+            manifest["contract"] = env["INS"]
+            save_manifest()
+            log.write_text("=== RUN TestLiveLongGapReal\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                main([str(root)])
+
     def test_complete_and_negative_evidence(self):
         self.assertEqual(verify(*fixture())["complete_gap_rows"], 31)
         for mode in ("missing-reference", "changed-price", "wrong-day", "duplicate-output", "short-pause",

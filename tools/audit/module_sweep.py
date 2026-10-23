@@ -164,16 +164,24 @@ def main():
                 bad += 1
                 print(out.strip()[:800])
     print()
+    print("Python 工具测试（单独一格，不算 Go 模块）：")
+    pycode, pyout = run(ROOT, sys.executable, "-X", "utf8", os.path.join(HERE, "python_sweep.py"))
+    print(pyout.strip())
+    pythonOK = pycode == 0
+    print()
     print("生成器还原演练（单独一格，不算模块）：")
     drillOK = drill()
     print()
-    if bad or not drillOK:
+    if bad or not drillOK or not pythonOK:
         if bad:
             print("❌ 模块：%d 项没过。" % bad)
         if not drillOK:
             print("❌ 演练没过（见上面「生成器还原演练」那一段）。")
+        if not pythonOK:
+            print("❌ Python 工具测试没过。")
         return 1
     print("✅ %d 个模块，gofmt / vet / test 全过；生成器还原演练过，演练前后工作区内容指纹相同。" % len(mods))
+    print("✅ 已枚举的 Python 工具测试通过（零项或全跳过会拒绝）。")
     print("⚠️ 而这只说明【被枚举到的】模块都过了 ——")
     print("   判据是「目录里有 go.mod」；一个不用 go.mod 组织的东西它照样看不见。")
     return 0
