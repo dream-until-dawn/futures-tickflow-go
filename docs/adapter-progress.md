@@ -4,7 +4,7 @@
 
 10/23 后续补强基线 23f59b0：真实固定版本模拟器录入合成多/空各两手，转换后的 Close 推进产生 +2250/-2250 的手算盈亏；非法价格根拒绝后账户不变。adapter 完整 test/vet 通过，突变从七项增至八项，全部 KILLED，包含“误用 High 计价”使多/空变成 +5000/-5000 的断言失败；还原后通过，克隆 before/after 均为 ""。这项测试使用 ApplyTrade 直接录入，不宣称 Submit、撮合或真实行情成交闭环通过。
 
-晚间补充收口：封存225根真实历史经转换连续推进模拟器、多/空一手最终-350/+350及错误交易日账户不变，见 [adapter-recorded-history.md](adapter-recorded-history.md)；独立外部模块按远端明确提交取用、无本地replace，见 [adapter-external-consumer.md](adapter-external-consumer.md)。这两项补充已在功能分支实现；按使用者晚间“允许自行合并主线”的新增授权，与生命周期监护主线同步后再作合并前复验。它们不关闭现场行情缺口，不创建发布tag，不扩展撮合或结算职责。
+晚间补充收口：封存225根真实历史经转换连续推进模拟器、多/空一手最终-350/+350及错误交易日账户不变，见 [adapter-recorded-history.md](adapter-recorded-history.md)；独立外部模块按远端明确提交取用、无本地replace，见 [adapter-external-consumer.md](adapter-external-consumer.md)。按使用者晚间“允许自行合并主线”的新增授权，同步生命周期主线后，97f6d7c完整自检通过，补充收口验收完成。它们不关闭现场行情缺口，不创建发布tag，不扩展撮合或结算职责。
 
 ## 2026-09-29：实现前对表与分期
 
