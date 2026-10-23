@@ -46,3 +46,5 @@ launch 返回 launched 只代表监护创建请求成功，随后必须读取 st
 5e8dee7 的首次全仓检查发现中文 Python 输出守卫未通过：reconfigure 不符合仓库规定的双流包裹形式。已改为只在直接入口包裹 stdout/stderr，模块导入不改调用方输出流；未放宽守卫。该轮其它模块及24项Python测试、还原演练通过，但总结果为失败，不计全绿。
 
 基线5e8dee7的仓库外突变复核位于 C:\Temp\tickflow-lifecycle-mutations-79040de8d8ed4fd988c0e9a8596e6c2d：零数据退出仍成功、忽略过期心跳、忽略停写三项全部 KILLED，均为目标断言失败，非导入/编译失败；基线与还原后均退出0。被测 worker.py SHA256 为301a1f04170fcdf49fdacd6df8c279cf45c262c01b393d854d66e80527d9bd1e。
+
+修复后的固定提交 f04124a 运行 module_sweep.py：三个Go模块 gofmt/vet/test全部通过，Python三个目录共24项全部通过，生成器还原演练通过、前后内容指纹均为e3b0c44298fc；运行前后工作区干净。至此生命周期离线验收通过，不改变真实行情验收状态。
