@@ -2,11 +2,13 @@ package adapter_test
 
 import (
 	"math"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	futsim "github.com/dream-until-dawn/futures-position-simulator-go"
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 	"github.com/dream-until-dawn/futures-tickflow-go/adapter"
 )
@@ -103,7 +105,7 @@ func TestBarRejectsNonFinite(t *testing.T) {
 				b.Close = bad
 			}
 			got, err := adapter.Bar(b, symbol(t, "SHFE.rb2701"))
-			if err == nil || !strings.Contains(err.Error(), field) || !got.Start.IsZero() {
+			if err == nil || !strings.Contains(err.Error(), field) || !reflect.DeepEqual(got, futsim.Bar{}) {
 				t.Fatalf("%s=%v 应返回点名错误与零结果，得到 %+v / %v", field, bad, got, err)
 			}
 		}

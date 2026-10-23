@@ -1,5 +1,7 @@
 # v0.11 adapter 与停夜盘验证推进记录
 
+当前复核入口（2026-10-23）：[review-20261023.md](review-20261023.md)。下面的 9/29 结果作为历史证据保留；新的真实行情排期见 [live-validation-plan.md](live-validation-plan.md)。
+
 ## 2026-09-29：实现前对表与分期
 
 用户同意先推进 adapter 对接与 9/30 探针准备；合并 main、打 tag 和实盘取数仍在对应确认点执行。

@@ -40,16 +40,19 @@ def check(ins, output, env_file, environ):
     return out, problems
 
 
-def main():
+def main(argv=None, *, now=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--phase", choices=WINDOWS, required=True)
     p.add_argument("--ins", required=True, help="须另行核实的具体合约，预检不验证主力映射")
     p.add_argument("--out", required=True)
     p.add_argument("--env-file", type=Path, default=ROOT / ".env")
-    args = p.parse_args()
+    args = p.parse_args(argv)
+    # 实跑只读进程环境和根目录 .env，不能用另一份凭证制造预检通过。
+    if args.env_file.resolve() != (ROOT / ".env").resolve():
+        p.error("--env-file 只能是仓库根目录 .env，须与实跑的凭证来源一致")
     out, problems = check(args.ins, args.out, args.env_file, os.environ)
     begin, end, test = WINDOWS[args.phase]
-    if dt.datetime.now(dt.timezone.utc) > dt.datetime.fromisoformat(begin):
+    if (now or dt.datetime.now(dt.timezone.utc)) > dt.datetime.fromisoformat(begin):
         problems.append("计划开始时刻已过，不能照旧运行")
     for problem in problems:
         print("FAIL " + problem)
