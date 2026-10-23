@@ -1,6 +1,6 @@
 # v0.11 adapter 与停夜盘验证推进记录
 
-当前复核入口（2026-10-23）：[review-20261023.md](review-20261023.md)。下面的 9/29 结果作为历史证据保留；新的真实行情排期见 [live-validation-plan.md](live-validation-plan.md)。
+当前状态（2026-10-23）：使用者已取消外部评审并授权直接操作 Git；adapter 已随 a4737fe 合入远端 main。[review-20261023.md](review-20261023.md) 与下面的 9/29 结果作为历史证据保留；新的真实行情排期、运行器和实测进展见 [live-validation-plan.md](live-validation-plan.md)。
 
 ## 2026-09-29：实现前对表与分期
 

@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -49,6 +51,45 @@ func TestSessionEndReadout(t *testing.T) {
 			}
 			if _, e := inspectSessionEnd(fr, tailSym, closeMs); e == nil {
 				t.Fatal("无效样本未拒绝")
+			}
+		})
+	}
+}
+
+// TestSessionEndCLIProjection 让四秒边界走实际报告入口，防止只测读数不测判对。
+func TestSessionEndCLIProjection(t *testing.T) {
+	oldOnly, oldIn, oldClose, oldSymbol, oldFailed := only, *tailIn, *sessionClose, *sessionSymbol, failed
+	defer func() {
+		only, *tailIn, *sessionClose, *sessionSymbol, failed = oldOnly, oldIn, oldClose, oldSymbol, oldFailed
+	}()
+	closeMs := time.Date(2026, 10, 23, 23, 0, 0, 0, cst).UnixMilli()
+	only = "shinny-session-end"
+	*sessionClose = "2026-10-23T23:00:00+08:00"
+	*sessionSymbol = tailSym
+	for _, tc := range []struct {
+		name  string
+		delta int64
+		want  int
+	}{{"3999ms", 3999, 0}, {"4000ms", 4000, 0}, {"4001ms", 4001, 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			frames := synthTail(closeMs-5*60000, 5, map[int64]bool{4: true}, nil)
+			frames[len(frames)-1].RecvMs = closeMs + tc.delta
+			frames = append(frames, tailFrame{RecvMs: closeMs + 10000, Raw: json.RawMessage(`{"aid":"rtn_data","data":[]}`)})
+			*tailIn = filepath.Join(t.TempDir(), "raw.jsonl")
+			f, e := os.Create(*tailIn)
+			if e != nil {
+				t.Fatal(e)
+			}
+			for _, fr := range frames {
+				if e = json.NewEncoder(f).Encode(fr); e != nil {
+					t.Fatal(e)
+				}
+			}
+			f.Close()
+			failed = 0
+			probeSessionEnd()
+			if failed != tc.want {
+				t.Fatalf("FAIL 计数 %d，应 %d", failed, tc.want)
 			}
 		})
 	}

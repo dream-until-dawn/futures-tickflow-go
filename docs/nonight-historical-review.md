@@ -7,3 +7,11 @@
 事先判据：查询区间内不存在 9/30 夜盘或假期根，10/8 日盘应恰有 225 根（09:00–10:15、10:30–11:30、13:30–15:00），时间标签逐根精确且不重不漏，ID 递增。时段按上期所公开日盘安排手列，不能由待验日历反推出期待数据。离线反例包括夜盘根、缺日盘根、重复、错误时刻及 ID 逆序。
 
 本次记录应明确区分：历史根复核、真实停夜盘夜观测、L9 节点跨度。这三项不能互相替代。
+
+## 2026-10-23 结果
+
+基线 31d1489f863a9944509d5265e98a237aed58da55，在已提交干净工作区执行 go test ./source/shinnysource -run '^TestNoNightHistoricalReviewReal$' -count=1 -v -timeout 3m，通过。仓库外证据根为 C:\Temp\tickflow-nonight-history-20261023-9f52710709734bdea9e86df067a7fe0d，含 manifest.json、run.log、capture/history.jsonl、independent-check.json。
+
+独立 Python 标准库按手列时段重算时间戳，225 根完全相符，ID 58740–58964 逐一连续，O/H/L/C/V/OI 全部有限。查询区间内额外夜盘/假期根为零。原始历史文件分析前后 SHA256 相同：71c8543186d9d6b2ee8fff2b9b5f4bfab5b7f7e90434ac786da88934a8cb5754。
+
+五项离线反例全部拒绝。结论限于该具体合约的历史数据；原 9/30 晚 Live 实测、末根冻结及 L9 节点读数仍未补齐。
