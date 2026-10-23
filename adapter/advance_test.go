@@ -15,7 +15,7 @@ import (
 
 // 合成时段独立声明，不从 tickflow 日历或 adapter 输出反推期望。
 // 空仓与空规则刻意只验接口、时段与交易日；涨跌停查不到必须通过 Unchecked 明示。
-func simulator(t *testing.T) *futsim.Simulator {
+func simulator(t *testing.T, supplied ...refdata.Provider) *futsim.Simulator {
 	t.Helper()
 	session := func(h1, m1, h2, m2 int) refdata.Session {
 		return refdata.Session{Start: refdata.MustClockTime(h1, m1, 0), End: refdata.MustClockTime(h2, m2, 0)}
@@ -32,9 +32,13 @@ func simulator(t *testing.T) *futsim.Simulator {
 	if err != nil {
 		t.Fatal(err)
 	}
+	var chosen refdata.Provider = rules
+	if len(supplied) > 0 {
+		chosen = supplied[0]
+	}
 	choices := futsim.CTPChoices()
 	choices.FeeRounding = fee.NoRounding // 合成输入的显式选择，不声称真实柜台口径。
-	s, err := futsim.New(futsim.Config{Day: 20260929, PreBalance: decimal.NewFromInt(100000), Rules: rules, Choices: choices, Calendar: cal})
+	s, err := futsim.New(futsim.Config{Day: 20260929, PreBalance: decimal.NewFromInt(100000), Rules: chosen, Choices: choices, Calendar: cal})
 	if err != nil {
 		t.Fatal(err)
 	}

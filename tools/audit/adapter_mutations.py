@@ -24,6 +24,7 @@ def main():
         ("结束时刻误取开盘", "time.UnixMilli(b.TsEnd)", "time.UnixMilli(b.Ts)", "TestBarTimeAndPrices"),
         ("合约月份偏移", "Month: month", "Month: month + 1", "TestBarSymbols"),
         ("收盘误取最高价", "decimal.NewFromFloat(b.Close)", "decimal.NewFromFloat(b.High)", "TestBarTimeAndPrices"),
+        ("持仓计价误取最高价", "decimal.NewFromFloat(b.Close)", "decimal.NewFromFloat(b.High)", "TestAdvanceMarksSyntheticPositions"),
         ("价格擅自舍入", "decimal.NewFromFloat(b.Close)", "decimal.NewFromFloat(b.Close).Round(2)", "TestBarRecordedPrices"),
         ("不拒绝非有限价格", "math.IsNaN(field.value) || math.IsInf(field.value, 0)", "math.IsNaN(field.value) && math.IsInf(field.value, 0)", "TestBarRejectsNonFinite"),
         ("不拒绝非规范合约", "err != nil || canonical != sym", "err != nil && canonical != sym && false", "TestBarRejectsInvalidSymbol"),
