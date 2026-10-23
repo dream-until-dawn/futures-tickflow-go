@@ -6,6 +6,14 @@ adapter 已合入主线，合成多空持仓 Close 计价与账户失败不变�
 
 停夜盘历史复核完成：固定 SHFE.rb2701，10/8 日盘 225 根标签完整，ID 58740–58964 连续，查询区间额外夜盘/假期根为零。Python 标准库独立复核及分析前后哈希一致，见 nonight-historical-review.md。这项只证明历史事实。
 
+封存历史到 adapter 的连续计价验证已在功能分支完成：225 根逐根转换并推进固定模拟器，多/空合成持仓最终盈亏为 -350/+350；错误交易日拒绝且账户不变，空历史文件按预期失败。外部文件测试默认跳过，已显式指定原始文件单独运行，详细证据见 [adapter-recorded-history.md](adapter-recorded-history.md)。这项不关闭现场观测缺口。
+
+独立外部 Go 模块已按远端明确提交 9a2cabd 取用 adapter，在 GOWORK=off、无本地 replace 下通过正常转换和 NaN 拒绝探针；父行情模块实际解析为 v0.10.0，未创建发布 tag，见 [adapter-external-consumer.md](adapter-external-consumer.md)。
+
+## 主线与待确认状态
+
+15:27 核验：本地及已知 origin/main 均为 9a2cabd；状态更正候选 codex/oct23-evidence-closeout 固定为 7ca296c。自动审批拒绝该候选合入主线，认为最初第8条仍要求明确确认，已在本会话提问等待人工答复。当前继续在 codex/adapter-recorded-history 保留和推送离线证据；未获得新的明确人工确认前不合并、不推送 main，也不更换途径绕过拒绝。若仅批准 7ca296c，不将之后的适配器回放工作自动并入该授权范围。
+
 ## 两项现场观测均未验成
 
 15:02 后重新核验，原执行工具句柄均已丢失。系统实际进程查询使用 .NET Process.GetProcessesByName，go、shinnysource.test、shinny-probe 三类均未发现运行进程。原始文件与日志没有完成结果；终止原因未定位，不将观察中断或环境切换直接断言为根因。
