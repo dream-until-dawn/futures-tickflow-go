@@ -20,6 +20,12 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// recordedPriceRow 只保留本次转换消费的字段；Datetime 是上游纳秒开盘标签。
+type recordedPriceRow struct {
+	Datetime         int64
+	High, Low, Close float64
+}
+
 // TestRecordedHistoryAdapterAdvance 仅读取已封存数据，不把它称为实时或撮合闭环。
 func TestRecordedHistoryAdapterAdvance(t *testing.T) {
 	path := os.Getenv("TICKFLOW_ADAPTER_HISTORY")
@@ -34,16 +40,10 @@ func TestRecordedHistoryAdapterAdvance(t *testing.T) {
 	if hex.EncodeToString(sum[:]) != "71c8543186d9d6b2ee8fff2b9b5f4bfab5b7f7e90434ac786da88934a8cb5754" {
 		t.Fatal("原始历史哈希不匹配")
 	}
-	var rows []struct {
-		Datetime         int64
-		High, Low, Close float64
-	}
+	var rows []recordedPriceRow
 	// 文件是 JSONL，逐行解析；哈希已绑定完整字节，不能换成另一份同形样本。
 	for _, line := range bytes.Split(bytes.TrimSpace(data), []byte{'\n'}) {
-		var row struct {
-			Datetime         int64
-			High, Low, Close float64
-		}
+		var row recordedPriceRow
 		if err = json.Unmarshal(line, &row); err != nil {
 			t.Fatal(err)
 		}
@@ -57,12 +57,14 @@ func TestRecordedHistoryAdapterAdvance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// 合成规则只为记账可执行，不能据此声称交易所费率或涨跌停已经核对。
 	rules, err := refdata.NewBuilder(1).AddInstrument(refdata.Instrument{ID: inst, VolumeMultiple: d("10"), PriceTick: d("1"), PositionDateType: refdata.UseHistory, IsTrading: true}).
 		AddCommissionRates(inst, types.Speculation, refdata.CommissionRates{OpenByVolume: d("1"), CloseByVolume: d("1"), CloseTodayByVolume: d("1")}).
 		AddMarginRates(inst, types.Speculation, refdata.MarginRates{LongByMoney: d("0.1"), ShortByMoney: d("0.1")}).Build()
 	if err != nil {
 		t.Fatal(err)
 	}
+	// 交易段与标签按已公布时段手列，不从待测转换结果倒推期望。
 	var sessions []refdata.Session
 	var stamps []int64
 	for _, hours := range [][4]int{{9, 0, 10, 15}, {10, 30, 11, 30}, {13, 30, 15, 0}} {
