@@ -62,8 +62,9 @@ type fakeServer struct {
 
 // pushCmd 是推送连接上的一条指令：发一帧 rtn_data（data 是它的一个元素），或断开这条连接。
 type pushCmd struct {
-	data map[string]any
-	drop bool
+	closed chan struct{} // drop 的服务端关闭确认，仅供控制测试使用。
+	data   map[string]any
+	drop   bool
 }
 
 func newFakeServer(t *testing.T) *fakeServer {
@@ -213,6 +214,9 @@ func (fs *fakeServer) servePush(ctx context.Context, write func(any) bool) {
 			return
 		case cmd := <-fs.push:
 			if cmd.drop {
+				if cmd.closed != nil {
+					defer close(cmd.closed)
+				}
 				time.Sleep(20 * time.Millisecond) // 让已写出的帧先到
 				return
 			}
