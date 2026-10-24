@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from plan import child_environment, quiet_files
 
 TERMINAL = {"completed", "failed", "timed_out"}
 
@@ -57,20 +58,25 @@ def run(root, plan):
     def publish():
         nonlocal state_before
         status["heartbeat"] = time.time()
-        if status["state"] != state_before:
+        event_key = (status["state"], tuple(status.get("quiet_files", [])), tuple(status.get("stale_files", [])))
+        if event_key != state_before:
             with (root / "events.jsonl").open("a", encoding="utf-8") as output:
-                output.write(json.dumps(dict(at=status["heartbeat"], state=status["state"]), ensure_ascii=False) + "\n")
-            state_before = status["state"]
+                output.write(json.dumps(dict(at=status["heartbeat"], state=status["state"],
+                                             quiet_files=status.get("quiet_files", []),
+                                             stale_files=status.get("stale_files", [])), ensure_ascii=False) + "\n")
+            state_before = event_key
         write_status(root, status)
 
     try:
         publish()
         command = [arg.replace("{task_dir}", str(root)) for arg in plan["command"]]
+        stage = "environment"
+        environment = child_environment(plan, root, os.environ)
         stage = "capture_log"
-        with (root / "capture.log").open("xb") as log:
+        with (root / plan.get("stdout_name", "capture.log")).open("xb") as log:
             stage = "spawn"
             child = subprocess.Popen(command, cwd=plan["cwd"], stdin=subprocess.DEVNULL,
-                                     stdout=log, stderr=subprocess.STDOUT)
+                                     stdout=log, stderr=subprocess.STDOUT, env=environment)
             status["child_pid"] = child.pid
             while True:
                 stage = "observe"
@@ -83,11 +89,13 @@ def run(root, plan):
                         status["last_data_at"] = time.time()
                 previous = current
                 status["files"] = current
+                status["quiet_files"] = quiet_files(plan, time.time())
                 # 每个必需通道独立判断，避免一个活跃文件掩盖另一个已停写的通道。
                 stale_files = [name for name in plan["watch"]
                                if ((name not in current or name not in changed_at)
                                    and now - started >= plan["startup_seconds"])
                                or (name in changed_at and now - changed_at[name] >= plan["idle_seconds"])]
+                stale_files = [name for name in stale_files if name not in status["quiet_files"]]
                 status["stale_files"] = stale_files
                 code = child.poll()
                 if code is not None:

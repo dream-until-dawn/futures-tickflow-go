@@ -8,12 +8,14 @@ import subprocess
 import sys
 import time
 
-from plan import validate
+from plan import validate, child_environment
 from worker import inspect, run, write_status
 
 
 def launch(root, plan):
     """独占新目录，保留计划；调用方退出后监护继续运行。"""
+    # 路径错误必须在创建任何任务目录或启动进程之前拒绝。
+    child_environment(plan, root, os.environ)
     root.mkdir(parents=True, exist_ok=False)
     (root / "plan.json").write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
     write_status(root, dict(state="launching", heartbeat=time.time(), child_pid=None,
