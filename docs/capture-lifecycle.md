@@ -8,6 +8,8 @@
 
 10/24补充：非敏感env参数绑定、逐通道quiet_windows与run.log接入见 [capture-phase-plan.md](capture-phase-plan.md)。计划暂停必须单独声明，不通过增大所有通道的空闲阈值掩盖故障。
 
+非交易日六项收口的执行单、产物绑定、证据迁移和CI作用域见 [offline-readiness.md](offline-readiness.md)。默认独立进程要求不变；受限CI可显式选择job作用域作合成演练，该模式不能用于真实采集产物，也不承诺宿主作业结束后继续运行。
+
 状态区分 waiting、running、stalled、completed、failed、timed_out；监护心跳与文件最后变化分别记录。stalled 可以恢复，保留转换事件和次数；子进程正常退出但从未观察到数据时必须失败。completed 仅代表进程退出零且有文件活动，行情验收仍需独立复核。status 对超期心跳报告 supervisor_unknown，绝不凭旧状态宣称仍在采集。超时终止直接子进程并记录实际退出码；不声称任意派生进程树均已清理。
 
 每个 watch 文件独立判定；一条通道持续更新不能掩盖另一条缺失或停写。watch 只列需要持续更新的录制文件，不能把只在结束时生成的历史汇总当成连续活性通道。监测采用大小与纳秒修改时间，不解析内容，文件变化不证明行情有效。Windows 状态文件读取/替换出现短时共享冲突时有限重试，持续失败则不报成功。

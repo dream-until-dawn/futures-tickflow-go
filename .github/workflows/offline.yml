@@ -25,6 +25,7 @@ jobs:
     env:
       GOTOOLCHAIN: local
       PYTHONUTF8: '1'
+      TICKFLOW_TEST_PROCESS_SCOPE: ${{ matrix.os == 'windows-latest' && 'job' || 'independent' }}
     defaults:
       run:
         shell: pwsh
@@ -48,7 +49,7 @@ jobs:
       - name: Modules, Python suites and restoration drill
         run: python -X utf8 tools/audit/module_sweep.py
       - name: Compile, capture, reconcile and migrate synthetic evidence
-        run: python -X utf8 tools/probe/capture_task/drill.py (Join-Path $env:RUNNER_TEMP 'tickflow-offline-drill')
+        run: python -X utf8 tools/probe/capture_task/drill.py (Join-Path $env:RUNNER_TEMP 'tickflow-offline-drill') --process-scope $env:TICKFLOW_TEST_PROCESS_SCOPE
       - name: Linux race checks
         if: matrix.os == 'ubuntu-latest' && matrix.go == '1.26.x'
         run: |

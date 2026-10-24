@@ -2,6 +2,7 @@
 import datetime as dt
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -23,7 +24,8 @@ class PhasePlanTest(unittest.TestCase):
     def plan(self, code="pass", **overrides):
         value = dict(command=[sys.executable, "-c", code, "{task_dir}"], cwd=str(self.base),
                      watch=["raw.jsonl"], max_seconds=4, startup_seconds=0.1,
-                     idle_seconds=0.12, poll_seconds=0.02)
+                     idle_seconds=0.12, poll_seconds=0.02,
+                     process_scope=os.environ.get("TICKFLOW_TEST_PROCESS_SCOPE", "independent"))
         value.update(overrides)
         return validate(value)
 

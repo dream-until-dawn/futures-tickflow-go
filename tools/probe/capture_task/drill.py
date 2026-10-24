@@ -13,11 +13,11 @@ from prepare import ROOT, prepare
 from worker import inspect
 
 
-def drill(directory):
+def drill(directory, process_scope="independent"):
     directory = directory.resolve()
     if directory.exists() or directory.is_relative_to(ROOT):
         raise ValueError("演练目录必须是仓库外新的目录")
-    plan = prepare(directory / "prepared", "synthetic", synthetic_spec())
+    plan = prepare(directory / "prepared", "synthetic", synthetic_spec(), process_scope)
     task = directory / "task"
     result = subprocess.run([sys.executable, str(Path(__file__).with_name("cli.py")), "launch", str(task), "--plan", str(plan)],
                             capture_output=True, timeout=15)
@@ -67,7 +67,7 @@ def drill(directory):
     moved = directory / "migrated"
     shutil.copytree(task, moved)
     migrated = verify(moved, True)
-    summary = dict(source_sha=report["source_sha"], provenance="synthetic", rows=48, complete_gap_rows=31,
+    summary = dict(source_sha=report["source_sha"], provenance="synthetic", process_scope=process_scope, rows=48, complete_gap_rows=31,
                    negatives=negatives, migrated=migrated)
     (directory / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary
@@ -78,5 +78,6 @@ if __name__ == "__main__":
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
+    parser.add_argument("--process-scope", choices=["independent", "job"], default="independent")
     args = parser.parse_args()
-    print(json.dumps(drill(args.directory), ensure_ascii=False, indent=2))
+    print(json.dumps(drill(args.directory, args.process_scope), ensure_ascii=False, indent=2))

@@ -20,14 +20,14 @@ def git(*args):
     return subprocess.check_output(["git", *args], cwd=ROOT, timeout=30).decode().strip()
 
 
-def make_plan(binary, source_sha, mode, spec, now):
+def make_plan(binary, source_sha, mode, spec, now, process_scope="independent"):
     """生成参数、监护窗口和产物绑定；真实窗口由Go校验器裁定。"""
     artifact = validate_artifact(dict(path=str(binary.resolve()), sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                                       source_sha=source_sha, mode=mode, spec=spec))
     value = dict(command=command(artifact), cwd=str(ROOT / "source/shinnysource"),
                  watch=["capture/reference.jsonl", "capture/live.jsonl"], env=parameters(artifact),
                  stdout_name="run.log", artifact=artifact, max_seconds=60, startup_seconds=10,
-                 idle_seconds=5, poll_seconds=0.1)
+                 idle_seconds=5, poll_seconds=0.1, process_scope=process_scope)
     if mode == "real":
         if stamp(spec["BEGIN"]) <= now or stamp(spec["END"]) + 10 > stamp(spec["DEADLINE"]):
             raise ValueError("窗口过期或超过明确授权截止")
@@ -39,7 +39,7 @@ def make_plan(binary, source_sha, mode, spec, now):
     return validate(value)
 
 
-def prepare(destination, mode, spec):
+def prepare(destination, mode, spec, process_scope="independent"):
     """先拒绝脏树/旧目录，编译前后核对源树；不启动采集。"""
     destination = destination.resolve()
     if destination.is_relative_to(ROOT) or destination.exists():
@@ -58,7 +58,7 @@ def prepare(destination, mode, spec):
         raise ValueError("编译失败或编译期间源码变化，保留目录供排查")
     if mode == "real":
         (destination / "preflight.log").write_text(preflight(binary, spec), encoding="utf-8")
-    plan = make_plan(binary, source_sha, mode, spec, time.time())
+    plan = make_plan(binary, source_sha, mode, spec, time.time(), process_scope)
     (destination / "plan.json").write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
     return destination / "plan.json"
 
@@ -68,13 +68,14 @@ def main():
     parser.add_argument("directory", type=Path)
     parser.add_argument("--mode", choices=["real", "synthetic"], required=True)
     parser.add_argument("--spec", type=Path)
+    parser.add_argument("--process-scope", choices=["independent", "job"], default="independent")
     args = parser.parse_args()
     if args.mode == "real" and not args.spec:
         parser.error("真实模式必须指定完整执行单和DEADLINE")
     if args.mode == "synthetic" and args.spec:
         parser.error("合成模式使用固定虚拟时钟，不接受真实执行单")
     spec = synthetic_spec() if args.mode == "synthetic" else json.loads(args.spec.read_text(encoding="utf-8-sig"))
-    print(prepare(args.directory, args.mode, spec))
+    print(prepare(args.directory, args.mode, spec, args.process_scope))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ import copy
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -87,6 +88,30 @@ class PreparationTest(unittest.TestCase):
                 launch(root, plan)
             guard.assert_called_once()
             self.assertFalse(root.exists())
+
+    def test_process_scope_is_explicit_and_real_cannot_use_job(self):
+        for scope in ("independent", "job"):
+            plan = validate(dict(self.plan, process_scope=scope))
+            root = self.base / scope
+            with mock.patch("cli.subprocess.Popen", return_value=mock.Mock(pid=123)) as spawn:
+                result = launch(root, plan)
+            self.assertEqual(result["process_scope"], scope)
+            options = spawn.call_args.kwargs
+            if os.name == "nt":
+                self.assertEqual(bool(options["creationflags"] & subprocess.CREATE_BREAKAWAY_FROM_JOB), scope == "independent")
+            else:
+                self.assertEqual(options["start_new_session"], scope == "independent")
+            self.assertEqual(json.loads((root / "manifest.json").read_text())["process_scope"], scope)
+        with self.assertRaises(ValueError):
+            make_plan(self.binary, "a" * 40, "real", synthetic_spec(), 1, "job")
+
+    def test_independent_spawn_denial_never_silently_falls_back(self):
+        root = self.base / "denied"
+        with mock.patch("cli.subprocess.Popen", side_effect=PermissionError()) as spawn:
+            with self.assertRaises(PermissionError):
+                launch(root, self.plan)
+            self.assertEqual(spawn.call_count, 1)
+        self.assertEqual(json.loads((root / "status.json").read_text())["state"], "failed")
 
 
 if __name__ == "__main__":

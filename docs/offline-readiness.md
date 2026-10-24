@@ -39,3 +39,9 @@ python tools/probe/capture_task/drill.py C:\Temp\new-offline-drill
 CI矩阵为Linux Go1.23/1.26和Windows Go1.26，Python3.12；禁用自动Go工具链升级以核验最低版本。Linux Go1.26另做三个模块竞态检查。Actions引用按官方仓库的v6标签核验后固定SHA，配置依据见 [checkout](https://github.com/actions/checkout)、[setup-go](https://github.com/actions/setup-go)、[setup-python](https://github.com/actions/setup-python)。工作流配置完成不等于远端检查通过，最终以实际运行记录为准。
 
 当前adapter已在主线，契约对应状态已同步；仍未发布v0.11。历史设计中的旧日期保留为历史记录，当前实现和验收状态以当天进度及本文件为准。历史分支处置见 [branch-audit-20261024.md](branch-audit-20261024.md)。
+
+## Windows CI 首轮失败与修正
+
+候选dd4761c的本地三个Go模块及45项Python测试、还原演练通过；首轮远端Linux两个版本通过，含Go1.26三模块竞态检查，但Windows两个独立启动测试因宿主Job不允许CREATE_BREAKAWAY_FROM_JOB而返回WinError5，故整轮失败，不以Linux通过代替Windows。
+
+默认process_scope=independent保留脱离父作业的要求，失败不自动降级；真实采集产物只允许independent。新增显式job作用域供合成CI演练使用，Windows该模式不设置breakaway，允许启动命令退出后继续工作，但随宿主Job结束而终止。Linux对应不新建session。计划、manifest、启动回执和状态都记录作用域；CI明确选job，不能把此结果宣称为已验证脱离宿主作业的持久采集。两种作用域的标志、禁止静默降级和真实模式拒绝job均有测试。

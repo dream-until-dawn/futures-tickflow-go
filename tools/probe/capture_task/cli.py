@@ -26,19 +26,22 @@ def launch(root, plan):
         stage(root, plan, data)
     (root / "plan.json").write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
     write_status(root, dict(state="launching", heartbeat=time.time(), child_pid=None,
-                           supervisor_pid=None))
+                           supervisor_pid=None, process_scope=plan.get("process_scope", "independent")))
+    scope = plan.get("process_scope", "independent")
     options = {}
     if os.name == "nt":
         options["creationflags"] = (subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
-                                    | subprocess.CREATE_NO_WINDOW | subprocess.CREATE_BREAKAWAY_FROM_JOB)
+                                    | subprocess.CREATE_NO_WINDOW)
+        if scope == "independent":
+            options["creationflags"] |= subprocess.CREATE_BREAKAWAY_FROM_JOB
     else:
-        options["start_new_session"] = True
+        options["start_new_session"] = scope == "independent"
     try:
         with (root / "worker.log").open("xb") as log:
             process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), "worker", str(root)],
                                        stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
                                        close_fds=True, **options)
-        return dict(task_dir=str(root), supervisor_pid=process.pid, state="launched")
+        return dict(task_dir=str(root), supervisor_pid=process.pid, state="launched", process_scope=scope)
     except Exception as error:
         write_status(root, dict(state="failed", reason=type(error).__name__))
         raise

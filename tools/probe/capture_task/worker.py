@@ -47,6 +47,7 @@ def run(root, plan):
     """监护一个直接子进程；业务验收由外部复核器另行完成。"""
     started = time.monotonic()
     status = dict(state="waiting", supervisor_pid=os.getpid(), child_pid=None,
+                  process_scope=plan.get("process_scope", "independent"),
                   heartbeat=time.time(), started_at=time.time(), last_data_at=None,
                   returncode=None, stalls=0, files={})
     child = None

@@ -74,6 +74,10 @@ def validate(value):
     if log_name not in ("capture.log", "run.log"):
         raise ValueError("stdout_name只允许capture.log或run.log")
     result["stdout_name"] = log_name
+    scope = value.get("process_scope", "independent")
+    if scope not in ("independent", "job"):
+        raise ValueError("process_scope只允许independent或job")
+    result["process_scope"] = scope
     windows = value.get("quiet_windows", {})
     if not isinstance(windows, dict):
         raise ValueError("quiet_windows必须按watch文件声明")

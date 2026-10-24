@@ -57,6 +57,8 @@ def command(artifact):
 
 def check_binding(plan):
     artifact = plan["artifact"]
+    if artifact["mode"] == "real" and plan.get("process_scope", "independent") != "independent":
+        raise ValueError("真实采集产物必须使用独立进程作用域")
     if (plan["env"] != parameters(artifact) or plan["command"] != command(artifact)
             or plan["stdout_name"] != "run.log" or plan["watch"] != ["capture/reference.jsonl", "capture/live.jsonl"]):
         raise ValueError("执行计划与绑定产物参数不一致")
@@ -96,6 +98,7 @@ def stage(root, plan, data):
     target.chmod(0o700)
     manifest = {k.lower(): v for k, v in artifact["spec"].items()}
     manifest.update(contract=artifact["spec"]["INS"], sha=artifact["source_sha"], provenance=artifact["mode"],
+                    process_scope=plan.get("process_scope", "independent"),
                     binary_file=target.name, binary_sha256=artifact["sha256"],
                     plan_sha256=hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest())
     with (root / "manifest.json").open("x", encoding="utf-8") as output:

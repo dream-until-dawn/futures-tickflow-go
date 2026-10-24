@@ -1,6 +1,7 @@
 """仅使用本地子进程的生命周期正反测试，不连接行情服务。"""
 import json
 import io
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -26,7 +27,8 @@ class LifecycleTest(unittest.TestCase):
     def plan(self, code, **overrides):
         value = dict(command=[sys.executable, "-c", code, "{task_dir}"], cwd=str(self.base),
                      watch=["raw.jsonl"], max_seconds=6, startup_seconds=2,
-                     idle_seconds=0.3, poll_seconds=0.03)
+                     idle_seconds=0.3, poll_seconds=0.03,
+                     process_scope=os.environ.get("TICKFLOW_TEST_PROCESS_SCOPE", "independent"))
         value.update(overrides)
         return validate(value)
 
@@ -149,6 +151,7 @@ class LifecycleTest(unittest.TestCase):
                                   capture_output=True, timeout=5)
         self.assertEqual(launcher.returncode, 0, launcher.stderr)
         self.assertEqual(json.loads(launcher.stdout)["state"], "launched")
+        self.assertEqual(json.loads(launcher.stdout)["process_scope"], plan["process_scope"])
         observed_after_exit = []
         deadline = time.monotonic() + 10
         while time.monotonic() < deadline:
