@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 ENV_KEYS = {"TICKFLOW_GAP_" + key for key in
-            ("INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END", "OUT", "REAL")} | {"TICKFLOW_LIVE"}
+            ("INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END", "OUT", "REAL", "DEADLINE", "OFFLINE")} | {"TICKFLOW_LIVE"}
 
 
 def stamp(value):
@@ -51,7 +51,7 @@ def validate(value):
     watch = value.get("watch")
     if not isinstance(watch, list) or not watch:
         raise ValueError("必须指定 watch 数据文件")
-    reserved = {"plan.json", "status.json", "status.tmp", "events.jsonl", "worker.log", "capture.log", "run.log"}
+    reserved = {"plan.json", "manifest.json", "status.json", "status.tmp", "events.jsonl", "worker.log", "capture.log", "run.log"}
     for name in watch:
         if (not isinstance(name, str) or not name or not Path(name).parts or Path(name).drive or Path(name).is_absolute()
                 or ".." in Path(name).parts or Path(name).parts[0].casefold() in reserved):
@@ -90,6 +90,10 @@ def validate(value):
                 raise ValueError("暂停窗口必须递增、不重叠且起止有效")
             previous_end = end
         result["quiet_windows"][name] = [dict(item) for item in entries]
+    if "artifact" in value:
+        from artifact import validate_artifact, check_binding
+        result["artifact"] = validate_artifact(value["artifact"])
+        check_binding(result)
     return result
 
 

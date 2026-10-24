@@ -1,6 +1,7 @@
 """监护前台采集子进程，分别记录进程心跳与数据活性。"""
 import json
 import io
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -135,9 +136,18 @@ def run(root, plan):
 
 def inspect(root, stale_seconds=10):
     """终态保留；非终态心跳超期则报告未知，不把 PID 当作存活证据。"""
-    status = json.loads((root / "status.json").read_text(encoding="utf-8"))
-    if status["state"] not in TERMINAL and time.time() - status["heartbeat"] > stale_seconds:
-        status = dict(status, state="supervisor_unknown")
+    try:
+        status = json.loads((root / "status.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return dict(state="supervisor_unknown", reason="状态缺失、损坏或暂不可读")
+    known = TERMINAL | {"waiting", "running", "launching", "stalled"}
+    if not isinstance(status, dict) or not isinstance(status.get("state"), str) or status["state"] not in known:
+        return dict(state="supervisor_unknown", reason="状态结构无效")
+    if status["state"] not in TERMINAL:
+        heartbeat = status.get("heartbeat")
+        if (type(heartbeat) not in (float, int) or not math.isfinite(heartbeat)
+                or not -1 <= time.time() - heartbeat <= stale_seconds):
+            status = dict(status, state="supervisor_unknown", reason="心跳过期、异常或时钟回退")
     return status
 
 

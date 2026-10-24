@@ -2,6 +2,7 @@ package shinnysource
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -56,8 +57,15 @@ func parseGapPlan(env map[string]string, now time.Time) (gapPlan, error) {
 	}
 	local := now.In(tickflow.CST)
 	limit := time.Date(local.Year(), local.Month(), local.Day(), 17, 0, 0, 0, tickflow.CST).UnixMilli()
+	if value := env["DEADLINE"]; value != "" {
+		deadline, e := time.Parse(time.RFC3339, value)
+		if e != nil {
+			return p, fmt.Errorf("DEADLINE 须为明确授权的 RFC3339 时刻")
+		}
+		limit = deadline.UnixMilli()
+	}
 	if p.end+10000 > limit {
-		return p, fmt.Errorf("END 超过今日 17:00 授权期限")
+		return p, fmt.Errorf("END 超过授权期限（未给 DEADLINE 时为同日17:00）")
 	}
 	d, err := p.cal.DayAt(p.sym.ProductKey(), p.start)
 	if err != nil {
@@ -70,6 +78,20 @@ func parseGapPlan(env map[string]string, now time.Time) (gapPlan, error) {
 		}
 	}
 	return p, fmt.Errorf("窗口必须完全位于一段连续交易时段内")
+}
+
+// TestGapPlanOfflinePreflight 只验证参数，不读取凭证，不连接行情服务器。
+func TestGapPlanOfflinePreflight(t *testing.T) {
+	if os.Getenv("TICKFLOW_GAP_PLAN_CHECK") != "1" {
+		t.Skip("仅供执行单生成器显式离线预检")
+	}
+	env := map[string]string{}
+	for _, key := range []string{"INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END", "DEADLINE"} {
+		env[key] = os.Getenv("TICKFLOW_GAP_" + key)
+	}
+	if _, err := parseGapPlan(env, time.Now()); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestGapPlanValidation(t *testing.T) {
@@ -89,5 +111,24 @@ func TestGapPlanValidation(t *testing.T) {
 				t.Fatal("非法配置被接受")
 			}
 		})
+	}
+}
+
+// TestGapExplicitDeadline 只在明确执行单截止内允许准备未来窗口，不放宽过期或短缺口。
+func TestGapExplicitDeadline(t *testing.T) {
+	env := map[string]string{"INS": "SHFE.rb2701", "DAYS": "20261022,20261023", "START": "2026-10-23T13:30:00+08:00", "BEGIN": "2026-10-23T13:31:00+08:00", "DROP": "2026-10-23T13:36:00+08:00", "RESUME": "2026-10-23T14:08:00+08:00", "END": "2026-10-23T14:18:00+08:00"}
+	now, _ := time.Parse(time.RFC3339, "2026-10-22T12:00:00+08:00")
+	if _, err := parseGapPlan(env, now); err == nil {
+		t.Fatal("没有明确截止不能延长原同日17点保护")
+	}
+	env["DEADLINE"] = "2026-10-23T15:00:00+08:00"
+	if _, err := parseGapPlan(env, now); err != nil {
+		t.Fatal(err)
+	}
+	for _, deadline := range []string{"bad", "2026-10-23T14:18:09+08:00"} {
+		env["DEADLINE"] = deadline
+		if _, err := parseGapPlan(env, now); err == nil {
+			t.Fatal("错误或不足截止被接受")
+		}
 	}
 }

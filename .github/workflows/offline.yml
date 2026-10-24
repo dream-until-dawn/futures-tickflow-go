@@ -1,0 +1,58 @@
+name: Offline verification
+on:
+  push:
+    branches: [main, codex/offline-readiness-six]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            go: '1.23.x'
+          - os: ubuntu-latest
+            go: '1.26.x'
+          - os: windows-latest
+            go: '1.26.x'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      GOTOOLCHAIN: local
+      PYTHONUTF8: '1'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: '**/go.sum'
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Preserve local main reference
+        run: |
+          git show-ref --verify --quiet refs/heads/main
+          if ($LASTEXITCODE -ne 0) { git branch main origin/main }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Modules, Python suites and restoration drill
+        run: python -X utf8 tools/audit/module_sweep.py
+      - name: Compile, capture, reconcile and migrate synthetic evidence
+        run: python -X utf8 tools/probe/capture_task/drill.py (Join-Path $env:RUNNER_TEMP 'tickflow-offline-drill')
+      - name: Linux race checks
+        if: matrix.os == 'ubuntu-latest' && matrix.go == '1.26.x'
+        run: |
+          foreach ($module in @('.', 'adapter', 'tools/probe/shinny')) {
+            go -C $module test -race ./... -count=1 -timeout=10m
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }

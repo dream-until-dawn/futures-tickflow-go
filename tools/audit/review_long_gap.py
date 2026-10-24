@@ -100,6 +100,7 @@ def read_lines(data):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_root", type=Path)
+    parser.add_argument("--allow-synthetic", action="store_true", help="仅用于明确标识的合成演练")
     args = parser.parse_args(argv)
     root = args.run_root
     names = ["reference.jsonl", "history.jsonl", "live.jsonl", "events.jsonl"]
@@ -107,9 +108,13 @@ def main(argv=None):
     before = {name: hashlib.sha256(data).hexdigest() for name, data in contents.items()}
     manifest_bytes = (root / "manifest.json").read_bytes()
     manifest = json.loads(manifest_bytes.decode("utf-8-sig"), parse_constant=reject_constant)
+    provenance = manifest.get("provenance", "real")
+    require(provenance in ("real", "synthetic"), "未知材料分类")
+    require(provenance != "synthetic" or args.allow_synthetic, "合成材料不能作为现场验收")
     log_bytes = (root / "run.log").read_bytes()
     log = log_bytes.decode("utf-8-sig")
-    require("--- PASS: TestLiveLongGapReal" in log and "--- FAIL:" not in log,
+    expected_test = "TestGapOfflineBundle" if provenance == "synthetic" else "TestLiveLongGapReal"
+    require("--- PASS: " + expected_test in log and "--- FAIL:" not in log,
             "运行器尚未成功结束，不能封存通过结论")
     events = read_lines(contents["events.jsonl"])
     require(events and manifest["contract"] == events[0]["INS"], "执行单与采集配置不一致")
@@ -123,7 +128,7 @@ def main(argv=None):
     require(before == after, "分析期间原始文件改变")
     require(log_bytes == (root / "run.log").read_bytes(), "分析期间运行日志改变")
     require(manifest_bytes == (root / "manifest.json").read_bytes(), "分析期间执行单改变")
-    result.update(source_sha=manifest["sha"], sha256_before=before, sha256_after=after)
+    result.update(source_sha=manifest["sha"], provenance=provenance, sha256_before=before, sha256_after=after)
     result.update(manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
                   run_log_sha256=hashlib.sha256(log_bytes).hexdigest())
     print(json.dumps(result, ensure_ascii=False, indent=2))

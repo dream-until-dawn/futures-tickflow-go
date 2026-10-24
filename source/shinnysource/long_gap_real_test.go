@@ -58,7 +58,7 @@ func TestLiveLongGapReal(t *testing.T) {
 		t.Skip("TICKFLOW_GAP_REAL=1 点名才联网")
 	}
 	env := map[string]string{}
-	for _, k := range []string{"INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END"} {
+	for _, k := range []string{"INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END", "DEADLINE"} {
 		env[k] = os.Getenv("TICKFLOW_GAP_" + k)
 	}
 	p, err := parseGapPlan(env, time.Now())
