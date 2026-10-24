@@ -44,6 +44,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     content = report()
     if args.output:
-        args.output.write_text(content, encoding="utf-8")
+        args.output.write_text(content, encoding="utf-8", newline="\n")
     else:
         print(content)
