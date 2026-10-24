@@ -113,6 +113,24 @@ class PreparationTest(unittest.TestCase):
             self.assertEqual(spawn.call_count, 1)
         self.assertEqual(json.loads((root / "status.json").read_text())["state"], "failed")
 
+    def test_real_spec_timezone_matches_independent_reviewer(self):
+        spec = dict(synthetic_spec(), BEGIN="2026-09-04T01:01:00+00:00")
+        with self.assertRaisesRegex(ValueError, "东八区"):
+            make_plan(self.binary, "a" * 40, "real", spec, 1)
+
+    def test_build_ignores_external_workspace_and_flags(self):
+        def build(args, **options):
+            self.assertIn("-mod=readonly", args)
+            self.assertEqual(options["env"]["GOWORK"], "off")
+            self.assertEqual(options["env"]["GOFLAGS"], "")
+            Path(args[args.index("-o") + 1]).write_bytes(b"unit-build")
+            return subprocess.CompletedProcess(args, 0, b"", b"")
+        with mock.patch.dict(os.environ, GOWORK="outside-workspace", GOFLAGS="-overlay=outside.json"):
+            with mock.patch("prepare.git", side_effect=["a" * 40, "", "a" * 40, ""]), mock.patch("prepare.subprocess.run", side_effect=build):
+                generated = prepare(self.base / "isolated", "synthetic", synthetic_spec())
+                self.assertTrue(generated.exists())
+            self.assertEqual(os.environ["GOWORK"], "outside-workspace")
+
 
 if __name__ == "__main__":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

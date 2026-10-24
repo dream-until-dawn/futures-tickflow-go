@@ -51,8 +51,10 @@ def prepare(destination, mode, spec, process_scope="independent"):
         raise ValueError("只能从已提交干净源码编译")
     destination.mkdir(parents=True, exist_ok=False)
     binary = destination / ("capture.test.exe" if os.name == "nt" else "capture.test")
-    result = subprocess.run(["go", "test", "-c", "-o", str(binary), "./source/shinnysource"], cwd=ROOT,
-                            capture_output=True, timeout=240)
+    # 不继承仓库外go.work或GOFLAGS覆盖源文件；禁止编译顺便改依赖清单。
+    build_env = dict(os.environ, GOWORK="off", GOFLAGS="")
+    result = subprocess.run(["go", "test", "-mod=readonly", "-c", "-o", str(binary), "./source/shinnysource"], cwd=ROOT,
+                            env=build_env, capture_output=True, timeout=240)
     (destination / "build.log").write_bytes(result.stdout + result.stderr)
     if result.returncode or git("rev-parse", "HEAD") != source_sha or git("status", "--porcelain"):
         raise ValueError("编译失败或编译期间源码变化，保留目录供排查")

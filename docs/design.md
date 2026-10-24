@@ -1,5 +1,7 @@
 # futures-tickflow-go 设计
 
+当前实现与验收入口（2026-10-24）：[offline-readiness.md](offline-readiness.md) 汇总非交易日六项工具收口；[day-progress-20261024.md](day-progress-20261024.md) 记录推进；历史章节的旧日期和候选决定保留原时点语义，不据此重启过期采集。
+
 > **这份文档写给要改这个库的人。** 只想用它的话，读
 > [contract.md](contract.md) —— 那里有能力、边界、每条结论的置信度，
 > 以及一张标了「是否静默」的已知风险表。

@@ -4,7 +4,7 @@
 
 本批只做离线接入：计划可固定白名单内的非敏感环境参数，支持明确stdout文件名和逐通道绝对时间暂停窗口。窗口必须带时区、有限、起止严格递增、不重叠且归属于watch通道；只在该窗口抑制该通道停写告警，不抑制监护心跳、不放宽参照、总超时、进程非零退出或结束时缺文件的判据。恢复后的首根可等一个idle_seconds宽限，期间明确列为quiet_files，不能称数据持续活跃。
 
-凭证继续只继承父进程环境，不写入计划。env仅允许TICKFLOW_GAP_INS、DAYS、START、BEGIN、DROP、RESUME、END、OUT、REAL及TICKFLOW_LIVE；未知键、凭证键、空值和非字符串拒绝。路径占位符仅在OUT和command参数替换；OUT在执行前解析并约束为新任务目录的子目录，拒绝借路径写回历史资料。stdout文件仅允许capture.log或run.log，均不允许成为watch活性来源。
+凭证继续只继承父进程环境，不写入计划。env仅允许TICKFLOW_GAP_INS、DAYS、START、BEGIN、DROP、RESUME、END、OUT、REAL、DEADLINE、OFFLINE及TICKFLOW_LIVE；未知键、凭证键、空值和非字符串拒绝。路径占位符仅在OUT和command参数替换；OUT在执行前解析并约束为新任务目录的子目录，拒绝借路径写回历史资料。stdout文件仅允许capture.log或run.log，均不允许成为watch活性来源。
 
 验证包括计划暂停内零误报、同一时刻参照缺失仍告警、窗口结束仍无数据必须告警、窗口不使非零退出或缺文件结束通过、非敏感参数固定且凭证不复制、越界OUT与非法窗口拒绝，以及独立启动入口保存plan、环境参数和run.log闭环。不会启动10/23过期窗口，不产生真实行情验收结论。
 

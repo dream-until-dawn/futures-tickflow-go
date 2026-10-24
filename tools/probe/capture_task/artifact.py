@@ -1,5 +1,6 @@
 """绑定编译产物、执行参数和采集清单，不读取或保存行情凭证。"""
 import hashlib
+import datetime as dt
 import io
 import json
 import os
@@ -35,6 +36,10 @@ def validate_artifact(value):
         raise ValueError("执行参数必须完整且不含凭证键")
     if value["mode"] == "synthetic" and spec != synthetic_spec():
         raise ValueError("合成模式只能使用明确的固定虚拟时钟")
+    if value["mode"] == "real":
+        for key in ("START", "BEGIN", "DROP", "RESUME", "END", "DEADLINE"):
+            if dt.datetime.fromisoformat(spec[key]).utcoffset() != dt.timedelta(hours=8):
+                raise ValueError("执行单时刻须明确东八区，与独立复核口径一致")
     return dict(value, spec=dict(spec))
 
 
