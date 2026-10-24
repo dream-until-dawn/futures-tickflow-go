@@ -39,3 +39,9 @@
 startup_seconds须覆盖等待BEGIN到首根的时间；idle_seconds按参照接收与正常分钟交付频率选择；max_seconds覆盖末根观察、最终历史请求和校验的有限余量。quiet窗口只配置Live，不给reference统一豁免。原运行器仍核验未来窗口、连续交易时段、至少31根完整分钟与明确opt-in；本扩展不绕过其预检。
 
 launch后仍须核验child_pid、心跳和各通道变化。stdout_name仅对齐复核日志名，manifest.json的合约、时刻、代码SHA及编译二进制哈希仍需执行准备阶段明确封存；没有执行单或成功结束日志时，独立复核器继续拒绝。quiet_files只说明计划允许停写，不是行情有效性声明。
+
+## 固定候选验证
+
+e678b0f干净提交运行module_sweep.py，三个Go模块的gofmt/vet/test全部通过，Python三个目录共33项全部通过，生成器还原演练通过；前后工作区干净、内容指纹e3b0c44298fc一致。新增9项测试包括窗口左闭右开、其它通道不被豁免、恢复后缺失告警、凭证键拒绝、OUT越界拒绝及独立CLI的env/run.log闭环；均为本地合成任务。
+
+独立突变夹具保留在C:\Temp\tickflow-phase-mutations-5a17fa80458c4d2690eba3a3efcf41ed。三项分别将暂停豁免扩大到其它通道、允许凭证键、错误接受窗口右边界，全部由目标断言检出（KILLED），未解决0；基线和还原后退出0，突变退出1，未以导入/编译错误计数。被测plan.py SHA256为25bee0deef3755e86abdb86bb26722547223b3ac4ff1aa62249a84fafe9fb402，worker.py为d9cbe162e2bb02e54177f5d4c28a006b19ed84ac7625d23e2507615baae14abe。
