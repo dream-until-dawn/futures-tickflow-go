@@ -1,5 +1,19 @@
 # 2026-10-27 现场验收启动记录
 
+## 15:11 收尾：主连日盘末根观测与同序列历史对账通过
+
+15:11:01 复查录制已 completed、returncode=0、stalls=0；run.log 明确记录 14:53:53.850 开始，15:07:00.000 断开，共 1363 帧、422510 字节。末帧接收时间为 15:00:01.700，不能把末帧当断开时刻；收盘后静默与录制日志的实际结束分别记录。原始 raw.jsonl SHA256 为 `335cc883d8978193adbee798dca327512500c1080179da6271f7d3dcb4dc8899`。
+
+来源仍为下文 79d17b5 的固定 probe.exe。独立 Go 末根报告与额外 Python 重放一致：收盘前四根正常分钟推进；14:59 末根首次接收于 14:59:01.151，113 次实际字段变化，最后变化接收于 15:00:01.135，本机 L-C=1135ms。本份记录尚未出现超过四秒的本机修改，但不推广成普遍保证。
+
+在仓库外复制探针源码并加入只读 TestPostCloseHistory，收盘后新连接取得同一 KQ.m@SHFE.rb 序列 14:55—14:59 五根，原始响应另存 post-history-raw.jsonl。五个标签及 O/H/L/C/V/close_oi/open_oi 七字段与现场最终快照逐项一致。首次副本构建因相对 replace 指向 C:\go.mod 失败，修正仅临时副本的本地模块路径后实际 PASS，前后日志保留。临时扩展工具单独封存，不将其冒称为原录制二进制。
+
+真实材料副本的三项反例均在实际 Go 报告入口失败：删去收盘后帧导致覆盖不足；注入 C+5001ms 的真实字段修改触发超四秒 FAIL；破坏 JSON 被拒绝。原 task 目录前后哈希一致。收尾 NTP 复测 server-local 约 -0.907/-0.909 秒，往返约 0.252/0.314 秒，与开头约 -0.934/-0.936 秒方向一致，仅为两端偏差估计，不证明全程准确度或网络延迟上界。
+
+前后 openmd 映射均超时，原始 quote 也未提供 underlying_symbol，故具体合约归属未建立；不能把本次主连观测当作 SHFE.rb2701 末根实测。日盘状态更新为“主连观测、同序列历史对账已通过；具体合约归属及四秒保证未建立”，夜盘末根、停夜盘 Live/L9 仍未关闭，未新启动夜盘或发布 tag。
+
+证据根目录仍为下文 C:\Temp\tickflow-sessionend-20261027-63db2f0f762646a5b73e28843631a601。session-acceptance-report.json 记录完整结果；sealed-sessionend 使用单独的 sessionend-observation-v1 清单封存 42 文件，分类明确保留 mapping_unresolved，不复用只适用于长缺口的封存格式。sealed-sessionend-copy 迁移副本全部文件哈希一致，两份 seal-sessionend.json 的 SHA256 同为 `886856b363a79f9890d4e920c40f9891aebde7227192f953fba961ba07674b6d`。
+
 ## 14:53 启动日盘末根独立录制
 
 使用者在 14:52 唤醒后，14:52:49 核对时间，仍可覆盖收盘前至少两根正常分钟推进与 15:00 末根；不把实际起跑追记为原定 14:50。独立探针的 SessionEnd、TailDeadline、LiveTailSendsOnlyMarketAids、OutputInsideRepo 相关测试通过，从干净来源 `79d17b52e6e7ef1d8e320a7f1c7d93451584ee3b` 编译 probe.exe，SHA256 为 `04d31a5ff0395a33aecefaac5ba40f55779d3df576c747fc146c05663e89bb92`。
