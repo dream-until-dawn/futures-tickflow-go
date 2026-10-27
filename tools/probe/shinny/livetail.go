@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -31,10 +32,11 @@ import (
 )
 
 var (
-	tailEnd   = flag.String("tail-end", "", "shinny-live-tail 到这一刻断开（RFC3339，带偏移，如 2026-09-21T15:05:00+08:00）；用户授权窗口的终点")
-	tailOut   = flag.String("tail-out", "", "shinny-live-tail 的落盘文件（JSONL；不进仓）")
-	tailIn    = flag.String("tail-in", "", "shinny-live-analyze 读的落盘文件")
-	tailCalib = flag.Bool("tail-calib", false, "shinny-live-analyze 做标定")
+	tailEnd    = flag.String("tail-end", "", "shinny-live-tail 到这一刻断开（RFC3339，带偏移，如 2026-09-21T15:05:00+08:00）；用户授权窗口的终点")
+	tailOut    = flag.String("tail-out", "", "shinny-live-tail 的落盘文件（JSONL；不进仓）")
+	tailIn     = flag.String("tail-in", "", "shinny-live-analyze 读的落盘文件")
+	tailCalib  = flag.Bool("tail-calib", false, "shinny-live-analyze 做标定")
+	tailSymbol = flag.String("tail-symbol", tailSym, "录制合约；默认主连，可显式指定 SHFE.rbYYMM 具体合约")
 )
 
 const (
@@ -121,6 +123,11 @@ func probeLiveTail(md, tok string) {
 	if !optIn(name) {
 		return
 	}
+	symbol := *tailSymbol
+	if err := validateTailSymbol(symbol); err != nil {
+		report(name, "FAIL", err.Error())
+		return
+	}
 	if *tailOut == "" {
 		report(name, "FAIL", "要给 -tail-out（落盘文件，放 scratchpad，不进仓）")
 		return
@@ -139,14 +146,14 @@ func probeLiveTail(md, tok string) {
 	}
 	ctx, cancel := context.WithDeadline(context.Background(), end)
 	defer cancel()
-	f, err := os.Create(*tailOut)
+	f, err := os.OpenFile(*tailOut, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
 		report(name, "FAIL", err.Error())
 		return
 	}
 	defer f.Close()
 	w := bufio.NewWriter(f)
-	fmt.Printf("开始 %s（本机）· 到 %s 断开 · %s 1m · 只用行情通道\n", showMs(time.Now().UnixMilli()), showMs(end.UnixMilli()), tailSym)
+	fmt.Printf("开始 %s（本机）· 到 %s 断开 · %s 1m · 只用行情通道\n", showMs(time.Now().UnixMilli()), showMs(end.UnixMilli()), symbol)
 
 	c, _, err := websocket.Dial(ctx, md, &websocket.DialOptions{
 		CompressionMode: websocket.CompressionNoContextTakeover,
@@ -159,18 +166,22 @@ func probeLiveTail(md, tok string) {
 	defer c.CloseNow()
 	c.SetReadLimit(256 << 20)
 	send := func(v map[string]any) error { b, _ := json.Marshal(v); return c.Write(ctx, websocket.MessageText, b) }
-	if err := send(map[string]any{"aid": "subscribe_quote", "ins_list": tailSym}); err != nil {
+	if err := send(map[string]any{"aid": "subscribe_quote", "ins_list": symbol}); err != nil {
 		report(name, "FAIL", err.Error())
 		return
 	}
-	if err := send(map[string]any{"aid": "set_chart", "chart_id": "tail", "ins_list": tailSym, "duration": tailDur, "view_width": tailWidth}); err != nil {
+	if err := send(map[string]any{"aid": "set_chart", "chart_id": "tail", "ins_list": symbol, "duration": tailDur, "view_width": tailWidth}); err != nil {
 		report(name, "FAIL", err.Error())
 		return
 	}
 	// 取数前那次 openmd 挪到连上行情之后、放后台（评审方 2026-09-21 裁）：它不再占授权窗口的开头，也不挡收帧 ——
 	// 在收帧循环里同步去取，服务器那边会攒帧，本机收到时刻就不是真的收到时刻了。
 	before := make(chan string, 1)
-	go func() { before <- showUnderlying() }()
+	if symbol == tailSym {
+		go func() { before <- showUnderlying() }()
+	} else {
+		before <- "直接订阅具体合约 " + symbol + "；不判断主连映射"
+	}
 	frames := 0
 	for {
 		if err := send(map[string]any{"aid": "peek_message"}); err != nil {
@@ -194,8 +205,27 @@ func probeLiveTail(md, tok string) {
 	}
 	f.Close()
 	fmt.Printf("KQ.m 映射（openmd 合约表，连上行情之后）：%s\n", <-before)
-	fmt.Printf("KQ.m 映射（openmd 合约表，断开之后）：%s\n", showUnderlying())
+	if symbol == tailSym {
+		fmt.Printf("KQ.m 映射（openmd 合约表，断开之后）：%s\n", showUnderlying())
+	} else {
+		fmt.Printf("具体合约订阅结束：%s；未查询主连映射\n", symbol)
+	}
 	report(name, "PASS", fmt.Sprintf("记了 %d 帧；读数用 -only shinny-live-analyze -tail-in 算", frames))
+}
+
+// validateTailSymbol 限定已核验夜盘时段的品种，拒绝列表、别名和非法月份。
+func validateTailSymbol(symbol string) error {
+	if symbol == tailSym {
+		return nil
+	}
+	if !regexp.MustCompile(`^SHFE\.rb[0-9]{4}$`).MatchString(symbol) {
+		return fmt.Errorf("录制仅支持默认主连或具体 SHFE.rbYYMM 合约")
+	}
+	month, _ := strconv.Atoi(symbol[len(symbol)-2:])
+	if month < 1 || month > 12 {
+		return fmt.Errorf("具体合约月份无效")
+	}
+	return nil
 }
 
 // tailDeadline 解析 -tail-end：必须给、必须是带偏移的 RFC3339、必须晚于现在。
