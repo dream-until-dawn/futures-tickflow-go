@@ -117,13 +117,17 @@ class PhasePlanTest(unittest.TestCase):
         cli = Path(__file__).with_name("cli.py")
         process = subprocess.run([sys.executable, str(cli), "launch", str(root), "--plan", str(spec)], capture_output=True, timeout=5)
         self.assertEqual(process.returncode, 0, process.stderr)
+        from process_wait import wait_for_exit
+        self.addCleanup(wait_for_exit, json.loads(process.stdout)["supervisor_pid"])
         deadline = time.monotonic() + 8
         while time.monotonic() < deadline:
             status = inspect(root)
             if status["state"] in {"completed", "failed", "timed_out"}:
                 break
             time.sleep(0.04)
-        self.assertEqual(status["state"], "completed", status)
+        self.assertEqual(status["state"], "completed", (status,
+                         (root / "worker.log").read_text(errors="replace"),
+                         (root / "run.log").read_text(errors="replace")))
         self.assertEqual((root / "capture/raw.jsonl").read_text(), "SHFE.rb2701")
         self.assertIn("synthetic runner ended", (root / "run.log").read_text())
         self.assertEqual(json.loads((root / "plan.json").read_text(encoding="utf-8"))["env"], plan["env"])

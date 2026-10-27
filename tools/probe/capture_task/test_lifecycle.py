@@ -13,6 +13,7 @@ from unittest import mock
 from plan import validate
 from worker import inspect, run, signatures, write_status
 from cli import launch
+from process_wait import wait_for_exit
 
 CLI = Path(__file__).with_name("cli.py")
 WRITE = "from pathlib import Path; import sys,time; p=Path(sys.argv[1])/'raw.jsonl'; "
@@ -150,6 +151,8 @@ class LifecycleTest(unittest.TestCase):
         launcher = subprocess.run([sys.executable, str(CLI), "launch", str(root), "--plan", str(spec)],
                                   capture_output=True, timeout=5)
         self.assertEqual(launcher.returncode, 0, launcher.stderr)
+        # 清理回调后进先出：先等解释器退出释放worker.log，再删除临时目录。
+        self.addCleanup(wait_for_exit, json.loads(launcher.stdout)["supervisor_pid"])
         self.assertEqual(json.loads(launcher.stdout)["state"], "launched")
         self.assertEqual(json.loads(launcher.stdout)["process_scope"], plan["process_scope"])
         observed_after_exit = []
