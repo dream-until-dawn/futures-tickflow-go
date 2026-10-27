@@ -1,5 +1,15 @@
 # 2026-10-27 现场验收启动记录
 
+## 11:20 收尾：本次长缺口现场验收通过
+
+11:20:50 北京时间复查，任务状态 completed、returncode=0、stalls=0，采集运行器 TestLiveLongGapReal 实际 PASS，11:18:10 正常结束。独立复核器对原始参照、Live 输出与结束后历史逐根复核通过：48 根输出、9819 帧参照、32 根完整断流分钟；实际 socket_closed=10:36:00.000，resume_next=11:08:00.064（均为本机北京时间），间隔 1920.064 秒。运行器报告推送 2、握手 3；这些计数仅描述本次执行。
+
+独立审计报告位于证据根目录的 independent-review.json、acceptance-report.json。四份原始 JSONL 的分析前后 SHA256 完全相同；来源仍为下文绑定的 82f8949，不因后续文档提交改写。原任务已写入 seal.json，11 个文件封存核验通过；sealed-copy 迁移副本也通过相同独立复核与 11 文件字节校验。
+
+三组真实材料副本反例均被独立分析及封存校验拒绝：篡改 Live 首根收盘价、删去历史末根、删去 socket_closed 事件。反例只写入 negative-* 副本，原始任务前后字节一致，反例之后再次校验原件通过。acceptance-check.py 保留了本轮复核步骤，不读取凭证，不使用合成材料开关。
+
+本结论只关闭 SHFE.rb2701 在本次 10:30—11:18 窗口的完整长缺口现场条目，不证明其它品种、其它窗口都通过；10/23 与 10/26 未验成记录保持原状。日盘末根、夜盘末根、停夜盘 Live/L9 仍需另行现场验收，v0.11 尚未发布，不打 tag。
+
 使用者要求在日盘期间继续推进，沿用已授予的现场采集及主线合并权限。10:22:33 北京时间核验处于上午休息段；按上期所[交易时间](https://www.shfe.com.cn/services/calenderandholidays/tradinghours/)及[休市安排](https://www.shfe.com.cn/services/calenderandholidays/holiday/)，选择当天 10:30—11:30 连续段，未查到改变本窗口的临时休市通知。
 
 ## 旧请求核验
