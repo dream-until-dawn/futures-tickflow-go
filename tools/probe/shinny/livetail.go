@@ -204,13 +204,18 @@ func probeLiveTail(md, tok string) {
 		return
 	}
 	f.Close()
-	fmt.Printf("KQ.m 映射（openmd 合约表，连上行情之后）：%s\n", <-before)
 	if symbol == tailSym {
+		fmt.Printf("KQ.m 映射（openmd 合约表，连上行情之后）：%s\n", <-before)
 		fmt.Printf("KQ.m 映射（openmd 合约表，断开之后）：%s\n", showUnderlying())
 	} else {
+		fmt.Printf("%s\n", <-before)
 		fmt.Printf("具体合约订阅结束：%s；未查询主连映射\n", symbol)
 	}
-	report(name, "PASS", fmt.Sprintf("记了 %d 帧；读数用 -only shinny-live-analyze -tail-in 算", frames))
+	readout := fmt.Sprintf("记了 %d 帧；读数用 -only shinny-live-analyze -tail-in 算", frames)
+	if symbol != tailSym {
+		readout = fmt.Sprintf("记了 %d 帧；末根读数用 -only shinny-session-end -session-symbol %s -session-close <执行单收盘时刻> -tail-in <原始帧文件>", frames, symbol)
+	}
+	report(name, "PASS", readout)
 }
 
 // validateTailSymbol 限定已核验夜盘时段的品种，拒绝列表、别名和非法月份。
