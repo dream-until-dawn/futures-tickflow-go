@@ -48,6 +48,21 @@ class NightPreparationTest(unittest.TestCase):
                 write(changed,"KQ.m@SHFE.rb" if kind=="alias" else "SHFE.rb2701")
                 with self.subTest(kind=kind),self.assertRaises(ValueError):verify_contract(path,"SHFE.rb2701",self.now)
 
+    def test_day_session_and_calendar_boundaries(self):
+        day = dict(self.spec, trading_day="20261027", start="2026-10-27T14:50:00+08:00",
+                   close="2026-10-27T15:00:00+08:00", end="2026-10-27T15:07:00+08:00",
+                   deadline="2026-10-27T15:09:00+08:00")
+        before = self.now - 3600
+        self.assertEqual(validate_spec(day, before)["close"].hour, 15)
+        for changes in ({"trading_day":"20261028"}, {"start":"2026-10-27T22:50:00+08:00"},
+                        {"end":"2026-10-27T15:06:00+08:00"}, {"deadline":"2026-10-27T15:11:00+08:00"}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                validate_spec(dict(day, **changes), before)
+        with self.assertRaises(ValueError): validate_spec(day, self.now)
+        friday = {key: value.replace("2026-10-27", "2026-10-30") for key, value in self.spec.items()}
+        friday["trading_day"] = "20261031"
+        with self.assertRaisesRegex(ValueError, "周末"): validate_spec(friday, before)
+
     def test_launch_rejects_early_stale_and_tampered_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/"binary").write_bytes(b"changed")

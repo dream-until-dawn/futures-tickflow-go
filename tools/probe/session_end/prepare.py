@@ -11,7 +11,7 @@ import subprocess
 import sys
 import time
 
-from clock_probe import combine, measure
+from clock_probe import combine, measure, trace_writer
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "capture_task"))
@@ -23,7 +23,7 @@ def digest(path):
 
 
 def validate_spec(spec, now):
-    """只接受本次已核验品种、分钟对齐和明确东八区的夜盘窗口。"""
+    """只接受螺纹钢日盘或夜盘末根；交易日须另按官方日历核实。"""
     if not isinstance(spec, dict) or set(spec) != {"symbol", "trading_day", "start", "close", "end", "deadline"} or any(not isinstance(v, str) for v in spec.values()):
         raise ValueError("执行单字段不完整或含未知字段")
     import re
@@ -36,14 +36,19 @@ def validate_spec(spec, now):
             raise ValueError("窗口须分钟对齐并显式东八区")
         points[key] = point
     start, close, end, deadline = (points[k] for k in ("start", "close", "end", "deadline"))
+    day = close.hour == 15
+    expected_start_hour = 14 if day else 22
     if not (start.date() == close.date() == end.date() == deadline.date()
-            and start.hour == 22 and close.hour == 23 and close.minute == 0
+            and start.hour == expected_start_hour and close.hour in (15, 23) and close.minute == 0
             and start <= close - dt.timedelta(minutes=5) and close < end <= deadline
-            and end - close >= dt.timedelta(minutes=7) and deadline.hour == 23
+            and end - close >= dt.timedelta(minutes=7) and deadline.hour == close.hour
             and deadline.minute <= 10 and now < close.timestamp() - 240):
-        raise ValueError("窗口不足、过期或超出已核验的23点收盘段")
-    if spec["trading_day"] != (close + dt.timedelta(days=1)).strftime("%Y%m%d"):
-        raise ValueError("本执行单交易日须为次一自然日；节假日安排须另核")
+        raise ValueError("窗口不足、过期或超出已核验的15点/23点收盘段")
+    expected_day = close if day else close + dt.timedelta(days=1)
+    if close.weekday() >= 5 or (not day and expected_day.weekday() >= 5):
+        raise ValueError("周末跨日窗口须另核，不使用自然日推断")
+    if spec["trading_day"] != expected_day.strftime("%Y%m%d"):
+        raise ValueError("日盘须同日、夜盘须次一自然日；节假日安排须另核")
     return points
 
 
@@ -99,7 +104,8 @@ def prepare(destination, spec):
     (destination / "build.log").write_bytes(build.stdout + build.stderr)
     if build.returncode or git("rev-parse", "HEAD") != source or git("status", "--porcelain"):
         raise ValueError("编译失败或源码变化")
-    clock = measure()
+    with (destination / "clock-preflight-attempts.jsonl").open("x", encoding="utf-8") as diagnostics:
+        clock = measure(trace_writer(diagnostics))
     (destination / "clock-preflight.json").write_text(json.dumps(clock, indent=2), encoding="utf-8")
     # 单次六秒录制只作连接与原生合约预检，不等到夜间窗口。
     short_end = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))) + dt.timedelta(seconds=6)
@@ -152,7 +158,7 @@ def launch(destination):
              ("clock-plan.json", "capture-plan.json")]
     plans[0]["max_seconds"] = points["deadline"].timestamp()-time.time()
     start(clock_root, plans[0])
-    limit = time.monotonic()+25
+    limit = time.monotonic()+35
     while time.monotonic() < limit:
         status = inspect(clock_root)
         if status["state"] == "running":

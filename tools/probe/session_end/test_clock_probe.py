@@ -3,9 +3,88 @@ import copy
 import io
 import struct
 import sys
+import threading
 import unittest
+from unittest.mock import patch
 
-from clock_probe import SERVERS, combine, encode_stamp, parse_response
+from clock_probe import SERVERS, combine, encode_stamp, measure, parse_response, resolve
+
+
+class RetryClockTest(unittest.TestCase):
+    """用可控时间验证恢复、耗尽和质量失败，不能只验证正常返回。"""
+    def run_cycle(self, failure=None):
+        self.now, self.calls, self.events = 1000.0, [], []
+
+        def pause(seconds):
+            self.now += seconds
+
+        def sampler(host, timeout):
+            self.calls.append((host, self.now, timeout))
+            if failure:
+                failure(len(self.calls), pause)
+            return dict(server=host, offset_low_seconds=-0.1, offset_high_seconds=0.1)
+
+        return measure(self.events.append, sampler=sampler, monotonic=lambda: self.now,
+                       wall=lambda: self.now, pause=pause)
+
+    def test_transient_network_failure_retained_and_six_valid_samples(self):
+        def failure(number, pause):
+            if number == 1:
+                raise TimeoutError("模拟丢包")
+        proof = self.run_cycle(failure)
+        self.assertEqual((proof["attempts"], len(proof["samples"])), (7, 6))
+        self.assertEqual(self.events[0]["state"], "error")
+        self.assertEqual(self.events[-1]["state"], "cycle_pass")
+        for host in SERVERS:
+            times = [at for source, at, _ in self.calls if source == host]
+            self.assertTrue(all(b-a >= 2 for a, b in zip(times, times[1:])))
+
+    def test_network_failure_exhausts_without_source_substitution(self):
+        def failure(number, pause):
+            raise TimeoutError("持续断网")
+        with self.assertRaises(TimeoutError): self.run_cycle(failure)
+        self.assertEqual(len(self.calls), 3)
+        self.assertEqual({item[0] for item in self.calls}, {SERVERS[0]})
+        self.assertEqual(self.events[-1]["state"], "cycle_failed")
+
+    def test_quality_failure_is_not_retried(self):
+        def failure(number, pause):
+            raise ValueError("未同步或回显错误")
+        with self.assertRaises(ValueError): self.run_cycle(failure)
+        self.assertEqual(len(self.calls), 1)
+
+    def test_total_cycle_budget_does_not_reset_per_request(self):
+        def failure(number, pause):
+            pause(4)
+        with self.assertRaises(TimeoutError): self.run_cycle(failure)
+        self.assertEqual(len(self.calls), 5)
+        self.assertEqual(self.now, 1020)
+
+    def test_whole_cycle_wall_clock_jump_rejected(self):
+        count = 0
+        def wall():
+            nonlocal count
+            count += 1
+            return 1000 + (1 if count > 7 else 0)
+        with self.assertRaisesRegex(ValueError, "跳变"):
+            measure(sampler=lambda host, timeout: dict(server=host, offset_low_seconds=0, offset_high_seconds=0.1),
+                    monotonic=lambda: 1000, wall=wall, pause=lambda seconds: None)
+
+    def test_dns_timeout_and_failure_are_bounded(self):
+        release = threading.Event()
+        entered = threading.Event()
+        def lookup(*args):
+            entered.set()
+            release.wait(2)
+            return []
+        try:
+            with patch("clock_probe.socket.getaddrinfo", side_effect=lookup):
+                with self.assertRaises(TimeoutError): resolve("test.invalid", 0.02)
+                self.assertTrue(entered.is_set())
+        finally:
+            release.set()
+        with patch("clock_probe.socket.getaddrinfo", return_value=[]):
+            with self.assertRaises(OSError): resolve("test.invalid", 1)
 
 
 class ClockProofTest(unittest.TestCase):
