@@ -1,0 +1,23 @@
+{
+  "source_sha": "2f02b0faa08245464eb9b99506d66a24e4182cdf",
+  "baseline_sha": "d49c5ba9881854f8220fa5ba4c370ac792355840",
+  "baseline_tag": "v0.10.0",
+  "tool_sha256": "815a191a971e9585352f06db925fc2c95ed5062f61b6b6835fd279aa72d345f8",
+  "scope": "AST one module, excludes tools/tests/nested modules; adapter separately; not full semantic or behavior proof",
+  "counts": {
+    "added": 2,
+    "removed": 0,
+    "changed": 1
+  },
+  "adapter_introduced": true,
+  "adapter_exports": 1,
+  "files": {
+    "adapter-api.json": "c4457b36fe90336dfa5fbc3c596a76c90b1b650ea54970ab4356cfd3920f2845",
+    "api-candidate.json": "19f342550610230910472a5cd0e5f639853cbe5369aedbf376b7563f7fd1921e",
+    "api-control-zero.json": "6f04451488628029b96d38b37c5c395676c89c9e6ea3b576d6fcb18d64b7b9a7",
+    "api-diff.json": "0e84a12adcf0b10fa173f8720608658aa0040946d61567d0e6dca815671ccab1",
+    "api-tree.exe": "815a191a971e9585352f06db925fc2c95ed5062f61b6b6835fd279aa72d345f8",
+    "api-v010.json": "41c005f0a41be5c6099f86381a8e2be746cc4d7773dbb6dfcab1987101ef4140",
+    "modules.diff": "1b58c64155aed67e2622dba07ed358f66a03dfe37b9f0f04bd5cd4c90c077a35"
+  }
+}

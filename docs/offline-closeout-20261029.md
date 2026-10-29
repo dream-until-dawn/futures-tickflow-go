@@ -8,3 +8,17 @@
 4. 发布材料统一指向候选及审计证据，写明embedded.New函数值兼容性、独立adapter版本依赖与现场限制。停夜盘Live/L9缺失继续阻塞发布；不删范围、不打tag。
 
 验收：全部Go模块gofmt/vet/test、Python正反测试、生成器还原和doccheck；主线合并后核对远端与CI。离线合成时钟和日历证据均明确分类，不能补写10/28、10/29现场的单调锚点，也不能代替未来停夜盘现场。
+
+## 实施与固定候选证据
+
+代码候选为 `2f02b0faa08245464eb9b99506d66a24e4182cdf`。时钟v2实现及独立工具见 [clock-proof-v2.md](clock-proof-v2.md)，停夜盘计划与边界见 [nonight-parameterized-runner.md](nonight-parameterized-runner.md)。没有启动新现场任务，没有改写已封存资料，没有新建自动化。
+
+API归档证据目录为 `C:\Temp\tickflow-offline-closeout-20261029-7a922ed5e7894c87b065b64e8dd3a97a`；基线v0.10.0到候选根模块新增2、删除0、签名变化1，adapter独立新增Bar。完整声明快照、同树零差、模块差异、提取器二进制及SHA均保留，版本化摘要见release/v0.11.0-api-audit.json和release/v0.11.0-api-diff.json。
+
+同目录synthetic-clock为完全离线的两个周期、12样本端到端记录：使用归档候选的实际measure/record和独立CLI；完整样本、结束标识和周期间锚点通过，注入墙钟跳变被拒绝；旧封存现场被明确拒绝为缺v2锚点，未修改。单元正反矩阵另覆盖缺周期、锚点、拼接、坏包、伪造区间与缺结束记录。
+
+consumer-v010与consumer为通过模块服务下载的仓库外消费者，均无replace。adapter正向和NaN反例、旧函数值在v0.10.0通过而候选拒绝、候选包装迁移通过，日志与模块选择已保存；没有把包下载测试说成新现场或资金链路验收。官方公告文件哈希绑定只证明字节一致，公告真实性和交易安排仍须独立核实，合成示例不可用于正式执行。
+
+本轮离线交付完成后，剩余发布阻塞为未来官方停夜盘特殊窗口、Live对照及L9真实节点；旧现场的时间假设不因工具升级而消失。暂不打tag。
+
+本地最终检查：三个Go模块gofmt/vet/test、73项Python正反测试、生成器还原演练及doccheck通过。652文件离线审计封存于证据目录同名追加-sealed，schema为offline-closeout-audit-v1，明确不表示现场验收；seal.json SHA256为 `fff7651c5d029f6025c89555684318dac153af55aad418a2749c0d7d53b96077`。追加-sealed-copy的迁移副本逐文件一致，改坏api-diff.json的篡改副本被拒绝。后续材料提交不改变2f02b0f的生产API；最终main提交与跨平台CI以Git和CI实际结果为准。

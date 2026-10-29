@@ -1,0 +1,20 @@
+{
+  "added": [
+    {
+      "name": "calendar/embedded:embedded.NoNightAfter",
+      "after": "func(days ...tickflow.TradingDay) Option"
+    },
+    {
+      "name": "calendar/embedded:embedded.Option",
+      "after": "type  func(*options)"
+    }
+  ],
+  "removed": [],
+  "changed": [
+    {
+      "name": "calendar/embedded:embedded.New",
+      "before": "func(tradingDays []tickflow.TradingDay) (*Calendar, error)",
+      "after": "func(tradingDays []tickflow.TradingDay, opts ...Option) (*Calendar, error)"
+    }
+  ]
+}
