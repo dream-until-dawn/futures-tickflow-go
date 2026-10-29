@@ -268,3 +268,26 @@ func TestDayNodeIntegerAndRetiredControl(t *testing.T) {
 		t.Fatal("必需跨度缺失被放行")
 	}
 }
+
+func TestDayNodeParentDeadlineAndMissingOutput(t *testing.T) {
+	nodeTestTempRoot(t)
+	var hits atomic.Int32
+	server := nodeTestServer(t, "silent", &hits)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	started := time.Now()
+	if _, err := collectDayNodes(ctx, "ws"+strings.TrimPrefix(server.URL, "http"), "unused", nodeTestSymbols, filepath.Join(t.TempDir(), "parent-deadline"), 5*time.Second); err == nil {
+		t.Fatal("父期限被忽略")
+	}
+	if time.Since(started) >= 2*time.Second {
+		t.Fatal("阻塞读取没有服从更短的父期限")
+	}
+	before := hits.Load()
+	previousOut, previousFailed := *dayNodeOut, failed
+	defer func() { *dayNodeOut, failed = previousOut, previousFailed }()
+	*dayNodeOut = ""
+	probeSuspendedNightSpan(context.Background(), "ws"+strings.TrimPrefix(server.URL, "http"), "unused")
+	if failed != previousFailed+1 || hits.Load() != before {
+		t.Fatal("缺取证目录时没有在节点连接前拒绝")
+	}
+}

@@ -18,3 +18,5 @@ python -X utf8 tools/probe/nonight_preflight.py --phase evening --ins SHFE.rb270
 真窗口登记后用同入口去掉--allow-synthetic并换成独立核实的官方计划；分别给evening/fetch不同的新目录。阶段甲保留原始帧、注入与不注入两路Live对照，阶段乙拉历史并按派生区间计数。运行成功不等于业务验收成功，仍按probe.md 6.41独立复核对照是否触发、连接错误与判定错误、零根与节后正向恢复。
 
 L9的trading_day_end_id须在恢复日盘中（例如09:05后、15:00前）另保留原始节点；既有shinny-suspended-night-span探针按实际节点识别普通夜/停夜，无固定9/30日期。本次未把15:10历史查询当成盘中预测读数，也未改L9生产判据。官方未来特殊窗口及真实Live/L9证据仍缺失，发布继续阻塞。
+
+同日后续已补原始取证及超时链：该探针现在必须提供-day-node-out仓外新目录，用review_daynodes.py独立重放；详见 [L9取证链](l9-evidence-chain.md)。完整节点集合不等于业务对照通过，仍须原探针的控制值判据及真实特殊窗口。
