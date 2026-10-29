@@ -184,6 +184,9 @@ func TestDayNodeWireEvidenceAndFailures(t *testing.T) {
 			if (summary["state"] == "completed") != valid {
 				t.Fatal("失败被写成成功")
 			}
+			if mode == "secret" && (summary["reason"] != "authorization_material_in_response_suppressed" || summary["frames"] != float64(0)) {
+				t.Fatal("反射的鉴权材料未在原始帧落盘前拒绝")
+			}
 			for _, name := range []string{"metadata.json", "requests.jsonl", "frames.jsonl", "summary.json"} {
 				content, err := os.ReadFile(filepath.Join(directory, name))
 				if err != nil {
