@@ -1,6 +1,7 @@
 """离线预检的正反向测试，凭证仅用合成值。"""
 import contextlib
 import io
+import json
 from pathlib import Path
 import tempfile
 import sys
@@ -33,12 +34,35 @@ class PreflightTest(unittest.TestCase):
                 self.assertNotIn("go test", output)
                 self.assertNotIn("synthetic-secret", output)
                 rc, output = self.cli(args, before)
-                self.assertEqual(rc, 0, output)
-                self.assertIn("TestNoNightRealEvening", output)
+                self.assertNotEqual(rc, 0, output)
+                self.assertNotIn("go test", output)
                 for phase in pre.WINDOWS:
                     rc, output = self.cli(["--phase", phase, "--ins", "SHFE.rb2701", "--out", str(Path(tmp) / "out")], dt.datetime.fromisoformat("2026-10-23T09:00:00+08:00"))
                     self.assertEqual(rc, 1, output)
                     self.assertNotIn("go test", output)
+
+    def test_parameterized_plan_and_synthetic_gate(self):
+        fixture = Path(__file__).parent/"testdata/nonight-synthetic/plan.json"
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(pre.os.environ, dict.fromkeys(pre.KEYS, "fake"), clear=True):
+            args = ["--phase", "evening", "--ins", "SHFE.rb2701", "--out", str(Path(tmp)/"out"), "--plan", str(fixture)]
+            before = dt.datetime.fromisoformat("2026-09-30T20:58:00+08:00")
+            rc, output = self.cli(args, before)
+            self.assertEqual(rc, 1)
+            self.assertNotIn("go test", output)
+            rc, output = self.cli(args+["--allow-synthetic"], before)
+            self.assertEqual(rc, 0, output)
+            self.assertNotIn("go test", output)
+            # 此处只标定声明为official的输出分支，不把合成字节当真实公告执行。
+            plan = json.loads(fixture.read_text(encoding="utf-8"))
+            plan.update(evidence_class="official", evidence_file=str((fixture.parent/"evidence.txt").resolve()))
+            candidate = Path(tmp)/"plan.json"
+            candidate.write_text(json.dumps(plan), encoding="utf-8")
+            args[-1] = str(candidate)
+            rc, output = self.cli(args, before)
+            self.assertEqual(rc, 0, output)
+            self.assertIn("TICKFLOW_NN_PLAN_SHA256", output)
+            self.assertIn("TestNoNightRealEvening", output)
+            self.assertFalse((Path(tmp)/"out").exists())
 
     def test_environment_takes_precedence(self):
         with tempfile.TemporaryDirectory() as tmp:

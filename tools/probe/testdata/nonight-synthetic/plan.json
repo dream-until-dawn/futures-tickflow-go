@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "symbol": "SHFE.rb2701",
+  "trading_days": [20260929, 20260930, 20261008, 20261009],
+  "no_night_after": 20260930,
+  "resume_day": 20261008,
+  "evening_begin": "2026-09-30T20:59:00+08:00",
+  "evening_end": "2026-09-30T21:10:00+08:00",
+  "fetch_begin": "2026-10-08T15:10:00+08:00",
+  "fetch_end": "2026-10-08T15:15:00+08:00",
+  "official_url": "https://www.shfe.com.cn/services/calenderandholidays/holiday/",
+  "evidence_file": "evidence.txt",
+  "evidence_sha256": "c4404efc65eeb33567d678ab3dc1d26e89ff63fc558ac125f22a413a8e635529",
+  "evidence_class": "synthetic"
+}

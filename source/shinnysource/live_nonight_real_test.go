@@ -3,6 +3,8 @@ package shinnysource
 import (
 	"bufio"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -19,7 +21,8 @@ import (
 	"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded"
 )
 
-// v0.11 停夜盘那一晚的实盘（probe.md 6.41；判对先落文）。连真天勤，点名才跑：
+// v0.11 停夜盘现场（probe.md 6.41）。当前须由nonight_preflight.py --plan生成
+// 绑定TICKFLOW_NN_PLAN和SHA256的参数；下面9/30、10/8命令只留作历史说明，不能直接复用。
 //
 //	甲（9/30 晚）  TICKFLOW_LIVE=1 TICKFLOW_NN_OUT=<仓库外的目录> TICKFLOW_NN_INS=<事先定的主力合约> \
 //	              TICKFLOW_NN_BEGIN=2026-09-30T20:59:00+08:00 TICKFLOW_NN_END=2026-09-30T21:10:00+08:00 \
@@ -74,7 +77,7 @@ func nnEnv(t *testing.T) map[string]string {
 	t.Helper()
 	v := map[string]string{}
 	var missing []string
-	for _, k := range []string{"TICKFLOW_NN_OUT", "TICKFLOW_NN_INS", "TICKFLOW_NN_BEGIN", "TICKFLOW_NN_END"} {
+	for _, k := range []string{"TICKFLOW_NN_OUT", "TICKFLOW_NN_INS", "TICKFLOW_NN_BEGIN", "TICKFLOW_NN_END", "TICKFLOW_NN_PLAN", "TICKFLOW_NN_PLAN_SHA256"} {
 		if v[k] = os.Getenv(k); v[k] == "" {
 			missing = append(missing, k)
 		}
@@ -85,15 +88,35 @@ func nnEnv(t *testing.T) map[string]string {
 	return v
 }
 
-// nnPrepare：凭证 · 仓库外的落盘目录 · 期限断言 · 按墙钟等到 BEGIN（醒晚 30 秒不联网）。返回 plain / 注入 两个日历、合约、落盘目录、END。
-func nnPrepare(t *testing.T) (Config, tickflow.Calendar, tickflow.Calendar, tickflow.Symbol, string, int64) {
+// nnPrepare 校验绑定计划、凭证、独占证据目录及期限，再等到BEGIN；醒晚30秒不联网。
+// 返回两份日历、合约、目录、截止及派生窗口，所有现场计数同用该计划。
+func nnPrepare(t *testing.T, phase string) (Config, tickflow.Calendar, tickflow.Calendar, tickflow.Symbol, string, int64, nnPlan, nnWindow) {
 	t.Helper()
 	env := nnEnv(t)
-	plain, err := embedded.New(nnDays)
+	raw, err := os.ReadFile(env["TICKFLOW_NN_PLAN"])
+	if err != nil {
+		t.Fatal("执行单不可读")
+	}
+	digest := sha256.Sum256(raw)
+	if hex.EncodeToString(digest[:]) != env["TICKFLOW_NN_PLAN_SHA256"] {
+		t.Fatal("执行单与预检绑定哈希不符")
+	}
+	plan, window, err := nnParsePlan(raw, env["TICKFLOW_NN_PLAN"], false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	inj, err := embedded.New(nnDays, embedded.NoNightAfter(20260930))
+	expectedBegin, expectedEnd := plan.EveningBegin, plan.EveningEnd
+	if phase == "fetch" {
+		expectedBegin, expectedEnd = plan.FetchBegin, plan.FetchEnd
+	}
+	if env["TICKFLOW_NN_INS"] != plan.Symbol || env["TICKFLOW_NN_BEGIN"] != expectedBegin || env["TICKFLOW_NN_END"] != expectedEnd {
+		t.Fatal("环境参数与执行单不符")
+	}
+	plain, err := embedded.New(plan.Days)
+	if err != nil {
+		t.Fatal(err)
+	}
+	inj, err := embedded.New(plan.Days, embedded.NoNightAfter(plan.NoNightAfter))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -126,7 +149,29 @@ func nnPrepare(t *testing.T) (Config, tickflow.Calendar, tickflow.Calendar, tick
 	if now := time.Now().UnixMilli(); now > begin+30000 {
 		t.Fatalf("醒来时已是 %s，晚于 BEGIN ＋ 30 秒 —— 窗口错位，不联网", fmtMs(now))
 	}
-	return cfg, plain, inj, sym, out, end
+	// 独占目录同时防止并发实跑覆盖证据；已存在即失败，不复用空目录。
+	if err := os.Mkdir(out, 0700); err != nil {
+		t.Fatal("无法独占创建证据目录，禁止重复启动")
+	}
+	if err := os.WriteFile(filepath.Join(out, "execution-plan.json"), raw, 0600); err != nil {
+		t.Fatal(err)
+	}
+	evidencePath := plan.EvidenceFile
+	if !filepath.IsAbs(evidencePath) {
+		evidencePath = filepath.Join(filepath.Dir(env["TICKFLOW_NN_PLAN"]), evidencePath)
+	}
+	evidence, err := os.ReadFile(evidencePath)
+	if err != nil {
+		t.Fatal("无法封存公告证据")
+	}
+	evidenceDigest := sha256.Sum256(evidence)
+	if hex.EncodeToString(evidenceDigest[:]) != plan.EvidenceSHA256 {
+		t.Fatal("公告证据在执行前变化")
+	}
+	if err := os.WriteFile(filepath.Join(out, "official-evidence.bin"), evidence, 0600); err != nil {
+		t.Fatal(err)
+	}
+	return cfg, plain, inj, sym, out, end, plan, window
 }
 
 // nnEvent 是甲二 / 甲三落盘的一行：交出的根或报错，连同本机时刻。
@@ -174,17 +219,17 @@ func TestNoNightLayerCalibration(t *testing.T) {
 }
 
 func TestNoNightRealEvening(t *testing.T) {
-	cfg, plain, inj, sym, out, end := nnPrepare(t)
+	cfg, plain, inj, sym, out, end, plan, window := nnPrepare(t, "evening")
 	ins := sym.Native()
 	startOf := func(cal tickflow.Calendar) int64 {
-		d, err := cal.DayOf(sym.ProductKey(), 20261008)
+		d, err := cal.DayOf(sym.ProductKey(), plan.ResumeDay)
 		if err != nil {
 			t.Fatal(err)
 		}
 		return d.Sessions[0].Start
 	}
 	startInj, startPlain := startOf(inj), startOf(plain)
-	t.Logf("合约 %s · 起始格（两路同用）%s · 不注入日历下 10/08 第一段 %s（只印，不用）· 结束 %s", ins, fmtMs(startInj), fmtMs(startPlain), fmtMs(end))
+	t.Logf("合约 %s · 起始格（两路同用）%s · 不注入日历下恢复日第一段 %s（只印，不用）· 结束 %s", ins, fmtMs(startInj), fmtMs(startPlain), fmtMs(end))
 	mk := func(cal tickflow.Calendar) *Client {
 		c := cfg
 		c.Calendar = cal
@@ -196,7 +241,8 @@ func TestNoNightRealEvening(t *testing.T) {
 		return cl
 	}
 	rawPath := filepath.Join(out, "nn_raw.jsonl")
-	ctx := context.Background()
+	ctx, cancel := context.WithDeadline(context.Background(), time.UnixMilli(end))
+	defer cancel()
 	var wg sync.WaitGroup
 	var rawErr error
 	var rawFrames int
@@ -284,11 +330,11 @@ func TestNoNightRealEvening(t *testing.T) {
 	go run("plain", plain, startInj) // 评审方 F1：对照只差日历这一个变量（起始格同为 10/08 09:00；不注入日历下它也是交易分钟）
 	wg.Wait()
 	t.Logf("落盘 md5：甲一 %s · 甲二 %s · 甲三 %s", fileMD5(rawPath), fileMD5(filepath.Join(out, "nn_live_inj.jsonl")), fileMD5(filepath.Join(out, "nn_live_plain.jsonl")))
-	nnReport(t, out, rawPath, ins, rawFrames, rawErr)
+	nnReport(t, out, rawPath, ins, rawFrames, rawErr, window)
 }
 
 // nnReport 从落盘文件读回来算 N1 – N3（与离线复算同一条路）。
-func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr error) {
+func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr error, window nnWindow) {
 	t.Helper()
 	var recs []l8Rec
 	f, err := os.Open(rawPath)
@@ -316,10 +362,10 @@ func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr erro
 			rows = append(rows, r)
 		}
 	}
-	n, vol := nnCount(rows, nnEve, nnNightTo)
+	n, vol := nnCount(rows, window.eve, window.nightTo)
 	afterEve, firstK := 0, int64(0)
 	for _, r := range recs {
-		if r.Recv >= nnEve {
+		if r.Recv >= window.eve {
 			afterEve++
 		}
 		if firstK == 0 && strings.Contains(string(r.Raw), `"klines"`) {
@@ -351,7 +397,7 @@ func nnReport(t *testing.T, out, rawPath, ins string, rawFrames int, rawErr erro
 }
 
 func TestNoNightRealFetch(t *testing.T) {
-	cfg, _, _, sym, out, end := nnPrepare(t)
+	cfg, _, _, sym, out, end, _, window := nnPrepare(t, "fetch")
 	cfg.HTTPClient = &http.Client{Timeout: 30 * time.Second}
 	cl, err := New(cfg)
 	if err != nil {
@@ -359,7 +405,7 @@ func TestNoNightRealFetch(t *testing.T) {
 	}
 	ctx, cancel := context.WithDeadline(context.Background(), time.UnixMilli(end))
 	defer cancel()
-	rows, err := cl.fetch(ctx, sym.Native(), nnFetchFrom, nnDayClose, viewWidth(600))
+	rows, err := cl.fetch(ctx, sym.Native(), window.fetchFrom, window.dayClose, viewWidth(600))
 	if err != nil {
 		t.Fatalf("乙：历史通道：%v", err)
 	}
@@ -373,8 +419,8 @@ func TestNoNightRealFetch(t *testing.T) {
 		enc.Encode(r)
 	}
 	f.Close()
-	night, nvol := nnCount(rows, nnFetchFrom, nnDayOpen-5*3600000) // [9/30 20:00, 10/8 04:00)
-	day, _ := nnCount(rows, nnDayOpen, nnDayClose)
+	night, nvol := nnCount(rows, window.fetchFrom, window.dayOpen-5*3600000)
+	day, _ := nnCount(rows, window.dayOpen, window.dayClose)
 	t.Logf("落盘 md5：乙 %s · 共 %d 行", fileMD5(p), len(rows))
-	t.Logf("N4 乙：夜盘时段 [9/30 20:00, 10/8 04:00) 的根 %d（量 %g）· 10/8 日盘 [09:00, 15:00) 的根 %d", night, nvol, day)
+	t.Logf("N4 乙：夜盘区间 [%s,%s) 的根 %d（量 %g）· 恢复日日盘 [%s,%s) 的根 %d", fmtMs(window.fetchFrom), fmtMs(window.dayOpen-5*3600000), night, nvol, fmtMs(window.dayOpen), fmtMs(window.dayClose), day)
 }

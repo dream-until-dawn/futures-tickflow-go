@@ -11,6 +11,7 @@ import struct
 import sys
 import threading
 import time
+import uuid
 
 SERVERS = ("ntp.aliyun.com", "time.windows.com")
 EPOCH = 2208988800
@@ -127,7 +128,7 @@ def combine(samples):
                 samples=samples, assumption="NTP server accuracy and nonnegative path delay; not exchange latency")
 
 
-def measure(trace=None, *, sampler=None, monotonic=None, wall=None, pause=None):
+def measure(trace=None, *, sampler=None, monotonic=None, wall=None, pause=None, recording_id=None, sequence=0):
     """只重试网络错误；质量错误立即失败，成功周期仍须完整六样本。"""
     sampler, monotonic = sampler or sample, monotonic or time.monotonic
     wall, pause = wall or time.time, pause or time.sleep
@@ -156,11 +157,15 @@ def measure(trace=None, *, sampler=None, monotonic=None, wall=None, pause=None):
                     trace(dict(event, state="sample", sample=item))
                     samples.append(item)
                     break
-        elapsed = monotonic() - started
-        if elapsed > CYCLE_BUDGET or abs(wall() - started_wall - elapsed) > 0.05:
+        ended, ended_wall = monotonic(), wall()
+        elapsed = ended - started
+        if elapsed < 0 or elapsed > CYCLE_BUDGET or abs(ended_wall - started_wall - elapsed) > 0.05:
             raise ValueError("周期超时或本机时钟跳变")
         proof = combine(samples)
-        proof.update(attempts=attempts, cycle_seconds=elapsed, cycle_started_at=started_wall)
+        proof.update(schema="ntp-cycle-v2", recording_id=recording_id or str(uuid.uuid4()), sequence=sequence,
+                     measured_at=ended_wall, attempts=attempts, cycle_seconds=elapsed, cycle_started_at=started_wall,
+                     anchors=dict(wall_start=started_wall, monotonic_start=started,
+                                  wall_end=ended_wall, monotonic_end=ended))
         trace(dict(state="cycle_pass", attempts=attempts, elapsed_seconds=elapsed))
         return proof
     except (OSError, ValueError) as error:
@@ -181,16 +186,25 @@ def record(path, until):
     if until <= time.time():
         raise ValueError("校准截止已过期")
     previous = None
+    recording_id, sequence = str(uuid.uuid4()), 0
     with path.open("x", encoding="utf-8") as output, path.with_name(path.stem + "-attempts.jsonl").open("x", encoding="utf-8") as diagnostics:
+        trace = trace_writer(diagnostics)
         while True:
             wall, monotonic = time.time(), time.monotonic()
+            trace(dict(state="record_anchor", recording_id=recording_id, sequence=sequence,
+                       wall=wall, monotonic=monotonic))
             if previous and abs((wall - previous[0]) - (monotonic - previous[1])) > 0.05:
+                trace(dict(state="record_jump", previous_wall=previous[0], previous_monotonic=previous[1],
+                           wall=wall, monotonic=monotonic, recording_id=recording_id, sequence=sequence))
                 raise ValueError("记录期间本机时钟跳变")
-            proof = measure(trace_writer(diagnostics))
+            proof = measure(trace, recording_id=recording_id, sequence=sequence)
             output.write(json.dumps(proof, ensure_ascii=False) + "\n")
             output.flush()
             previous = (wall, monotonic)
+            sequence += 1
             if time.time() >= until:
+                trace(dict(state="record_end", recording_id=recording_id, cycles=sequence,
+                           wall=time.time(), monotonic=time.monotonic(), until=until))
                 return
             time.sleep(min(30, max(0, until - time.time())))
 
