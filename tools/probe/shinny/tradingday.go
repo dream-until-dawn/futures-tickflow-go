@@ -2,23 +2,21 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
-
-	"github.com/coder/websocket"
 )
 
 // dayNode 是序列节点上与「交易日边界」有关的几个字段。
 type dayNode struct {
-	lastID   int64
-	startID  int64
-	endID    int64
-	newest   time.Time // 最新一根的 datetime（天勤按开盘时刻标注）
-	first    time.Time // 【本交易日第一根】的 datetime，即 bar[startID]
-	haveSpan bool      // start/end 两个字段是否都拿到了
+	lastID    int64
+	startID   int64
+	endID     int64
+	newest    time.Time // 最新一根的 datetime（天勤按开盘时刻标注）
+	first     time.Time // 【本交易日第一根】的 datetime，即 bar[startID]
+	haveSpan  bool      // start/end 有效且首根可解释
+	haveStart bool
+	haveEnd   bool
 }
 
 // span 返回 end − start + 1，即这个交易日【声称】有多少根 1m。
@@ -28,101 +26,7 @@ func (n dayNode) span() int64 { return n.endID - n.startID + 1 }
 //
 // 与 depths 的区别：这里要的是【最新】的一段，所以不给 focus_datetime。
 func dayNodes(ctx context.Context, md, tok string, syms []string) (map[string]dayNode, error) {
-	c, _, err := websocket.Dial(ctx, md, &websocket.DialOptions{
-		CompressionMode: websocket.CompressionNoContextTakeover,
-		HTTPHeader: http.Header{
-			"User-Agent":    {"tqsdk-python 3.10.2"},
-			"Accept":        {"application/json"},
-			"Authorization": {"Bearer " + tok},
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	defer c.CloseNow()
-	c.SetReadLimit(256 << 20)
-
-	send := func(v any) { b, _ := json.Marshal(v); c.Write(ctx, websocket.MessageText, b) }
-	const durNano = int64(60) * 1e9
-	durKey := fmt.Sprintf("%d", durNano)
-
-	for i, s := range syms {
-		send(map[string]any{"aid": "set_chart", "chart_id": fmt.Sprintf("t%d", i),
-			// 500 要盖住整个交易日（rb 345 根）——窗口不够长时 bar[startID]
-			// 会掉在窗口外、first 取不到，而那正好发生在日盘后段，
-			// 也就是这条探针最需要它的时候。
-			"ins_list": s, "duration": durNano, "view_width": 500})
-	}
-	send(map[string]any{"aid": "peek_message"})
-
-	snap := map[string]any{}
-	out := map[string]dayNode{}
-	deadline := time.Now().Add(90 * time.Second)
-	for time.Now().Before(deadline) && len(out) < len(syms) {
-		_, msg, err := c.Read(ctx)
-		if err != nil {
-			break
-		}
-		var m struct {
-			Aid  string           `json:"aid"`
-			Data []map[string]any `json:"data"`
-		}
-		if json.Unmarshal(msg, &m) != nil || m.Aid != "rtn_data" {
-			send(map[string]any{"aid": "peek_message"})
-			continue
-		}
-		for _, d := range m.Data {
-			merge(snap, d)
-		}
-		for i, s := range syms {
-			if _, seen := out[s]; seen {
-				continue
-			}
-			ch := obj(snap, "charts", fmt.Sprintf("t%d", i))
-			if ch == nil {
-				continue
-			}
-			if ready, _ := ch["ready"].(bool); !ready {
-				continue
-			}
-			ser := obj(snap, "klines", s, durKey)
-			if ser == nil {
-				continue
-			}
-			last, ok := ser["last_id"].(float64)
-			if !ok || last < 0 {
-				continue
-			}
-			n := dayNode{lastID: int64(last)}
-			// 「拿不到」与「值为 0」必须分开——0 是个合法的 bar id。
-			st, okS := ser["trading_day_start_id"].(float64)
-			en, okE := ser["trading_day_end_id"].(float64)
-			n.startID, n.endID, n.haveSpan = int64(st), int64(en), okS && okE
-
-			// 本交易日第一根：bar[startID]。它是「今天有没有夜盘」的直接证据——
-			// 21:00 起 ⇒ 那天有夜盘；09:00 起 ⇒ 那天停了夜盘。
-			if n.haveSpan {
-				if r := obj(obj(ser, "data"), fmt.Sprintf("%d", n.startID)); r != nil {
-					if ts, ok := r["datetime"].(float64); ok && ts != 0 {
-						n.first = time.Unix(0, int64(ts)).In(cst)
-					}
-				}
-			}
-
-			// 最新一根的 datetime：按 id 取，不靠 map 遍历顺序
-			if r := obj(obj(ser, "data"), fmt.Sprintf("%d", int64(last))); r != nil {
-				if ts, ok := r["datetime"].(float64); ok && ts != 0 {
-					n.newest = time.Unix(0, int64(ts)).In(cst)
-				}
-			}
-			out[s] = n
-		}
-		send(map[string]any{"aid": "peek_message"})
-	}
-	if len(out) == 0 {
-		return nil, fmt.Errorf("没有任何合约就绪（%d 个）", len(syms))
-	}
-	return out, nil
+	return collectDayNodes(ctx, md, tok, syms, "", 90*time.Second)
 }
 
 // 标称每交易日 1m 根数。夜盘分钟 + 日盘 225 分钟（09:00-10:15 / 10:30-11:30 / 13:30-15:00）。
@@ -502,8 +406,12 @@ func probeSuspendedNightSpan(ctx context.Context, md, tok string) {
 	)
 	name := "shinny-suspended-night-span"
 
-	nodes, err := dayNodes(ctx, md, tok,
-		[]string{subject, noNight, hasNight, expired, cffex})
+	if *dayNodeOut == "" {
+		report(name, "FAIL", "L9必须给-day-node-out保存原始取证；未启动节点查询")
+		return
+	}
+	nodes, err := collectDayNodes(ctx, md, tok,
+		[]string{subject, noNight, hasNight, expired, cffex}, *dayNodeOut, 90*time.Second)
 	if err != nil {
 		report(name, "FAIL", "拉取失败: "+err.Error())
 		return

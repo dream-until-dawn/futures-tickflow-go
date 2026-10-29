@@ -31,6 +31,7 @@ import (
 // template.go 的方向是【本库是被测对象、真值来自天勤】，与上面那条不冲突：
 // 那条禁的是拿本库当**判定依据**。方向反了，就不是同一件事。
 var mustNotImportLibrary = []string{
+	"daynodes.go",   // 原始节点取证与完整性读取，只依赖外部协议，不用本库日历作判据。
 	"sessionend.go", // 指定末根的离线反例筛查，只依赖原始帧，不用本库日历作判据。
 	"main.go",
 	"tradingday.go",  // 里面的 rbSession 是照交易所公布写死的，不许改成读日历
