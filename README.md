@@ -103,6 +103,8 @@ python tools/probe/probe.py
 
 ## 文档
 
+回测引擎和其他使用者请先读[接入与维护手册](docs/consumer-maintenance.md)：能力、字段语义、接入流程、错误处置、已知不足和证据置信度集中在此。
+
 回测引擎当前可用能力与接入边界见[阶段性交付说明](docs/staged-delivery-20261029.md)；原v0.11完整范围的停夜盘Live/L9仍是后续专项，暂未打tag。
 
 | 文档 | 写给谁 |
