@@ -1,0 +1,240 @@
+{
+  "schema": "rb-margin-effective-v1",
+  "source_commit": "16a0db0160d61eac16f7de235fc597045a7062cc",
+  "old_packages": [
+    {
+      "manifest": "C:\\Temp\\tickflow-p0-shfe-short-20261103-bc5b06e95f444822a8ee0a322d6f79ca\\manifest.json",
+      "sha256": "20028c7319159038b7aebc85a010275a4044569b8ff0cab519ca80da8b1b9e5c",
+      "files": 40
+    },
+    {
+      "manifest": "C:\\Temp\\tickflow-p0-rb-append-20261103-8fd44813fd174d8bb73bcff382b1c9cb\\manifest.json",
+      "sha256": "6b25de319a9afee3386741f6539b7ffbb47977be5fe084f944a27d017718a442",
+      "files": 74
+    }
+  ],
+  "margin": {
+    "instrument": "SHFE.rb2610",
+    "applicable_trade_day": "2026-09-01",
+    "historical_positions_repriced_at": "2026-08-31 end-of-day settlement event",
+    "next_session_start": "2026-08-31T21:00:00+08:00",
+    "previous_spec_long_short": "0.07",
+    "new_spec_long_short": "0.10",
+    "risk_rule_effective": "2026-07-06",
+    "rb_rule_effective": "2026-01-01",
+    "risk_article": "5",
+    "rb_article": "45",
+    "exact_settlement_wall_clock": "not_recorded; do not use 15:00 or update_date as actual event timestamp",
+    "company_margin": "not established"
+  },
+  "notice_scope": {
+    "index_requests": 5,
+    "index_request_budget": 12,
+    "body_requests": 12,
+    "body_request_budget": 12,
+    "rule_requests": 2,
+    "rule_request_budget": 4,
+    "coverage_pages": [
+      4,
+      5,
+      6
+    ],
+    "all_index_rows": 60,
+    "target_date_range": [
+      "2026-08-27",
+      "2026-09-04"
+    ],
+    "target_titles": 15,
+    "shfe_target_bodies_read": 10,
+    "ine_target_bodies_not_read": 5,
+    "prior_bodies_read": 2,
+    "retries": 0,
+    "unread_before_boundary": "other earlier continuing measures not exhaustively reviewed"
+  },
+  "finding": {
+    "rb_universal_margin_or_price_limit_adjustment_in_read_notices": "not found; fixed-stage margin change remains established",
+    "client_restrictions_present": true,
+    "rb_affected_clients_excluded": false,
+    "no_extra_restrictions_proven": false,
+    "rb_delivery_brand_change_present": true
+  },
+  "validation": {
+    "old_files_hashed": 114,
+    "margin_snapshots": true,
+    "official_rules_and_calendar": true,
+    "index_dates_and_unique_urls": true,
+    "body_dates_and_classification": true,
+    "negative_controls": [
+      "missing_page",
+      "dropped_notice",
+      "same_date_tables_not_interchangeable",
+      "notice_delivery_date_not_publication_date"
+    ]
+  },
+  "gaps": [
+    "exact real settlement completion second not obtained",
+    "no proof all account/client restrictions absent",
+    "older continuing or cross-channel notices not exhaustively audited",
+    "market-maker attachments and transferred INE bodies not examined",
+    "broker-specific historical margin/fees not verified",
+    "model event ordering verified, not actual trade or broker receipt evidence"
+  ],
+  "evidence_package": {
+    "path": "C:\\Temp\\tickflow-rb-effective-20261103-34fba126f3e7471e8a6cefdc72ac19a1",
+    "manifest": "C:\\Temp\\tickflow-rb-effective-20261103-34fba126f3e7471e8a6cefdc72ac19a1\\manifest.json",
+    "manifest_sha256": "ca456acd04cbbed05595286a46b7ce503928b320a4886bd5dd01aed19094b0da",
+    "files": 85
+  },
+  "notice_assessments": [
+    {
+      "page": 5,
+      "date": "2026-09-02",
+      "title": "关于对部分客户采取限制开仓监管措施的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260902_833213.html",
+      "classification": "client_restriction_unspecified",
+      "assessment": "账户组日内开仓超限，公开正文不列具体品种/合约或客户清单，不能排除RB客户适用",
+      "body_sha256": "18070fd8e32ea2a502894066abc6616551586bdfa087515a16df0ad367d89ed0",
+      "article_sha256": "cd5409614211b74a954e79738d39461771e27a5f99b50ef81f97ba774e1615d5"
+    },
+    {
+      "page": 5,
+      "date": "2026-09-02",
+      "title": "关于同意上海裕强供应链管理有限公司调整铜、铝、锌期货库容的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260902_833203.html",
+      "classification": "warehouse_non_rb",
+      "assessment": "铜铝锌库容调整，不是RB交易参数调整",
+      "body_sha256": "e3c27d9996937e9038a511b61c2b67147d15429170e0ce9a74bca2cdd43b763d",
+      "article_sha256": "f8dba7a50734cd180dc919a1ba046c1c296d317db1a10db886307c9dfff4b129"
+    },
+    {
+      "page": 5,
+      "date": "2026-09-01",
+      "title": "违规处理决定公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260901_833192.html",
+      "classification": "named_client_suspension",
+      "assessment": "涉白银期权的个别当事人开仓暂停，自收到决定书次日起三个月；不推断处分仅限涉案品种，不复述身份",
+      "body_sha256": "a674eb673414f8e1a3b831bc0523848b1c56f3e16eb01ed86dea4c15ad67300e",
+      "article_sha256": "e4d9a744351a5836b29c47e2bd07fdbeb112113805ff468c91304ff848e3dbad"
+    },
+    {
+      "page": 5,
+      "date": "2026-09-01",
+      "title": "违规处理决定公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260901_833191.html",
+      "classification": "named_client_suspension",
+      "assessment": "涉铝期权的个别当事人开仓暂停，自收到决定书次日起三个月；不推断处分仅限涉案品种，不复述身份",
+      "body_sha256": "184f1b9ef9bf41a73fc12cb0e9256a7588bb825f7b4ff1b75d77d0e60d304432",
+      "article_sha256": "9ae3eab8b536f3e8345b243cb05ce5b46a1e776a764bfe7ccafcbd962ea535ac"
+    },
+    {
+      "page": 5,
+      "date": "2026-09-01",
+      "title": "关于公布不锈钢、热轧卷板期权及部分期货、期权品种做市商名单的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260901_833187.html",
+      "classification": "market_maker_roster",
+      "assessment": "做市商名单，不是全体普通RB客户保证金或涨跌停调整",
+      "body_sha256": "35741d44a939c230b855a2e5a53ec50cae1a0e06d46f05e85675ae492b82828c",
+      "article_sha256": "fbf55bff45ca1dea4ec610b569941e9c4d84fa5c5860ed51f076330e90a457e3"
+    },
+    {
+      "page": 5,
+      "date": "2026-08-31",
+      "title": "关于对部分客户采取限制开仓监管措施的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260831_833174.html",
+      "classification": "client_restriction_unspecified",
+      "assessment": "三组实际控制关系账户开仓超限，品种/合约和身份范围未公开，不能排除RB客户适用",
+      "body_sha256": "f20cf716567081ff257343c3cca41dc85cd517509d9e67578293c02ee6fa5eb9",
+      "article_sha256": "077495af711d45fb5ea4848a9fc4f769076dca94c3198b0b1fea87bfebe59202"
+    },
+    {
+      "page": 5,
+      "date": "2026-08-31",
+      "title": "关于热轧卷板期权、不锈钢期权上市交易有关事项的通知",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260831_833171.html",
+      "classification": "other_product_options",
+      "assessment": "热轧卷板、不锈钢期权上市安排，不是RB期货普遍参数调整",
+      "body_sha256": "b5e94e13552d2eb38834b8b4912dd5e3166a0a4bfd660a29073e928687732058",
+      "article_sha256": "b1f77257ccd75257636ee07b04ebf1f471d1e464c1530b73ee4e419460bb3119"
+    },
+    {
+      "page": 5,
+      "date": "2026-08-28",
+      "title": "关于发布《上海期货交易所做市商业务指南》（修订案）的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260828_833145.html",
+      "classification": "market_maker_rules_future_effective",
+      "assessment": "做市商业务指南修订9/11施行，附件未在本轮下载，不能当目标窗口普通RB交易限制",
+      "body_sha256": "dc6f4056a4aae59cc7cd58b1fd14a0c76121c2eeafafa6bf112f51b3143e646c",
+      "article_sha256": "e61725d800e2e8ac0b52210e1b5bd412e768900ccc352300bc0cf74df9e341da"
+    },
+    {
+      "page": 5,
+      "date": "2026-08-28",
+      "title": "关于发布《上海期货交易所做市商管理办法》（修订案）的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260828_833137.html",
+      "classification": "market_maker_rules_future_effective",
+      "assessment": "做市商管理办法修订9/11实施，附件未在本轮下载，不能当目标窗口普通RB交易限制",
+      "body_sha256": "bd194331dadb1b84d6a0634de8637e1e38563d38c4eb648ec8216f7f4bef4ba8",
+      "article_sha256": "8717c2970fe598e5c0ce4115e505a35eb169a361d2db7621e25f603e831f2ca8"
+    },
+    {
+      "page": 5,
+      "date": "2026-08-28",
+      "title": "关于同意湖南华菱钢铁股份有限公司“湘钢”牌螺纹钢注册的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260828_833138.html",
+      "classification": "rb_delivery_brand",
+      "assessment": "RB可交割品牌注册，自公告日起可用于交割；不能据此说窗口对RB完全无变化",
+      "body_sha256": "10e8e6d35fa2396b0c37bb9ad310dac25ec1349a4c6e0025c6c3c795a94fc1a8",
+      "article_sha256": "206ddebec6658764543fb970cef2dfdd81bcb30f4d9a1c4bd5a002a867da6b32"
+    },
+    {
+      "page": 6,
+      "date": "2026-08-26",
+      "title": "关于对部分客户采取限制开仓监管措施的公告",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260826_833108.html",
+      "classification": "prior_client_restriction_unspecified",
+      "assessment": "边界前一日账户组开仓超限限制，明确列入样本，不排除延续到目标窗口",
+      "body_sha256": "46c6d1393a15b86387a4f9b5265c1d6f74859c21da9eaa24e6792ab0a42a997d",
+      "article_sha256": "b1b87e606319c8f4097a13faaaf3d59d26e7bd3e11b8a0aadd720084f1801ae9"
+    },
+    {
+      "page": 6,
+      "date": "2026-08-21",
+      "title": "关于做好市场风险控制工作的通知",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202608/t20260821_833068.html",
+      "classification": "prior_risk_warning",
+      "assessment": "前置能源化工风险提示，未在正文设定RB涨跌停或保证金新数值",
+      "body_sha256": "66113b28ee02b78ce114c667cedfa701d07b89b292f9d5a9b0fef9c294b12b62",
+      "article_sha256": "1843828c5d1399ead73cf1cd0f082e4dcbc2ce69711adbeaab19714070aaf867"
+    }
+  ],
+  "source_files": {
+    "notice-assessment.json": {
+      "size": 6821,
+      "sha256": "726c5a17dc1c6ddc8c05ecba7e20c103f419427c52c3c22dbbc77fa51d83dc5a"
+    },
+    "notice-index-parsed.json": {
+      "size": 18774,
+      "sha256": "3bcb2dcbae168411d02ae82a3da8fe8f0e30b3b3b0a5a725c186936abae54798"
+    },
+    "rb-product-notes.body": {
+      "size": 357019,
+      "sha256": "eaecafa0076686363e40f74cf3788e7608255016848809e64ec927262516cc51"
+    },
+    "rb2610-effective-snapshots.json": {
+      "size": 2074,
+      "sha256": "4ab3ba29b4d2969b235c0cb7e5b378eedba1c8294174c4f6389871ccff1f648f"
+    },
+    "review_effective.py": {
+      "size": 10636,
+      "sha256": "aead0b6e6499b6093a872dcaf69034668c873ebb93e0d324486daaac3179dad3"
+    },
+    "risk-control-202606.body": {
+      "size": 313946,
+      "sha256": "d4ab0b9de22dd2f436db7a856184e46f9e0947ce14f552d588dcf946e9ed0ea6"
+    },
+    "rule-copies/rb-rules-202601.body": {
+      "size": 210620,
+      "sha256": "b19deb6ee3dfb44cf83d760fe96893eb2a53758d78488b6407df6e2245379841"
+    }
+  }
+}
