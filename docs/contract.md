@@ -611,6 +611,24 @@ curl -C - -o tq.json "https://openmd.shinnytech.com/t/md/symbols/latest.json"
 
 ⛔ **这一行原来的大小是那个被推翻过 27 倍的旧值，动作是【接着往下拿】那一种；两者都已作废**（真实约 334 MiB；而那个动作拿不到压缩、比重来慢约 11 倍）。改成：带 gzip 整包拉，~15 MiB / 约 1 小时；断了就重来，别续传。看 `trading_time` 是否还在。
 
+## 历史目录复用后的shinnyref失败分类（2026-11-05）
+
+`refdata/catalog.Candidates`开始复用已取得的`shinnyref.Contract`快照，原“首个包外消费者前必须公开失败分类”的到期条件已触发。新增以下公开哨兵，均可用`errors.Is`分类，包括经`fmt.Errorf`包装后；内部既有错误身份不变，不改变成功结果或增加网络请求。
+
+| 哨兵 | 含义与处置 |
+|---|---|
+| `ErrNotFuture` | 解码记录不是FUTURE，按实际产品类型分流，不能视为零条期货 |
+| `ErrMissing` | 必要字段缺失；拒绝补全，核源结构 |
+| `ErrBadOffset` | 时段端点格式/范围无效；核单位及原值 |
+| `ErrBadSessions` | trading_time结构无效；不猜模板 |
+| `ErrNoGzip` | 未收到约定gzip；不降级拉取巨量明文 |
+| `ErrNotReadToEOF` | 调用方未读至EOF，完整性未经验证；不声称数据损坏或已验成 |
+| `ErrStreamBroken` | 流完整性未通过；不能使用本次数据；如重取须新有界预算 |
+| `ErrBadStatus` | 非200响应（206单列）；不能当空目录 |
+| `ErrRangeAsked` | 收到206，Range与此端点压缩契约不兼容；不拼接不同快照 |
+
+JSON语法错误、请求构造、底层网络和context错误继续以原错误链传播；不是以上哨兵的穷举替代。Scan仍须读取完整对象、核尾部并处理Close错误；取消不能标成完整目录。最后交易日与上市日不由ExpireTs推算；历史时段不从快照trading_time外推。
+
 **将来**（有代码之后）：
 
 ```bash

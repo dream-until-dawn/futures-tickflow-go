@@ -13,7 +13,8 @@ import (
 // DefaultURL 是天勤 openmd 的合约目录。免费、无鉴权。
 const DefaultURL = "https://openmd.shinnytech.com/t/md/symbols/latest.json"
 
-// ⛔ 这几个也**不导出**，而那条到期条件在**包级**（见 contract.go 的包注释）——
+// 以下沿用原私有错误身份；2026-11-05在errors.go公开同一身份的别名。
+// 原设计中这几个不导出，而那条到期条件在包级（见contract.go历史记录）——
 // 它管本包全部哨兵。⚠️ 这几个是后加的，而它们第一版**没有继承**那条到期条件
 // （评审方 2026-09-10 指出）⇒ 判据的粒度是包级，它就该写在包级。
 var (

@@ -1,6 +1,9 @@
 package tickflow_test
 
 import (
+	"errors"
+	"fmt"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/shinnyref"
 	"os/exec"
 	"strings"
 	"testing"
@@ -79,17 +82,15 @@ func countField(t *testing.T, field, want string) int {
 // guard: 到期条件本身。它不是业务测试 —— 到期那天它红，而那正是它的用途。
 // TestRefdataExpiryConditionNotYetDue —— 到期的那天它自己红。
 func TestRefdataExpiryConditionNotYetDue(t *testing.T) {
-	// **两个模块各问一次** —— 见 importCounts 上面那段。
-	for _, dir := range []string{".", "tools"} {
-		if got := importCounts(t, dir)[shinnyrefPkg]; got != 0 {
-			t.Fatalf("模块 %s 里，`%s` 现在有 %d 个包外调用方 —— "+
-				"【这条到期条件到期了】。\n"+
-				"处置不是把这条测试改掉，是：\n"+
-				"  一、把本包对外的失败分类写进 docs/contract.md（本仓文档先行）\n"+
-				"  二、然后导出那些哨兵（errNotFuture / errNotReadToEOF / …）\n"+
-				"  三、再回来改这条测试与 contract.go 的包注释",
-				dir, shinnyrefPkg, got)
-		}
+	// 2026-11-05已按原到期处置顺序完成文档和导出；旧名保留供历史文档定位。
+	// 后继检查真实包外分类；完整私有哨兵覆盖由shinnyref包内AST守卫负责。
+	_, err := shinnyref.DecodeContract([]byte(`{"class":"OPTION"}`))
+	if !errors.Is(fmt.Errorf("catalog candidate: %w", err), shinnyref.ErrNotFuture) || errors.Is(err, shinnyref.ErrMissing) {
+		t.Fatalf("包外类型分类失效: %v", err)
+	}
+	_, err = shinnyref.DecodeContract([]byte(`{"class":"FUTURE"}`))
+	if !errors.Is(err, shinnyref.ErrMissing) || errors.Is(err, shinnyref.ErrNotFuture) {
+		t.Fatalf("缺字段分类失效: %v", err)
 	}
 }
 

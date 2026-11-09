@@ -2,6 +2,8 @@ package tickflow_test
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"go/ast"
@@ -19,7 +21,9 @@ import (
 
 	tickflow "github.com/dream-until-dawn/futures-tickflow-go"
 	"github.com/dream-until-dawn/futures-tickflow-go/calendar/embedded"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/cffexsource"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/officialdaily"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource"
 )
@@ -394,7 +398,12 @@ type capsSource struct {
 func sourcesUnderTest(t *testing.T) []capsSource {
 	t.Helper()
 	cal := testCalendarForCaps(t)
+	official := newOfficialForCaps(t, cal)
 	return []capsSource{
+		{name: "officialdaily", caps: official.Caps, bars: func(ctx context.Context, _ *http.Client, req tickflow.BarRequest) error {
+			_, err := official.Bars(ctx, req)
+			return err
+		}},
 		{name: "sinasource", caps: newSinaForCaps(t, cal).Caps},
 		{name: "cffexsource", caps: newCffexForCaps(t, cal).Caps},
 		{name: "shinnysource", caps: newShinnyForCaps(t, cal, http.DefaultClient).Caps,
@@ -403,6 +412,18 @@ func sourcesUnderTest(t *testing.T) []capsSource {
 				return err
 			}},
 	}
+}
+
+func newOfficialForCaps(t *testing.T, cal tickflow.Calendar) *officialdaily.Source {
+	t.Helper()
+	raw := []byte(`{"o_code":"0000","report_date":"20260910","o_curinstrument":[{"PRODUCTID":"rb_f","DELIVERYMONTH":"2701","OPENPRICE":"3000","HIGHESTPRICE":"3010","LOWESTPRICE":"2990","CLOSEPRICE":"3001","SETTLEMENTPRICE":"3002","PRESETTLEMENTPRICE":"3000","VOLUME":"1","OPENINTEREST":"2"}]}`)
+	sum := sha256.Sum256(raw)
+	ref := evidence.Ref{ID: "synthetic-official-caps", URL: "https://example.org/synthetic", SHA256: hex.EncodeToString(sum[:]), RetrievedAt: time.Date(2026, 9, 11, 0, 0, 0, 0, time.UTC)}
+	source, err := officialdaily.New(cal, []officialdaily.Document{{Format: "shfe-json", Day: 20260910, Evidence: ref, Raw: raw}}, nil, time.Date(2026, 9, 11, 0, 0, 0, 0, time.UTC).UnixMilli())
+	if err != nil {
+		t.Fatal(err)
+	}
+	return source
 }
 
 func newShinnyForCaps(t *testing.T, cal tickflow.Calendar, hc *http.Client) *shinnysource.Client {

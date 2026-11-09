@@ -1,0 +1,352 @@
+{
+  "schema": "historical-core-candidate-v1",
+  "date": "2026-11-09",
+  "branch": "codex/historical-dataflow",
+  "baseline": "2b6d7454aa3c201356d7ec8de8765a616ce154eb",
+  "status": "compatible_core_candidate_history_incomplete",
+  "probe_root": "C:\\Temp\\tickflow-historical-dataflow-20261105-0e2fc9756c714a9b8e5b8acf25f93a0c",
+  "original_interfaces": "Source/Bar/Store/Feed signatures preserved; new packages and error aliases are additive",
+  "daily": {
+    "status": "passed",
+    "contract_days": 9,
+    "exact_decimal_field_checks": 72,
+    "feed_numeric_checks": 63,
+    "network_requests": 0,
+    "scope": "raw numeric/source identity reconciliation; not calendar/roster/exchange timing certification"
+  },
+  "annual": {
+    "status": "passed",
+    "records": 2916,
+    "decimal_checks": 23328,
+    "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+    "artifact_sha256": "18ad7505eb8c138319103d6d729e42f637ff24f0a58c545f14a49b933dced8dc"
+  },
+  "mutations": {
+    "status": "passed",
+    "mutants": 7,
+    "cases": [
+      {
+        "name": "原件哈希失效",
+        "file": "refdata/evidence/evidence.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "8ba4c1df1049f45d085ee183c1599b46bf9b3dde0555349e3075a7374a5d5412",
+        "test": "TestEvidenceHashAndIdentity"
+      },
+      {
+        "name": "无证据日历被接受",
+        "file": "calendar/verified/calendar.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "dada83b5b9c080f5b15df969a0f7279056029fef77f3f0096062f3993549d780",
+        "test": "TestVerifiedCalendarRejectsGapsAndInvalidProof"
+      },
+      {
+        "name": "候选冒充历史映射",
+        "file": "refdata/catalog/catalog.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "44044a5a9c2d18e998e6c3d5d0bac52bac195afe332e2e093d7b480ea7e92225",
+        "test": "TestCatalogAmbiguityUnknownAndSnapshot"
+      },
+      {
+        "name": "漏合约不报错",
+        "file": "refdata/catalog/catalog.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "44044a5a9c2d18e998e6c3d5d0bac52bac195afe332e2e093d7b480ea7e92225",
+        "test": "TestCatalogIndependentRosterAndLifecycle"
+      },
+      {
+        "name": "请求预算失效",
+        "file": "archive/batch/download.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "99317ce02544ccbc9885efd496718b60d34f1c70a72cab8c58d110c407d26565",
+        "test": "TestBatchBudgetResumeAndTamper"
+      },
+      {
+        "name": "年包原件哈希失效",
+        "file": "source/officialdaily/annual.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "37902ee664720e40bffe6d62bd473232231b791e29aebf7f859e8bbb89aa0ea4",
+        "test": "TestAnnualOriginAndArtifactAreBothBound"
+      },
+      {
+        "name": "Feed收盘错列",
+        "file": "source/officialdaily/source.go",
+        "baseline": "passed",
+        "mutant": "assertion_rejected",
+        "source_sha256": "538cbc66099d5cbd4dfbe9517595c57328bbf60baebf49c4945b9890ed0ba398",
+        "test": "TestOfficialSyncStoreFeedResume"
+      }
+    ],
+    "workspace_unchanged": true
+  },
+  "validation": {
+    "go_modules": 3,
+    "checks": [
+      "gofmt",
+      "vet",
+      "test",
+      "doccheck",
+      "generator restoration"
+    ],
+    "python_tests": 81,
+    "windows_synthetic_process_scope": "job as existing offline.yml",
+    "independent_scope": "single detached test passed with dedicated TEMP; full independent run observe ValueError retained, not certified"
+  },
+  "archive": {
+    "plan_sha256": "fb8c4f9256ff4d3d9ad6230e547974377e938763ce8f6791108758b534f778a1",
+    "report_sha256": "461855dd2a3b23e2ee4c60e29b4aa64637c471f0cadf0d6cf7aa86df21f818e2",
+    "planned": 13,
+    "received": 11,
+    "blocked": 2,
+    "resumed_all": true,
+    "network_requests": 0,
+    "partitions": [
+      {
+        "exchange": "CZCE",
+        "product": "",
+        "year": 2026,
+        "planned": 3,
+        "received": 3,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "DCE",
+        "product": "",
+        "year": 2026,
+        "planned": 1,
+        "received": 0,
+        "failed": 0,
+        "blocked": 1,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "GFEX",
+        "product": "",
+        "year": 2026,
+        "planned": 1,
+        "received": 0,
+        "failed": 0,
+        "blocked": 1,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2021,
+        "planned": 1,
+        "received": 1,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2022,
+        "planned": 1,
+        "received": 1,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2023,
+        "planned": 1,
+        "received": 1,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2024,
+        "planned": 1,
+        "received": 1,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2025,
+        "planned": 1,
+        "received": 1,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      },
+      {
+        "exchange": "SHFE",
+        "product": "",
+        "year": 2026,
+        "planned": 3,
+        "received": 3,
+        "failed": 0,
+        "blocked": 0,
+        "unknown": 0,
+        "not_run": 0,
+        "coverage_status": "unverified_calendar_and_roster"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "shfe-daily-20261102",
+      "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20261102.dat",
+      "year": 2026,
+      "format": "shfe-json",
+      "sha256": "d992d13ae01a4c483553940d05ca6e65238db721d348f0754c4fbdb78925650e",
+      "receipt_time": "2026-11-05T05:20:56.741687+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "czce-daily-20261102",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261102/FutureDataDaily.txt",
+      "year": 2026,
+      "format": "czce-txt",
+      "sha256": "62d8ea21e8f8a4e8baabae15e3f32c212b14c7681d12c03d50060940ad5e2508",
+      "receipt_time": "2026-11-05T05:20:56.758536+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-daily-20261103",
+      "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20261103.dat",
+      "year": 2026,
+      "format": "shfe-json",
+      "sha256": "913ee268b928f0dbda76ad6ceec6f6c1a48cb4c294ae586ee876463f9d1dd6bf",
+      "receipt_time": "2026-11-05T05:20:56.772739+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "czce-daily-20261103",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261103/FutureDataDaily.txt",
+      "year": 2026,
+      "format": "czce-txt",
+      "sha256": "33b41258c1ebcc7d1d7cf36124e278565477103e4e5d196d3d92b14f9468a58c",
+      "receipt_time": "2026-11-05T05:20:56.789930+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-daily-20261104",
+      "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20261104.dat",
+      "year": 2026,
+      "format": "shfe-json",
+      "sha256": "9c2826c4b02798738d81b30372108fba451ae82a387bf0729f416fac14bd59b3",
+      "receipt_time": "2026-11-05T05:20:56.804745+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "czce-daily-20261104",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261104/FutureDataDaily.txt",
+      "year": 2026,
+      "format": "czce-txt",
+      "sha256": "c80daa16b085039f8681ab4edd9fa5fb66d3dca861f276908cb69761b73534e8",
+      "receipt_time": "2026-11-05T05:20:56.821674+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-annual-2021",
+      "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119586875148395.zip",
+      "year": 2021,
+      "format": "shfe-annual-zip",
+      "sha256": "e9962695770b84da1001a108fd42b2422ce5be2b9c954fcd7c40e879c32eba48",
+      "receipt_time": "2026-11-05T05:20:39.047098+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-annual-2022",
+      "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119587093379978.zip",
+      "year": 2022,
+      "format": "shfe-annual-zip",
+      "sha256": "38be8b5ff728a6aa34aa1e25a961857cac319a194db8f9c161d3e1af10b5399c",
+      "receipt_time": "2026-11-05T05:20:39.246435+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-annual-2023",
+      "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119587353273027.zip",
+      "year": 2023,
+      "format": "shfe-annual-zip",
+      "sha256": "605e119b8f6e7cd73b02fa18aa75ce1b388d5628aa024d7f5b7961d028a9ec2c",
+      "receipt_time": "2026-11-05T05:20:39.438674+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-annual-2024",
+      "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202501/P020250103380580546440.zip",
+      "year": 2024,
+      "format": "shfe-annual-zip",
+      "sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e",
+      "receipt_time": "2026-11-05T05:20:39.666382+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "shfe-annual-2025",
+      "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202601/P020260317382428557825.zip",
+      "year": 2025,
+      "format": "shfe-annual-zip",
+      "sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902",
+      "receipt_time": "2026-11-05T05:20:39.999585+00:00",
+      "time_semantics": "local reuse receipt time; first HTTP not certified"
+    },
+    {
+      "id": "dce-unavailable",
+      "url": "https://www.dce.com.cn/",
+      "year": 2026,
+      "format": "blocked",
+      "sha256": null,
+      "receipt_time": null,
+      "time_semantics": "blocked; no request"
+    },
+    {
+      "id": "gfex-unavailable",
+      "url": "https://www.gfex.com.cn/",
+      "year": 2026,
+      "format": "blocked",
+      "sha256": null,
+      "receipt_time": null,
+      "time_semantics": "blocked; no request"
+    }
+  ],
+  "logs": {
+    "modules-20261109-ci-scope.log": "db8decc4fb076d447165662113407a27143607a22656c277318219e13a60fed8",
+    "modules-20261109.log": "3658d2baf89861a7af6807aad45c70a8fb4109a28dce2a05e6183a212a4ad5cf",
+    "candidate-modules.log": "3c9a99ab71cca233cfea9776a2994295cb5f93da29d3dae9267d86afbe47c505"
+  },
+  "open_gaps": [
+    "14 product historical session evidence and provider data",
+    "independent historical complete listed universe",
+    "DCE/GFEX official routes",
+    "special OHLC statistical semantics",
+    "consumer upgrade and financial baseline acceptance",
+    "selection-scoped Source constructor still pending"
+  ],
+  "scope": "Raw archive and bounded software/numeric proof only; not all-market complete or strict backtest certification"
+}

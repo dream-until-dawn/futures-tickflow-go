@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>历史行情兼容扩展设计与验收</title><style>body{font:16px/1.8 system-ui;max-width:1100px;margin:30px auto;padding:24px;color:#20374b}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccd6dd;padding:12px;text-align:left}code{overflow-wrap:anywhere}.note{background:#fff1cf;padding:16px}</style>
+<h1>历史行情兼容扩展</h1><p>2026-11-05。独立核验下游原始人工授权后启动，基线 2b6d7454aa3c201356d7ec8de8765a616ce154eb。仅功能分支；不合并 main、不打 tag、不部署、不改资金费用政策。</p>
+<p class="note">目标区间 2021-01-04—2026-11-04，52 个已观察品种。观察记录不是独立挂牌全集，日线存在不证明历史时段，最新参考快照不证明上市日期。实现通过与资料认证完成分别报告。</p>
+<h2>模块与兼容约定</h2><table><tr><th>模块</th><th>设计</th><th>失败边界</th></tr>
+<tr><td>refdata/evidence</td><td>统一原件身份、URL、采集时刻、SHA256；校验原件内容，保存原始十进制文本。</td><td>错误哈希、无身份、时间未知均不能冒充完整证据。</td></tr>
+<tr><td>calendar/verified</td><td>注入有证据的逐自然日记录、实际绝对时段及标称模板，实现原 Calendar。周末、节假日、上市前、未知分别表达。每个覆盖区间必须逐日连续，缺一天构造失败。</td><td>不从当前模板外推；没有历史时段证据的14品种保持未认证，并列出资料需求。实时时段不能用行情日期反证。</td></tr>
+<tr><td>refdata/catalog</td><td>独立历史目录，生命周期可未知；已观察区间与生命周期分列。复用 shinnyref 快照为候选，郑商所原码仅在独立证据绑定的活动区间内唯一消歧。</td><td>不从月份推上市/最后交易日；必须用独立预期清单查删除/未来合约。候选不计认证全集。</td></tr>
+<tr><td>source/officialdaily</td><td>有界读取已存 SHFE/INE JSON、CZCE UTF-8 TXT；原始十进制记录及 PreSettlement 独立附件，原件哈希与记录绑定；Bar 仅作既有浮点计算接口。新增离线 Source，复用 Syncer/segfile/Feed。</td><td>挑战页、日期错配、重复、截断、原件改写、未消歧郑码拒绝；异常OHLC隔离，不修原值、不关闭CheckBars。成交额单位未知则NaN。其他格式逐项报告支持状态。</td></tr>
+<tr><td>archive/batch</td><td>冻结输入清单与本地内容哈希，分批执行、原子收据、复核后恢复；独立公开HTTP下载器限制请求/字节/间隔/超时，不自动重试；源内容验证后再记成功。</td><td>失败、未知、未执行、完成分列；旧收据不替代内容校验。DCE/GFEX既有TLS问题不循环重试、不绕过证书。</td></tr></table>
+<h2>实施阶段</h2><ol><li>只读核对下游提交、请求/字节收据和原件哈希，复算官方/供应商差异及14品种缺口，登记可用格式和未知。</li><li>实现独立元数据、逐日历、目录和官方Source；合成边界测试与本地真实原件探针。</li><li>编排冻结批次；证明真实原件进入Syncer/Store/Feed、关开恢复零HTTP，独立核对十进制字段；验证缺失/篡改/代码歧义/超预算。</li><li>全模块验证、doccheck、有效源码破坏测试；提交可锁定分支和残留缺口。</li></ol>
+<h2>验收口径</h2><p>价格/量仓与独立实现逐字段对比；供应商差异不覆盖官方值。特殊 lu2108/20210728、fu2306/20230530 原始OHLC问题原样隔离。任何本地 fixture 仅证明软件行为，不能作为真实历史制度证据。没有独立日历、挂牌全集、生命周期和临时制度资料时，不输出“全历史完成”。无柜台实测，不作交易可执行性保证。</p>
+<p>执行结果另见 <a href="historical-dataflow-status.html">实施状态和缺口</a>；消费者交付入口为 <a href="consumer-maintenance.md">维护文档</a>。</p></html>

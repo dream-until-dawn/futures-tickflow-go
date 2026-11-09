@@ -1,7 +1,7 @@
 name: Offline verification
 on:
   push:
-    branches: [main, codex/offline-readiness-six]
+    branches: [main, codex/offline-readiness-six, codex/historical-dataflow]
   pull_request:
   workflow_dispatch:
 

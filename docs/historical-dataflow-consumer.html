@@ -1,0 +1,25 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方历史行情消费者接入</title><style>body{font:16px/1.85 system-ui;max-width:1080px;margin:24px auto;padding:24px;color:#20364b}pre{padding:18px;background:#edf3f7;overflow:auto}code{overflow-wrap:anywhere}.note{background:#fff0cd;padding:16px}</style>
+<h1>官方历史行情接入与维护</h1><p class="note">功能分支预览，既有公共接口兼容。真实验收与未决项见<a href="historical-dataflow-status.html">状态页</a>，不能把样本链路当五市场全历史资格。</p>
+<h2>接入顺序</h2><ol><li>冻结独立日历、分期历史时段、合约目录和原件清单。行情日期不能自证日历完整，首末行情不能自证生命周期。</li><li>archive/batch.Run复用已有原件，或明确预算一次获取公开增量；Validator检查业务内容。已知DCE/GFEX失败路线blocked，不绕过TLS或循环重试。</li><li>同一个Calendar对象创建officialdaily.Source和Syncer。Source明确实现CalendarHolder，Caps.ClientUse为None，不虚发HTTP凑闸门计数。</li><li>SyncFrozen核明确日线闭区间，再由原segfile/Feed消费。每目录只对应一个规范全代码及周期；CZCE三位原码不能作跨年代目录键。</li><li>初始、重开、Feed结束三处evidence.VerifyFiles核冻结文件。Feed.Err非nil依原约定作废结果，最后Close；文件校验不替代单写者/只读快照纪律。</li></ol>
+<h2>接口示意</h2><pre>src, err := officialdaily.New(cal, documents, historicalCatalog, frozenNow)
+// 先处理err；CZCE原码须有据Resolve，不猜年份。
+cfg := tickflow.SyncerConfig{
+    Calendar: cal, Store: store,
+    NewSource: func(*http.Client) tickflow.Source { return src },
+    Pacer: pacing.NoPacing(), Timeout: 5 * time.Second,
+}
+proof, err := batch.SyncFrozen(ctx, cfg, explicitDailyRequest, frozenNow)
+// 必须核err及proof.Covered；不能只看Report.Complete()。
+attachments := src.Records(symbol)
+// 持久化附件及SHA。Bar没有PreSettlement，不用上一根收盘补造。</pre>
+<p>Document.Evidence绑定URL、实际采集时刻、完整SHA和版本；Raw提供原件字节。Parse/New核身份、业务日期、格式和唯一合约日；Records交付报价字面量、昨结算、原行号/成员与证据副本。每个请求交易日都必须有记录；先按目录收窄生命周期外日期。缺日、未完结、零/缺OHLC和关系异常阻断Bar，附件仍保留。</p>
+<h2>年度包</h2><pre>python -X utf8 tools/archive/decode_annual.py ORIGINAL.zip NEW.json --sha256 ORIGINAL_SHA --year 2025 --product rb</pre>
+<h2>受控原件归档入口（2026-11-09）</h2><pre>go run ./cmd/archive-batch -plan FROZEN.json -out NEW_ARCHIVE
+go run ./cmd/archive-batch -plan FROZEN.json -out NEW_ARCHIVE -network</pre>
+<p>默认离线。清单schema为historical-archive-v1，明确from/to、max_requests、max_bytes、interval_ms、timeout_ms、max_local_bytes和jobs。Job使用archive/batch.Job字段：id、url、exchange、year、format；日表另给day，本地复用另给local、expected_sha256、retrieved_at。清单冻结在frozen-plan.json；修改任何字节须新建批次。received_all_planned_originals只表示本计划原件通过指定级别验证，不认证全市场、全历史或回测资格。退出码0为本计划全部received；blocked/failed保留报告并退出1。</p>
+<p>支持shfe-json（SHFE/INE共享官方表）、czce-txt、shfe-annual-zip、identity-only（仅有据本地导入）。年包此处只核ZIP成员、年份、CRC及预算，行解码另行执行；不依赖Calendar、catalog或Feed，14品种时段缺口不会阻止其可验证原件归档。DCE/GFEX既有路线须blocked，禁止该入口新发网络请求。每个HTTP412/404、截断或超限结果保存有界正文、真实SHA、status/final_url及complete/partial/none；前缀SHA不冒充完整原件。无响应明确none。恢复时先复核封存字节，沿用失败/未知状态，不重取；跨次调用扣除旧HTTP尝试和正文消耗，未知网络消耗阻断新请求。字节预算为实际读取的响应体，不含协议开销。</p>
+<p>report.json含逐项收据和按任务登记的市场/年/品种计数；共享日表可能含多个市场，不按登记标签伪造正文覆盖。真实13项离线清单/结果位于探针根目录的controlled-archive-plan-20261109.json与controlled-archive-20261109/report.json：六份日表、2021—2025五年包均received，DCE/GFEX两项blocked；两次运行均零HTTP，第二次全部复核复用。此冻结样本末日是2026-11-04，不声称已补至11月9日。</p>
+<p>解码器离线、有界、校CRC、不解压落盘、不覆盖既有产物。XLSX直接读数值XML文本；旧XLS须xlrd==2.0.2，数值只能保留二进制解码表示。只依明确合并格恢复合约号；识别期权/TAS并计数排除；未知代码/表头、错成员月份和重复合约日拒绝。</p>
+<p>Document.Format=annual-decoded-v1；Raw/Evidence指产物，Day设该年1月1日，Evidence.Version等于解码器文件SHA；Origin/Original提供原始ZIP。Go再次核双身份、ZIP CRC、年份、成员/行号及字段；不在Go内部启动Python。来源绑定不能替代独立解码复核。</p>
+<h2>状态和边界</h2><ul><li>catalog.QueryHistory分LifecycleOverlap、Observed、Unresolved；候选不混进已核生命周期。CZCE用YrCd/MnthCd并读FrstTrdDt/LstTrdDt；SHFE将EXPIREDATE单列。CheckSet必须有独立预期清单，含无成交合约。</li><li>verified.Calendar每个自然日都有记录，明确休市用空Sessions，缺记录是未知，缺日构造失败。实际时段使用绝对时刻，每日绑定生效模板及证据；不自动扩展embedded。</li><li>附件保留空串、--和零；Bar结算0为NaN，零/缺OHLC阻断。CZCE明确万元成交额乘10000；SHFE/年包单位未核时Turnover为NaN。</li><li>received/resumed表示验证器通过/复核复用；failed、blocked、in_progress、not_run分别表示失败、禁止尝试、未知执行和未运行。</li><li>Downloader按实例计预算，串行、无自动重试/重定向；失败尝试也计请求。超字节最多多读1探针字节并计消耗；跨进程累计由冻结清单和保留收据控制。</li></ul>
+<p>时间身份注意：local-reuse的RetrievedAt只能按复用收据语义解释，不能自动称首次HTTP采集时间。首次来源时间须追明确父收据并核URL、SHA、长度和字节；父链未获证时点时可得性保持未知。</p><h2>升级纪律</h2><p>锁定分支完整SHA和证据后升级下游，执行原账本正反例。新来源不自动刷新旧segfile，禁止静默混源；原件、时段或目录变更另建冻结结果和目录，保留旧版本可复现。没有下单、柜台验收或收益保证。</p></html>
