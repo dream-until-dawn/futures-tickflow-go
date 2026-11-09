@@ -1,0 +1,38 @@
+{
+  "schema": "rb-margin-recheck-v1",
+  "review_date": "2026-11-09",
+  "reviewed_evidence_commit": "2b6d7454aa3c201356d7ec8de8765a616ce154eb",
+  "prior_index": "rb-margin-effective-20261103.json",
+  "archive_check": {
+    "manifests": 3,
+    "file_entries": 199,
+    "size_and_sha256": "passed",
+    "count_includes_copies": true,
+    "originals_modified": false
+  },
+  "snapshot_positive_controls": "passed: 20260831 trading 0.07; 20260901 trading 0.10; both directions",
+  "negative_controls_rejected": [
+    "Settlement:20260831 used as 20260901 opening argument",
+    "ContractDailyTradeArgument:20260831 used for 20260901",
+    "missing index page",
+    "dropped index notice"
+  ],
+  "official_url_spotchecks": [
+    "https://www.shfe.com.cn/regulation/exchangerules/productrules/202512/t20251231_829962.html",
+    "https://www.shfe.com.cn/regulation/exchangerules/otherrules/202606/t20260622_832192.html",
+    "https://www.shfe.com.cn/publicnotice/notice/202608/t20260831_833174.html",
+    "https://www.shfe.com.cn/publicnotice/notice/202609/t20260902_833213.html"
+  ],
+  "spotcheck_transport": "browser service; not newly sealed raw HTTP bodies",
+  "notice_coverage": "unchanged prior bounded sample; no new index enumeration",
+  "additional_rule_context": {
+    "rb_article_47": "delivery-month preceding month: table limit 4500 lots per direction for customer and non-futures-company member; not full account eligibility or hedge quota certification",
+    "risk_article_8": "highest applicable margin ratio applies",
+    "implemented_account_limits": false
+  },
+  "margin_event_order_confidence": "high within exchange rules and frozen snapshots",
+  "actual_settlement_second": null,
+  "broker_margin_and_account_applicability": "unresolved",
+  "point_in_time_client_availability": "not established",
+  "no_extra_restrictions_proven": false
+}
