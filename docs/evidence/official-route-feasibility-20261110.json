@@ -1,0 +1,203 @@
+{
+  "schema": "official-route-feasibility-v1",
+  "date": "2026-11-10",
+  "base_commit": "6907df5529b368de835123996ea02daadc7d9a3e",
+  "evidence_directory": "C:\\Temp\\tickflow-official-routes-20261110-1915",
+  "budget": {
+    "max_requests": 12,
+    "max_per_market": 6,
+    "max_response_bytes": 4194304,
+    "max_total_bytes": 25165824,
+    "timeout_seconds": 15,
+    "max_elapsed_seconds": 240,
+    "redirects": false,
+    "retries": 0,
+    "normal_tls": true,
+    "initial_jobs": [
+      {
+        "id": "dce-new-home",
+        "market": "DCE",
+        "url": "https://www.dce.cn/"
+      },
+      {
+        "id": "gfex-home",
+        "market": "GFEX",
+        "url": "https://www.gfex.com.cn/"
+      }
+    ]
+  },
+  "actual_requests": [
+    {
+      "id": "dce-new-home",
+      "market": "DCE",
+      "url": "https://www.dce.cn/",
+      "requested_utc": "2026-11-10T11:16:21.249978+00:00",
+      "state": "failed",
+      "error": "URLError: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)>",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 10.013
+    },
+    {
+      "id": "gfex-home",
+      "market": "GFEX",
+      "url": "https://www.gfex.com.cn/",
+      "requested_utc": "2026-11-10T11:16:31.263522+00:00",
+      "state": "failed",
+      "error": "URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.gfex.com.cn'. (_ssl.c:1081)>",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 0.146
+    },
+    {
+      "id": "dce-public-portal",
+      "market": "DCE",
+      "url": "https://extportal.dce.com.cn/",
+      "requested_utc": "2026-11-10T11:17:16.999407+00:00",
+      "state": "failed",
+      "error": "URLError: <urlopen error [SSL: UNSAFE_LEGACY_RENEGOTIATION_DISABLED] unsafe legacy renegotiation disabled (_ssl.c:1081)>",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 0.313
+    }
+  ],
+  "market_data_documents_obtained": 0,
+  "supported_years_proven": [],
+  "public_api_or_network_gate_changed": false,
+  "isolation_results": [
+    {
+      "calendar_scope": "embedded fu template",
+      "day": 20230530,
+      "exact_error": "officialdaily: SHFE.fu2306 2023-05-30 OHLC隔离，原件605e119b8f6e7cd73b02fa18aa75ce1b388d5628aa024d7f5b7961d028a9ec2c行30023",
+      "healthy_queries": [
+        {
+          "bars": 1,
+          "day": 20230529,
+          "native": "fu2306"
+        },
+        {
+          "bars": 1,
+          "day": 20230530,
+          "native": "fu2307"
+        }
+      ],
+      "native": "fu2306",
+      "original_preserved": true,
+      "range_with_bad_day": "nil bars + OHLC isolation error"
+    },
+    {
+      "calendar_scope": "synthetic software isolation only; historical INE.lu qualification unresolved",
+      "day": 20210728,
+      "exact_error": "officialdaily: INE.lu2108 2021-07-28 OHLC隔离，原件317ca857f2293330b1297fdd704263b674ba8033e49ed8e2cfab42c51b7e1c6b行22",
+      "healthy_queries": [
+        {
+          "bars": 1,
+          "day": 20210728,
+          "native": "lu2109"
+        }
+      ],
+      "native": "lu2108",
+      "original_preserved": true,
+      "range_with_bad_day": "nil bars + OHLC isolation error"
+    }
+  ],
+  "actual_source_records": [
+    {
+      "format": "annual-decoded-v1",
+      "ref": {
+        "id": "shfe-annual-2023",
+        "kind": "shfe_annual",
+        "url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119587353273027.zip",
+        "at_utc": "2026-11-05T05:20:39.438674+00:00",
+        "state": "received",
+        "year": 2023,
+        "transport": "local-reuse",
+        "reused_from": "results/rb-history/years/2023.zip",
+        "status": 200,
+        "sha256": "605e119b8f6e7cd73b02fa18aa75ce1b388d5628aa024d7f5b7961d028a9ec2c",
+        "bytes": 24187534,
+        "content_status": "crc_verified_pending_row_parse"
+      },
+      "record": {
+        "exchange": "SHFE",
+        "native": "fu2306",
+        "day": 20230530,
+        "fields": {
+          "pre_settle": "3232",
+          "open": "3651",
+          "high": "3651",
+          "low": "3651",
+          "close": "3232",
+          "settle": "3232",
+          "volume": "2",
+          "turnover": "7.302",
+          "open_interest": "35"
+        },
+        "turnover_unit": "unknown",
+        "member": "所内合约行情报表2023.5.xls",
+        "row": 30023
+      },
+      "decoded_product_records": 2904,
+      "decoded_sha256": "b6060d9bf04733d7c16d3322751790f286f6275eb5ff9376acb19fd9be6282e2"
+    },
+    {
+      "format": "shfe-json",
+      "ref": {
+        "id": "ine-daily-20210728",
+        "kind": "ine_daily",
+        "url": "https://www.ine.cn/data/tradedata/future/dailydata/kx20210728.dat",
+        "at_utc": "2026-11-05T05:23:47.161612+00:00",
+        "state": "failed",
+        "day": "20210728",
+        "status": 200,
+        "final_url": "https://www.ine.cn/data/tradedata/future/dailydata/kx20210728.dat",
+        "transport": "public-https",
+        "sha256": "317ca857f2293330b1297fdd704263b674ba8033e49ed8e2cfab42c51b7e1c6b",
+        "bytes": 27034,
+        "error": "ValueError: OHLC关系矛盾"
+      },
+      "record": {
+        "exchange": "INE",
+        "native": "lu2108",
+        "day": 20210728,
+        "fields": {
+          "open": "3180",
+          "high": "3180",
+          "low": "3180",
+          "close": "3450",
+          "settle": "3450",
+          "pre_settle": "3450",
+          "volume": "1",
+          "open_interest": "4116",
+          "turnover": "3.18"
+        }
+      },
+      "decoded_product_records": 57,
+      "decoded_sha256": "317ca857f2293330b1297fdd704263b674ba8033e49ed8e2cfab42c51b7e1c6b"
+    }
+  ],
+  "mutation": {
+    "removed_guard": "Source OHLC quarantine",
+    "compiled": true,
+    "target_assertion_failed": true,
+    "working_source_unchanged": true
+  },
+  "unresolved": [
+    "DCE and GFEX normal TLS routes unavailable in tested local environment; not proof of universal outage",
+    "lu historical session calendar not certified; synthetic isolation control is software test only",
+    "zero or contradictory OHLC retained but not qualified as strict Bar",
+    "annual decoder structural/hash/identity errors still reject whole document; not just OHLC isolation",
+    "local reuse receipt time is not first original HTTP acquisition"
+  ],
+  "validation": {
+    "three_go_modules_gofmt_vet_test": "passed",
+    "python_tests": "passed via module_sweep enumeration",
+    "generator_restore": "passed; identical workspace fingerprint d5a6c08ae389",
+    "doccheck": "passed 203 documented declarations / 861 source declarations",
+    "windows_synthetic_process_scope": "job, existing CI mode; not independent real capture proof",
+    "initial_sandbox_test": "failed segfile rename Access is denied in virtualized TEMP; rerun dedicated TEMP passed",
+    "full_log_sha256": "4f9e8c78c1c7bba342c6bb5674b9c9f4eae6c8af9a92ff471831c8a57661684c"
+  },
+  "evidence_manifest_sha256": "a8a4058e2d49d406b56a5398860faee0e8c79669dc93b6d539f23393e06369fb",
+  "evidence_manifest_entries": 15
+}

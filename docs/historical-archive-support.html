@@ -5,7 +5,8 @@
 <tr><td>SHFE/INE 2021—2025</td><td>官方年度ZIP离线复用与显式预算HTTPS清单；成员身份、年份、CRC、展开预算检查。本次五年包均归档并恢复，零HTTP；解码后可进入年包Source。</td><td>2025 RB的2916合约日有23328项字段比较，不推广成全部成员数值认证。fu2306/20230530、lu2108/20210728保留原值，异常合约查询隔离，不抹掉整个年包。</td></tr>
 <tr><td>SHFE/INE 2026</td><td>官方日表JSON；校业务状态/日期/期货行/字段，不依赖时段。11/2—4三份共享表已归档，RB/SC样本链路通过。</td><td>共享原件可服务两个市场，不按标签重复下载。还需冻结最新末日、补缺日；任务分区标签不代表表内只有该市场。</td></tr>
 <tr><td>CZCE 2021—2026</td><td>官方UTF-8 TXT；支持品种月份/合约代码表头，按列名检查。归档无需catalog；进入Source须有据消歧。11/2—4三份已归档，RM三日链路通过。</td><td>部分年份/日期未齐。未知编码显式转码并保留原件，不补空表，不猜三位码年份。</td></tr>
-<tr><td>DCE 2021—2026</td><td>既有官网路线blocked，入口禁止新请求；有据本地原件可identity-only导入。</td><td>官方历史连续数据未验成，新路线须先有界核验；不自动重试SSL失败、绕证书或用供应商数据替代官方验收。</td></tr>
-<tr><td>GFEX 上市后—2026</td><td>既有证书问题blocked，禁止本入口访问；本地有据原件可identity-only导入。</td><td>官方通道未解。上市前须独立挂牌资料判定，不把无来源当零成交。</td></tr></table>
+<tr><td>DCE 2021—2026</td><td>既有官网路线blocked，入口禁止新请求；有据本地原件可identity-only导入。</td><td>11/10新域名候选握手EOF，独立门户默认TLS拒绝旧重协商；未取得行情或证明新增年份。详见<a href="official-route-feasibility-20261110.md">本轮有界核验与兼容方案</a>，不绕证书或开启旧TLS降级。</td></tr>
+<tr><td>GFEX 上市后—2026</td><td>既有证书问题blocked，禁止本入口访问；本地有据原件可identity-only导入。</td><td>11/10新首页请求仍证书主机名不匹配，无新增支持年份。上市前须独立挂牌资料判定，不把无来源当零成交。</td></tr></table>
+<p>异常隔离精度：fu2306/20230530已从2023年包复核，lu2108/20210728本轮依据INE日原件；后者在合成日历下只验证软件隔离，不认证历史时段。Bars按单合约和日期请求拒绝异常，其他有效请求仍可运行；结构或身份错误仍可拒绝整个文档。<a href="official-route-feasibility-20261110.md">原值、正常对照及失败记录</a>均保留，不能误隔离整年。</p>
 <h2>实际执行</h2><p>探针根目录：<code>C:/Temp/tickflow-historical-dataflow-20261105-0e2fc9756c714a9b8e5b8acf25f93a0c</code>。controlled-archive-plan-20261109.json冻结13项；controlled-archive-20261109/report.json列11项received、2项blocked，整体incomplete且退出1。第二次全部resumed、零HTTP。样本末日为2026-11-04，不冒充已补至11/9。</p>
 <h2>失败与恢复</h2><p>正文完整性分complete/partial/none。HTTP412/404失败正文、截断/超限前缀分别保存真实SHA和HTTP身份。失败/未知不自动重试；恢复核封存字节，扣除旧网络请求和正文预算。新计划/明确重试须新目录并保留旧诊断。年包received只表示容器校验，identity-only只表示字节身份，均非全行数据或制度资格。</p></html>
