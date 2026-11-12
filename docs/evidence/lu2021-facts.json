@@ -1,0 +1,440 @@
+{
+  "schema": "lu2021-facts-v1",
+  "year": 2021,
+  "day_minutes": [
+    [
+      540,
+      615
+    ],
+    [
+      630,
+      690
+    ],
+    [
+      810,
+      900
+    ]
+  ],
+  "night_minutes": [
+    [
+      1260,
+      1380
+    ]
+  ],
+  "holidays": [
+    {
+      "name": "newyear",
+      "from": 20210101,
+      "to": 20210103,
+      "resume": 20210104,
+      "no_night_after": 20201231,
+      "source": "holiday-newyear-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "spring",
+      "from": 20210211,
+      "to": 20210217,
+      "resume": 20210218,
+      "no_night_after": 20210210,
+      "source": "holiday-spring-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "qingming",
+      "from": 20210403,
+      "to": 20210405,
+      "resume": 20210406,
+      "no_night_after": 20210402,
+      "source": "holiday-qingming-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "labor",
+      "from": 20210501,
+      "to": 20210505,
+      "resume": 20210506,
+      "no_night_after": 20210430,
+      "source": "holiday-labor-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "dragon",
+      "from": 20210612,
+      "to": 20210614,
+      "resume": 20210615,
+      "no_night_after": 20210611,
+      "source": "holiday-dragon-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "autumn",
+      "from": 20210919,
+      "to": 20210921,
+      "resume": 20210922,
+      "no_night_after": 20210917,
+      "source": "holiday-autumn-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    },
+    {
+      "name": "national",
+      "from": 20211001,
+      "to": 20211007,
+      "resume": 20211008,
+      "no_night_after": 20210930,
+      "source": "holiday-national-2021",
+      "annual_tokens": [
+        "〔2020〕73号"
+      ],
+      "notice_tokens": [
+        "上海国际能源交易中心",
+        "晚上不进行夜盘交易",
+        "集合竞价"
+      ]
+    }
+  ],
+  "versions": [
+    [
+      20210101,
+      20210610,
+      "trade-rule-202011-doc"
+    ],
+    [
+      20210611,
+      20211125,
+      "trade-rule-202106-doc"
+    ],
+    [
+      20211126,
+      20211231,
+      "trade-rule-202111-doc"
+    ]
+  ],
+  "rule_reviews": [
+    {
+      "raw_source": "trade-rule-202011-doc",
+      "text_source": "trade-rule-202011-doc-text",
+      "raw_sha256": "2bb59b0c1eba75d50d8db82e05d22f6d5b7a74faf23ccd78e4712133c30bc1c7",
+      "version_token": "2020年11月11日第三次修订",
+      "session_clause": "第一节交易时间是指自交易日日盘09:00至10:15，上市品种实行连续交易的，第一节交易时间是指自从前一个工作日的连续交易开始至当日10:15，能源中心另有规定的除外。"
+    },
+    {
+      "raw_source": "trade-rule-202106-doc",
+      "text_source": "trade-rule-202106-doc-text",
+      "raw_sha256": "add28177bd9a482ea7384c2f80ef44bc4d23622a7fa4951117fd2e53d710f2b6",
+      "version_token": "2021年6月11日第四次修订",
+      "session_clause": "第一节交易时间是指自交易日日盘09:00至10:15，上市品种实行连续交易的，第一节交易时间是指自从前一个工作日的连续交易开始至当日10:15，能源中心另有规定的除外。"
+    },
+    {
+      "raw_source": "trade-rule-202111-doc",
+      "text_source": "trade-rule-202111-doc-text",
+      "raw_sha256": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211",
+      "version_token": "2021年11月26日第五次修订",
+      "session_clause": "第一节交易时间是指自交易日日盘09:00至10:15，上市品种实行连续交易的，第一节交易时间是指自从前一个工作日的连续交易开始至当日10:15，能源中心另有规定的除外。"
+    }
+  ],
+  "sources": {
+    "lu-listing-primary": {
+      "file": "lu-listing-primary.body",
+      "bytes": 118899,
+      "ref": {
+        "id": "lu-listing-primary",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202006/t20200610_796050.html",
+        "sha256": "fb98948dbe2f5910df16a760617178d620e637c7cd57e820ce704f8c45afc574",
+        "retrieved_at": "2026-11-12T09:41:55.927728+00:00"
+      }
+    },
+    "holiday-year-2021": {
+      "file": "holiday-year-2021.body",
+      "bytes": 118480,
+      "ref": {
+        "id": "holiday-year-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202012/t20201223_796876.html",
+        "sha256": "5cf4f96f849e9cf0c2968f1d90c6e22acc450ad334b58976f14ddc81824fb298",
+        "retrieved_at": "2026-11-12T09:42:34.057740+00:00"
+      }
+    },
+    "holiday-newyear-2021": {
+      "file": "holiday-newyear-2021.body",
+      "bytes": 117009,
+      "ref": {
+        "id": "holiday-newyear-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202012/t20201228_796896.html",
+        "sha256": "ee6ebe57175e5638d2d1ba05a7633892868f485f812e24bd361d4d343435797e",
+        "retrieved_at": "2026-11-12T09:42:34.930521+00:00"
+      }
+    },
+    "holiday-spring-2021": {
+      "file": "holiday-spring-2021.body",
+      "bytes": 119262,
+      "ref": {
+        "id": "holiday-spring-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202102/t20210204_797058.html",
+        "sha256": "02dc30b482930c32e7d5dc16522ded2a8c155ed29d3147e402c9f328ad342e91",
+        "retrieved_at": "2026-11-12T09:42:35.674603+00:00"
+      }
+    },
+    "holiday-qingming-2021": {
+      "file": "holiday-qingming-2021.body",
+      "bytes": 116986,
+      "ref": {
+        "id": "holiday-qingming-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202103/t20210329_797208.html",
+        "sha256": "d64025f40a0613a0d7242597e296e1253dd85342c5334f4a8e7c185e3996a4ec",
+        "retrieved_at": "2026-11-12T09:42:36.527982+00:00"
+      }
+    },
+    "holiday-labor-2021": {
+      "file": "holiday-labor-2021.body",
+      "bytes": 119145,
+      "ref": {
+        "id": "holiday-labor-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202104/t20210427_797287.html",
+        "sha256": "1ec87878e84594675015d68a1902c5ae613b7f39a7a603fc4463e0df4e9cf54f",
+        "retrieved_at": "2026-11-12T09:42:37.401232+00:00"
+      }
+    },
+    "holiday-dragon-2021": {
+      "file": "holiday-dragon-2021.body",
+      "bytes": 118764,
+      "ref": {
+        "id": "holiday-dragon-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202106/t20210607_797433.html",
+        "sha256": "1c90a81a94c3d4ea025989731e75ad35f741e9b7a6438bc7b93d059181b31e4b",
+        "retrieved_at": "2026-11-12T09:42:38.321006+00:00"
+      }
+    },
+    "holiday-autumn-2021": {
+      "file": "holiday-autumn-2021.body",
+      "bytes": 116975,
+      "ref": {
+        "id": "holiday-autumn-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202109/t20210914_797869.html",
+        "sha256": "a87824e02ccca5b2673e8e15b440c68d965bb46f4a2ae3ca07969d8b3e65645a",
+        "retrieved_at": "2026-11-12T09:41:57.496936+00:00"
+      }
+    },
+    "holiday-national-2021": {
+      "file": "holiday-national-2021.body",
+      "bytes": 118737,
+      "ref": {
+        "id": "holiday-national-2021",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202109/t20210927_797924.html",
+        "sha256": "978fef9f649ec7774b88277b5eba75b353fe0ecc3c7250aaa7b744223997c8dd",
+        "retrieved_at": "2026-11-12T09:41:56.693497+00:00"
+      }
+    },
+    "holiday-newyear-2022-boundary": {
+      "file": "holiday-newyear-2022-boundary.body",
+      "bytes": 118952,
+      "ref": {
+        "id": "holiday-newyear-2022-boundary",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202112/t20211228_798349.html",
+        "sha256": "eca3d02503a42204392710f96567238f9b1049d01412397856b094dfd978f4a4",
+        "retrieved_at": "2026-11-12T09:47:08.074979+00:00"
+      }
+    },
+    "trade-rule-202011-doc": {
+      "file": "trade-rule-202011-doc.body",
+      "bytes": 60416,
+      "ref": {
+        "id": "trade-rule-202011-doc",
+        "url": "https://www.shfe.com.cn/upload/20201111/1605088830767.doc",
+        "sha256": "2bb59b0c1eba75d50d8db82e05d22f6d5b7a74faf23ccd78e4712133c30bc1c7",
+        "retrieved_at": "2026-11-12T09:44:17.263471+00:00"
+      }
+    },
+    "trade-rule-202106-doc": {
+      "file": "trade-rule-202106-doc.body",
+      "bytes": 58880,
+      "ref": {
+        "id": "trade-rule-202106-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202106/P020240320695753027239.doc",
+        "sha256": "add28177bd9a482ea7384c2f80ef44bc4d23622a7fa4951117fd2e53d710f2b6",
+        "retrieved_at": "2026-11-12T09:44:52.031630+00:00"
+      }
+    },
+    "trade-rule-202111-doc": {
+      "file": "trade-rule-202111-doc.body",
+      "bytes": 62464,
+      "ref": {
+        "id": "trade-rule-202111-doc",
+        "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+        "sha256": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211",
+        "retrieved_at": "2026-11-12T09:44:18.063735+00:00"
+      }
+    },
+    "rules-bc-202011": {
+      "file": "rules-bc-202011.body",
+      "bytes": 119997,
+      "ref": {
+        "id": "rules-bc-202011",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202011/t20201111_796684.html",
+        "sha256": "86f41349f14acf0854284db2a671eaee61c9c79c5cdc8dd70df8300992fadbaf",
+        "retrieved_at": "2026-11-12T09:42:39.192918+00:00"
+      }
+    },
+    "rules-sc-202106": {
+      "file": "rules-sc-202106.body",
+      "bytes": 121476,
+      "ref": {
+        "id": "rules-sc-202106",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202106/t20210611_797462.html",
+        "sha256": "b41fa75b3e63ec11d7cec50e32c38457011a31d08242e123ebf56cb017cc854c",
+        "retrieved_at": "2026-11-12T09:42:40.047191+00:00"
+      }
+    },
+    "rules-202111-official": {
+      "file": "rules-202111-official.body",
+      "bytes": 82913,
+      "ref": {
+        "id": "rules-202111-official",
+        "url": "https://www.ine.cn/publicnotice/notice/202111/t20211126_813108.html",
+        "sha256": "1eaced87abad0f6412436a29d960a625a178b61e12bc7be183bc81711273cd9f",
+        "retrieved_at": "2026-11-12T09:42:40.778523+00:00"
+      }
+    },
+    "compliance-202109": {
+      "file": "compliance-202109.body",
+      "bytes": 15261702,
+      "ref": {
+        "id": "compliance-202109",
+        "url": "https://www.shfe.com.cn/upload/20211110/1636525208614.pdf",
+        "sha256": "4cbcaaa5374d509dc8241df8580d54c4154186574fc6ac363f0461e3476a2d3e",
+        "retrieved_at": "2026-11-12T09:38:44.744160+00:00"
+      }
+    },
+    "ine-trade-202106": {
+      "file": "ine-trade-202106.body",
+      "bytes": 501676,
+      "ref": {
+        "id": "ine-trade-202106",
+        "url": "https://www.shfe.com.cn/content/2021_sc_options/GZ2.pdf",
+        "sha256": "f94244c8ae6e27a78b2de3d9b51323c6235ff6f838b4ef7127f757aedb6dca2a",
+        "retrieved_at": "2026-11-12T09:40:28.755399+00:00"
+      }
+    },
+    "search-night-2021": {
+      "file": "search-night-2021.body",
+      "bytes": 81452,
+      "ref": {
+        "id": "search-night-2021",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "2153175b446812b30fad511e05c7fb587e653086f8997dae7cc42ee992e345a1",
+        "retrieved_at": "2026-11-12T09:44:53.092610+00:00"
+      }
+    },
+    "search-continuous-2021": {
+      "file": "search-continuous-2021.body",
+      "bytes": 22983,
+      "ref": {
+        "id": "search-continuous-2021",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "86d6d0035dd7b279d171079feb8f594bc71edf423e9a6ef29fd708a29f16710a",
+        "retrieved_at": "2026-11-12T09:44:53.921633+00:00"
+      }
+    },
+    "search-suspension-2021": {
+      "file": "search-suspension-2021.body",
+      "bytes": 3944,
+      "ref": {
+        "id": "search-suspension-2021",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "c5d9f4a20b1e59c0898815dd7c4aa0f59335c8d05ef1cb80f60fb3a566494219",
+        "retrieved_at": "2026-11-12T09:44:54.707206+00:00"
+      }
+    },
+    "search-hours-2021": {
+      "file": "search-hours-2021.body",
+      "bytes": 22609,
+      "ref": {
+        "id": "search-hours-2021",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "cf573547d2d8089f25c04f6e1e37530b1566768864d29f595a2f63e02a350912",
+        "retrieved_at": "2026-11-12T09:47:08.880998+00:00"
+      }
+    },
+    "trade-rule-202011-doc-text": {
+      "file": "trade-rule-202011-doc.txt",
+      "bytes": 29933,
+      "ref": {
+        "id": "trade-rule-202011-doc-text",
+        "url": "https://www.shfe.com.cn/upload/20201111/1605088830767.doc",
+        "sha256": "203e33817b6af19085dbbf2164a9f0f710cd23080c542bf20b7709241ea1ae13",
+        "retrieved_at": "2026-11-12T09:44:17.263471+00:00",
+        "version": "2bb59b0c1eba75d50d8db82e05d22f6d5b7a74faf23ccd78e4712133c30bc1c7"
+      }
+    },
+    "trade-rule-202106-doc-text": {
+      "file": "trade-rule-202106-doc.txt",
+      "bytes": 31229,
+      "ref": {
+        "id": "trade-rule-202106-doc-text",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202106/P020240320695753027239.doc",
+        "sha256": "286fb9055ed86bdf64f371626532323838d4487642e0bc8e5da3956d65fe4cc4",
+        "retrieved_at": "2026-11-12T09:44:52.031630+00:00",
+        "version": "add28177bd9a482ea7384c2f80ef44bc4d23622a7fa4951117fd2e53d710f2b6"
+      }
+    },
+    "trade-rule-202111-doc-text": {
+      "file": "trade-rule-202111-doc.txt",
+      "bytes": 31350,
+      "ref": {
+        "id": "trade-rule-202111-doc-text",
+        "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+        "sha256": "eb157730273f53dbf74e2b6de53ec9eb305efacf107c1e23cf6bfa10ed31ddc5",
+        "retrieved_at": "2026-11-12T09:44:18.063735+00:00",
+        "version": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211"
+      }
+    }
+  },
+  "search_roles": [
+    "search-night-2021",
+    "search-continuous-2021",
+    "search-suspension-2021",
+    "search-hours-2021"
+  ],
+  "review_scope": "official published schedule; version dates are document effective dates, not publication wall-clock seconds; no fee/fund rules applied"
+}
