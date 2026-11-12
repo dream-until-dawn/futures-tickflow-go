@@ -1,0 +1,352 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "830ed4263db18d942cca9c8cb2c44070b8c752a3d47ca39a5cbbfac21ca66181",
+  "qualified_profiles": [
+    "SHFE.ao",
+    "SHFE.br",
+    "SHFE.ad",
+    "SHFE.op"
+  ],
+  "source_root": "C:\\Temp\\tickflow-calendar-2025-20261112",
+  "pending_profiles": {
+    "INE": "existing missing originals; no requests",
+    "DCE/GFEX": "no evidenced new route; no requests"
+  },
+  "source_scope": "published continuous schedules only; no point-in-time availability, full lifecycle or account restrictions certification",
+  "calendar": {
+    "path": "calendar/verified/profiles/shfe-2025.json",
+    "sha256": "e5bb05a16d8b8c3a468697f87e611070a597ebecd030bf71bccf81c531ec9438",
+    "summary": {
+      "SHFE.ao": {
+        "natural_days": 365,
+        "trading_days": 243,
+        "day_only_trade_days": [
+          20250102,
+          20250205,
+          20250407,
+          20250506,
+          20250603,
+          20251009
+        ]
+      },
+      "SHFE.br": {
+        "natural_days": 365,
+        "trading_days": 243,
+        "day_only_trade_days": [
+          20250102,
+          20250205,
+          20250407,
+          20250506,
+          20250603,
+          20251009
+        ]
+      },
+      "SHFE.ad": {
+        "natural_days": 205,
+        "trading_days": 141,
+        "day_only_trade_days": [
+          20250610,
+          20251009
+        ]
+      },
+      "SHFE.op": {
+        "natural_days": 113,
+        "trading_days": 75,
+        "day_only_trade_days": [
+          20250910,
+          20251009
+        ]
+      }
+    }
+  },
+  "network": {
+    "direct_requests": 39,
+    "bytes": 2961525,
+    "searches": 14,
+    "max_budget": 48,
+    "DCE_GFEX_INE_requests": 0,
+    "failed_or_challenged": [
+      {
+        "id": "management-202508",
+        "url": "https://www.shfe.com.cn/regulation/exchangerules/otherrules/202508/t20250807_828512.html",
+        "status": 404,
+        "sha256": "e55b00b7408417d23bdf96e10dc5e6897052dff79c6da35bcf0619b7a01a39bd"
+      }
+    ],
+    "recorded_evidence_collection_seconds": 307.574916,
+    "same_request_retries": 0
+  },
+  "source_review": {
+    "raw_receipts": "requests.json (local, raw headers not published)",
+    "index_classification": "search-review.json",
+    "clean_text_selection": "last standalone final rule title; original comparison text preserved in body and full txt",
+    "scope": "public continuous schedules only, no account permission or exhaustive halt certificate"
+  },
+  "positive": {
+    "market_contract_days": 8,
+    "monthly_observation_checks": 35,
+    "products": 4,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "false-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2025-01-02"
+    },
+    {
+      "case": "ad-prelisting-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2025-06-10"
+    },
+    {
+      "case": "op-prelisting-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2025-09-10"
+    },
+    {
+      "case": "rule-publication-date",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2025-08-08"
+    },
+    {
+      "case": "migration-date",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2025-08-08"
+    },
+    {
+      "case": "cross-midnight",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2025-06-16"
+    },
+    {
+      "case": "foreign-ref",
+      "exit": 1,
+      "reason": "annual_evidence_binding",
+      "actual": "annual_evidence_binding"
+    },
+    {
+      "case": "missing-rule-ref",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2025-08-08 management-2025-doc"
+    },
+    {
+      "case": "missing-holiday-ref",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2025-10-09 national-2025"
+    },
+    {
+      "case": "prelisting-closed",
+      "exit": 1,
+      "reason": "annual_version_range",
+      "actual": "annual_version_range"
+    },
+    {
+      "case": "fact-pin",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "false-observed-date",
+      "exit": 1,
+      "reason": "observation_date_set",
+      "actual": "observation_date_set: ao month1"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "exit": 1,
+      "target": "false-first-night",
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "exit": 1,
+      "target": "published-not-effective",
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "date_observation_method": {
+    "product": "SHFE.rb",
+    "dates": 243,
+    "contract_days": 2916,
+    "month_intersections": 35,
+    "source": "same official annual ZIP",
+    "XLSX_reader": "openpyxl 3.1.5 separate from price decoder manual XML reader",
+    "scope": "date cross-check, not official ordinal or hours definition"
+  },
+  "raw_cell_checks": {
+    "reader": "openpyxl 3.1.5, separate XLSX reader; same official ZIP",
+    "checks": [
+      {
+        "native": "ao2502",
+        "day": 20250102,
+        "member": "上期所合约行情报表/所内合约行情报表2025.1.xlsx",
+        "row": 14941,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "op2601",
+        "day": 20251009,
+        "member": "上期所合约行情报表/所内合约行情报表2025.10.xlsx",
+        "row": 64622,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "ad2511",
+        "day": 20250610,
+        "member": "上期所合约行情报表/所内合约行情报表2025.6.xlsx",
+        "row": 5,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "ao2509",
+        "day": 20250808,
+        "member": "上期所合约行情报表/所内合约行情报表2025.8.xlsx",
+        "row": 29112,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "br2509",
+        "day": 20250807,
+        "member": "上期所合约行情报表/所内合约行情报表2025.8.xlsx",
+        "row": 47305,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "br2509",
+        "day": 20250808,
+        "member": "上期所合约行情报表/所内合约行情报表2025.8.xlsx",
+        "row": 47306,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "ad2511",
+        "day": 20250808,
+        "member": "上期所合约行情报表/所内合约行情报表2025.8.xlsx",
+        "row": 10,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      },
+      {
+        "native": "op2601",
+        "day": 20250910,
+        "member": "上期所合约行情报表/所内合约行情报表2025.9.xlsx",
+        "row": 71738,
+        "fields": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "settle",
+          "volume",
+          "open_interest"
+        ],
+        "result": "equal"
+      }
+    ]
+  },
+  "validation": {
+    "Go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "Python_tests": 99,
+    "generator_restore": "passed; workspace fingerprint unchanged",
+    "doccheck": "passed",
+    "compatibility": "2024 regenerated byte-identical; 2024 shared date checks and 2023 legacy CLI real pipelines passed",
+    "race": "three modules passed serially"
+  },
+  "initial_failures": [
+    "sample selection encountered raw nonnumeric empty quote; frozen data unchanged, sample selector corrected",
+    "prelisting control was rejected by version range before natural coverage; isolated unit test checks coverage separately",
+    "race first attempt hit transient .git/index.lock while documentation guard scanned Git internals; scanner skips .git, retains nested module checks and read failures"
+  ],
+  "seal": {
+    "files": 312,
+    "seal_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+    "sealed": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed",
+    "migration": "C:\\Temp\\tickflow-calendar-2025-20261112-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-calendar-2025-20261112-tamper",
+    "verified": "all hashes, lengths and file set match",
+    "tamper_rejected": "shfe-year-2025.body"
+  }
+}

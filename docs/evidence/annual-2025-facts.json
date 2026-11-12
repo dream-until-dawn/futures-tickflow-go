@@ -1,0 +1,821 @@
+{
+  "schema": "annual-calendar-facts-v1",
+  "year": 2025,
+  "previous_trading_day": 20241231,
+  "day_minutes": [
+    [
+      540,
+      615
+    ],
+    [
+      630,
+      690
+    ],
+    [
+      810,
+      900
+    ]
+  ],
+  "events": [
+    {
+      "name": "newyear",
+      "from": 20250101,
+      "to": 20250101,
+      "resume": 20250102,
+      "no_night_after": 20241231,
+      "source": "shfe-boundary-2025"
+    },
+    {
+      "name": "spring",
+      "from": 20250128,
+      "to": 20250204,
+      "resume": 20250205,
+      "no_night_after": 20250127,
+      "source": "spring-2025"
+    },
+    {
+      "name": "qingming",
+      "from": 20250404,
+      "to": 20250406,
+      "resume": 20250407,
+      "no_night_after": 20250403,
+      "source": "qingming-2025"
+    },
+    {
+      "name": "labor",
+      "from": 20250501,
+      "to": 20250505,
+      "resume": 20250506,
+      "no_night_after": 20250430,
+      "source": "labor-2025"
+    },
+    {
+      "name": "dragon",
+      "from": 20250531,
+      "to": 20250602,
+      "resume": 20250603,
+      "no_night_after": 20250530,
+      "source": "dragon-2025"
+    },
+    {
+      "name": "national",
+      "from": 20251001,
+      "to": 20251008,
+      "resume": 20251009,
+      "no_night_after": 20250930,
+      "source": "national-2025"
+    }
+  ],
+  "year_end_no_night_after": 20251231,
+  "year_end_source": "boundary-2026",
+  "profiles": {
+    "SHFE.ao": {
+      "listed": 20230619,
+      "night_minutes": [
+        [
+          1260,
+          1500
+        ]
+      ],
+      "base_sources": [
+        "ao-listing",
+        "shfe-year-2025"
+      ],
+      "version_sources": {
+        "shfe-management-docx": [
+          "shfe-rules-2024",
+          "shfe-ao-business-doc"
+        ],
+        "management-2025-doc": [
+          "rules-202507",
+          "ao-business-2025-doc"
+        ]
+      },
+      "versions": [
+        [
+          20241023,
+          20250807,
+          "shfe-management-docx"
+        ],
+        [
+          20250808,
+          20251231,
+          "management-2025-doc"
+        ]
+      ]
+    },
+    "SHFE.br": {
+      "listed": 20230728,
+      "night_minutes": [
+        [
+          1260,
+          1380
+        ]
+      ],
+      "base_sources": [
+        "br-listing",
+        "shfe-year-2025"
+      ],
+      "version_sources": {
+        "shfe-management-docx": [
+          "shfe-rules-2024",
+          "shfe-br-business-docx"
+        ],
+        "management-2025-doc": [
+          "rules-202507",
+          "br-business-2025-doc"
+        ]
+      },
+      "versions": [
+        [
+          20241023,
+          20250807,
+          "shfe-management-docx"
+        ],
+        [
+          20250808,
+          20251231,
+          "management-2025-doc"
+        ]
+      ]
+    },
+    "SHFE.ad": {
+      "listed": 20250610,
+      "night_minutes": [
+        [
+          1260,
+          1500
+        ]
+      ],
+      "base_sources": [
+        "ad-listing",
+        "shfe-year-2025"
+      ],
+      "version_sources": {
+        "shfe-management-docx": [
+          "shfe-rules-2024",
+          "ad-rules",
+          "ad-business-first-docx"
+        ],
+        "management-2025-doc": [
+          "rules-202507",
+          "ad-business-202508-docx"
+        ]
+      },
+      "from": 20250610,
+      "versions": [
+        [
+          20250610,
+          20250807,
+          "shfe-management-docx"
+        ],
+        [
+          20250808,
+          20251231,
+          "management-2025-doc"
+        ]
+      ]
+    },
+    "SHFE.op": {
+      "listed": 20250910,
+      "night_minutes": [
+        [
+          1260,
+          1380
+        ]
+      ],
+      "base_sources": [
+        "op-listing",
+        "shfe-year-2025"
+      ],
+      "version_sources": {
+        "management-2025-doc": [
+          "rules-202507",
+          "op-rules",
+          "op-business-first-docx"
+        ]
+      },
+      "from": 20250910,
+      "versions": [
+        [
+          20250818,
+          20251231,
+          "management-2025-doc"
+        ]
+      ]
+    }
+  },
+  "sources": {
+    "ao-listing": {
+      "file": "ao-listing.body",
+      "bytes": 118449,
+      "ref": {
+        "id": "ao-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202306/t20230606_800293.html",
+        "sha256": "bb7a956d93a65d49929c3131904d3e8b1b5ff200b3b774e84df8cebf1f9dfed3",
+        "retrieved_at": "2026-11-12T10:47:24.165922+00:00"
+      }
+    },
+    "br-listing": {
+      "file": "br-listing.body",
+      "bytes": 118679,
+      "ref": {
+        "id": "br-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202307/t20230718_800481.html",
+        "sha256": "f74c8d2e0d8e9d550d6b55353e63982e3516468f72e4037fc070ef72de4d1902",
+        "retrieved_at": "2026-11-12T10:48:15.015823+00:00"
+      }
+    },
+    "shfe-boundary-2025": {
+      "file": "shfe-boundary-2025.body",
+      "bytes": 122166,
+      "ref": {
+        "id": "shfe-boundary-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202412/t20241227_824154.html",
+        "sha256": "121919049893e9f8951143605f5e9f5c87b97f888b8ad40644a7fa8471934234",
+        "retrieved_at": "2026-11-12T11:55:55.828470+00:00"
+      }
+    },
+    "shfe-management-docx": {
+      "file": "shfe-management-docx.body",
+      "bytes": 33890,
+      "ref": {
+        "id": "shfe-management-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823628050899479.docx",
+        "sha256": "1a4d3f3d3520dbb13285609b141d4783f6aacade407a22627cf78df33b857e75",
+        "retrieved_at": "2026-11-12T11:59:28.546959+00:00"
+      }
+    },
+    "shfe-management-final": {
+      "file": "shfe-management-final.txt",
+      "bytes": 14977,
+      "ref": {
+        "id": "shfe-management-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823628050899479.docx",
+        "sha256": "d7899dbca442fb3ddf585a678ad460636acfda8080a5c2387295f11f2ef246e1",
+        "retrieved_at": "2026-11-12T12:34:34.740220+00:00",
+        "version": "reviewed-text;origin=1a4d3f3d3520dbb13285609b141d4783f6aacade407a22627cf78df33b857e75"
+      }
+    },
+    "shfe-rules-2024": {
+      "file": "shfe-rules-2024.body",
+      "bytes": 134905,
+      "ref": {
+        "id": "shfe-rules-2024",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/t20240823_802167.html",
+        "sha256": "d6ca3637be232b0517eaa547dc509d19e3fd88397e24f1fe584e556b1f6584e9",
+        "retrieved_at": "2026-11-12T11:55:56.546837+00:00"
+      }
+    },
+    "shfe-ao-business-doc": {
+      "file": "shfe-ao-business-doc.body",
+      "bytes": 72704,
+      "ref": {
+        "id": "shfe-ao-business-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823632356258735.doc",
+        "sha256": "5b8a798b03741cb9871dd8ff1a53c655bc4816a31abbde4a5f5890df83959767",
+        "retrieved_at": "2026-11-12T11:59:30.669512+00:00"
+      }
+    },
+    "shfe-br-business-docx": {
+      "file": "shfe-br-business-docx.body",
+      "bytes": 32062,
+      "ref": {
+        "id": "shfe-br-business-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823636323126914.docx",
+        "sha256": "f5d3f15ef25347e86da33cc1d18b60371ac94cde94c7fb089b771de1c452c36c",
+        "retrieved_at": "2026-11-12T11:59:31.344791+00:00"
+      }
+    },
+    "shfe-year-2025": {
+      "file": "shfe-year-2025.body",
+      "bytes": 132455,
+      "ref": {
+        "id": "shfe-year-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202412/t20241223_824109.html",
+        "sha256": "5252b47d62f8ba14a7f1f6760e8087ab82f4cf2423075bdfdc00aad9882f04ce",
+        "retrieved_at": "2026-11-12T13:16:34.651694+00:00",
+        "version": "official-original"
+      }
+    },
+    "spring-2025": {
+      "file": "spring-2025.body",
+      "bytes": 123176,
+      "ref": {
+        "id": "spring-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202501/t20250122_824396.html",
+        "sha256": "eeb317b3c38d326147c9bf1aeeb1d80c5183d22b0048788401b098fa506b6ed7",
+        "retrieved_at": "2026-11-12T13:16:35.673069+00:00",
+        "version": "official-original"
+      }
+    },
+    "qingming-2025": {
+      "file": "qingming-2025.body",
+      "bytes": 121139,
+      "ref": {
+        "id": "qingming-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202504/t20250401_824935.html",
+        "sha256": "b2364ea5b5a06c80a0c4fd46626109ddf7dbc31ead2c89e7425538af4e3042f9",
+        "retrieved_at": "2026-11-12T13:16:36.918886+00:00",
+        "version": "official-original"
+      }
+    },
+    "labor-2025": {
+      "file": "labor-2025.body",
+      "bytes": 124003,
+      "ref": {
+        "id": "labor-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202504/t20250425_827640.html",
+        "sha256": "21b0a8955b767b5ac1176743dc46f00c85efad1e65abf4d644663f924181e27b",
+        "retrieved_at": "2026-11-12T13:16:38.727416+00:00",
+        "version": "official-original"
+      }
+    },
+    "dragon-2025": {
+      "file": "dragon-2025.body",
+      "bytes": 128923,
+      "ref": {
+        "id": "dragon-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/t20250527_827892.html",
+        "sha256": "108ec73f92cbf37179e4efc8f15ed57c4cadd081e74ccbd995600259a5cb8dab",
+        "retrieved_at": "2026-11-12T13:16:41.425547+00:00",
+        "version": "official-original"
+      }
+    },
+    "national-2025": {
+      "file": "national-2025.body",
+      "bytes": 129079,
+      "ref": {
+        "id": "national-2025",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202509/t20250924_829115.html",
+        "sha256": "3c8bc16cb9a35d0d94247191984d5344c2f9df9063e3fa515e129926197b994e",
+        "retrieved_at": "2026-11-12T13:16:42.559128+00:00",
+        "version": "official-original"
+      }
+    },
+    "boundary-2026": {
+      "file": "boundary-2026.body",
+      "bytes": 124195,
+      "ref": {
+        "id": "boundary-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202512/t20251226_829924.html",
+        "sha256": "9de740925b3ddbe8faa4a609d97e8f1ea1e7111397cf0ea7646dd25434d97cf6",
+        "retrieved_at": "2026-11-12T13:16:45.299869+00:00",
+        "version": "official-original"
+      }
+    },
+    "rules-202507": {
+      "file": "rules-202507.body",
+      "bytes": 127169,
+      "ref": {
+        "id": "rules-202507",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/t20250708_828285.html",
+        "sha256": "c381cd0a375233f8a1786a31070d4cb601a0bcddd560439cefaebd058a239f91",
+        "retrieved_at": "2026-11-12T13:16:46.464282+00:00",
+        "version": "official-original"
+      }
+    },
+    "ad-listing": {
+      "file": "ad-listing.body",
+      "bytes": 127058,
+      "ref": {
+        "id": "ad-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/t20250526_827862.html",
+        "sha256": "e446696b10f69224bbb55123b3aabf6ad4b40ea2bd48a498065020c5415395df",
+        "retrieved_at": "2026-11-12T13:16:48.566706+00:00",
+        "version": "official-original"
+      }
+    },
+    "op-listing": {
+      "file": "op-listing.body",
+      "bytes": 124414,
+      "ref": {
+        "id": "op-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/t20250818_828697.html",
+        "sha256": "ae33f736381305006fc31e4f6353744b0c7a09205678f3d3904ed8e2662b2fd6",
+        "retrieved_at": "2026-11-12T13:16:49.906965+00:00",
+        "version": "official-original"
+      }
+    },
+    "ad-rules": {
+      "file": "ad-rules.body",
+      "bytes": 120937,
+      "ref": {
+        "id": "ad-rules",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/t20250526_827851.html",
+        "sha256": "e82c82b3120184fbf7de977374dc301d64fb8ea440403a4b27f060a33762fc60",
+        "retrieved_at": "2026-11-12T13:16:51.000111+00:00",
+        "version": "official-original"
+      }
+    },
+    "op-rules": {
+      "file": "op-rules.body",
+      "bytes": 120556,
+      "ref": {
+        "id": "op-rules",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/t20250818_828689.html",
+        "sha256": "de9d48cdb318733ac30dfd187650c891b81f5202fe81fbf21dfb0b5992c4aeb8",
+        "retrieved_at": "2026-11-12T13:16:52.375410+00:00",
+        "version": "official-original"
+      }
+    },
+    "next-hedging-rules": {
+      "file": "next-hedging-rules.body",
+      "bytes": 120810,
+      "ref": {
+        "id": "next-hedging-rules",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/t20251128_829643.html",
+        "sha256": "ace20d6d80a340cc18d52e1aba9eaa5ce4c4d6621e0df4b8ecb85e8a2f9e8e04",
+        "retrieved_at": "2026-11-12T13:16:53.547095+00:00",
+        "version": "official-original"
+      }
+    },
+    "api2-notice": {
+      "file": "api2-notice.body",
+      "bytes": 120216,
+      "ref": {
+        "id": "api2-notice",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/t20251119_829553.html",
+        "sha256": "a508eea9e44e95b80a332c425f63273b80db93d9cbdaf06e28babe776629c096",
+        "retrieved_at": "2026-11-12T13:16:55.653777+00:00",
+        "version": "official-original"
+      }
+    },
+    "program-rules": {
+      "file": "program-rules.body",
+      "bytes": 119446,
+      "ref": {
+        "id": "program-rules",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/t20250808_828602.html",
+        "sha256": "b7ed48b8face0d972edbd649508786275b3b89662d4a44dfb994c4ffaee13450",
+        "retrieved_at": "2026-11-12T13:16:58.461276+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-2025-doc": {
+      "file": "management-2025-doc.body",
+      "bytes": 100864,
+      "ref": {
+        "id": "management-2025-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476147513.doc",
+        "sha256": "a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94",
+        "retrieved_at": "2026-11-12T13:20:01.739287+00:00",
+        "version": "official-original"
+      }
+    },
+    "ao-business-2025-doc": {
+      "file": "ao-business-2025-doc.body",
+      "bytes": 107008,
+      "ref": {
+        "id": "ao-business-2025-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476206253.doc",
+        "sha256": "7f773b7d099cf29cb6d380fbdaddc543abbcdc5a2fe02289e6a3ed2a7b46f27c",
+        "retrieved_at": "2026-11-12T13:20:03.674460+00:00",
+        "version": "official-original"
+      }
+    },
+    "br-business-2025-doc": {
+      "file": "br-business-2025-doc.body",
+      "bytes": 107520,
+      "ref": {
+        "id": "br-business-2025-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476229377.doc",
+        "sha256": "133f23b59844a97b3de0951edbb39571b73703204b993e8a7b143d5c1050cd97",
+        "retrieved_at": "2026-11-12T13:20:05.191616+00:00",
+        "version": "official-original"
+      }
+    },
+    "ad-business-202508-docx": {
+      "file": "ad-business-202508-docx.body",
+      "bytes": 42463,
+      "ref": {
+        "id": "ad-business-202508-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250711521477019605.docx",
+        "sha256": "258c2a5c6f06e2ace2ca71f41b51314d6762100318a74ceda80c3a36ce2e58be",
+        "retrieved_at": "2026-11-12T13:20:07.210539+00:00",
+        "version": "official-original"
+      }
+    },
+    "ad-business-first-docx": {
+      "file": "ad-business-first-docx.body",
+      "bytes": 29462,
+      "ref": {
+        "id": "ad-business-first-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/W020250526632427928779.docx",
+        "sha256": "3f822d8ca300cb28b7b5b1b58cd296a4c478f64cd47ae8bcc10119d9c2abc927",
+        "retrieved_at": "2026-11-12T13:20:09.443392+00:00",
+        "version": "official-original"
+      }
+    },
+    "op-business-first-docx": {
+      "file": "op-business-first-docx.body",
+      "bytes": 33164,
+      "ref": {
+        "id": "op-business-first-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/W020250818576773587141.docx",
+        "sha256": "4aae20555ccc08f328dade64559ea6e4291651dc26de5ac73a0fbdfb129a027a",
+        "retrieved_at": "2026-11-12T13:20:11.312560+00:00",
+        "version": "official-original"
+      }
+    },
+    "internationalization-explanation": {
+      "file": "internationalization-explanation.body",
+      "bytes": 19657,
+      "ref": {
+        "id": "internationalization-explanation",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476131927.docx",
+        "sha256": "058f01d71174d20f26396aee35a3eed7d8cfa83f9fc043ddb6719688e1a6f751",
+        "retrieved_at": "2026-11-12T13:20:11.968464+00:00",
+        "version": "official-original"
+      }
+    },
+    "program-management-docx": {
+      "file": "program-management-docx.body",
+      "bytes": 24710,
+      "ref": {
+        "id": "program-management-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/W020250808579960876546.docx",
+        "sha256": "10b7a7c25d55cac06ca32bf9ea3749aa3e8745ae1b7f1051bc00747792e74cd1",
+        "retrieved_at": "2026-11-12T13:20:12.677298+00:00",
+        "version": "official-original"
+      }
+    },
+    "business-next-2026-docx": {
+      "file": "business-next-2026-docx.body",
+      "bytes": 221220,
+      "ref": {
+        "id": "business-next-2026-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302",
+        "retrieved_at": "2026-11-12T13:20:13.578775+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-2025-doc-final": {
+      "file": "management-2025-doc-final.txt",
+      "bytes": 15786,
+      "ref": {
+        "id": "management-2025-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476147513.doc",
+        "sha256": "a4bc50d57d13e76ed89dffb2eb749be77f845e723968e5ed6d07d3965228a8e7",
+        "retrieved_at": "2026-11-12T13:25:37.684176+00:00",
+        "version": "reviewed-final-text;origin=a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94"
+      }
+    },
+    "ao-business-2025-doc-final": {
+      "file": "ao-business-2025-doc-final.txt",
+      "bytes": 16349,
+      "ref": {
+        "id": "ao-business-2025-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476206253.doc",
+        "sha256": "f47af6e86b9716f532e76b30245565ce53246fd9798bd767ca60cd1dbd32fd91",
+        "retrieved_at": "2026-11-12T13:25:37.684996+00:00",
+        "version": "reviewed-final-text;origin=7f773b7d099cf29cb6d380fbdaddc543abbcdc5a2fe02289e6a3ed2a7b46f27c"
+      }
+    },
+    "br-business-2025-doc-final": {
+      "file": "br-business-2025-doc-final.txt",
+      "bytes": 17794,
+      "ref": {
+        "id": "br-business-2025-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476229377.doc",
+        "sha256": "f64c81b82688124abcd8fb9573d52737f318d6e07acb49e379fa07f34bcb5e35",
+        "retrieved_at": "2026-11-12T13:25:37.685824+00:00",
+        "version": "reviewed-final-text;origin=133f23b59844a97b3de0951edbb39571b73703204b993e8a7b143d5c1050cd97"
+      }
+    },
+    "ad-business-202508-docx-final": {
+      "file": "ad-business-202508-docx-final.txt",
+      "bytes": 13604,
+      "ref": {
+        "id": "ad-business-202508-docx-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250711521477019605.docx",
+        "sha256": "97fc438b83ca4888b3aa26b953e2e17b4b5f5b10a69e1747d6b01bc9b07370c4",
+        "retrieved_at": "2026-11-12T13:25:37.686422+00:00",
+        "version": "reviewed-final-text;origin=258c2a5c6f06e2ace2ca71f41b51314d6762100318a74ceda80c3a36ce2e58be"
+      }
+    },
+    "ad-business-first-docx-final": {
+      "file": "ad-business-first-docx-final.txt",
+      "bytes": 13479,
+      "ref": {
+        "id": "ad-business-first-docx-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/W020250526632427928779.docx",
+        "sha256": "34917864eb0af73f4bbb9b7d3468b0c865c83f13eab7e7d373b4db0655e0ef4c",
+        "retrieved_at": "2026-11-12T13:25:37.687012+00:00",
+        "version": "reviewed-final-text;origin=3f822d8ca300cb28b7b5b1b58cd296a4c478f64cd47ae8bcc10119d9c2abc927"
+      }
+    },
+    "op-business-first-docx-final": {
+      "file": "op-business-first-docx-final.txt",
+      "bytes": 17865,
+      "ref": {
+        "id": "op-business-first-docx-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/W020250818576773587141.docx",
+        "sha256": "9301c5e66acf78693338fd86ac2c3f67ff97bc5f16539210a8f37d134a547e46",
+        "retrieved_at": "2026-11-12T13:25:37.687632+00:00",
+        "version": "reviewed-final-text;origin=4aae20555ccc08f328dade64559ea6e4291651dc26de5ac73a0fbdfb129a027a"
+      }
+    }
+  },
+  "reviews": [
+    {
+      "source": "shfe-management-final",
+      "kind": "text",
+      "origin": "shfe-management-docx",
+      "origin_sha256": "1a4d3f3d3520dbb13285609b141d4783f6aacade407a22627cf78df33b857e75",
+      "tokens": [
+        "上海期货交易所交易管理办法（修订版）",
+        "本办法自2024年10月23日起实施",
+        "交易日的第一节是指从前一个工作日的连续交易开始至当天日盘10:15结束"
+      ]
+    },
+    {
+      "source": "shfe-boundary-2025",
+      "kind": "article",
+      "tokens": [
+        "2024年12月31日晚上不进行夜盘交易"
+      ]
+    },
+    {
+      "source": "shfe-rules-2024",
+      "kind": "article",
+      "tokens": [
+        "自2024年10月23日实施"
+      ]
+    },
+    {
+      "source": "ao-listing",
+      "kind": "article",
+      "tokens": [
+        "2023年6月19日",
+        "21:00-次日01:00",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00"
+      ]
+    },
+    {
+      "source": "br-listing",
+      "kind": "article",
+      "tokens": [
+        "2023年7月28日",
+        "21:00-23:00",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00"
+      ]
+    },
+    {
+      "source": "management-2025-doc-final",
+      "kind": "text",
+      "tokens": [
+        "本办法自2025年8月8日起实施",
+        "前一个工作日的连续交易开始",
+        "10:15"
+      ],
+      "origin": "management-2025-doc",
+      "origin_sha256": "a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94"
+    },
+    {
+      "source": "ao-business-2025-doc-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2025年8月8日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "ao-business-2025-doc",
+      "origin_sha256": "7f773b7d099cf29cb6d380fbdaddc543abbcdc5a2fe02289e6a3ed2a7b46f27c"
+    },
+    {
+      "source": "br-business-2025-doc-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2025年8月8日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "br-business-2025-doc",
+      "origin_sha256": "133f23b59844a97b3de0951edbb39571b73703204b993e8a7b143d5c1050cd97"
+    },
+    {
+      "source": "ad-business-202508-docx-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2025年8月8日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "ad-business-202508-docx",
+      "origin_sha256": "258c2a5c6f06e2ace2ca71f41b51314d6762100318a74ceda80c3a36ce2e58be"
+    },
+    {
+      "source": "ad-business-first-docx-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2025年6月10日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "ad-business-first-docx",
+      "origin_sha256": "3f822d8ca300cb28b7b5b1b58cd296a4c478f64cd47ae8bcc10119d9c2abc927"
+    },
+    {
+      "source": "op-business-first-docx-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2025年8月18日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "op-business-first-docx",
+      "origin_sha256": "4aae20555ccc08f328dade64559ea6e4291651dc26de5ac73a0fbdfb129a027a"
+    },
+    {
+      "source": "spring-2025",
+      "kind": "article",
+      "tokens": [
+        "2025年1月27日晚上不进行夜盘交易",
+        "2025年2月5日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "qingming-2025",
+      "kind": "article",
+      "tokens": [
+        "2025年4月3日晚上不进行夜盘交易",
+        "2025年4月7日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "labor-2025",
+      "kind": "article",
+      "tokens": [
+        "2025年4月30日晚上不进行夜盘交易",
+        "2025年5月6日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "dragon-2025",
+      "kind": "article",
+      "tokens": [
+        "2025年5月30日晚上不进行夜盘交易",
+        "2025年6月3日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "national-2025",
+      "kind": "article",
+      "tokens": [
+        "2025年9月30日晚上不进行夜盘交易",
+        "2025年10月9日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "shfe-year-2025",
+      "kind": "article",
+      "tokens": [
+        "〔2024〕204号",
+        "1月28日至2月4日休市",
+        "10月1日至10月8日休市"
+      ]
+    },
+    {
+      "source": "rules-202507",
+      "kind": "article",
+      "tokens": [
+        "自2025年8月8日起实施"
+      ]
+    },
+    {
+      "source": "ad-listing",
+      "kind": "article",
+      "tokens": [
+        "2025年6月10日",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00",
+        "21:00-次日01:00"
+      ]
+    },
+    {
+      "source": "op-listing",
+      "kind": "article",
+      "tokens": [
+        "2025年9月10日",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00",
+        "21:00-23:00"
+      ]
+    },
+    {
+      "source": "boundary-2026",
+      "kind": "article",
+      "tokens": [
+        "2025年12月31日晚上不进行夜盘交易"
+      ]
+    }
+  ]
+}

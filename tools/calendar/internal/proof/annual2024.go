@@ -167,6 +167,14 @@ func profile2024(input calendarFile) (*verified.Calendar, error) {
 }
 
 func observations2024(cal *verified.Calendar, dir string) (int, error) {
+	return observationsAnnual(cal, dir, annualSpec{year: 2024, openDays: 242, products: map[string]annualProduct{
+		"ao": {from: 20240101, to: 20241231}, "br": {from: 20240101, to: 20241231},
+	}})
+}
+
+// observationsAnnual 用另一品种的全年原始公布日期交叉核查；部分年只比较覆盖交集。
+// 该集合证明日期相容，不代替时段公告、上市依据或官方交易日序号。
+func observationsAnnual(cal *verified.Calendar, dir string, spec annualSpec) (int, error) {
 	var input struct {
 		Original fileRef `json:"original"`
 		Artifact fileRef `json:"artifact"`
@@ -201,7 +209,7 @@ func observations2024(cal *verified.Calendar, dir string) (int, error) {
 	if e = json.Unmarshal(raw, &data); e != nil {
 		return 0, e
 	}
-	if data.Schema != "shfe-rb-observed-days-v1" || data.Year != 2024 || data.OriginSHA != input.Original.Ref.SHA256 || data.ScannerSHA != scannerSHA || input.Artifact.Ref.Version != scannerSHA || len(data.Months) != 12 {
+	if data.Schema != "shfe-rb-observed-days-v1" || data.Year != spec.year || data.OriginSHA != input.Original.Ref.SHA256 || data.ScannerSHA != scannerSHA || input.Artifact.Ref.Version != scannerSHA || len(data.Months) != 12 {
 		return 0, fmt.Errorf("observation_identity")
 	}
 	total, dates := 0, 0
@@ -212,23 +220,33 @@ func observations2024(cal *verified.Calendar, dir string) (int, error) {
 		}
 		for i, d := range expected {
 			y, m, _ := d.Split()
-			if y != 2024 || m != month || (i > 0 && expected[i-1] >= d) {
+			if y != spec.year || m != month || (i > 0 && expected[i-1] >= d) {
 				return 0, fmt.Errorf("observation_date")
 			}
 		}
 		dates += len(expected)
-		from := ymd(time.Date(2024, time.Month(month), 1, 0, 0, 0, 0, zone))
-		to := ymd(time.Date(2024, time.Month(month+1), 0, 0, 0, 0, 0, zone))
-		for _, product := range []string{"ao", "br"} {
+		monthFrom := ymd(time.Date(spec.year, time.Month(month), 1, 0, 0, 0, 0, zone))
+		monthTo := ymd(time.Date(spec.year, time.Month(month+1), 0, 0, 0, 0, 0, zone))
+		for product, p := range spec.products {
+			from, to := max(monthFrom, p.from), min(monthTo, p.to)
+			if from > to {
+				continue
+			}
+			want := []tf.TradingDay{}
+			for _, d := range expected {
+				if d >= from && d <= to {
+					want = append(want, d)
+				}
+			}
 			actual := []tf.TradingDay{}
 			e = cal.Walk(tf.ProductKey{Exchange: tf.SHFE, Product: product}, from, to, func(d tf.Day) bool { actual = append(actual, d.Num); return true })
-			if e != nil || !reflect.DeepEqual(actual, expected) {
+			if e != nil || !reflect.DeepEqual(actual, want) {
 				return 0, fmt.Errorf("observation_date_set: %s month%d", product, month)
 			}
 			total++
 		}
 	}
-	if dates != 242 {
+	if dates != spec.openDays {
 		return 0, fmt.Errorf("observation_total")
 	}
 	return total, nil

@@ -3172,20 +3172,7 @@ func TestTestNamesInDocsExist(t *testing.T) {
 			"它在同一片（0dbfa38）里被后继替换掉了，紧跟着的补注记的正是【今天仓里没有它】这件事",
 	}
 
-	have := map[string]bool{}
-	err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
-		if err != nil || info.IsDir() || !strings.HasSuffix(p, "_test.go") {
-			return err
-		}
-		b, rerr := os.ReadFile(p)
-		if rerr != nil {
-			return rerr
-		}
-		for _, m := range regexp.MustCompile(`func (Test[A-Za-z0-9_]+)\(`).FindAllStringSubmatch(string(b), -1) {
-			have[m[1]] = true
-		}
-		return nil
-	})
+	have, err := documentedTestDefinitions(".")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3237,6 +3224,56 @@ func TestTestNamesInDocsExist(t *testing.T) {
 		if have[name] {
 			t.Errorf("%s 在 skip 表里（理由：它不存在），而仓里现在【有】这个测试 —— 例外过期了，删掉它", name)
 		}
+	}
+}
+
+// documentedTestDefinitions 保留嵌套模块扫描，跳过Git内部的瞬时锁与对象；
+// 源码读取失败仍必须报错，不能把消失的测试当作不存在后继续验收。
+func documentedTestDefinitions(root string) (map[string]bool, error) {
+	have := map[string]bool{}
+	err := filepath.Walk(root, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if info.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, "_test.go") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		for _, m := range regexp.MustCompile(`func (Test[A-Za-z0-9_]+)\(`).FindAllStringSubmatch(string(b), -1) {
+			have[m[1]] = true
+		}
+		return nil
+	})
+	return have, err
+}
+
+func TestDocumentedTestDefinitionsIgnoreGitKeepNested(t *testing.T) {
+	root := t.TempDir()
+	for _, dir := range []string{".git", "adapter/nested"} {
+		if err := os.MkdirAll(filepath.Join(root, dir), 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for name, text := range map[string]string{".git/fake_test.go": "func TestGitInternal(", "adapter/nested/real_test.go": "func TestNestedDefinition("} {
+		if err := os.WriteFile(filepath.Join(root, name), []byte(text), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	have, err := documentedTestDefinitions(root)
+	if err != nil || len(have) != 1 || !have["TestNestedDefinition"] || have["TestGitInternal"] {
+		t.Fatalf("definitions: %v %v", have, err)
+	}
+	if _, err := documentedTestDefinitions(filepath.Join(root, "missing")); err == nil {
+		t.Fatal("missing source root accepted")
 	}
 }
 

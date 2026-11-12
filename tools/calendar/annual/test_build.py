@@ -69,6 +69,31 @@ class AnnualBuildTest(unittest.TestCase):
             with self.subTest(values=values), self.assertRaisesRegex(ValueError, reason):
                 record(values, 2024)
 
+    def test_listing_partial_coverage_and_first_night(self):
+        facts = copy.deepcopy(self.facts)
+        p = facts['profiles']['SHFE.ao']
+        p['from'] = p['listed'] = 20240612
+        result = build.generate(facts, self.raw, 'test')
+        rows = result['series'][0]['records']
+        self.assertEqual(rows[0]['day'], 20240612)
+        self.assertEqual(len(rows[0]['sessions']), 3)
+        self.assertEqual(len(rows[1]['sessions']), 4)
+        self.assertEqual(rows[1]['sessions'][0]['Start'], build.stamp(build.date(20240612), 1260))
+        p['from'] = 20240611
+        with self.assertRaisesRegex(ValueError, 'profile_listing'):
+            build.generate(facts, self.raw, 'test')
+        p['from'] = 20240613
+        with self.assertRaisesRegex(ValueError, 'profile_previous_day'):
+            build.generate(facts, self.raw, 'test')
+        p['previous_trading_day'] = 20240612
+        self.assertEqual(build.generate(facts, self.raw, 'test')['series'][0]['records'][0]['day'], 20240613)
+        p['previous_trading_day'] = 20240613
+        with self.assertRaisesRegex(ValueError, 'profile_previous_day'):
+            build.generate(facts, self.raw, 'test')
+        p['to'] = 20250101
+        with self.assertRaisesRegex(ValueError, 'profile_coverage'):
+            build.generate(facts, self.raw, 'test')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

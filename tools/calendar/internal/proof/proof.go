@@ -452,12 +452,26 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 	var n int
 	var e error
 	if input.Schema == "annual-calendar-v1" {
-		if e = bind2024(input, lock, facts, dir); e != nil {
-			return e
-		}
-		cal, e = profile2024(input)
-		if e == nil {
-			n, e = observations2024(cal, dir)
+		switch input.Year {
+		case 2024:
+			if e = bind2024(input, lock, facts, dir); e != nil {
+				return e
+			}
+			cal, e = profile2024(input)
+			if e == nil {
+				n, e = observations2024(cal, dir)
+			}
+		case 2025:
+			spec := spec2025()
+			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+				return e
+			}
+			cal, e = profileAnnual(input, spec)
+			if e == nil {
+				n, e = observationsAnnual(cal, dir, spec)
+			}
+		default:
+			return fmt.Errorf("annual_unreviewed_year")
 		}
 	} else {
 		if e = bind(input, lock, dir); e != nil {

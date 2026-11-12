@@ -46,8 +46,16 @@ def validate(facts, raw):
         last = b
     date(facts['year_end_no_night_after'])
     for key, p in facts['profiles'].items():
-        if len(key.split('.')) != 2 or date(p['listed']) > start:
+        covered_from = date(p.get('from', number(start)))
+        covered_to = date(p.get('to', number(end)))
+        if not start <= covered_from <= covered_to <= end:
+            raise ValueError('profile_coverage')
+        if len(key.split('.')) != 2 or date(p['listed']) > covered_from:
             raise ValueError('profile_listing')
+        if covered_from != start and covered_from != date(p['listed']) and 'previous_trading_day' not in p:
+            raise ValueError('profile_previous_day')
+        if date(p.get('previous_trading_day', facts['previous_trading_day'])) >= covered_from:
+            raise ValueError('profile_previous_day')
         for parts in [facts['day_minutes'], p['night_minutes']]:
             previous = -1
             for a, b in parts:
@@ -64,7 +72,7 @@ def validate(facts, raw):
             if role not in facts['sources']:
                 raise ValueError('version_source')
             previous_end = vb
-        if date(p['versions'][0][0]) > start or previous_end < end:
+        if date(p['versions'][0][0]) > covered_from or previous_end < covered_to:
             raise ValueError('version_coverage')
 
 
@@ -81,15 +89,16 @@ def generate(facts, raw, facts_sha):
     result, summary = [], {}
     for key, p in facts['profiles'].items():
         rows, day_only, count = [], [], 0
-        previous = date(facts['previous_trading_day'])
-        day = start
-        while day <= end:
+        previous = date(p.get('previous_trading_day', facts['previous_trading_day']))
+        day = date(p.get('from', number(start)))
+        covered_to = date(p.get('to', number(end)))
+        while day <= covered_to:
             value = number(day)
             vf, vt, role = next(v for v in p['versions'] if v[0] <= value <= v[1])
             sessions = []
             if not closed(day):
                 count += 1
-                if p['night_minutes'] and number(previous) not in stops:
+                if p['night_minutes'] and value != p['listed'] and number(previous) not in stops:
                     sessions += [{'Start': stamp(previous, a), 'End': stamp(previous, b)} for a, b in p['night_minutes']]
                 elif p['night_minutes']:
                     day_only.append(value)
