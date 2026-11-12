@@ -4,6 +4,7 @@ import datetime as dt
 import io
 import sys
 from pathlib import Path
+from paths import resolved_within
 
 ENV_KEYS = {"TICKFLOW_GAP_" + key for key in
             ("INS", "DAYS", "START", "BEGIN", "DROP", "RESUME", "END", "OUT", "REAL", "DEADLINE", "OFFLINE")} | {"TICKFLOW_LIVE"}
@@ -31,7 +32,7 @@ def child_environment(plan, root, inherited):
     environment = dict(inherited, **overrides)
     if "TICKFLOW_GAP_OUT" in environment:
         output = Path(environment["TICKFLOW_GAP_OUT"].replace("{task_dir}", str(root))).resolve()
-        if output == root or not output.is_relative_to(root):
+        if not resolved_within(output, root, strict_child=True):
             raise ValueError("OUT必须是新任务目录的子目录")
         environment["TICKFLOW_GAP_OUT"] = str(output)
     return environment

@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 from plan import child_environment, quiet_files
+from paths import resolved_within
 
 TERMINAL = {"completed", "failed", "timed_out"}
 
@@ -32,7 +33,7 @@ def signatures(root, names):
     found = {}
     for name in names:
         path = root / name
-        if not path.resolve().is_relative_to(root):
+        if not resolved_within(path, root):
             raise ValueError("监测路径越过任务目录")
         try:
             stat = path.stat()

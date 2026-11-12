@@ -128,7 +128,8 @@ class LifecycleTest(unittest.TestCase):
     def test_empty_file_and_escaping_link_are_not_activity(self):
         (self.base / "empty").touch()
         self.assertEqual(signatures(self.base, ["empty"]), {})
-        with mock.patch.object(Path, "resolve", return_value=self.base.parent):
+        # 新比较器同时解析候选和根目录；只把候选模拟为逃逸，根仍是原任务目录。
+        with mock.patch.object(Path, "resolve", side_effect=[self.base.parent, self.base]):
             with self.assertRaises(ValueError):
                 signatures(self.base, ["escape"])
 
