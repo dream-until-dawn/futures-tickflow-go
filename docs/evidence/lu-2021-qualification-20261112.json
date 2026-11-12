@@ -1,0 +1,722 @@
+{
+  "schema": "lu-2021-qualification-v1",
+  "date": "2026-11-12",
+  "ci_fix_commit": "2af62718be80a2b509cc62294535054766ffa9e9",
+  "ci_fix_run": 43189438353,
+  "ci_fix_matrices": "Linux1.23/Linux1.26/Windows1.26 all success",
+  "evidence_directory": "C:\\Temp\\tickflow-lu-qualification-20261112",
+  "budget": {
+    "max_requests": 24,
+    "max_bytes": 62914560,
+    "per_file": 12582912,
+    "timeout_seconds": 20,
+    "overall_seconds": 1800,
+    "retries": 0,
+    "redirects": false,
+    "tls": "default verification",
+    "DCE_GFEX_requests": 0
+  },
+  "actual_requests": 23,
+  "actual_response_bytes": 19751106,
+  "browser_discovery_calls": 11,
+  "DCE_GFEX_requests": 0,
+  "receipts": [
+    {
+      "id": "lu-topic",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/",
+      "requested_utc": "2026-11-12T09:13:49.958323+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:13:51 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/",
+      "first_response_utc": "2026-11-12T09:13:50.146111+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:13:50.171543+00:00",
+      "bytes": 24305,
+      "sha256": "acf25f8388d69e14ea8eef9b22ae3c43610e644420df5e6d8687d1422a5d21fd",
+      "elapsed_seconds": 0.213,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "lu-manual-2020",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/manual.pdf",
+      "requested_utc": "2026-11-12T09:13:50.673162+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:13:52 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "4198894",
+        "Last-Modified": "Wed, 20 Mar 2024 09:20:12 GMT",
+        "ETag": "\"65faaa4c-4011ee\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/manual.pdf",
+      "first_response_utc": "2026-11-12T09:13:50.786167+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:13:53.202919+00:00",
+      "bytes": 4198894,
+      "sha256": "497a87526a356121dee2d6cd24323fefa233e402df962e3d056e3b5162a3e63e",
+      "elapsed_seconds": 2.532,
+      "application_state": "pdf_signature_only"
+    },
+    {
+      "id": "ine-disclosure-2021",
+      "url": "https://www.ine.cn/upload/20220517/1652751392386.pdf",
+      "requested_utc": "2026-11-12T09:13:53.707187+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:13:55 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "1361242",
+        "Last-Modified": "Thu, 28 Nov 2024 09:03:29 GMT",
+        "ETag": "\"674831e1-14c55a\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.ine.cn/upload/20220517/1652751392386.pdf",
+      "first_response_utc": "2026-11-12T09:13:53.854070+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:13:55.018320+00:00",
+      "bytes": 1361242,
+      "sha256": "18851819f24824e3e10e88377a5c7bf0857f2ee6ce621f189698382b00f077d2",
+      "elapsed_seconds": 1.312,
+      "application_state": "pdf_signature_only"
+    },
+    {
+      "id": "shfe-base-20210728",
+      "url": "https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+      "requested_utc": "2026-11-12T09:13:55.520415+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:13:56 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "52740",
+        "Last-Modified": "Wed, 20 Mar 2024 09:16:47 GMT",
+        "ETag": "\"65faa97f-ce04\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+      "first_response_utc": "2026-11-12T09:13:55.636442+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:13:55.710762+00:00",
+      "bytes": 52740,
+      "sha256": "db42129286c10001cae09494e63e9b25c7fc66ce15ee5425f643c4f930388776",
+      "elapsed_seconds": 0.19,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "ine-base-20210728",
+      "url": "https://www.ine.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+      "requested_utc": "2026-11-12T09:13:56.212224+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:13:57 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "17604",
+        "Last-Modified": "Mon, 23 Sep 2024 09:27:18 GMT",
+        "ETag": "\"66f13476-44c4\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.ine.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+      "first_response_utc": "2026-11-12T09:13:56.324360+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:13:56.324600+00:00",
+      "bytes": 17604,
+      "sha256": "74e2bca2b1fb4c2b8cb499ae6720d2c96aa022f7b9c25dd7e1a209728f1a82c5",
+      "elapsed_seconds": 0.112,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "lu-notice-index-2020",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/notice.html",
+      "requested_utc": "2026-11-12T09:15:09.343255+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:15:10 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/notice.html",
+      "first_response_utc": "2026-11-12T09:15:09.466857+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:15:09.467108+00:00",
+      "bytes": 3939,
+      "sha256": "ac80683964b7fd1fb076bde16aed3eeddfd0dab80439871c8d8d77eb88077229",
+      "elapsed_seconds": 0.124,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "lu-standard-2020",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/FJ1.pdf",
+      "requested_utc": "2026-11-12T09:15:09.968269+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:15:11 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "392212",
+        "Last-Modified": "Wed, 20 Mar 2024 09:20:12 GMT",
+        "ETag": "\"65faaa4c-5fc14\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/FJ1.pdf",
+      "first_response_utc": "2026-11-12T09:15:10.088790+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:15:10.445906+00:00",
+      "bytes": 392212,
+      "sha256": "076845907992bb3d51beca320303d6cd41f962977063ea43c4f3a2ae11eb8f39",
+      "elapsed_seconds": 0.478,
+      "application_state": "pdf_signature_only"
+    },
+    {
+      "id": "ine-trade-rules-2020",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/FJ3.pdf",
+      "requested_utc": "2026-11-12T09:15:10.947626+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:15:12 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "4474109",
+        "Last-Modified": "Wed, 20 Mar 2024 09:20:12 GMT",
+        "ETag": "\"65faaa4c-4444fd\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/FJ3.pdf",
+      "first_response_utc": "2026-11-12T09:15:11.062132+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:15:13.883728+00:00",
+      "bytes": 4474109,
+      "sha256": "f3b69cab811bc192a223c6f60f3d41e2aa274b93aa3a968673db325fe8cc12b3",
+      "elapsed_seconds": 2.938,
+      "application_state": "pdf_signature_only"
+    },
+    {
+      "id": "ine-standard-publication",
+      "url": "https://www.ine.com.cn/news/notice/3021.html",
+      "requested_utc": "2026-11-12T09:15:14.388071+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:15:15 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "10648",
+        "Cache-Control": "no-store"
+      },
+      "final_url": "https://www.ine.com.cn/news/notice/3021.html",
+      "first_response_utc": "2026-11-12T09:15:14.646916+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:15:14.647089+00:00",
+      "bytes": 10648,
+      "sha256": "876d6958e7b17b677713b907bf8ab33367192569415803b4b64156d81c8c2c87",
+      "elapsed_seconds": 0.259,
+      "application_state": "challenge_not_evidence"
+    },
+    {
+      "id": "lu-listing-official",
+      "url": "https://www.ine.com.cn/news/notice/3011.html",
+      "requested_utc": "2026-11-12T09:16:20.741992+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:16:22 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "10648",
+        "Cache-Control": "no-store"
+      },
+      "final_url": "https://www.ine.com.cn/news/notice/3011.html",
+      "first_response_utc": "2026-11-12T09:16:20.860025+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:16:20.860256+00:00",
+      "bytes": 10648,
+      "sha256": "460abf4a9ea3d38f0e3fc5f0b322c054ececf9c8345d62ddbde565dfa24d2f45",
+      "elapsed_seconds": 0.118,
+      "application_state": "challenge_not_evidence"
+    },
+    {
+      "id": "shfe-sitemap",
+      "url": "https://www.shfe.com.cn/sitemap/",
+      "requested_utc": "2026-11-12T09:16:21.361882+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:16:22 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/sitemap/",
+      "first_response_utc": "2026-11-12T09:16:21.475601+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:16:21.706268+00:00",
+      "bytes": 147506,
+      "sha256": "3f62f3d01229c3d259a8a38b3051d3ad62ebb60793c977768c574b19852b7dfa",
+      "elapsed_seconds": 0.344,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-calendar",
+      "url": "https://www.shfe.com.cn/services/calenderandholidays/tradingcalendar/",
+      "requested_utc": "2026-11-12T09:17:09.591205+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:17:10 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/services/calenderandholidays/tradingcalendar/",
+      "first_response_utc": "2026-11-12T09:17:09.719822+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:17:09.954560+00:00",
+      "bytes": 148728,
+      "sha256": "0d12dd32af6cefb8650c178c6fa83eabb16e54433e5252ffa27cb327d996bfe2",
+      "elapsed_seconds": 0.363,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-holidays",
+      "url": "https://www.shfe.com.cn/services/calenderandholidays/holiday/",
+      "requested_utc": "2026-11-12T09:17:10.456178+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:17:11 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/services/calenderandholidays/holiday/",
+      "first_response_utc": "2026-11-12T09:17:10.569472+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:17:10.662797+00:00",
+      "bytes": 130049,
+      "sha256": "cc78678ea7e1414b5c6623051e81f33ccf9707813464ed8674c25b8ade15c483",
+      "elapsed_seconds": 0.207,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "calendar-query-js",
+      "url": "https://www.shfe.com.cn/images/calendar_query.js",
+      "requested_utc": "2026-11-12T09:18:04.763361+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:18:06 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "29745",
+        "Last-Modified": "Mon, 30 Dec 2024 00:51:17 GMT",
+        "ETag": "\"6771ee85-7431\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/images/calendar_query.js",
+      "first_response_utc": "2026-11-12T09:18:04.897252+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:18:04.922474+00:00",
+      "bytes": 29745,
+      "sha256": "43c0cac1b5f342169d56439f81561bc865d36b3c41a61d682806592200eb0dda",
+      "elapsed_seconds": 0.159,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-api-js",
+      "url": "https://www.shfe.com.cn/images/api.js",
+      "requested_utc": "2026-11-12T09:18:05.424453+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:18:06 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "16823",
+        "Last-Modified": "Tue, 28 Oct 2025 05:16:57 GMT",
+        "ETag": "\"690051c9-41b7\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/images/api.js",
+      "first_response_utc": "2026-11-12T09:18:05.534877+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:18:05.556658+00:00",
+      "bytes": 16823,
+      "sha256": "888923e303b7178af9b3bfac83621c60f2f6ae0871894bf1ebe75a3a2708f86b",
+      "elapsed_seconds": 0.132,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-calendar-2021",
+      "url": "https://www.shfe.com.cn/data/calendar/calendar_2021.dat",
+      "requested_utc": "2026-11-12T09:18:58.719877+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:00 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "459132",
+        "Last-Modified": "Fri, 11 Apr 2025 09:28:05 GMT",
+        "ETag": "\"67f8e0a5-7017c\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/data/calendar/calendar_2021.dat",
+      "first_response_utc": "2026-11-12T09:18:58.870515+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:18:59.590050+00:00",
+      "bytes": 459132,
+      "sha256": "37943ea0e12269229e22677bd71a3a0ef7bd13137efbe0a60a369e1a58b65bb3",
+      "elapsed_seconds": 0.87,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "calendar-red-days-js",
+      "url": "https://www.shfe.com.cn/data/config/js/calendar-data.js",
+      "requested_utc": "2026-11-12T09:19:00.091978+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:01 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "262878",
+        "Last-Modified": "Fri, 30 Oct 2026 09:12:13 GMT",
+        "ETag": "\"6ae45f6d-402de\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/data/config/js/calendar-data.js",
+      "first_response_utc": "2026-11-12T09:19:00.223974+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:19:00.731815+00:00",
+      "bytes": 262878,
+      "sha256": "9dd5360e6c1630ed8b21b5c3d1866a42215c8c9a457d70866d68e23a7b3de0cb",
+      "elapsed_seconds": 0.64,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-utils-js",
+      "url": "https://www.shfe.com.cn/images/common_utils.js",
+      "requested_utc": "2026-11-12T09:19:01.233599+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:02 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "23274",
+        "Last-Modified": "Tue, 28 Oct 2025 01:50:53 GMT",
+        "ETag": "\"6900217d-5aea\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/images/common_utils.js",
+      "first_response_utc": "2026-11-12T09:19:01.357558+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:19:01.383621+00:00",
+      "bytes": 23274,
+      "sha256": "36be8754bef2f99ed1a79460953f39e552ca4367a822289469ca6ba748f6c77c",
+      "elapsed_seconds": 0.15,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "shfe-global-js",
+      "url": "https://www.shfe.com.cn/images/global.js",
+      "requested_utc": "2026-11-12T09:19:01.885297+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:03 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "8940",
+        "Last-Modified": "Mon, 30 Dec 2024 00:51:38 GMT",
+        "ETag": "\"6771ee9a-22ec\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/images/global.js",
+      "first_response_utc": "2026-11-12T09:19:02.010065+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:19:02.010280+00:00",
+      "bytes": 8940,
+      "sha256": "2ae16ce8a288757c1c1280808d732402fdfef4cdf6543a55d775b0bc516b2b05",
+      "elapsed_seconds": 0.125,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "ine-calendar-2021",
+      "url": "https://www.ine.cn/data/calendar/calendar_2021.dat",
+      "requested_utc": "2026-11-12T09:19:42.539810+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:43 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "132992",
+        "Last-Modified": "Tue, 30 Dec 2025 09:26:44 GMT",
+        "ETag": "\"69539ad4-20780\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.ine.cn/data/calendar/calendar_2021.dat",
+      "first_response_utc": "2026-11-12T09:19:42.666085+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:19:42.857131+00:00",
+      "bytes": 132992,
+      "sha256": "8129ffcf8d6a9b4da08a51eb86e6c80c003174b3327d8f8673dd8d785daf8552",
+      "elapsed_seconds": 0.317,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "ine-calendar-red-days",
+      "url": "https://www.ine.cn/data/config/js/calendar-data.js",
+      "requested_utc": "2026-11-12T09:19:43.359020+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:19:44 GMT",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Content-Length": "83859",
+        "Last-Modified": "Fri, 30 Oct 2026 09:12:32 GMT",
+        "ETag": "\"6ae45f80-14793\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.ine.cn/data/config/js/calendar-data.js",
+      "first_response_utc": "2026-11-12T09:19:43.474756+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:19:43.564209+00:00",
+      "bytes": 83859,
+      "sha256": "1791d6099357c331da5ace3ecc8d08d909ab7725e7947927524af52253dec890",
+      "elapsed_seconds": 0.205,
+      "application_state": "unvalidated"
+    },
+    {
+      "id": "lu-qa-2020",
+      "url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/QA.pdf",
+      "requested_utc": "2026-11-12T09:20:46.389725+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:20:47 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "7593211",
+        "Last-Modified": "Wed, 20 Mar 2024 09:20:12 GMT",
+        "ETag": "\"65faaa4c-73dcfb\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.shfe.com.cn/content/2020_LU_DERIVATIVES/QA.pdf",
+      "first_response_utc": "2026-11-12T09:20:46.522947+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:20:49.543985+00:00",
+      "bytes": 7593211,
+      "sha256": "a76de9083d6638ebf25be2c380730e73d7e75cec7b73385a0c1c3fcf703333a1",
+      "elapsed_seconds": 3.158,
+      "application_state": "pdf_signature_only"
+    },
+    {
+      "id": "ine-calendar-2020",
+      "url": "https://www.ine.cn/data/calendar/calendar_2020.dat",
+      "requested_utc": "2026-11-12T09:20:50.050438+00:00",
+      "status": 200,
+      "headers": {
+        "Date": "Thu, 12 Nov 2026 09:20:51 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "167628",
+        "Last-Modified": "Tue, 30 Dec 2025 09:26:44 GMT",
+        "ETag": "\"69539ad4-28ecc\"",
+        "Cache-Control": "max-age=30"
+      },
+      "final_url": "https://www.ine.cn/data/calendar/calendar_2020.dat",
+      "first_response_utc": "2026-11-12T09:20:50.162839+00:00",
+      "transport_state": "complete",
+      "finished_utc": "2026-11-12T09:20:50.418938+00:00",
+      "bytes": 167628,
+      "sha256": "fcbae7335dae973d09d91be0f84c193b4f5b84532a4a115f2a6b1400e6ff5e35",
+      "elapsed_seconds": 0.368,
+      "application_state": "unvalidated"
+    }
+  ],
+  "life_scope": "INE.lu2108 only; not complete product universe or certified sessions",
+  "lifecycle_entry": {
+    "symbol": {
+      "Exchange": "INE",
+      "Product": "lu",
+      "YearMon": 2108
+    },
+    "listed": {
+      "day": 20200803,
+      "evidence": [
+        {
+          "id": "shfe-base-20210728",
+          "url": "https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+          "sha256": "db42129286c10001cae09494e63e9b25c7fc66ce15ee5425f643c4f930388776",
+          "retrieved_at": "2026-11-12T09:13:55.710762+00:00"
+        },
+        {
+          "id": "ine-base-20210728",
+          "url": "https://www.ine.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+          "sha256": "74e2bca2b1fb4c2b8cb499ae6720d2c96aa022f7b9c25dd7e1a209728f1a82c5",
+          "retrieved_at": "2026-11-12T09:13:56.324600+00:00"
+        },
+        {
+          "id": "ine-calendar-2020",
+          "url": "https://www.ine.cn/data/calendar/calendar_2020.dat",
+          "sha256": "fcbae7335dae973d09d91be0f84c193b4f5b84532a4a115f2a6b1400e6ff5e35",
+          "retrieved_at": "2026-11-12T09:20:50.418938+00:00"
+        }
+      ]
+    },
+    "last_trading": {
+      "day": 20210730,
+      "evidence": [
+        {
+          "id": "ine-calendar-2021",
+          "url": "https://www.ine.cn/data/calendar/calendar_2021.dat",
+          "sha256": "8129ffcf8d6a9b4da08a51eb86e6c80c003174b3327d8f8673dd8d785daf8552",
+          "retrieved_at": "2026-11-12T09:19:42.857131+00:00"
+        }
+      ]
+    },
+    "reported_expiry": {
+      "day": 20210730,
+      "evidence": [
+        {
+          "id": "shfe-base-20210728",
+          "url": "https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+          "sha256": "db42129286c10001cae09494e63e9b25c7fc66ce15ee5425f643c4f930388776",
+          "retrieved_at": "2026-11-12T09:13:55.710762+00:00"
+        },
+        {
+          "id": "ine-base-20210728",
+          "url": "https://www.ine.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+          "sha256": "74e2bca2b1fb4c2b8cb499ae6720d2c96aa022f7b9c25dd7e1a209728f1a82c5",
+          "retrieved_at": "2026-11-12T09:13:56.324600+00:00"
+        }
+      ]
+    },
+    "observed": [
+      {
+        "day": 20210728,
+        "evidence": {
+          "id": "ine-base-20210728",
+          "url": "https://www.ine.cn/data/busiparamdata/future/ContractBaseInfo20210728.dat",
+          "sha256": "74e2bca2b1fb4c2b8cb499ae6720d2c96aa022f7b9c25dd7e1a209728f1a82c5",
+          "retrieved_at": "2026-11-12T09:13:56.324600+00:00"
+        }
+      }
+    ]
+  },
+  "lifecycle_events": {
+    "listed_calendar": {
+      "id": 87067,
+      "day": "20200803",
+      "text": "交易提示:SC2108、LU2108合约上市交割提示：SC2008买方申报意向。卖方提交标准仓单。结算提示:收取SC2008合约交割手续费。"
+    },
+    "last_calendar": {
+      "id": 87260,
+      "day": "20210730",
+      "text": "交易提示:1.SC2108、LU2108合约的最后交易日2.BC2108合约的非套保和套保持仓调整为5手的整倍数3.下一交易日新上市合约：SC2208的挂盘基准价为438.3元/桶，涨/跌停板幅度为16%；LU2208挂盘基准价为3504元/吨，涨/跌停板幅度为16%。结算提示：1.BC2108合约保证金率调整为15%;2.NR2108合约保证金率调整为15%;3.收取7月份会员权利凭证作为保证金的保管费。"
+    }
+  },
+  "lifecycle_validation": {
+    "positive": "passed",
+    "negative_controls": [
+      {
+        "case": "missing_target",
+        "rejected_by": "target_identity"
+      },
+      {
+        "case": "wrong_day",
+        "rejected_by": "row_trade_day"
+      },
+      {
+        "case": "altered_open",
+        "rejected_by": "base_disagreement"
+      },
+      {
+        "case": "missing_last",
+        "rejected_by": "explicit_last_missing"
+      },
+      {
+        "case": "wrong_calendar_market",
+        "rejected_by": "calendar_exchange"
+      },
+      {
+        "case": "shift_both_expiries",
+        "rejected_by": "expiry_vs_explicit_last_disagreement"
+      }
+    ]
+  },
+  "catalog_consumer_check": "catalog.New accepted; 4 in-range mappings and 2 out-of-range rejections passed",
+  "sparse_calendar": {
+    "ine_2020": {
+      "records": 181,
+      "unique_dates": 181,
+      "first": "20200106",
+      "last": "20201231"
+    },
+    "ine_2021": {
+      "records": 186,
+      "unique_dates": 186,
+      "first": "20210105",
+      "last": "20211231"
+    },
+    "missing_date_semantics": "unknown; not closed",
+    "marker_configuration": "UI hint markers; not a trading-day roster"
+  },
+  "unresolved": [
+    "2021 LU complete regular session template and version continuity",
+    "official 2021 full holiday and special no-night/resumption arrangements",
+    "complete per-natural-day absolute session records",
+    "all other LU lifecycle dates and independent complete roster",
+    "current ParseSHFEBase does not directly accept all legacy schemas",
+    "official LU2108 settlement-adjustment notice original not acquired; no close-price correction justified"
+  ],
+  "pdf_review": {
+    "standard_page_1": "rendered and visually inspected",
+    "trade_rule_pages": [
+      1,
+      3,
+      18,
+      19
+    ],
+    "qa_contents_pages": [
+      2,
+      3,
+      4
+    ],
+    "extraction_warning": "glyph mapping incomplete; no keyword absence proof"
+  },
+  "qualification": {
+    "lu2108_lifecycle_endpoints": "verified from explicit official events and base data",
+    "lu_2021_calendar": "not certified",
+    "strict_OHLC": "unchanged",
+    "public_interface_changed": false
+  },
+  "validation": {
+    "module_sweep": "3 Go modules gofmt/vet/test, enumerated Python tests and restoration passed",
+    "restoration_fingerprint": "cdbfeafc2cf6 unchanged",
+    "all_modules_race": "passed locally",
+    "targeted_race_repeat": "batch and ingest 10 rounds passed",
+    "doccheck": "passed",
+    "evidence_negative_controls": "6 target-specific lifecycle rejections passed",
+    "catalog_consumer": "4 in-range and 2 outside-lifecycle checks passed",
+    "windows_python_process_scope": "job (existing CI synthetic tests); no real capture claim"
+  },
+  "manifest": {
+    "path": "C:\\Temp\\tickflow-lu-qualification-20261112\\manifest.json",
+    "files": 56,
+    "sha256": "6ed7cf363c30714e3090e689a37ad7c437c81f864017f6cc748fc71b98106876"
+  },
+  "artifacts": {
+    "lu2108-lifecycle.json": {
+      "bytes": 6217,
+      "sha256": "82b82a005ff65312ad518d0e29f974ae546db38dc95bad650bdd01e9a1277e7a"
+    },
+    "review_lifecycle.py": {
+      "bytes": 4707,
+      "sha256": "3ee8afddf2271fe9a46934158040a6bd834e4b0951587bbce740204f16dff874"
+    },
+    "consume_lifecycle.go": {
+      "bytes": 890,
+      "sha256": "79dbcaa739ae8854e0484fc98951182cdaf73dcc357b07b25929420af953ab4f"
+    },
+    "catalog-consume.log": {
+      "bytes": 126,
+      "sha256": "8c7366911ffee9f606d269ea4a2ace9c7d0cbbb63eadd606e22809145ee71746"
+    },
+    "race-before-prefix.log": {
+      "bytes": 2106,
+      "sha256": "a3244dbb507483913e50b1087e763c8a98c8bab5aa1f2ff363d85ab9da183b80"
+    },
+    "race-after-fixed.log": {
+      "bytes": 151,
+      "sha256": "f2d4812e0d07240b0803d089fe83f4f72072d0023ebbf7d223c6dfd257e64be8"
+    },
+    "race-all-modules.log": {
+      "bytes": 1841,
+      "sha256": "467c0c403232e603f8a0c2b90e7b4545652f997319a21b6b7641a8190c068ab9"
+    },
+    "modules-final.log": {
+      "bytes": 12121,
+      "sha256": "bbbc66b51e60e6ec531ebad702c888d14a9a96cfeb7b6e898aab560547a81909"
+    },
+    "doccheck.log": {
+      "bytes": 392,
+      "sha256": "03833cfb0c9bd9ec07934a77e742bd621e330f393a59521556d3dd0f22792442"
+    }
+  }
+}
