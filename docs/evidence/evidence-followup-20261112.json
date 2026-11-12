@@ -1,0 +1,151 @@
+{
+  "schema": "historical-evidence-followup-v1",
+  "date": "2026-11-12",
+  "base_commit": "3733a0889f89293b9339a56a06c2503f94416ae8",
+  "route_review": {
+    "base_commit": "3733a0889f89293b9339a56a06c2503f94416ae8",
+    "browser_tool_budget": 6,
+    "browser_tool_calls_used": 4,
+    "direct_requests_budget": 4,
+    "direct_requests_used": 0,
+    "max_response_bytes": 2097152,
+    "max_total_bytes": 8388608,
+    "timeout_seconds": 15,
+    "overall_direct_seconds": 120,
+    "new_official_endpoint_found": false,
+    "retries": 0,
+    "tls_bypass": false,
+    "network_gate_changed": false
+  },
+  "evidence_directory": "C:\\Temp\\tickflow-evidence-followup-20261112-1652",
+  "manifest_sha256": "a17d14a904533948804a58937ed0dbc723a035d285976a559188dbde9f065e51",
+  "files": {
+    "lu-observation-20210728.json": {
+      "bytes": 17829,
+      "sha256": "687ebb9b43752c5b807a2d4ed8a4f5e123d9a1bd2138c596de332c4e98158daf"
+    },
+    "observe.go": {
+      "bytes": 3007,
+      "sha256": "f08cfe9a407d96dc8c30d6afac1b554b52e5eb105e6afba6dd7786c2c6f46984"
+    },
+    "partial-evidence-review.json": {
+      "bytes": 3288,
+      "sha256": "a5231bb973a768a18920b6653e46852f32695aadbae8a75b58c9eee423b8270a"
+    },
+    "plan-and-result.json": {
+      "bytes": 432,
+      "sha256": "734c599534085f01d282b752a436ec73d9c822dbf3ddf3608a00f3690920b11d"
+    },
+    "validation.log": {
+      "bytes": 612,
+      "sha256": "b171723746fdf550732f8004c9dac74ba6d1bde3d47893f0bc53d124b4740f74"
+    }
+  },
+  "lu_observations": {
+    "path": "C:\\Temp\\tickflow-evidence-followup-20261112-1652\\lu-observation-20210728.json",
+    "sha256": "687ebb9b43752c5b807a2d4ed8a4f5e123d9a1bd2138c596de332c4e98158daf",
+    "count": 12,
+    "day": 20210728,
+    "source": {
+      "id": "ine-daily-20210728",
+      "url": "https://www.ine.cn/data/tradedata/future/dailydata/kx20210728.dat",
+      "sha256": "317ca857f2293330b1297fdd704263b674ba8033e49ed8e2cfab42c51b7e1c6b",
+      "retrieved_at": "2026-11-05T05:23:47.161612Z"
+    },
+    "qualification": "observed only; not independent complete roster or lifecycle",
+    "positive_resolutions": 12,
+    "wrong_day_unknown_code_controls": 3,
+    "removed_target_control": "rejected"
+  },
+  "lu_calendar_partial": {
+    "schema": "lu-calendar-partial-evidence-v1",
+    "verified_at_local_date": "2026-11-12",
+    "sources": [
+      {
+        "id": "lu-listing-2020-nh",
+        "url": "https://www.nanhua.net/news/2020/06/31897558-21fc-4136-a36a-b92473ab9139.html",
+        "at": "2026-11-05T07:46:46.474906+00:00",
+        "status": 200,
+        "final_url": "https://www.nanhua.net/news/2020/06/31897558-21fc-4136-a36a-b92473ab9139.html",
+        "file": "lu-listing-2020-nh.body",
+        "bytes": 89264,
+        "sha256": "55416064affaf2f7b2298cc9ca954c23c5efd91deb22a495085b55e3c138a4c7",
+        "local_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\upstream-calendar-research-20261105\\lu-listing-2020-nh.body",
+        "role": "secondary reprint; shared origin possible"
+      },
+      {
+        "id": "lu-listing-2020-nc",
+        "url": "https://www.zjncf.com.cn/customer/info/3798.html",
+        "at": "2026-11-05T07:46:46.718923+00:00",
+        "status": 200,
+        "final_url": "https://www.zjncf.com.cn/customer/info/3798.html",
+        "file": "lu-listing-2020-nc.body",
+        "bytes": 149723,
+        "sha256": "78da2c609e9daf842d4c47cd39a5a1518c68750a94cd203e6aba92d1fc2d5230",
+        "local_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\upstream-calendar-research-20261105\\lu-listing-2020-nc.body",
+        "role": "secondary reprint; shared origin possible"
+      },
+      {
+        "id": "ine-current-hours",
+        "url": "https://www.ine.com.cn/services/calenderandholidays/tradinghours/",
+        "at": "2026-11-05T07:42:30.685468+00:00",
+        "status": 200,
+        "final_url": "https://www.ine.com.cn/services/calenderandholidays/tradinghours/",
+        "file": "ine-current-hours.body",
+        "bytes": 99042,
+        "sha256": "3142298b911bd6ec2784eac3ee4630ae585221e8936c0ef7396756703a793cd5",
+        "local_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\upstream-calendar-research-20261105\\ine-current-hours.body",
+        "role": "current-only official hours; no historical applicability proof"
+      }
+    ],
+    "reprint_agreement": {
+      "normalized_characters": 811,
+      "sha256": "6c2ba9dc9ca0c635ccc8d4a94bac7a6c015a2dc845850aaa23e0cada54606d58",
+      "equal": true,
+      "single_character_change_rejected": true,
+      "not_independent_official_originals": true
+    },
+    "qualified_scope": "2020 listing-time secondary support and current official snapshot only",
+    "not_established": [
+      "official original listing notice",
+      "version continuity into 2021",
+      "2021 holiday and special no-night notices",
+      "complete day-by-day absolute sessions",
+      "LU2108 listing/last-trading dates and independent complete roster"
+    ],
+    "old_isolation_manifest_files_verified": 15,
+    "fu_original_sha_verified": "605e119b8f6e7cd73b02fa18aa75ce1b388d5628aa024d7f5b7961d028a9ec2c",
+    "fu_bad_row": {
+      "exchange": "SHFE",
+      "native": "fu2306",
+      "day": 20230530,
+      "fields": {
+        "pre_settle": "3232",
+        "open": "3651",
+        "high": "3651",
+        "low": "3651",
+        "close": "3232",
+        "settle": "3232",
+        "volume": "2",
+        "turnover": "7.302",
+        "open_interest": "35"
+      },
+      "turnover_unit": "unknown",
+      "member": "所内合约行情报表2023.5.xls",
+      "row": 30023
+    }
+  },
+  "calendar_certified": false,
+  "new_DCE_GFEX_market_bodies": 0,
+  "new_supported_years": [],
+  "production_code_changed": false,
+  "funds_rules_changed": false,
+  "validation": {
+    "officialdaily_and_catalog_regression": "passed",
+    "documentation_guards": "passed",
+    "doccheck": "passed 203 documented / 861 source declarations",
+    "new_observation_controls": "12 positive; 3 unknown date/code negatives; removed target rejected",
+    "reprint_control": "matching normalized bodies; one-character difference rejected",
+    "workspace_changes": "documentation and evidence only"
+  }
+}
