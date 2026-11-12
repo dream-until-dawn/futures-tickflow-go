@@ -1,4 +1,4 @@
-package main
+package proof
 
 import (
 	"encoding/json"

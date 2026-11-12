@@ -15,7 +15,7 @@ class Article(HTMLParser):
     """只读已知官网正文容器；未知模板拒绝，避免把导航或挑战页当正文。"""
     def __init__(self):
         super().__init__()
-        self.depth, self.parts = 0, []
+        self.depth, self.parts, self.ignored = 0, [], 0
 
     def handle_starttag(self, tag, attrs):
         classes = set(dict(attrs).get('class', '').split())
@@ -23,13 +23,17 @@ class Article(HTMLParser):
             self.depth = 1
         elif self.depth and tag not in VOID:
             self.depth += 1
+        if self.depth and tag not in VOID and (self.ignored or tag in {'style', 'script'}):
+            self.ignored += 1
 
     def handle_endtag(self, tag):
+        if self.ignored and tag not in VOID:
+            self.ignored -= 1
         if self.depth and tag not in VOID:
             self.depth -= 1
 
     def handle_data(self, data):
-        if self.depth:
+        if self.depth and not self.ignored:
             self.parts.append(data)
 
 

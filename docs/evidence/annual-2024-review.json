@@ -1,0 +1,207 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "8fedb85d56425e320ae26120002c540813345bd412e3bb5aa95beaca5ebfcf59",
+  "qualified_profiles": [
+    "SHFE.ao",
+    "SHFE.br"
+  ],
+  "pending_profiles": {
+    "INE.lu": [
+      "INE2024端午详细公告正文",
+      "INE2025元旦年界详细公告正文"
+    ],
+    "INE.ec": [
+      "同上两份关键正文"
+    ]
+  },
+  "source_root": "C:\\Temp\\tickflow-calendar-2024-20261112",
+  "source_scope": "published continuous schedules only; reviewed source facts, not arbitrary configuration certification",
+  "derived_registration_utc": "2026-11-12T12:34:34.740220+00:00",
+  "calendar": {
+    "path": "calendar/verified/profiles/shfe-2024.json",
+    "sha256": "8c2744f4ede120090dd1b30a1c2a036a4e495a7918dfe3b671ce968515f6ed49",
+    "summary": {
+      "SHFE.ao": {
+        "natural_days": 366,
+        "trading_days": 242,
+        "day_only_trade_days": [
+          20240102,
+          20240219,
+          20240408,
+          20240506,
+          20240611,
+          20240918,
+          20241008
+        ]
+      },
+      "SHFE.br": {
+        "natural_days": 366,
+        "trading_days": 242,
+        "day_only_trade_days": [
+          20240102,
+          20240219,
+          20240408,
+          20240506,
+          20240611,
+          20240918,
+          20241008
+        ]
+      }
+    }
+  },
+  "network": {
+    "direct_requests": 44,
+    "bytes": 2811308,
+    "failed_or_challenged": [
+      {
+        "id": "shfe-management-2024",
+        "url": "https://www.shfe.com.cn/regulation/exchangerules/otherrules/202409/t20240903_802235.html",
+        "status": 404,
+        "state": "unvalidated",
+        "sha256": "e55b00b7408417d23bdf96e10dc5e6897052dff79c6da35bcf0619b7a01a39bd"
+      },
+      {
+        "id": "ine-dragon-2024",
+        "url": "https://www.ine.cn/publicnotice/notice/202406/t20240605_814860.html",
+        "status": 200,
+        "state": "challenge_not_evidence",
+        "sha256": "e039276fe14bec460455330dfd9a5fe6e1d924588e1f16669bab61d55f62cb19"
+      },
+      {
+        "id": "ine-boundary-2025",
+        "url": "https://www.ine.cn/publicnotice/notice/202412/t20241227_824153.html",
+        "status": 200,
+        "state": "challenge_not_evidence",
+        "sha256": "dbcce1abd700c1d0ad47ead54dfe10d5f50e87e377ee3e00fdcae34652462bb2"
+      },
+      {
+        "id": "ine-holiday-2025-page",
+        "url": "https://www.ine.cn/services/calenderandholidays/holiday/202412/t20241225_824131.html",
+        "status": 200,
+        "state": "challenge_not_evidence",
+        "sha256": "c9077b5ed4ae2b8417e314b9c714385283a08686488c009581bfd0f9f1fc327d"
+      }
+    ],
+    "DCE_GFEX_requests": 0,
+    "recorded_evidence_collection_seconds": 533.591036
+  },
+  "positive": {
+    "market_contract_days": 8,
+    "monthly_observation_checks": 24,
+    "products": 2,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "false-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2024-01-02"
+    },
+    {
+      "case": "rule-publication-date",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2024-10-23"
+    },
+    {
+      "case": "cross-midnight",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2024-01-08"
+    },
+    {
+      "case": "foreign-ref",
+      "exit": 1,
+      "reason": "annual_evidence_binding",
+      "actual": "annual_evidence_binding"
+    },
+    {
+      "case": "missing-rule-ref",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2024-10-23 shfe-management-docx"
+    },
+    {
+      "case": "lost-leap-day",
+      "exit": 1,
+      "reason": "annual_structure: verified: SHFE.ao 有缺日/乱序",
+      "actual": "annual_structure: verified: SHFE.ao 有缺日/乱序"
+    },
+    {
+      "case": "fact-pin",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "false-observed-date",
+      "exit": 1,
+      "reason": "observation_date_set",
+      "actual": "observation_date_set: ao month1"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "exit": 1,
+      "target": "false-first-night",
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "exit": 1,
+      "target": "published-not-effective",
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "date_observation_method": {
+    "product": "SHFE.rb",
+    "year_original": "shfe-annual-2024.body",
+    "observed_days": 242,
+    "contract_days": 2904,
+    "XLS_backend": "xlrd 2.0.2, same binary reader as price decoder",
+    "XLSX_backend": "openpyxl 3.1.5, independent of price decoder XML reader",
+    "limit": "observations cross-check dates only; not an official year ordinal or proof of hours"
+  },
+  "scope_notes": [
+    "only SHFE.ao/SHFE.br in 2024 qualified",
+    "INE.lu/ec full-year 2024 remain pending official special-window originals",
+    "opening auction, unindexed/unpublished intraday halt, lifecycle/full universe, price quality and point-in-time availability not certified",
+    "rule references partitioned by published implementation date, not exact natural-clock legal applicability",
+    "DayAt absolute time bounds differ from Covers/DayOf natural date coverage",
+    "derived verification registration and original source receipt UTC kept separately; first generated UTC not fabricated"
+  ],
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 98,
+    "generator_restore": "passed; unchanged workspace fingerprint",
+    "doccheck": "passed",
+    "race": "three modules passed serially",
+    "compatibility": "old 2023 CLI real pipeline passed; LU2021 and listed2023 regeneration byte-identical"
+  },
+  "facts_time_revision": {
+    "old_sha256": "ca36f2a97d6f775a1f9d5751631ec4ac3b10e9fe3a6c0f62e278903d72239a9e",
+    "new_sha256": "8fedb85d56425e320ae26120002c540813345bd412e3bb5aa95beaca5ebfcf59",
+    "registered_utc": "2026-11-12T12:34:34.740220+00:00",
+    "reason": "separate derived text verification time from raw document receipt time; original bytes unchanged"
+  },
+  "seal": {
+    "files": 300,
+    "seal_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+    "sealed": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed",
+    "migration": "C:\\Temp\\tickflow-calendar-2024-20261112-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-calendar-2024-20261112-tamper",
+    "verified": "all hashes, lengths and file set match",
+    "tamper_rejected": "shfe-year-2024.body"
+  }
+}

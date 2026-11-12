@@ -100,6 +100,8 @@ class CalendarBuildTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'missing_article'):
             build.article(b'<html>Access denied 2021 21:00-23:00</html>')
         self.assertEqual(build.article(html('甲<br/>乙')), '甲乙正文结束')
+        self.assertEqual(build.article(html('<style>伪日期20240101</style>甲<script>伪条款</script>乙')),
+                         '甲乙正文结束')
 
 
 if __name__ == '__main__':
