@@ -1,0 +1,160 @@
+{
+  "schema": "listed2023-review-v1",
+  "date": "2026-11-12",
+  "main_merged_before_followup": "3c8eae527aa1b091c4027d86d81ebb8815756cd1",
+  "main_ci": 43203213993,
+  "calendar": {
+    "path": "calendar/verified/profiles/listed-2023.json",
+    "sha256": "ca8a0903daab1403e86ef7be52aad446e25de06068ce5297401e5aff1160ac73",
+    "summary": {
+      "INE.ec": {
+        "from": 20230818,
+        "to": 20231231,
+        "natural_days": 136,
+        "trading_days": 90,
+        "night_product_day_only": []
+      },
+      "SHFE.ao": {
+        "from": 20230619,
+        "to": 20231231,
+        "natural_days": 196,
+        "trading_days": 132,
+        "night_product_day_only": [
+          20230619,
+          20230626,
+          20231009
+        ]
+      },
+      "SHFE.br": {
+        "from": 20230728,
+        "to": 20231231,
+        "natural_days": 157,
+        "trading_days": 105,
+        "night_product_day_only": [
+          20230728,
+          20231009
+        ]
+      }
+    }
+  },
+  "facts": "docs/evidence/listed2023-facts.json",
+  "evidence_root": "C:\\Temp\\tickflow-session-followup-20261112",
+  "independent_checker": {
+    "market_contract_days": 8,
+    "ordinal_checks": 18,
+    "products": 3,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": {
+    "positive": 1,
+    "targeted_negative": 8
+  },
+  "source_mutations": [
+    {
+      "case": "drop-session-guard",
+      "exit": 1,
+      "target_subtest": "first-night",
+      "rejected_without_unrelated_guard": true
+    },
+    {
+      "case": "drop-template-guard",
+      "exit": 1,
+      "target_subtest": "publication-date",
+      "rejected_without_unrelated_guard": true
+    }
+  ],
+  "lu_2021_after_shared_parser_sha256": "08380f51aa43fc1d36528a50e7075a871314f62adf13f0f4a7e3310ef29f77d7",
+  "source_review": {
+    "direct_requests": 40,
+    "direct_bytes": 2531782,
+    "challenge_pages": [
+      "ec-listing",
+      "ine-year-2023",
+      "ine-autumn-2023",
+      "ine-boundary-2024",
+      "ine-rules-202308",
+      "ine-rules-202311"
+    ],
+    "DCE_GFEX_requests": 0,
+    "review_limits": [
+      "indexed title/body review not an exhaustive proof of no unpublished intraday halt",
+      "direct XLS cell review uses the same xlrd backend, not a second XLS decoder",
+      "annual original receipt is local-reuse; first HTTP time unknown"
+    ],
+    "main_merged": "3c8eae527aa1b091c4027d86d81ebb8815756cd1",
+    "main_ci": 43203213993,
+    "supplementary_notices": [
+      {
+        "id": "market-test-notice",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202308/t20230811_800634.html",
+        "sha256": "8f16cb51797d4a17d8cafff1e936c0aa30aa5f3e6625ce265f02b66811b57889",
+        "review": "Aug12 Saturday is a market-data system test, not a scheduled trading day; Aug28 trial releases market depth data, not continuous-session hours"
+      },
+      {
+        "id": "position-limit-notice",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202311/t20231129_801034.html",
+        "sha256": "e4a2c42ed83191a45cdf116eacdeca11dec6b510199d359c896384a38b4a6128",
+        "review": "Dec1 account opening limits for listed other products; no session-hour change for EC/AO/BR; not an unrestricted-account certificate"
+      },
+      {
+        "id": "br-options-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202307/t20230718_800482.html",
+        "sha256": "9cd7d60225329989a8e8fae52ed125c8d566b231ae7332464d1423d940b79b36",
+        "review": "BR options start July28 21:00, futures start July28 09:00; must not substitute options launch for futures"
+      }
+    ]
+  },
+  "raw_field_checks": {
+    "shfe_xls_cells": 35,
+    "ine_close_settle": 6,
+    "limits": "same xlrd backend used for XLS; no second independent decoder claim"
+  },
+  "scope": [
+    "three products, listing date to 20231231 only",
+    "continuous trading only, no opening auction",
+    "no unindexed/unpublished intraday halt exhaustiveness",
+    "no price correctness, full contract lifecycle/universe or account permission certification",
+    "2026 retrieval not 2023 point-in-time availability",
+    "annual reuse UTC not first HTTP retrieval time",
+    "embedded coverage unchanged; explicit verified.Calendar required",
+    "DCE/GFEX pending with zero requests",
+    "no tag"
+  ],
+  "capture_path_fix": {
+    "initial_full_sweep": "Go modules passed; capture_task detached CLI failed at observe/ValueError",
+    "diagnostic_rounds": 20,
+    "diagnostic_completed": 18,
+    "failures": [
+      12,
+      15
+    ],
+    "cause": "Path.resolve returned extended Windows filesystem namespace for candidate while root had ordinary drive prefix",
+    "after_fix_rounds": 20,
+    "after_fix_completed": 20,
+    "capture_suite_tests": 42,
+    "controls": "ordinary/extended drive and UNC aliases; cross-root/cross-drive escapes, strict child, unresolved parent and unknown device namespaces rejected",
+    "raw_diagnostic": "capture-diagnostic/task-12/path-error.json",
+    "scope": "synthetic only, no live capture launched"
+  },
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 94,
+    "generator_restore": "passed; workspace fingerprint unchanged",
+    "doccheck": "passed",
+    "race": "three modules passed serially",
+    "first_full_sweep_failure": "preserved and root cause fixed: Windows extended-path namespace mismatch"
+  },
+  "seal": {
+    "files": 488,
+    "seal_sha256": "2c298ce49ec1ee4347264075c02b4354d93b42ceed56e9c6c2973a9597ded65d",
+    "sealed": "C:\\Temp\\tickflow-session-followup-20261112-sealed",
+    "migration": "C:\\Temp\\tickflow-session-followup-20261112-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-session-followup-20261112-tamper",
+    "verified": "all bytes and file set match",
+    "tamper_rejected": "ao-listing.body"
+  },
+  "capture_fix_commit": "5f488ee6932004c2a3f6d51c383e1af8f974589f"
+}

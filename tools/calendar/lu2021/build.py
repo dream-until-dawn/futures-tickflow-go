@@ -1,77 +1,15 @@
 """从冻结官方事实生成LU 2021逐日日历；只离线读取，不自动放入内置日历。"""
 import argparse
 import datetime as dt
-import hashlib
 import io
 import json
 from pathlib import Path
 import re
 import sys
-from html.parser import HTMLParser
 
-ZONE = dt.timezone(dt.timedelta(hours=8))
-VOID = {'br', 'hr', 'img', 'input', 'meta', 'link'}
-
-
-class Article(HTMLParser):
-    """只读已知官网正文容器；未知模板拒绝，避免把导航或挑战页当正文。"""
-    def __init__(self):
-        super().__init__()
-        self.depth, self.parts = 0, []
-
-    def handle_starttag(self, tag, attrs):
-        classes = set(dict(attrs).get('class', '').split())
-        if not self.depth and classes & {'notice_contain', 'TRS_Editor', 'm_content_test'}:
-            self.depth = 1
-        elif self.depth and tag not in VOID:
-            self.depth += 1
-
-    def handle_endtag(self, tag):
-        if self.depth and tag not in VOID:
-            self.depth -= 1
-
-    def handle_data(self, data):
-        if self.depth:
-            self.parts.append(data)
-
-
-def normalize(text):
-    return re.sub(r'\s+', '', text)
-
-
-def article(raw):
-    reader = Article()
-    reader.feed(raw.decode('utf-8'))
-    text = normalize(''.join(reader.parts))
-    if not text:
-        raise ValueError('missing_article')
-    return text
-
-
-def date(number):
-    return dt.datetime.strptime(str(number), '%Y%m%d').date()
-
-
-def number(day):
-    return int(day.strftime('%Y%m%d'))
-
-
-def stamp(day, minute):
-    return int(dt.datetime.combine(day, dt.time(), ZONE).timestamp() * 1000) + minute * 60000
-
-
-def load_sources(facts, root):
-    """源锁独立于回执，逐字节检查；本工具不认证任意新源锁的事实质量。"""
-    result = {}
-    for name, source in facts['sources'].items():
-        filename = source['file']
-        if Path(filename).name != filename:
-            raise ValueError('unsafe_source_path')
-        raw = (root / filename).read_bytes()
-        if len(raw) != source['bytes'] or hashlib.sha256(raw).hexdigest() != source['ref']['sha256']:
-            raise ValueError('source_hash:' + name)
-        result[name] = raw
-    return result
+# 两个分期生成器复用只读解析和源锁；规则判断仍在各自模块。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from official_text import Article, article, date, number, stamp, normalize, load_sources
 
 
 def validate(facts, raw):
