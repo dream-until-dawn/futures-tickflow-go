@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	syncatomic "sync/atomic"
 	"testing"
 	"time"
 
@@ -39,9 +40,9 @@ func TestLocalOverflowPrefixResumesWithoutReadingOriginalAgain(t *testing.T) {
 func TestFailureEvidencePreserves412PartialAndNoResponse(t *testing.T) {
 	for _, mode := range []string{"412", "truncated", "byte_limit", "network"} {
 		t.Run(mode, func(t *testing.T) {
-			calls := 0
+			var calls syncatomic.Int32 // 处理器与测试线程独立运行，保留精确计数且避免race。
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				calls++
+				calls.Add(1)
 				switch mode {
 				case "412":
 					w.Header().Set("Content-Type", "text/html")
@@ -114,8 +115,8 @@ func TestFailureEvidencePreserves412PartialAndNoResponse(t *testing.T) {
 				}
 			}
 			n, _ := down.Usage()
-			if n != 1 || validations != 0 || (mode != "network" && calls != 1) {
-				t.Fatalf("失败重复请求/误验证: %d %d %d", n, validations, calls)
+			if n != 1 || validations != 0 || (mode != "network" && calls.Load() != 1) {
+				t.Fatalf("失败重复请求/误验证: %d %d %d", n, validations, calls.Load())
 			}
 			if mode != "network" {
 				if e = os.WriteFile(filepath.Join(root, "failed-original.body"), []byte("mutated failure evidence"), 0600); e != nil {

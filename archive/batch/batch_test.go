@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	syncatomic "sync/atomic"
 	"testing"
 	"time"
 
@@ -59,8 +60,8 @@ func validator(_ Job, raw []byte, _ evidence.Ref) error {
 	return nil
 }
 func TestBatchBudgetResumeAndTamper(t *testing.T) {
-	requests := 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { requests++; fmt.Fprint(w, "real-market-data") }))
+	var requests syncatomic.Int32 // HTTP响应不为测试与服务端协程的共享变量提供Go内存同步。
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { requests.Add(1); fmt.Fprint(w, "real-market-data") }))
 	defer server.Close()
 	d, e := NewDownloader(server.Client(), limits())
 	if e != nil {
@@ -69,11 +70,11 @@ func TestBatchBudgetResumeAndTamper(t *testing.T) {
 	job := Job{ID: "official-day", URL: server.URL, Format: "test", Day: 20261104}
 	root := t.TempDir()
 	result, e := Run(context.Background(), root, []Job{job}, d, 1024, validator)
-	if e != nil || result[0].Receipt.State != "received" || requests != 1 {
-		t.Fatalf("%+v %v %d", result, e, requests)
+	if e != nil || result[0].Receipt.State != "received" || requests.Load() != 1 {
+		t.Fatalf("%+v %v %d", result, e, requests.Load())
 	}
 	result, e = Run(context.Background(), root, []Job{job}, d, 1024, validator)
-	if e != nil || !result[0].Resumed || requests != 1 {
+	if e != nil || !result[0].Resumed || requests.Load() != 1 {
 		t.Fatalf("恢复错误 %v", e)
 	}
 	if e = os.WriteFile(filepath.Join(root, "official-day.body"), []byte("changed"), 0600); e != nil {
@@ -94,8 +95,8 @@ func TestBatchBudgetResumeAndTamper(t *testing.T) {
 	}
 }
 func TestBatchFailuresDoNotRetryOrMasqueradeAsSuccess(t *testing.T) {
-	requests := 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { requests++; fmt.Fprint(w, "<html>challenge</html>") }))
+	var requests syncatomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { requests.Add(1); fmt.Fprint(w, "<html>challenge</html>") }))
 	defer server.Close()
 	d, _ := NewDownloader(server.Client(), limits())
 	root := t.TempDir()
@@ -106,13 +107,13 @@ func TestBatchFailuresDoNotRetryOrMasqueradeAsSuccess(t *testing.T) {
 			t.Fatalf("%+v %v", r, e)
 		}
 	}
-	if requests != 1 {
+	if requests.Load() != 1 {
 		t.Fatal("失败重复请求")
 	}
 	job.ID = "blocked"
 	job.Blocked = "已知证书问题，禁止自动重试"
 	r, e := Run(context.Background(), root, []Job{job}, d, 1024, validator)
-	if e != nil || r[0].Receipt.State != "blocked" || requests != 1 {
+	if e != nil || r[0].Receipt.State != "blocked" || requests.Load() != 1 {
 		t.Fatal("阻塞源被请求")
 	}
 	job.ID = "../escape"
@@ -129,9 +130,9 @@ func TestBatchFailuresDoNotRetryOrMasqueradeAsSuccess(t *testing.T) {
 func TestDownloaderByteTimeoutAndRedirect(t *testing.T) {
 	for _, mode := range []string{"bytes", "timeout", "redirect", "status"} {
 		t.Run(mode, func(t *testing.T) {
-			calls := 0
+			var calls syncatomic.Int32
 			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				calls++
+				calls.Add(1)
 				switch mode {
 				case "timeout":
 					<-r.Context().Done()
@@ -159,7 +160,7 @@ func TestDownloaderByteTimeoutAndRedirect(t *testing.T) {
 				t.Fatal("失败被吞")
 			}
 			n, b := d.Usage()
-			if n != 1 || calls != 1 {
+			if n != 1 || calls.Load() != 1 {
 				t.Fatal("发生隐式重试/重定向")
 			}
 			if mode == "bytes" && b != 4 {
