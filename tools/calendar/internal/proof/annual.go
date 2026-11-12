@@ -17,13 +17,14 @@ import (
 // annualSpec 是独立核阅原文后写入的审核表，不读取编译器的节假日配置。
 // 新年份不能仅靠提交一个自带SHA的JSON获得资格。
 type annualSpec struct {
-	year     int
-	factsSHA string
-	holiday  [][2]tf.TradingDay
-	dayOnly  map[tf.TradingDay]bool
-	products map[string]annualProduct
-	openDays int
-	events   []annualEvent
+	year         int
+	factsSHA     string
+	holiday      [][2]tf.TradingDay
+	dayOnly      map[tf.TradingDay]bool
+	products     map[string]annualProduct
+	openDays     int
+	events       []annualEvent
+	ordinalDates []tf.TradingDay
 }
 type annualEvent struct {
 	from, to tf.TradingDay
@@ -35,6 +36,7 @@ type annualVersion struct {
 }
 type annualProduct struct {
 	from, to           tf.TradingDay
+	listed             tf.TradingDay
 	nightEnd, openDays int
 	versions           []annualVersion
 }
@@ -55,6 +57,7 @@ func spec2025() annualSpec {
 		newBusiness := p + "-business-2025-doc"
 		if p == "ad" {
 			x.from = 20250610
+			x.listed = 20250610
 			x.openDays = 141
 			oldBusiness = "ad-business-first-docx"
 			newBusiness = "ad-business-202508-docx"
@@ -66,6 +69,7 @@ func spec2025() annualSpec {
 		}
 		if p == "op" {
 			x.from = 20250910
+			x.listed = 20250910
 			x.openDays = 75
 			x.versions = []annualVersion{{20250818, 20251231, []string{"management-2025-doc", "rules-202507", "op-rules", "op-business-first-docx"}}}
 		}
@@ -189,8 +193,8 @@ func profileAnnual(input calendarFile, spec annualSpec) (*verified.Calendar, err
 			}
 			count++
 			var sessions []tf.Session
-			// AD/OP首日上市只允许09:00开始；AO/BR不是本年上市。
-			firstListing := p.from > tf.TradingDay(spec.year*10000+101) && r.Day == p.from
+			// 只有原文明确的上市首日才能省略前夜，部分年起点本身不等于上市。
+			firstListing := r.Day == p.listed
 			if !spec.dayOnly[r.Day] && !firstListing {
 				previous := natural(r.Day).AddDate(0, 0, -1)
 				for spec.closed(ymd(previous)) {

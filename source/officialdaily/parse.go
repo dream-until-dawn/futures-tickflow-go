@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
@@ -40,26 +41,47 @@ type Document struct {
 }
 
 var numeric = regexp.MustCompile(`^(?:[0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)(?:\.[0-9]+)?$`)
+var scientific = regexp.MustCompile(`^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?[eE][+-]?[0-9]+$`)
 var shfeProduct = regexp.MustCompile(`^[a-z]{1,3}_f$`)
 var month = regexp.MustCompile(`^[0-9]{4}$`)
 var czceCode = regexp.MustCompile(`^[A-Z]{1,3}[0-9]{3,4}$`)
 var ine = map[string]bool{"sc": true, "nr": true, "lu": true, "bc": true, "ec": true}
 
-// Number 将原始非负十进制转为计算值；缺值返回NaN，零仍是零。
+// Number 将原始非负十进制（含科学计数表示）转为计算值；缺值返回NaN，零仍是零。
 // 原报价始终保留在Record，不用此转换结果作财务原始字段。
 func Number(s string) (float64, error) {
 	s = strings.TrimSpace(s)
 	if s == "" || s == "-" || s == "--" {
 		return math.NaN(), nil
 	}
-	if !numeric.MatchString(s) {
+	if !numeric.MatchString(s) && !scientific.MatchString(s) {
 		return 0, fmt.Errorf("officialdaily: 非法非负十进制 %q", s)
 	}
 	v, e := strconv.ParseFloat(strings.ReplaceAll(s, ",", ""), 64)
 	if e != nil || math.IsInf(v, 0) {
 		return 0, fmt.Errorf("officialdaily: 数值溢出 %q", s)
 	}
+	// ParseFloat可能将非零极小值静默变成零，不能据此认证零成交或零价格。
+	if v == 0 && strings.Trim(strings.Split(strings.ToLower(s), "e")[0], "0.,") != "" {
+		return 0, fmt.Errorf("officialdaily: 非零数值下溢 %q", s)
+	}
 	return v, nil
+}
+
+// exactQuantity 在浮点安全范围外另核原字面量的整数性；Records仍保留原表示。
+func exactQuantity(s string, value float64) bool {
+	if math.IsNaN(value) || value != math.Trunc(value) || value > 9007199254740991 || len(s) > 4096 {
+		return false
+	}
+	if value == 0 {
+		return true
+	} // Number已经拒绝非零下溢；避免展开0e巨大指数。
+	literal := strings.ReplaceAll(strings.TrimSpace(s), ",", "")
+	if !strings.ContainsAny(literal, ".eE") {
+		literal += ".0"
+	} // 强制十进制，不能将前导零当八进制。
+	r, ok := new(big.Rat).SetString(literal)
+	return ok && r.IsInt() && r.Num().Sign() >= 0 && r.Num().BitLen() <= 53
 }
 func text(v json.RawMessage) (string, error) {
 	if len(v) == 0 || bytes.Equal(v, []byte("null")) {
@@ -94,7 +116,7 @@ func finish(rr []Record) ([]Record, error) {
 		}
 		for _, key := range []string{"volume", "open_interest"} {
 			v, _ := Number(r.Fields[key])
-			if math.IsNaN(v) || v != math.Trunc(v) || v > 9007199254740991 {
+			if !exactQuantity(r.Fields[key], v) {
 				return nil, fmt.Errorf("officialdaily: 量仓缺失/非安全整数")
 			}
 		}

@@ -44,12 +44,15 @@ def validate(facts, raw):
         if not stop < a <= b < resume or (last is not None and a <= last):
             raise ValueError('event_order')
         last = b
-    date(facts['year_end_no_night_after'])
+    if 'year_end_no_night_after' in facts:
+        date(facts['year_end_no_night_after'])
     for key, p in facts['profiles'].items():
         covered_from = date(p.get('from', number(start)))
         covered_to = date(p.get('to', number(end)))
         if not start <= covered_from <= covered_to <= end:
             raise ValueError('profile_coverage')
+        if covered_to == end and ('year_end_no_night_after' not in facts or 'year_end_source' not in facts):
+            raise ValueError('missing_year_boundary')
         if len(key.split('.')) != 2 or date(p['listed']) > covered_from:
             raise ValueError('profile_listing')
         if covered_from != start and covered_from != date(p['listed']) and 'previous_trading_day' not in p:
@@ -81,7 +84,9 @@ def generate(facts, raw, facts_sha):
     year = facts['year']
     start, end = date(year*10000+101), date(year*10000+1231)
     closed_ranges = [(date(e['from']), date(e['to'])) for e in facts['events']]
-    stops = {e['no_night_after'] for e in facts['events']} | {facts['year_end_no_night_after']}
+    stops = {e['no_night_after'] for e in facts['events']}
+    if 'year_end_no_night_after' in facts:
+        stops.add(facts['year_end_no_night_after'])
 
     def closed(day):
         return day.weekday() >= 5 or any(a <= day <= b for a, b in closed_ranges)
@@ -107,7 +112,7 @@ def generate(facts, raw, facts_sha):
             roles = p['base_sources'] + [role]
             roles += p.get('version_sources', {}).get(role, [])
             roles += [e['source'] for e in facts['events'] if e['no_night_after'] <= value <= e['resume']]
-            if value >= facts['year_end_no_night_after']:
+            if 'year_end_no_night_after' in facts and value >= facts['year_end_no_night_after']:
                 roles.append(facts['year_end_source'])
             refs = [facts['sources'][r]['ref'] for r in dict.fromkeys(roles)]
             template = {'From': vf, 'To': vt,

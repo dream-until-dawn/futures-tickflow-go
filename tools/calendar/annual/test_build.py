@@ -82,6 +82,7 @@ class AnnualBuildTest(unittest.TestCase):
         p['from'] = 20240611
         with self.assertRaisesRegex(ValueError, 'profile_listing'):
             build.generate(facts, self.raw, 'test')
+
         p['from'] = 20240613
         with self.assertRaisesRegex(ValueError, 'profile_previous_day'):
             build.generate(facts, self.raw, 'test')
@@ -93,6 +94,17 @@ class AnnualBuildTest(unittest.TestCase):
         p['to'] = 20250101
         with self.assertRaisesRegex(ValueError, 'profile_coverage'):
             build.generate(facts, self.raw, 'test')
+
+    def test_partial_year_does_not_invent_future_boundary(self):
+        facts = copy.deepcopy(self.facts)
+        del facts['year_end_no_night_after']
+        del facts['year_end_source']
+        with self.assertRaisesRegex(ValueError, 'missing_year_boundary'):
+            build.generate(facts, self.raw, 'test')
+        for p in facts['profiles'].values():
+            p['to'] = 20241104
+        result = build.generate(facts, self.raw, 'test')
+        self.assertEqual(result['series'][0]['records'][-1]['day'], 20241104)
 
 
 if __name__ == '__main__':

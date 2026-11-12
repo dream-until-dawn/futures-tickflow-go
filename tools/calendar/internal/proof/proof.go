@@ -269,7 +269,8 @@ func ordinal(dir string, f fileRef) (tf.TradingDay, int, error) {
 		return 0, 0, e
 	}
 	n, e := strconv.Atoi(strings.Trim(string(v.Ordinal), "\""))
-	if e != nil || strings.Trim(string(v.Code), "\"") != "0" {
+	code := strings.Trim(string(v.Code), "\"")
+	if e != nil || (code != "0" && code != "0000") {
 		return 0, 0, fmt.Errorf("ordinal_status")
 	}
 	return tf.TradingDay(d), n, nil
@@ -470,6 +471,15 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 			if e == nil {
 				n, e = observationsAnnual(cal, dir, spec)
 			}
+		case 2026:
+			spec := spec2026()
+			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+				return e
+			}
+			cal, e = profileAnnual(input, spec)
+			if e == nil {
+				n, e = annualOrdinals(cal, dir, spec)
+			}
 		default:
 			return fmt.Errorf("annual_unreviewed_year")
 		}
@@ -493,7 +503,7 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 		}
 	}
 	report := map[string]any{"status": "passed", "products": len(input.Series), "market_contract_days": samples, "reopen_added_bars": 0, "scope": "published continuous schedules; no point-in-time availability or price certification"}
-	if input.Schema == "annual-calendar-v1" {
+	if input.Schema == "annual-calendar-v1" && input.Year != 2026 {
 		report["monthly_observation_checks"] = n
 	} else {
 		report["ordinal_checks"] = n

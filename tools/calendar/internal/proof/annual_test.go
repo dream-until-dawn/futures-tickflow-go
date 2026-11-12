@@ -89,3 +89,88 @@ func TestAnnual2025ProfileRejectsMutations(t *testing.T) {
 		}
 	})
 }
+
+func TestAnnual2026ProfileRejectsMutations(t *testing.T) {
+	raw, err := os.ReadFile("../../../../calendar/verified/profiles/shfe-2026-to-1104.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	decode := func() calendarFile {
+		var v calendarFile
+		if err := json.Unmarshal(raw, &v); err != nil {
+			t.Fatal(err)
+		}
+		return v
+	}
+	if _, err := profileAnnual(decode(), spec2026()); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name, reason string
+		day          tf.TradingDay
+		change       func(*verified.Record)
+	}{
+		{"false-first-night", "annual_absolute_session", 20260105, func(r *verified.Record) {
+			r.Sessions = append([]tf.Session{{Start: instant(20251231, 1260), End: instant(20251231, 1500)}}, r.Sessions...)
+		}},
+		{"published-not-effective", "annual_template_version", 20260706, func(r *verified.Record) { r.Template.From = 20260618 }},
+		{"sept-published-not-effective", "annual_template_version", 20260914, func(r *verified.Record) { r.Template.From = 20260911 }},
+		{"cross-midnight", "annual_absolute_session", 20260706, func(r *verified.Record) { r.Sessions[0].End -= 7200000 }},
+		{"false-autumn-first-night", "annual_absolute_session", 20260928, func(r *verified.Record) {
+			r.Sessions = append([]tf.Session{{Start: instant(20260924, 1260), End: instant(20260924, 1500)}}, r.Sessions...)
+		}},
+		{"holiday-open", "annual_holiday_open", 20261002, func(r *verified.Record) {
+			r.Sessions = []tf.Session{{Start: instant(20261002, 540), End: instant(20261002, 615)}}
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			v := decode()
+			for i := range v.Series[0].Records {
+				r := &v.Series[0].Records[i]
+				if r.Day == tc.day {
+					tc.change(r)
+				}
+			}
+			_, err := profileAnnual(v, spec2026())
+			if err == nil || !strings.Contains(err.Error(), tc.reason) {
+				t.Fatalf("want %s got %v", tc.reason, err)
+			}
+		})
+	}
+	t.Run("known-slice-start-is-not-listing", func(t *testing.T) {
+		v, spec := decode(), spec2026()
+		for i := range v.Series {
+			rows := v.Series[i].Records
+			start := 0
+			for rows[start].Day < 20260706 {
+				start++
+			}
+			v.Series[i].Records = rows[start:]
+			p := spec.products[v.Series[i].Product.Product]
+			p.from = 20260706
+			p.openDays = 0
+			for _, r := range rows[start:] {
+				if len(r.Sessions) > 0 {
+					p.openDays++
+				}
+			}
+			spec.products[v.Series[i].Product.Product] = p
+		}
+		if _, err := profileAnnual(v, spec); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("future-scope-extension", func(t *testing.T) {
+		v := decode()
+		s := &v.Series[0]
+		last := s.Records[len(s.Records)-1]
+		last.Day = 20261105
+		last.Template.To = 20261105
+		last.Sessions = nil
+		s.Records = append(s.Records, last)
+		_, err := profileAnnual(v, spec2026())
+		if err == nil || !strings.Contains(err.Error(), "annual_natural_coverage") {
+			t.Fatalf("extended scope: %v", err)
+		}
+	})
+}

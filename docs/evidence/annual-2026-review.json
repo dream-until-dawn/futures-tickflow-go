@@ -1,0 +1,223 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "9d59bae9cddb9f519f4da49811a125e488d7a8d28990d0d1f73047dff4fd8c55",
+  "qualified_profiles": [
+    "SHFE.ao",
+    "SHFE.br",
+    "SHFE.ad",
+    "SHFE.op"
+  ],
+  "source_root": "C:\\Temp\\tickflow-calendar-2026-20261112",
+  "scope": "published continuous schedules 20260101-20261104 only; no fabricated 2027 boundary",
+  "pending": "INE missing originals and DCE/GFEX routes unchanged; no requests",
+  "calendar": {
+    "path": "calendar/verified/profiles/shfe-2026-to-1104.json",
+    "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e",
+    "summary": {
+      "SHFE.ao": {
+        "natural_days": 308,
+        "trading_days": 201,
+        "day_only_trade_days": [
+          20260105,
+          20260224,
+          20260407,
+          20260506,
+          20260622,
+          20260928,
+          20261008
+        ]
+      },
+      "SHFE.br": {
+        "natural_days": 308,
+        "trading_days": 201,
+        "day_only_trade_days": [
+          20260105,
+          20260224,
+          20260407,
+          20260506,
+          20260622,
+          20260928,
+          20261008
+        ]
+      },
+      "SHFE.ad": {
+        "natural_days": 308,
+        "trading_days": 201,
+        "day_only_trade_days": [
+          20260105,
+          20260224,
+          20260407,
+          20260506,
+          20260622,
+          20260928,
+          20261008
+        ]
+      },
+      "SHFE.op": {
+        "natural_days": 308,
+        "trading_days": 201,
+        "day_only_trade_days": [
+          20260105,
+          20260224,
+          20260407,
+          20260506,
+          20260622,
+          20260928,
+          20261008
+        ]
+      }
+    }
+  },
+  "network": {
+    "direct_requests": 23,
+    "bytes": 1456882,
+    "searches": 11,
+    "same_request_retries": 0,
+    "INE_DCE_GFEX_requests": 0,
+    "failed": [],
+    "recorded_evidence_collection_seconds": 823.939667
+  },
+  "positive": {
+    "market_contract_days": 8,
+    "ordinal_checks": 44,
+    "products": 4,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "false-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2026-01-05"
+    },
+    {
+      "case": "autumn-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2026-09-28"
+    },
+    {
+      "case": "july-publication",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2026-07-06"
+    },
+    {
+      "case": "sept-publication",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2026-09-14"
+    },
+    {
+      "case": "cross-midnight",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2026-07-06"
+    },
+    {
+      "case": "friday-to-sunday",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2026-07-06"
+    },
+    {
+      "case": "foreign-ref",
+      "exit": 1,
+      "reason": "annual_evidence_binding",
+      "actual": "annual_evidence_binding"
+    },
+    {
+      "case": "missing-version-ref",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2026-09-14 management-202609-docx"
+    },
+    {
+      "case": "missing-holiday-ref",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2026-09-28 autumn-national-2026"
+    },
+    {
+      "case": "fact-pin",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "future-extension",
+      "exit": 1,
+      "reason": "annual_version_range",
+      "actual": "annual_version_range"
+    },
+    {
+      "case": "false-ordinal",
+      "exit": 1,
+      "reason": "annual_ordinal_mismatch",
+      "actual": "annual_ordinal_mismatch: ao 2026-11-04"
+    },
+    {
+      "case": "false-report-date",
+      "exit": 1,
+      "reason": "annual_ordinal_identity",
+      "actual": "annual_ordinal_identity"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "exit": 1,
+      "target": "false-first-night",
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "exit": 1,
+      "target": "published-not-effective",
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "quantity-guard",
+      "exit": 1,
+      "target": "near-integer",
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "source_scope_notes": [
+    "daily receipt local-reuse clock is not first HTTP receipt or historical live availability",
+    "original numerical literals retained including scientific notation; no data repairs",
+    "2026 range ends11-04; no fabricated2027 boundary",
+    "year ordinal cross-check verifies cumulative counts, not all intervening prices or hours",
+    "same product cross-year Series merge and full-range Sync not yet independently exercised"
+  ],
+  "initial_failures": [
+    "review ignores parenthetical remarks; June night note retained in original, review token targets nonparenthetical implementation wording",
+    "first raw market pipeline rejected legitimate scientific turnover1.1441791526E7; parser compatibility and exact quantity checks added, original untouched"
+  ],
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 100,
+    "generator_restore": "passed; unchanged workspace fingerprint",
+    "doccheck": "passed",
+    "race": "three modules passed serially",
+    "compatibility": "2024/2025 regenerated byte-identical and both old real market pipelines passed; legacy2023 CLI real pipeline passed"
+  },
+  "seal": {
+    "files": 337,
+    "seal_sha256": "cc5f2929146dca978831d089ddf71710e9e1b7aca6aaf1e324cf3f1ebdc7e3f2",
+    "sealed": "C:\\Temp\\tickflow-calendar-2026-20261112-sealed",
+    "migration": "C:\\Temp\\tickflow-calendar-2026-20261112-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-calendar-2026-20261112-tamper",
+    "verified": "all hashes, lengths and file set match",
+    "tamper_rejected": "shfe-year-2026.body"
+  }
+}

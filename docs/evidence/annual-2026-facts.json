@@ -1,0 +1,788 @@
+{
+  "schema": "annual-calendar-facts-v1",
+  "year": 2026,
+  "previous_trading_day": 20251231,
+  "day_minutes": [
+    [
+      540,
+      615
+    ],
+    [
+      630,
+      690
+    ],
+    [
+      810,
+      900
+    ]
+  ],
+  "events": [
+    {
+      "name": "newyear",
+      "from": 20260101,
+      "to": 20260104,
+      "resume": 20260105,
+      "no_night_after": 20251231,
+      "source": "boundary-2026"
+    },
+    {
+      "name": "spring",
+      "from": 20260214,
+      "to": 20260223,
+      "resume": 20260224,
+      "no_night_after": 20260213,
+      "source": "spring-2026"
+    },
+    {
+      "name": "qingming",
+      "from": 20260404,
+      "to": 20260406,
+      "resume": 20260407,
+      "no_night_after": 20260403,
+      "source": "qingming-2026"
+    },
+    {
+      "name": "labor",
+      "from": 20260501,
+      "to": 20260505,
+      "resume": 20260506,
+      "no_night_after": 20260430,
+      "source": "labor-2026"
+    },
+    {
+      "name": "dragon",
+      "from": 20260619,
+      "to": 20260621,
+      "resume": 20260622,
+      "no_night_after": 20260618,
+      "source": "dragon-2026"
+    },
+    {
+      "name": "autumn",
+      "from": 20260925,
+      "to": 20260927,
+      "resume": 20260928,
+      "no_night_after": 20260924,
+      "source": "autumn-national-2026"
+    },
+    {
+      "name": "national",
+      "from": 20261001,
+      "to": 20261007,
+      "resume": 20261008,
+      "no_night_after": 20260930,
+      "source": "autumn-national-2026"
+    }
+  ],
+  "profiles": {
+    "SHFE.ao": {
+      "listed": 20230619,
+      "to": 20261104,
+      "night_minutes": [
+        [
+          1260,
+          1500
+        ]
+      ],
+      "base_sources": [
+        "ao-listing",
+        "shfe-year-2026",
+        "next-hedging-rules",
+        "business-next-2026-docx"
+      ],
+      "versions": [
+        [
+          20260101,
+          20260705,
+          "management-2025-doc"
+        ],
+        [
+          20260706,
+          20260913,
+          "management-202607-doc"
+        ],
+        [
+          20260914,
+          20261104,
+          "management-202609-docx"
+        ]
+      ],
+      "version_sources": {
+        "management-2025-doc": [
+          "rules-202507"
+        ],
+        "management-202607-doc": [
+          "manager-202606-release"
+        ],
+        "management-202609-docx": [
+          "manager-202609-release"
+        ]
+      }
+    },
+    "SHFE.br": {
+      "listed": 20230728,
+      "to": 20261104,
+      "night_minutes": [
+        [
+          1260,
+          1380
+        ]
+      ],
+      "base_sources": [
+        "br-listing",
+        "shfe-year-2026",
+        "next-hedging-rules",
+        "business-next-2026-docx"
+      ],
+      "versions": [
+        [
+          20260101,
+          20260705,
+          "management-2025-doc"
+        ],
+        [
+          20260706,
+          20260913,
+          "management-202607-doc"
+        ],
+        [
+          20260914,
+          20261104,
+          "management-202609-docx"
+        ]
+      ],
+      "version_sources": {
+        "management-2025-doc": [
+          "rules-202507"
+        ],
+        "management-202607-doc": [
+          "manager-202606-release"
+        ],
+        "management-202609-docx": [
+          "manager-202609-release"
+        ]
+      }
+    },
+    "SHFE.ad": {
+      "listed": 20250610,
+      "to": 20261104,
+      "night_minutes": [
+        [
+          1260,
+          1500
+        ]
+      ],
+      "base_sources": [
+        "ad-listing",
+        "shfe-year-2026",
+        "next-hedging-rules",
+        "business-next-2026-docx"
+      ],
+      "versions": [
+        [
+          20260101,
+          20260705,
+          "management-2025-doc"
+        ],
+        [
+          20260706,
+          20260913,
+          "management-202607-doc"
+        ],
+        [
+          20260914,
+          20261104,
+          "management-202609-docx"
+        ]
+      ],
+      "version_sources": {
+        "management-2025-doc": [
+          "rules-202507"
+        ],
+        "management-202607-doc": [
+          "manager-202606-release"
+        ],
+        "management-202609-docx": [
+          "manager-202609-release"
+        ]
+      }
+    },
+    "SHFE.op": {
+      "listed": 20250910,
+      "to": 20261104,
+      "night_minutes": [
+        [
+          1260,
+          1380
+        ]
+      ],
+      "base_sources": [
+        "op-listing",
+        "shfe-year-2026",
+        "next-hedging-rules",
+        "business-next-2026-docx"
+      ],
+      "versions": [
+        [
+          20260101,
+          20260705,
+          "management-2025-doc"
+        ],
+        [
+          20260706,
+          20260913,
+          "management-202607-doc"
+        ],
+        [
+          20260914,
+          20261104,
+          "management-202609-docx"
+        ]
+      ],
+      "version_sources": {
+        "management-2025-doc": [
+          "rules-202507"
+        ],
+        "management-202607-doc": [
+          "manager-202606-release"
+        ],
+        "management-202609-docx": [
+          "manager-202609-release"
+        ]
+      }
+    }
+  },
+  "sources": {
+    "ao-listing": {
+      "file": "ao-listing.body",
+      "bytes": 118449,
+      "ref": {
+        "id": "ao-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202306/t20230606_800293.html",
+        "sha256": "bb7a956d93a65d49929c3131904d3e8b1b5ff200b3b774e84df8cebf1f9dfed3",
+        "retrieved_at": "2026-11-12T10:47:24.165922+00:00"
+      }
+    },
+    "br-listing": {
+      "file": "br-listing.body",
+      "bytes": 118679,
+      "ref": {
+        "id": "br-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202307/t20230718_800481.html",
+        "sha256": "f74c8d2e0d8e9d550d6b55353e63982e3516468f72e4037fc070ef72de4d1902",
+        "retrieved_at": "2026-11-12T10:48:15.015823+00:00"
+      }
+    },
+    "ad-listing": {
+      "file": "ad-listing.body",
+      "bytes": 127058,
+      "ref": {
+        "id": "ad-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202505/t20250526_827862.html",
+        "sha256": "e446696b10f69224bbb55123b3aabf6ad4b40ea2bd48a498065020c5415395df",
+        "retrieved_at": "2026-11-12T13:16:48.566706+00:00",
+        "version": "official-original"
+      }
+    },
+    "op-listing": {
+      "file": "op-listing.body",
+      "bytes": 124414,
+      "ref": {
+        "id": "op-listing",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202508/t20250818_828697.html",
+        "sha256": "ae33f736381305006fc31e4f6353744b0c7a09205678f3d3904ed8e2662b2fd6",
+        "retrieved_at": "2026-11-12T13:16:49.906965+00:00",
+        "version": "official-original"
+      }
+    },
+    "rules-202507": {
+      "file": "rules-202507.body",
+      "bytes": 127169,
+      "ref": {
+        "id": "rules-202507",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/t20250708_828285.html",
+        "sha256": "c381cd0a375233f8a1786a31070d4cb601a0bcddd560439cefaebd058a239f91",
+        "retrieved_at": "2026-11-12T13:16:46.464282+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-2025-doc": {
+      "file": "management-2025-doc.body",
+      "bytes": 100864,
+      "ref": {
+        "id": "management-2025-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476147513.doc",
+        "sha256": "a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94",
+        "retrieved_at": "2026-11-12T13:20:01.739287+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-2025-doc-final": {
+      "file": "management-2025-doc-final.txt",
+      "bytes": 15786,
+      "ref": {
+        "id": "management-2025-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476147513.doc",
+        "sha256": "a4bc50d57d13e76ed89dffb2eb749be77f845e723968e5ed6d07d3965228a8e7",
+        "retrieved_at": "2026-11-12T13:25:37.684176+00:00",
+        "version": "reviewed-final-text;origin=a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94"
+      }
+    },
+    "boundary-2026": {
+      "file": "boundary-2026.body",
+      "bytes": 124195,
+      "ref": {
+        "id": "boundary-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202512/t20251226_829924.html",
+        "sha256": "9de740925b3ddbe8faa4a609d97e8f1ea1e7111397cf0ea7646dd25434d97cf6",
+        "retrieved_at": "2026-11-12T13:16:45.299869+00:00",
+        "version": "official-original"
+      }
+    },
+    "next-hedging-rules": {
+      "file": "next-hedging-rules.body",
+      "bytes": 120810,
+      "ref": {
+        "id": "next-hedging-rules",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/t20251128_829643.html",
+        "sha256": "ace20d6d80a340cc18d52e1aba9eaa5ce4c4d6621e0df4b8ecb85e8a2f9e8e04",
+        "retrieved_at": "2026-11-12T13:16:53.547095+00:00",
+        "version": "official-original"
+      }
+    },
+    "business-next-2026-docx": {
+      "file": "business-next-2026-docx.body",
+      "bytes": 221220,
+      "ref": {
+        "id": "business-next-2026-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302",
+        "retrieved_at": "2026-11-12T13:20:13.578775+00:00",
+        "version": "official-original"
+      }
+    },
+    "shfe-year-2026": {
+      "file": "shfe-year-2026.body",
+      "bytes": 121416,
+      "ref": {
+        "id": "shfe-year-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202512/t20251217_829805.html",
+        "sha256": "3d502c5a3f27b93e5f15968bb732fe8f11daabc29fcd224b5d2be30ea3f2b018",
+        "retrieved_at": "2026-11-12T13:46:44.232394+00:00",
+        "version": "official-original"
+      }
+    },
+    "spring-2026": {
+      "file": "spring-2026.body",
+      "bytes": 127582,
+      "ref": {
+        "id": "spring-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202602/t20260209_830421.html",
+        "sha256": "f23908f39ff2e524bf42cb82ed3059dd129a13b495cac0c31a0ce069ba1a63ef",
+        "retrieved_at": "2026-11-12T13:46:46.345179+00:00",
+        "version": "official-original"
+      }
+    },
+    "qingming-2026": {
+      "file": "qingming-2026.body",
+      "bytes": 121651,
+      "ref": {
+        "id": "qingming-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202603/t20260331_830986.html",
+        "sha256": "0c99ecfd1dc2d4371917cc32b5114674f1c57c8b41d7f5ebae6b39b74d925146",
+        "retrieved_at": "2026-11-12T13:46:47.364702+00:00",
+        "version": "official-original"
+      }
+    },
+    "labor-2026": {
+      "file": "labor-2026.body",
+      "bytes": 123556,
+      "ref": {
+        "id": "labor-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202604/t20260427_831528.html",
+        "sha256": "b321b48ccb1c35949ffe572f2283ab957b7220a11dc09babea00bee6f05f15ad",
+        "retrieved_at": "2026-11-12T13:46:48.910446+00:00",
+        "version": "official-original"
+      }
+    },
+    "dragon-2026": {
+      "file": "dragon-2026.body",
+      "bytes": 121129,
+      "ref": {
+        "id": "dragon-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202606/t20260615_832075.html",
+        "sha256": "ef94d04cdac156388c3f8e0feebaf5e5be0f70d2ed290bf6bd5221c2326dc12e",
+        "retrieved_at": "2026-11-12T13:46:49.849673+00:00",
+        "version": "official-original"
+      }
+    },
+    "autumn-national-2026": {
+      "file": "autumn-national-2026.body",
+      "bytes": 130196,
+      "ref": {
+        "id": "autumn-national-2026",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260921_833503.html",
+        "sha256": "c512806497958a944dce4079594d9daea3727b5fa611dd3375a3deb0f51380e4",
+        "retrieved_at": "2026-11-12T13:46:51.574816+00:00",
+        "version": "official-original"
+      }
+    },
+    "manager-202606-release": {
+      "file": "manager-202606-release.body",
+      "bytes": 121799,
+      "ref": {
+        "id": "manager-202606-release",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202606/t20260618_832166.html",
+        "sha256": "b82a1a894eb94b36ed1ad1a22b64028c2d4f9b292d784ce507d99a3253fb4819",
+        "retrieved_at": "2026-11-12T13:46:52.881873+00:00",
+        "version": "official-original"
+      }
+    },
+    "manager-202609-release": {
+      "file": "manager-202609-release.body",
+      "bytes": 120299,
+      "ref": {
+        "id": "manager-202609-release",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202609/t20260911_833356.html",
+        "sha256": "08bb07f8c6d8b58ad695f8437ba4bc97f2bff82e9dffec68ae04e39a645b739f",
+        "retrieved_at": "2026-11-12T13:46:54.164647+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-202607-doc": {
+      "file": "management-202607-doc.body",
+      "bytes": 51200,
+      "ref": {
+        "id": "management-202607-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202606/W020260618613368819709.doc",
+        "sha256": "dbf538f32836896837f5d395a6beaf7de6c443ac5762cee32dba4a7ca274f121",
+        "retrieved_at": "2026-11-12T13:48:11.149373+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-202609-docx": {
+      "file": "management-202609-docx.body",
+      "bytes": 28248,
+      "ref": {
+        "id": "management-202609-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202609/W020260911499678977551.docx",
+        "sha256": "d1fd5d2ab9d406586e36ba173e5972e894781ef662b0e1006d8d879905415922",
+        "retrieved_at": "2026-11-12T13:48:11.830098+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-diff-202607-docx": {
+      "file": "management-diff-202607-docx.body",
+      "bytes": 23564,
+      "ref": {
+        "id": "management-diff-202607-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202606/W020260721410809024926.docx",
+        "sha256": "8a316c22ad7ac7ccc37c2f9ffd3ae49c0cf34c689c4fdc855da3baadb9bce324",
+        "retrieved_at": "2026-11-12T13:48:12.491470+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-diff-202609-docx": {
+      "file": "management-diff-202609-docx.body",
+      "bytes": 20447,
+      "ref": {
+        "id": "management-diff-202609-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202609/W020260911499678977439.docx",
+        "sha256": "7b4d457c892233db7c887bb8e4e6b3809ae843dc0887046cfe693ad03cc80dd5",
+        "retrieved_at": "2026-11-12T13:48:13.131507+00:00",
+        "version": "official-original"
+      }
+    },
+    "management-202607-doc-text": {
+      "file": "management-202607-doc.txt",
+      "bytes": 17205,
+      "ref": {
+        "id": "management-202607-doc-text",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202606/W020260618613368819709.doc",
+        "sha256": "204a46b28180cd11e41a1cd7c6de9d19f947ce6d2cd207ae580a1c02452a25b2",
+        "retrieved_at": "2026-11-12T13:52:38.297769+00:00",
+        "version": "reviewed-final-text;origin=dbf538f32836896837f5d395a6beaf7de6c443ac5762cee32dba4a7ca274f121"
+      }
+    },
+    "management-202609-docx-text": {
+      "file": "management-202609-docx.txt",
+      "bytes": 16922,
+      "ref": {
+        "id": "management-202609-docx-text",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202609/W020260911499678977551.docx",
+        "sha256": "7c697fc7e68724bc2593e678828f3815a2244af93f873be470ef398ce9d3b294",
+        "retrieved_at": "2026-11-12T13:52:38.298017+00:00",
+        "version": "reviewed-final-text;origin=d1fd5d2ab9d406586e36ba173e5972e894781ef662b0e1006d8d879905415922"
+      }
+    },
+    "ao-business-2026-final": {
+      "file": "ao-business-2026-final.txt",
+      "bytes": 16408,
+      "ref": {
+        "id": "ao-business-2026-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "d92e07a88f421ba9c18ccaf92d43a46e0d44dd76a2a9e60e794dc19d154a304a",
+        "retrieved_at": "2026-11-12T13:52:38.298126+00:00",
+        "version": "reviewed-final-text;origin=94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+      }
+    },
+    "br-business-2026-final": {
+      "file": "br-business-2026-final.txt",
+      "bytes": 17943,
+      "ref": {
+        "id": "br-business-2026-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "c2f0ba9843cc02dd7a49e67f1334719b3d56934a0379504fc42bc66bfcb8a7b5",
+        "retrieved_at": "2026-11-12T13:52:38.298230+00:00",
+        "version": "reviewed-final-text;origin=94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+      }
+    },
+    "ad-business-2026-final": {
+      "file": "ad-business-2026-final.txt",
+      "bytes": 13870,
+      "ref": {
+        "id": "ad-business-2026-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "6f9feadf2a1bce62dbe893b0f6299c1f78cebaa199d7183eead5c30a27e11b57",
+        "retrieved_at": "2026-11-12T13:52:38.298334+00:00",
+        "version": "reviewed-final-text;origin=94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+      }
+    },
+    "op-business-2026-final": {
+      "file": "op-business-2026-final.txt",
+      "bytes": 18190,
+      "ref": {
+        "id": "op-business-2026-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128614256853728.docx",
+        "sha256": "4fb437ca61bd723119775400bd78145d2bcb3c82b29c4b7740e2abc01e9c0a6c",
+        "retrieved_at": "2026-11-12T13:52:38.298439+00:00",
+        "version": "reviewed-final-text;origin=94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+      }
+    }
+  },
+  "reviews": [
+    {
+      "source": "ao-listing",
+      "kind": "article",
+      "tokens": [
+        "2023年6月19日",
+        "21:00-次日01:00",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00"
+      ]
+    },
+    {
+      "source": "br-listing",
+      "kind": "article",
+      "tokens": [
+        "2023年7月28日",
+        "21:00-23:00",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00"
+      ]
+    },
+    {
+      "source": "management-2025-doc-final",
+      "kind": "text",
+      "tokens": [
+        "本办法自2025年8月8日起实施",
+        "前一个工作日的连续交易开始",
+        "10:15"
+      ],
+      "origin": "management-2025-doc",
+      "origin_sha256": "a6d8c751a3aedc36a71d720be367325ed61264ab738865a201181f23ad8c9b94"
+    },
+    {
+      "source": "rules-202507",
+      "kind": "article",
+      "tokens": [
+        "自2025年8月8日起实施"
+      ]
+    },
+    {
+      "source": "ad-listing",
+      "kind": "article",
+      "tokens": [
+        "2025年6月10日",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00",
+        "21:00-次日01:00"
+      ]
+    },
+    {
+      "source": "op-listing",
+      "kind": "article",
+      "tokens": [
+        "2025年9月10日",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00",
+        "21:00-23:00"
+      ]
+    },
+    {
+      "source": "boundary-2026",
+      "kind": "article",
+      "tokens": [
+        "2025年12月31日晚上不进行夜盘交易"
+      ]
+    },
+    {
+      "source": "management-202607-doc-text",
+      "kind": "text",
+      "tokens": [
+        "本办法自2026年7月6日起实施",
+        "从前一个工作日的连续交易开始至当天日盘10:15结束"
+      ],
+      "origin": "management-202607-doc",
+      "origin_sha256": "dbf538f32836896837f5d395a6beaf7de6c443ac5762cee32dba4a7ca274f121"
+    },
+    {
+      "source": "management-202609-docx-text",
+      "kind": "text",
+      "tokens": [
+        "本办法自2026年9月14日起实施",
+        "从前一个工作日的连续交易开始至当天日盘10:15结束"
+      ],
+      "origin": "management-202609-docx",
+      "origin_sha256": "d1fd5d2ab9d406586e36ba173e5972e894781ef662b0e1006d8d879905415922"
+    },
+    {
+      "source": "ao-business-2026-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2026年1月1日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "business-next-2026-docx",
+      "origin_sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+    },
+    {
+      "source": "br-business-2026-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2026年1月1日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "business-next-2026-docx",
+      "origin_sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+    },
+    {
+      "source": "ad-business-2026-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2026年1月1日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "business-next-2026-docx",
+      "origin_sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+    },
+    {
+      "source": "op-business-2026-final",
+      "kind": "text",
+      "tokens": [
+        "本细则自2026年1月1日起实施",
+        "交易时间为上午9:00"
+      ],
+      "origin": "business-next-2026-docx",
+      "origin_sha256": "94910c4742c613beb1decc9daffe38ea9eb231b0710dacf6771d75cee4547302"
+    },
+    {
+      "source": "boundary-2026",
+      "kind": "article",
+      "tokens": [
+        "2025年12月31日晚上不进行夜盘交易",
+        "2026年1月5日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "spring-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年2月13日晚上不进行夜盘交易",
+        "2026年2月24日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "qingming-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年4月3日晚上不进行夜盘交易",
+        "2026年4月7日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "labor-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年4月30日晚上不进行夜盘交易",
+        "2026年5月6日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "dragon-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年6月18日晚上不进行夜盘交易",
+        "2026年6月22日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "autumn-national-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年9月24日晚上不进行夜盘交易",
+        "2026年9月28日"
+      ]
+    },
+    {
+      "source": "autumn-national-2026",
+      "kind": "article",
+      "tokens": [
+        "2026年9月30日晚上不进行夜盘交易",
+        "2026年10月8日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "shfe-year-2026",
+      "kind": "article",
+      "tokens": [
+        "〔2025〕157号",
+        "2月15日至2月23日休市",
+        "9月25日至9月27日休市",
+        "10月1日至10月7日休市"
+      ]
+    },
+    {
+      "source": "next-hedging-rules",
+      "kind": "article",
+      "tokens": [
+        "自2026年1月1日起实施"
+      ]
+    },
+    {
+      "source": "manager-202606-release",
+      "kind": "article",
+      "tokens": [
+        "自2026年7月6日起实施",
+        "市价指令自2026年7月6日"
+      ]
+    },
+    {
+      "source": "manager-202609-release",
+      "kind": "article",
+      "tokens": [
+        "自2026年9月14日起实施"
+      ]
+    }
+  ]
+}
