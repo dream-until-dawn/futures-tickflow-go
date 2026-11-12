@@ -1,0 +1,444 @@
+{
+  "schema": "historical-calendar-source-review-v1",
+  "source_root": "C:\\Temp\\tickflow-calendar-next-20261112",
+  "sources": {
+    "search-wr-listing": {
+      "file": "search-wr-listing.body",
+      "bytes": 77635,
+      "ref": {
+        "id": "search-wr-listing",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "8cc678dd715432f19940eea0ee3de611908ffe90b2f572799f2317e4ae91b320",
+        "retrieved_at": "2026-11-12T14:08:27.945414+00:00",
+        "version": "public-search-result-not-full-rule"
+      }
+    },
+    "search-wr-business": {
+      "file": "search-wr-business.body",
+      "bytes": 21633,
+      "ref": {
+        "id": "search-wr-business",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "555bda58b0b6e1d2b3489572f5612e52fde3e91edcd9f580cf814ce63bb8ba2d",
+        "retrieved_at": "2026-11-12T14:08:28.816140+00:00",
+        "version": "public-search-result-not-full-rule"
+      }
+    },
+    "search-night-universe": {
+      "file": "search-night-universe.body",
+      "bytes": 36469,
+      "ref": {
+        "id": "search-night-universe",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "230d5105d9df3214602747f045fd369002a8dd4fec019f6dc29de7ee578d9db1",
+        "retrieved_at": "2026-11-12T14:08:29.909983+00:00",
+        "version": "public-search-result-not-full-rule"
+      }
+    },
+    "czce-cy-listing-pdf": {
+      "file": "czce-cy-listing-pdf.body",
+      "bytes": 163538,
+      "ref": {
+        "id": "czce-cy-listing-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2018/06/29/1505472870185096-1531036138963055.pdf",
+        "sha256": "95dbfadb08059c8fb3fee20acc78e7e0700f69ed3fb3668d2d617ccf954f223e",
+        "retrieved_at": "2026-11-12T14:09:09.793316+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-listing-2009": {
+      "file": "wr-listing-2009.body",
+      "bytes": 118036,
+      "ref": {
+        "id": "wr-listing-2009",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/200903/t20090323_787145.html",
+        "sha256": "2ab6ffeef810b1dfb6e752c9e2a24777123bb2bd0849d696cb6a7bb64778d48c",
+        "retrieved_at": "2026-11-12T14:10:57.952216+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-contract-2009": {
+      "file": "wr-contract-2009.body",
+      "bytes": 118045,
+      "ref": {
+        "id": "wr-contract-2009",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/200903/t20090316_787132.html",
+        "sha256": "fdbc47f06806898473619536e8ef9bf8f5d2414e37e82e5f6304e9f7ad465584",
+        "retrieved_at": "2026-11-12T14:10:58.825660+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-business-202503-release": {
+      "file": "wr-business-202503-release.body",
+      "bytes": 121708,
+      "ref": {
+        "id": "wr-business-202503-release",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202503/t20250314_824805.html",
+        "sha256": "bf7f23a8ab17122e94c0eea6f596664cd5b648e8e745962db126d80b15eace04",
+        "retrieved_at": "2026-11-12T14:10:59.728564+00:00",
+        "version": "official-original"
+      }
+    },
+    "night-hours-2019": {
+      "file": "night-hours-2019.body",
+      "bytes": 116794,
+      "ref": {
+        "id": "night-hours-2019",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/201912/t20191225_795464.html",
+        "sha256": "76dbb3e0f2a4f278024f3c957cdd1f1e2bba176a922ffcaf73cf0a8855ddfc18",
+        "retrieved_at": "2026-11-12T14:11:00.594413+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-business-202410-doc": {
+      "file": "wr-business-202410-doc.body",
+      "bytes": 71168,
+      "ref": {
+        "id": "wr-business-202410-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823632356267393.doc",
+        "sha256": "de93f959c9e848bdb6ffffd42cb6b78d01234a4a4194d544dcd65a3b20c8292c",
+        "retrieved_at": "2026-11-12T14:13:42.083955+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-business-202508-doc": {
+      "file": "wr-business-202508-doc.body",
+      "bytes": 109568,
+      "ref": {
+        "id": "wr-business-202508-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476200896.doc",
+        "sha256": "333ee4d412e788e29316e4816eeb334632138b50457c7c9922348598c898b9c2",
+        "retrieved_at": "2026-11-12T14:13:42.866278+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-contract-202410-docx": {
+      "file": "wr-contract-202410-docx.body",
+      "bytes": 21552,
+      "ref": {
+        "id": "wr-contract-202410-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823636323155533.docx",
+        "sha256": "fc616205ced8986264b25ffbdd2d70f620a2555948fe74da0efecdaeb997265b",
+        "retrieved_at": "2026-11-12T14:13:43.516137+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-business-202504-doc": {
+      "file": "wr-business-202504-doc.body",
+      "bytes": 80896,
+      "ref": {
+        "id": "wr-business-202504-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202503/W020250314569226599095.doc",
+        "sha256": "07276382a49f86013fd242903dee9b44ec81bbd81f51b4d4a6d780c287feccc6",
+        "retrieved_at": "2026-11-12T14:13:44.219031+00:00",
+        "version": "official-original"
+      }
+    },
+    "czce-pf-listing-pdf": {
+      "file": "czce-pf-listing-pdf.body",
+      "bytes": 345135,
+      "ref": {
+        "id": "czce-pf-listing-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2020/10/19/1597089064856174-1597089064867882.pdf",
+        "sha256": "0f27826e9c66dbaca8e09681e52d29d1526a4243d3b58afb0d1414f641c946af",
+        "retrieved_at": "2026-11-12T14:13:45.467554+00:00",
+        "version": "official-original"
+      }
+    },
+    "czce-pk-journal-pdf": {
+      "file": "czce-pk-journal-pdf.body",
+      "bytes": 2931654,
+      "ref": {
+        "id": "czce-pk-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2023/02/16/1655836155004585-1655836155023704.pdf",
+        "sha256": "d452c93c7411fa1ece5646d985a70e8e99054aac5153120345f23bc8b38e4966",
+        "retrieved_at": "2026-11-12T14:13:48.454129+00:00",
+        "version": "official-original"
+      }
+    },
+    "czce-px-sh-journal-pdf": {
+      "file": "czce-px-sh-journal-pdf.body",
+      "bytes": 3233479,
+      "ref": {
+        "id": "czce-px-sh-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2023/10/18/1697226838884489-1697226838904727.pdf",
+        "sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+        "retrieved_at": "2026-11-12T14:13:51.319696+00:00",
+        "version": "official-original"
+      }
+    },
+    "czce-pr-journal-pdf": {
+      "file": "czce-pr-journal-pdf.body",
+      "bytes": 3728110,
+      "ref": {
+        "id": "czce-pr-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2024/09/14/1726389999932285-1726389999951648.pdf",
+        "sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+        "retrieved_at": "2026-11-12T14:13:54.479375+00:00",
+        "version": "official-original"
+      }
+    },
+    "search-wr-night-forward": {
+      "file": "search-wr-night-forward.body",
+      "bytes": 89,
+      "ref": {
+        "id": "search-wr-night-forward",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "8661ce3d3233fe557d4e0e656e48179d9fc4f7ca5835cd54f71c1ece3c906c8d",
+        "retrieved_at": "2026-11-12T14:18:03.778730+00:00",
+        "version": "public-search-result-not-full-rule"
+      }
+    },
+    "search-wr-night-reverse": {
+      "file": "search-wr-night-reverse.body",
+      "bytes": 89,
+      "ref": {
+        "id": "search-wr-night-reverse",
+        "url": "https://www.shfe.com.cn/api/search/",
+        "sha256": "8661ce3d3233fe557d4e0e656e48179d9fc4f7ca5835cd54f71c1ece3c906c8d",
+        "retrieved_at": "2026-11-12T14:18:04.680204+00:00",
+        "version": "public-search-result-not-full-rule"
+      }
+    },
+    "czce-pl-retrospective-pdf": {
+      "file": "czce-pl-retrospective-pdf.body",
+      "bytes": 1713960,
+      "ref": {
+        "id": "czce-pl-retrospective-pdf",
+        "url": "https://www.czce.com.cn/cn/content_file/gyjys/qhscyjcs/cgxc/2026/4/077939e9d8fc4ad088cd76a52ed8d3a0.pdf",
+        "sha256": "724ad477c9e81a9afc28432e2bc89dec6d1b78a412a82f856418676357f6d8ef",
+        "retrieved_at": "2026-11-12T14:18:45.625277+00:00",
+        "version": "official-original"
+      }
+    },
+    "wr-business-202410-doc-final": {
+      "file": "wr-business-202410-doc-final.txt",
+      "bytes": 14292,
+      "ref": {
+        "id": "wr-business-202410-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202408/W020240823632356267393.doc",
+        "sha256": "c4296ba3e30981de9c411e4c6ad2a27f71f8379c717bd99b5fd1cc12efdfa8f8",
+        "retrieved_at": "2026-11-12T14:21:06.963952+00:00",
+        "version": "reviewed-text;origin=de93f959c9e848bdb6ffffd42cb6b78d01234a4a4194d544dcd65a3b20c8292c"
+      }
+    },
+    "wr-business-202504-doc-final": {
+      "file": "wr-business-202504-doc-final.txt",
+      "bytes": 15308,
+      "ref": {
+        "id": "wr-business-202504-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202503/W020250314569226599095.doc",
+        "sha256": "4d55dc8745bf0385d34774aa2e4ec2eb50ed194a15e861be0aed4d1332019409",
+        "retrieved_at": "2026-11-12T14:21:06.969388+00:00",
+        "version": "reviewed-text;origin=07276382a49f86013fd242903dee9b44ec81bbd81f51b4d4a6d780c287feccc6"
+      }
+    },
+    "wr-business-202508-doc-final": {
+      "file": "wr-business-202508-doc-final.txt",
+      "bytes": 15387,
+      "ref": {
+        "id": "wr-business-202508-doc-final",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202507/W020250708579476200896.doc",
+        "sha256": "a0aa806ca7ec6946a1ff8ee0f9b6330c783f6b8f67cf740da63b2a1bf1d5b41a",
+        "retrieved_at": "2026-11-12T14:21:06.974470+00:00",
+        "version": "reviewed-text;origin=333ee4d412e788e29316e4816eeb334632138b50457c7c9922348598c898b9c2"
+      }
+    }
+  },
+  "calendar_qualification_extended": false,
+  "verified_calendar_products_remain": 6,
+  "observations": [
+    {
+      "product": "SHFE.wr",
+      "source": "wr-listing-2009",
+      "listing_date": 20090327,
+      "night_clause": null,
+      "limit": "listing date only; no certified historical no-night universe",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.CY",
+      "source": "czce-cy-listing-pdf",
+      "listing_date": 20170818,
+      "night_clause": "21:00-23:30",
+      "limit": "original listing-year night; no inference of later end time",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.PF",
+      "source": "czce-pf-listing-pdf",
+      "listing_date": 20201012,
+      "night_clause": "21:00-23:00",
+      "limit": "first day has no preceding night",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.PK",
+      "source": "czce-pk-journal-pdf",
+      "listing_date": 20210201,
+      "night_clause": "explicit no night at listing",
+      "limit": "not proof of no later change",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.PX",
+      "source": "czce-px-sh-journal-pdf",
+      "listing_date": 20230915,
+      "night_clause": "21:00-23:00",
+      "limit": "PDF page48; options listing separate",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.SH",
+      "source": "czce-px-sh-journal-pdf",
+      "listing_date": 20230915,
+      "night_clause": "21:00-23:00",
+      "limit": "PDF pages45-46; options listing separate",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.PR",
+      "source": "czce-pr-journal-pdf",
+      "listing_date": 20240830,
+      "night_clause": "21:00-23:00",
+      "limit": "PDF pages49-50 continuous clause; code PR retained",
+      "calendar_qualified": false
+    },
+    {
+      "product": "CZCE.PL",
+      "source": "czce-pl-retrospective-pdf",
+      "listing_date": 20250722,
+      "night_clause": null,
+      "limit": "retrospective corroboration only; no original listing hours",
+      "calendar_qualified": false
+    }
+  ],
+  "WR_rule_dates": {
+    "2024 release": "20241023",
+    "2025-03-14 release": "20250414",
+    "2025-07-08 release": "20250808"
+  },
+  "pdf_reviews": [
+    {
+      "role": "czce-cy-listing-pdf",
+      "origin_sha256": "95dbfadb08059c8fb3fee20acc78e7e0700f69ed3fb3668d2d617ccf954f223e",
+      "pages": 1,
+      "reviewed_pdf_pages": [
+        1
+      ],
+      "text_file": "czce-cy-listing-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:15:56.333439+00:00",
+      "text_sha256": "1aeb85def7260212afd7b1fe482cda4f6b4d115dcb737dd5c8d77e1224ca211c",
+      "render": "pdfium (bundled pypdfium2); Poppler unavailable"
+    },
+    {
+      "role": "czce-pf-listing-pdf",
+      "origin_sha256": "0f27826e9c66dbaca8e09681e52d29d1526a4243d3b58afb0d1414f641c946af",
+      "pages": 1,
+      "reviewed_pdf_pages": [
+        1
+      ],
+      "text_file": "czce-pf-listing-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:15:56.381288+00:00",
+      "text_sha256": "e14693c10c72cf249d8ca33c2447e21cb2ab21648175f1ca44636452e13edf4e",
+      "render": "pdfium (bundled pypdfium2); Poppler unavailable"
+    },
+    {
+      "role": "czce-pk-journal-pdf",
+      "origin_sha256": "d452c93c7411fa1ece5646d985a70e8e99054aac5153120345f23bc8b38e4966",
+      "pages": 47,
+      "reviewed_pdf_pages": [
+        43,
+        44
+      ],
+      "text_file": "czce-pk-journal-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:16:00.812101+00:00",
+      "text_sha256": "c73db88604e1c02a065bc23f5510d4f015c1b4d228b591bc796034c40c66f308",
+      "render": "pdfium (bundled pypdfium2); Poppler unavailable"
+    },
+    {
+      "role": "czce-px-sh-journal-pdf",
+      "origin_sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+      "pages": 64,
+      "reviewed_pdf_pages": [
+        45,
+        46,
+        48,
+        49
+      ],
+      "text_file": "czce-px-sh-journal-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:16:05.521077+00:00",
+      "text_sha256": "31faabcf5e65b697bc4103f55597395d12621c9e7e2ef4dafc06a4b9e537a834",
+      "render": "pdfium (bundled pypdfium2); Poppler unavailable"
+    },
+    {
+      "role": "czce-pr-journal-pdf",
+      "origin_sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+      "pages": 65,
+      "reviewed_pdf_pages": [
+        49,
+        50
+      ],
+      "text_file": "czce-pr-journal-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:16:10.651004+00:00",
+      "text_sha256": "b36ff2f61009653d5f9fb7f61a403d91cfa49de03af0057123793999bf5d9bfe",
+      "render": "pdfium (bundled pypdfium2); Poppler unavailable"
+    },
+    {
+      "role": "czce-pl-retrospective-pdf",
+      "origin_sha256": "724ad477c9e81a9afc28432e2bc89dec6d1b78a412a82f856418676357f6d8ef",
+      "pages": 33,
+      "reviewed_pdf_pages": [
+        5
+      ],
+      "text_file": "czce-pl-retrospective-pdf.txt",
+      "derived_registration_utc": "2026-11-12T14:19:32.132053+00:00",
+      "text_sha256": "6ff5db85f17dab8e7c0e02bc569420bae615ece3b2d9806dc39d7e317b063b31",
+      "render": "bundled pypdfium2",
+      "scope": "retrospective listing-date corroboration only, not original listing/session terms"
+    }
+  ],
+  "pending": {
+    "SHFE.wr": "need explicit historical no-night scope/complete ordinary continuous schedule chain; 2019-12-25 notice is exceptional22:30 opening, cannot certify standard schedule",
+    "CZCE.PX/SH/PR/PF/PK/CY": "listing evidence improved; missing fully reviewed historical three-segment day breaks, applicable rule versions, year holidays and detailed special nights; no generated calendar",
+    "CZCE.PL": "need original listing notice and hours, not just later annual retrospective",
+    "INE": "previous missing originals unchanged; no requests",
+    "DCE/GFEX": "no evidenced new route; no requests"
+  },
+  "network": {
+    "direct_requests": 19,
+    "bytes": 13009558,
+    "browser_calls": 4,
+    "same_request_retries": 0,
+    "budget": {
+      "direct": 24,
+      "bytes": 33554432,
+      "single": 8388608,
+      "seconds_per_request": 15,
+      "overall_seconds": 2400
+    },
+    "INE_DCE_GFEX_requests": 0,
+    "recorded_evidence_collection_seconds": 618.073774
+  },
+  "diagnostics": [
+    "two WR links included business rule and contract; title selector narrowed to business rule",
+    "stale jobs were rejected by existing no-retry guard before issuing HTTP; no duplicate request was sent"
+  ],
+  "scope": "evidence-only; no calendar, lifecycle universe, point-in-time or price certification",
+  "validation": {
+    "scope": "evidence/docs only; implementation unchanged from730af7e",
+    "root_regression": "passed",
+    "doccheck": "passed",
+    "PDF_visual_pages": "11 actual PDF pages reviewed including continued PR night clause",
+    "source_bytes": "all19 response lengths/SHA and complete bodies verified"
+  },
+  "seal": {
+    "files": 70,
+    "seal_sha256": "b64536dfe6698910be8e6afc077e75ffd249495554d7d0585f3f542d0c4cd9e0",
+    "sealed": "C:\\Temp\\tickflow-calendar-next-20261112-sealed",
+    "migration": "C:\\Temp\\tickflow-calendar-next-20261112-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-calendar-next-20261112-tamper",
+    "verified": "all hashes, lengths and file set match",
+    "tamper_rejected": "czce-cy-listing-pdf.body"
+  }
+}
