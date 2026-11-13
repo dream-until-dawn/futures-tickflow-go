@@ -23,3 +23,26 @@
 三个Go模块gofmt/vet/test、100项Python测试、还原演练和doccheck通过。新增八个具名测试覆盖正向与错误授权、路径、清单、凭据、标签、恢复和预算等反例，六项源码破坏按目标原因变红。首次隔离副本缺少limits测试helper而编译失败，补齐副本helper后基线及六项破坏控制通过，原失败日志保留。
 
 本机race第一次因GCC中文库路径误解码链接失败；对子进程使用已有ASCII junction库路径后，Go1.26.1与已安装1.26.11均在ThreadSanitizer启动时内存分配失败（error87），测试未开始，不能记通过。为取得独立Linux race结果，给既有离线CI增加本候选分支触发；不改主线或系统工具链。真实请求保持0，等待候选CI及race通过后才执行冻结四个GET。
+
+## 真实有界验证结果（替代上述待执行状态）
+
+源码候选`e2147ff9eb011e029fd1aa30fe1bf0324608199d`的[CI43381452677](https://github.com/dream-until-dawn/futures-tickflow-go/actions/runs/43381452677)三矩阵全部通过，Linux1.26的全模块race步骤实际通过；本机race环境失败记录不抹去。之后才执行真实四GET，唯一根`C:/Temp/tickflow-native-http-20261113`，启动标记O_EXCL防止未知/重复执行。执行器源码SHA为`89c23b5071dbb581958d16d38ca81014168d3bd1e7d08b076f7ac7e5ab2ec95b`，二进制SHA为`e1b5cb2381d32e086775ce2768da7a88511e66b0896882c6927f59494b0ab0f0`。
+
+协会HTTPS原件沿用引擎实际取得的字节，本会话重新计算SHA并读取两条jQuery常量href，没有重新联网。SHA为`ab8b407342ef715cd7ba444ee61b80257165df1c863c13e884c159c91ce5ae58`；原Ref取得字段沿用原收据请求开始时刻，其响应完成上界另见冻结引擎记录，不冒充精确完成秒。首页是这两条明确业务链接同站的派生入口，不声称协会直接列出首页链接。
+
+| 实际GET URL | 状态/字节 | 原件SHA256 | 独立复核 |
+| --- | --- | --- | --- |
+| `http://www.dce.com.cn/` | 412 / 2614 | `70d5d22eb4f17f629746ce78c91571e2e30535d7c279da5645cee5eaf56abee2` | WAF脚本响应，非业务原件 |
+| `http://www.dce.com.cn/dce/channel/list/180.html` | 412 / 2724 | `3475971dfa315edf5feab5125bf775832e09232d816c904e33a613a096fb28a3` | WAF脚本响应，非业务原件 |
+| `http://www.gfex.com.cn/` | 200 / 986 | `dce54b84b6a968d1cf2b9ee6132e20199821663e573d3706e7ec86b5e703c3a2` | 含EO_Bot_Ssid、Cookie及location重载的机器人挑战，非业务原件 |
+| `http://www.gfex.com.cn/gfex/rjycs/ywcs.shtml` | 200 / 987 | `fc7dd53ee245b0b644eb6f559a40a1aa8eef6b9800538a93d7713f282fe5f244` | 同类挑战，HTTP200不能当作获取成功 |
+
+实际总计4请求、7,311正文读取字节（不计协议头/线上开销），开始间隔逐项≥1秒；0 POST、0查询、0脚本执行、0重试/跳转/TLS降级。未用满12次预算不是遗漏：没有可读业务正文或公开查询路径依据，按批准条件停，不从挑战脚本推导后门。该结果只限本环境/这四URL，不声称全球或永久不可用。成功获取正文仅是传输层事实，业务原件0、金融准入新增0、交易日历/默认表新增0、生产变更0。
+
+候选API只增加显式构造器、授权类型和omitempty的Download来源/明文元数据；旧Job字段、序列化身份及旧NewDownloader默认不变。GET以外一律不支持；未来POST/脚本/查询若出现可信新依据，须另行设计登记，不能当成现已具备的功能。失败HTTP/完整性/预算路径沿用原下载守卫。成功远程HTTP恢复必须有当前显式策略并核明文/出处标签，不能删标签洗成HTTPS。
+
+本批不合并候选主线、不打tag。精确请求/收据、正反与六项源码破坏日志、原件和限制见[机器索引](evidence/native-http-feasibility-20261113.json)。本项目主线仍为已完成PX/SH补证的154845d；DCE/GFEX缺证保持待决，严格Feed/金融资格不扩展。
+
+## 封存与交接
+
+封存`C:/Temp/tickflow-native-http-20261113-sealed`，99文件，manifest SHA256：`07c91c74da3244be31e0b8fd7549dc432b923f7b9b8ea69becfcf84f87136e48`。逐项文件集合/长度/SHA核验及迁移通过；独立篡改request-03正文副本被准确拒绝，原封存及迁移再次一致。排除临时目录、缓存和可执行文件，保留编译指纹、执行器源码、全部失败日志、原件、候选源码与文档快照；快照取自添加封存指针前，避免循环哈希。新源出现前不重试本批四URL；候选供消费者独立复核，未合并主线。
