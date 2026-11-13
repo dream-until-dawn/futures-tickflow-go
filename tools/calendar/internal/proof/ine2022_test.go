@@ -76,6 +76,7 @@ func TestINEAnnualFactsPins(t *testing.T) {
 		spec  annualSpec
 		input calendarFile
 	}{
+		{"ine-2020-facts.json", specINE2020(), ineHistoricalFixture(t, "ine-lu-2020-listed.json")},
 		{"ine-2022-facts.json", specINE2022(), ine2022Fixture(t)},
 		{"ine-2023-facts.json", specINE2023(), ineHistoricalFixture(t, "ine-lu-2023.json")},
 		{"ine-2024-facts.json", specINE2024(), ineHistoricalFixture(t, "ine-2024.json")},

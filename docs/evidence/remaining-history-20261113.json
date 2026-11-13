@@ -1,0 +1,179 @@
+{
+  "schema": "remaining-history-review-v1",
+  "review_registered_utc": "2026-11-13T14:08:49.790346+00:00",
+  "source_root": "C:\\Temp\\tickflow-remaining-history-20261113",
+  "network": {
+    "requests": 2,
+    "bytes": 1056815,
+    "transport_complete": 2,
+    "budget_overrun": 1,
+    "source_retries": 0,
+    "PX_SH_DCE_GFEX_requests": 0
+  },
+  "sources": [
+    {
+      "id": "pf-2024-official-rules",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/02/07/20240207160030209.pdf",
+      "sha256": "3efded1fb955db90e048bfbc53c3ee3a1a0c4e8e89eeb63d065d3babe9eb9fcb",
+      "bytes": 142347,
+      "retrieved_at": "2026-11-13T13:46:31.329141+00:00",
+      "elapsed_seconds": 35.985,
+      "transport_complete": true,
+      "planned_request_seconds": 15,
+      "whole_request_budget_passed": false,
+      "pdf_file": "C:\\Temp\\tickflow-remaining-history-20261113\\pf-2024-rules.pdf",
+      "pages": 8,
+      "text_extract_complete": true,
+      "visually_reviewed_pages": [
+        1,
+        8
+      ],
+      "source_text_reviewed": true,
+      "calendar_qualified": false,
+      "backtest_admission_expanded": false,
+      "facts": {
+        "kind": "official normative rules",
+        "approved": 20240104,
+        "published": 20240206,
+        "effective": 20240206,
+        "notice": "2024-16",
+        "day_minutes": [
+          [
+            540,
+            615
+          ],
+          [
+            630,
+            690
+          ],
+          [
+            810,
+            900
+          ]
+        ],
+        "night_minutes": [
+          [
+            1260,
+            1380
+          ]
+        ],
+        "pending": [
+          "2020 first-version formal clauses still missing; cannot backfill from2024",
+          "2024 year/special-night/next-year boundary originals and applicability continuity still unclosed"
+        ]
+      },
+      "rendered_pages": [
+        {
+          "page": 1,
+          "file": "C:\\Temp\\tickflow-remaining-history-20261113\\rendered\\pf-1.png",
+          "bytes": 357100,
+          "sha256": "bbc0446ddad552d2ff7d9fb5f8399ea3a510d1df488f54ddb53104a889572482"
+        },
+        {
+          "page": 8,
+          "file": "C:\\Temp\\tickflow-remaining-history-20261113\\rendered\\pf-8.png",
+          "bytes": 40532,
+          "sha256": "81510adaa82679e1d8a2ccf77563d87f533e15ae027beb767fe6bf94fc3c5dcf"
+        }
+      ]
+    },
+    {
+      "id": "wr-official-study-2024",
+      "url": "https://www.shfe.com.cn/services/marketresearch/magazine/202408/W020240814416403834724.pdf",
+      "sha256": "71b3756120370f542471253e2b35fe9f8ac90e3270a2d44b684eba6dbd62c5b2",
+      "bytes": 914468,
+      "retrieved_at": "2026-11-13T13:46:33.423079+00:00",
+      "elapsed_seconds": 1.592,
+      "transport_complete": true,
+      "planned_request_seconds": 15,
+      "whole_request_budget_passed": true,
+      "pdf_file": "C:\\Temp\\tickflow-remaining-history-20261113\\wr-day-auction-study-2024.pdf",
+      "pages": 5,
+      "text_extract_complete": true,
+      "visually_reviewed_pages": [
+        1,
+        5
+      ],
+      "source_text_reviewed": true,
+      "calendar_qualified": false,
+      "backtest_admission_expanded": false,
+      "facts": {
+        "kind": "official journal research, not normative rule",
+        "issue": "Futures and Financial Derivatives volume135 March2024",
+        "statement": "authors describe wire rod and shipping index as without night trading and exclude them from analysis",
+        "sample_windows_as_written": [
+          "2022-12-26..2023-05-25",
+          "2023-05-26..2023-11-24"
+        ],
+        "scope_notes": [
+          "first window is called six months in original but dates span about five; preserve discrepancy, do not repair",
+          "whole-period WR calendar cannot be certified from exclusion statement or2026 current hours page",
+          "WR2020 dated normative no-night/three-segment schedule and version continuation still missing"
+        ]
+      },
+      "rendered_pages": [
+        {
+          "page": 1,
+          "file": "C:\\Temp\\tickflow-remaining-history-20261113\\rendered\\wr-1.png",
+          "bytes": 608767,
+          "sha256": "c9f12ed284bfe62de7b00c5f97105f7a249212c327af15c07a8acbcf789eaca1"
+        },
+        {
+          "page": 5,
+          "file": "C:\\Temp\\tickflow-remaining-history-20261113\\rendered\\wr-5.png",
+          "bytes": 305762,
+          "sha256": "3404e2768547c9bee86408f278eb752b72cef8cf6ec9fd5a01e37831992a6015"
+        }
+      ]
+    }
+  ],
+  "web_discovery_queries": [
+    "site:czce.com.cn 2024 休市 安排 公报 filetype:pdf",
+    "site:czce.com.cn 2020 涤纶短纤 交易细则 filetype:pdf",
+    "site:shfe.com.cn 2020 线材 夜盘 交易时间 filetype:pdf",
+    "site:czce.com.cn 2024 9 公报 国庆 中秋 pdf",
+    "site:czce.com.cn 2024 12 公报 元旦 pdf",
+    "site:czce.com.cn 涤纶短纤 2020 76号 交易 细则 附件"
+  ],
+  "rejected_candidates": [
+    {
+      "url": "https://www.czce.com.cn/cn/uploadfile/2020/09/29/20200929191255244.pdf",
+      "reason": "risk-control rules, not PF first trading-hours rules; indexed header has2020 and2021 effective wording, not fetched"
+    },
+    {
+      "url": "https://www.czce.com.cn/cn/rootfiles/2024/04/29/1715230234568456-1715230234588647.pdf",
+      "reason": "contract generic other-trading-hours wording does not establish first-version break/night scope; not fetched"
+    },
+    {
+      "url": "https://www.shfe.com.cn/products/futures/metal/ferrousandpreciousmetal/hc_f/manual/201612/P020240320671558968422.pdf",
+      "reason": "2016 contract plus unspecified other trading hours cannot establish WR2020 historical no-night; not fetched"
+    }
+  ],
+  "blockers": {
+    "PR2024": "official year/postlisting Autumn-National/2025 NewYear boundary originals not supplied by bounded result set; no failed page retry",
+    "PF2020": "first formal76 rule attachment and2020 special schedules still unclosed",
+    "PF2024": "formal hours version obtained, but year calendars and applicability continuation missing",
+    "WR2020": "dated normative hours/no-night range and continuity missing; research alone insufficient",
+    "PK_CY_PL": "previous first/evolving night and rule/holiday originals still missing; no new supported entry this round",
+    "PX_SH": "held by user",
+    "DCE_GFEX": "held; no new supported route; no requests"
+  },
+  "budget_findings": {
+    "PF_complete_request_seconds": 35.985,
+    "planned_seconds": 15,
+    "reason": "temporary urllib timeout was per socket operation rather than total request",
+    "resolution": "preserve complete response and budget failure; never retry to claim pass; future acquisition must use existing batch.Downloader whole-client plus context deadline",
+    "offline_streaming_test": "positive and drip partial timeout passed; disabling both guards made exact drip target fail; localhost only"
+  },
+  "qualification": "no additional calendar or complete backtest qualification granted; bounded result set is not proof that originals do not exist globally",
+  "clock": "receipt times are local machine UTC representations, not continuously NTP-calibrated exchange timestamps",
+  "seal": {
+    "files": 30,
+    "seal_sha256": "221d7256bd09b19628d5c961eaf7b2a9ce86f0482ee5c1b4af126d4ca3e23c14",
+    "sealed": "C:\\Temp\\tickflow-remaining-history-20261113-sealed",
+    "migration": "C:\\Temp\\tickflow-remaining-history-20261113-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-remaining-history-20261113-tamper",
+    "verified": "all bytes, hashes and exact file set; PDF and four rendered pages unchanged in migration",
+    "tamper_rejected": "pf-2024-rules.pdf"
+  }
+}

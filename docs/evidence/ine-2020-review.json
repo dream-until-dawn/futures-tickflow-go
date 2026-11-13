@@ -1,0 +1,328 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "e7b2778fe96a23b79bdc697f43f7548218a945e9e1abc96872ade34cd4e4ac11",
+  "qualified_profiles": [
+    "INE.lu"
+  ],
+  "source_root": "C:\\Temp\\tickflow-ine-2020-20261113",
+  "qualification": "passed absolute schedule, fixed112 base,8 official ordinal differences,8 actual contract days; candidate awaiting CI",
+  "scope": "published continuous schedules20200622-20201231; before listing uncovered",
+  "limitations": [
+    "Word active main characters only, no rendering/hidden/revision/field semantics",
+    "Nov11 publication exact instant unknown; date-level schedule evidence is not financial-policy effective instant",
+    "prelisting ordinal base is whole-INE counter, not prelisting LU market data"
+  ],
+  "calendar": {
+    "path": "calendar/verified/profiles/ine-lu-2020-listed.json",
+    "sha256": "a5bd8bb86545d3a888f0aea58666c924028927d5f2510ec50f279b69f2414b58",
+    "summary": {
+      "INE.lu": {
+        "natural_days": 193,
+        "trading_days": 131,
+        "day_only_trade_days": [
+          20200622,
+          20200629,
+          20201009
+        ]
+      }
+    }
+  },
+  "independent": {
+    "market_contract_days": 8,
+    "ordinal_base_checks": 1,
+    "ordinal_checks": 8,
+    "products": 1,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2020-06-22"
+    },
+    {
+      "case": "friday-to-sunday",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2020-07-06"
+    },
+    {
+      "case": "autumn-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2020-06-29"
+    },
+    {
+      "case": "version",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2020-07-06"
+    },
+    {
+      "case": "wrong-exchange",
+      "exit": 1,
+      "reason": "annual_product",
+      "actual": "annual_product"
+    },
+    {
+      "case": "missing-year-evidence",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2020-06-22 ine-year-2020"
+    },
+    {
+      "case": "self-rehashed-facts",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "source-tamper",
+      "exit": 1,
+      "reason": "source_hash",
+      "actual": "source_hash ine-year-2020: evidence: ine-year-2020 原件SHA256不符"
+    },
+    {
+      "case": "wrong-market-expectation",
+      "exit": 1,
+      "reason": "feed_fields",
+      "actual": "feed_fields: INE.lu2101 2020-06-22"
+    },
+    {
+      "case": "rehashed-ordinal",
+      "exit": 1,
+      "reason": "annual_ordinal_mismatch",
+      "actual": "annual_ordinal_mismatch: lu 2020-06-22"
+    },
+    {
+      "case": "rehashed-report-date",
+      "exit": 1,
+      "reason": "annual_ordinal_identity",
+      "actual": "annual_ordinal_identity"
+    },
+    {
+      "case": "missing-base",
+      "exit": 1,
+      "reason": "annual_ordinal_base:",
+      "actual": "annual_ordinal_base: open C:\\Temp\\tickflow-ine-2020-20261113\\missing-base\\annual-base-input.json: The system cannot find the file specified."
+    },
+    {
+      "case": "wrong-base-day",
+      "exit": 1,
+      "reason": "annual_ordinal_base_identity",
+      "actual": "annual_ordinal_base_identity"
+    },
+    {
+      "case": "whole-counter-shift",
+      "exit": 1,
+      "reason": "annual_ordinal_base_identity",
+      "actual": "annual_ordinal_base_identity"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "target": "friday-to-sunday",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "target": "copper-listing-not-rule",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "base-counter-guard",
+      "target": "shifted-whole-counter",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "word_comparison": {
+    "reader_sha256": "8ff586c550ca0b8c09a7e8b8e5521a592d4ba05abc63887509ad922c780f403f",
+    "cases": [
+      {
+        "role": "trade-rule-202011-doc",
+        "original_ref": {
+          "id": "trade-rule-202011-doc",
+          "url": "https://www.shfe.com.cn/upload/20201111/1605088830767.doc",
+          "sha256": "2bb59b0c1eba75d50d8db82e05d22f6d5b7a74faf23ccd78e4712133c30bc1c7",
+          "retrieved_at": "2026-11-12T09:44:17.263471+00:00"
+        },
+        "legacy_ref": {
+          "id": "trade-rule-202011-doc-text",
+          "url": "https://www.shfe.com.cn/upload/20201111/1605088830767.doc",
+          "sha256": "203e33817b6af19085dbbf2164a9f0f710cd23080c542bf20b7709241ea1ae13",
+          "retrieved_at": "2026-11-12T09:44:17.263471+00:00",
+          "version": "2bb59b0c1eba75d50d8db82e05d22f6d5b7a74faf23ccd78e4712133c30bc1c7"
+        },
+        "active_characters": 10293,
+        "normalized_equal": true
+      },
+      {
+        "role": "trade-rule-202106-doc",
+        "original_ref": {
+          "id": "trade-rule-202106-doc",
+          "url": "https://www.shfe.com.cn/publicnotice/notice/202106/P020240320695753027239.doc",
+          "sha256": "add28177bd9a482ea7384c2f80ef44bc4d23622a7fa4951117fd2e53d710f2b6",
+          "retrieved_at": "2026-11-12T09:44:52.031630+00:00"
+        },
+        "legacy_ref": {
+          "id": "trade-rule-202106-doc-text",
+          "url": "https://www.shfe.com.cn/publicnotice/notice/202106/P020240320695753027239.doc",
+          "sha256": "286fb9055ed86bdf64f371626532323838d4487642e0bc8e5da3956d65fe4cc4",
+          "retrieved_at": "2026-11-12T09:44:52.031630+00:00",
+          "version": "add28177bd9a482ea7384c2f80ef44bc4d23622a7fa4951117fd2e53d710f2b6"
+        },
+        "active_characters": 10737,
+        "normalized_equal": true
+      },
+      {
+        "role": "trade-rule-202111-doc",
+        "original_ref": {
+          "id": "trade-rule-202111-doc",
+          "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+          "sha256": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211",
+          "retrieved_at": "2026-11-12T09:44:18.063735+00:00"
+        },
+        "legacy_ref": {
+          "id": "trade-rule-202111-doc-text",
+          "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+          "sha256": "eb157730273f53dbf74e2b6de53ec9eb305efacf107c1e23cf6bfa10ed31ddc5",
+          "retrieved_at": "2026-11-12T09:44:18.063735+00:00",
+          "version": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211"
+        },
+        "active_characters": 10786,
+        "normalized_equal": true
+      },
+      {
+        "role": "ine-trade-202308-doc",
+        "original_ref": {
+          "id": "ine-trade-202308-doc",
+          "url": "https://www.shfe.com.cn/upload/20230811/1691749552608.doc",
+          "sha256": "0adf96a456beb87ae493a176fdec28bee007546a6454f442ab05faf456bfe9b6",
+          "retrieved_at": "2026-11-12T10:50:16.809587+00:00"
+        },
+        "legacy_ref": {
+          "id": "ine-trade-202308-doc-text",
+          "url": "https://www.shfe.com.cn/upload/20230811/1691749552608.doc",
+          "sha256": "7b2b63a7a0c212648ddf5676d47868665cc41ae61d5affc766cc2654e2653150",
+          "retrieved_at": "2026-11-12T10:50:16.809587+00:00",
+          "version": "reviewed-text-from:0adf96a456beb87ae493a176fdec28bee007546a6454f442ab05faf456bfe9b6"
+        },
+        "active_characters": 11204,
+        "normalized_equal": true
+      },
+      {
+        "role": "ine-next-rule-doc",
+        "original_ref": {
+          "id": "ine-next-rule-doc",
+          "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128600409634633.doc",
+          "sha256": "ccca9adf5067bd6778e405f198742fc0831a9e8ad2dbb3d5607a64f524eb1671",
+          "retrieved_at": "2026-11-12T12:02:54.517329+00:00"
+        },
+        "legacy_ref": {
+          "id": "ine-next-rule-doc-text",
+          "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128600409634633.doc",
+          "sha256": "86367596c3f2e4e0952d8043d45967c616885316bc1f428eb090ea1051cca953",
+          "retrieved_at": "2026-11-13T12:10:38.857065+00:00",
+          "version": "reviewed-text-from:ccca9adf5067bd6778e405f198742fc0831a9e8ad2dbb3d5607a64f524eb1671"
+        },
+        "active_characters": 11876,
+        "normalized_equal": true
+      }
+    ],
+    "scope": "main characters compared after whitespace normalization only; no full-layout or revision display claim"
+  },
+  "network": {
+    "requests": 21,
+    "bytes": 837973,
+    "search_posts": 5,
+    "failed": 0,
+    "dce_gfex": 0
+  },
+  "compatibility": "five existing INE2022-2026 full-year real pipelines passed with no base subtraction; whole Word main characters match five older frozen exports after whitespace normalization",
+  "joined_calendar": {
+    "lu": {
+      "from_day": 20200622,
+      "to_day": 20261104,
+      "natural_days": 2327,
+      "trading_days": 1544
+    },
+    "ec": {
+      "from_day": 20230818,
+      "to_day": 20261104,
+      "natural_days": 1175,
+      "trading_days": 776
+    },
+    "verified": "constructor, Covers, Walk, DayAt and duplicate/missing-day rejection; not full-range market Sync",
+    "shfe": {
+      "ao": {
+        "from_day": 20230619,
+        "to_day": 20261104,
+        "trading_days": 818
+      },
+      "br": {
+        "from_day": 20230728,
+        "to_day": 20261104,
+        "trading_days": 791
+      },
+      "ad": {
+        "from_day": 20250610,
+        "to_day": 20261104,
+        "trading_days": 342
+      },
+      "op": {
+        "from_day": 20250910,
+        "to_day": 20261104,
+        "trading_days": 276
+      }
+    }
+  },
+  "initial_review_notes": [
+    "2020 notices say连续交易 and当晚进行 rather than later恢复 wording; exact original terms preserved",
+    "copper listing date mutation moved toNov19 so template still covers record day and tests version guard rather than structural precheck"
+  ],
+  "stream_wrapper_fix": {
+    "all_function_class_AST_unchanged": true,
+    "producer_sha256": "8ff586c550ca0b8c09a7e8b8e5521a592d4ba05abc63887509ad922c780f403f",
+    "current_source_sha256": "063c3124908af1d4950fd85fad1a440751e42ff123ea894fb3f2df69a51be058",
+    "change": "only stdlib imports and __main__ UTF8 stream wrappers; no import-time stream changes",
+    "guard_requires_exact_double_quoted_literal": true
+  },
+  "producer_source_file": "C:\\Temp\\tickflow-ine-2020-20261113\\reader-producer-before-stream-wrap.py",
+  "whole_request_deadline_regression": {
+    "test": "TestDownloaderStreamingBodyDeadline",
+    "loopback_only": true,
+    "positive_complete_and_drip_partial_timeout": "passed",
+    "two_guard_mutation": "passed: disabling client and context total deadline made exact drip test fail",
+    "production_implementation_changed": false
+  },
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 115,
+    "generator_restore": "passed; fingerprint unchanged",
+    "doccheck": "passed",
+    "compatibility": "2022-2026 real CLI regressions passed; six joined calendars and bounded streaming body positive/negative/mutation controls passed"
+  },
+  "seal": {
+    "files": 447,
+    "seal_sha256": "d0bdf9931a2d9f1901587b98a37217e940e57472b06a8ad1a22a6cb3199b5cdb",
+    "sealed": "C:\\Temp\\tickflow-ine-2020-20261113-sealed",
+    "migration": "C:\\Temp\\tickflow-ine-2020-20261113-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-ine-2020-20261113-tamper",
+    "verified": "all hashes, lengths, file set match; rebuilt bytes identical and real market pipeline passed",
+    "tamper_rejected": "ine-year-2020.body"
+  }
+}

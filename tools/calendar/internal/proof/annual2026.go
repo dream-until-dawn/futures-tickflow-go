@@ -36,7 +36,25 @@ func annualOrdinals(cal *verified.Calendar, dir string, spec annualSpec) (int, e
 	if len(files) != len(spec.ordinalDates) || len(files) == 0 {
 		return 0, fmt.Errorf("annual_ordinal_anchors")
 	}
-	total, previous := 0, 0
+	base := 0
+	if spec.ordinalBase != 0 {
+		var f fileRef
+		if e := read(filepath.Join(dir, "annual-base-input.json"), &f); e != nil {
+			return 0, fmt.Errorf("annual_ordinal_base: %w", e)
+		}
+		day, n, e := ordinal(dir, f)
+		if e != nil {
+			return 0, e
+		}
+		// 基数本身也固定核过，不能把整串官方序号同时平移后仍通过。
+		if day != spec.ordinalBase || n != spec.ordinalBaseCount || n <= 0 {
+			return 0, fmt.Errorf("annual_ordinal_base_identity")
+		}
+		base = n
+	} else if spec.ordinalBaseCount != 0 {
+		return 0, fmt.Errorf("annual_ordinal_base_config")
+	}
+	total, previous := 0, base
 	for i, f := range files {
 		day, n, e := ordinal(dir, f)
 		if e != nil {
@@ -47,18 +65,31 @@ func annualOrdinals(cal *verified.Calendar, dir string, spec annualSpec) (int, e
 		}
 		previous = n
 		for product, p := range spec.products {
-			if p.from != tf.TradingDay(spec.year*10000+101) || day > p.to {
+			if day > p.to {
 				return 0, fmt.Errorf("annual_ordinal_scope")
+			}
+			if spec.ordinalBase == 0 {
+				if p.from != tf.TradingDay(spec.year*10000+101) {
+					return 0, fmt.Errorf("annual_ordinal_scope")
+				}
+			} else {
+				prior := natural(p.from).AddDate(0, 0, -1)
+				for spec.closed(ymd(prior)) {
+					prior = prior.AddDate(0, 0, -1)
+				}
+				if p.from != p.listed || spec.ordinalDates[0] != p.from || ymd(prior) != spec.ordinalBase {
+					return 0, fmt.Errorf("annual_ordinal_scope")
+				}
 			}
 			count := 0
 			e := cal.Walk(tf.ProductKey{Exchange: spec.exchangeKey(), Product: product}, p.from, day, func(tf.Day) bool { count++; return true })
-			if e != nil || count != n {
+			if e != nil || count != n-base {
 				return 0, fmt.Errorf("annual_ordinal_mismatch: %s %s", product, day)
 			}
 			total++
 		}
 	}
-	if previous != spec.openDays {
+	if previous-base != spec.openDays {
 		return 0, fmt.Errorf("annual_ordinal_total")
 	}
 	return total, nil

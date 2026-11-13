@@ -17,16 +17,18 @@ import (
 // annualSpec 是独立核阅原文后写入的审核表，不读取编译器的节假日配置。
 // 新年份不能仅靠提交一个自带SHA的JSON获得资格。
 type annualSpec struct {
-	exchange     string
-	yearRole     string
-	year         int
-	factsSHA     string
-	holiday      [][2]tf.TradingDay
-	dayOnly      map[tf.TradingDay]bool
-	products     map[string]annualProduct
-	openDays     int
-	events       []annualEvent
-	ordinalDates []tf.TradingDay
+	exchange         string
+	yearRole         string
+	year             int
+	factsSHA         string
+	holiday          [][2]tf.TradingDay
+	dayOnly          map[tf.TradingDay]bool
+	products         map[string]annualProduct
+	openDays         int
+	events           []annualEvent
+	ordinalDates     []tf.TradingDay
+	ordinalBase      tf.TradingDay
+	ordinalBaseCount int
 }
 
 // 空值保留既有SHFE审核表的含义；其他交易所必须由专用审核表明确指定。

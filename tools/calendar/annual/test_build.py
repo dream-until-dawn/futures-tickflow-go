@@ -209,6 +209,26 @@ class AnnualBuildTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, f'review_clause:ine-year-{year}'):
                     build.generate(facts, raw, 'software-only')
 
+    def test_lu_2020_listing_scope_and_first_nights(self):
+        root = Path(__file__).resolve().parents[3]
+        facts = json.loads((root / 'docs/evidence/ine-2020-facts.json').read_bytes())
+        texts = {}
+        for r in facts['reviews']:
+            texts[r['source']] = texts.get(r['source'], '') + ''.join(r['tokens'])
+        raw = {role: ('<div class="notice_contain">' + text + '</div>').encode()
+               if any(r['source'] == role and r['kind'] == 'article' for r in facts['reviews'])
+               else text.encode() for role, text in texts.items()}
+        result = build.generate(facts, raw, 'software-only')
+        rows = {r['day']: r for r in result['series'][0]['records']}
+        self.assertEqual((len(rows), result['summary']['INE.lu']['trading_days']), (193, 131))
+        self.assertNotIn(20200621, rows)
+        self.assertEqual(result['summary']['INE.lu']['day_only_trade_days'], [20200622, 20200629, 20201009])
+        self.assertEqual(rows[20200622]['template']['From'], 20200610)
+        self.assertEqual(rows[20201111]['template']['From'], 20201111)
+        facts['profiles']['INE.lu']['from'] = 20200621
+        with self.assertRaisesRegex(ValueError, 'profile_listing'):
+            build.generate(facts, raw, 'software-only')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

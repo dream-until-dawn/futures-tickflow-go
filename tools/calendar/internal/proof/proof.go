@@ -453,8 +453,20 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 	var n int
 	var e error
 	usesAnnualOrdinals := false
+	ordinalBaseChecks := 0
 	if input.Schema == "annual-calendar-v1" {
 		switch input.Year {
+		case 2020:
+			spec := specINE2020()
+			usesAnnualOrdinals = true
+			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+				return e
+			}
+			cal, e = profileAnnual(input, spec)
+			if e == nil {
+				n, e = annualOrdinals(cal, dir, spec)
+				ordinalBaseChecks = 1
+			}
 		case 2022:
 			spec := specINE2022()
 			usesAnnualOrdinals = true
@@ -548,6 +560,9 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 		}
 	}
 	report := map[string]any{"status": "passed", "products": len(input.Series), "market_contract_days": samples, "reopen_added_bars": 0, "scope": "published continuous schedules; no point-in-time availability or price certification"}
+	if ordinalBaseChecks > 0 {
+		report["ordinal_base_checks"] = ordinalBaseChecks
+	}
 	if input.Schema == "annual-calendar-v1" && !usesAnnualOrdinals {
 		report["monthly_observation_checks"] = n
 	} else {
