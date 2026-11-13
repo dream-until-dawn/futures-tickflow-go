@@ -57,6 +57,8 @@ L9已有官方2026事件表中最后停夜盘为09-30，恢复日均已过去；
 
 ## 阶段性交接包
 
+**当前交接使用v2**：`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2`，208个文件条目（manifest另计）、24,953,432字节；manifest SHA256为`a45a9f5dd2c986ec7a3f53447b340e2cea6867f0509ccb2bbaf3f68b3ffd0df8`。ZIP为11,145,999字节，独立CLI、迁移、五类反例和实际ZIP CRC/解包复验通过。v2修正首包validation字段把全部5次直接请求误标为5次交易所请求的分类：实际4次交易所+1次转载页；请求原始行及其字节未变。下面首包v1作为历史构包记录保留，不应继续当作当前交接指针。
+
 已实际生成`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle`，205个文件条目（manifest另计）、24,941,952字节，manifest SHA256为`1bb5000454fb288c3b51c1896f85bd450a6614f5bbf8ead208415b7e1d4d8ce8`。独立CLI和迁移副本验证通过；修改当前源码ZIP、删除范围文件、增加未列文件、给“完整发布”造正确新manifest和错误包外摘要五类反例均按目标原因拒绝，原包及迁移再次一致。归档ZIP为11,139,581字节，身份和路径见[包外交接记录](release/staged-delivery-bundle-20261113.json)。
 
 包内源码ZIP固定原Git树，更新文档和校验器另列；文档快照早于添加此包指针，避免循环哈希。恢复完整相对文档链接的做法见包内README。包内有本轮三个新官方文件及五份已核日历，但此前完整市场原件只含manifest/指针，不能把这一阶段包交接写成五市场历史全集已交付。

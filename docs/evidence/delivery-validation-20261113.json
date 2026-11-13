@@ -10,9 +10,12 @@
   "new_bundle_test_functions": 3,
   "new_bundle_removed_guard_controls": 3,
   "existing_data_qualification_tests": 6,
-  "new_exchange_requests": 5,
   "INE_DCE_GFEX_requests": 0,
   "local_race": "not rerun; prior local TSan startup failures retained historically; current final branch/main CI Linux race required",
   "first_full_sweep": "failed specifically new Chinese test script lacked stdout/stderr UTF8 wrappers; corrected and full sweep rerun; original failure log retained",
-  "tag_identity_correction": "v0.10.0 annotated tag object89528ad9188d693a76ebf22a7f8737e43c3ccc8e, peeled source commitd49c5ba9881854f8220fa5ba4c370ac792355840; archive already used peeled source; counts unchanged"
+  "tag_identity_correction": "v0.10.0 annotated tag object89528ad9188d693a76ebf22a7f8737e43c3ccc8e, peeled source commitd49c5ba9881854f8220fa5ba4c370ac792355840; archive already used peeled source; counts unchanged",
+  "new_direct_https_requests": 5,
+  "new_exchange_https_requests": 4,
+  "broker_discovery_requests": 1,
+  "request_count_note": "first bundle used an imprecise exchange_requests label for all5 direct requests; corrected classification is4 exchange +1 broker; exact original request rows unchanged"
 }
