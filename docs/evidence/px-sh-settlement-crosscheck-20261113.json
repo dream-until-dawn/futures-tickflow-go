@@ -1,0 +1,1182 @@
+{
+  "calendar_qualified": false,
+  "cross_publication": "same exchange, distinct daily and monthly publications; not independent providers",
+  "daily_documents": 21,
+  "first_contract_mapping": "restricted to published PX2405/SH2405; never nearest-decade inference",
+  "matched_contract_days": 42,
+  "records": [
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,378.00",
+      "daily_source": {
+        "id": "czce-daily-20231201",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231201/FutureDataDaily.txt",
+        "sha256": "8d9d8513afb69ffb3fb17649dd549e03ec3c2407da8cfd69a4c5bfe0853aea27",
+        "retrieved_at": "2026-11-13T09:48:38.605262Z"
+      },
+      "day": 20231201,
+      "fields": {
+        "close": "8,318.00",
+        "high": "8,484.00",
+        "low": "8,262.00",
+        "open": "8,446.00",
+        "open_interest": "66,977",
+        "pre_settle": "8,356.00",
+        "settle": "8,378.00",
+        "turnover": "264,777.09",
+        "volume": "63,217"
+      },
+      "monthly_literal": "8378",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8378
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,328.00",
+      "daily_source": {
+        "id": "czce-daily-20231204",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231204/FutureDataDaily.txt",
+        "sha256": "6d886b7d255b793b657db3efc7799e4bd3bb361153d9839b2b8042b9b599b58a",
+        "retrieved_at": "2026-11-13T09:51:05.790527Z"
+      },
+      "day": 20231204,
+      "fields": {
+        "close": "8,278.00",
+        "high": "8,402.00",
+        "low": "8,252.00",
+        "open": "8,320.00",
+        "open_interest": "67,580",
+        "pre_settle": "8,378.00",
+        "settle": "8,328.00",
+        "turnover": "210,983.81",
+        "volume": "50,667"
+      },
+      "monthly_literal": "8328",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8328
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,254.00",
+      "daily_source": {
+        "id": "czce-daily-20231205",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231205/FutureDataDaily.txt",
+        "sha256": "05cfda125e01ddb2ca57edde6c479a3f10071e311cd1ed97e81d194ecf0bbe91",
+        "retrieved_at": "2026-11-13T09:51:06.586551Z"
+      },
+      "day": 20231205,
+      "fields": {
+        "close": "8,274.00",
+        "high": "8,310.00",
+        "low": "8,190.00",
+        "open": "8,280.00",
+        "open_interest": "68,428",
+        "pre_settle": "8,328.00",
+        "settle": "8,254.00",
+        "turnover": "201,100.56",
+        "volume": "48,732"
+      },
+      "monthly_literal": "8254",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8254
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,224.00",
+      "daily_source": {
+        "id": "czce-daily-20231206",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231206/FutureDataDaily.txt",
+        "sha256": "10c17b2003e3bbd01b4f0c9da0a79bfd49b4bcd7d6eabecdd802cadad2d87d2d",
+        "retrieved_at": "2026-11-13T09:51:07.371015Z"
+      },
+      "day": 20231206,
+      "fields": {
+        "close": "8,310.00",
+        "high": "8,342.00",
+        "low": "8,110.00",
+        "open": "8,270.00",
+        "open_interest": "70,213",
+        "pre_settle": "8,254.00",
+        "settle": "8,224.00",
+        "turnover": "347,668.66",
+        "volume": "84,547"
+      },
+      "monthly_literal": "8224",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8224
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,254.00",
+      "daily_source": {
+        "id": "czce-daily-20231207",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231207/FutureDataDaily.txt",
+        "sha256": "64da535e9df07be6afcd84ba52fc003485a550e09b91b5bb5fe3320b94c5cc02",
+        "retrieved_at": "2026-11-13T09:51:08.23393Z"
+      },
+      "day": 20231207,
+      "fields": {
+        "close": "8,270.00",
+        "high": "8,310.00",
+        "low": "8,170.00",
+        "open": "8,290.00",
+        "open_interest": "69,488",
+        "pre_settle": "8,224.00",
+        "settle": "8,254.00",
+        "turnover": "208,946.96",
+        "volume": "50,637"
+      },
+      "monthly_literal": "8254",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8254
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,338.00",
+      "daily_source": {
+        "id": "czce-daily-20231208",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231208/FutureDataDaily.txt",
+        "sha256": "64f4ff901e13f218757fae54865c32f9b7fc6635a25ed07f57acc9414443bf98",
+        "retrieved_at": "2026-11-13T09:51:09.053633Z"
+      },
+      "day": 20231208,
+      "fields": {
+        "close": "8,338.00",
+        "high": "8,394.00",
+        "low": "8,244.00",
+        "open": "8,246.00",
+        "open_interest": "71,805",
+        "pre_settle": "8,254.00",
+        "settle": "8,338.00",
+        "turnover": "239,921.90",
+        "volume": "57,559"
+      },
+      "monthly_literal": "8338",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8338
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,346.00",
+      "daily_source": {
+        "id": "czce-daily-20231211",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231211/FutureDataDaily.txt",
+        "sha256": "014d2db4efee331646f16cac4d5623877dc1a8f28b9da79b59e5d0bd9a602f73",
+        "retrieved_at": "2026-11-13T09:51:09.828056Z"
+      },
+      "day": 20231211,
+      "fields": {
+        "close": "8,336.00",
+        "high": "8,386.00",
+        "low": "8,282.00",
+        "open": "8,340.00",
+        "open_interest": "73,709",
+        "pre_settle": "8,338.00",
+        "settle": "8,346.00",
+        "turnover": "239,483.72",
+        "volume": "57,392"
+      },
+      "monthly_literal": "8346",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8346
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,354.00",
+      "daily_source": {
+        "id": "czce-daily-20231212",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231212/FutureDataDaily.txt",
+        "sha256": "7916a97cbedcbc285e8a2e4101a7de7b77a5a6e97f1e584e7e89c30b60790044",
+        "retrieved_at": "2026-11-13T09:51:10.713385Z"
+      },
+      "day": 20231212,
+      "fields": {
+        "close": "8,356.00",
+        "high": "8,426.00",
+        "low": "8,268.00",
+        "open": "8,326.00",
+        "open_interest": "78,311",
+        "pre_settle": "8,346.00",
+        "settle": "8,354.00",
+        "turnover": "301,499.10",
+        "volume": "72,177"
+      },
+      "monthly_literal": "8354",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8354
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,226.00",
+      "daily_source": {
+        "id": "czce-daily-20231213",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231213/FutureDataDaily.txt",
+        "sha256": "b5f7abedf419dc8a7ec610f17b446e0ac0122dc3548c6db484d46f3ac792016e",
+        "retrieved_at": "2026-11-13T09:51:11.520851Z"
+      },
+      "day": 20231213,
+      "fields": {
+        "close": "8,136.00",
+        "high": "8,358.00",
+        "low": "8,132.00",
+        "open": "8,346.00",
+        "open_interest": "94,084",
+        "pre_settle": "8,354.00",
+        "settle": "8,226.00",
+        "turnover": "399,198.04",
+        "volume": "97,062"
+      },
+      "monthly_literal": "8226",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8226
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,154.00",
+      "daily_source": {
+        "id": "czce-daily-20231214",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231214/FutureDataDaily.txt",
+        "sha256": "961fa346491735145783c8ad0f19c7ae122c48e5e8fca1a9a925df6cded1be04",
+        "retrieved_at": "2026-11-13T09:51:12.336967Z"
+      },
+      "day": 20231214,
+      "fields": {
+        "close": "8,098.00",
+        "high": "8,214.00",
+        "low": "8,092.00",
+        "open": "8,160.00",
+        "open_interest": "103,337",
+        "pre_settle": "8,226.00",
+        "settle": "8,154.00",
+        "turnover": "336,005.64",
+        "volume": "82,413"
+      },
+      "monthly_literal": "8154",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8154
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,220.00",
+      "daily_source": {
+        "id": "czce-daily-20231215",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231215/FutureDataDaily.txt",
+        "sha256": "e62283cc4ccdd4af0329209699706355ace14b538e7124a8d9f217e7ac7085ff",
+        "retrieved_at": "2026-11-13T09:51:13.109357Z"
+      },
+      "day": 20231215,
+      "fields": {
+        "close": "8,244.00",
+        "high": "8,300.00",
+        "low": "8,132.00",
+        "open": "8,160.00",
+        "open_interest": "85,609",
+        "pre_settle": "8,154.00",
+        "settle": "8,220.00",
+        "turnover": "366,390.44",
+        "volume": "89,144"
+      },
+      "monthly_literal": "8220",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8220
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,262.00",
+      "daily_source": {
+        "id": "czce-daily-20231218",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231218/FutureDataDaily.txt",
+        "sha256": "976f47905c45887cdf4efd50428792251bfd369cf4808ca5c6b646106f99bb2b",
+        "retrieved_at": "2026-11-13T09:51:13.878882Z"
+      },
+      "day": 20231218,
+      "fields": {
+        "close": "8,308.00",
+        "high": "8,330.00",
+        "low": "8,200.00",
+        "open": "8,260.00",
+        "open_interest": "82,096",
+        "pre_settle": "8,220.00",
+        "settle": "8,262.00",
+        "turnover": "197,577.86",
+        "volume": "47,826"
+      },
+      "monthly_literal": "8262",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8262
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,342.00",
+      "daily_source": {
+        "id": "czce-daily-20231219",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231219/FutureDataDaily.txt",
+        "sha256": "16be3ab78e11b940fa0e5f7b86641db0378e428a26e473a48ad7bd032a5606d8",
+        "retrieved_at": "2026-11-13T09:51:14.721873Z"
+      },
+      "day": 20231219,
+      "fields": {
+        "close": "8,318.00",
+        "high": "8,378.00",
+        "low": "8,300.00",
+        "open": "8,300.00",
+        "open_interest": "79,041",
+        "pre_settle": "8,262.00",
+        "settle": "8,342.00",
+        "turnover": "173,477.90",
+        "volume": "41,594"
+      },
+      "monthly_literal": "8342",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8342
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,424.00",
+      "daily_source": {
+        "id": "czce-daily-20231220",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231220/FutureDataDaily.txt",
+        "sha256": "24436a453ddb608b74929e860ab99e14f9088fe6a4dadcd1bdff5b1155414219",
+        "retrieved_at": "2026-11-13T09:51:15.643762Z"
+      },
+      "day": 20231220,
+      "fields": {
+        "close": "8,492.00",
+        "high": "8,512.00",
+        "low": "8,320.00",
+        "open": "8,322.00",
+        "open_interest": "82,436",
+        "pre_settle": "8,342.00",
+        "settle": "8,424.00",
+        "turnover": "267,228.33",
+        "volume": "63,446"
+      },
+      "monthly_literal": "8424",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8424
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,524.00",
+      "daily_source": {
+        "id": "czce-daily-20231221",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231221/FutureDataDaily.txt",
+        "sha256": "b6ac4300329319a6a6477785ec600c5b19de3cd2efa6b4e8f372f15ef13fa079",
+        "retrieved_at": "2026-11-13T09:51:16.498994Z"
+      },
+      "day": 20231221,
+      "fields": {
+        "close": "8,598.00",
+        "high": "8,614.00",
+        "low": "8,450.00",
+        "open": "8,512.00",
+        "open_interest": "80,557",
+        "pre_settle": "8,424.00",
+        "settle": "8,524.00",
+        "turnover": "334,148.44",
+        "volume": "78,399"
+      },
+      "monthly_literal": "8524",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8524
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,598.00",
+      "daily_source": {
+        "id": "czce-daily-20231222",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231222/FutureDataDaily.txt",
+        "sha256": "f5084841ec08040b5104a9690038509cf964009e3099933a0359a4d590c7ad0a",
+        "retrieved_at": "2026-11-13T09:51:17.301182Z"
+      },
+      "day": 20231222,
+      "fields": {
+        "close": "8,604.00",
+        "high": "8,674.00",
+        "low": "8,530.00",
+        "open": "8,580.00",
+        "open_interest": "80,780",
+        "pre_settle": "8,524.00",
+        "settle": "8,598.00",
+        "turnover": "344,396.46",
+        "volume": "80,112"
+      },
+      "monthly_literal": "8598",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8598
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,560.00",
+      "daily_source": {
+        "id": "czce-daily-20231225",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231225/FutureDataDaily.txt",
+        "sha256": "9ac255dc3a8d4f3434b26022b46d99f05835080949623158f6236ca20b1865cf",
+        "retrieved_at": "2026-11-13T09:51:18.085787Z"
+      },
+      "day": 20231225,
+      "fields": {
+        "close": "8,570.00",
+        "high": "8,626.00",
+        "low": "8,498.00",
+        "open": "8,614.00",
+        "open_interest": "81,522",
+        "pre_settle": "8,598.00",
+        "settle": "8,560.00",
+        "turnover": "245,266.59",
+        "volume": "57,315"
+      },
+      "monthly_literal": "8560",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8560
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,570.00",
+      "daily_source": {
+        "id": "czce-daily-20231226",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231226/FutureDataDaily.txt",
+        "sha256": "48b2e110b459ef08dd6b26b563c42b1001d865282f36a69e7b7a7cda39695e73",
+        "retrieved_at": "2026-11-13T09:51:18.844212Z"
+      },
+      "day": 20231226,
+      "fields": {
+        "close": "8,544.00",
+        "high": "8,620.00",
+        "low": "8,530.00",
+        "open": "8,568.00",
+        "open_interest": "82,282",
+        "pre_settle": "8,560.00",
+        "settle": "8,570.00",
+        "turnover": "187,905.16",
+        "volume": "43,853"
+      },
+      "monthly_literal": "8570",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8570
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,620.00",
+      "daily_source": {
+        "id": "czce-daily-20231227",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231227/FutureDataDaily.txt",
+        "sha256": "f79fbc47a025c8009edafb600af48cdd98b986cf22c563eb41121b88bd7fdc8f",
+        "retrieved_at": "2026-11-13T09:51:19.643954Z"
+      },
+      "day": 20231227,
+      "fields": {
+        "close": "8,648.00",
+        "high": "8,662.00",
+        "low": "8,546.00",
+        "open": "8,558.00",
+        "open_interest": "86,972",
+        "pre_settle": "8,570.00",
+        "settle": "8,620.00",
+        "turnover": "256,883.36",
+        "volume": "59,599"
+      },
+      "monthly_literal": "8620",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8620
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,654.00",
+      "daily_source": {
+        "id": "czce-daily-20231228",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231228/FutureDataDaily.txt",
+        "sha256": "a3ef55d3d741d02d73dbc588eb3432ee1007019d7937f6623b732fc7d298a2ff",
+        "retrieved_at": "2026-11-13T09:51:20.460354Z"
+      },
+      "day": 20231228,
+      "fields": {
+        "close": "8,674.00",
+        "high": "8,724.00",
+        "low": "8,588.00",
+        "open": "8,648.00",
+        "open_interest": "90,250",
+        "pre_settle": "8,620.00",
+        "settle": "8,654.00",
+        "turnover": "276,655.22",
+        "volume": "63,938"
+      },
+      "monthly_literal": "8654",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8654
+    },
+    {
+      "actual_pdf_page": 38,
+      "canonical": "CZCE.PX2405",
+      "daily_literal": "8,590.00",
+      "daily_source": {
+        "id": "czce-daily-20231229",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231229/FutureDataDaily.txt",
+        "sha256": "8be28cc28526f69dc3746bb9e5716409ce9c11718e9dd0670be159b119e93921",
+        "retrieved_at": "2026-11-13T09:51:21.233818Z"
+      },
+      "day": 20231229,
+      "fields": {
+        "close": "8,590.00",
+        "high": "8,666.00",
+        "low": "8,532.00",
+        "open": "8,650.00",
+        "open_interest": "89,466",
+        "pre_settle": "8,654.00",
+        "settle": "8,590.00",
+        "turnover": "230,839.04",
+        "volume": "53,743"
+      },
+      "monthly_literal": "8590",
+      "native": "PX405",
+      "row": 112,
+      "settle": 8590
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,664.00",
+      "daily_source": {
+        "id": "czce-daily-20231201",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231201/FutureDataDaily.txt",
+        "sha256": "8d9d8513afb69ffb3fb17649dd549e03ec3c2407da8cfd69a4c5bfe0853aea27",
+        "retrieved_at": "2026-11-13T09:48:38.605262Z"
+      },
+      "day": 20231201,
+      "fields": {
+        "close": "2,674.00",
+        "high": "2,691.00",
+        "low": "2,634.00",
+        "open": "2,672.00",
+        "open_interest": "47,171",
+        "pre_settle": "2,658.00",
+        "settle": "2,664.00",
+        "turnover": "604,592.57",
+        "volume": "75,641"
+      },
+      "monthly_literal": "2664",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2664
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,645.00",
+      "daily_source": {
+        "id": "czce-daily-20231204",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231204/FutureDataDaily.txt",
+        "sha256": "6d886b7d255b793b657db3efc7799e4bd3bb361153d9839b2b8042b9b599b58a",
+        "retrieved_at": "2026-11-13T09:51:05.790527Z"
+      },
+      "day": 20231204,
+      "fields": {
+        "close": "2,619.00",
+        "high": "2,677.00",
+        "low": "2,611.00",
+        "open": "2,655.00",
+        "open_interest": "47,729",
+        "pre_settle": "2,664.00",
+        "settle": "2,645.00",
+        "turnover": "666,157.01",
+        "volume": "83,965"
+      },
+      "monthly_literal": "2645",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2645
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,587.00",
+      "daily_source": {
+        "id": "czce-daily-20231205",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231205/FutureDataDaily.txt",
+        "sha256": "05cfda125e01ddb2ca57edde6c479a3f10071e311cd1ed97e81d194ecf0bbe91",
+        "retrieved_at": "2026-11-13T09:51:06.586551Z"
+      },
+      "day": 20231205,
+      "fields": {
+        "close": "2,575.00",
+        "high": "2,613.00",
+        "low": "2,568.00",
+        "open": "2,613.00",
+        "open_interest": "46,487",
+        "pre_settle": "2,645.00",
+        "settle": "2,587.00",
+        "turnover": "564,263.59",
+        "volume": "72,694"
+      },
+      "monthly_literal": "2587",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2587
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,586.00",
+      "daily_source": {
+        "id": "czce-daily-20231206",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231206/FutureDataDaily.txt",
+        "sha256": "10c17b2003e3bbd01b4f0c9da0a79bfd49b4bcd7d6eabecdd802cadad2d87d2d",
+        "retrieved_at": "2026-11-13T09:51:07.371015Z"
+      },
+      "day": 20231206,
+      "fields": {
+        "close": "2,590.00",
+        "high": "2,607.00",
+        "low": "2,560.00",
+        "open": "2,567.00",
+        "open_interest": "46,710",
+        "pre_settle": "2,587.00",
+        "settle": "2,586.00",
+        "turnover": "431,316.53",
+        "volume": "55,602"
+      },
+      "monthly_literal": "2586",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2586
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,555.00",
+      "daily_source": {
+        "id": "czce-daily-20231207",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231207/FutureDataDaily.txt",
+        "sha256": "64da535e9df07be6afcd84ba52fc003485a550e09b91b5bb5fe3320b94c5cc02",
+        "retrieved_at": "2026-11-13T09:51:08.23393Z"
+      },
+      "day": 20231207,
+      "fields": {
+        "close": "2,564.00",
+        "high": "2,597.00",
+        "low": "2,523.00",
+        "open": "2,570.00",
+        "open_interest": "51,404",
+        "pre_settle": "2,586.00",
+        "settle": "2,555.00",
+        "turnover": "964,179.65",
+        "volume": "125,800"
+      },
+      "monthly_literal": "2555",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2555
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,661.00",
+      "daily_source": {
+        "id": "czce-daily-20231208",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231208/FutureDataDaily.txt",
+        "sha256": "64f4ff901e13f218757fae54865c32f9b7fc6635a25ed07f57acc9414443bf98",
+        "retrieved_at": "2026-11-13T09:51:09.053633Z"
+      },
+      "day": 20231208,
+      "fields": {
+        "close": "2,642.00",
+        "high": "2,745.00",
+        "low": "2,551.00",
+        "open": "2,567.00",
+        "open_interest": "56,801",
+        "pre_settle": "2,555.00",
+        "settle": "2,661.00",
+        "turnover": "2,074,833.77",
+        "volume": "259,877"
+      },
+      "monthly_literal": "2661",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2661
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,644.00",
+      "daily_source": {
+        "id": "czce-daily-20231211",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231211/FutureDataDaily.txt",
+        "sha256": "014d2db4efee331646f16cac4d5623877dc1a8f28b9da79b59e5d0bd9a602f73",
+        "retrieved_at": "2026-11-13T09:51:09.828056Z"
+      },
+      "day": 20231211,
+      "fields": {
+        "close": "2,651.00",
+        "high": "2,677.00",
+        "low": "2,592.00",
+        "open": "2,628.00",
+        "open_interest": "56,292",
+        "pre_settle": "2,661.00",
+        "settle": "2,644.00",
+        "turnover": "1,044,846.17",
+        "volume": "131,705"
+      },
+      "monthly_literal": "2644",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2644
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,678.00",
+      "daily_source": {
+        "id": "czce-daily-20231212",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231212/FutureDataDaily.txt",
+        "sha256": "7916a97cbedcbc285e8a2e4101a7de7b77a5a6e97f1e584e7e89c30b60790044",
+        "retrieved_at": "2026-11-13T09:51:10.713385Z"
+      },
+      "day": 20231212,
+      "fields": {
+        "close": "2,680.00",
+        "high": "2,709.00",
+        "low": "2,632.00",
+        "open": "2,647.00",
+        "open_interest": "57,629",
+        "pre_settle": "2,644.00",
+        "settle": "2,678.00",
+        "turnover": "1,174,725.57",
+        "volume": "146,220"
+      },
+      "monthly_literal": "2678",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2678
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,666.00",
+      "daily_source": {
+        "id": "czce-daily-20231213",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231213/FutureDataDaily.txt",
+        "sha256": "b5f7abedf419dc8a7ec610f17b446e0ac0122dc3548c6db484d46f3ac792016e",
+        "retrieved_at": "2026-11-13T09:51:11.520851Z"
+      },
+      "day": 20231213,
+      "fields": {
+        "close": "2,660.00",
+        "high": "2,691.00",
+        "low": "2,636.00",
+        "open": "2,677.00",
+        "open_interest": "53,622",
+        "pre_settle": "2,678.00",
+        "settle": "2,666.00",
+        "turnover": "721,864.16",
+        "volume": "90,250"
+      },
+      "monthly_literal": "2666",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2666
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,679.00",
+      "daily_source": {
+        "id": "czce-daily-20231214",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231214/FutureDataDaily.txt",
+        "sha256": "961fa346491735145783c8ad0f19c7ae122c48e5e8fca1a9a925df6cded1be04",
+        "retrieved_at": "2026-11-13T09:51:12.336967Z"
+      },
+      "day": 20231214,
+      "fields": {
+        "close": "2,670.00",
+        "high": "2,702.00",
+        "low": "2,655.00",
+        "open": "2,663.00",
+        "open_interest": "56,704",
+        "pre_settle": "2,666.00",
+        "settle": "2,679.00",
+        "turnover": "806,978.44",
+        "volume": "100,397"
+      },
+      "monthly_literal": "2679",
+      "native": "SH405",
+      "row": 166,
+      "settle": 2679
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,680.00",
+      "daily_source": {
+        "id": "czce-daily-20231215",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231215/FutureDataDaily.txt",
+        "sha256": "e62283cc4ccdd4af0329209699706355ace14b538e7124a8d9f217e7ac7085ff",
+        "retrieved_at": "2026-11-13T09:51:13.109357Z"
+      },
+      "day": 20231215,
+      "fields": {
+        "close": "2,673.00",
+        "high": "2,697.00",
+        "low": "2,661.00",
+        "open": "2,682.00",
+        "open_interest": "52,921",
+        "pre_settle": "2,679.00",
+        "settle": "2,680.00",
+        "turnover": "617,044.67",
+        "volume": "76,754"
+      },
+      "monthly_literal": "2680",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2680
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,662.00",
+      "daily_source": {
+        "id": "czce-daily-20231218",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231218/FutureDataDaily.txt",
+        "sha256": "976f47905c45887cdf4efd50428792251bfd369cf4808ca5c6b646106f99bb2b",
+        "retrieved_at": "2026-11-13T09:51:13.878882Z"
+      },
+      "day": 20231218,
+      "fields": {
+        "close": "2,672.00",
+        "high": "2,679.00",
+        "low": "2,647.00",
+        "open": "2,676.00",
+        "open_interest": "51,401",
+        "pre_settle": "2,680.00",
+        "settle": "2,662.00",
+        "turnover": "460,824.28",
+        "volume": "57,710"
+      },
+      "monthly_literal": "2662",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2662
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,678.00",
+      "daily_source": {
+        "id": "czce-daily-20231219",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231219/FutureDataDaily.txt",
+        "sha256": "16be3ab78e11b940fa0e5f7b86641db0378e428a26e473a48ad7bd032a5606d8",
+        "retrieved_at": "2026-11-13T09:51:14.721873Z"
+      },
+      "day": 20231219,
+      "fields": {
+        "close": "2,664.00",
+        "high": "2,711.00",
+        "low": "2,656.00",
+        "open": "2,663.00",
+        "open_interest": "50,550",
+        "pre_settle": "2,662.00",
+        "settle": "2,678.00",
+        "turnover": "643,914.26",
+        "volume": "80,150"
+      },
+      "monthly_literal": "2678",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2678
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,688.00",
+      "daily_source": {
+        "id": "czce-daily-20231220",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231220/FutureDataDaily.txt",
+        "sha256": "24436a453ddb608b74929e860ab99e14f9088fe6a4dadcd1bdff5b1155414219",
+        "retrieved_at": "2026-11-13T09:51:15.643762Z"
+      },
+      "day": 20231220,
+      "fields": {
+        "close": "2,692.00",
+        "high": "2,712.00",
+        "low": "2,661.00",
+        "open": "2,661.00",
+        "open_interest": "53,447",
+        "pre_settle": "2,678.00",
+        "settle": "2,688.00",
+        "turnover": "538,235.29",
+        "volume": "66,740"
+      },
+      "monthly_literal": "2688",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2688
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,701.00",
+      "daily_source": {
+        "id": "czce-daily-20231221",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231221/FutureDataDaily.txt",
+        "sha256": "b6ac4300329319a6a6477785ec600c5b19de3cd2efa6b4e8f372f15ef13fa079",
+        "retrieved_at": "2026-11-13T09:51:16.498994Z"
+      },
+      "day": 20231221,
+      "fields": {
+        "close": "2,744.00",
+        "high": "2,748.00",
+        "low": "2,675.00",
+        "open": "2,705.00",
+        "open_interest": "59,219",
+        "pre_settle": "2,688.00",
+        "settle": "2,701.00",
+        "turnover": "728,815.04",
+        "volume": "89,938"
+      },
+      "monthly_literal": "2701",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2701
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,859.00",
+      "daily_source": {
+        "id": "czce-daily-20231222",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231222/FutureDataDaily.txt",
+        "sha256": "f5084841ec08040b5104a9690038509cf964009e3099933a0359a4d590c7ad0a",
+        "retrieved_at": "2026-11-13T09:51:17.301182Z"
+      },
+      "day": 20231222,
+      "fields": {
+        "close": "2,814.00",
+        "high": "2,972.00",
+        "low": "2,743.00",
+        "open": "2,752.00",
+        "open_interest": "80,512",
+        "pre_settle": "2,701.00",
+        "settle": "2,859.00",
+        "turnover": "4,770,776.78",
+        "volume": "556,143"
+      },
+      "monthly_literal": "2859",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2859
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,816.00",
+      "daily_source": {
+        "id": "czce-daily-20231225",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231225/FutureDataDaily.txt",
+        "sha256": "9ac255dc3a8d4f3434b26022b46d99f05835080949623158f6236ca20b1865cf",
+        "retrieved_at": "2026-11-13T09:51:18.085787Z"
+      },
+      "day": 20231225,
+      "fields": {
+        "close": "2,836.00",
+        "high": "2,851.00",
+        "low": "2,768.00",
+        "open": "2,801.00",
+        "open_interest": "76,982",
+        "pre_settle": "2,859.00",
+        "settle": "2,816.00",
+        "turnover": "1,931,916.27",
+        "volume": "228,672"
+      },
+      "monthly_literal": "2816",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2816
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,849.00",
+      "daily_source": {
+        "id": "czce-daily-20231226",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231226/FutureDataDaily.txt",
+        "sha256": "48b2e110b459ef08dd6b26b563c42b1001d865282f36a69e7b7a7cda39695e73",
+        "retrieved_at": "2026-11-13T09:51:18.844212Z"
+      },
+      "day": 20231226,
+      "fields": {
+        "close": "2,817.00",
+        "high": "2,893.00",
+        "low": "2,808.00",
+        "open": "2,837.00",
+        "open_interest": "72,188",
+        "pre_settle": "2,816.00",
+        "settle": "2,849.00",
+        "turnover": "1,948,307.83",
+        "volume": "227,969"
+      },
+      "monthly_literal": "2849",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2849
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,815.00",
+      "daily_source": {
+        "id": "czce-daily-20231227",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231227/FutureDataDaily.txt",
+        "sha256": "f79fbc47a025c8009edafb600af48cdd98b986cf22c563eb41121b88bd7fdc8f",
+        "retrieved_at": "2026-11-13T09:51:19.643954Z"
+      },
+      "day": 20231227,
+      "fields": {
+        "close": "2,794.00",
+        "high": "2,842.00",
+        "low": "2,783.00",
+        "open": "2,820.00",
+        "open_interest": "67,775",
+        "pre_settle": "2,849.00",
+        "settle": "2,815.00",
+        "turnover": "942,858.03",
+        "volume": "111,657"
+      },
+      "monthly_literal": "2815",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2815
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,808.00",
+      "daily_source": {
+        "id": "czce-daily-20231228",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231228/FutureDataDaily.txt",
+        "sha256": "a3ef55d3d741d02d73dbc588eb3432ee1007019d7937f6623b732fc7d298a2ff",
+        "retrieved_at": "2026-11-13T09:51:20.460354Z"
+      },
+      "day": 20231228,
+      "fields": {
+        "close": "2,838.00",
+        "high": "2,850.00",
+        "low": "2,766.00",
+        "open": "2,794.00",
+        "open_interest": "69,255",
+        "pre_settle": "2,815.00",
+        "settle": "2,808.00",
+        "turnover": "1,260,356.02",
+        "volume": "149,605"
+      },
+      "monthly_literal": "2808",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2808
+    },
+    {
+      "actual_pdf_page": 42,
+      "canonical": "CZCE.SH2405",
+      "daily_literal": "2,842.00",
+      "daily_source": {
+        "id": "czce-daily-20231229",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231229/FutureDataDaily.txt",
+        "sha256": "8be28cc28526f69dc3746bb9e5716409ce9c11718e9dd0670be159b119e93921",
+        "retrieved_at": "2026-11-13T09:51:21.233818Z"
+      },
+      "day": 20231229,
+      "fields": {
+        "close": "2,823.00",
+        "high": "2,871.00",
+        "low": "2,816.00",
+        "open": "2,838.00",
+        "open_interest": "61,324",
+        "pre_settle": "2,808.00",
+        "settle": "2,842.00",
+        "turnover": "1,073,960.73",
+        "volume": "125,951"
+      },
+      "monthly_literal": "2842",
+      "native": "SH405",
+      "row": 167,
+      "settle": 2842
+    }
+  ],
+  "schema": "monthly-daily-settlement-crosscheck-v1",
+  "strict_Feed_admitted": false,
+  "targeted_negative_controls": [
+    {
+      "actual_reason": "evidence: czce-daily-20231201 原件SHA256不符",
+      "control": "wrong-SHA",
+      "required_reason": "原件SHA256不符"
+    },
+    {
+      "actual_reason": "officialdaily: TXT标题/业务日期不符",
+      "control": "wrong-day",
+      "required_reason": "TXT标题/业务日期不符"
+    },
+    {
+      "actual_reason": "incomplete observation set",
+      "control": "missing-day",
+      "required_reason": "incomplete observation set"
+    },
+    {
+      "actual_reason": "duplicate monthly key",
+      "control": "duplicate-monthly",
+      "required_reason": "duplicate monthly key"
+    },
+    {
+      "actual_reason": "unproven contract mapping",
+      "control": "wrong-contract",
+      "required_reason": "unproven contract mapping"
+    },
+    {
+      "actual_reason": "settlement mismatch: 20231201/PX405",
+      "control": "wrong-settle",
+      "required_reason": "settlement mismatch"
+    },
+    {
+      "actual_reason": "settlement mismatch: 20231201/PX405",
+      "control": "close-as-settle",
+      "required_reason": "settlement mismatch"
+    }
+  ]
+}

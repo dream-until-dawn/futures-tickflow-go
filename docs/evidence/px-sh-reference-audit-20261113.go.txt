@@ -1,0 +1,147 @@
+package main
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	tf "github.com/dream-until-dawn/futures-tickflow-go"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/catalog"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
+)
+
+type request struct {
+	ID     string `json:"id"`
+	URL    string `json:"url"`
+	SHA    string `json:"sha256"`
+	At     string `json:"finished_utc"`
+	State  string `json:"transport_state"`
+	Status int    `json:"status"`
+}
+
+func hash(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
+func must(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+func main() {
+	root := os.Args[1]
+	b, e := os.ReadFile(filepath.Join(root, "requests.json"))
+	must(e)
+	var reqs []request
+	must(json.Unmarshal(b, &reqs))
+	out := []catalog.Entry{}
+	controls := []map[string]string{}
+	counts := map[string]int{}
+	unique := map[string]bool{}
+	for _, r := range reqs {
+		if !strings.HasPrefix(r.ID, "czce-reference-") {
+			continue
+		}
+		if r.State != "complete" || r.Status != 200 {
+			panic("reference unavailable")
+		}
+		day := tf.TradingDay(20231201)
+		expected := 14
+		if strings.HasSuffix(r.ID, "20231229") {
+			day = 20231229
+			expected = 16
+		}
+		raw, e := os.ReadFile(filepath.Join(root, r.ID+".body"))
+		must(e)
+		at, e := time.Parse(time.RFC3339Nano, r.At)
+		must(e)
+		ref := evidence.Ref{ID: r.ID, URL: r.URL, SHA256: r.SHA, RetrievedAt: at}
+		rows, e := catalog.ParseCZCEReference(raw, ref, day)
+		must(e)
+		n := 0
+		for _, row := range rows {
+			s := row.Symbol.String()
+			if strings.HasPrefix(s, "CZCE.PX") || strings.HasPrefix(s, "CZCE.SH") {
+				if row.Listed.Day == 0 || row.LastTrading.Day == 0 {
+					panic("missing lifecycle")
+				}
+				out = append(out, row)
+				unique[s] = true
+				n++
+			}
+		}
+		if n != expected {
+			panic(fmt.Sprintf("unexpected target count %s: %d", r.ID, n))
+		}
+		counts[r.ID] = n
+		for _, mode := range []string{"wrong-SHA", "wrong-observation-date", "wrong-year", "inverted-lifecycle", "missing-last-date"} {
+			copyRaw := append([]byte(nil), raw...)
+			copyRef := ref
+			copyDay := day
+			want := ""
+			switch mode {
+			case "wrong-SHA":
+				copyRef.SHA256 = strings.Repeat("0", 64)
+				want = "原件SHA256不符"
+			case "wrong-observation-date":
+				copyDay++
+				want = "未绑定观察日期"
+			case "wrong-year":
+				copyRaw = bytes.Replace(copyRaw, []byte("<YrCd>2024</YrCd>"), []byte("<YrCd>2034</YrCd>"), 1)
+				copyRef.SHA256 = hash(copyRaw)
+				want = "缺少显式交割年月或与到期不符"
+			case "inverted-lifecycle":
+				copyRaw = bytes.Replace(copyRaw, []byte("<FrstTrdDt>2023-09-15</FrstTrdDt>"), []byte("<FrstTrdDt>2025-09-15</FrstTrdDt>"), 1)
+				copyRef.SHA256 = hash(copyRaw)
+				want = "生命周期颠倒"
+			case "missing-last-date":
+				copyRaw = regexp.MustCompile(`<LstTrdDt>2024-05-[0-9]{2}</LstTrdDt>`).ReplaceAll(copyRaw, []byte("<LstTrdDt>n.a.</LstTrdDt>"))
+				copyRef.SHA256 = hash(copyRaw)
+			}
+			changed, err := catalog.ParseCZCEReference(copyRaw, copyRef, copyDay)
+			if mode == "missing-last-date" {
+				must(err)
+				found := 0
+				for _, v := range changed {
+					if v.Symbol.String() == "CZCE.PX2405" || v.Symbol.String() == "CZCE.SH2405" {
+						if v.LastTrading.Day != 0 || v.ExpireTs == 0 {
+							panic("expiry filled last trading")
+						}
+						found++
+					}
+				}
+				if found != 2 {
+					panic("missing target")
+				}
+				controls = append(controls, map[string]string{"source": r.ID, "control": mode, "actual": "both target LastTrading remain unknown; ExpireTs retained"})
+				continue
+			}
+			if err == nil || !strings.Contains(err.Error(), want) {
+				panic(fmt.Sprintf("wrong control failure %s: %v", mode, err))
+			}
+			controls = append(controls, map[string]string{"source": r.ID, "control": mode, "actual": err.Error()})
+		}
+	}
+	if len(out) != 30 || len(unique) != 16 {
+		panic("incomplete observations")
+	}
+	for _, v := range out {
+		if v.Symbol.String() == "CZCE.PX2405" || v.Symbol.String() == "CZCE.SH2405" {
+			expectedLast := tf.TradingDay(20240514)
+			if v.Observed[0].Day == 20231229 {
+				expectedLast = 20240517
+			}
+			if v.Listed.Day != 20230915 || v.LastTrading.Day != expectedLast {
+				panic("first contract mismatch")
+			}
+		}
+	}
+	result := map[string]any{"schema": "czce-historical-reference-observations-v1", "counts": counts, "observations": out, "distinct_contracts": len(unique), "targeted_controls": controls, "lifecycle_conflict": "PX2405/SH2405: Dec1 asserts May14; Dec29 asserts May17; neither is adjudicated final", "all_market_roster_proven": false, "point_in_time_available_proven": false, "calendar_qualified": false, "strict_Feed_admitted": false, "limits": "date-stamped archived reference retrieved in 2026; LastTrading is the field assertion, not independent proof of actual final session; TrdHrs does not prove three day segments"}
+	b, e = json.MarshalIndent(result, "", "  ")
+	must(e)
+	must(os.WriteFile(filepath.Join(root, "reference-check.json"), append(b, '\n'), 0600))
+	fmt.Println("PASS:30 PX/SH observations;16 distinct contracts;10 targeted controls; no calendar/financial admission")
+}

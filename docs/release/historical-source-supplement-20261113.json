@@ -1,0 +1,47 @@
+{
+  "schema": "historical-source-supplement-v1",
+  "supplements": "docs/release/staged-delivery-bundle-20261113.json",
+  "bundle": "C:\\Temp\\tickflow-calendar-continue-20261113-bundle",
+  "migration": "C:\\Temp\\tickflow-calendar-continue-20261113-bundle-migration",
+  "manifest_sha256": "30f33031e5e1726f982606dd6286989881954f0d8947d843f0100f1e006f483b",
+  "zip": "C:\\Temp\\tickflow-calendar-continue-20261113-bundle.zip",
+  "zip_sha256": "554f3027fbc5b4c2d970dd917d5a4d7b8c49ec6e6f20e58ebbe262cecd76c2a7",
+  "zip_bytes": 5268410,
+  "verified": {
+    "source_sha": "a700da1f2442e72c68276f6152ef9fa8af26907e",
+    "files": 73,
+    "bytes": 11072777,
+    "full_release": false
+  },
+  "controls": [
+    {
+      "control": "mutate-body",
+      "target_reason": "文件字节/SHA不符",
+      "actual": "文件字节/SHA不符：phase1/czce-daily-20231201.body"
+    },
+    {
+      "control": "missing-scope",
+      "target_reason": "文件集合不符",
+      "actual": "文件集合不符"
+    },
+    {
+      "control": "extra-file",
+      "target_reason": "文件集合不符",
+      "actual": "文件集合不符"
+    },
+    {
+      "control": "wrong-external-manifest",
+      "target_reason": "包外manifest SHA不符",
+      "actual": "包外manifest SHA不符"
+    },
+    {
+      "control": "self-consistent-scope-escalation",
+      "target_reason": "阶段范围不能提升资格",
+      "actual": "阶段范围不能提升资格：financial_admission_extended"
+    }
+  ],
+  "new_originals": 34,
+  "reused_originals": 1,
+  "full_release": false,
+  "tag_created": false
+}

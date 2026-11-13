@@ -1,0 +1,105 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	tf "github.com/dream-until-dawn/futures-tickflow-go"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/catalog"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/officialdaily"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
+)
+
+type req struct {
+	ID     string `json:"id"`
+	URL    string `json:"url"`
+	SHA    string `json:"sha256"`
+	At     string `json:"finished_utc"`
+	State  string `json:"transport_state"`
+	Status int    `json:"status"`
+}
+
+func must(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+func main() {
+	root := os.Args[1]
+	b, e := os.ReadFile(filepath.Join(root, "requests.json"))
+	must(e)
+	var requests []req
+	must(json.Unmarshal(b, &requests))
+	references := []map[string]any{}
+	daily := []officialdaily.Record{}
+	controls := []string{}
+	for _, r := range requests {
+		if r.Status != 200 || r.State != "complete" {
+			panic("incomplete")
+		}
+		at, e := time.Parse(time.RFC3339Nano, r.At)
+		must(e)
+		ref := evidence.Ref{ID: r.ID, URL: r.URL, SHA256: r.SHA, RetrievedAt: at}
+		raw, e := os.ReadFile(filepath.Join(root, r.ID+".body"))
+		must(e)
+		n, e := strconv.Atoi(r.ID[len(r.ID)-8:])
+		must(e)
+		day := tf.TradingDay(n)
+		if strings.HasPrefix(r.ID, "czce-reference-") {
+			rows, e := catalog.ParseCZCEReference(raw, ref, day)
+			must(e)
+			targets := []catalog.Entry{}
+			for _, v := range rows {
+				if v.Symbol.String() == "CZCE.PX2405" || v.Symbol.String() == "CZCE.SH2405" {
+					if v.Listed.Day != 20230915 || v.LastTrading.Day != 20240517 {
+						panic("unexpected target lifecycle")
+					}
+					targets = append(targets, v)
+				}
+			}
+			expected := 2
+			if day == 20240520 {
+				expected = 0
+			}
+			if len(targets) != expected {
+				panic("unexpected target presence")
+			}
+			references = append(references, map[string]any{"day": day, "targets": targets, "total_parsed_futures": len(rows), "evidence": ref})
+			_, err := catalog.ParseCZCEReference(raw, ref, day+1)
+			if err == nil || !strings.Contains(err.Error(), "未绑定观察日期") {
+				panic("wrong date not rejected")
+			}
+			controls = append(controls, fmt.Sprintf("%d reference date mismatch rejected", day))
+		} else {
+			doc := officialdaily.Document{Format: "czce-txt", Day: day, Raw: raw, Evidence: ref}
+			rows, e := officialdaily.Parse(doc)
+			must(e)
+			for _, v := range rows {
+				if v.Native == "PX405" || v.Native == "SH405" {
+					if v.Fields["settle"] == "" {
+						panic("missing settle")
+					}
+					daily = append(daily, v)
+				}
+			}
+			doc.Day++
+			_, err := officialdaily.Parse(doc)
+			if err == nil || !strings.Contains(err.Error(), "TXT标题/业务日期不符") {
+				panic("wrong daily date accepted")
+			}
+			controls = append(controls, "daily date mismatch rejected")
+		}
+	}
+	if len(references) != 3 || len(daily) != 2 || len(controls) != 4 {
+		panic("incomplete")
+	}
+	out := map[string]any{"schema": "px-sh-final-reference-observations-v1", "reference_snapshots": references, "daily_records": daily, "targeted_controls": controls, "last_trading_field_supported_by_near_expiry_snapshots": 20240517, "earlier_snapshot_assertions_preserved": true, "historical_point_in_time_availability_proven": false, "calendar_qualified": false, "financial_admission_extended": false, "limits": "May20 omission is list observation not standalone legal delisting evidence; May17 quotes do not establish full lifecycle or holiday/version history"}
+	b, e = json.MarshalIndent(out, "", "  ")
+	must(e)
+	must(os.WriteFile(filepath.Join(root, "expiry-check.json"), append(b, '\n'), 0600))
+	fmt.Println("PASS:3 original reference snapshots;2 final-day daily records;4 targeted negative controls")
+}

@@ -1,0 +1,556 @@
+{
+  "schema": "historical-source-continuation-v1",
+  "date": "2026-11-13",
+  "source_sha": "a700da1f2442e72c68276f6152ef9fa8af26907e",
+  "production_go_sha": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+  "evidence_root": "C:\\Temp\\tickflow-calendar-continue-20261113",
+  "requests": [
+    {
+      "id": "czce-202312-monthly-official",
+      "url": "https://www.czce.com.cn/cn/rootfiles/2024/01/12/1703387901670861-1703387901697575.pdf",
+      "requested_utc": "2026-11-13T09:42:01.767100+00:00",
+      "first_response_utc": "2026-11-13T09:42:01.975854+00:00",
+      "finished_utc": "2026-11-13T09:42:08.663057+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 3301304,
+      "sha256": "9822a3ca24724077634b0242894a39d7e848b91022b7fe6c564ead76ba73c833"
+    },
+    {
+      "id": "czce-daily-20231201",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231201/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:48:38.259152+00:00",
+      "first_response_utc": "2026-11-13T09:48:38.461273+00:00",
+      "finished_utc": "2026-11-13T09:48:38.605262+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33866,
+      "sha256": "8d9d8513afb69ffb3fb17649dd549e03ec3c2407da8cfd69a4c5bfe0853aea27"
+    },
+    {
+      "id": "czce-daily-20231204",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231204/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:05.426503+00:00",
+      "first_response_utc": "2026-11-13T09:51:05.663191+00:00",
+      "finished_utc": "2026-11-13T09:51:05.790527+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33866,
+      "sha256": "6d886b7d255b793b657db3efc7799e4bd3bb361153d9839b2b8042b9b599b58a"
+    },
+    {
+      "id": "czce-daily-20231205",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231205/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:06.292008+00:00",
+      "first_response_utc": "2026-11-13T09:51:06.505119+00:00",
+      "finished_utc": "2026-11-13T09:51:06.586551+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33865,
+      "sha256": "05cfda125e01ddb2ca57edde6c479a3f10071e311cd1ed97e81d194ecf0bbe91"
+    },
+    {
+      "id": "czce-daily-20231206",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231206/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:07.088256+00:00",
+      "first_response_utc": "2026-11-13T09:51:07.294584+00:00",
+      "finished_utc": "2026-11-13T09:51:07.371015+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33865,
+      "sha256": "10c17b2003e3bbd01b4f0c9da0a79bfd49b4bcd7d6eabecdd802cadad2d87d2d"
+    },
+    {
+      "id": "czce-daily-20231207",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231207/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:07.872543+00:00",
+      "first_response_utc": "2026-11-13T09:51:08.078220+00:00",
+      "finished_utc": "2026-11-13T09:51:08.233930+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33866,
+      "sha256": "64da535e9df07be6afcd84ba52fc003485a550e09b91b5bb5fe3320b94c5cc02"
+    },
+    {
+      "id": "czce-daily-20231208",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231208/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:08.735733+00:00",
+      "first_response_utc": "2026-11-13T09:51:08.939070+00:00",
+      "finished_utc": "2026-11-13T09:51:09.053633+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33852,
+      "sha256": "64f4ff901e13f218757fae54865c32f9b7fc6635a25ed07f57acc9414443bf98"
+    },
+    {
+      "id": "czce-daily-20231211",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231211/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:09.554919+00:00",
+      "first_response_utc": "2026-11-13T09:51:09.753298+00:00",
+      "finished_utc": "2026-11-13T09:51:09.828056+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33851,
+      "sha256": "014d2db4efee331646f16cac4d5623877dc1a8f28b9da79b59e5d0bd9a602f73"
+    },
+    {
+      "id": "czce-daily-20231212",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231212/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:10.329547+00:00",
+      "first_response_utc": "2026-11-13T09:51:10.546301+00:00",
+      "finished_utc": "2026-11-13T09:51:10.713385+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33851,
+      "sha256": "7916a97cbedcbc285e8a2e4101a7de7b77a5a6e97f1e584e7e89c30b60790044"
+    },
+    {
+      "id": "czce-daily-20231213",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231213/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:11.214714+00:00",
+      "first_response_utc": "2026-11-13T09:51:11.411333+00:00",
+      "finished_utc": "2026-11-13T09:51:11.520851+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33851,
+      "sha256": "b5f7abedf419dc8a7ec610f17b446e0ac0122dc3548c6db484d46f3ac792016e"
+    },
+    {
+      "id": "czce-daily-20231214",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231214/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:12.022780+00:00",
+      "first_response_utc": "2026-11-13T09:51:12.223586+00:00",
+      "finished_utc": "2026-11-13T09:51:12.336967+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33851,
+      "sha256": "961fa346491735145783c8ad0f19c7ae122c48e5e8fca1a9a925df6cded1be04"
+    },
+    {
+      "id": "czce-daily-20231215",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231215/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:12.838604+00:00",
+      "first_response_utc": "2026-11-13T09:51:13.035175+00:00",
+      "finished_utc": "2026-11-13T09:51:13.109357+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "e62283cc4ccdd4af0329209699706355ace14b538e7124a8d9f217e7ac7085ff"
+    },
+    {
+      "id": "czce-daily-20231218",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231218/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:13.610872+00:00",
+      "first_response_utc": "2026-11-13T09:51:13.804524+00:00",
+      "finished_utc": "2026-11-13T09:51:13.878882+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "976f47905c45887cdf4efd50428792251bfd369cf4808ca5c6b646106f99bb2b"
+    },
+    {
+      "id": "czce-daily-20231219",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231219/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:14.380510+00:00",
+      "first_response_utc": "2026-11-13T09:51:14.599533+00:00",
+      "finished_utc": "2026-11-13T09:51:14.721873+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "16be3ab78e11b940fa0e5f7b86641db0378e428a26e473a48ad7bd032a5606d8"
+    },
+    {
+      "id": "czce-daily-20231220",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231220/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:15.223779+00:00",
+      "first_response_utc": "2026-11-13T09:51:15.495026+00:00",
+      "finished_utc": "2026-11-13T09:51:15.643762+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "24436a453ddb608b74929e860ab99e14f9088fe6a4dadcd1bdff5b1155414219"
+    },
+    {
+      "id": "czce-daily-20231221",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231221/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:16.145371+00:00",
+      "first_response_utc": "2026-11-13T09:51:16.347879+00:00",
+      "finished_utc": "2026-11-13T09:51:16.498994+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "b6ac4300329319a6a6477785ec600c5b19de3cd2efa6b4e8f372f15ef13fa079"
+    },
+    {
+      "id": "czce-daily-20231222",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231222/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:17.000711+00:00",
+      "first_response_utc": "2026-11-13T09:51:17.193046+00:00",
+      "finished_utc": "2026-11-13T09:51:17.301182+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "f5084841ec08040b5104a9690038509cf964009e3099933a0359a4d590c7ad0a"
+    },
+    {
+      "id": "czce-daily-20231225",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231225/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:17.802628+00:00",
+      "first_response_utc": "2026-11-13T09:51:18.010031+00:00",
+      "finished_utc": "2026-11-13T09:51:18.085787+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "9ac255dc3a8d4f3434b26022b46d99f05835080949623158f6236ca20b1865cf"
+    },
+    {
+      "id": "czce-daily-20231226",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231226/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:18.587082+00:00",
+      "first_response_utc": "2026-11-13T09:51:18.772608+00:00",
+      "finished_utc": "2026-11-13T09:51:18.844212+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "48b2e110b459ef08dd6b26b563c42b1001d865282f36a69e7b7a7cda39695e73"
+    },
+    {
+      "id": "czce-daily-20231227",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231227/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:19.345573+00:00",
+      "first_response_utc": "2026-11-13T09:51:19.516775+00:00",
+      "finished_utc": "2026-11-13T09:51:19.643954+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "f79fbc47a025c8009edafb600af48cdd98b986cf22c563eb41121b88bd7fdc8f"
+    },
+    {
+      "id": "czce-daily-20231228",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231228/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:20.145204+00:00",
+      "first_response_utc": "2026-11-13T09:51:20.323794+00:00",
+      "finished_utc": "2026-11-13T09:51:20.460354+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "a3ef55d3d741d02d73dbc588eb3432ee1007019d7937f6623b732fc7d298a2ff"
+    },
+    {
+      "id": "czce-daily-20231229",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231229/FutureDataDaily.txt",
+      "requested_utc": "2026-11-13T09:51:20.962748+00:00",
+      "first_response_utc": "2026-11-13T09:51:21.159191+00:00",
+      "finished_utc": "2026-11-13T09:51:21.233818+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33963,
+      "sha256": "8be28cc28526f69dc3746bb9e5716409ce9c11718e9dd0670be159b119e93921"
+    },
+    {
+      "id": "czce-reference-20231201",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231201/FutureDataReferenceData.xml",
+      "requested_utc": "2026-11-13T09:58:13.350418+00:00",
+      "first_response_utc": "2026-11-13T09:58:13.548362+00:00",
+      "finished_utc": "2026-11-13T09:58:14.209372+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 304202,
+      "sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "id": "czce-reference-20231229",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20231229/FutureDataReferenceData.xml",
+      "requested_utc": "2026-11-13T09:58:14.711137+00:00",
+      "first_response_utc": "2026-11-13T09:58:14.919770+00:00",
+      "finished_utc": "2026-11-13T09:58:15.307818+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 307085,
+      "sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    }
+  ],
+  "settlement": {
+    "daily_originals": 21,
+    "contract_days": 42,
+    "contracts": [
+      "CZCE.PX2405",
+      "CZCE.SH2405"
+    ],
+    "negative_controls": 7,
+    "field": "settle",
+    "same_exchange_distinct_publications": true
+  },
+  "reference": {
+    "observations": 30,
+    "distinct_contracts": 16,
+    "targeted_controls": 10,
+    "conflicts": [
+      {
+        "symbol": "CZCE.PX2405",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20230915,
+            "last_trading": 20240514
+          },
+          {
+            "observation": 20231229,
+            "listed": 20230915,
+            "last_trading": 20240517
+          }
+        ],
+        "adjudicated": false
+      },
+      {
+        "symbol": "CZCE.PX2406",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20230915,
+            "last_trading": 20240614
+          },
+          {
+            "observation": 20231229,
+            "listed": 20230915,
+            "last_trading": 20240617
+          }
+        ],
+        "adjudicated": false
+      },
+      {
+        "symbol": "CZCE.PX2410",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20231023,
+            "last_trading": 20241014
+          },
+          {
+            "observation": 20231229,
+            "listed": 20231023,
+            "last_trading": 20241021
+          }
+        ],
+        "adjudicated": false
+      },
+      {
+        "symbol": "CZCE.SH2405",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20230915,
+            "last_trading": 20240514
+          },
+          {
+            "observation": 20231229,
+            "listed": 20230915,
+            "last_trading": 20240517
+          }
+        ],
+        "adjudicated": false
+      },
+      {
+        "symbol": "CZCE.SH2406",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20230915,
+            "last_trading": 20240614
+          },
+          {
+            "observation": 20231229,
+            "listed": 20230915,
+            "last_trading": 20240617
+          }
+        ],
+        "adjudicated": false
+      },
+      {
+        "symbol": "CZCE.SH2410",
+        "snapshots": [
+          {
+            "observation": 20231201,
+            "listed": 20231023,
+            "last_trading": 20241014
+          },
+          {
+            "observation": 20231229,
+            "listed": 20231023,
+            "last_trading": 20241021
+          }
+        ],
+        "adjudicated": false
+      }
+    ],
+    "final_lifecycle_adjudicated": false
+  },
+  "calendar_generated": false,
+  "strict_Feed_admitted": false,
+  "financial_admission_extended": false,
+  "originals_rewritten": false,
+  "tag_created": false,
+  "limitations": [
+    "2026 retrieval does not prove historical point-in-time availability",
+    "same issuer is not independent providers",
+    "monthly product aggregate volume/OI never assigned to individual contracts",
+    "all-year holiday/version continuity remains open",
+    "TrdHrs does not prove intraday recess",
+    "LastTrading snapshot differences not silently resolved"
+  ],
+  "network_budget": {
+    "actual": 24,
+    "max_requests": 24,
+    "max_bytes": 33554432,
+    "actual_bytes": 4624768,
+    "retries": 0
+  },
+  "first_audit_failure": "hardcoded May14 missing-field mutation left Dec29 May17 intact; corrected audit not production; original snapshots preserved",
+  "reused_listing": {
+    "path": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113\\czce-px-sh-journal-pdf.body",
+    "sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+    "new_network_request": false
+  },
+  "followup_batches": [
+    {
+      "root": "C:\\Temp\\tickflow-px-sh-expiry-20261113",
+      "requests": [
+        {
+          "id": "czce-reference-20240514",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:52:04.302252+00:00",
+          "first_response_utc": "2026-11-13T10:52:04.518372+00:00",
+          "finished_utc": "2026-11-13T10:52:04.967351+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 318566,
+          "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0"
+        },
+        {
+          "id": "czce-reference-20240517",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:52:05.469139+00:00",
+          "first_response_utc": "2026-11-13T10:52:05.672352+00:00",
+          "finished_utc": "2026-11-13T10:52:06.486323+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 318516,
+          "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b"
+        },
+        {
+          "id": "czce-reference-20240520",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240520/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:52:06.988003+00:00",
+          "first_response_utc": "2026-11-13T10:52:07.185124+00:00",
+          "finished_utc": "2026-11-13T10:52:07.852783+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 318571,
+          "sha256": "01dd25dffa1893720d6a6e6b74ce715685091362a91eb5d042a1f2e6713316b3"
+        },
+        {
+          "id": "czce-daily-20240517",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataDaily.txt",
+          "requested_utc": "2026-11-13T10:52:08.354265+00:00",
+          "first_response_utc": "2026-11-13T10:52:08.552940+00:00",
+          "finished_utc": "2026-11-13T10:52:08.698106+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 35391,
+          "sha256": "cab3c48c1319e017e42cb75e433a65046e5561090c7569cb794b4f4bd6e62f60"
+        }
+      ],
+      "reference_snapshots": 3,
+      "daily_records": 2,
+      "targeted_controls": 4
+    },
+    {
+      "root": "C:\\Temp\\tickflow-px-sh-expiry-rest-20261113",
+      "requests": [
+        {
+          "id": "czce-reference-20240617",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240617/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:54:10.520235+00:00",
+          "first_response_utc": "2026-11-13T10:54:10.732539+00:00",
+          "finished_utc": "2026-11-13T10:54:11.339685+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 320007,
+          "sha256": "6604b37e367ecfb4cd634f8c492da0bbf989717f63ec4203ba6abb0541f597c8"
+        },
+        {
+          "id": "czce-reference-20240618",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240618/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:54:11.841247+00:00",
+          "first_response_utc": "2026-11-13T10:54:12.044028+00:00",
+          "finished_utc": "2026-11-13T10:54:12.764956+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 320041,
+          "sha256": "4ca6585a3d42a87a8b5af12bbaa227841f11bdba7b8e86f0d334cb50d4b5280e"
+        },
+        {
+          "id": "czce-reference-20241021",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20241021/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:54:13.266816+00:00",
+          "first_response_utc": "2026-11-13T10:54:13.476060+00:00",
+          "finished_utc": "2026-11-13T10:54:14.166273+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 330090,
+          "sha256": "fee186e9e7e3693588b44978c984d5c512c1ee56da0378cd7d1ef586f89d9189"
+        },
+        {
+          "id": "czce-reference-20241022",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20241022/FutureDataReferenceData.xml",
+          "requested_utc": "2026-11-13T10:54:14.667730+00:00",
+          "first_response_utc": "2026-11-13T10:54:14.874351+00:00",
+          "finished_utc": "2026-11-13T10:54:15.383281+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 331581,
+          "sha256": "092bd3737ef0d5b59814cdacdefee14582cc2712b3513a4ed42547f190c501c9"
+        },
+        {
+          "id": "czce-daily-20240617",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240617/FutureDataDaily.txt",
+          "requested_utc": "2026-11-13T10:54:15.884807+00:00",
+          "first_response_utc": "2026-11-13T10:54:16.074804+00:00",
+          "finished_utc": "2026-11-13T10:54:16.145772+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 35377,
+          "sha256": "e0ba455b61bf14ad1ca7b0b49dea4d241037aa95e2c3212a961146eddfc3880a"
+        },
+        {
+          "id": "czce-daily-20241021",
+          "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20241021/FutureDataDaily.txt",
+          "requested_utc": "2026-11-13T10:54:16.647067+00:00",
+          "first_response_utc": "2026-11-13T10:54:16.840277+00:00",
+          "finished_utc": "2026-11-13T10:54:16.986481+00:00",
+          "status": 200,
+          "transport_state": "complete",
+          "bytes": 36529,
+          "sha256": "98da84309b09c6591e08bb629c0d62024e430689356fafa5fbe750c677048425"
+        }
+      ],
+      "reference_snapshots": 4,
+      "daily_records": 4,
+      "targeted_controls": 6
+    }
+  ],
+  "new_requests_total": 34,
+  "targeted_controls_total": 27,
+  "negative_rejection_controls": 25,
+  "unknown_last_date_positive_controls": 2,
+  "near_expiry_findings": {
+    "CZCE.PX2405": 20240517,
+    "CZCE.SH2405": 20240517,
+    "CZCE.PX2406": 20240617,
+    "CZCE.SH2406": 20240617,
+    "CZCE.PX2410": 20241021,
+    "CZCE.SH2410": 20241021
+  },
+  "near_expiry_findings_scope": "explicit fields in near-expiry snapshots plus same-day quotes; not point-in-time history or legal delisting",
+  "final_lifecycle_version_chain_complete": false
+}

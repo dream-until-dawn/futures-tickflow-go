@@ -1,0 +1,21 @@
+{
+  "schema": "historical-source-validation-v1",
+  "go_modules": 3,
+  "gofmt_vet_test": "passed",
+  "python_tests": 104,
+  "restoration_drill": "passed; identical workspace fingerprint06dfed6db9e6",
+  "source_doccheck": "go run ./tools/doccheck passed;203 declarations,872 source,0 pending",
+  "offline_audit_replays": 4,
+  "post_replay_manifest_unchanged": true,
+  "source_controls": 27,
+  "bundle_negative_controls": 5,
+  "first_sweep": "failed fingerprint when concurrent documentation writes occurred; original log retained; stable rerun passed",
+  "first_reference_audit": "failed hardcoded missing-date mutation when later source had changed date; original assertions preserved, corrected control passed",
+  "independent_xml_review": "all30 initial observations and8 near-expiry fields matched Python ElementTree originals; absent lists compared",
+  "stale_root_doccheck_binary": "root untracked historical exe reported1 signature mismatch; freshly compiled current source passed; no production change",
+  "logs_root": "C:\\Temp\\tickflow-calendar-continue-20261113",
+  "production_go_changed": false,
+  "public_API_changed": false,
+  "new_calendar_generated": false,
+  "tag_created": false
+}

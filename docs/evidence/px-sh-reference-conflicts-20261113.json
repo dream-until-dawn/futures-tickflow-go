@@ -1,0 +1,315 @@
+{
+  "method": "Python ElementTree independently compared every selected Go catalogue field with original XML",
+  "observations": [
+    {
+      "symbol": "CZCE.PX2405",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240514,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2406",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240614,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2407",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240712,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2408",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240814,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2409",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240913,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2410",
+      "observation": 20231201,
+      "listed": 20231023,
+      "last_trading": 20241014,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2411",
+      "observation": 20231201,
+      "listed": 20231115,
+      "last_trading": 20241114,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2405",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240514,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2406",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240614,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2407",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240712,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2408",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240814,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2409",
+      "observation": 20231201,
+      "listed": 20230915,
+      "last_trading": 20240913,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2410",
+      "observation": 20231201,
+      "listed": 20231023,
+      "last_trading": 20241014,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.SH2411",
+      "observation": 20231201,
+      "listed": 20231115,
+      "last_trading": 20241114,
+      "source_sha256": "bec848b951ba5972cbe792ffbd2773b118361dedaa5c340bbd6da72a861b1a17"
+    },
+    {
+      "symbol": "CZCE.PX2405",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240517,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2406",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240617,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2407",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240712,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2408",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240814,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2409",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240913,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2410",
+      "observation": 20231229,
+      "listed": 20231023,
+      "last_trading": 20241021,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2411",
+      "observation": 20231229,
+      "listed": 20231115,
+      "last_trading": 20241114,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.PX2412",
+      "observation": 20231229,
+      "listed": 20231215,
+      "last_trading": 20241213,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2405",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240517,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2406",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240617,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2407",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240712,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2408",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240814,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2409",
+      "observation": 20231229,
+      "listed": 20230915,
+      "last_trading": 20240913,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2410",
+      "observation": 20231229,
+      "listed": 20231023,
+      "last_trading": 20241021,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2411",
+      "observation": 20231229,
+      "listed": 20231115,
+      "last_trading": 20241114,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    },
+    {
+      "symbol": "CZCE.SH2412",
+      "observation": 20231229,
+      "listed": 20231215,
+      "last_trading": 20241213,
+      "source_sha256": "61df090bf4e79fc80290bd623996e933fb1ce7ae4d688e5ca0a44b6ab55eb24d"
+    }
+  ],
+  "conflicts": [
+    {
+      "symbol": "CZCE.PX2405",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20230915,
+          "last_trading": 20240514
+        },
+        {
+          "observation": 20231229,
+          "listed": 20230915,
+          "last_trading": 20240517
+        }
+      ],
+      "adjudicated": false
+    },
+    {
+      "symbol": "CZCE.PX2406",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20230915,
+          "last_trading": 20240614
+        },
+        {
+          "observation": 20231229,
+          "listed": 20230915,
+          "last_trading": 20240617
+        }
+      ],
+      "adjudicated": false
+    },
+    {
+      "symbol": "CZCE.PX2410",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20231023,
+          "last_trading": 20241014
+        },
+        {
+          "observation": 20231229,
+          "listed": 20231023,
+          "last_trading": 20241021
+        }
+      ],
+      "adjudicated": false
+    },
+    {
+      "symbol": "CZCE.SH2405",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20230915,
+          "last_trading": 20240514
+        },
+        {
+          "observation": 20231229,
+          "listed": 20230915,
+          "last_trading": 20240517
+        }
+      ],
+      "adjudicated": false
+    },
+    {
+      "symbol": "CZCE.SH2406",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20230915,
+          "last_trading": 20240614
+        },
+        {
+          "observation": 20231229,
+          "listed": 20230915,
+          "last_trading": 20240617
+        }
+      ],
+      "adjudicated": false
+    },
+    {
+      "symbol": "CZCE.SH2410",
+      "snapshots": [
+        {
+          "observation": 20231201,
+          "listed": 20231023,
+          "last_trading": 20241014
+        },
+        {
+          "observation": 20231229,
+          "listed": 20231023,
+          "last_trading": 20241021
+        }
+      ],
+      "adjudicated": false
+    }
+  ],
+  "calendar_qualified": false,
+  "point_in_time_proven": false
+}

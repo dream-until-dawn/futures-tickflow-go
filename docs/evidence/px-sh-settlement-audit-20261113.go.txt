@@ -1,0 +1,190 @@
+package main
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	tf "github.com/dream-until-dawn/futures-tickflow-go"
+	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/officialdaily"
+	"math"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
+)
+
+type request struct {
+	ID       string `json:"id"`
+	URL      string `json:"url"`
+	SHA      string `json:"sha256"`
+	Finished string `json:"finished_utc"`
+	Status   int    `json:"status"`
+	State    string `json:"transport_state"`
+}
+type item struct {
+	Native    string        `json:"native"`
+	Canonical string        `json:"canonical"`
+	Day       tf.TradingDay `json:"day"`
+	Settle    string        `json:"settle_literal"`
+	Page      int           `json:"actual_pdf_page"`
+}
+
+func hash(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
+func check(month []item, docs []officialdaily.Document, field string) ([]map[string]any, error) {
+	known := map[string]string{"PX405": "CZCE.PX2405", "SH405": "CZCE.SH2405"}
+	daily := map[string]officialdaily.Record{}
+	for _, d := range docs {
+		rows, e := officialdaily.Parse(d)
+		if e != nil {
+			return nil, e
+		}
+		for _, r := range rows {
+			if _, ok := known[r.Native]; !ok {
+				continue
+			}
+			k := fmt.Sprintf("%d/%s", r.Day, r.Native)
+			if _, ok := daily[k]; ok {
+				return nil, fmt.Errorf("duplicate daily key")
+			}
+			daily[k] = r
+		}
+	}
+	if len(month) != 42 || len(daily) != 42 {
+		return nil, fmt.Errorf("incomplete observation set")
+	}
+	seen := map[string]bool{}
+	out := []map[string]any{}
+	for _, m := range month {
+		if known[m.Native] == "" || known[m.Native] != m.Canonical {
+			return nil, fmt.Errorf("unproven contract mapping")
+		}
+		k := fmt.Sprintf("%d/%s", m.Day, m.Native)
+		if seen[k] {
+			return nil, fmt.Errorf("duplicate monthly key")
+		}
+		seen[k] = true
+		r, ok := daily[k]
+		if !ok {
+			return nil, fmt.Errorf("missing matching daily key")
+		}
+		a, e := officialdaily.Number(m.Settle)
+		if e != nil {
+			return nil, e
+		}
+		b, e := officialdaily.Number(r.Fields[field])
+		if e != nil {
+			return nil, e
+		}
+		if math.IsNaN(a) || math.IsNaN(b) || a != b {
+			return nil, fmt.Errorf("settlement mismatch: %s", k)
+		}
+		values := map[string]float64{}
+		for _, name := range []string{"open", "high", "low", "close", "volume", "open_interest"} {
+			v, e := officialdaily.Number(r.Fields[name])
+			if e != nil || math.IsNaN(v) {
+				return nil, fmt.Errorf("invalid requested field")
+			}
+			values[name] = v
+		}
+		if values["low"] > math.Min(values["open"], values["close"]) || values["high"] < math.Max(values["open"], values["close"]) || values["low"] > values["high"] {
+			return nil, fmt.Errorf("requested OHLC quarantine")
+		}
+		out = append(out, map[string]any{"day": m.Day, "native": m.Native, "canonical": m.Canonical, "settle": a, "monthly_literal": m.Settle, "daily_literal": r.Fields[field], "actual_pdf_page": m.Page, "daily_source": r.Evidence, "row": r.Row, "fields": r.Fields})
+	}
+	return out, nil
+}
+func main() {
+	root := os.Args[1]
+	paper, e := os.ReadFile(filepath.Join(root, "czce-202312-monthly-official.body"))
+	if e != nil || hash(paper) != "9822a3ca24724077634b0242894a39d7e848b91022b7fe6c564ead76ba73c833" {
+		panic("monthly original identity")
+	}
+	raw, e := os.ReadFile(filepath.Join(root, "requests.json"))
+	if e != nil {
+		panic(e)
+	}
+	var requests []request
+	if e = json.Unmarshal(raw, &requests); e != nil {
+		panic(e)
+	}
+	docs := []officialdaily.Document{}
+	for _, r := range requests {
+		if !strings.HasPrefix(r.ID, "czce-daily-") {
+			continue
+		}
+		if r.Status != 200 || r.State != "complete" {
+			panic("not complete daily")
+		}
+		day, e := strconv.Atoi(strings.TrimPrefix(r.ID, "czce-daily-"))
+		if e != nil {
+			panic(e)
+		}
+		b, e := os.ReadFile(filepath.Join(root, r.ID+".body"))
+		if e != nil {
+			panic(e)
+		}
+		at, e := time.Parse(time.RFC3339Nano, r.Finished)
+		if e != nil {
+			panic(e)
+		}
+		docs = append(docs, officialdaily.Document{Format: "czce-txt", Day: tf.TradingDay(day), Raw: b, Evidence: evidence.Ref{ID: r.ID, URL: r.URL, SHA256: r.SHA, RetrievedAt: at}})
+	}
+	raw, e = os.ReadFile(filepath.Join(root, "monthly-observations.json"))
+	if e != nil {
+		panic(e)
+	}
+	var monthly struct {
+		Records []item `json:"records"`
+	}
+	if e = json.Unmarshal(raw, &monthly); e != nil {
+		panic(e)
+	}
+	out, e := check(monthly.Records, docs, "settle")
+	if e != nil {
+		panic(e)
+	}
+	controls := []map[string]string{}
+	for _, mode := range []string{"wrong-SHA", "wrong-day", "missing-day", "duplicate-monthly", "wrong-contract", "wrong-settle", "close-as-settle"} {
+		m := append([]item{}, monthly.Records...)
+		d := append([]officialdaily.Document{}, docs...)
+		field := "settle"
+		want := ""
+		switch mode {
+		case "wrong-SHA":
+			d[0].Evidence.SHA256 = strings.Repeat("0", 64)
+			want = "原件SHA256不符"
+		case "wrong-day":
+			d[0].Day++
+			want = "TXT标题/业务日期不符"
+		case "missing-day":
+			d = d[1:]
+			want = "incomplete observation set"
+		case "duplicate-monthly":
+			m[1] = m[0]
+			want = "duplicate monthly key"
+		case "wrong-contract":
+			m[0].Canonical = "CZCE.PX3405"
+			want = "unproven contract mapping"
+		case "wrong-settle":
+			m[0].Settle = "1"
+			want = "settlement mismatch"
+		case "close-as-settle":
+			field = "close"
+			want = "settlement mismatch"
+		}
+		_, err := check(m, d, field)
+		if err == nil || !strings.Contains(err.Error(), want) {
+			panic(fmt.Sprintf("control accepted/wrong reason %s: %v", mode, err))
+		}
+		controls = append(controls, map[string]string{"control": mode, "required_reason": want, "actual_reason": err.Error()})
+	}
+	result := map[string]any{"schema": "monthly-daily-settlement-crosscheck-v1", "daily_documents": len(docs), "matched_contract_days": len(out), "records": out, "targeted_negative_controls": controls, "cross_publication": "same exchange, distinct daily and monthly publications; not independent providers", "calendar_qualified": false, "strict_Feed_admitted": false, "first_contract_mapping": "restricted to published PX2405/SH2405; never nearest-decade inference"}
+	b, _ := json.MarshalIndent(result, "", "  ")
+	if e = os.WriteFile(filepath.Join(root, "crosscheck.json"), append(b, '\n'), 0600); e != nil {
+		panic(e)
+	}
+	fmt.Printf("PASS: %d official daily originals; %d settlement matches;7 targeted negative controls; no calendar/Feed admission\n", len(docs), len(out))
+}

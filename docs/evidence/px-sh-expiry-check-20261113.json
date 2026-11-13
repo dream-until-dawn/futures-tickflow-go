@@ -1,0 +1,282 @@
+{
+  "calendar_qualified": false,
+  "daily_records": [
+    {
+      "exchange": "CZCE",
+      "native": "PX405",
+      "day": 20240517,
+      "fields": {
+        "close": "0.00",
+        "high": "0.00",
+        "low": "0.00",
+        "open": "0.00",
+        "open_interest": "0",
+        "pre_settle": "7,986.00",
+        "settle": "8,048.00",
+        "turnover": "0.00",
+        "volume": "0"
+      },
+      "turnover_unit": "wanyuan",
+      "evidence": {
+        "id": "czce-daily-20240517",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataDaily.txt",
+        "sha256": "cab3c48c1319e017e42cb75e433a65046e5561090c7569cb794b4f4bd6e62f60",
+        "retrieved_at": "2026-11-13T10:52:08.698106Z"
+      },
+      "row": 112
+    },
+    {
+      "exchange": "CZCE",
+      "native": "SH405",
+      "day": 20240517,
+      "fields": {
+        "close": "0.00",
+        "high": "0.00",
+        "low": "0.00",
+        "open": "0.00",
+        "open_interest": "0",
+        "pre_settle": "2,399.00",
+        "settle": "2,426.00",
+        "turnover": "0.00",
+        "volume": "0"
+      },
+      "turnover_unit": "wanyuan",
+      "evidence": {
+        "id": "czce-daily-20240517",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataDaily.txt",
+        "sha256": "cab3c48c1319e017e42cb75e433a65046e5561090c7569cb794b4f4bd6e62f60",
+        "retrieved_at": "2026-11-13T10:52:08.698106Z"
+      },
+      "row": 171
+    }
+  ],
+  "earlier_snapshot_assertions_preserved": true,
+  "financial_admission_extended": false,
+  "historical_point_in_time_availability_proven": false,
+  "last_trading_field_supported_by_near_expiry_snapshots": 20240517,
+  "limits": "May20 omission is list observation not standalone legal delisting evidence; May17 quotes do not establish full lifecycle or holiday/version history",
+  "reference_snapshots": [
+    {
+      "day": 20240514,
+      "evidence": {
+        "id": "czce-reference-20240514",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+        "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+        "retrieved_at": "2026-11-13T10:52:04.967351Z"
+      },
+      "targets": [
+        {
+          "symbol": {
+            "Exchange": "CZCE",
+            "Product": "PX",
+            "YearMon": 2405
+          },
+          "listed": {
+            "day": 20230915,
+            "evidence": [
+              {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            ]
+          },
+          "last_trading": {
+            "day": 20240517,
+            "evidence": [
+              {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            ]
+          },
+          "reported_expiry": {
+            "day": 0,
+            "evidence": null
+          },
+          "observed": [
+            {
+              "day": 20240514,
+              "evidence": {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            }
+          ],
+          "expire_ts": 1715929200000
+        },
+        {
+          "symbol": {
+            "Exchange": "CZCE",
+            "Product": "SH",
+            "YearMon": 2405
+          },
+          "listed": {
+            "day": 20230915,
+            "evidence": [
+              {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            ]
+          },
+          "last_trading": {
+            "day": 20240517,
+            "evidence": [
+              {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            ]
+          },
+          "reported_expiry": {
+            "day": 0,
+            "evidence": null
+          },
+          "observed": [
+            {
+              "day": 20240514,
+              "evidence": {
+                "id": "czce-reference-20240514",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240514/FutureDataReferenceData.xml",
+                "sha256": "7210c813b4896c0fe90bc8c0433938eff1fbea55ef66ccdfc91e1cc7e977d8e0",
+                "retrieved_at": "2026-11-13T10:52:04.967351Z"
+              }
+            }
+          ],
+          "expire_ts": 1715929200000
+        }
+      ],
+      "total_parsed_futures": 222
+    },
+    {
+      "day": 20240517,
+      "evidence": {
+        "id": "czce-reference-20240517",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+        "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+        "retrieved_at": "2026-11-13T10:52:06.486323Z"
+      },
+      "targets": [
+        {
+          "symbol": {
+            "Exchange": "CZCE",
+            "Product": "PX",
+            "YearMon": 2405
+          },
+          "listed": {
+            "day": 20230915,
+            "evidence": [
+              {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            ]
+          },
+          "last_trading": {
+            "day": 20240517,
+            "evidence": [
+              {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            ]
+          },
+          "reported_expiry": {
+            "day": 0,
+            "evidence": null
+          },
+          "observed": [
+            {
+              "day": 20240517,
+              "evidence": {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            }
+          ],
+          "expire_ts": 1715929200000
+        },
+        {
+          "symbol": {
+            "Exchange": "CZCE",
+            "Product": "SH",
+            "YearMon": 2405
+          },
+          "listed": {
+            "day": 20230915,
+            "evidence": [
+              {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            ]
+          },
+          "last_trading": {
+            "day": 20240517,
+            "evidence": [
+              {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            ]
+          },
+          "reported_expiry": {
+            "day": 0,
+            "evidence": null
+          },
+          "observed": [
+            {
+              "day": 20240517,
+              "evidence": {
+                "id": "czce-reference-20240517",
+                "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240517/FutureDataReferenceData.xml",
+                "sha256": "8f093e9248b6c101412f96f08090fff4af28be061dde072003ca164bcccb9b9b",
+                "retrieved_at": "2026-11-13T10:52:06.486323Z"
+              }
+            }
+          ],
+          "expire_ts": 1715929200000
+        }
+      ],
+      "total_parsed_futures": 222
+    },
+    {
+      "day": 20240520,
+      "evidence": {
+        "id": "czce-reference-20240520",
+        "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240520/FutureDataReferenceData.xml",
+        "sha256": "01dd25dffa1893720d6a6e6b74ce715685091362a91eb5d042a1f2e6713316b3",
+        "retrieved_at": "2026-11-13T10:52:07.852783Z"
+      },
+      "targets": [],
+      "total_parsed_futures": 222
+    }
+  ],
+  "schema": "px-sh-final-reference-observations-v1",
+  "targeted_controls": [
+    "20240514 reference date mismatch rejected",
+    "20240517 reference date mismatch rejected",
+    "20240520 reference date mismatch rejected",
+    "daily date mismatch rejected"
+  ]
+}
