@@ -180,6 +180,35 @@ class AnnualBuildTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'review_clause:ine-year-2022'):
             build.generate(facts, raw, 'software-only')
 
+    def test_ine_2023_2024_cutovers_listing_and_leap_day(self):
+        root = Path(__file__).resolve().parents[3]
+        for year in [2023, 2024]:
+            with self.subTest(year=year):
+                facts = json.loads((root / f'docs/evidence/ine-{year}-facts.json').read_bytes())
+                texts = {}
+                for r in facts['reviews']:
+                    texts[r['source']] = texts.get(r['source'], '') + ''.join(r['tokens'])
+                raw = {role: ('<div class="notice_contain">' + text + '</div>').encode()
+                       if any(r['source'] == role and r['kind'] == 'article' for r in facts['reviews'])
+                       else text.encode() for role, text in texts.items()}
+                result = build.generate(facts, raw, 'software-only')
+                rows = {r['day']: r for r in result['series'][0]['records']}
+                self.assertEqual(result['summary']['INE.lu']['trading_days'], 242)
+                if year == 2023:
+                    self.assertEqual(rows[20230526]['template']['From'], 20230526)
+                    self.assertEqual(rows[20230818]['template']['From'], 20230818)
+                    self.assertEqual(len(rows[20230818]['sessions']), 4)
+                    self.assertEqual(rows[20231121]['template']['From'], 20231121)
+                else:
+                    self.assertIn(20240229, rows)
+                    self.assertEqual(len(rows), 366)
+                    self.assertEqual(len(rows[20240611]['sessions']), 3)
+                    self.assertEqual(rows[20241023]['template']['From'], 20231121)
+                    self.assertEqual(len(result['summary']['INE.ec']['day_only_trade_days']), 242)
+                raw[f'ine-year-{year}'] = b'<div class="notice_contain">unrelated</div>'
+                with self.assertRaisesRegex(ValueError, f'review_clause:ine-year-{year}'):
+                    build.generate(facts, raw, 'software-only')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

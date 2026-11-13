@@ -1,0 +1,444 @@
+{
+  "schema": "annual-calendar-facts-v1",
+  "year": 2023,
+  "previous_trading_day": 20221230,
+  "day_minutes": [
+    [
+      540,
+      615
+    ],
+    [
+      630,
+      690
+    ],
+    [
+      810,
+      900
+    ]
+  ],
+  "events": [
+    {
+      "from": 20230101,
+      "to": 20230102,
+      "resume": 20230103,
+      "no_night_after": 20221230,
+      "source": "ine-year-2023"
+    },
+    {
+      "from": 20230121,
+      "to": 20230127,
+      "resume": 20230130,
+      "no_night_after": 20230120,
+      "source": "ine-year-2023"
+    },
+    {
+      "from": 20230405,
+      "to": 20230405,
+      "resume": 20230406,
+      "no_night_after": 20230404,
+      "source": "ine-year-2023"
+    },
+    {
+      "from": 20230429,
+      "to": 20230503,
+      "resume": 20230504,
+      "no_night_after": 20230428,
+      "source": "ine-year-2023"
+    },
+    {
+      "from": 20230622,
+      "to": 20230624,
+      "resume": 20230626,
+      "no_night_after": 20230621,
+      "source": "ine-year-2023"
+    },
+    {
+      "from": 20230929,
+      "to": 20231006,
+      "resume": 20231009,
+      "no_night_after": 20230928,
+      "source": "ine-year-2023"
+    }
+  ],
+  "year_end_no_night_after": 20231229,
+  "year_end_source": "boundary-2024",
+  "profiles": {
+    "INE.lu": {
+      "listed": 20200622,
+      "night_minutes": [
+        [
+          1260,
+          1380
+        ]
+      ],
+      "base_sources": [
+        "lu-listing",
+        "ine-year-2023"
+      ],
+      "versions": [
+        [
+          20211126,
+          20230525,
+          "ine-trade-202111-text"
+        ],
+        [
+          20230526,
+          20230817,
+          "ine-next-text"
+        ],
+        [
+          20230818,
+          20231120,
+          "ine-trade-202308-doc-text"
+        ],
+        [
+          20231121,
+          20231231,
+          "ine-trade-202311-docx-text"
+        ]
+      ],
+      "version_sources": {
+        "ine-trade-202111-text": [
+          "ine-rules-202111",
+          "ine-trade-202111-doc",
+          "ine-next-publication",
+          "ine-next-docx",
+          "ine-next-text"
+        ],
+        "ine-next-text": [
+          "ine-next-publication",
+          "ine-next-docx"
+        ],
+        "ine-trade-202308-doc-text": [
+          "ine-rules-202308-repub",
+          "ine-trade-202308-doc"
+        ],
+        "ine-trade-202311-docx-text": [
+          "ine-rules-202311-repub",
+          "ine-trade-202311-docx",
+          "ine-next-rules-publication",
+          "ine-next-rule-doc",
+          "ine-next-rule-doc-text"
+        ]
+      }
+    }
+  },
+  "sources": {
+    "lu-listing": {
+      "file": "lu-listing-primary.body",
+      "bytes": 118899,
+      "ref": {
+        "id": "lu-listing-primary",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202006/t20200610_796050.html",
+        "sha256": "fb98948dbe2f5910df16a760617178d620e637c7cd57e820ce704f8c45afc574",
+        "retrieved_at": "2026-11-12T09:41:55.927728+00:00"
+      }
+    },
+    "ine-rules-202311-repub": {
+      "file": "ine-rules-202311-repub.body",
+      "bytes": 117246,
+      "ref": {
+        "id": "ine-rules-202311-repub",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202311/t20231117_800989.html",
+        "sha256": "922db336db05574659563633157cd1b3f25cdf68c74db8f6446d1de96b1419c4",
+        "retrieved_at": "2026-11-12T10:49:08.502373+00:00"
+      }
+    },
+    "ine-trade-202311-docx": {
+      "file": "ine-trade-202311-docx.body",
+      "bytes": 32747,
+      "ref": {
+        "id": "ine-trade-202311-docx",
+        "url": "https://www.shfe.com.cn/upload/20231117/1700214138206.docx",
+        "sha256": "8a38a390135bd5527be3695e16caa87d4a255c9c21ee6cb99e547c16fccb2683",
+        "retrieved_at": "2026-11-12T10:50:17.605077+00:00"
+      }
+    },
+    "ine-trade-202311-docx-text": {
+      "file": "ine-trade-202311-docx.txt",
+      "bytes": 32586,
+      "ref": {
+        "id": "ine-trade-202311-docx-text",
+        "url": "https://www.shfe.com.cn/upload/20231117/1700214138206.docx",
+        "sha256": "b2ec371bd7fbb0fbe6491aa085b5b718d4cd716712f2b53411a7a4d067a9ae21",
+        "retrieved_at": "2026-11-12T10:50:17.605077+00:00",
+        "version": "reviewed-text-from:8a38a390135bd5527be3695e16caa87d4a255c9c21ee6cb99e547c16fccb2683"
+      }
+    },
+    "ine-next-rules-publication": {
+      "file": "ine-next-rules-publication.body",
+      "bytes": 121515,
+      "ref": {
+        "id": "ine-next-rules-publication",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/t20251128_829646.html",
+        "sha256": "ca4359435ea77b23b984a3ef883041055291a540d6cc94363354a8e31ea2a643",
+        "retrieved_at": "2026-11-12T11:59:32.168673+00:00"
+      }
+    },
+    "ine-next-rule-doc": {
+      "file": "ine-next-rule-doc.body",
+      "bytes": 76288,
+      "ref": {
+        "id": "ine-next-rule-doc",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128600409634633.doc",
+        "sha256": "ccca9adf5067bd6778e405f198742fc0831a9e8ad2dbb3d5607a64f524eb1671",
+        "retrieved_at": "2026-11-12T12:02:54.517329+00:00"
+      }
+    },
+    "ine-next-rule-doc-text": {
+      "file": "ine-next-rule-doc.txt",
+      "bytes": 34412,
+      "ref": {
+        "id": "ine-next-rule-doc-text",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202511/W020251128600409634633.doc",
+        "sha256": "86367596c3f2e4e0952d8043d45967c616885316bc1f428eb090ea1051cca953",
+        "retrieved_at": "2026-11-13T12:10:38.857065+00:00",
+        "version": "reviewed-text-from:ccca9adf5067bd6778e405f198742fc0831a9e8ad2dbb3d5607a64f524eb1671"
+      }
+    },
+    "boundary-2024": {
+      "file": "ine-boundary-2024-repub.body",
+      "bytes": 118439,
+      "ref": {
+        "id": "ine-boundary-2024-repub",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202312/t20231227_801168.html",
+        "sha256": "d42e49f43b638ecb1bfa1bfbc55fefd6b6d41c51ce0cf62b7a5535f4f595b566",
+        "retrieved_at": "2026-11-12T10:49:06.774828+00:00"
+      }
+    },
+    "ine-year-2023": {
+      "file": "ine-year-2023-repub.body",
+      "bytes": 118358,
+      "ref": {
+        "id": "ine-year-2023-repub",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202212/t20221227_799689.html",
+        "sha256": "478ec8f597f99495992e732349593d83e01f1d4bec20ac0dce69cf2d4b08c3d3",
+        "retrieved_at": "2026-11-12T10:49:05.131239+00:00"
+      }
+    },
+    "ine-rules-202111": {
+      "file": "rules-202111-official.body",
+      "bytes": 82913,
+      "ref": {
+        "id": "rules-202111-official",
+        "url": "https://www.ine.cn/publicnotice/notice/202111/t20211126_813108.html",
+        "sha256": "1eaced87abad0f6412436a29d960a625a178b61e12bc7be183bc81711273cd9f",
+        "retrieved_at": "2026-11-12T09:42:40.778523+00:00"
+      }
+    },
+    "ine-trade-202111-doc": {
+      "file": "trade-rule-202111-doc.body",
+      "bytes": 62464,
+      "ref": {
+        "id": "trade-rule-202111-doc",
+        "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+        "sha256": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211",
+        "retrieved_at": "2026-11-12T09:44:18.063735+00:00"
+      }
+    },
+    "ine-trade-202111-text": {
+      "file": "trade-rule-202111-doc.txt",
+      "bytes": 31350,
+      "ref": {
+        "id": "trade-rule-202111-doc-text",
+        "url": "https://www.ine.cn/upload/20211126/1637911678824.doc",
+        "sha256": "eb157730273f53dbf74e2b6de53ec9eb305efacf107c1e23cf6bfa10ed31ddc5",
+        "retrieved_at": "2026-11-12T09:44:18.063735+00:00",
+        "version": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211"
+      }
+    },
+    "ine-next-publication": {
+      "file": "ine-next-202304-publication.body",
+      "bytes": 118011,
+      "ref": {
+        "id": "ine-next-202304-publication",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202304/t20230426_800101.html",
+        "sha256": "1df72f2518377cf4f1cde37d7b342bc6bd8bd95a2dd4136f6f8d8ceebacd03df",
+        "retrieved_at": "2026-11-13T12:36:27.438011+00:00"
+      }
+    },
+    "ine-next-docx": {
+      "file": "ine-next-202305-docx.body",
+      "bytes": 35357,
+      "ref": {
+        "id": "ine-next-202305-docx",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202304/P020240320711083265916.docx",
+        "sha256": "ad12eb6868100d4d3bffa6576c087c4c9a1e738dfe00ec94b0a0bc6717e3fae1",
+        "retrieved_at": "2026-11-13T12:37:09.927693+00:00"
+      }
+    },
+    "ine-next-text": {
+      "file": "ine-next-docx.txt",
+      "bytes": 31556,
+      "ref": {
+        "id": "ine-next-text",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202304/P020240320711083265916.docx",
+        "sha256": "3babbee62de70fc46bd36af45ec55a63b7fd087697edd0b879ec7a1bd33d4c60",
+        "retrieved_at": "2026-11-13T12:41:11.418394+00:00",
+        "version": "stdlib-docx-text-from:ad12eb6868100d4d3bffa6576c087c4c9a1e738dfe00ec94b0a0bc6717e3fae1"
+      }
+    },
+    "ine-rules-202308-repub": {
+      "file": "ine-rules-202308-repub.body",
+      "bytes": 118300,
+      "ref": {
+        "id": "ine-rules-202308-repub",
+        "url": "https://www.shfe.com.cn/publicnotice/notice/202308/t20230811_800630.html",
+        "sha256": "ef80ead7805ff46849a40f13121077e6adf7ce0de12efb9b61461424b544634e",
+        "retrieved_at": "2026-11-12T10:49:07.623544+00:00"
+      }
+    },
+    "ine-trade-202308-doc": {
+      "file": "ine-trade-202308-doc.body",
+      "bytes": 75264,
+      "ref": {
+        "id": "ine-trade-202308-doc",
+        "url": "https://www.shfe.com.cn/upload/20230811/1691749552608.doc",
+        "sha256": "0adf96a456beb87ae493a176fdec28bee007546a6454f442ab05faf456bfe9b6",
+        "retrieved_at": "2026-11-12T10:50:16.809587+00:00"
+      }
+    },
+    "ine-trade-202308-doc-text": {
+      "file": "ine-trade-202308-doc.txt",
+      "bytes": 32632,
+      "ref": {
+        "id": "ine-trade-202308-doc-text",
+        "url": "https://www.shfe.com.cn/upload/20230811/1691749552608.doc",
+        "sha256": "7b2b63a7a0c212648ddf5676d47868665cc41ae61d5affc766cc2654e2653150",
+        "retrieved_at": "2026-11-12T10:50:16.809587+00:00",
+        "version": "reviewed-text-from:0adf96a456beb87ae493a176fdec28bee007546a6454f442ab05faf456bfe9b6"
+      }
+    }
+  },
+  "reviews": [
+    {
+      "source": "ine-rules-202111",
+      "kind": "article",
+      "tokens": [
+        "2021年11月26日",
+        "交易细则"
+      ]
+    },
+    {
+      "source": "ine-trade-202111-text",
+      "kind": "text",
+      "tokens": [
+        "本细则自2021年11月26日起实施",
+        "第一节交易时间是指自交易日日盘09:00至10:15"
+      ],
+      "origin": "ine-trade-202111-doc",
+      "origin_sha256": "5a6eca42a2e83b83b84bd608e5290de241c0456f9581dc1bc8ec6d690e5a8211"
+    },
+    {
+      "source": "ine-next-publication",
+      "kind": "article",
+      "tokens": [
+        "〔2023〕11号",
+        "自2023年5月26日",
+        "起实施"
+      ]
+    },
+    {
+      "source": "ine-next-text",
+      "kind": "text",
+      "tokens": [
+        "本细则自2023年5月26日起实施",
+        "2021年11月26日第五次修订"
+      ],
+      "origin": "ine-next-docx",
+      "origin_sha256": "ad12eb6868100d4d3bffa6576c087c4c9a1e738dfe00ec94b0a0bc6717e3fae1"
+    },
+    {
+      "source": "ine-rules-202308-repub",
+      "kind": "article",
+      "tokens": [
+        "〔2023〕37号",
+        "交易细则"
+      ]
+    },
+    {
+      "source": "ine-trade-202308-doc-text",
+      "kind": "text",
+      "tokens": [
+        "本细则自2023年8月18日起实施",
+        "第一节交易时间是指自交易日日盘09:00至10:15"
+      ],
+      "origin": "ine-trade-202308-doc",
+      "origin_sha256": "0adf96a456beb87ae493a176fdec28bee007546a6454f442ab05faf456bfe9b6"
+    },
+    {
+      "source": "lu-listing",
+      "kind": "article",
+      "tokens": [
+        "低硫燃料油",
+        "09:00-10:15",
+        "10:30-11:30",
+        "13:30-15:00",
+        "21:00-23:00"
+      ]
+    },
+    {
+      "source": "ine-rules-202311-repub",
+      "kind": "article",
+      "tokens": [
+        "自2023年11月21日",
+        "起实施"
+      ]
+    },
+    {
+      "source": "ine-trade-202311-docx-text",
+      "kind": "text",
+      "tokens": [
+        "本细则自2023年11月21日起实施",
+        "第一节交易时间是指自交易日日盘09:00至10:15"
+      ],
+      "origin": "ine-trade-202311-docx",
+      "origin_sha256": "8a38a390135bd5527be3695e16caa87d4a255c9c21ee6cb99e547c16fccb2683"
+    },
+    {
+      "source": "ine-next-rules-publication",
+      "kind": "article",
+      "tokens": [
+        "自2026年1月1日起实施"
+      ]
+    },
+    {
+      "source": "ine-next-rule-doc-text",
+      "kind": "text",
+      "tokens": [
+        "2023年11月21日第八次修订",
+        "2026年1月1日第九次修订"
+      ],
+      "origin": "ine-next-rule-doc",
+      "origin_sha256": "ccca9adf5067bd6778e405f198742fc0831a9e8ad2dbb3d5607a64f524eb1671"
+    },
+    {
+      "source": "boundary-2024",
+      "kind": "article",
+      "tokens": [
+        "2023年12月29日晚上不进行夜盘交易",
+        "2024年1月2日",
+        "当晚恢复夜盘交易"
+      ]
+    },
+    {
+      "source": "ine-year-2023",
+      "kind": "article",
+      "tokens": [
+        "2023年休市安排",
+        "12月30日晚上不进行夜盘交易",
+        "1月3日起照常开市",
+        "1月20日晚上不进行夜盘交易",
+        "1月30日起照常开市",
+        "4月4日晚上不进行夜盘交易",
+        "4月6日起照常开市",
+        "4月28日晚上不进行夜盘交易",
+        "5月4日起照常开市",
+        "6月21日晚上不进行夜盘交易",
+        "6月26日起照常开市",
+        "9月28日晚上不进行夜盘交易",
+        "10月9日起照常开市"
+      ]
+    }
+  ]
+}

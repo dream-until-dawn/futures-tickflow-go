@@ -1,0 +1,154 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "e5f2d4db82213bef71eeca13ead2b285897aa0c1ee52811eba1598ee704464c5",
+  "qualified_profiles": [
+    "INE.lu"
+  ],
+  "source_root": "C:\\Temp\\tickflow-ine-2023-20261113",
+  "qualification": "passed independent absolute schedules, originals, official ordinals and8 real contract days; candidate awaiting CI",
+  "scope": "published continuous schedules only; preserved missing detailed financial policy originals, no PIT or account qualification",
+  "calendar": {
+    "path": "calendar/verified/profiles/ine-lu-2023.json",
+    "sha256": "fcbe1c8ff73c9e805adce268967bf8e6cc18d58a8b93ac8d2f164e2b3b04a5fc",
+    "summary": {
+      "INE.lu": {
+        "natural_days": 365,
+        "trading_days": 242,
+        "day_only_trade_days": [
+          20230103,
+          20230130,
+          20230406,
+          20230504,
+          20230626,
+          20231009
+        ]
+      }
+    }
+  },
+  "independent": {
+    "market_contract_days": 8,
+    "ordinal_checks": 13,
+    "products": 1,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2023-01-03"
+    },
+    {
+      "case": "friday-to-sunday",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2023-01-09"
+    },
+    {
+      "case": "autumn-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2023-10-09"
+    },
+    {
+      "case": "version",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2023-01-09"
+    },
+    {
+      "case": "wrong-exchange",
+      "exit": 1,
+      "reason": "annual_product",
+      "actual": "annual_product"
+    },
+    {
+      "case": "missing-year-evidence",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2023-01-01 ine-year-2023"
+    },
+    {
+      "case": "self-rehashed-facts",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "source-tamper",
+      "exit": 1,
+      "reason": "source_hash",
+      "actual": "source_hash ine-year-2023: evidence: ine-year-2023-repub 原件SHA256不符"
+    },
+    {
+      "case": "wrong-market-expectation",
+      "exit": 1,
+      "reason": "feed_fields",
+      "actual": "feed_fields: INE.lu2303 2023-01-03"
+    },
+    {
+      "case": "rehashed-ordinal",
+      "exit": 1,
+      "reason": "annual_ordinal_mismatch",
+      "actual": "annual_ordinal_mismatch: lu 2023-01-03"
+    },
+    {
+      "case": "rehashed-report-date",
+      "exit": 1,
+      "reason": "annual_ordinal_identity",
+      "actual": "annual_ordinal_identity"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "target": "friday-to-sunday",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "target": "may-publication-not-effective",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "network": {
+    "requests": 7,
+    "bytes": 200465,
+    "search_posts": 0,
+    "failed": 0,
+    "reused_daily": 9,
+    "dce_gfex": 0
+  },
+  "initial_control_failure": {
+    "case": "missing-year-evidence",
+    "result": "no-op mutation unexpectedly passed; old ref ID differs from role",
+    "correction": "remove actual frozen annual reference by SHA, keep original input and new output paths"
+  },
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 108,
+    "generator_restore": "passed; fingerprint unchanged",
+    "doccheck": "passed",
+    "compatibility": "existing SHFE2024/2025/2026 and INE2025 profile tests passed; existing files unchanged"
+  },
+  "seal": {
+    "files": 309,
+    "seal_sha256": "5dcdf70f4b0d30dd888bc5e78b1c397f47d8edd63fe4150c5b49118c355cb6de",
+    "sealed": "C:\\Temp\\tickflow-ine-2023-20261113-sealed",
+    "migration": "C:\\Temp\\tickflow-ine-2023-20261113-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-ine-2023-20261113-tamper",
+    "verified": "all hashes, lengths, file set match; rebuilt bytes identical and real market pipeline passed",
+    "tamper_rejected": "ine-year-2023-repub.body"
+  }
+}

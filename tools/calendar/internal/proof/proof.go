@@ -465,7 +465,29 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 			if e == nil {
 				n, e = annualOrdinals(cal, dir, spec)
 			}
+		case 2023:
+			spec := specINE2023()
+			usesAnnualOrdinals = true
+			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+				return e
+			}
+			cal, e = profileAnnual(input, spec)
+			if e == nil {
+				n, e = annualOrdinals(cal, dir, spec)
+			}
 		case 2024:
+			if input.FactsSHA == specINE2024().factsSHA {
+				spec := specINE2024()
+				usesAnnualOrdinals = true
+				if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+					return e
+				}
+				cal, e = profileAnnual(input, spec)
+				if e == nil {
+					n, e = annualOrdinals(cal, dir, spec)
+				}
+				break
+			}
 			if e = bind2024(input, lock, facts, dir); e != nil {
 				return e
 			}
