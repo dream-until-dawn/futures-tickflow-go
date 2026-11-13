@@ -146,18 +146,21 @@ class LifecycleTest(unittest.TestCase):
     def test_detached_worker_survives_launcher_exit(self):
         # launch 命令退出之后，监护和采集仍继续；不能仅断言 Popen 成功。
         root = self.base / "detached"
-        plan = self.plan(WRITE + "\nfor i in range(16):\n p.write_text(str(i)); time.sleep(0.1)\n")
+        # Windows托管CI的解释器/文件扫描启动时间可能超过默认6秒。
+        # 此例测脱离启动器后的存活和连续写入，不测短超时；保留独立超时反例。
+        plan = self.plan(WRITE + "\nfor i in range(16):\n p.write_text(str(i)); time.sleep(0.1)\n",
+                         max_seconds=30, startup_seconds=15)
         spec = self.base / "input.json"
         spec.write_text(json.dumps(plan), encoding="utf-8")
         launcher = subprocess.run([sys.executable, str(CLI), "launch", str(root), "--plan", str(spec)],
-                                  capture_output=True, timeout=5)
+                                  capture_output=True, timeout=15)
         self.assertEqual(launcher.returncode, 0, launcher.stderr)
         # 清理回调后进先出：先等解释器退出释放worker.log，再删除临时目录。
         self.addCleanup(wait_for_exit, json.loads(launcher.stdout)["supervisor_pid"])
         self.assertEqual(json.loads(launcher.stdout)["state"], "launched")
         self.assertEqual(json.loads(launcher.stdout)["process_scope"], plan["process_scope"])
         observed_after_exit = []
-        deadline = time.monotonic() + 10
+        deadline = time.monotonic() + plan["max_seconds"] + 10
         while time.monotonic() < deadline:
             status = inspect(root)
             data = root / "raw.jsonl"
