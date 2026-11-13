@@ -73,16 +73,18 @@ func TestNativeHTTPGrantAndBoundaryRejections(t *testing.T) {
 			g.URL = "http://www.dce.com.cn/dce/channel/list/181.html"
 			g.LinkedURL = g.URL
 		},
-		"credentials":     func(g *NativeHTTPGrant) { g.URL = "http://user:secret@www.dce.com.cn/" },
-		"foreign-host":    func(g *NativeHTTPGrant) { g.URL = "http://www.dce.cn/" },
-		"port":            func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn:80/" },
-		"fragment":        func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "#x" },
-		"query":           func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "?token=secret" },
-		"empty-query":     func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "?" },
-		"path":            func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/admin" },
-		"cross-host-path": func(g *NativeHTTPGrant) { g.URL = "http://www.gfex.com.cn/dce/channel/list/180.html" },
-		"encoded-path":    func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/dce/channel/list/%31%38%30.html" },
-		"traversal":       func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/dce/../admin" },
+		"credentials":         func(g *NativeHTTPGrant) { g.URL = "http://user:secret@www.dce.com.cn/" },
+		"foreign-host":        func(g *NativeHTTPGrant) { g.URL = "http://www.dce.cn/" },
+		"port":                func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn:80/" },
+		"fragment":            func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "#x" },
+		"empty-fragment":      func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "#" },
+		"empty-home-fragment": func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/#" },
+		"query":               func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "?token=secret" },
+		"empty-query":         func(g *NativeHTTPGrant) { g.URL = nativeTestURL + "?" },
+		"path":                func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/admin" },
+		"cross-host-path":     func(g *NativeHTTPGrant) { g.URL = "http://www.gfex.com.cn/dce/channel/list/180.html" },
+		"encoded-path":        func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/dce/channel/list/%31%38%30.html" },
+		"traversal":           func(g *NativeHTTPGrant) { g.URL = "http://www.dce.com.cn/dce/../admin" },
 	} {
 		t.Run(name, func(t *testing.T) {
 			g := valid

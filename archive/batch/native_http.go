@@ -30,7 +30,7 @@ var sourceLiteralHref = regexp.MustCompile(`(?i)\.attr\(\s*["']href["']\s*,\s*["
 
 func nativeURL(address string) (*url.URL, error) {
 	u, err := url.Parse(address)
-	if err != nil || u.Scheme != "http" || u.User != nil || u.Opaque != "" || u.RawQuery != "" || u.ForceQuery || u.Fragment != "" || u.RawPath != "" || strings.Contains(address, "\\") || (u.Host != "www.dce.com.cn" && u.Host != "www.gfex.com.cn") {
+	if err != nil || u.Scheme != "http" || u.User != nil || u.Opaque != "" || u.RawQuery != "" || u.ForceQuery || strings.Contains(address, "#") || u.RawPath != "" || strings.Contains(address, "\\") || (u.Host != "www.dce.com.cn" && u.Host != "www.gfex.com.cn") {
 		return nil, fmt.Errorf("batch: native-http非法公开URL")
 	}
 	if u.Path != "/" && !publicParameterPath.MatchString(u.Path) {

@@ -140,5 +140,22 @@
     "snapshot": "pre-seal pointers; metadata appended after seal avoids circular hash"
   },
   "probe_source_sha256": "89c23b5071dbb581958d16d38ca81014168d3bd1e7d08b076f7ac7e5ab2ec95b",
-  "probe_binary_sha256": "e1b5cb2381d32e086775ce2768da7a88511e66b0896882c6927f59494b0ab0f0"
+  "probe_binary_sha256": "e1b5cb2381d32e086775ce2768da7a88511e66b0896882c6927f59494b0ab0f0",
+  "post_capture_hardening": {
+    "scope": "reject empty home URL fragment; business URL fragment already rejected by exact linked URL",
+    "before": "empty-home-fragment subtest failed with 无效授权竟通过",
+    "after": "all seven test functions and subtests passed",
+    "initial_probe": "business URL # was already rejected and passed; that non-red attempt retained",
+    "network_repeated": false,
+    "real_capture_code_remains": "e2147ff9eb011e029fd1aa30fe1bf0324608199d",
+    "supplemental_root": "C:/Temp/tickflow-native-http-fragment-20261113",
+    "seal": {
+      "files": 7,
+      "manifest_sha256": "346f130ec555de508f7c70975c6e95d43e1b4367cef61b2793c92855675464fc",
+      "migration": "C:/Temp/tickflow-native-http-fragment-20261113-migration",
+      "original_and_migration": "exact file set,length,SHA passed",
+      "tamper": "native_http.go rejected",
+      "prior_99_file_seal": "reverified unchanged"
+    }
+  }
 }
