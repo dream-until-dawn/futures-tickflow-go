@@ -158,6 +158,28 @@ class AnnualBuildTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'missing_year_boundary'):
             build.generate(facts, raw, 'software-only')
 
+    def test_lu_2022_annual_direct_clauses_and_first_nights(self):
+        root = Path(__file__).resolve().parents[3]
+        facts = json.loads((root / 'docs/evidence/ine-2022-facts.json').read_bytes())
+        texts = {}
+        for r in facts['reviews']:
+            texts[r['source']] = texts.get(r['source'], '') + ''.join(r['tokens'])
+        raw = {role: ('<div class="notice_contain">' + text + '</div>').encode()
+               if any(r['source'] == role and r['kind'] == 'article' for r in facts['reviews'])
+               else text.encode() for role, text in texts.items()}
+        result = build.generate(facts, raw, 'software-only')
+        rows = {r['day']: r for r in result['series'][0]['records']}
+        self.assertEqual(result['summary']['INE.lu']['trading_days'], 242)
+        self.assertEqual(len(rows[20220505]['sessions']), 3)
+        self.assertEqual(len(rows[20220913]['sessions']), 3)
+        self.assertEqual(rows[20220110]['sessions'][0]['Start'], build.stamp(build.date(20220107), 1260))
+        self.assertEqual(rows[20221230]['template']['From'], 20211126)
+        self.assertNotIn('ine-labor-2022', facts['sources'])
+        self.assertNotIn('ine-autumn-2022', facts['sources'])
+        raw['ine-year-2022'] = b'<div class="notice_contain">no direct schedule clauses</div>'
+        with self.assertRaisesRegex(ValueError, 'review_clause:ine-year-2022'):
+            build.generate(facts, raw, 'software-only')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

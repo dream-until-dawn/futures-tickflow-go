@@ -1,0 +1,160 @@
+{
+  "schema": "annual-calendar-review-v1",
+  "facts_sha256": "16533cf07b1438986ac543380836f8c19f6793bc9759a0b7b806c4a18e4926bc",
+  "qualified_profiles": [
+    "INE.lu"
+  ],
+  "source_root": "C:\\Temp\\tickflow-ine-2022-20261113",
+  "qualification": "passed absolute schedule, source binding,13 official ordinal checks,8 real contract days; candidate awaiting CI",
+  "source_scope": "2022 published continuous schedules; annual62 directly establishes Labor and Autumn dates/no-night/resume, failed detailed originals remain failed",
+  "limitations": [
+    "no detailed Labor/Autumn financial-policy evidence",
+    "OLE header independently located in raw bytes; no second whole OLE decoder",
+    "2023 successor confirms2022 version continuity; effectiveMay26, not publishedApr26"
+  ],
+  "calendar": {
+    "path": "calendar/verified/profiles/ine-lu-2022.json",
+    "sha256": "f38f8bb434a71d25719bbd5118d8f65f8c651d40294a5df9e022ca8775dd72e0",
+    "summary": {
+      "INE.lu": {
+        "natural_days": 365,
+        "trading_days": 242,
+        "day_only_trade_days": [
+          20220104,
+          20220207,
+          20220406,
+          20220505,
+          20220606,
+          20220913,
+          20221010
+        ]
+      }
+    }
+  },
+  "independent": {
+    "market_contract_days": 8,
+    "ordinal_checks": 13,
+    "products": 1,
+    "reopen_added_bars": 0,
+    "scope": "published continuous schedules; no point-in-time availability or price certification",
+    "status": "passed"
+  },
+  "artifact_controls": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "reason": null,
+      "actual": ""
+    },
+    {
+      "case": "first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2022-01-04"
+    },
+    {
+      "case": "friday-to-sunday",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2022-01-10"
+    },
+    {
+      "case": "autumn-first-night",
+      "exit": 1,
+      "reason": "annual_absolute_session",
+      "actual": "annual_absolute_session: 2022-09-13"
+    },
+    {
+      "case": "version",
+      "exit": 1,
+      "reason": "annual_template_version",
+      "actual": "annual_template_version: 2022-01-10"
+    },
+    {
+      "case": "wrong-exchange",
+      "exit": 1,
+      "reason": "annual_product",
+      "actual": "annual_product"
+    },
+    {
+      "case": "missing-year-evidence",
+      "exit": 1,
+      "reason": "annual_required_evidence",
+      "actual": "annual_required_evidence: 2022-01-01 ine-year-2022"
+    },
+    {
+      "case": "self-rehashed-facts",
+      "exit": 1,
+      "reason": "annual_facts_pin",
+      "actual": "annual_facts_pin"
+    },
+    {
+      "case": "source-tamper",
+      "exit": 1,
+      "reason": "source_hash",
+      "actual": "source_hash ine-year-2022: evidence: ine-year-2022 原件SHA256不符"
+    },
+    {
+      "case": "wrong-market-expectation",
+      "exit": 1,
+      "reason": "feed_fields",
+      "actual": "feed_fields: INE.lu2204 2022-01-04"
+    },
+    {
+      "case": "rehashed-ordinal",
+      "exit": 1,
+      "reason": "annual_ordinal_mismatch",
+      "actual": "annual_ordinal_mismatch: lu 2022-01-04"
+    },
+    {
+      "case": "rehashed-report-date",
+      "exit": 1,
+      "reason": "annual_ordinal_identity",
+      "actual": "annual_ordinal_identity"
+    }
+  ],
+  "source_mutations": [
+    {
+      "case": "session-guard",
+      "target": "friday-to-sunday",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    },
+    {
+      "case": "version-guard",
+      "target": "invented-rule-start",
+      "exit": 1,
+      "target_guard_effectively_disabled": true
+    }
+  ],
+  "network": {
+    "requests": 29,
+    "bytes": 1365175,
+    "search_posts": 5,
+    "failed_or_challenged": [
+      "ine-autumn-2022:HTTP200 challenge",
+      "ine-labor-2022:read timeout,65536 partial bytes"
+    ],
+    "dce_gfex": 0
+  },
+  "initial_failures": [
+    "sample selector failed to strip legacy PRODUCTID trailing spaces and produced zero samples; original empty input preserved, source parser unchanged"
+  ],
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 107,
+    "generator_restore": "passed; fingerprint unchanged",
+    "doccheck": "passed",
+    "compatibility": "existing SHFE2024/2025/2026 and INE2025 profile tests passed; existing files unchanged"
+  },
+  "seal": {
+    "files": 257,
+    "seal_sha256": "f388f093923674b10619b90a488b4cec89c5b26c6e8a194f98af7f28cffc7c82",
+    "sealed": "C:\\Temp\\tickflow-ine-2022-20261113-sealed",
+    "migration": "C:\\Temp\\tickflow-ine-2022-20261113-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-ine-2022-20261113-tamper",
+    "verified": "all hashes, lengths, file set match; rebuilt bytes identical and real market pipeline passed",
+    "tamper_rejected": "ine-year-2022.body"
+  }
+}

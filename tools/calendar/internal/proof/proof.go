@@ -455,6 +455,16 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 	usesAnnualOrdinals := false
 	if input.Schema == "annual-calendar-v1" {
 		switch input.Year {
+		case 2022:
+			spec := specINE2022()
+			usesAnnualOrdinals = true
+			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
+				return e
+			}
+			cal, e = profileAnnual(input, spec)
+			if e == nil {
+				n, e = annualOrdinals(cal, dir, spec)
+			}
 		case 2024:
 			if e = bind2024(input, lock, facts, dir); e != nil {
 				return e
