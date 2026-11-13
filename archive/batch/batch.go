@@ -27,12 +27,14 @@ type Limits struct {
 
 // Downloader 串行获取，不自动重试或跟随重定向。连接失败也消耗请求预算。
 type Downloader struct {
-	mu       sync.Mutex
-	client   *http.Client
-	limits   Limits
-	requests int
-	bytes    int64
-	last     time.Time
+	mu               sync.Mutex
+	client           *http.Client
+	limits           Limits
+	requests         int
+	bytes            int64
+	last             time.Time
+	nativeHTTP       map[string]NativeHTTPGrant
+	maxResponseBytes int64
 }
 
 // NewDownloader 保留传入Transport的正常TLS校验，不设置InsecureSkipVerify。
@@ -163,6 +165,9 @@ func Run(ctx context.Context, root string, jobs []Job, down *Downloader, maxLoca
 				return out, fmt.Errorf("batch: 正文完整性未知")
 			}
 			if old.State == "received" {
+				if err := validateNativeReceipt(down, j.URL, old.HTTP); err != nil {
+					return out, err
+				}
 				if old.BodyState != "complete" || (old.HTTP != nil && (!old.HTTP.Complete || old.HTTP.Status != http.StatusOK || !old.HTTP.ResponseReceived)) {
 					return out, fmt.Errorf("batch: 成功收据实际不是完整200正文")
 				}

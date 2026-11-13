@@ -23,6 +23,10 @@ type Download struct {
 	RequestedAt      time.Time `json:"requested_at"`
 	Complete         bool      `json:"complete"`
 	Failure          string    `json:"failure,omitempty"`
+	Transport        string    `json:"transport,omitempty"` // native-http仅为明文身份，不表示内容认证。
+	Unauthenticated  bool      `json:"unauthenticated,omitempty"`
+	SourceURL        string    `json:"source_url,omitempty"`
+	SourceSHA        string    `json:"source_sha256,omitempty"`
 }
 
 // FetchDetailed 不丢弃非200、超预算和截断响应的有界失败字节；从不重试。
@@ -31,8 +35,10 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	result := Download{ContentLength: -1}
+	d.markNative(&result, address)
 	u, e := url.Parse(address)
-	if e != nil || u.User != nil || u.Host == "" || (u.Scheme != "https" && !(u.Scheme == "http" && (u.Hostname() == "127.0.0.1" || u.Hostname() == "localhost" || u.Hostname() == "::1"))) {
+	_, nativeAllowed := d.nativeGrant(address)
+	if e != nil || u.User != nil || u.Host == "" || (d.nativeHTTP != nil && !nativeAllowed) || (u.Scheme != "https" && !(u.Scheme == "http" && (u.Hostname() == "127.0.0.1" || u.Hostname() == "localhost" || u.Hostname() == "::1"))) && !nativeAllowed {
 		result.Failure = "invalid_url"
 		return result, fmt.Errorf("batch: 非公开HTTPS地址")
 	}
@@ -77,6 +83,9 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 		result.FinalURL = response.Request.URL.String()
 	}
 	remaining := d.limits.Bytes - d.bytes
+	if d.maxResponseBytes > 0 && d.maxResponseBytes < remaining {
+		remaining = d.maxResponseBytes
+	}
 	raw, e := io.ReadAll(io.LimitReader(response.Body, remaining+1))
 	d.bytes += int64(len(raw))
 	result.Body = raw
