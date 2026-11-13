@@ -106,6 +106,33 @@ class AnnualBuildTest(unittest.TestCase):
         result = build.generate(facts, self.raw, 'test')
         self.assertEqual(result['series'][0]['records'][-1]['day'], 20241104)
 
+    def test_ine_day_only_product_and_night_boundaries(self):
+        root = Path(__file__).resolve().parents[3]
+        source = (root / 'docs/evidence/ine-2025-facts.json').read_bytes()
+        review = json.loads((root / 'docs/evidence/ine-2025-review.json').read_bytes())
+        facts = build.checked_facts(source, review)
+        # 合成正文只测生成器；原件SHA及外部序号由独立Go审核器验证。
+        texts = {}
+        for r in facts['reviews']:
+            texts[r['source']] = texts.get(r['source'], '') + ''.join(r['tokens'])
+        raw = {role: ('<div class="notice_contain">' + text + '</div>').encode()
+               if any(r['source'] == role and r['kind'] == 'article' for r in facts['reviews'])
+               else text.encode() for role, text in texts.items()}
+        result = build.generate(facts, raw, hashlib.sha256(source).hexdigest())
+        rows = {s['product']['Product']: {r['day']: r for r in s['records']} for s in result['series']}
+        self.assertEqual(len(result['summary']['INE.ec']['day_only_trade_days']), 243)
+        self.assertEqual(result['summary']['INE.lu']['day_only_trade_days'],
+                         [20250102, 20250205, 20250407, 20250506, 20250603, 20251009])
+        self.assertEqual(rows['ec'][20250106]['template']['Night'], [])
+        self.assertEqual(len(rows['ec'][20250106]['sessions']), 3)
+        self.assertEqual(rows['lu'][20250106]['sessions'][0]['Start'], build.stamp(build.date(20250103), 1260))
+        self.assertEqual(len(rows['lu'][20250205]['sessions']), 3)
+        self.assertEqual(rows['ec'][20250126]['sessions'], [])
+        self.assertEqual(rows['lu'][20251231]['template']['From'], 20231121)
+        raw['ine-year-2025'] = b'<div class="notice_contain">unrelated</div>'
+        with self.assertRaisesRegex(ValueError, 'review_clause:ine-year-2025'):
+            build.generate(facts, raw, 'test')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

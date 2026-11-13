@@ -452,6 +452,7 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 	var cal *verified.Calendar
 	var n int
 	var e error
+	usesAnnualOrdinals := false
 	if input.Schema == "annual-calendar-v1" {
 		switch input.Year {
 		case 2024:
@@ -464,14 +465,23 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 			}
 		case 2025:
 			spec := spec2025()
+			if input.FactsSHA == specINE2025().factsSHA {
+				spec = specINE2025()
+				usesAnnualOrdinals = true
+			}
 			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
 				return e
 			}
 			cal, e = profileAnnual(input, spec)
 			if e == nil {
-				n, e = observationsAnnual(cal, dir, spec)
+				if usesAnnualOrdinals {
+					n, e = annualOrdinals(cal, dir, spec)
+				} else {
+					n, e = observationsAnnual(cal, dir, spec)
+				}
 			}
 		case 2026:
+			usesAnnualOrdinals = true
 			spec := spec2026()
 			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
 				return e
@@ -503,7 +513,7 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 		}
 	}
 	report := map[string]any{"status": "passed", "products": len(input.Series), "market_contract_days": samples, "reopen_added_bars": 0, "scope": "published continuous schedules; no point-in-time availability or price certification"}
-	if input.Schema == "annual-calendar-v1" && input.Year != 2026 {
+	if input.Schema == "annual-calendar-v1" && !usesAnnualOrdinals {
 		report["monthly_observation_checks"] = n
 	} else {
 		report["ordinal_checks"] = n

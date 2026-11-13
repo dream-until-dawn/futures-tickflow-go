@@ -105,7 +105,8 @@ def generate(facts, raw, facts_sha):
                 count += 1
                 if p['night_minutes'] and value != p['listed'] and number(previous) not in stops:
                     sessions += [{'Start': stamp(previous, a), 'End': stamp(previous, b)} for a, b in p['night_minutes']]
-                elif p['night_minutes']:
+                else:
+                    # 无夜盘品种的全部交易日也须如实计入日盘摘要。
                     day_only.append(value)
                 sessions += [{'Start': stamp(day, a), 'End': stamp(day, b)} for a, b in facts['day_minutes']]
                 previous = day

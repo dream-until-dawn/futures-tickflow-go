@@ -17,6 +17,8 @@ import (
 // annualSpec 是独立核阅原文后写入的审核表，不读取编译器的节假日配置。
 // 新年份不能仅靠提交一个自带SHA的JSON获得资格。
 type annualSpec struct {
+	exchange     string
+	yearRole     string
 	year         int
 	factsSHA     string
 	holiday      [][2]tf.TradingDay
@@ -26,6 +28,21 @@ type annualSpec struct {
 	events       []annualEvent
 	ordinalDates []tf.TradingDay
 }
+
+// 空值保留既有SHFE审核表的含义；其他交易所必须由专用审核表明确指定。
+func (s annualSpec) exchangeKey() string {
+	if s.exchange == "" {
+		return tf.SHFE
+	}
+	return s.exchange
+}
+func (s annualSpec) annualSourceRole() string {
+	if s.yearRole != "" {
+		return s.yearRole
+	}
+	return fmt.Sprintf("shfe-year-%d", s.year)
+}
+
 type annualEvent struct {
 	from, to tf.TradingDay
 	role     string
@@ -116,7 +133,7 @@ func bindAnnual(input calendarFile, lock sourceLock, facts, dir string, spec ann
 	}
 	for _, s := range input.Series {
 		p, ok := spec.products[s.Product.Product]
-		if s.Product.Exchange != tf.SHFE || !ok {
+		if s.Product.Exchange != spec.exchangeKey() || !ok {
 			return fmt.Errorf("annual_product")
 		}
 		for _, r := range s.Records {
@@ -131,7 +148,7 @@ func bindAnnual(input calendarFile, lock sourceLock, facts, dir string, spec ann
 			if e != nil {
 				return e
 			}
-			roles := append([]string{s.Product.Product + "-listing", fmt.Sprintf("shfe-year-%d", spec.year)}, v.roles...)
+			roles := append([]string{s.Product.Product + "-listing", spec.annualSourceRole()}, v.roles...)
 			// 年度公告与逐节详细通知分别绑定，不能删掉停夜盘依据仍通过审核。
 			for _, event := range spec.events {
 				if r.Day >= event.from && r.Day <= event.to {
@@ -160,7 +177,7 @@ func profileAnnual(input calendarFile, spec annualSpec) (*verified.Calendar, err
 	seen := map[string]bool{}
 	for _, s := range input.Series {
 		p, ok := spec.products[s.Product.Product]
-		if s.Product.Exchange != tf.SHFE || !ok || seen[s.Product.Product] {
+		if s.Product.Exchange != spec.exchangeKey() || !ok || seen[s.Product.Product] {
 			return nil, fmt.Errorf("annual_product")
 		}
 		seen[s.Product.Product] = true
@@ -177,7 +194,10 @@ func profileAnnual(input calendarFile, spec annualSpec) (*verified.Calendar, err
 			if e != nil {
 				return nil, e
 			}
-			template := tf.SessionTemplate{From: v.from, To: v.to, Day: []tf.Session{{Start: 540 * 60000, End: 615 * 60000}, {Start: 630 * 60000, End: 690 * 60000}, {Start: 810 * 60000, End: 900 * 60000}}, Night: []tf.Session{{Start: 1260 * 60000, End: int64(p.nightEnd) * 60000}}}
+			template := tf.SessionTemplate{From: v.from, To: v.to, Day: []tf.Session{{Start: 540 * 60000, End: 615 * 60000}, {Start: 630 * 60000, End: 690 * 60000}, {Start: 810 * 60000, End: 900 * 60000}}, Night: []tf.Session{}}
+			if p.nightEnd > 0 {
+				template.Night = []tf.Session{{Start: 1260 * 60000, End: int64(p.nightEnd) * 60000}}
+			}
 			if !reflect.DeepEqual(template, r.Template) {
 				return nil, fmt.Errorf("annual_template_version: %s", r.Day)
 			}
@@ -195,7 +215,7 @@ func profileAnnual(input calendarFile, spec annualSpec) (*verified.Calendar, err
 			var sessions []tf.Session
 			// 只有原文明确的上市首日才能省略前夜，部分年起点本身不等于上市。
 			firstListing := r.Day == p.listed
-			if !spec.dayOnly[r.Day] && !firstListing {
+			if p.nightEnd > 0 && !spec.dayOnly[r.Day] && !firstListing {
 				previous := natural(r.Day).AddDate(0, 0, -1)
 				for spec.closed(ymd(previous)) {
 					previous = previous.AddDate(0, 0, -1)

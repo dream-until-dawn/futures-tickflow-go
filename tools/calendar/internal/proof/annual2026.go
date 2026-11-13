@@ -51,7 +51,7 @@ func annualOrdinals(cal *verified.Calendar, dir string, spec annualSpec) (int, e
 				return 0, fmt.Errorf("annual_ordinal_scope")
 			}
 			count := 0
-			e := cal.Walk(tf.ProductKey{Exchange: tf.SHFE, Product: product}, p.from, day, func(tf.Day) bool { count++; return true })
+			e := cal.Walk(tf.ProductKey{Exchange: spec.exchangeKey(), Product: product}, p.from, day, func(tf.Day) bool { count++; return true })
 			if e != nil || count != n {
 				return 0, fmt.Errorf("annual_ordinal_mismatch: %s %s", product, day)
 			}
