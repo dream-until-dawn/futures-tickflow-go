@@ -1,0 +1,39 @@
+{
+  "schema": "px-sh-holiday-validation-v1",
+  "base_sha": "b5c31c6fed52a8baf8243949e5b68a1673070f3f",
+  "go_modules": 3,
+  "gofmt_vet_test": "passed",
+  "python_tests": 104,
+  "restoration_drill": "passed identical fingerprint88a3fcdb2b49",
+  "source_doccheck": "passed203 declarations872 source0 pending",
+  "rule_pairs": 2,
+  "targeted_source_rejections": 13,
+  "bundle_negative_controls": 5,
+  "migration_audit_replayed": true,
+  "post_replay_bytes_unchanged": true,
+  "zip_crc_and_extraction": "passed",
+  "first_source_rejection": "U+2015 horizontal bar in actual PX2023 original; added only typographic canonicalization; hour/break mutations still rejected",
+  "first_migration_replay": "returned0 but dependency cache introduced extra file; exact-set verifier correctly rejected; no guard removed; final audit disables bytecode writes",
+  "final_bundle": "sealed-v2",
+  "post_seal_discovery": {
+    "browser_calls": 1,
+    "queries": 3,
+    "description": "official PDF scoped719/717/1060 search; no hits; not proof no archives exist",
+    "new_direct_requests": 0
+  },
+  "final_browser_totals": {
+    "calls": 17,
+    "queries": 43,
+    "opened_pages": 6
+  },
+  "archive_index_browser_totals": {
+    "calls": 16,
+    "queries": 40,
+    "scope": "pre-seal discovery freeze, unchanged inside original bundle"
+  },
+  "production_Go_API_changed": false,
+  "new_calendar_generated": false,
+  "DCE_GFEX_requests": 0,
+  "tag_created": false,
+  "logs_root": "C:\\Temp\\tickflow-px-sh-holidays-20261113"
+}

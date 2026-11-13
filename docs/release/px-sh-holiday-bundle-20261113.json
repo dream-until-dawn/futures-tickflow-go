@@ -1,0 +1,49 @@
+{
+  "schema": "px-sh-holiday-evidence-bundle-v1",
+  "bundle": "C:\\Temp\\tickflow-px-sh-holidays-20261113-sealed-v2",
+  "migration": "C:\\Temp\\tickflow-px-sh-holidays-20261113-sealed-v2-migration",
+  "manifest_sha256": "8fb8d374a1831fb5c78f2476534fbe1d7d1d3ba5c288eec2c0d0e0ab3c4aed0e",
+  "verified": {
+    "source_sha": "b5c31c6fed52a8baf8243949e5b68a1673070f3f",
+    "files": 41,
+    "bytes": 4512251,
+    "full_release": false
+  },
+  "zip": "C:\\Temp\\tickflow-px-sh-holidays-20261113-sealed-v2.zip",
+  "zip_sha256": "08ae48baac6b9e53608cf9f91e5e59e7dc1f3dde218cc9c8ad2e0a5c5a7a411e",
+  "zip_bytes": 2677789,
+  "source_replay": {
+    "returncode": 0,
+    "result": "2 rule pairs;13 targeted rejections;report LF unchanged"
+  },
+  "bundle_controls": [
+    {
+      "control": "tamper_original",
+      "required_reason": "文件字节/SHA不符",
+      "actual": "文件字节/SHA不符：czce-202402-product-clean.body"
+    },
+    {
+      "control": "missing_scope",
+      "required_reason": "文件集合不符",
+      "actual": "文件集合不符"
+    },
+    {
+      "control": "extra_file",
+      "required_reason": "文件集合不符",
+      "actual": "文件集合不符"
+    },
+    {
+      "control": "wrong_external_sha",
+      "required_reason": "包外manifest SHA不符",
+      "actual": "包外manifest SHA不符"
+    },
+    {
+      "control": "self_consistent_scope_escalation",
+      "required_reason": "阶段范围不能提升资格",
+      "actual": "阶段范围不能提升资格：financial_admission_extended"
+    }
+  ],
+  "calendar_qualified": false,
+  "new_official_holiday_originals": 0,
+  "tag_created": false
+}

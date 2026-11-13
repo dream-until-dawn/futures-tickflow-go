@@ -1,0 +1,444 @@
+{
+  "schema": "px-sh-holiday-followup-v1",
+  "base_sha": "b5c31c6fed52a8baf8243949e5b68a1673070f3f",
+  "source_root": "C:\\Temp\\tickflow-px-sh-holidays-20261113",
+  "scope": "PX/SH2023 holiday originals and applicable rule continuity; no new calendar",
+  "requests": [
+    {
+      "id": "broker-hsqh-autumn-links",
+      "url": "https://www.hsqh.net/col49/1430",
+      "requested_utc": "2026-11-13T11:08:52.745210+00:00",
+      "first_response_utc": "2026-11-13T11:08:53.971872+00:00",
+      "finished_utc": "2026-11-13T11:08:54.461985+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 79909,
+      "sha256": "6570d9ca63fe34f2402a2aaeed9d8cc57b9104b83249ba2f16c9cdb41da0c104",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "czce-english-home",
+      "url": "https://english.czce.com.cn/",
+      "requested_utc": "2026-11-13T11:08:54.963403+00:00",
+      "first_response_utc": "2026-11-13T11:08:55.273295+00:00",
+      "finished_utc": "2026-11-13T11:08:55.273564+00:00",
+      "status": 412,
+      "transport_state": "complete",
+      "bytes": 2638,
+      "sha256": "5c8b9bd69fd77ef3a08248117d873ddb82e923d64eb0453b48eb0e84960cdca0",
+      "application_state": "HTTP412_challenge_not_official_document"
+    },
+    {
+      "id": "czce-autumn-717-original",
+      "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2023/09/1689465334108789.htm",
+      "requested_utc": "2026-11-13T11:09:35.920705+00:00",
+      "first_response_utc": "2026-11-13T11:09:36.135699+00:00",
+      "finished_utc": "2026-11-13T11:09:36.135994+00:00",
+      "status": 412,
+      "transport_state": "complete",
+      "bytes": 2826,
+      "sha256": "2eb2ad20dddfe5bc3922ed94156ece8e41649a1eb3926344a9eff4c8cc44c9aa",
+      "application_state": "HTTP412_challenge_not_official_document"
+    },
+    {
+      "id": "broker-wkjy-boundary-link",
+      "url": "https://www.wkjyqh.com/english/a/20231228/70001.shtml",
+      "requested_utc": "2026-11-13T11:09:36.637298+00:00",
+      "first_response_utc": "2026-11-13T11:09:36.913528+00:00",
+      "finished_utc": "2026-11-13T11:09:37.306895+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 11405,
+      "sha256": "be8f72fc9d767456aae5b0990b6d9ced1c9b6f6fd77a8c32e1ce0237d0b19f52",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "czce-english-boundary-original",
+      "url": "https://english.czce.com.cn/en/AboutUs/News/ggytz/webinfo/2023/12/1703386602348988.htm",
+      "requested_utc": "2026-11-13T11:09:37.808299+00:00",
+      "first_response_utc": "2026-11-13T11:09:38.019254+00:00",
+      "finished_utc": "2026-11-13T11:09:38.019573+00:00",
+      "status": 412,
+      "transport_state": "complete",
+      "bytes": 2773,
+      "sha256": "6b7f4f8f892179a577d0792b2b5916553eb89c0ecb5f13a93fcac1ea2ef79484",
+      "application_state": "HTTP412_challenge_not_official_document"
+    },
+    {
+      "id": "legal-product-rule-index",
+      "url": "https://futureslaw.org.cn:443/czcepzxz/index_1-15.htm",
+      "requested_utc": "2026-11-13T11:10:38.734308+00:00",
+      "first_response_utc": "2026-11-13T11:10:39.044763+00:00",
+      "finished_utc": "2026-11-13T11:10:39.084180+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 48361,
+      "sha256": "ff134df76940afd58f0022bd23b829a4ffcb829eb5540c15788f0536b43281a4",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "broker-founder-year-links",
+      "url": "https://www.founderfu.com/fzzqqh_2019/details_247_55934.html",
+      "requested_utc": "2026-11-13T11:11:19.707000+00:00",
+      "first_response_utc": "2026-11-13T11:11:19.943644+00:00",
+      "finished_utc": "2026-11-13T11:11:19.943790+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "application_state": "HTTP200_empty_not_document"
+    },
+    {
+      "id": "broker-iztqh-year-links",
+      "url": "https://www.iztqh.com/news/4414.html",
+      "requested_utc": "2026-11-13T11:12:13.689464+00:00",
+      "first_response_utc": "2026-11-13T11:12:14.017292+00:00",
+      "finished_utc": "2026-11-13T11:12:14.017512+00:00",
+      "status": 302,
+      "transport_state": "complete",
+      "bytes": 142,
+      "sha256": "745173bcc5c57ce9751dd019606e877e0aae13b60372fdb090f3db0470c3a43c",
+      "application_state": "HTTP302_to_verification_challenge_not_followed"
+    },
+    {
+      "id": "broker-jinxin-year-links",
+      "url": "https://www.jinxinqh.com/article/category/notice2-95",
+      "requested_utc": "2026-11-13T11:12:14.518930+00:00",
+      "first_response_utc": "2026-11-13T11:12:14.799227+00:00",
+      "finished_utc": "2026-11-13T11:12:14.801826+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 29558,
+      "sha256": "eb59634b3a1faba6dd1128ff48b30b98465e18ed6606f557bbe6c115f97a6014",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "legal-product-rule-index-all",
+      "url": "https://futureslaw.org.cn:443/czcepzxz/index_1-100.htm",
+      "requested_utc": "2026-11-13T11:12:35.005835+00:00",
+      "first_response_utc": "2026-11-13T11:12:35.202086+00:00",
+      "finished_utc": "2026-11-13T11:12:35.238631+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 84994,
+      "sha256": "5908edc8783be9cdd18f1f339cafae96b918e92bd76a050c929ce0db82342486",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "legal-px-rule",
+      "url": "https://futureslaw.org.cn:443/czcepzxz/3024.htm",
+      "requested_utc": "2026-11-13T11:13:00.111666+00:00",
+      "first_response_utc": "2026-11-13T11:13:00.332834+00:00",
+      "finished_utc": "2026-11-13T11:13:00.371693+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 75271,
+      "sha256": "2fba3046f9eb7c447eb93659c2844b2eed8a2b50b36d3b26ac61eb7c725df5c6",
+      "application_state": "nonissuer_202402_rule_copy_discovery_only"
+    },
+    {
+      "id": "legal-sh-rule",
+      "url": "https://futureslaw.org.cn:443/czcepzxz/3027.htm",
+      "requested_utc": "2026-11-13T11:13:00.872987+00:00",
+      "first_response_utc": "2026-11-13T11:13:01.047661+00:00",
+      "finished_utc": "2026-11-13T11:13:01.103881+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 70286,
+      "sha256": "f021ecb5917dd84499af04abf7a23ebbbaeb25b62eef6384064060327cbade02",
+      "application_state": "nonissuer_202402_rule_copy_discovery_only"
+    },
+    {
+      "id": "broker-jinxin-year-next-links",
+      "url": "https://www.jinxinqh.com/article/category/notice2-96",
+      "requested_utc": "2026-11-13T11:13:01.605265+00:00",
+      "first_response_utc": "2026-11-13T11:13:02.008963+00:00",
+      "finished_utc": "2026-11-13T11:13:02.009268+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 29264,
+      "sha256": "e219d0898bbe78a1fbf98b041ebcb21cabe836fdda0ae4614283ef1930d4a12d",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "broker-jinxin-year-final-links",
+      "url": "https://www.jinxinqh.com/article/category/notice2-97",
+      "requested_utc": "2026-11-13T11:13:40.103969+00:00",
+      "first_response_utc": "2026-11-13T11:13:40.496655+00:00",
+      "finished_utc": "2026-11-13T11:13:40.508084+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 29582,
+      "sha256": "9acabe78740dd4a2f3a176479399e764544bebd617d7422301ceead77d804ba2",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "czce-year-719-original",
+      "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2022/12/1655831741946794.htm",
+      "requested_utc": "2026-11-13T11:14:15.429960+00:00",
+      "first_response_utc": "2026-11-13T11:14:15.627415+00:00",
+      "finished_utc": "2026-11-13T11:14:15.627826+00:00",
+      "status": 412,
+      "transport_state": "complete",
+      "bytes": 2843,
+      "sha256": "a25543a8e971663b2e90257cba38c5b3f410329692dd4f6682e7f804dce56a4e",
+      "application_state": "HTTP412_challenge_not_official_document"
+    },
+    {
+      "id": "csrc-px-202309-rule",
+      "url": "https://neris.csrc.gov.cn/falvfagui/rdqsHeader/mainbody?navbarId=2&secFutrsLawId=285a592d0b4c48e3ac77495f450343bb",
+      "requested_utc": "2026-11-13T11:14:44.695961+00:00",
+      "first_response_utc": "2026-11-13T11:14:45.088648+00:00",
+      "finished_utc": "2026-11-13T11:14:45.198226+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 71704,
+      "sha256": "bf826681f40744f4ca1c8f48d2839e8c969bc3d04de70a9e021e648d5bb5dfbe",
+      "application_state": "official_metadata_only_fulltext_and_evolution_empty_template"
+    },
+    {
+      "id": "csrc-mainbody-public-script",
+      "url": "https://neris.csrc.gov.cn/falvfagui/static/mainbody.js?v=20200709",
+      "requested_utc": "2026-11-13T11:15:23.371614+00:00",
+      "first_response_utc": "2026-11-13T11:15:23.584826+00:00",
+      "finished_utc": "2026-11-13T11:15:23.585086+00:00",
+      "status": 302,
+      "transport_state": "complete",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "application_state": "HTTP302_empty_without_location_no_script"
+    },
+    {
+      "id": "czce-202402-journal-successor",
+      "url": "https://www.czce.com.cn/cn/rootfiles/2024/03/13/1708571092287298-1708571092302860.pdf",
+      "requested_utc": "2026-11-13T11:16:33.079620+00:00",
+      "first_response_utc": "2026-11-13T11:16:33.271708+00:00",
+      "finished_utc": "2026-11-13T11:16:34.901838+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 2722137,
+      "sha256": "666a6596d52f682406c52ebdf872f459c2b74239bd00284701f8542a4880506d",
+      "application_state": "official_successor_document_verified"
+    },
+    {
+      "id": "broker-ghls-successor-links",
+      "url": "https://www.ghlsqh.com.cn/company/news/show-23215.html",
+      "requested_utc": "2026-11-13T11:16:35.405423+00:00",
+      "first_response_utc": "2026-11-13T11:16:35.587856+00:00",
+      "finished_utc": "2026-11-13T11:16:35.631322+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 33072,
+      "sha256": "f3d4416e6b8eb340ee16105df33730a7372d4d47ba4791fea1fde165732a53cc",
+      "application_state": "discovery_index_or_original_link_only"
+    },
+    {
+      "id": "czce-202402-product-diff",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/02/06/20240206151338811.docx",
+      "requested_utc": "2026-11-13T11:17:28.388825+00:00",
+      "first_response_utc": "2026-11-13T11:17:28.633606+00:00",
+      "finished_utc": "2026-11-13T11:17:28.684094+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 14417,
+      "sha256": "c45494c4ab35a78a3391b58afab6884b67a5db72773d225f11e4746d272c7775",
+      "application_state": "official_successor_document_verified"
+    },
+    {
+      "id": "czce-202402-product-clean",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/02/06/20240206164900722.docx",
+      "requested_utc": "2026-11-13T11:17:29.185390+00:00",
+      "first_response_utc": "2026-11-13T11:17:29.359305+00:00",
+      "finished_utc": "2026-11-13T11:17:29.712168+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 325725,
+      "sha256": "8daa14fd71d37e9553387f3750d98ff74018667339ac796523c348a531dea173",
+      "application_state": "official_successor_document_verified"
+    },
+    {
+      "id": "broker-jwview-boundary-links",
+      "url": "https://www.jwview.com/jingwei/kb/pc/12-28/197095.shtml",
+      "requested_utc": "2026-11-13T11:19:01.095078+00:00",
+      "first_response_utc": "2026-11-13T11:19:01.477031+00:00",
+      "finished_utc": "2026-11-13T11:19:01.478932+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 43568,
+      "sha256": "3fdc4a4b4eee33d245781d8c489628afd8c7f21869af9de65c14c766aa78185a",
+      "application_state": "actual_body_did_not_contain_target_notice"
+    },
+    {
+      "id": "broker-zjncf-boundary-links",
+      "url": "https://www.zjncf.com.cn/ajax/ajaxExchange/59.html",
+      "requested_utc": "2026-11-13T11:19:01.980385+00:00",
+      "first_response_utc": "2026-11-13T11:19:02.333879+00:00",
+      "finished_utc": "2026-11-13T11:19:02.334090+00:00",
+      "status": 200,
+      "transport_state": "complete",
+      "bytes": 15217,
+      "sha256": "6b4d5776eefff425813d93de11fc58839c0070b2c7485b2d20d182fe41ee6019",
+      "application_state": "mutable_index_actual202404_not_search_cached202312"
+    }
+  ],
+  "reused_originals": [
+    {
+      "id": "px-business-202309-docx",
+      "file": "px-business-202309-docx.body",
+      "bytes": 32479,
+      "sha256": "2a3305019203d24498c11722e0fa922f69df978d80a557bd0219e364dbe86d28",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908183636193.docx",
+      "original_retrieved_at": "2026-11-13T06:07:36.263001+00:00",
+      "new_request": false
+    },
+    {
+      "id": "sh-business-202309-docx",
+      "file": "sh-business-202309-docx.body",
+      "bytes": 31843,
+      "sha256": "ed38bb68e81c6360781e656bd38f7a48f06b5498234119f373fa62a1af6ca773",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908183010426.docx",
+      "original_retrieved_at": "2026-11-13T06:12:46.313221+00:00",
+      "new_request": false
+    }
+  ],
+  "source_review": {
+    "schema": "px-sh-successor-review-v1",
+    "rules": [
+      {
+        "product": "对二甲苯",
+        "original_article8": "第八条 对二甲苯期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为每周一至周五（法定节假日除外）下午9:00―11:00。日盘交易时间为每周一至周五（法定节假日除外）上午9:00―11:30，下午1:30―3:00；其中，上午10:15―10:30为休息时间。",
+        "successor_article8": "第八条 对二甲苯期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为下午21:00—23：00。日盘交易时间为上午9:00—11:30，下午13:30—15:00；其中，上午10:15—10:30为休息时间。",
+        "successor_diff_clause": "将第八条第一款修订为：“对二甲苯期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为下午21:00—23：00。日盘交易时间为上午9:00—11:30，下午13:30—15:00；其中，上午10:15—10:30为休息时间。”",
+        "current_column_matches_2023_original": true,
+        "successor_effective": 20240206,
+        "scope": "published amendment checkpoint; not exhaustive2023 version index"
+      },
+      {
+        "product": "烧碱",
+        "original_article8": "第八条 烧碱期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为每周一至周五（法定节假日除外）下午9:00－11:00。日盘交易时间为每周一至周五（法定节假日除外）上午9:00－11:30，下午1:30－3:00；其中，上午10:15－10:30为休息时间。",
+        "successor_article8": "第八条 烧碱期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为下21:00—23：00。日盘交易时间为上午9:00—11:30，下午13:30—15:00；其中，上午10:15—10:30为休息时间。",
+        "successor_diff_clause": "将第八条第一款修订为：“烧碱期货合约交易时间分为夜盘交易时间和日盘交易时间。夜盘交易时间为下午21:00—23：00。日盘交易时间为上午9:00—11:30，下午13:30—15:00；其中，上午10:15—10:30为休息时间。”",
+        "current_column_matches_2023_original": true,
+        "successor_effective": 20240206,
+        "scope": "published amendment checkpoint; not exhaustive2023 version index"
+      }
+    ],
+    "source_controls": [
+      {
+        "control": "wrong_SHA",
+        "required_reason": "original_SHA_mismatch",
+        "actual": "original_SHA_mismatch"
+      },
+      {
+        "control": "truncated_DOCX",
+        "required_reason": "docx_structure",
+        "actual": "docx_structure"
+      },
+      {
+        "control": "wrong_identity",
+        "required_reason": "product_identity",
+        "actual": "product_identity"
+      },
+      {
+        "control": "wrong_effective",
+        "required_reason": "effective_date",
+        "actual": "effective_date"
+      },
+      {
+        "control": "wrong_break",
+        "required_reason": "day_break",
+        "actual": "day_break"
+      },
+      {
+        "control": "wrong_night",
+        "required_reason": "session_hours",
+        "actual": "session_hours"
+      },
+      {
+        "control": "changed_current_column",
+        "required_reason": "old_clause_mismatch",
+        "actual": "old_clause_mismatch"
+      },
+      {
+        "control": "successor_as_2023",
+        "required_reason": "successor_after_requested_start",
+        "actual": "successor_after_requested_start"
+      },
+      {
+        "control": "czce-year-719-original",
+        "required_reason": "official_HTTP_status",
+        "actual": "official_HTTP_status"
+      },
+      {
+        "control": "czce-autumn-717-original",
+        "required_reason": "official_HTTP_status",
+        "actual": "official_HTTP_status"
+      },
+      {
+        "control": "czce-english-boundary-original",
+        "required_reason": "official_HTTP_status",
+        "actual": "official_HTTP_status"
+      },
+      {
+        "control": "HTTP200_challenge_still_rejected",
+        "required_reason": "official_article_missing",
+        "actual": "official_article_missing"
+      },
+      {
+        "control": "broker_promoted_to_issuer",
+        "required_reason": "official_issuer_required",
+        "actual": "official_issuer_required"
+      }
+    ],
+    "official_holiday_originals_obtained": 0,
+    "calendar_qualified": false,
+    "calendar_output": null,
+    "year2023_revision_index_complete": false,
+    "regulator_metadata": {
+      "publication": 20230908,
+      "effective": 20230915,
+      "status": "已被修改",
+      "evolution_list_empty_in_actual_response": true,
+      "fulltext_obtained": false
+    },
+    "clean_SH_literal_note": "successor clean original literally says 为下21:00; preserved without source correction; diff正文 says 下午21:00",
+    "diff_table_warning": "third column mixes strike/delete and inserted text; do not flatten as final rule",
+    "pdf_review": {
+      "file": "czce-202402-journal-successor.body",
+      "actual_page": 41,
+      "printed_page": 40,
+      "publication": 20240206,
+      "effective": "自发布之日起施行",
+      "visual_verified": true
+    },
+    "blocked": [
+      "719 official original412",
+      "717 official original412",
+      "1060 corresponding English official original412; Chinese original link not located",
+      "complete applicable2023 version index not obtained"
+    ]
+  },
+  "network": {
+    "actual_requests": 23,
+    "max_requests": 24,
+    "actual_bytes": 3695692,
+    "max_bytes": 67108864,
+    "direct_retries": 0,
+    "automatic_redirects": false,
+    "DCE_GFEX_requests": 0,
+    "prior_raw_urls_excluded": true,
+    "browser_calls": 16,
+    "browser_queries": 40,
+    "browser_open_pages": 6,
+    "browser_note": "initial YH old failed page was read once by browser before inventory check; stopped; not a new raw HTTP source"
+  },
+  "new_official_successor_originals": 3,
+  "official_holiday_originals_obtained": 0,
+  "qualified_calendar_products_remain": 6,
+  "new_calendar_generated": false,
+  "financial_admission_extended": false,
+  "tag_created": false,
+  "blocking_condition": "official719/717 and English boundary actual412; Chinese1060 original link missing; full2023 version index not obtained",
+  "confidence": "high for exact SHA and published amendment checkpoint, incomplete for intervening rules/holiday/point-in-time",
+  "originals_rewritten": false
+}

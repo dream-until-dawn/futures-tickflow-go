@@ -1,0 +1,120 @@
+"""只读复核PX/SH后继时段条文；本脚本不生成日历、不进行网络请求。"""
+import copy,hashlib,io,json,re,sys,unicodedata,zipfile
+from pathlib import Path
+from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
+NS={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+W='{'+NS['w']+'}'
+# 复算封存副本不得因依赖导入生成额外缓存文件。
+sys.dont_write_bytecode=True
+def norm(s):
+    return re.sub(r'\s+','',unicodedata.normalize('NFKC',s)).replace('—','-').replace('－','-').replace('―','-')
+def sha(b):return hashlib.sha256(b).hexdigest()
+def text(p):return ''.join(t.text or '' for t in p.findall('.//w:t',NS))
+def doc(raw,expected):
+    if sha(raw)!=expected:raise ValueError('original_SHA_mismatch')
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            if len(z.infolist())>1000 or sum(i.file_size for i in z.infolist())>32*1024**2:raise ValueError('docx_budget')
+            b=z.read('word/document.xml')
+            if b'<!DOCTYPE' in b:raise ValueError('docx_doctype')
+            return ET.fromstring(b)
+    except (zipfile.BadZipFile,KeyError,ET.ParseError):raise ValueError('docx_structure')
+def section(x,name,date,old=False):
+    ps=x.findall('.//w:p',NS);title='郑州商品交易所'+name+'期货业务细则'
+    hits=[i for i,p in enumerate(ps) if norm(text(p))==title]
+    if len(hits)!=1:raise ValueError('product_identity')
+    i=hits[0]
+    if date not in norm(text(ps[i+1])):raise ValueError('effective_date')
+    clause=next((text(p) for p in ps[i+2:i+35] if norm(text(p)).startswith('第八条')),None)
+    if clause is None:raise ValueError('article8_missing')
+    s=norm(clause)
+    if '10:15-10:30' not in s or '休息时间' not in s:raise ValueError('day_break')
+    hours=['9:00-11:30','1:30-3:00','下午9:00-11:00'] if old else ['9:00-11:30','13:30-15:00','21:00-23:00']
+    if any(k not in s for k in hours):raise ValueError('session_hours')
+    return clause
+
+def review(clean,diff,originals):
+    result=[]
+    # 对照表第一列是品种分组，第二列为现行条款；第三列有删除线混排，不做净稿。
+    rows=[]
+    for row in diff.findall('.//w:tbl/w:tr',NS):
+        cs=row.findall('w:tc',NS)
+        if len(cs)==3 and '对二甲苯' in text(cs[0]) and '烧碱' in text(cs[0]):rows.append(cs)
+    if len(rows)!=1:raise ValueError('diff_group_identity')
+    current=text(rows[0][1])
+    for name,old in originals.items():
+        a=section(old,name,'2023年9月15日',old=True);b=section(clean,name,'2024年2月6日')
+        left=norm(a.replace(name,'XX'));right=norm(current.replace('第八条第一款','第八条'))
+        if left!=right:raise ValueError('old_clause_mismatch')
+        # 修订正文中的指定品种新条款另核，避免拿表格中混排的删除线文字拼接。
+        ps=diff.findall('.//w:p',NS);index=next(i for i,p in enumerate(ps) if '对《郑州商品交易所'+name+'期货业务细则》作如下修订' in text(p));revised=text(ps[index+1]);s=norm(revised)
+        if any(k not in s for k in ['第八条第一款','21:00-23:00','9:00-11:30','13:30-15:00','10:15-10:30']):raise ValueError('diff_new_clause')
+        result.append(dict(product=name,original_article8=a,successor_article8=b,successor_diff_clause=revised,current_column_matches_2023_original=True,successor_effective=20240206,scope='published amendment checkpoint; not exhaustive2023 version index'))
+    return result
+
+def mutate(raw,name,mode):
+    x=doc(raw,sha(raw));ps=x.findall('.//w:p',NS);i=next(i for i,p in enumerate(ps) if norm(text(p))=='郑州商品交易所'+name+'期货业务细则')
+    if mode=='identity':p=ps[i];s='错误品种细则'
+    elif mode=='effective':p=ps[i+1];s=text(p).replace('2024年2月6日','2024年2月7日')
+    else:
+        p=next(p for p in ps[i+2:i+35] if norm(text(p)).startswith('第八条'));s=text(p).replace('10:15','10:16') if mode=='break' else text(p).replace('21:00','20:59')
+    for child in list(p):p.remove(child)
+    ET.SubElement(ET.SubElement(p,W+'r'),W+'t').text=s
+    out=io.BytesIO()
+    with zipfile.ZipFile(io.BytesIO(raw)) as z,zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as dst:
+        for info in z.infolist():dst.writestr(info,ET.tostring(x,encoding='utf-8',xml_declaration=True) if info.filename=='word/document.xml' else z.read(info.filename))
+    return out.getvalue()
+
+def holiday(raw,ref):
+    if urlparse(ref['url']).hostname not in ['www.czce.com.cn','english.czce.com.cn']:raise ValueError('official_issuer_required')
+    if ref['status']!=200:raise ValueError('official_HTTP_status')
+    if not raw:raise ValueError('empty_original')
+    if b'arg1=' in raw or b'aliyun' in raw or b'acw_sc__' in raw:raise ValueError('challenge_not_notice')
+    # 只读现有严格正文容器解析器；未知模板及空正文拒绝。
+    from official_text import article
+    try:s=article(raw)
+    except ValueError:raise ValueError('official_article_missing')
+    if '休市' not in s and '夜盘' not in s:raise ValueError('notice_identity')
+    return s
+
+def main():
+    r=Path(sys.argv[1]);repo=Path(sys.argv[2]);sys.path.insert(0,str(repo/'tools/calendar'))
+    lock=json.loads((r/'source-lock.json').read_text(encoding='utf-8'));refs={v['id']:v for v in lock['new_requests']+lock['reused_originals']}
+    raw={}
+    for n,v in refs.items():
+        p=r/v.get('file',n+'.body');b=p.read_bytes() if p.exists() else b''
+        if len(b)!=v['bytes'] or sha(b)!=v['sha256']:raise ValueError('frozen_identity:'+n)
+        raw[n]=b
+    clean_raw=raw['czce-202402-product-clean'];diff_raw=raw['czce-202402-product-diff'];clean=doc(clean_raw,refs['czce-202402-product-clean']['sha256']);diff=doc(diff_raw,refs['czce-202402-product-diff']['sha256']);originals={name:doc(raw[n],refs[n]['sha256']) for name,n in [('对二甲苯','px-business-202309-docx'),('烧碱','sh-business-202309-docx')]}
+    result=review(clean,diff,originals);controls=[]
+    def rejects(name,want,call):
+        try:call()
+        except ValueError as e:
+            if want not in str(e):raise AssertionError((name,want,str(e)))
+            controls.append(dict(control=name,required_reason=want,actual=str(e)));return
+        raise AssertionError(name+' accepted')
+    rejects('wrong_SHA','original_SHA_mismatch',lambda:doc(clean_raw,'0'*64));rejects('truncated_DOCX','docx_structure',lambda:doc(clean_raw[:100],sha(clean_raw[:100])))
+    for mode,want in [('identity','product_identity'),('effective','effective_date'),('break','day_break'),('night','session_hours')]:
+        b=mutate(clean_raw,'对二甲苯',mode);rejects('wrong_'+mode,want,lambda b=b:review(doc(b,sha(b)),diff,originals))
+    changed=copy.deepcopy(diff)
+    for row in changed.findall('.//w:tbl/w:tr',NS):
+        cs=row.findall('w:tc',NS)
+        if len(cs)==3 and '对二甲苯' in text(cs[0]):
+            for t in cs[1].findall('.//w:t',NS):t.text=(t.text or '').replace('9:00','8:59')
+    rejects('changed_current_column','old_clause_mismatch',lambda:review(clean,changed,originals))
+    # 后继版本不能借用到更早范围，明确不是日期回填工具。
+    def retroactive():
+        if result[0]['successor_effective']>20230915:raise ValueError('successor_after_requested_start')
+    rejects('successor_as_2023','successor_after_requested_start',retroactive)
+    for n in ['czce-year-719-original','czce-autumn-717-original','czce-english-boundary-original']:
+        rejects(n,'official_HTTP_status',lambda n=n:holiday(raw[n],refs[n]))
+    n='czce-autumn-717-original';fake=dict(refs[n],status=200);rejects('HTTP200_challenge_still_rejected','official_article_missing',lambda:holiday(raw[n],fake))
+    fake=dict(refs[n],url='https://www.hsqh.net/col49/1430');rejects('broker_promoted_to_issuer','official_issuer_required',lambda:holiday(raw[n],fake))
+    # 元数据页面是官方材料，但其空模板并非法规正文或完整历次修订索引。
+    page=raw['csrc-px-202309-rule'].decode('utf-8');assert '2023-09-15' in page and '2023-09-08' in page and '已被修改' in page
+    empty_evolution=bool(re.search(r'id="divEvltList">\s*</div>',page));assert empty_evolution
+    out=dict(schema='px-sh-successor-review-v1',rules=result,source_controls=controls,official_holiday_originals_obtained=0,calendar_qualified=False,calendar_output=None,year2023_revision_index_complete=False,regulator_metadata=dict(publication=20230908,effective=20230915,status='已被修改',evolution_list_empty_in_actual_response=True,fulltext_obtained=False),clean_SH_literal_note='successor clean original literally says 为下21:00; preserved without source correction; diff正文 says 下午21:00',diff_table_warning='third column mixes strike/delete and inserted text; do not flatten as final rule',pdf_review=dict(file='czce-202402-journal-successor.body',actual_page=41,printed_page=40,publication=20240206,effective='自发布之日起施行',visual_verified=True),blocked=['719 official original412','717 official original412','1060 corresponding English official original412; Chinese original link not located','complete applicable2023 version index not obtained'])
+    (r/'source-review.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n');print(json.dumps(dict(verified_rule_pairs=len(result),targeted_rejections=len(controls),calendar_qualified=False),ensure_ascii=False))
+if __name__=='__main__':
+    sys.stdout=io.TextIOWrapper(sys.stdout.buffer,encoding='utf-8',errors='replace');sys.stderr=io.TextIOWrapper(sys.stderr.buffer,encoding='utf-8',errors='replace');main()
