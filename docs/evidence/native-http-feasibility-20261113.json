@@ -115,7 +115,7 @@
     "old_Job_fields_and_SHA": "unchanged; exact serialization test passed",
     "HTTP_method_scope": "GET only; unknown POST/query/scripts not implemented",
     "candidate_branch": "codex/native-http-feasibility",
-    "candidate_merged_main": false
+    "candidate_merged_main": true
   },
   "conclusion": "bounded native HTTP transport works to response bodies, but all four are challenges; zero business originals, no market qualification",
   "business_originals": 0,
@@ -127,8 +127,7 @@
   "pending": [
     "DCE/GFEX business originals and independent identity/field/date verification",
     "authenticity limits of unauthenticated plaintext",
-    "official historical calendars and lifecycle/financial-rule evidence unchanged",
-    "candidate independent consumer review and separate merge authorization"
+    "official historical calendars and lifecycle/financial-rule evidence unchanged"
   ],
   "seal": {
     "sealed_directory": "C:/Temp/tickflow-native-http-20261113-sealed",
@@ -157,5 +156,12 @@
       "tamper": "native_http.go rejected",
       "prior_99_file_seal": "reverified unchanged"
     }
+  },
+  "main_integration": {
+    "record": "native-http-main-integration-20261113.json",
+    "merged_code_candidate": "01eaffae87ee07aec77f86db7280b5852078f2d9",
+    "merged_and_pushed": true,
+    "authority": "explicit user authorization in this chat on2026-11-13",
+    "historical_snapshot_note": "previous pre-merge index is preserved in Git and original sealed snapshots; raw responses/seals unchanged"
   }
 }

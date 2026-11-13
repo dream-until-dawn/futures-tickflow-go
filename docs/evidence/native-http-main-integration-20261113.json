@@ -1,0 +1,48 @@
+{
+  "schema": "native-http-main-integration-v1",
+  "date_beijing": "2026-11-13",
+  "verification_utc": "2026-11-13T08:17:13Z",
+  "authorization": "本会话用户明确要求核验并将原生HTTP候选合并推送主线，同步维护文档并与本地引擎会话对齐；不重复失败探针、不扩大回测准入、不打tag",
+  "previous_main": "154845df12a920c38f6370f629e62d940b1721b4",
+  "merged_code_candidate": "01eaffae87ee07aec77f86db7280b5852078f2d9",
+  "merge_method": "fast-forward",
+  "candidate_merged_and_pushed_main": true,
+  "pre_merge": {
+    "working_tree": "clean",
+    "candidate_and_remote": "exact SHA match after fetch",
+    "main_and_remote": "exact baseline match after fetch",
+    "ci_run": 43382461051,
+    "ci_matrices": "Linux Go1.23, Linux Go1.26, Windows Go1.26 all completed success; re-queried this turn",
+    "linux_full_module_race": "actual CI step success; re-queried this turn",
+    "local_batch_package": "go test ./archive/batch -count=1 -timeout=2m passed this turn",
+    "sealed_files": 106,
+    "sealed_verification": "exact file sets, lengths and SHA256 rechecked for 99 original files and7 supplemental files",
+    "consumer_record": "C:/VScodeProject/futures-decision-strategy/docs/evidence/native-http-consumer-20261113.json",
+    "consumer_record_sha256": "6a29b73491dae7ca44ca5fb9d6a6c9084caeb3befec379e33ea3b0a2c68a749a",
+    "consumer_verification": "candidate SHA and two verification-source hashes and four response-copy byte lengths/SHA rechecked; consumer test outcomes read from report, not rerun here"
+  },
+  "historical_capture": {
+    "code": "e2147ff9eb011e029fd1aa30fe1bf0324608199d",
+    "requests": 4,
+    "body_bytes": 7311,
+    "business_originals": 0,
+    "classification": "DCE two HTTP412 challenges; GFEX two HTTP200 cookie/reload challenges",
+    "original_and_supplemental_seals": "unchanged; their pre-merge snapshots are historical facts, not current branch status"
+  },
+  "current_scope": {
+    "default_NewDownloader": "remote HTTPS and loopback HTTP tests only, unchanged",
+    "explicit_native_http": "NewNativeHTTPDownloader; exact URL/GET plus audited CFA source body/ref/SHA; limited public parameter paths or same-host derived homepage",
+    "old_Job_serialization_and_SHA": "unchanged",
+    "transport_identity": "native-http and unauthenticated plus source URL/SHA required; SHA does not authenticate plaintext or financial data",
+    "unknown_POST_query_scripts": "not implemented or probed",
+    "DCE_GFEX_business_data": "pending; no readable business original or public query-parameter basis",
+    "calendar_and_financial_admission": "unchanged"
+  },
+  "new_exchange_requests_this_turn": 0,
+  "failed_urls_replayed": 0,
+  "financial_admission_extended": false,
+  "default_calendar_extended": false,
+  "production_changes": false,
+  "tag_created": false,
+  "consumer_alignment": "user-authorized local engine chat will receive final main SHA and verification result after documentation commit CI"
+}

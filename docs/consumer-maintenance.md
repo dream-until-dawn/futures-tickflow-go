@@ -322,8 +322,10 @@ CZCE新增CY/PF/PK/PX/SH/PR上市时段原文并逐页视觉核对，PL仅有后
 
 三份关键规则正向核字、10份DOCX结构和七项定向副本反例通过；原反例构造失败及修订轨迹保留。26次有界HTTPS、620,132字节、12次浏览发现后停于具体缺证；INE、DCE/GFEX零请求，不重复失败探针，不打tag。精确URL/SHA、原件时刻、失败分类和继续条件见[本轮维护记录](czce-px-sh-2023-worklog.md)与[证据索引](evidence/czce-px-sh-2023-review.json)。
 
-### 11.12 DCE/GFEX新入口有界验证：仅独立候选，仍无业务原件（2026-11-13）
+### 11.12 原生HTTP显式入口已合入主线，DCE/GFEX仍无业务原件（2026-11-13）
 
-本节属于另获人类明确批准的原生HTTP验证候选，尚未合入主线，不替代11.11的PX/SH结论。已独立核实协会HTTPS原件的两条常量href，明确域名为www.dce.com.cn、www.gfex.com.cn；旧www.dce.cn失败不能代表已核官网。候选保留旧下载器默认HTTPS，新增逐URL/GET及官方出处SHA显式入口；明文元数据不能省略、清洗成HTTPS或解释为真实性认证。
+本节原生HTTP兼容已在本会话获得明确主线合并授权。重新核验后，准确候选`01eaffae87ee07aec77f86db7280b5852078f2d9`已快进合入并推送main，不替代11.11的PX/SH结论。已独立核实协会HTTPS原件的两条常量href，明确域名为www.dce.com.cn、www.gfex.com.cn；旧www.dce.cn失败不能代表已核官网。主线保留旧下载器默认HTTPS，新增逐URL/GET及官方出处SHA显式入口；明文元数据不能省略、清洗成HTTPS或解释为真实性认证。
 
 候选全模块测试及三矩阵CI（含Linux全模块race）、六项源码破坏门禁通过后才执行4次GET、7,311字节：DCE首页/参数页均412，GFEX首页/参数页均200机器人Cookie重载挑战。业务原件0；不执行挑战、不跟跳转、不猜POST/查询、不继续耗预算。仅说明本次环境的具体响应，不能断言全球不可用。DCE/GFEX历史日历、真实合约历史量价/结算、挂牌/生命周期和交易所制度缺口继续待决，已核六品种范围不扩大。参见[候选设计与实际结果](native-http-feasibility.md)及[机器证据](evidence/native-http-feasibility-20261113.json)。
+
+本次合并前再次核候选CI三矩阵和Linux race、重跑下载包全量正反测试、逐项核验99+7文件封存及引擎侧副本指纹通过；没有新的交易所请求，也没有重放失败URL。原件/旧封存保留当时未合并状态，当前集成事实见[主线集成索引](evidence/native-http-main-integration-20261113.json)。使用者可固定包含01eaffa的main提交调用显式入口，但这不表示取得DCE/GFEX业务数据；默认路径、回测准入和资金制度边界保持，暂不打tag。
