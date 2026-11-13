@@ -483,6 +483,9 @@ func run(calendar, facts, dir, out string, withMarket bool) error {
 		case 2026:
 			usesAnnualOrdinals = true
 			spec := spec2026()
+			if input.FactsSHA == specINE2026().factsSHA {
+				spec = specINE2026()
+			}
 			if e = bindAnnual(input, lock, facts, dir, spec); e != nil {
 				return e
 			}

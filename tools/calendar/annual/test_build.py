@@ -133,6 +133,31 @@ class AnnualBuildTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'review_clause:ine-year-2025'):
             build.generate(facts, raw, 'test')
 
+    def test_ine_2026_partition_and_no_future_boundary(self):
+        root = Path(__file__).resolve().parents[3]
+        source = (root / 'docs/evidence/ine-2026-facts.json').read_bytes()
+        review = json.loads((root / 'docs/evidence/ine-2026-review.json').read_bytes())
+        facts = build.checked_facts(source, review)
+        texts = {}
+        for r in facts['reviews']:
+            texts[r['source']] = texts.get(r['source'], '') + ''.join(r['tokens'])
+        raw = {role: ('<div class="notice_contain">' + text + '</div>').encode()
+               if any(r['source'] == role and r['kind'] == 'article' for r in facts['reviews'])
+               else text.encode() for role, text in texts.items()}
+        result = build.generate(facts, raw, 'software-only')
+        rows = {r['day']: r for r in result['series'][0]['records']}
+        self.assertEqual(len(rows), 308)
+        self.assertEqual(result['summary']['INE.lu']['trading_days'], 201)
+        self.assertEqual(len(result['summary']['INE.ec']['day_only_trade_days']), 201)
+        self.assertEqual(rows[20260705]['template']['From'], 20260101)
+        self.assertEqual(rows[20260706]['template']['From'], 20260706)
+        self.assertEqual(rows[20260914]['template']['From'], 20260914)
+        self.assertEqual(len(rows[20260928]['sessions']), 3)
+        self.assertNotIn(20261105, rows)
+        facts['profiles']['INE.lu']['to'] = 20261231
+        with self.assertRaisesRegex(ValueError, 'missing_year_boundary'):
+            build.generate(facts, raw, 'software-only')
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
