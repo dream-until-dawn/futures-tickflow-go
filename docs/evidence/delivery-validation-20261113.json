@@ -1,0 +1,18 @@
+{
+  "fixed_production_source": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+  "go_modules": 3,
+  "gofmt_vet_test": "passed",
+  "python_tests": 103,
+  "restore_drill": "passed identical workspace fingerprint9ba30763e44d",
+  "doccheck": "passed",
+  "external_consumer_functions": 5,
+  "source_PR_negative_controls": 7,
+  "new_bundle_test_functions": 3,
+  "new_bundle_removed_guard_controls": 3,
+  "existing_data_qualification_tests": 6,
+  "new_exchange_requests": 5,
+  "INE_DCE_GFEX_requests": 0,
+  "local_race": "not rerun; prior local TSan startup failures retained historically; current final branch/main CI Linux race required",
+  "first_full_sweep": "failed specifically new Chinese test script lacked stdout/stderr UTF8 wrappers; corrected and full sweep rerun; original failure log retained",
+  "tag_identity_correction": "v0.10.0 annotated tag object89528ad9188d693a76ebf22a7f8737e43c3ccc8e, peeled source commitd49c5ba9881854f8220fa5ba4c370ac792355840; archive already used peeled source; counts unchanged"
+}

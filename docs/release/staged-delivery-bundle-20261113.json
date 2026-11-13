@@ -1,0 +1,44 @@
+{
+  "schema": "staged-delivery-bundle-record-v1",
+  "source_sha": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+  "bundle": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle",
+  "migration": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-migration",
+  "manifest_sha256": "1bb5000454fb288c3b51c1896f85bd450a6614f5bbf8ead208415b7e1d4d8ce8",
+  "files": 205,
+  "bytes": 24941952,
+  "full_release": false,
+  "zip": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle.zip",
+  "zip_sha256": "c78fb450746305e4944e283831665c7b008014a69b3ce7bdd931f0004202a234",
+  "zip_bytes": 11139581,
+  "controls": [
+    {
+      "control": "mutate",
+      "target_reason": "文件字节/SHA不符：sources/current.zip",
+      "rejected": true
+    },
+    {
+      "control": "missing",
+      "target_reason": "文件集合不符",
+      "rejected": true
+    },
+    {
+      "control": "extra",
+      "target_reason": "文件集合不符",
+      "rejected": true
+    },
+    {
+      "control": "scope",
+      "target_reason": "阶段范围不能提升资格：full_release",
+      "rejected": true
+    }
+  ],
+  "wrong_external_digest": "rejected",
+  "standalone_cli": "passed",
+  "all_remaining_work_complete": false,
+  "all_market_originals_included": false,
+  "financial_admission_extended": false,
+  "live_l9_verified": false,
+  "tag_created": false,
+  "snapshot_boundary": "documents and verifier before adding bundle pointers; exact source archives separately frozen; no circular self-hash",
+  "zip_crc_and_unpacked_roundtrip": "passed; actual ZIP extracted to new directory and standalone verifier matched external manifest SHA"
+}

@@ -1,0 +1,33 @@
+{
+  "fixed_source": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+  "baseline_tag": "v0.10.0",
+  "baseline_sha": "d49c5ba9881854f8220fa5ba4c370ac792355840",
+  "old_release_candidate": "2f02b0faa08245464eb9b99506d66a24e4182cdf",
+  "tool_source_sha256": "402b9b88f1b4c7f1e6e6440cc3ffb19911de7320d6a5e3616b31de43c56d00eb",
+  "tool_binary_sha256": "bf409bf53a56de1f9fb87c15a3655b104eaa400186e1268df8d53ee28f0a931b",
+  "scope": "AST union of build variants; root excludes tests/tools/nested modules; adapter separate; not semantic/ABI proof",
+  "counts": {
+    "diff-v010": {
+      "added": 208,
+      "removed": 0,
+      "changed": 1
+    },
+    "diff-old-candidate": {
+      "added": 206,
+      "removed": 0,
+      "changed": 0
+    },
+    "adapter-diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0
+    },
+    "zero": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0
+    }
+  },
+  "baseline_tag_object_sha": "89528ad9188d693a76ebf22a7f8737e43c3ccc8e",
+  "baseline_identity_note": "annotated tag object is separate from peeled source commit; git archive already exported the peeled commit; API counts unchanged"
+}

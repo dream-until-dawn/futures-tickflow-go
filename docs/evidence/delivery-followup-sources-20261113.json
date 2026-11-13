@@ -1,0 +1,179 @@
+{
+  "schema": "delivery-followup-source-review-v1",
+  "date": "2026-11-13",
+  "base_source_sha": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+  "evidence_root": "C:/Temp/tickflow-delivery-refresh-20261113/research",
+  "requests": [
+    {
+      "id": "pr-release-broker-discovery",
+      "url": "https://www.hongtaqh.com/wsyyt/ywgg/202408/20240819_9794.html",
+      "requested_utc": "2026-11-13T08:45:28.932373+00:00",
+      "first_response_utc": "2026-11-13T08:45:29.859898+00:00",
+      "finished_utc": "2026-11-13T08:45:30.262811+00:00",
+      "status": 200,
+      "bytes": 69430,
+      "sha256": "04da12abc419582ba5725c193dc7d0b749e4e6689f617141ca65413584744acd",
+      "classification": "broker_discovery_only"
+    },
+    {
+      "id": "pr-contract-202408-official",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/08/16/20240816174226526.docx",
+      "requested_utc": "2026-11-13T08:46:47.398318+00:00",
+      "first_response_utc": "2026-11-13T08:46:47.590626+00:00",
+      "finished_utc": "2026-11-13T08:46:47.661032+00:00",
+      "status": 200,
+      "bytes": 26008,
+      "sha256": "0769a569388724a4f6115e896c397e7499ccd79f2ec7f796110cd4fec019bf26",
+      "classification": "official_docx_original"
+    },
+    {
+      "id": "pr-rules-202408-official",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/08/16/20240816174234338.docx",
+      "requested_utc": "2026-11-13T08:46:48.162937+00:00",
+      "first_response_utc": "2026-11-13T08:46:48.366220+00:00",
+      "finished_utc": "2026-11-13T08:46:48.447559+00:00",
+      "status": 200,
+      "bytes": 33182,
+      "sha256": "f0cac66a8fdf2a22d935358f395cf65db08c934b1343f14d2782afcec4dd7cfe",
+      "classification": "official_docx_original"
+    },
+    {
+      "id": "pl-listing-202507-official-page",
+      "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2025/07/1750860251945899.htm",
+      "requested_utc": "2026-11-13T08:48:35.083282+00:00",
+      "first_response_utc": "2026-11-13T08:48:35.277581+00:00",
+      "finished_utc": "2026-11-13T08:48:35.277946+00:00",
+      "status": 412,
+      "bytes": 2864,
+      "sha256": "5793d61e94448bc422928cb03e6fe67e20bca3c35a7b66032c0c905451f2506a",
+      "classification": "challenge_not_document"
+    },
+    {
+      "id": "pf-202009-journal-official",
+      "url": "https://www.czce.com.cn/cn/rootfiles/2023/02/16/1655836155089980-1655836155106338.pdf",
+      "requested_utc": "2026-11-13T08:49:12.299937+00:00",
+      "first_response_utc": "2026-11-13T08:49:12.490202+00:00",
+      "finished_utc": "2026-11-13T08:49:16.400830+00:00",
+      "status": 200,
+      "bytes": 3149846,
+      "sha256": "8c988f1d72055d9eb62a43ec3271879b385f90b09af3a561f961a3fcd1cf4d01",
+      "classification": "official_pdf_original"
+    }
+  ],
+  "budget": {
+    "direct_requests": 5,
+    "body_bytes": 3281330,
+    "request_limit": 24,
+    "body_limit": 33554432,
+    "per_file_limit": 4194304,
+    "per_request_timeout_seconds": 15,
+    "browser_tool_calls": 5,
+    "search_queries": 20,
+    "browser_tool_call_limit": 12,
+    "same_URL_retries": 0,
+    "redirects": 0,
+    "tls_bypasses": 0,
+    "INE_requests": 0,
+    "DCE_requests": 0,
+    "GFEX_requests": 0,
+    "prior_URLs_excluded": 128
+  },
+  "PR2024": {
+    "new_official_documents": 2,
+    "board": "2024-07-18",
+    "publication": "2024-08-16 from broker reproduction; existing official August journal105 announcement independently retained in prior sealed evidence",
+    "effective": "2024-08-30",
+    "rules_article": 8,
+    "day_intervals": [
+      "09:00-10:15",
+      "10:30-11:30",
+      "13:30-15:00"
+    ],
+    "night": "21:00-23:00",
+    "source_controls": {
+      "positive_documents": 2,
+      "targeted_rejections": [
+        {
+          "control": "sha",
+          "required_reason": "original SHA mismatch",
+          "rejected": true
+        },
+        {
+          "control": "truncated",
+          "required_reason": "DOCX structure rejected",
+          "rejected": true
+        },
+        {
+          "control": "identity",
+          "required_reason": "product identity rejected",
+          "rejected": true
+        },
+        {
+          "control": "effective",
+          "required_reason": "effective date rejected",
+          "rejected": true
+        },
+        {
+          "control": "break",
+          "required_reason": "day break rejected",
+          "rejected": true
+        },
+        {
+          "control": "night",
+          "required_reason": "night span rejected",
+          "rejected": true
+        },
+        {
+          "control": "draft",
+          "required_reason": "draft marker rejected",
+          "rejected": true
+        }
+      ],
+      "originals_changed": false
+    },
+    "calendar_qualified": false,
+    "remaining": "official2024 holiday/related detailed no-night and2025 New Year boundary + full applicable revision continuity"
+  },
+  "PF2020": {
+    "new_official_documents": 1,
+    "pdf_review": {
+      "pages": 53,
+      "relevant_actual_pdf_pages": [
+        44,
+        45
+      ],
+      "original_sha256": "8c988f1d72055d9eb62a43ec3271879b385f90b09af3a561f961a3fcd1cf4d01",
+      "status": "actual PDF pages44/45 rendered and visually inspected; printed43/44; formal76 publication and77 listing read in full",
+      "render_note": "Poppler emitted missing display-font warnings; resulting relevant Chinese pages and numbers visually readable; warnings observed in tool output, not captured original stderr file"
+    },
+    "formal_publication_notice": 76,
+    "listing_notice": 77,
+    "publication": "2020-09-28",
+    "effective_listing": "2020-10-12",
+    "first_night": "2020-10-12 21:00-23:00",
+    "first_contracts": [
+      "PF105",
+      "PF106",
+      "PF107",
+      "PF108",
+      "PF109"
+    ],
+    "draft_notice_66_not_used_as_formal_rule": true,
+    "full_attachments_obtained": false,
+    "calendar_qualified": false,
+    "remaining": "then-effective formal trade rules and day break, applicable revision continuity,2020 annual/end-year no-night originals"
+  },
+  "other_pending": {
+    "PX_SH2023": "719/717/1060 official holiday originals and post-listing version index still missing; no new direct requests",
+    "INE2024": "Dragon Boat and New Year boundary full official originals missing; no repeated probes",
+    "PK2021": "first draft/publication leads do not establish full formal regime/holiday chain",
+    "CY2017": "first23:30 night established earlier; later adjustment exact original and complete holiday/version chain missing; secondary2019 adjustment not promoted",
+    "PL2025": "new exact original source page412; complete reproduction is only lead, no official readable listing/rules originals obtained",
+    "WR": "historical night participation/no-night scope and applicable three-day-session/revision chain incomplete"
+  },
+  "calendar_generated": false,
+  "qualified_product_count": 6,
+  "financial_admission_extended": false,
+  "originals_rewritten": false,
+  "confidence": "high for actual formal PR clauses and PF publication/listing pages; incomplete annual qualification remains unknown; no invented percentage"
+}

@@ -1,0 +1,830 @@
+{
+  "added": [
+    {
+      "name": "archive/batch:batch.Download",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Download.Attempted",
+      "after": "bool `json:\"attempted\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Body",
+      "after": "[]byte `json:\"-\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Complete",
+      "after": "bool `json:\"complete\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.ContentLength",
+      "after": "int64 `json:\"content_length\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.ContentType",
+      "after": "string `json:\"content_type,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Failure",
+      "after": "string `json:\"failure,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.FinalURL",
+      "after": "string `json:\"final_url,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.RequestedAt",
+      "after": "time.Time `json:\"requested_at\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.ResponseReceived",
+      "after": "bool `json:\"response_received\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.ServerDate",
+      "after": "string `json:\"server_date,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.SourceSHA",
+      "after": "string `json:\"source_sha256,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.SourceURL",
+      "after": "string `json:\"source_url,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Status",
+      "after": "int `json:\"status\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Transport",
+      "after": "string `json:\"transport,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Download.Unauthenticated",
+      "after": "bool `json:\"unauthenticated,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Downloader",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Downloader.Fetch",
+      "after": "recv *Downloader func(ctx context.Context, address string) ([]byte, error)"
+    },
+    {
+      "name": "archive/batch:batch.Downloader.FetchDetailed",
+      "after": "recv *Downloader func(ctx context.Context, address string) (Download, error)"
+    },
+    {
+      "name": "archive/batch:batch.Downloader.Usage",
+      "after": "recv *Downloader func() (int, int64)"
+    },
+    {
+      "name": "archive/batch:batch.Job",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Job.Blocked",
+      "after": "string `json:\"blocked,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Day",
+      "after": "int32 `json:\"day\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Exchange",
+      "after": "string `json:\"exchange,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.ExpectedSHA",
+      "after": "string `json:\"expected_sha256,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Format",
+      "after": "string `json:\"format\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.ID",
+      "after": "string `json:\"id\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Local",
+      "after": "string `json:\"local,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Product",
+      "after": "string `json:\"product,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.RetrievedAt",
+      "after": "time.Time `json:\"retrieved_at,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.URL",
+      "after": "string `json:\"url\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Version",
+      "after": "string `json:\"version,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Job.Year",
+      "after": "int `json:\"year,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Limits",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Limits.Bytes",
+      "after": "int64"
+    },
+    {
+      "name": "archive/batch:batch.Limits.Interval",
+      "after": "time.Duration"
+    },
+    {
+      "name": "archive/batch:batch.Limits.Requests",
+      "after": "int"
+    },
+    {
+      "name": "archive/batch:batch.Limits.Timeout",
+      "after": "time.Duration"
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant.LinkedURL",
+      "after": "string `json:\"linked_url\"`"
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant.Method",
+      "after": "string `json:\"method\"`"
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant.Source",
+      "after": "evidence.Ref `json:\"source\"`"
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant.SourceBody",
+      "after": "[]byte `json:\"-\"`"
+    },
+    {
+      "name": "archive/batch:batch.NativeHTTPGrant.URL",
+      "after": "string `json:\"url\"`"
+    },
+    {
+      "name": "archive/batch:batch.NewDownloader",
+      "after": "func(client *http.Client, l Limits) (*Downloader, error)"
+    },
+    {
+      "name": "archive/batch:batch.NewNativeHTTPDownloader",
+      "after": "func(l Limits, grants []NativeHTTPGrant) (*Downloader, error)"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Blocked",
+      "after": "int `json:\"blocked\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.CoverageStatus",
+      "after": "string `json:\"coverage_status\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Exchange",
+      "after": "string `json:\"exchange\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Failed",
+      "after": "int `json:\"failed\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.NotRun",
+      "after": "int `json:\"not_run\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Planned",
+      "after": "int `json:\"planned\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Product",
+      "after": "string `json:\"product\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Received",
+      "after": "int `json:\"received\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Unknown",
+      "after": "int `json:\"unknown\"`"
+    },
+    {
+      "name": "archive/batch:batch.PartitionReport.Year",
+      "after": "int `json:\"year\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Receipt.BodyState",
+      "after": "string `json:\"body_state\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.Bytes",
+      "after": "int64 `json:\"bytes\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.Error",
+      "after": "string `json:\"error,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.Evidence",
+      "after": "evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.HTTP",
+      "after": "*Download `json:\"http,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.JobSHA",
+      "after": "string `json:\"job_sha256\"`"
+    },
+    {
+      "name": "archive/batch:batch.Receipt.State",
+      "after": "string `json:\"state\"`"
+    },
+    {
+      "name": "archive/batch:batch.Result",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.Result.ID",
+      "after": "string `json:\"id\"`"
+    },
+    {
+      "name": "archive/batch:batch.Result.Receipt",
+      "after": "Receipt `json:\"receipt\"`"
+    },
+    {
+      "name": "archive/batch:batch.Result.Resumed",
+      "after": "bool `json:\"resumed\"`"
+    },
+    {
+      "name": "archive/batch:batch.Run",
+      "after": "func(ctx context.Context, root string, jobs []Job, down *Downloader, maxLocalBytes int64, validate Validator) ([]Result, error)"
+    },
+    {
+      "name": "archive/batch:batch.Summarize",
+      "after": "func(jobs []Job, results []Result) ([]PartitionReport, error)"
+    },
+    {
+      "name": "archive/batch:batch.SyncFrozen",
+      "after": "func(ctx context.Context, cfg tf.SyncerConfig, request tf.SyncRequest, now int64) (SyncResult, error)"
+    },
+    {
+      "name": "archive/batch:batch.SyncResult",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.SyncResult.Covered",
+      "after": "bool `json:\"covered\"`"
+    },
+    {
+      "name": "archive/batch:batch.SyncResult.Report",
+      "after": "tf.SyncReport `json:\"report\"`"
+    },
+    {
+      "name": "archive/batch:batch.SyncResult.Request",
+      "after": "tf.SyncRequest `json:\"request\"`"
+    },
+    {
+      "name": "archive/batch:batch.Validator",
+      "after": "type  func(Job, []byte, evidence.Ref) error"
+    },
+    {
+      "name": "archive/ingest:ingest.Parse",
+      "after": "func(raw []byte) (Plan, error)"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan",
+      "after": "struct "
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.From",
+      "after": "tf.TradingDay `json:\"from\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.IntervalMS",
+      "after": "int64 `json:\"interval_ms\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.Jobs",
+      "after": "[]batch.Job `json:\"jobs\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.MaxBytes",
+      "after": "int64 `json:\"max_bytes\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.MaxLocalBytes",
+      "after": "int64 `json:\"max_local_bytes\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.MaxRequests",
+      "after": "int `json:\"max_requests\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.Schema",
+      "after": "string `json:\"schema\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.TimeoutMS",
+      "after": "int64 `json:\"timeout_ms\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Plan.To",
+      "after": "tf.TradingDay `json:\"to\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report",
+      "after": "struct "
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Bytes",
+      "after": "int64 `json:\"bytes\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Partitions",
+      "after": "[]batch.PartitionReport `json:\"partitions\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.PlanSHA",
+      "after": "string `json:\"plan_sha256\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Qualification",
+      "after": "string `json:\"qualification\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Requests",
+      "after": "int `json:\"requests\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Results",
+      "after": "[]batch.Result `json:\"results\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Schema",
+      "after": "string `json:\"schema\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.Status",
+      "after": "string `json:\"status\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.TotalBytes",
+      "after": "int64 `json:\"cumulative_bytes\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Report.TotalRequests",
+      "after": "int `json:\"cumulative_requests\"`"
+    },
+    {
+      "name": "archive/ingest:ingest.Run",
+      "after": "func(ctx context.Context, raw []byte, out string, network bool) (Report, error)"
+    },
+    {
+      "name": "archive/ingest:ingest.ValidateOriginal",
+      "after": "func(j batch.Job, raw []byte, r evidence.Ref) error"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar",
+      "after": "struct "
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.Covers",
+      "after": "recv *Calendar func(k tf.ProductKey) (tf.TradingDay, tf.TradingDay, bool)"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.DayAt",
+      "after": "recv *Calendar func(k tf.ProductKey, ts int64) (tf.Day, error)"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.DayOf",
+      "after": "recv *Calendar func(k tf.ProductKey, d tf.TradingDay) (tf.Day, error)"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.Evidence",
+      "after": "recv *Calendar func(k tf.ProductKey, d tf.TradingDay) ([]evidence.Ref, error)"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.Template",
+      "after": "recv *Calendar func(k tf.ProductKey, d tf.TradingDay) (tf.SessionTemplate, error)"
+    },
+    {
+      "name": "calendar/verified:verified.Calendar.Walk",
+      "after": "recv *Calendar func(k tf.ProductKey, from, to tf.TradingDay, fn func(tf.Day) bool) error"
+    },
+    {
+      "name": "calendar/verified:verified.Date",
+      "after": "func(d tf.TradingDay) (time.Time, error)"
+    },
+    {
+      "name": "calendar/verified:verified.New",
+      "after": "func(all []Series) (*Calendar, error)"
+    },
+    {
+      "name": "calendar/verified:verified.Record",
+      "after": "struct "
+    },
+    {
+      "name": "calendar/verified:verified.Record.Day",
+      "after": "tf.TradingDay `json:\"day\"`"
+    },
+    {
+      "name": "calendar/verified:verified.Record.Evidence",
+      "after": "[]evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "calendar/verified:verified.Record.Sessions",
+      "after": "[]tf.Session `json:\"sessions\"`"
+    },
+    {
+      "name": "calendar/verified:verified.Record.Template",
+      "after": "tf.SessionTemplate `json:\"template\"`"
+    },
+    {
+      "name": "calendar/verified:verified.Series",
+      "after": "struct "
+    },
+    {
+      "name": "calendar/verified:verified.Series.Product",
+      "after": "tf.ProductKey `json:\"product\"`"
+    },
+    {
+      "name": "calendar/verified:verified.Series.Records",
+      "after": "[]Record `json:\"records\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Candidates",
+      "after": "func(contracts []shinnyref.Contract, ref evidence.Ref) ([]Entry, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.Catalog",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.Catalog.Entries",
+      "after": "recv *Catalog func() []Entry"
+    },
+    {
+      "name": "refdata/catalog:catalog.Catalog.Get",
+      "after": "recv *Catalog func(s tf.Symbol) (Entry, bool)"
+    },
+    {
+      "name": "refdata/catalog:catalog.Catalog.QueryHistory",
+      "after": "recv *Catalog func(q Query) (QueryReport, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.Catalog.Resolve",
+      "after": "recv *Catalog func(exchange, native string, day tf.TradingDay) (tf.Symbol, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.CheckSet",
+      "after": "func(want Expected, actual []tf.Symbol) error"
+    },
+    {
+      "name": "refdata/catalog:catalog.DateFact",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.DateFact.Day",
+      "after": "tf.TradingDay `json:\"day\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.DateFact.Evidence",
+      "after": "[]evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.Candidate",
+      "after": "*evidence.Ref `json:\"candidate,omitempty\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.ExpireTs",
+      "after": "int64 `json:\"expire_ts,omitempty\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.LastTrading",
+      "after": "DateFact `json:\"last_trading\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.Listed",
+      "after": "DateFact `json:\"listed\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.Observed",
+      "after": "[]Observation `json:\"observed\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.ReportedExpiry",
+      "after": "DateFact `json:\"reported_expiry\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Entry.Symbol",
+      "after": "tf.Symbol `json:\"symbol\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Expected",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.Expected.Day",
+      "after": "tf.TradingDay"
+    },
+    {
+      "name": "refdata/catalog:catalog.Expected.Evidence",
+      "after": "[]evidence.Ref"
+    },
+    {
+      "name": "refdata/catalog:catalog.Expected.Symbols",
+      "after": "[]tf.Symbol"
+    },
+    {
+      "name": "refdata/catalog:catalog.Merge",
+      "after": "func(groups ...[]Entry) ([]Entry, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.New",
+      "after": "func(entries []Entry) (*Catalog, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.Observation",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.Observation.Day",
+      "after": "tf.TradingDay `json:\"day\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.Observation.Evidence",
+      "after": "evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.ParseCZCEReference",
+      "after": "func(raw []byte, ref evidence.Ref, day tf.TradingDay) ([]Entry, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.ParseSHFEBase",
+      "after": "func(raw []byte, ref evidence.Ref, day tf.TradingDay) ([]Entry, error)"
+    },
+    {
+      "name": "refdata/catalog:catalog.Query",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.Query.Exchange",
+      "after": "string"
+    },
+    {
+      "name": "refdata/catalog:catalog.Query.From",
+      "after": "tf.TradingDay"
+    },
+    {
+      "name": "refdata/catalog:catalog.Query.To",
+      "after": "tf.TradingDay"
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport.CompleteUniverseCertified",
+      "after": "bool `json:\"complete_universe_certified\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport.LifecycleOverlap",
+      "after": "[]Entry `json:\"lifecycle_overlap\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport.Observed",
+      "after": "[]Entry `json:\"observed\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport.Requested",
+      "after": "Query `json:\"requested\"`"
+    },
+    {
+      "name": "refdata/catalog:catalog.QueryReport.Unresolved",
+      "after": "[]Entry `json:\"unresolved\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.File",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/evidence:evidence.File.MaxBytes",
+      "after": "int64 `json:\"max_bytes\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.File.Path",
+      "after": "string `json:\"path\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.File.Ref",
+      "after": "Ref `json:\"ref\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.File.Verify",
+      "after": "recv File func() error"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref",
+      "after": "struct "
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.ID",
+      "after": "string `json:\"id\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.RetrievedAt",
+      "after": "time.Time `json:\"retrieved_at\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.SHA256",
+      "after": "string `json:\"sha256\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.URL",
+      "after": "string `json:\"url\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.Validate",
+      "after": "recv Ref func() error"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.Verify",
+      "after": "recv Ref func(raw []byte) error"
+    },
+    {
+      "name": "refdata/evidence:evidence.Ref.Version",
+      "after": "string `json:\"version,omitempty\"`"
+    },
+    {
+      "name": "refdata/evidence:evidence.VerifyFiles",
+      "after": "func(files []File) error"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrBadOffset",
+      "after": "var  = errBadOffset slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrBadSessions",
+      "after": "var  = errBadSessions slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrBadStatus",
+      "after": "var  = errBadStatus slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrMissing",
+      "after": "var  = errMissing slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrNoGzip",
+      "after": "var  = errNoGzip slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrNotFuture",
+      "after": "var  = errNotFuture slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrNotReadToEOF",
+      "after": "var  = errNotReadToEOF slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrRangeAsked",
+      "after": "var  = errRangeAsked slot=0"
+    },
+    {
+      "name": "refdata/shinnyref:shinnyref.ErrStreamBroken",
+      "after": "var  = errStreamBroken slot=0"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document",
+      "after": "struct "
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Day",
+      "after": "tf.TradingDay `json:\"day\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Evidence",
+      "after": "evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Format",
+      "after": "string `json:\"format\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Origin",
+      "after": "evidence.Ref `json:\"origin,omitempty\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Original",
+      "after": "[]byte `json:\"-\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Document.Raw",
+      "after": "[]byte `json:\"-\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.New",
+      "after": "func(cal tf.Calendar, documents []Document, resolver Resolver, now int64) (*Source, error)"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Number",
+      "after": "func(s string) (float64, error)"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Parse",
+      "after": "func(d Document) ([]Record, error)"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record",
+      "after": "struct "
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Artifact",
+      "after": "*evidence.Ref `json:\"artifact,omitempty\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Day",
+      "after": "tf.TradingDay `json:\"day\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Evidence",
+      "after": "evidence.Ref `json:\"evidence\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Exchange",
+      "after": "string `json:\"exchange\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Fields",
+      "after": "map[string]string `json:\"fields\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Member",
+      "after": "string `json:\"member,omitempty\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Native",
+      "after": "string `json:\"native\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.Row",
+      "after": "int `json:\"row\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Record.TurnoverUnit",
+      "after": "string `json:\"turnover_unit\"`"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Resolver",
+      "after": "type  interface {\n\tResolve(exchange, native string, day tf.TradingDay) (tf.Symbol, error)\n}"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Source",
+      "after": "struct "
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Source.Bars",
+      "after": "recv *Source func(ctx context.Context, req tf.BarRequest) ([]tf.Bar, error)"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Source.Calendar",
+      "after": "recv *Source func() tf.Calendar"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Source.Caps",
+      "after": "recv *Source func(k tf.ProductKey) tf.Capabilities"
+    },
+    {
+      "name": "source/officialdaily:officialdaily.Source.Records",
+      "after": "recv *Source func(sym tf.Symbol) []Record"
+    }
+  ],
+  "removed": [],
+  "changed": []
+}
