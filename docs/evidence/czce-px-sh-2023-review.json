@@ -1,0 +1,631 @@
+{
+  "schema": "czce-listed2023-evidence-review-v1",
+  "base_commit": "232c71736fd009ff052c7d4754aa7c42b5d94bbd",
+  "source_root": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113",
+  "scope": "PX/SH2023 primary rule supplement only; no qualified calendar generated",
+  "calendar_qualified": false,
+  "calendar_output": null,
+  "verified_calendar_products_remain": 6,
+  "sources": {
+    "czce-home": {
+      "file": "czce-home.body",
+      "bytes": 2652,
+      "status": 412,
+      "state": "http_blocked_not_document",
+      "error": null,
+      "ref": {
+        "id": "czce-home",
+        "url": "https://www.czce.com.cn/",
+        "sha256": "46c0f290b871a18118211c1ccabd61867a227c4f3be444df4a8fe1285c00caf1",
+        "retrieved_at": "2026-11-13T06:06:23.281316+00:00"
+      }
+    },
+    "broker-px-release-discovery": {
+      "file": "broker-px-release-discovery.body",
+      "bytes": 34082,
+      "status": 200,
+      "state": "discovery_only",
+      "error": null,
+      "ref": {
+        "id": "broker-px-release-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=48449",
+        "sha256": "f0081632031c88fcc60cabae3f6d25235f1ad635390d1072721ea7eeb62ff3f0",
+        "retrieved_at": "2026-11-13T06:06:24.192374+00:00"
+      }
+    },
+    "broker-autumn-discovery": {
+      "file": "broker-autumn-discovery.body",
+      "bytes": 23670,
+      "status": 200,
+      "state": "challenge_not_document",
+      "error": null,
+      "ref": {
+        "id": "broker-autumn-discovery",
+        "url": "https://www.yhqh.com.cn/col420/11166.html",
+        "sha256": "9ba72bf25eb30fb3653f8d8338b71e1e8d1580a285d975b203a380999a5a5933",
+        "retrieved_at": "2026-11-13T06:06:24.921600+00:00"
+      }
+    },
+    "px-business-202309-docx": {
+      "file": "px-business-202309-docx.body",
+      "bytes": 32479,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "px-business-202309-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908183636193.docx",
+        "sha256": "2a3305019203d24498c11722e0fa922f69df978d80a557bd0219e364dbe86d28",
+        "retrieved_at": "2026-11-13T06:07:36.263001+00:00"
+      }
+    },
+    "px-contract-202309-docx": {
+      "file": "px-contract-202309-docx.body",
+      "bytes": 23943,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "px-contract-202309-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908183616249.docx",
+        "sha256": "23b649bc48ccdcf9e60359ac7f2b3e22fc2b384db638547b5496114771d9663b",
+        "retrieved_at": "2026-11-13T06:07:37.015094+00:00"
+      }
+    },
+    "trade-202304-release": {
+      "file": "trade-202304-release.body",
+      "bytes": 2820,
+      "status": 412,
+      "state": "http_blocked_not_document",
+      "error": null,
+      "ref": {
+        "id": "trade-202304-release",
+        "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2023/04/1684183656671349.htm",
+        "sha256": "d542ded3a309179e4b6524e222657c669b2a239127e4b49412841b47c9e728e6",
+        "retrieved_at": "2026-11-13T06:07:37.747613+00:00"
+      }
+    },
+    "broker-sh-release-discovery": {
+      "file": null,
+      "bytes": 0,
+      "status": null,
+      "state": "tls_failed_no_document",
+      "error": "URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)>",
+      "ref": {
+        "id": "broker-sh-release-discovery",
+        "url": "https://bocifco.com.cn/newsinfo.aspx?cid=3&id=48446",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retrieved_at": "2026-11-13T06:08:45.559175+00:00"
+      }
+    },
+    "broker-year-discovery": {
+      "file": "broker-year-discovery.body",
+      "bytes": 42183,
+      "status": 200,
+      "state": "secondary_notice_not_official_original",
+      "error": null,
+      "ref": {
+        "id": "broker-year-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=47821",
+        "sha256": "f91800bbe580f32915f9ff71e88cf0c7b89083255ee43d8d40b1b995226395dc",
+        "retrieved_at": "2026-11-13T06:08:46.361949+00:00"
+      }
+    },
+    "broker-boundary-discovery": {
+      "file": "broker-boundary-discovery.body",
+      "bytes": 34106,
+      "status": 200,
+      "state": "secondary_notice_not_official_original",
+      "error": null,
+      "ref": {
+        "id": "broker-boundary-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=48743",
+        "sha256": "accfd5a57141db6352614a08dc9526d0440ddcee10e7e19e747d7ee4809099dd",
+        "retrieved_at": "2026-11-13T06:08:47.154349+00:00"
+      }
+    },
+    "legal-index-discovery": {
+      "file": "legal-index-discovery.body",
+      "bytes": 49456,
+      "status": 200,
+      "state": "discovery_only",
+      "error": null,
+      "ref": {
+        "id": "legal-index-discovery",
+        "url": "https://futureslaw.org.cn/czcezlgz/index.htm",
+        "sha256": "15cf68bdae0314916066541d418cc5a222d7929f9466085e74d8a93f9833e53d",
+        "retrieved_at": "2026-11-13T06:08:47.997057+00:00"
+      }
+    },
+    "trade-202305-clean-docx": {
+      "file": "trade-202305-clean-docx.body",
+      "bytes": 42366,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "trade-202305-clean-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/04/26/20230426175131551.docx",
+        "sha256": "35930b2a16c9ec059d3454d2fe90c910cc7ded138df2a8824bb68bde7abe07f0",
+        "retrieved_at": "2026-11-13T06:10:14.235976+00:00"
+      }
+    },
+    "trade-202305-diff-docx": {
+      "file": "trade-202305-diff-docx.body",
+      "bytes": 14183,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "trade-202305-diff-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/04/26/20230426175118411.docx",
+        "sha256": "1f97b630f71b1716a3600e616f6d023301209f9cfa8d91ac0975a4fe90cba23e",
+        "retrieved_at": "2026-11-13T06:10:14.957194+00:00"
+      }
+    },
+    "broker-sh-founder-discovery": {
+      "file": null,
+      "bytes": 0,
+      "status": 200,
+      "state": "empty_not_document",
+      "error": null,
+      "ref": {
+        "id": "broker-sh-founder-discovery",
+        "url": "https://www.founderfu.com/fzzqqh_2019/details_247_65391.html",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retrieved_at": "2026-11-13T06:10:15.796702+00:00"
+      }
+    },
+    "broker-trade-discovery": {
+      "file": "broker-trade-discovery.body",
+      "bytes": 31771,
+      "status": 200,
+      "state": "discovery_only",
+      "error": null,
+      "ref": {
+        "id": "broker-trade-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=48096",
+        "sha256": "4877fda1867699e4ff921600de1073072d704d9c23c96545c5e025877886ff85",
+        "retrieved_at": "2026-11-13T06:10:16.593755+00:00"
+      }
+    },
+    "broker-sh-canonical-discovery": {
+      "file": "broker-sh-canonical-discovery.body",
+      "bytes": 36106,
+      "status": 200,
+      "state": "discovery_only",
+      "error": null,
+      "ref": {
+        "id": "broker-sh-canonical-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=48446",
+        "sha256": "36db4246f96dc9af8eb278cce52e1b7830d26a8a700bd31e12d55b488630a8e8",
+        "retrieved_at": "2026-11-13T06:11:02.714886+00:00"
+      }
+    },
+    "broker-sh-handbook-discovery": {
+      "file": null,
+      "bytes": 0,
+      "status": 200,
+      "state": "empty_not_document",
+      "error": null,
+      "ref": {
+        "id": "broker-sh-handbook-discovery",
+        "url": "https://www.founderfu.com/fzzqqh_2019/details_449_65581.html",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retrieved_at": "2026-11-13T06:11:03.383695+00:00"
+      }
+    },
+    "sh-contract-202309-docx": {
+      "file": "sh-contract-202309-docx.body",
+      "bytes": 22894,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "sh-contract-202309-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908182945148.docx",
+        "sha256": "641e4f014f4cf0d3ce03e010c6502143fb2e809f636e61fd3361fd6d6bcf4cb9",
+        "retrieved_at": "2026-11-13T06:12:45.540586+00:00"
+      }
+    },
+    "sh-business-202309-docx": {
+      "file": "sh-business-202309-docx.body",
+      "bytes": 31843,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "sh-business-202309-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2023/09/08/20230908183010426.docx",
+        "sha256": "ed38bb68e81c6360781e656bd38f7a48f06b5498234119f373fa62a1af6ca773",
+        "retrieved_at": "2026-11-13T06:12:46.313221+00:00"
+      }
+    },
+    "czce-trading-calendar-discovery": {
+      "file": "czce-trading-calendar-discovery.body",
+      "bytes": 2729,
+      "status": 412,
+      "state": "http_blocked_not_document",
+      "error": null,
+      "ref": {
+        "id": "czce-trading-calendar-discovery",
+        "url": "https://www.czce.com.cn/cn/jysj/jyyl/H770313index_1.htm",
+        "sha256": "bb6776bd91794513e56c10a863d6c9d8c8eb6b5485ea3300c91a62ed79e0d3d3",
+        "retrieved_at": "2026-11-13T06:13:55.946345+00:00"
+      }
+    },
+    "broker-autumn-ccb-discovery": {
+      "file": "broker-autumn-ccb-discovery.body",
+      "bytes": 25288,
+      "status": 200,
+      "state": "secondary_notice_not_official_original",
+      "error": null,
+      "ref": {
+        "id": "broker-autumn-ccb-discovery",
+        "url": "https://www.ccbfutures.com/main/a/20230921/63132.shtml",
+        "sha256": "dc54ae1b5ccf508679ada94fa0fc326291f36e0181db0828fcd7ec34b14592be",
+        "retrieved_at": "2026-11-13T06:15:28.052368+00:00"
+      }
+    },
+    "broker-year-bocifco-independent-discovery": {
+      "file": null,
+      "bytes": 0,
+      "status": 200,
+      "state": "empty_not_document",
+      "error": null,
+      "ref": {
+        "id": "broker-year-bocifco-independent-discovery",
+        "url": "https://www.founderfu.com/fzzqqh_2019/details_247_69741.html",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retrieved_at": "2026-11-13T06:15:28.715882+00:00"
+      }
+    },
+    "broker-next-rules-discovery": {
+      "file": "broker-next-rules-discovery.body",
+      "bytes": 45767,
+      "status": 200,
+      "state": "discovery_only",
+      "error": null,
+      "ref": {
+        "id": "broker-next-rules-discovery",
+        "url": "https://www.bocifco.com/newsinfo.aspx?cid=3&id=49418",
+        "sha256": "bb75dd14c04c51b4da0b18773568a789b9948ac41c95e55ec03853ce9c605f3c",
+        "retrieved_at": "2026-11-13T06:16:11.268091+00:00"
+      }
+    },
+    "px-next-202411-diff-docx": {
+      "file": "px-next-202411-diff-docx.body",
+      "bytes": 25653,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "px-next-202411-diff-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2024/11/04/20241104164159381.docx",
+        "sha256": "412e0def6c16b5148be7f92abafe13b5319bea5265447e5cb431f38b55ef6d15",
+        "retrieved_at": "2026-11-13T06:16:12.279992+00:00"
+      }
+    },
+    "px-next-202411-clean-docx": {
+      "file": "px-next-202411-clean-docx.body",
+      "bytes": 35070,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "px-next-202411-clean-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2024/11/04/20241104164207596.docx",
+        "sha256": "822b3d2c11425d4190da7c77a4c00a0bf6fb30408537dd9ce52d35815488d55c",
+        "retrieved_at": "2026-11-13T06:16:13.075984+00:00"
+      }
+    },
+    "sh-next-202411-diff-docx": {
+      "file": "sh-next-202411-diff-docx.body",
+      "bytes": 25620,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "sh-next-202411-diff-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2024/11/04/20241104164216381.docx",
+        "sha256": "1897da7cdb69fd7c7806cf4df736a74fc2c2b7fa2d3e2a3e6d565f4a0b393587",
+        "retrieved_at": "2026-11-13T06:16:13.838218+00:00"
+      }
+    },
+    "sh-next-202411-clean-docx": {
+      "file": "sh-next-202411-clean-docx.body",
+      "bytes": 35451,
+      "status": 200,
+      "state": "official_docx_original",
+      "error": null,
+      "ref": {
+        "id": "sh-next-202411-clean-docx",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2024/11/04/20241104164256833.docx",
+        "sha256": "35c242308aaf1901aa0e605c9b03bab5076d8cd68175f847cbfc6126d4c2c205",
+        "retrieved_at": "2026-11-13T06:16:14.612774+00:00"
+      }
+    },
+    "czce-px-sh-journal-pdf": {
+      "file": "czce-px-sh-journal-pdf.body",
+      "bytes": 3233479,
+      "ref": {
+        "id": "czce-px-sh-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2023/10/18/1697226838884489-1697226838904727.pdf",
+        "sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+        "retrieved_at": "2026-11-12T14:13:51.319696+00:00",
+        "version": "official-original"
+      },
+      "state": "reused_official_pdf",
+      "status": 200
+    }
+  },
+  "derived_rule_texts": {
+    "px-business-202309-docx": {
+      "file": "px-business-202309-docx.txt",
+      "sha256": "5157f09811ec2fa8993549d073cb8f8b246b3d9c1bc4d549c27519f1b87aabb1",
+      "origin_sha256": "2a3305019203d24498c11722e0fa922f69df978d80a557bd0219e364dbe86d28",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.524920+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "px-contract-202309-docx": {
+      "file": "px-contract-202309-docx.txt",
+      "sha256": "7705590697d8ebeecdf82ba3522f2b3c211f663f2bbf3872292f089c169633fb",
+      "origin_sha256": "23b649bc48ccdcf9e60359ac7f2b3e22fc2b384db638547b5496114771d9663b",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.531773+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "trade-202305-clean-docx": {
+      "file": "trade-202305-clean-docx.txt",
+      "sha256": "e16fdc8d3b4b2cc59639d2d231e20a1b1709c3dddffbf8ed1e187404e8b78bdd",
+      "origin_sha256": "35930b2a16c9ec059d3454d2fe90c910cc7ded138df2a8824bb68bde7abe07f0",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.538178+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "trade-202305-diff-docx": {
+      "file": "trade-202305-diff-docx.txt",
+      "sha256": "51977b53fefdd4f2ea5571ddcb1d2418f3e25e278cb6ff7c7223ab424dd40126",
+      "origin_sha256": "1f97b630f71b1716a3600e616f6d023301209f9cfa8d91ac0975a4fe90cba23e",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.544816+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "sh-contract-202309-docx": {
+      "file": "sh-contract-202309-docx.txt",
+      "sha256": "146e2e616a0a82992bce4d6bc2b0a3698e9869f2e88d1b85e6e4becedbc8d600",
+      "origin_sha256": "641e4f014f4cf0d3ce03e010c6502143fb2e809f636e61fd3361fd6d6bcf4cb9",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.550922+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "sh-business-202309-docx": {
+      "file": "sh-business-202309-docx.txt",
+      "sha256": "082bef73ec02ad1fab805541da9d6e5ae52d258db347783f664cf363d33cfc06",
+      "origin_sha256": "ed38bb68e81c6360781e656bd38f7a48f06b5498234119f373fa62a1af6ca773",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.559042+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "px-next-202411-diff-docx": {
+      "file": "px-next-202411-diff-docx.txt",
+      "sha256": "87d452c7f0c1f899cb23e475f334418fc4cea988d82778dd41d42b803c1f5f1f",
+      "origin_sha256": "412e0def6c16b5148be7f92abafe13b5319bea5265447e5cb431f38b55ef6d15",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.565775+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "px-next-202411-clean-docx": {
+      "file": "px-next-202411-clean-docx.txt",
+      "sha256": "a0bbceea30a3312720409846d770d71fb273a65cac63e8bae705faa481a401f7",
+      "origin_sha256": "822b3d2c11425d4190da7c77a4c00a0bf6fb30408537dd9ce52d35815488d55c",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.572118+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "sh-next-202411-diff-docx": {
+      "file": "sh-next-202411-diff-docx.txt",
+      "sha256": "b069af1baca8018ee78eca4036e071ad3601327ededaacc9335c05551fe7d180",
+      "origin_sha256": "1897da7cdb69fd7c7806cf4df736a74fc2c2b7fa2d3e2a3e6d565f4a0b393587",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.578262+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    },
+    "sh-next-202411-clean-docx": {
+      "file": "sh-next-202411-clean-docx.txt",
+      "sha256": "549db69857699fd8dda937c560c1d9c6f5ad4938989bc2381f52713b554d3413",
+      "origin_sha256": "35c242308aaf1901aa0e605c9b03bab5076d8cd68175f847cbfc6126d4c2c205",
+      "verified_text_registration_utc": "2026-11-13T06:25:44.585905+00:00",
+      "transform": "ZIP CRC + word/document.xml w:t paragraph text; original retained"
+    }
+  },
+  "official_rules_verified": [
+    {
+      "source": "px-business-202309-docx",
+      "sha256": "2a3305019203d24498c11722e0fa922f69df978d80a557bd0219e364dbe86d28",
+      "title": "郑州商品交易所对二甲苯期货业务细则",
+      "effective_date": "2023年9月15日",
+      "day_break_verified": true,
+      "explicit_product_night_hours": true,
+      "result": "passed"
+    },
+    {
+      "source": "sh-business-202309-docx",
+      "sha256": "ed38bb68e81c6360781e656bd38f7a48f06b5498234119f373fa62a1af6ca773",
+      "title": "郑州商品交易所烧碱期货业务细则",
+      "effective_date": "2023年9月15日",
+      "day_break_verified": true,
+      "explicit_product_night_hours": true,
+      "result": "passed"
+    },
+    {
+      "source": "trade-202305-clean-docx",
+      "sha256": "35930b2a16c9ec059d3454d2fe90c910cc7ded138df2a8824bb68bde7abe07f0",
+      "title": "郑州商品交易所期货交易管理办法",
+      "effective_date": "2023年5月26日",
+      "day_break_verified": true,
+      "explicit_product_night_hours": false,
+      "result": "passed"
+    }
+  ],
+  "controls": [
+    {
+      "case": "positive",
+      "result": "passed"
+    },
+    {
+      "case": "wrong-sha",
+      "result": "rejected",
+      "target": "source_sha",
+      "actual": "source_sha"
+    },
+    {
+      "case": "truncated-valid-new-sha",
+      "result": "rejected",
+      "target": "docx_integrity",
+      "actual": "docx_integrity"
+    },
+    {
+      "case": "foreign-product",
+      "result": "rejected",
+      "target": "product_identity",
+      "actual": "product_identity"
+    },
+    {
+      "case": "missing-rest",
+      "result": "rejected",
+      "target": "day_break",
+      "actual": "day_break"
+    },
+    {
+      "case": "wrong-effective",
+      "result": "rejected",
+      "target": "effective_date",
+      "actual": "effective_date"
+    },
+    {
+      "case": "draft-mixed-in",
+      "result": "rejected",
+      "target": "draft_not_final",
+      "actual": "draft_not_final"
+    },
+    {
+      "case": "wrong-night",
+      "result": "rejected",
+      "target": "night_hours",
+      "actual": "night_hours"
+    }
+  ],
+  "secondary_notices": [
+    {
+      "source": "broker-year-discovery",
+      "notice_number": "郑商函〔2022〕719号",
+      "issuer_date": "2022年12月27日",
+      "text_file": "broker-year-discovery-notice.txt",
+      "text_sha256": "0ab2a597c10b5b3579257ce59c1eebbe0faa3290ad69f8da4a90eacf8b3dd053",
+      "qualified_as_official_original": false,
+      "verified_text_registration_utc": "2026-11-13T06:25:44.364546+00:00"
+    },
+    {
+      "source": "broker-autumn-ccb-discovery",
+      "notice_number": "郑商函〔2023〕717号",
+      "issuer_date": "2023年9月21日",
+      "text_file": "broker-autumn-ccb-discovery-notice.txt",
+      "text_sha256": "e07111d46cefd907292c9422896e5009dfa899b9e6524fb3b42722aa8faec727",
+      "qualified_as_official_original": false,
+      "verified_text_registration_utc": "2026-11-13T06:25:44.375832+00:00"
+    },
+    {
+      "source": "broker-boundary-discovery",
+      "notice_number": "郑商函〔2023〕1060号",
+      "issuer_date": "2023年12月28日",
+      "text_file": "broker-boundary-discovery-notice.txt",
+      "text_sha256": "9f501caf5d119831bb24e221f9a809571bbb8e9523d0b8b9ca68db483635c461",
+      "qualified_as_official_original": false,
+      "verified_text_registration_utc": "2026-11-13T06:25:44.388091+00:00"
+    }
+  ],
+  "pending": [
+    {
+      "source": "郑商函〔2022〕719号",
+      "need": "2023年度休市官方原件；目前仅完整转载"
+    },
+    {
+      "source": "郑商函〔2023〕717号",
+      "need": "2023中秋国庆夜盘详细提示官方原件；目前仅完整转载"
+    },
+    {
+      "source": "郑商函〔2023〕1060号",
+      "need": "2024元旦年界夜盘提示官方原件；目前仅完整转载"
+    },
+    {
+      "source": "2023上市后官方版本/临时公告索引",
+      "need": "官网页面受阻，尚未穷尽有界版本与时段变更核查，不能靠首版附件自证全年无变更"
+    }
+  ],
+  "network": {
+    "direct_requests": 26,
+    "bytes": 620132,
+    "browser_calls": 12,
+    "same_request_retries": 0,
+    "INE_DCE_GFEX_requests": 0,
+    "classified_responses": {
+      "http_blocked_not_document": 3,
+      "discovery_only": 5,
+      "challenge_not_document": 1,
+      "official_docx_original": 10,
+      "tls_failed_no_document": 1,
+      "secondary_notice_not_official_original": 3,
+      "empty_not_document": 3
+    },
+    "recorded_collection_seconds": 591.534857
+  },
+  "rule_dates": {
+    "PX_SH": {
+      "board": "20230811",
+      "announcement": "20230908",
+      "effective_and_listing": "20230915"
+    },
+    "trade_management": {
+      "board": "20230207",
+      "announcement": "20230426",
+      "effective": "20230526"
+    }
+  },
+  "subsequent_2024_rules": {
+    "not_immediate_successor": true,
+    "history_mentions": [
+      "20240206",
+      "20241107"
+    ],
+    "scope": "retained later original revision/history; cannot call20241107 the next revision after2023"
+  },
+  "initial_control_failure": {
+    "category": "test mutation did not alter split-run Word date",
+    "observed": "mutation accepted:wrong-effective",
+    "record_kind": "tool-output transcription; first attempt stdout not redirected",
+    "preserved_script": "review_rules-v1.py",
+    "fixed": "paragraph XML mutation plus changed>0; seven targeted rejections now pass"
+  },
+  "software_changes": false,
+  "qualification_gate_relaxed": false,
+  "notes": [
+    "legal text calls two day subsections; first subsection contains10:15-10:30 break; data representation uses three continuous intervals",
+    "HTTP200 and readable broker text are not official-original acquisition",
+    "all response cookies/headers remain local, not in public index",
+    "normal TLS only; failed bocifco.com.cn host not requested again; www.bocifco.com links independently discovered and already valid TLS",
+    "first original receipt and later derived verification registration are separate; no point-in-time availability claim"
+  ],
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 100,
+    "generator_restore": "passed; identical workspace content fingerprint",
+    "doccheck": "passed",
+    "new_rule_source_controls": "3 positive rules and7 targeted rejection controls passed",
+    "race": "not rerun; no Go code change",
+    "calendar_pipeline": "not run; no qualified calendar generated"
+  },
+  "seal": {
+    "sealed_directory": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113-sealed",
+    "migration_directory": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113-migration",
+    "tamper_control_directory": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113-tamper-control",
+    "file_count": 92,
+    "manifest_sha256": "a0d0361a351b01e60e41981ecaf39aacb463b15d00c3e7a9fa676ed5085a7db7",
+    "original_and_migration": "exact file set, lengths and SHA256 passed",
+    "tamper_control": "targeted DOCX modification rejected",
+    "repository_snapshot": "pre-seal pointers snapshot; authoritative seal pointers added after seal to avoid circular hash"
+  }
+}
