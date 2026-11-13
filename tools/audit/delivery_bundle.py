@@ -29,6 +29,12 @@ def unique_object(pairs):
 
 def inventory(root):
     """拒绝链接、越界和过大包；包括多出的文件，不静默忽略。"""
+    root = Path(root)
+    if root.is_symlink() or root.is_junction():
+        raise ValueError("交接包根目录是链接")
+    # Windows runner的TEMP可经父级别名到达同一目录；比较两端都用规范根。
+    # 仅规范根路径，不跟随包内链接：下面逐项的链接/越界检查仍保留。
+    root = root.resolve(strict=True)
     files, total = {}, 0
     for path in sorted(root.rglob("*")):
         if path.is_symlink() or path.is_junction() or not path.resolve().is_relative_to(root):

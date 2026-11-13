@@ -57,7 +57,11 @@ L9已有官方2026事件表中最后停夜盘为09-30，恢复日均已过去；
 
 ## 阶段性交接包
 
-**当前交接使用v2**：`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2`，208个文件条目（manifest另计）、24,953,432字节；manifest SHA256为`a45a9f5dd2c986ec7a3f53447b340e2cea6867f0509ccb2bbaf3f68b3ffd0df8`。ZIP为11,145,999字节，独立CLI、迁移、五类反例和实际ZIP CRC/解包复验通过。v2修正首包validation字段把全部5次直接请求误标为5次交易所请求的分类：实际4次交易所+1次转载页；请求原始行及其字节未变。下面首包v1作为历史构包记录保留，不应继续当作当前交接指针。
+**最终交接使用v3**：`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v3`，228个文件条目（manifest另计）、25,101,228字节；manifest SHA256为`e93323da5a665e1439a217d37e2edba1038aa0772e7752033628cd321f52b426`。ZIP为11,192,956字节，独立CLI、迁移、五类反例、ZIP CRC/解包验证通过；包含规范根路径后的校验器和Windows失败/本地回归日志。修复后本地最终三个Go模块、104项Python及还原/doccheck通过（还原前后指纹3c49dbbe4d50），新候选跨平台CI通过才合并。以下v1/v2数字为保留的历史记录。
+
+Windows CI43400364566（候选37b060a）曾在构造测试包时误判临时父路径别名为越界。已保存完整失败日志，并先以`holder/../bundle`本地复现，再在inventory比较前规范根路径；包内链接/越界及包外摘要/范围守卫不删除。新增回归与三个去守卫破坏控制通过，修复版以v3交接包为准；下列v1/v2保持为历史记录，旧封存不改写。固定生产Go源码仍为fa25a6f，本次变化只在审计工具/文档。
+
+**历史v2（已被v3替代）**：`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2`，208个文件条目（manifest另计）、24,953,432字节；manifest SHA256为`a45a9f5dd2c986ec7a3f53447b340e2cea6867f0509ccb2bbaf3f68b3ffd0df8`。ZIP为11,145,999字节，独立CLI、迁移、五类反例和实际ZIP CRC/解包复验通过。v2修正首包validation字段把全部5次直接请求误标为5次交易所请求的分类：实际4次交易所+1次转载页；请求原始行及其字节未变。下面首包v1作为历史构包记录保留，不应继续当作当前交接指针。
 
 已实际生成`C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle`，205个文件条目（manifest另计）、24,941,952字节，manifest SHA256为`1bb5000454fb288c3b51c1896f85bd450a6614f5bbf8ead208415b7e1d4d8ce8`。独立CLI和迁移副本验证通过；修改当前源码ZIP、删除范围文件、增加未列文件、给“完整发布”造正确新manifest和错误包外摘要五类反例均按目标原因拒绝，原包及迁移再次一致。归档ZIP为11,139,581字节，身份和路径见[包外交接记录](release/staged-delivery-bundle-20261113.json)。
 

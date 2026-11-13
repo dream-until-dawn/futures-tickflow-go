@@ -1,15 +1,15 @@
 {
   "schema": "staged-delivery-bundle-record-v1",
   "source_sha": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
-  "bundle": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2",
-  "migration": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2-migration",
-  "manifest_sha256": "a45a9f5dd2c986ec7a3f53447b340e2cea6867f0509ccb2bbaf3f68b3ffd0df8",
-  "files": 208,
-  "bytes": 24953432,
+  "bundle": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v3",
+  "migration": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v3-migration",
+  "manifest_sha256": "e93323da5a665e1439a217d37e2edba1038aa0772e7752033628cd321f52b426",
+  "files": 228,
+  "bytes": 25101228,
   "full_release": false,
-  "zip": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v2.zip",
-  "zip_sha256": "e9b1da02e811e0a338d617a80b36e6b126417c1c8b48dc30c9902d3170bf6dc1",
-  "zip_bytes": 11145999,
+  "zip": "C:/Temp/tickflow-delivery-refresh-20261113/delivery-bundle-v3.zip",
+  "zip_sha256": "241876cdea8c30463e4c887fbc2a621c5f3ef0781d13451e9eced846e3f0b83f",
+  "zip_bytes": 11192956,
   "controls": [
     {
       "control": "mutate",
@@ -39,9 +39,9 @@
   "financial_admission_extended": false,
   "live_l9_verified": false,
   "tag_created": false,
-  "edition": 2,
-  "supersedes_manifest_sha256": "1bb5000454fb288c3b51c1896f85bd450a6614f5bbf8ead208415b7e1d4d8ce8",
-  "correction": "validation label:5 direct HTTPS requests are4 exchange +1 broker; original request rows unchanged; original v1 not rewritten",
+  "edition": 3,
+  "supersedes_manifest_sha256": "a45a9f5dd2c986ec7a3f53447b340e2cea6867f0509ccb2bbaf3f68b3ffd0df8",
+  "correction": "normalize inventory root for Windows temporary path aliases; links/escape/qualification guards retained; original v1/v2 unchanged",
   "snapshot_boundary": "documents and verifier before adding bundle pointers; exact source archives separately frozen; no circular self-hash",
   "zip_crc_and_unpacked_roundtrip": "passed; actual ZIP extracted to new directory and standalone verifier matched external manifest SHA"
 }

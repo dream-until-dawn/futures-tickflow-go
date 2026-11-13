@@ -2,12 +2,12 @@
   "fixed_production_source": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
   "go_modules": 3,
   "gofmt_vet_test": "passed",
-  "python_tests": 103,
-  "restore_drill": "passed identical workspace fingerprint9ba30763e44d",
+  "python_tests": 104,
+  "restore_drill": "passed identical workspace fingerprint3c49dbbe4d50",
   "doccheck": "passed",
   "external_consumer_functions": 5,
   "source_PR_negative_controls": 7,
-  "new_bundle_test_functions": 3,
+  "new_bundle_test_functions": 4,
   "new_bundle_removed_guard_controls": 3,
   "existing_data_qualification_tests": 6,
   "INE_DCE_GFEX_requests": 0,
@@ -17,5 +17,15 @@
   "new_direct_https_requests": 5,
   "new_exchange_https_requests": 4,
   "broker_discovery_requests": 1,
-  "request_count_note": "first bundle used an imprecise exchange_requests label for all5 direct requests; corrected classification is4 exchange +1 broker; exact original request rows unchanged"
+  "request_count_note": "first bundle used an imprecise exchange_requests label for all5 direct requests; corrected classification is4 exchange +1 broker; exact original request rows unchanged",
+  "windows_ci_regression": {
+    "failed_run": 43400364566,
+    "failed_candidate": "37b060a84daad345b8e272eb8f2de17920e46d53",
+    "mechanism": "inventory compared resolved child path to unresolved caller root; runner temporary path alias caused false outside-root rejection",
+    "local_reproducer": "holder/../bundle same-directory parent alias; first failed target then passed after root canonicalization",
+    "fix": "canonicalize root before inventory while retaining actual root/entry link and escape guards",
+    "local_result": "four bundle test functions,3 targeted removed guards, full104 Python and3 Go modules passed",
+    "decoded_public_ci_log_sha256": "a7197a1d6c59992359499858b50923723988f8350c332d4669af89117cc63179",
+    "cross_platform_status": "requires corrected candidate CI before merge"
+  }
 }

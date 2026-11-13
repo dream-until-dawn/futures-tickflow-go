@@ -71,6 +71,16 @@ class DeliveryBundleTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "重复JSON键"):
                 verify(root, digest(path))
 
+    def test_noncanonical_parent_path_matches_resolved_root(self):
+        """复现Windows临时目录别名的同类路径问题，不依赖创建链接的特权。"""
+        with tempfile.TemporaryDirectory() as temp:
+            parent = Path(temp) / "physical"
+            (parent / "holder").mkdir(parents=True)
+            alias = parent / "holder" / ".." / "bundle"
+            sha = self.fixture(alias)
+            self.assertEqual(verify(alias, sha), verify(alias.resolve(), sha))
+            self.assertEqual(inventory(alias), inventory(alias.resolve()))
+
 
 if __name__ == "__main__":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
