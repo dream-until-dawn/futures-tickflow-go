@@ -74,3 +74,29 @@ func TestStaticQuotePreparePinsOneLiteralAndOriginalReceipt(t *testing.T) {
 		})
 	}
 }
+
+func TestControlStaticRequiresExactPriorHTMLAndReceipt(t *testing.T) {
+	source := "../../../docs/evidence/sina-retired-page-20261114"
+	j, r, e := prepareControl(source)
+	if e != nil || j.URL != controlURL || r.SHA256 != quoteSHA {
+		t.Fatalf("%+v %v", j, e)
+	}
+	for _, changed := range []string{"page.jsonp", "receipt.json"} {
+		dir := t.TempDir()
+		for _, name := range []string{"page.jsonp", "receipt.json"} {
+			b, e := os.ReadFile(filepath.Join(source, name))
+			if e != nil {
+				t.Fatal(e)
+			}
+			if name == changed {
+				b = append(b, 'x')
+			}
+			if e = os.WriteFile(filepath.Join(dir, name), b, 0600); e != nil {
+				t.Fatal(e)
+			}
+		}
+		if _, _, e = prepareControl(dir); e == nil {
+			t.Fatal("坏HTML/收据通过")
+		}
+	}
+}

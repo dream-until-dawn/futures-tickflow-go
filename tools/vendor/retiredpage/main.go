@@ -1,4 +1,4 @@
-// Command retiredpage 只读取冻结SDK明确列举的一个静态页；不执行脚本或跟随链接。
+// Command retiredpage 只读逐项批准、经冻结原件绑定的单一静态资源；不执行或自动跟随链接。
 package main
 
 import (
@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
@@ -23,6 +24,29 @@ import (
 const quoteURL = "https://finance.sina.com.cn/futures/quotes/V2105.shtml"
 const originSHA = "cfa10698129f81c67e95a7dfbf9bae7a7d19fa57c5586f5263b826243560ba55"
 const receiptSHA = "5778f66ae1e51ba8f3d5a56fc6b6ca51650d97db6559a4cfcb3e123e1751cedc"
+const quoteSHA = "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3"
+const controlURL = "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js"
+
+// prepareControl 只认实际HTML的script src，不执行脚本或扩大公共下载器白名单。
+func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
+	body, e := os.ReadFile(filepath.Join(sourceDir, "page.jsonp"))
+	if e != nil {
+		return batch.Job{}, evidence.Ref{}, e
+	}
+	b, e := os.ReadFile(filepath.Join(sourceDir, "receipt.json"))
+	if e != nil {
+		return batch.Job{}, evidence.Ref{}, e
+	}
+	var r batch.Receipt
+	if e = json.Unmarshal(b, &r); e != nil {
+		return batch.Job{}, evidence.Ref{}, e
+	}
+	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']//stock2\.finance\.sina\.com\.cn/futures/page2012/js/control\.js["']`)
+	if digest(body) != quoteSHA || r.Evidence.URL != quoteURL || r.Evidence.Verify(body) != nil || r.State != "received" || r.BodyState != "complete" || r.Bytes != int64(len(body)) || r.HTTP == nil || r.HTTP.Status != 200 || !r.HTTP.Complete || r.HTTP.FinalURL != quoteURL || !src.Match(body) {
+		return batch.Job{}, evidence.Ref{}, fmt.Errorf("原HTML/收据/SHA或准确script src不符")
+	}
+	return batch.Job{ID: "sina-control-static", URL: controlURL, Format: "static-js-unqualified", Version: "sina-control-static-v1"}, r.Evidence, nil
+}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
 
@@ -75,12 +99,20 @@ func main() {
 }
 func run() error {
 	source := flag.String("source-dir", "", "冻结SDK正文与原收据目录")
+	controlFrom := flag.String("control-from", "", "原HTML/收据目录；显式唯一control.js静态模式")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
-	if *source == "" || *root == "" {
-		return fmt.Errorf("需要source-dir与全新root")
+	if (*source == "") == (*controlFrom == "") || *root == "" {
+		return fmt.Errorf("需要source-dir或control-from其一与全新root")
 	}
-	job, origin, e := prepare(*source)
+	var job batch.Job
+	var origin evidence.Ref
+	var e error
+	if *controlFrom != "" {
+		job, origin, e = prepareControl(*controlFrom)
+	} else {
+		job, origin, e = prepare(*source)
+	}
 	if e != nil {
 		return e
 	}
@@ -110,7 +142,7 @@ func run() error {
 	n, size := d.Usage()
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
-	if e = encoder.Encode(map[string]any{"kind": "static-html-unqualified", "requests": n, "bytes": size, "results": results, "retired_roster_certified": false, "financial_eligible": false}); e != nil {
+	if e = encoder.Encode(map[string]any{"kind": job.Format, "requests": n, "bytes": size, "results": results, "retired_roster_certified": false, "financial_eligible": false}); e != nil {
 		return e
 	}
 	if len(results) != 1 || results[0].Receipt.State != "received" {
