@@ -1,0 +1,34 @@
+{
+  "added": [
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeGrant",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeGrant.Method",
+      "after": "string `json:\"method\"`"
+    },
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeGrant.Source",
+      "after": "evidence.Ref `json:\"source\"`"
+    },
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeGrant.SourceBody",
+      "after": "[]byte `json:\"-\"`"
+    },
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeGrant.URL",
+      "after": "string `json:\"url\"`"
+    },
+    {
+      "name": "archive/batch:batch.GFEXEnglishHomeURL",
+      "after": "const  = \"http://www.gfex.com.cn/en/index.shtml\" slot=0"
+    },
+    {
+      "name": "archive/batch:batch.NewGFEXEnglishHomeDownloader",
+      "after": "func(l Limits, g GFEXEnglishHomeGrant) (*Downloader, error)"
+    }
+  ],
+  "removed": [],
+  "changed": []
+}

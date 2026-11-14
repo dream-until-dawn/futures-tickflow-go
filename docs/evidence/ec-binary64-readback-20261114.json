@@ -1,0 +1,155 @@
+{
+  "schema": "ec-binary64-original-readback-v1",
+  "years": [
+    {
+      "year": 2024,
+      "original_archive": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\shfe-annual-2024.body",
+      "archive_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e",
+      "member": "ine所内合约行情报表2024.1月-12月/ine所内合约行情报表2024.1月-12月.xlsx",
+      "member_sha256": "b657edfe72874ba02c6696ee6fd0db7908a8e093cd10fafe2a188d419e759c73",
+      "decoded_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\ine-annual-followup-20261114\\ec-2024-decoded.json",
+      "decoded_sha256": "34b0f08843f9a5e81e1582b3819ed0974b675161598add8f5e96322ce4b839e2",
+      "output_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\ine-annual-followup-20261114\\ec-2024-retry\\pipeline-v2\\records.jsonl",
+      "output_sha256": "5575accc974d95839dec7ff95924fc3913fefe90aeb5f786965bfac98377936e",
+      "rows": 1418,
+      "raw_fields_checked": 12762,
+      "binary64_price_fields_checked": 7090,
+      "integer_fields_checked": 2836,
+      "representation_differences": 538,
+      "binary64_mismatches": 0,
+      "examples": [
+        {
+          "native": "ec2404",
+          "day": 20240103,
+          "field": "settle",
+          "raw": "2326.1999999999998",
+          "bar_json": "2326.2",
+          "bits_hex": "40a22c6666666666"
+        },
+        {
+          "native": "ec2404",
+          "day": 20240104,
+          "field": "open",
+          "raw": "2549.8000000000002",
+          "bar_json": "2549.8",
+          "bits_hex": "40a3eb999999999a"
+        },
+        {
+          "native": "ec2404",
+          "day": 20240104,
+          "field": "low",
+          "raw": "2110.3000000000002",
+          "bar_json": "2110.3",
+          "bits_hex": "40a07c999999999a"
+        },
+        {
+          "native": "ec2404",
+          "day": 20240105,
+          "field": "low",
+          "raw": "2187.8000000000002",
+          "bar_json": "2187.8",
+          "bits_hex": "40a117999999999a"
+        }
+      ],
+      "controls": [
+        {
+          "control": "one-ulp",
+          "target_reason": "binary64-mismatch:close",
+          "rejected": true
+        },
+        {
+          "control": "raw-literal",
+          "target_reason": "raw-literal-mismatch",
+          "rejected": true
+        },
+        {
+          "control": "source-sha",
+          "target_reason": "source-identity",
+          "rejected": true
+        },
+        {
+          "control": "missing-row",
+          "target_reason": "key-set-mismatch",
+          "rejected": true
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "original_archive": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\shfe-annual-2025.body",
+      "archive_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902",
+      "member": "ine所内合约行情报表2025.1月-12月/ine所内合约行情报表2025.1月-12月.xlsx",
+      "member_sha256": "4327ffa5e427969730d7adc47c464e052e550db115aa6f4db8c99bf1030eba94",
+      "decoded_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\ine-annual-followup-20261114\\ec-2025-decoded.json",
+      "decoded_sha256": "49067bd12f6a7bf2e1381380c792fe6e3ea0b643ccd6771ad8af5dc6aa7bd16a",
+      "output_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\ine-annual-followup-20261114\\ec-2025-retry\\pipeline-v2\\records.jsonl",
+      "output_sha256": "5b09e2b103bee74e516b915b1c695fc4a71b99fc3fbbd5e15024db15afa36ea7",
+      "rows": 1458,
+      "raw_fields_checked": 13122,
+      "binary64_price_fields_checked": 7290,
+      "integer_fields_checked": 2916,
+      "representation_differences": 617,
+      "binary64_mismatches": 0,
+      "examples": [
+        {
+          "native": "ec2502",
+          "day": 20250102,
+          "field": "close",
+          "raw": "2224.6999999999998",
+          "bar_json": "2224.7",
+          "bits_hex": "40a1616666666666"
+        },
+        {
+          "native": "ec2502",
+          "day": 20250106,
+          "field": "high",
+          "raw": "2129.1999999999998",
+          "bar_json": "2129.2",
+          "bits_hex": "40a0a26666666666"
+        },
+        {
+          "native": "ec2502",
+          "day": 20250106,
+          "field": "settle",
+          "raw": "2065.6999999999998",
+          "bar_json": "2065.7",
+          "bits_hex": "40a0236666666666"
+        },
+        {
+          "native": "ec2502",
+          "day": 20250212,
+          "field": "settle",
+          "raw": "2052.3000000000002",
+          "bar_json": "2052.3",
+          "bits_hex": "40a008999999999a"
+        }
+      ],
+      "controls": [
+        {
+          "control": "one-ulp",
+          "target_reason": "binary64-mismatch:close",
+          "rejected": true
+        },
+        {
+          "control": "raw-literal",
+          "target_reason": "raw-literal-mismatch",
+          "rejected": true
+        },
+        {
+          "control": "source-sha",
+          "target_reason": "source-identity",
+          "rejected": true
+        },
+        {
+          "control": "missing-row",
+          "target_reason": "key-set-mismatch",
+          "rejected": true
+        }
+      ]
+    }
+  ],
+  "upstream_market_requests": 0,
+  "scope": "readback of existing engine outputs against original official XLSX; not a new pipeline run, not exact decimal finance qualification",
+  "financial_exact_decimal_admission": false,
+  "method": "Python IEEE754 byte pack against original XML numeric text; no epsilon; original full nine field spellings and member row identity checked"
+}

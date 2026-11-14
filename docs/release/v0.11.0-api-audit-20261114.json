@@ -1,0 +1,42 @@
+{
+  "source_sha": "4174da97e534a304f261ce4a9a04776b0c5debeb",
+  "commits": {
+    "current": "4174da97e534a304f261ce4a9a04776b0c5debeb",
+    "prior_refresh": "fa25a6f8afa861cf673ef5f9e349705e72a6bbc1",
+    "v010": "d49c5ba9881854f8220fa5ba4c370ac792355840",
+    "old_candidate": "2f02b0faa08245464eb9b99506d66a24e4182cdf"
+  },
+  "counts": {
+    "prior_refresh": {
+      "added": 7,
+      "removed": 0,
+      "changed": 0
+    },
+    "v010": {
+      "added": 215,
+      "removed": 0,
+      "changed": 1
+    },
+    "old_candidate": {
+      "added": 213,
+      "removed": 0,
+      "changed": 0
+    },
+    "current": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0
+    },
+    "adapter": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0
+    }
+  },
+  "tool_source_sha256": "402b9b88f1b4c7f1e6e6440cc3ffb19911de7320d6a5e3616b31de43c56d00eb",
+  "tool_binary_sha256": "9d717a05a25f5d2bca6d366a9d72df52e63362594ecaa4e1659c623f04075a15",
+  "scope": "AST exported declarations only; root excludes tests/tools/nested modules; adapter separately; not semantic or ABI qualification",
+  "baseline_tag": "v0.10.0",
+  "baseline_tag_object_sha": "89528ad9188d693a76ebf22a7f8737e43c3ccc8e",
+  "tag_note": "annotated object is separate from peeled source commit; no tag changes"
+}

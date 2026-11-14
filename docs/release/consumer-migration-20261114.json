@@ -1,0 +1,36 @@
+{
+  "source_sha": "4174da97e534a304f261ce4a9a04776b0c5debeb",
+  "GOWORK": "off",
+  "replace_directives": 0,
+  "selected_modules": [
+    {
+      "Path": "github.com/dream-until-dawn/futures-tickflow-go",
+      "Version": "v0.10.1-0.20261114112343-4174da97e534",
+      "Sum": "h1:uuD3EXq3BvUdKMkS6mnF2nE/P9rTWVqm4wZOGHYu0Qs=",
+      "Origin": null
+    },
+    {
+      "Path": "github.com/dream-until-dawn/futures-tickflow-go/adapter",
+      "Version": "v0.0.0-20261114112343-4174da97e534",
+      "Sum": "h1:Olhjmc9YdCXmQD/1TG6L2RSGLFEll5cLmI+cOnlpGvQ=",
+      "Origin": null
+    }
+  ],
+  "test_functions": 7,
+  "profiles": 11,
+  "joined_products": 6,
+  "constructor_and_rejection_only_market_requests": 0,
+  "downloaded_api_matches_git_archive": true,
+  "legacy_factory_v010": "compile passed",
+  "legacy_factory_current": "rejected specifically cannot use embedded.New",
+  "factory_wrapper": "passed",
+  "toolchain": "go version go1.26.1 windows/amd64",
+  "go_language": "1.23",
+  "initial_fixture_failure": "DayAt requires Unix milliseconds; external fixture initially used time.Time; fixed caller with UnixMilli, library unchanged; original build failure retained",
+  "go_mod_sha256": "4bf555819657458b2870cd6f730962312af7e072d692f9e4048bc8c81697f865",
+  "go_sum_sha256": "71f39ccc0be4deddbe935bab245beaa1a09118bc09eb8cd3c5a80624788e0936",
+  "downloaded_go_source_files_equal_fixed_archive": {
+    "github.com/dream-until-dawn/futures-tickflow-go": 253,
+    "github.com/dream-until-dawn/futures-tickflow-go/adapter": 5
+  }
+}

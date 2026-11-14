@@ -1,0 +1,50 @@
+{
+  "schema": "staged-delivery-bundle-record-v1",
+  "source_sha": "4174da97e534a304f261ce4a9a04776b0c5debeb",
+  "edition": 4,
+  "bundle": "C:\\Temp\\tickflow-offline-delivery-20261114-v1\\delivery-bundle-v4",
+  "migration": "C:\\Temp\\tickflow-offline-delivery-20261114-v1\\delivery-bundle-v4-migration",
+  "unpacked": "C:\\Temp\\tickflow-offline-delivery-20261114-v1\\delivery-bundle-v4-unpacked",
+  "manifest_sha256": "07738da201c6ff377137f020faef91a2aea8e3ac864127bdb129f918b3434d76",
+  "files": 152,
+  "bytes": 165195138,
+  "zip": "C:\\Temp\\tickflow-offline-delivery-20261114-v1\\delivery-bundle-v4.zip",
+  "zip_sha256": "32f7a057cd78cb909f760e32f1b3f08cbe6a3893cde0c1260bb4e5bae416cd77",
+  "zip_bytes": 115974756,
+  "controls": [
+    {
+      "control": "mutate",
+      "target_reason": "文件字节/SHA不符：sources/current.zip",
+      "rejected": true
+    },
+    {
+      "control": "missing",
+      "target_reason": "文件集合不符",
+      "rejected": true
+    },
+    {
+      "control": "extra",
+      "target_reason": "文件集合不符",
+      "rejected": true
+    },
+    {
+      "control": "scope",
+      "target_reason": "阶段范围不能提升资格：full_release",
+      "rejected": true
+    }
+  ],
+  "wrong_external_digest": "rejected",
+  "standalone_cli": "passed",
+  "migration_precision_recomputed": true,
+  "source_zip_git_comment_matches_source_sha": true,
+  "full_release": false,
+  "all_market_originals_included": false,
+  "financial_admission_extended": false,
+  "live_l9_verified": false,
+  "tag_created": false,
+  "profiles": 11,
+  "calendar_products": 6,
+  "exchange_requests": 0,
+  "portable_output_overlap_rejected": true,
+  "all_remaining_work_complete": false
+}
