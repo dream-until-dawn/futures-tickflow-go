@@ -13,6 +13,11 @@
 *.yml    text eol=lf
 *.yaml   text eol=lf
 *.json   text eol=lf
+# 新浪原响应含GB18030及供应商行尾；不得自动转码或归一化原件。
+source/sinavendor/testdata/*.jsonp binary
+docs/evidence/sina-vendor-20261114/raw/*.jsonp binary
+# 复用的取得收据/派生对照也属于冻结证据，保留原有CRLF以匹配原摘要。
+docs/evidence/sina-vendor-origin-20261114/*.json binary
 LICENSE  text eol=lf
 
 # ⛔ 这些声明管的是【索引】，而工作树可以和它们漂开 —— 而 `git status` 结构上看不见。

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "akshare-source.py.txt",
+    "bytes": 28251,
+    "sha256": "cfa10698129f81c67e95a7dfbf9bae7a7d19fa57c5586f5263b826243560ba55"
+  },
+  {
+    "file": "original-files.json",
+    "bytes": 2313,
+    "sha256": "39b7cfb11d4081276ad9857bedb76f746e6863697487b3b70a73bdf0bee99360"
+  },
+  {
+    "file": "RB2410-official-comparison.json",
+    "bytes": 54056,
+    "sha256": "ed5d673226413ae0e5ad812afde846feb7df60fcf6c452f864765dc6d6a83b57"
+  },
+  {
+    "file": "source-receipt.json",
+    "bytes": 358,
+    "sha256": "5778f66ae1e51ba8f3d5a56fc6b6ca51650d97db6559a4cfcb3e123e1751cedc"
+  }
+]

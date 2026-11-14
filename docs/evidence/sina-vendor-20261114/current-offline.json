@@ -1,0 +1,232 @@
+{
+  "calendar_basis": "synthetic: quotation-date union; NOT independent historical schedule",
+  "class": "vendor/sina/request-bound",
+  "new_market_requests": 0,
+  "published": false,
+  "samples": [
+    {
+      "symbol": "DCE.m2701",
+      "evidence": {
+        "id": "M2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2701&type=2021_04_12",
+        "sha256": "c2458d69c04c6972d0d4eb0a2f5b8e2b5d4035d5c286592b3bba8c55ee53352f",
+        "retrieved_at": "2026-11-14T13:42:06.2850768Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 198,
+      "target_rows": 198,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 198,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "DCE.l2701",
+      "evidence": {
+        "id": "L2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=L2701&type=2021_04_12",
+        "sha256": "292fe3730dab2950733d48574f3a113435f3624c60f58a3bf89ac5d600a867e3",
+        "retrieved_at": "2026-11-14T13:42:07.2852119Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 198,
+      "target_rows": 198,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 198,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "DCE.pp2701",
+      "evidence": {
+        "id": "PP2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2701&type=2021_04_12",
+        "sha256": "a086b126495179528c2e6fdf8d22239e1515692e1adf3b05ddfcecb5b6a76c45",
+        "retrieved_at": "2026-11-14T13:42:08.2857425Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 198,
+      "target_rows": 198,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 198,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "DCE.c2701",
+      "evidence": {
+        "id": "C2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2701&type=2021_04_12",
+        "sha256": "7ce96935553e12d8b3c342d2021e399d2706ca97f677c5a4a357686fa7048287",
+        "retrieved_at": "2026-11-14T13:42:09.2863785Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 198,
+      "target_rows": 198,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 198,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "DCE.lg2701",
+      "evidence": {
+        "id": "LG2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LG2701&type=2021_04_12",
+        "sha256": "23b41e76f13e60c8239b738b865621ecf8cf9ad87323a8eff6ddd850a1c0cb32",
+        "retrieved_at": "2026-11-14T13:42:10.2866637Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 188,
+      "target_rows": 188,
+      "First": 20260202,
+      "Last": 20261113,
+      "mechanical_complete": false,
+      "feed_rows": 0,
+      "resume_added": 0,
+      "failure": "embedded: 未收录品种 DCE.lg: tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」",
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "DCE.bz2701",
+      "evidence": {
+        "id": "BZ2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=BZ2701&type=2021_04_12",
+        "sha256": "4ca76d77da1db04329ab9243a6fd118a242ac8876d2e241902c976e785b5b944",
+        "retrieved_at": "2026-11-14T13:42:11.2871295Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 127,
+      "target_rows": 127,
+      "First": 20260202,
+      "Last": 20261113,
+      "mechanical_complete": false,
+      "feed_rows": 0,
+      "resume_added": 0,
+      "failure": "embedded: 未收录品种 DCE.bz: tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」",
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "GFEX.si2701",
+      "evidence": {
+        "id": "SI2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=SI2701&type=2021_04_12",
+        "sha256": "3c74e7d1c7277378f112fe3c5e7ff5423903bcf98ad9db4d45b7929073ad6aec",
+        "retrieved_at": "2026-11-14T13:42:12.2874086Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 197,
+      "target_rows": 197,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 197,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "GFEX.lc2701",
+      "evidence": {
+        "id": "LC2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LC2701&type=2021_04_12",
+        "sha256": "abd147c91a43c946221cc42a50a9bd013b770bb8a21d4ad8bd1772070a15a52f",
+        "retrieved_at": "2026-11-14T13:42:13.2879077Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 198,
+      "target_rows": 198,
+      "First": 20260119,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 198,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "GFEX.ps2701",
+      "evidence": {
+        "id": "PS2701",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PS2701&type=2021_04_12",
+        "sha256": "6a02764b80ba41d48eb482c6ab4e9dc5280e14eed9a97e006f0095479c1acc29",
+        "retrieved_at": "2026-11-14T13:42:14.2888779Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 154,
+      "target_rows": 154,
+      "First": 20260126,
+      "Last": 20261113,
+      "mechanical_complete": true,
+      "feed_rows": 154,
+      "resume_added": 0,
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "GFEX.pt2702",
+      "evidence": {
+        "id": "PT2702",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PT2702&type=2021_04_12",
+        "sha256": "6059340c2ee5c5b32d927dc0af5f258c666e07a4e2090749ad6c44b57a85448f",
+        "retrieved_at": "2026-11-14T13:42:15.2893404Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 143,
+      "target_rows": 143,
+      "First": 20260306,
+      "Last": 20261113,
+      "mechanical_complete": false,
+      "feed_rows": 0,
+      "resume_added": 0,
+      "failure": "embedded: 未收录品种 GFEX.pt: tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」",
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "GFEX.pd2702",
+      "evidence": {
+        "id": "PD2702",
+        "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PD2702&type=2021_04_12",
+        "sha256": "1d4cc629252883fccdcc19808cc49b815d022848ec389b524cd569a7a6a68293",
+        "retrieved_at": "2026-11-14T13:42:16.2897769Z",
+        "version": "sina-frozen-v1"
+      },
+      "raw_rows": 132,
+      "target_rows": 132,
+      "First": 20260304,
+      "Last": 20261113,
+      "mechanical_complete": false,
+      "feed_rows": 0,
+      "resume_added": 0,
+      "failure": "embedded: 未收录品种 GFEX.pd: tickflow: 日历覆盖不到——这是「答不了」，不是「没有交易」",
+      "official_calendar_certified": false,
+      "historical_roster_complete": false,
+      "financial_eligible": false
+    }
+  ]
+}

@@ -26,6 +26,7 @@ import (
 	"github.com/dream-until-dawn/futures-tickflow-go/source/officialdaily"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/shinnysource"
 	"github.com/dream-until-dawn/futures-tickflow-go/source/sinasource"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/sinavendor"
 )
 
 // guard: ㉒ 的后继 —— 日内源必须在连网之前拒掉主连（守的是「一个库＝一个合约」这条语义前提；扫描代价那条 (y) 之后已不成立）。
@@ -399,7 +400,12 @@ func sourcesUnderTest(t *testing.T) []capsSource {
 	t.Helper()
 	cal := testCalendarForCaps(t)
 	official := newOfficialForCaps(t, cal)
+	vendor := newSinaVendorForCaps(t, cal)
 	return []capsSource{
+		{name: "sinavendor", caps: vendor.Caps, bars: func(ctx context.Context, _ *http.Client, req tickflow.BarRequest) error {
+			_, err := vendor.Bars(ctx, req)
+			return err
+		}},
 		{name: "officialdaily", caps: official.Caps, bars: func(ctx context.Context, _ *http.Client, req tickflow.BarRequest) error {
 			_, err := official.Bars(ctx, req)
 			return err
@@ -412,6 +418,19 @@ func sourcesUnderTest(t *testing.T) []capsSource {
 				return err
 			}},
 	}
+}
+
+func newSinaVendorForCaps(t *testing.T, cal tickflow.Calendar) *sinavendor.Source {
+	t.Helper()
+	raw := []byte(`var _=([{"d":"2026-09-10","o":"3000","h":"3010","l":"2990","c":"3001","v":"1","p":"2","s":"3002"}]);`)
+	sum := sha256.Sum256(raw)
+	sym, _ := tickflow.ParseSymbol("SHFE.rb2701")
+	ref := evidence.Ref{ID: "synthetic-vendor-caps", URL: "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_=/InnerFuturesNewService.getDailyKLine?symbol=RB2701&type=2021_04_12", SHA256: hex.EncodeToString(sum[:]), RetrievedAt: time.Date(2026, 9, 11, 0, 0, 0, 0, time.UTC)}
+	s, e := sinavendor.New(cal, []sinavendor.Document{{Symbol: sym, Raw: raw, Evidence: ref}}, time.Date(2026, 9, 11, 0, 0, 0, 0, time.UTC).UnixMilli())
+	if e != nil {
+		t.Fatal(e)
+	}
+	return s
 }
 
 func newOfficialForCaps(t *testing.T, cal tickflow.Calendar) *officialdaily.Source {

@@ -1,0 +1,18 @@
+{
+  "schema": "sina-vendor-evidence-v1",
+  "provider": "sina",
+  "data_class": "vendor/request-bound",
+  "requests": 40,
+  "bytes": 359219,
+  "retries": 0,
+  "redirects": 0,
+  "official_dce_gfex_requests": 0,
+  "additional_requests_authorized": false,
+  "complete_2021_history": false,
+  "historical_calendar_certified": false,
+  "production_changed": false,
+  "tag_created": false,
+  "request_timestamp_semantics": "New Go batch refs use request-start UTC, not response-completion nor exchange-change time; reused original Python receipts retain their actual original timestamps.",
+  "build_provenance": "Acquisition executable was built from uncommitted working tree based on ad4956f; original executable retained outside Git. Final candidate is verified separately offline; not claimed byte-identical to acquisition executable.",
+  "release": "candidate; independent acceptance and exact CI tracked separately"
+}

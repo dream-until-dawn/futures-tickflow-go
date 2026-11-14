@@ -1,0 +1,62 @@
+[
+  {
+    "file": "docs/assets/alternative-data-20261114/akshare-source.body",
+    "bytes": 28251,
+    "sha256": "cfa10698129f81c67e95a7dfbf9bae7a7d19fa57c5586f5263b826243560ba55"
+  },
+  {
+    "file": "docs/assets/alternative-data-20261114/C2105.body",
+    "bytes": 28720,
+    "sha256": "2c56358bde9b12247df8ea3aceb384536bb0243e6daeca5e3c337a63cec63828"
+  },
+  {
+    "file": "docs/assets/alternative-data-20261114/M2105.body",
+    "bytes": 29046,
+    "sha256": "1627802176871d7bbf5d71118122dace2eb908c02b7f00e0cd323afa57129186"
+  },
+  {
+    "file": "docs/assets/alternative-data-20261114/RB2410.body",
+    "bytes": 28967,
+    "sha256": "455d01265aaa89e4d7d2dad0ceae1e527a2e66ce420117e8d2a7b0a8226cd32d"
+  },
+  {
+    "file": "docs/assets/alternative-data-20261114/SI2308.body",
+    "bytes": 19218,
+    "sha256": "c63e409fce5de3b67fc1d3adaeeb9cc915a28fbcfd3509b30ff5f63552b902bb"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/sample-receipts.json",
+    "bytes": 2045,
+    "sha256": "369e9e333e8bc83b2c6497be34b4ba8c836b5d49068444fc1175972268bd8cd2"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/source-receipt.json",
+    "bytes": 358,
+    "sha256": "5778f66ae1e51ba8f3d5a56fc6b6ca51650d97db6559a4cfcb3e123e1751cedc"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/RB2410-official-comparison.json",
+    "bytes": 54056,
+    "sha256": "ed5d673226413ae0e5ad812afde846feb7df60fcf6c452f864765dc6d6a83b57"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/probe-sina-alternative-20261114.py.txt",
+    "bytes": 3117,
+    "sha256": "bfd41209cabd9b3b3b94ed212193ba69d1b115517e2f6a0cd07432069031e652"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/review-sina-alternative-20261114.py.txt",
+    "bytes": 3543,
+    "sha256": "6421517b24e39471f24039c360a5eaba3ec0f23a16f6daa3da7b842466a42aa1"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/close-alternative-data-research-20261114.py.txt",
+    "bytes": 3620,
+    "sha256": "ad2052b82fb1387d9456ec5cef49ffc525c5223df698bc0f097b9ee54fd08441"
+  },
+  {
+    "file": "docs/evidence/alternative-data-20261114/sample-review.json",
+    "bytes": 5127,
+    "sha256": "c1b25ad1449489af0eb2ce373895383afd03b153f7508051a30223f4c222d5a5"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "job_sha256": "91c5d55257d2cf18d0c7c9b05007abbbc4c6d2c702d7f64e37a5c7a6f370053d",
+  "state": "received",
+  "evidence": {
+    "id": "list-pvc_qh",
+    "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1\u0026sort=position\u0026asc=0\u0026node=pvc_qh\u0026base=futures",
+    "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+    "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+    "version": "sina-vendor-v1"
+  },
+  "bytes": 5319,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1\u0026sort=position\u0026asc=0\u0026node=pvc_qh\u0026base=futures",
+    "content_type": "application/json; charset=gbk",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 13:40:02 GMT",
+    "requested_at": "2026-11-14T13:40:00.8470331Z",
+    "complete": true,
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  }
+}

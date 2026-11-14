@@ -35,6 +35,7 @@ type Downloader struct {
 	last             time.Time
 	nativeHTTP       map[string]NativeHTTPGrant
 	maxResponseBytes int64
+	sina             *sinaPolicy
 }
 
 // NewDownloader 保留传入Transport的正常TLS校验，不设置InsecureSkipVerify。
@@ -140,6 +141,19 @@ func Run(ctx context.Context, root string, jobs []Job, down *Downloader, maxLoca
 	}
 	f.Close()
 	defer os.Remove(lock)
+	if down != nil && down.sina != nil {
+		if e := down.restoreSina(root, jobs); e != nil {
+			return nil, e
+		}
+	}
+	for _, j := range jobs {
+		if j.Version == SinaVendorVersion && (down == nil || down.sina == nil || !down.sina.allowed[j.URL]) {
+			return nil, fmt.Errorf("batch: vendor恢复/获取缺显式精确URL策略")
+		}
+		if down != nil && down.sina != nil && (j.Version != SinaVendorVersion || j.Local != "") {
+			return nil, fmt.Errorf("batch: vendor网络批次不可混用身份或本地导入")
+		}
+	}
 	var out []Result
 	for _, j := range jobs {
 		if e = ctx.Err(); e != nil {
@@ -165,6 +179,9 @@ func Run(ctx context.Context, root string, jobs []Job, down *Downloader, maxLoca
 				return out, fmt.Errorf("batch: 正文完整性未知")
 			}
 			if old.State == "received" {
+				if j.Version == SinaVendorVersion && !validSinaMetadata(j.URL, old.HTTP) {
+					return out, fmt.Errorf("batch: vendor标签或URL被改写")
+				}
 				if err := validateNativeReceipt(down, j.URL, old.HTTP); err != nil {
 					return out, err
 				}

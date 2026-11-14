@@ -1,0 +1,26 @@
+{
+  "job_sha256": "7476797042f840247a04680151457ac7134b91825ab4b36f995952a9a971ee34",
+  "state": "received",
+  "evidence": {
+    "id": "list-xwb_qh",
+    "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1\u0026sort=position\u0026asc=0\u0026node=xwb_qh\u0026base=futures",
+    "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+    "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+    "version": "sina-vendor-v1"
+  },
+  "bytes": 3238,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1\u0026sort=position\u0026asc=0\u0026node=xwb_qh\u0026base=futures",
+    "content_type": "application/json; charset=gbk",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 13:40:10 GMT",
+    "requested_at": "2026-11-14T13:40:08.8504786Z",
+    "complete": true,
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  }
+}

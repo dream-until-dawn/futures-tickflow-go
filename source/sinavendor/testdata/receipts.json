@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2105&type=2021_04_12",
+    "name": "C2105",
+    "received_at": "2026-11-14T13:06:37.748894+00:00",
+    "status": 200,
+    "content_type": "application/javascript; charset=gbk",
+    "bytes": 28720,
+    "sha256": "2c56358bde9b12247df8ea3aceb384536bb0243e6daeca5e3c337a63cec63828",
+    "business_error": "ValueError: not inert expected JSONP data wrapper"
+  },
+  {
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2105&type=2021_04_12",
+    "name": "M2105",
+    "received_at": "2026-11-14T13:06:38.980629+00:00",
+    "status": 200,
+    "content_type": "application/javascript; charset=gbk",
+    "bytes": 29046,
+    "sha256": "1627802176871d7bbf5d71118122dace2eb908c02b7f00e0cd323afa57129186",
+    "business_error": "ValueError: not inert expected JSONP data wrapper"
+  },
+  {
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=SI2308&type=2021_04_12",
+    "name": "SI2308",
+    "received_at": "2026-11-14T13:06:40.220093+00:00",
+    "status": 200,
+    "content_type": "application/javascript; charset=gbk",
+    "bytes": 19218,
+    "sha256": "c63e409fce5de3b67fc1d3adaeeb9cc915a28fbcfd3509b30ff5f63552b902bb",
+    "business_error": "ValueError: not inert expected JSONP data wrapper"
+  },
+  {
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=RB2410&type=2021_04_12",
+    "name": "RB2410",
+    "received_at": "2026-11-14T13:06:41.407426+00:00",
+    "status": 200,
+    "content_type": "application/javascript; charset=gbk",
+    "bytes": 28967,
+    "sha256": "455d01265aaa89e4d7d2dad0ceae1e527a2e66ce420117e8d2a7b0a8226cd32d",
+    "business_error": "ValueError: not inert expected JSONP data wrapper"
+  }
+]

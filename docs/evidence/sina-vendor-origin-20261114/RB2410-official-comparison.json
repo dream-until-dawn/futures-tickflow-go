@@ -1,0 +1,2894 @@
+[
+  {
+    "day": "20231017",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231018",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231019",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231020",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231023",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231024",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231025",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231026",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231027",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231030",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231031",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231101",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231102",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231103",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231106",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231107",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231108",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231109",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231110",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231113",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231114",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231115",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231116",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231117",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231120",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231121",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231122",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231123",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231124",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231127",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231128",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231129",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231130",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231201",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231204",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231205",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231206",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231207",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231208",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231211",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231212",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231213",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231214",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231215",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231218",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231219",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231220",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231221",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231222",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231225",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231226",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231227",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231228",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20231229",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240102",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240103",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240104",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240105",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240108",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240109",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240110",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240111",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240112",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240115",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240116",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240117",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240118",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240119",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240122",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240123",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240124",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240125",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240126",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240129",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240130",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240131",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240201",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240202",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240205",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240206",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240207",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240208",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240219",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240220",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240221",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240222",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240223",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240226",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240227",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240228",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240229",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240301",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240304",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240305",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240306",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240307",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240308",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240311",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240312",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240313",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240314",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240315",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240318",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240319",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240320",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240321",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240322",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240325",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240326",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240327",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240328",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240329",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240401",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240402",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240403",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240408",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240409",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240410",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240411",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240412",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240415",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240416",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240417",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240418",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240419",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240422",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240423",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240424",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240425",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240426",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240429",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240430",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240506",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240507",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240508",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240509",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240510",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240513",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240514",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240515",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240516",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240517",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240520",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240521",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240522",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240523",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240524",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240527",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240528",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240529",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240530",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240531",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240603",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240604",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240605",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240606",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240607",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240611",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240612",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240613",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240614",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240617",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240618",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240619",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240620",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240621",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240624",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240625",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240626",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240627",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240628",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240701",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240702",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240703",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240704",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240705",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240708",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240709",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240710",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240711",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240712",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240715",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240716",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240717",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240718",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240719",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240722",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240723",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240724",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240725",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240726",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240729",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240730",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240731",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240801",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240802",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240805",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240806",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240807",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240808",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240809",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240812",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240813",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240814",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240815",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240816",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240819",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240820",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240821",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240822",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240823",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240826",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240827",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240828",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240829",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240830",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240902",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240903",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240904",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240905",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240906",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240909",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240910",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240911",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240912",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240913",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240918",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240919",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240920",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240923",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240924",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": false,
+      "open_interest": false,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240925",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": false,
+      "volume": false,
+      "open_interest": false,
+      "settle": false
+    }
+  },
+  {
+    "day": "20240926",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240927",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20240930",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241008",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241009",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241010",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241011",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241014",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  },
+  {
+    "day": "20241015",
+    "fields_equal": {
+      "open": true,
+      "high": true,
+      "low": true,
+      "close": true,
+      "volume": true,
+      "open_interest": true,
+      "settle": true
+    }
+  }
+]

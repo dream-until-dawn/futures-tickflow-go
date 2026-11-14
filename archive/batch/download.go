@@ -27,6 +27,7 @@ type Download struct {
 	Unauthenticated  bool      `json:"unauthenticated,omitempty"`
 	SourceURL        string    `json:"source_url,omitempty"`
 	SourceSHA        string    `json:"source_sha256,omitempty"`
+	DataClass        string    `json:"data_class,omitempty"`
 }
 
 // FetchDetailed 不丢弃非200、超预算和截断响应的有界失败字节；从不重试。
@@ -35,6 +36,15 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	result := Download{ContentLength: -1}
+	if d.sina != nil {
+		result.DataClass = SinaVendorVersion
+		result.Unauthenticated = true
+		if e := d.beforeSina(address); e != nil {
+			result.Failure = "vendor_gate"
+			return result, e
+		}
+		defer func() { d.afterSina(address, &result) }()
+	}
 	d.markNative(&result, address)
 	u, e := url.Parse(address)
 	_, nativeAllowed := d.nativeGrant(address)
@@ -67,6 +77,10 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 	d.last = time.Now()
 	result.Attempted = true
 	result.RequestedAt = d.last.UTC()
+	if d.sina != nil {
+		d.sina.attempted[address] = true
+		request.Header.Set("Referer", "https://finance.sina.com.cn")
+	}
 	response, e := d.client.Do(request)
 	if e != nil {
 		result.Failure = "network"
@@ -98,6 +112,10 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 		return result, fmt.Errorf("batch: 响应超过剩余字节预算")
 	}
 	result.Complete = true
+	if d.sina != nil && sinaChallenge(raw) {
+		result.Failure = "vendor_challenge"
+		return result, fmt.Errorf("batch: Sina挑战正文，停止该主机")
+	}
 	if response.StatusCode != http.StatusOK {
 		result.Failure = "http_status"
 		return result, fmt.Errorf("batch: HTTP %d", response.StatusCode)

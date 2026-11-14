@@ -1,0 +1,26 @@
+{
+  "job_sha256": "6626fd4ff5cefcaee91b5b9b8e6e60713f53b82a7d820386ae5ba7490102e404",
+  "state": "received",
+  "evidence": {
+    "id": "product-map",
+    "url": "https://vip.stock.finance.sina.com.cn/quotes_service/view/js/qihuohangqing.js",
+    "sha256": "59c04f39e631fe9247c893e9b635a77752b495225a239b29cb934162e580bd4d",
+    "retrieved_at": "2026-11-14T13:38:08.3522291Z",
+    "version": "sina-vendor-v1"
+  },
+  "bytes": 11098,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://vip.stock.finance.sina.com.cn/quotes_service/view/js/qihuohangqing.js",
+    "content_type": "application/javascript",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 13:38:09 GMT",
+    "requested_at": "2026-11-14T13:38:08.3522291Z",
+    "complete": true,
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  }
+}
