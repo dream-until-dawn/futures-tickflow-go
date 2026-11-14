@@ -1,0 +1,63 @@
+{
+  "schema": "gfex-english-result-independent-readback-v1",
+  "candidate_commit": "b5079cc0e01da803cc532439ad936f50da3414ba",
+  "independent_consumer": {
+    "positive": true,
+    "grant_rejections": 10,
+    "default_http_rejection": true,
+    "mutation_controls": 4,
+    "source_snapshot_files_matched": 544,
+    "consumer_executable_hash_matched": true
+  },
+  "probe": {
+    "actual_requests": 1,
+    "bytes": 980,
+    "sha256": "560c332fceb7feab9e45f5b478f20a81ce8fa3c769643fbbb3df50a3c72bec94",
+    "requested_at_utc": "2026-11-14T11:18:08.7187071Z",
+    "http_status": 200,
+    "complete": true,
+    "transport": "native-http",
+    "unauthenticated": true,
+    "business_verified": false,
+    "classification": "script-cookie-reload-challenge; no business homepage",
+    "observed_literal_markers": [
+      "EO_Bot_Ssid",
+      "__tst_status",
+      "setTimeout",
+      "location.href"
+    ],
+    "grant_consumed": true
+  },
+  "upstream_additional_market_requests": 0,
+  "source_root": "C:\\VScodeProject\\futures-decision-strategy\\results\\gfex-english-live-20261114",
+  "notes": [
+    "readback of recorded request and bounded consumer code, not independent observation of every network packet",
+    "challenge inspected as bytes only; no script, cookie or follow-up request",
+    "compatibility acceptance passed; live business source remains blocked"
+  ],
+  "candidate_ci": {
+    "run_id": 43588979995,
+    "head_sha": "b5079cc0e01da803cc532439ad936f50da3414ba",
+    "three_matrices": "passed",
+    "linux_go126_race": "passed"
+  },
+  "business_review": {
+    "path": "C:\\VScodeProject\\futures-decision-strategy\\results\\gfex-english-live-20261114\\business-review.json",
+    "sha256": "f477818bccde61985417889e1eb7b88f7c1c6e31a186570466499282d58ead47",
+    "status": "blocked_challenge",
+    "scripts_executed": false,
+    "retries": 0,
+    "new_market_originals": 0,
+    "one_time_authorization_consumed": true
+  },
+  "evidence_root": "C:\\Temp\\tickflow-gfex-english-closeout-20261114-v1",
+  "seal": {
+    "files": 30,
+    "manifest_sha256": "0ecff67649c41881c795ec97595caa70fa8e1637191070a354bcda598f94ead2",
+    "sealed": "C:\\Temp\\tickflow-gfex-english-closeout-20261114-v1-sealed",
+    "migration": "C:\\Temp\\tickflow-gfex-english-closeout-20261114-v1-migration",
+    "tamper_copy": "C:\\Temp\\tickflow-gfex-english-closeout-20261114-v1-tamper",
+    "all_bytes_hashes_file_set_matched": true,
+    "tamper_rejected": "gfex-english-live-20261114/response.body"
+  }
+}
