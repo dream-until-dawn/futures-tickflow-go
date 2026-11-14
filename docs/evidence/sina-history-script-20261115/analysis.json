@@ -1,0 +1,117 @@
+{
+  "identity": "static-js-unqualified",
+  "bytes": 17680,
+  "sha256": "2d3fb3cd57ffed396304e63c62d99e372653a323c346aeccb0f896788d456f45",
+  "encoding": "gb18030 strict; parent HTML declares gb2312",
+  "lines": 600,
+  "explicit_urls": [
+    "http://hq.sinajs.cn/list=\";",
+    "http://hq.sinajs.cn/?list=sh000001,sz399001,sh000011,sz399305\";",
+    "http://finance.sina.com.cn/futures/quote/cff/bc.shtml?code=__CODE__\";",
+    "http://finance.sina.com.cn/money/future/quote.html?__CODE__\";",
+    "http://finance.sina.com.cn/money/future/quote.html?\",",
+    "http://biz.finance.sina.com.cn/futures/hold/detail.php?t_breed=@CODE@&t_date=@DATE@',",
+    "http://biz.finance.sina.com.cn/futures/hold/history.php?t_breed=@CODE@&shortname=@AGENCY@',",
+    "http://finance.sina.com.cn/\",",
+    "http://finance.sina.com.cn/futuremarket/\",",
+    "http://finance.sina.com.cn/stock/indexfuture/\",",
+    "http://finance.sina.com.cn/futuremarket/yspzx.html\",",
+    "http://finance.sina.com.cn/futuremarket/gold.html\",",
+    "http://finance.sina.com.cn/column/futuresnyzx.html\",",
+    "http://finance.sina.com.cn/futuremarket/indu.html\",",
+    "http://finance.sina.com.cn/futuremarket/agri.html\",",
+    "http://q.blog.sina.com.cn/qihuoblog/\",",
+    "http://guba.sina.com.cn/bar.php?name=%C6%DA%BB%F5\",",
+    "http://biz.finance.sina.com.cn/hq/\",",
+    "http://vip.stock.finance.sina.com.cn/portfolio/main.php\","
+  ],
+  "historical_roster_proved": false,
+  "javascript_executed": false,
+  "followup_requests": 0,
+  "price_requests": 0,
+  "financial_eligible": false,
+  "observed_references": [
+    {
+      "line": 450,
+      "text": "changeJYS: function () {"
+    },
+    {
+      "line": 451,
+      "text": "var nIndex = this.JYSsel.selectedIndex;"
+    },
+    {
+      "line": 452,
+      "text": "this.fillBylist(this.PZSsel, PZ[nIndex]);"
+    },
+    {
+      "line": 456,
+      "text": "var nIndex1 = this.JYSsel.selectedIndex, nIndex2 = this.PZSsel.selectedIndex;"
+    },
+    {
+      "line": 457,
+      "text": "this.fillByArr(this.HYSsel, YF[nIndex1][nIndex2]);"
+    },
+    {
+      "line": 460,
+      "text": "var nIndex1 = this.JYSsel.selectedIndex, nIndex2 = this.PZSsel.selectedIndex, nIndex3 = this.HYSsel.selectedIndex;"
+    },
+    {
+      "line": 466,
+      "text": "window.open(__IF_URL.replace(\"__CODE__\", YF[nIndex1][nIndex2][nIndex3][1]));"
+    },
+    {
+      "line": 469,
+      "text": "window.open(this.url + YF[nIndex1][nIndex2][nIndex3][1]);"
+    },
+    {
+      "line": 484,
+      "text": "this.holdSel1.onchange = this.changeJYS.Bind(this, this.holdSel1, this.holdSel2);"
+    },
+    {
+      "line": 489,
+      "text": "FutureSearch.fillBylist(this.holdSel1, JYS);"
+    },
+    {
+      "line": 499,
+      "text": "this.buildSel1.onchange = this.changeJYS.Bind(this, this.buildSel1, this.buildSel2);"
+    },
+    {
+      "line": 511,
+      "text": "for (var j = 0; j < YF[i].length; j++) {"
+    },
+    {
+      "line": 512,
+      "text": "for (var k = 0; k < YF[i][j].length; k++) {"
+    },
+    {
+      "line": 513,
+      "text": "obj.options[nIndex] = new Option(YF[i][j][k][0]);"
+    },
+    {
+      "line": 514,
+      "text": "obj.options[nIndex].value = YF[i][j][k][1];"
+    },
+    {
+      "line": 523,
+      "text": "for (var i = 0; i < YF[nIndex].length; i++) {"
+    },
+    {
+      "line": 524,
+      "text": "for (var j = 0; j < YF[nIndex][i].length; j++) {"
+    },
+    {
+      "line": 525,
+      "text": "obj.options[opIndex] = new Option(YF[nIndex][i][j][0]);"
+    },
+    {
+      "line": 526,
+      "text": "obj.options[opIndex].value = YF[nIndex][i][j][1];"
+    },
+    {
+      "line": 539,
+      "text": "changeJYS: function (sel, obj) {"
+    }
+  ],
+  "declared_catalog_objects": [],
+  "limit": "仅引用目录对象，未定义JYS/PZ/YF，未证明2021起退市全集。其他HTTP字面量不跟随、不擅自改HTTPS。"
+}

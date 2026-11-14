@@ -1,0 +1,600 @@
+function $(objName){
+	if(document.getElementById){
+		return document.getElementById(objName);
+	}else{
+		return document.all.objName;
+	}
+}
+if( typeof $C == 'undefined' )$C = function(t){return document.createElement(t)};
+
+function oEvent(evt){ 
+	var evt = evt ? evt : (window.event ? window.event : null);
+	var objSrc = (evt.target) ? evt.target : evt.srcElement;
+	return(objSrc);
+}
+
+function getEvent(){
+	var evt = window.event ? window.event : getEvent.caller.arguments[0];
+	return(evt);
+}
+
+function addEvent(oTarget, sEventType, fnHandler){
+	if (oTarget.addEventListener) {
+		oTarget.addEventListener(sEventType, fnHandler, false);
+	}
+	else if(oTarget.attachEvent) {
+		oTarget.attachEvent("on" + sEventType, fnHandler);
+	}
+	else {
+		oTarget["on" + sEventType] = fnHandler;
+	}
+}
+
+String.prototype.trim = function() {
+	return this.replace(/(^\s+)|(\s+$)/g,"");
+}
+
+Function.prototype.Bind = function() { 
+	var __m = this, object = arguments[0], args = new Array(); 
+	for(var i = 1; i < arguments.length; i++){
+		args.push(arguments[i]);
+	}
+	
+	return function() {
+		return __m.apply(object, args);
+	}
+};
+
+Function.prototype.BindForEvent = function() { 
+	var __m = this, object = arguments[0], args = new Array();
+	for(var i = 1; i < arguments.length; i++){
+		args.push(arguments[i]);
+	}
+	
+	return function(event) {
+		return __m.apply(object, [( event || window.event)].concat(args));
+	}
+}
+
+var isIE = false;
+var userAgent = navigator.userAgent.toLowerCase();
+if ((userAgent.indexOf('msie') != -1) && (userAgent.indexOf('opera') == -1)) {
+	isIE = true;
+}
+//------------------------------------------------------------------------------
+// Cookie Related
+//------------------------------------------------------------------------------
+
+var Cookie = function()
+{
+	this.Init.apply(this, arguments);
+};
+
+Cookie.prototype = {
+	_items: {},
+	_nItems: 0,
+	
+	Init: function() {
+		
+	},
+	
+	_init: function() {
+		if (document.cookie.length == 0) {
+			return;
+		}
+		
+		var cookiesArr = document.cookie.split(';');
+		var temp;
+		this._nItems = cookiesArr.length;
+
+		if (this._nItems == 0) {
+			return;
+		}
+		
+		for (var i = 0; i < this._nItems; i++) {
+			temp = cookiesArr[i].split('=');
+			if (temp.length != 2) {
+				continue;
+			}
+			this._items[temp[0].trim()] = temp[1].trim();
+		}
+	},
+	
+	get: function(name) {
+		this._init();
+		
+		if (typeof this._items[name] != 'undefined') {
+			return unescape(this._items[name]);
+		}
+		
+		return '';
+	},
+	
+	set: function(name, value, expire, path, domain, secure) {
+		if (typeof name == 'undefined') {
+			return false;
+		}
+		
+		if (typeof value == 'undefined') {
+			return false;
+		}
+		
+		var cookieStr = name + '=' + escape(value) + '; ';
+		
+		if (typeof expire != 'undefined') {
+			cookieStr += 'expires=' + expire + '; '
+		}
+		
+		if (typeof path != 'undefined') {
+			cookieStr += 'path=' + path + '; '
+		}
+		
+		if (typeof domain != 'undefined') {
+			cookieStr += 'domain=' + domain + '; ';
+		}
+		
+		if (secure == true) {
+			cookieStr += 'secure;';
+		}
+		
+		document.cookie = cookieStr;
+	},
+	
+	remove: function(name) {
+		document.cookie = name + "=; expires=Fri, 21 Dec 1976 04:31:24 GMT;";
+	},
+	
+	getCount: function() {
+		this._init();
+		return this._nItems;
+	}
+};
+
+//------------------------------------------------------------------------------
+//navigation top
+//------------------------------------------------------------------------------
+var Nav = function (arrayData) {
+	this.element = $("nav");
+	var table = $C("table");
+	table.className = "table";
+	table.cellPadding = 0;
+	table.cellSpacing = 0;
+	table.border = 0;
+	var line = table.insertRow(0);
+	for (var i = 0; i < arrayData.length; i++) {
+		var cell = line.insertCell(i);
+		cell.className = i == 0 ? "index" : "off";
+		cell.onmouseover = function () {
+			this.className = this.className == "index" ? "index" : "on";
+		};
+		cell.onmouseout = function () {
+			this.className = this.className == "index" ? "index" : "off";
+		};
+		var link = $C("a");
+		link.target = "_blank";
+		link.href = arrayData[i][0];
+		link.innerHTML = arrayData[i][1];
+		cell.appendChild(link);
+	}
+	this.element.appendChild(table);
+};
+// Color configuration
+var __UP_COLOR = '#F00';
+var __DOWN_COLOR = '#008000';
+var __STABLE_COLOR = '#000';
+
+function getColorCode(value)
+{
+	value = parseFloat(value);
+	if (value > 0) {
+		return __UP_COLOR;
+	} else if (value < 0) {
+		return __DOWN_COLOR;
+	} else {
+		return __STABLE_COLOR;
+	}
+};
+//------------------------------------------------------------------------------
+//code trim
+//------------------------------------------------------------------------------
+function codeTrim(code) {
+	var typeRex = /(sh|sz)/;
+	return code.toString().replace(typeRex,"");;
+}
+
+
+var __SINAJS_URL = "http://hq.sinajs.cn/list=";
+var __REALTIME_INDEXS = "http://hq.sinajs.cn/?list=sh000001,sz399001,sh000011,sz399305";
+var __IF_URL = "http://finance.sina.com.cn/futures/quote/cff/bc.shtml?code=__CODE__";
+var __FUTURE_URL = "http://finance.sina.com.cn/money/future/quote.html?__CODE__";
+var __VISITED_FUTURES_NUM = 10;
+var __VISITED_FUTURES_COOKIE_NAME = 'visited_futures';
+
+//------------------------------------------------------------------------------
+// SINAJS quote parser begin
+//------------------------------------------------------------------------------
+
+var SinajsQuoteParser = {
+	parse: function(code) {
+		var quoteStr = window['hq_str_' + code];
+		if (typeof quoteStr == 'undefined') {
+			return null;
+		}
+		
+		if (quoteStr.length == 0) {
+			return null;
+		}
+		
+		return quoteStr.split(',');
+	}
+};
+
+var FundFormatter = {
+	formatTitle: function(code, name, nameCut, url) {
+		if (typeof nameCut == 'undefined') {
+			nameCut = name.length;
+		}
+		if (name.length == 0) {
+			name = code;
+			nameCut = name.length;
+		}
+		var tempUrl = url ? url : __FUTURE_URL
+		return '<a href="' + tempUrl.replace("__CODE__",codeTrim(code)) + '" title="' + name + '">' + name.substr(0, nameCut) + '</a>';
+	},
+	
+	formatCurValue: function(quoteArr) {
+		return '<span style="color:' + getColorCode(quoteArr[6]) + '">' + quoteArr[2] + '</span>';
+	},
+	
+	formatLastPrice: function(quoteArr) {
+		return '<span style="color:' + getColorCode(quoteArr[6]) + '">' + quoteArr[3] + '</span>';
+	},
+	
+	formatCommon: function(value, checkValue, valueSuffix) {
+		valueSuffix = (typeof valueSuffix == 'undefined') ? '' : valueSuffix;
+		return '<span style="color:' + getColorCode(checkValue) + '">' + value + valueSuffix + '</span>';
+	}
+};
+
+//------------------------------------------------------------------------------
+// Last visited stocks begin
+// Dependence: Cookie
+//------------------------------------------------------------------------------
+
+var VisitedStocks = function()
+{
+	this.Init.apply(this, arguments);
+};
+
+VisitedStocks.prototype = {
+	_stocks: [],
+	_cookie: null,
+	
+	Init: function() {
+		this._cookie = new Cookie();
+		
+		var stocksStr = this._cookie.get(__VISITED_FUTURES_COOKIE_NAME);
+		if (stocksStr.length != 0) {
+			this._stocks = stocksStr.split('|');
+		}
+	},
+	
+	_findStock: function(code) {
+		var nStocks = this._stocks.length;
+		for (var i = 0; i < nStocks; i++) {
+			if (this._stocks[i] == code) {
+				return i;
+			}
+		}
+		
+		return -1;
+	},
+	
+	set: function(code) {
+		var pos = this._findStock(code);
+		if (pos != -1) {
+			this._stocks.splice(pos, 1);
+		}
+		
+		this._stocks.unshift(code);
+		
+		if (this._stocks.length > __VISITED_FUTURES_NUM) {
+			this._stocks.pop();
+		}
+		this._cookie.set(__VISITED_FUTURES_COOKIE_NAME, this._stocks.join('|'), 'Fri, 31 Dec 2099 23:59:59 GMT', '/', 'finance.sina.com.cn');
+	},
+	
+	getAll: function() {
+		return this._stocks;
+	},
+	
+	clear: function() {
+		this._cookie.remove(__VISITED_FUTURES_COOKIE_NAME);
+	}
+};
+
+
+var VisitedStocksTable = {
+	_hotStockList: ['cu0803','al0803','zn0803','ru0803','fu0803','a0809','c0809','SR807','WS805','l0805'],
+	
+	_getVisitedStocksTpl: function() {
+		return '<table><thead><tr><th>名称</th><th>最新价</th><th>涨跌幅</th></tr>\
+			</thead><tbody>{#CONTENTS#}</tbody></table>';
+	},
+	
+	_getStockItemTpl: function(quote) {
+		return '<tr><th>{#TITLE#}</th><td>{#PRICE#}</td><td>{#CHANGE_RATE#}</td></tr>';
+	},
+	
+	_getHotStocksTpl: function() {
+		return '<table><thead><tr><th colspan="3">以下为热门期货</th></tr></thead>\
+				<tbody>{#CONTENTS#}</tbody></table>';
+	},
+	
+	_getVisitedStocks: function() {
+		var visited = new VisitedStocks();
+		return visited.getAll();
+	},
+	
+	_generateTable: function(visitedStocks, hotStocks) {
+		var contents = '';
+		var nVisitedStocks = visitedStocks.length;
+		var nHotStocks = hotStocks.length;
+		var quote = [];
+		var quoteLink = '';
+		var code = '';
+		
+		var item = '';
+		var visitedItems = [];
+		for (var i = 0; i < nVisitedStocks; i++) {
+			code = visitedStocks[i];
+			quote = SinajsQuoteParser.parse(code);
+			if (quote == null) {
+				continue;
+			}
+
+			item = this._getStockItemTpl();
+
+			if (code.indexOf("CFF") != -1) {
+				var changeRate = ((quote[3] - quote[14]) / quote[14] * 100).toFixed(2);
+			
+				item = item.replace(/\{#TITLE#\}/, FundFormatter.formatTitle(code.replace("CFF_", ""), "期指" + code.replace("CFF_IF", ""), 6, __IF_URL));
+				item = item.replace(/\{#PRICE#\}/, FundFormatter.formatCommon(quote[3], changeRate));
+				item = item.replace(/\{#CHANGE_RATE#\}/, FundFormatter.formatCommon(changeRate, changeRate, "%"));
+			}
+			else {
+				var changeRate = ((quote[8] - quote[10]) / quote[10] * 100).toFixed(2);
+			
+				item = item.replace(/\{#TITLE#\}/, FundFormatter.formatTitle(code, quote[0], 6));
+				item = item.replace(/\{#PRICE#\}/, FundFormatter.formatCommon(quote[8], changeRate));
+				item = item.replace(/\{#CHANGE_RATE#\}/, FundFormatter.formatCommon(changeRate, changeRate, "%"));
+			}
+			
+			visitedItems.push(item);
+		}
+		
+		var hotItems = [];
+		for (var i = 0; i < nHotStocks; i++) {
+			code = hotStocks[i];
+			quote = SinajsQuoteParser.parse(code);
+			if (quote == null) {
+				continue;
+			}
+			
+			var changeRate = ((quote[8] - quote[10]) / quote[10] * 100).toFixed(2);
+			
+			item = this._getStockItemTpl();
+			item = item.replace(/\{#TITLE#\}/, FundFormatter.formatTitle(code, quote[0], 6));
+			item = item.replace(/\{#PRICE#\}/, FundFormatter.formatCommon(quote[8], changeRate));
+			item = item.replace(/\{#CHANGE_RATE#\}/, FundFormatter.formatCommon(changeRate, changeRate, "%"));
+			
+			hotItems.push(item);
+		}
+		
+		var visitedTbl = '';
+		if (visitedItems.length != 0) {
+			visitedTbl = this._getVisitedStocksTpl();
+			visitedTbl = visitedTbl.replace(/\{#CONTENTS#\}/, visitedItems.join(''));
+		}
+		
+		var hotTbl = '';
+		if (hotItems.length != 0) {
+			hotTbl = this._getHotStocksTpl();
+			hotTbl = hotTbl.replace(/\{#CONTENTS#\}/, hotItems.join(''));
+		}
+		
+		return visitedTbl + hotTbl;
+	},
+	
+	_show: function(visitedStocks, hotStocks) {
+		$('visited_futures_tbl').innerHTML = this._generateTable(visitedStocks, hotStocks);
+	},
+	
+	show: function() {
+		var visitedStocks = this._getVisitedStocks();
+		var nVisitedStocks = visitedStocks.length;
+		
+		var nHotStocks = 0;
+		var hotStocks = [];
+
+		if (nVisitedStocks < __VISITED_FUTURES_NUM) {
+			nHotStocks = __VISITED_FUTURES_NUM - nVisitedStocks + 1;
+			hotStocks = this._hotStockList.slice(0, nHotStocks - 1);
+		}
+
+		var stocks = visitedStocks.concat(hotStocks);
+		var sinajsQuery = stocks.join(',');
+		var sLoader = new IO.Script();
+		sLoader.load(__SINAJS_URL + sinajsQuery, this._show.Bind(this, visitedStocks, hotStocks));
+	}
+};
+//------------------------------------------------------------------------------
+// FutureSearch begin
+//------------------------------------------------------------------------------
+var FutureSearch = {
+	url: "http://finance.sina.com.cn/money/future/quote.html?",
+	Init: function () {
+	},
+	fillByArr: function (obj, items) {
+		obj.innerHTML = "";
+		for (var i = 0; i < items.length; i++) {
+			obj.options[i] = new Option(items[i][0]);
+		};
+	},
+	fillBylist: function (obj, items) {
+		obj.innerHTML = "";
+		for (var i = 0; i < items.length; i++) {
+			obj.options[i] = new Option(items[i]);
+		};
+	},
+	changeJYS: function () {
+		var nIndex = this.JYSsel.selectedIndex;
+		this.fillBylist(this.PZSsel, PZ[nIndex]);
+		this.changePZ();
+	},
+	changePZ: function () {
+		var nIndex1 = this.JYSsel.selectedIndex, nIndex2 = this.PZSsel.selectedIndex;
+		this.fillByArr(this.HYSsel, YF[nIndex1][nIndex2]);
+	},
+	toResult: function () {
+		var nIndex1 = this.JYSsel.selectedIndex, nIndex2 = this.PZSsel.selectedIndex, nIndex3 = this.HYSsel.selectedIndex;
+		if (nIndex1 == 0) {
+			alert("请选择期货!");
+			return ;
+		}
+		if (nIndex1 == 4) {
+			window.open(__IF_URL.replace("__CODE__", YF[nIndex1][nIndex2][nIndex3][1]));
+		}
+		else {
+			window.open(this.url + YF[nIndex1][nIndex2][nIndex3][1]);
+		}
+	}
+}
+
+
+//------------------------------------------------------------------------------
+// HoldBuild begin
+//------------------------------------------------------------------------------
+var HoldBuild = {
+	holdUrl: 'http://biz.finance.sina.com.cn/futures/hold/detail.php?t_breed=@CODE@&t_date=@DATE@',
+	buildUrl: 'http://biz.finance.sina.com.cn/futures/hold/history.php?t_breed=@CODE@&shortname=@AGENCY@',
+	Init: function () {
+		this.holdSel1 = $("hold_sel1");
+		this.holdSel2 = $("hold_sel2");
+		this.holdSel1.onchange = this.changeJYS.Bind(this, this.holdSel1, this.holdSel2);
+		$("btn_hold").onclick = this.goToHold.Bind(this);
+		var tempDate = new Date();
+		$("hold_calendar").value = tempDate.getFullYear() + "-" + (tempDate.getMonth() + 1) + "-" + tempDate.getDate();
+
+		FutureSearch.fillBylist(this.holdSel1, JYS);
+		this.fillAll(this.holdSel2);
+
+		this.clone(this.holdSel1, $("build_sel1_wrap"), "build_sel1");
+		this.clone(this.holdSel2, $("build_sel2_wrap"), "build_sel2");
+		this.buildSel1 = $("build_sel1");
+		this.buildSel2 = $("build_sel2");
+		this.buildSel3 = $("build_sel3");
+		$("btn_build").onclick = this.goToBuild.Bind(this);
+		
+		this.buildSel1.onchange = this.changeJYS.Bind(this, this.buildSel1, this.buildSel2);
+		this.fillAgency();
+	},
+	clone: function (objFrom, wrapper, sId) {
+		var tempNode = objFrom.cloneNode(true);
+		tempNode.id = sId;
+		wrapper.appendChild(tempNode);
+	},
+	fillAll: function (obj) {
+		obj.innerHTML = "";
+		var nIndex = 0;
+		for (var i = 0; i < YF.length; i++) {
+			for (var j = 0; j < YF[i].length; j++) {
+				for (var k = 0; k < YF[i][j].length; k++) {
+					obj.options[nIndex] = new Option(YF[i][j][k][0]);
+					obj.options[nIndex].value = YF[i][j][k][1];
+					nIndex++;
+				};
+			};
+		};
+	},
+	fillOne: function (obj, nIndex) {
+		obj.innerHTML = "";
+		var opIndex = 0;
+		for (var i = 0; i < YF[nIndex].length; i++) {
+			for (var j = 0; j < YF[nIndex][i].length; j++) {
+				obj.options[opIndex] = new Option(YF[nIndex][i][j][0]);
+				obj.options[opIndex].value = YF[nIndex][i][j][1];
+				opIndex++;
+			};
+		};
+	},
+	fillAgency: function () {
+		this.buildSel3.innerHTML = "";
+		this.buildSel3.options[0] = new Option("机构");
+		for (var i = 0; i < jigou_all.length; i++) {
+			this.buildSel3.options[i + 1] = new Option(jigou_all[i]);
+			this.buildSel3.options[i + 1].value = jigou_all[i];
+		};
+	},
+	changeJYS: function (sel, obj) {
+		var nIndex = sel.selectedIndex;
+		if (nIndex != 0) {
+			this.fillOne(obj, nIndex);
+		}
+		else if (nIndex == 0) {
+			this.fillAll(obj);
+		}
+	},
+	goToHold: function () {
+		if (this.holdSel1.selectedIndex == 0 && this.holdSel2.selectedIndex == 0) {
+			alert("请选择期货");
+			return ;
+		}
+//		if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test($("hold_calendar").value) != true) {
+		if (/^(19|20)\d{2}-((0?[1-9])|(1[12]))-((0?[1-9])|(1[0-9])|(2[0-9])|(3[01]))$/.test($("hold_calendar").value) != true) {
+			alert("请按格式输入日期，例:2008-01-05");
+			var tempDate = new Date();
+			$("hold_calendar").value = tempDate.getFullYear() + "-" + (tempDate.getMonth() + 1) + "-" + tempDate.getDate();
+			return ;
+		}
+		window.open(this.holdUrl.replace("@CODE@", this.holdSel2.value).replace("@DATE@", $("hold_calendar").value));
+	},
+	goToBuild: function () {
+		if (this.buildSel1.selectedIndex == 0 && this.buildSel2.selectedIndex == 0) {
+			alert("请选择期货");
+			return ;
+		}
+		if (this.buildSel3.selectedIndex == 0) {
+			alert("请选择机构");
+			return ;
+		}
+		window.open(this.buildUrl.replace("@CODE@", this.buildSel2.value).replace("@AGENCY@", this.buildSel3.value));
+	}
+}
+
+
+function main () {
+	var visitedFutures = new VisitedStocks();
+	VisitedStocksTable.show();
+
+	window.nav = new Nav(
+		[
+			["http://finance.sina.com.cn/", "财经首页"],
+			["http://finance.sina.com.cn/futuremarket/", "期货首页"],
+			["http://finance.sina.com.cn/stock/indexfuture/", "股指期货"],
+			["http://finance.sina.com.cn/futuremarket/yspzx.html", "期指资讯"],
+			["http://finance.sina.com.cn/futuremarket/gold.html", "黄金"],
+			["http://finance.sina.com.cn/column/futuresnyzx.html", "能源"],
+			["http://finance.sina.com.cn/futuremarket/indu.html", "工业品"],
+			["http://finance.sina.com.cn/futuremarket/agri.html", "农产品"],
+			["http://q.blog.sina.com.cn/qihuoblog/", "期货圈"],
+			["http://guba.sina.com.cn/bar.php?name=%C6%DA%BB%F5", "期货吧"],
+			["http://biz.finance.sina.com.cn/hq/", "行情中心"],
+			["http://vip.stock.finance.sina.com.cn/portfolio/main.php", "自选股"]
+		]
+	);
+
+	FutureSearch.Init();
+	HoldBuild.Init();
+
+}

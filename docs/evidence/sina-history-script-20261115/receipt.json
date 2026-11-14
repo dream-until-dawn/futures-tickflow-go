@@ -1,0 +1,24 @@
+{
+  "job_sha256": "6c465c3d6eabf33c45da828e124589935e7738983066baa9f513076e669360e7",
+  "state": "received",
+  "evidence": {
+    "id": "sina-history-script",
+    "url": "https://vip.stock.finance.sina.com.cn/q//view/js/futures_history.js",
+    "sha256": "2d3fb3cd57ffed396304e63c62d99e372653a323c346aeccb0f896788d456f45",
+    "retrieved_at": "2026-11-14T16:41:27.2426014Z",
+    "version": "sina-history-script-v1"
+  },
+  "bytes": 17680,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://vip.stock.finance.sina.com.cn/q//view/js/futures_history.js",
+    "content_type": "application/javascript",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 16:41:27 GMT",
+    "requested_at": "2026-11-14T16:41:27.2426014Z",
+    "complete": true
+  }
+}
