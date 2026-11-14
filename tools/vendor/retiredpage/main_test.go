@@ -150,6 +150,30 @@ func TestHistoryHTMLPinsFrozenConfigAndNoParameters(t *testing.T) {
 	}
 }
 
+func TestHistoryScriptPinsOriginalDoubleSlash(t *testing.T) {
+	source := "../../../docs/evidence/sina-history-html-20261115"
+	job, ref, err := prepareHistoryScript(source)
+	if err != nil || job.URL != historyScriptURL || !strings.Contains(job.URL, "/q//view/") || ref.SHA256 != historySHA {
+		t.Fatalf("%+v %v", job, err)
+	}
+	dir := t.TempDir()
+	for _, name := range []string{"history.jsonp", "receipt.json"} {
+		data, err := os.ReadFile(filepath.Join(source, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name == "history.jsonp" {
+			data = []byte(strings.ReplaceAll(string(data), "/q//view/", "/q/view/"))
+		}
+		if err := os.WriteFile(filepath.Join(dir, name), data, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, _, err := prepareHistoryScript(dir); err == nil {
+		t.Fatal("自行改路径的HTML通过")
+	}
+}
+
 // 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
 func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
 	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115", "sina-config-static-20261115", "sina-history-html-20261115"} {

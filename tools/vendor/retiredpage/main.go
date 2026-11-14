@@ -30,6 +30,29 @@ const modularURL = "https://n.sinaimg.cn/finance/futures/moudler20200421.js"
 const configURL = "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js"
 const configSHA = "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585"
 const historyURL = "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php"
+const historySHA = "81cf741fad8436bb9477a7884597ea5c37ea40ae14a8527e6c0fc65267e3fa28"
+const historyScriptURL = "https://vip.stock.finance.sina.com.cn/q//view/js/futures_history.js"
+
+// prepareHistoryScript 保留原HTML相对路径的双斜线，仅接受准确原件及其真实src。
+func prepareHistoryScript(sourceDir string) (batch.Job, evidence.Ref, error) {
+	body, err := os.ReadFile(filepath.Join(sourceDir, "history.jsonp"))
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	raw, err := os.ReadFile(filepath.Join(sourceDir, "receipt.json"))
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	var r batch.Receipt
+	if err := json.Unmarshal(raw, &r); err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']/q//view/js/futures_history\.js["']`)
+	if digest(body) != historySHA || r.Evidence.URL != historyURL || r.Evidence.Verify(body) != nil || r.State != "received" || r.BodyState != "complete" || r.Bytes != int64(len(body)) || r.HTTP == nil || r.HTTP.Status != 200 || !r.HTTP.Complete || r.HTTP.FinalURL != historyURL || !src.Match(body) {
+		return batch.Job{}, evidence.Ref{}, fmt.Errorf("历史HTML/收据/双斜线src不符")
+	}
+	return batch.Job{ID: "sina-history-script", URL: historyScriptURL, Format: "static-js-unqualified", Version: "sina-history-script-v1"}, r.Evidence, nil
+}
 
 // prepareHistory 只取原配置明确引用的无参数HTML，不猜交易所、品种或合约参数。
 func prepareHistory(sourceDir string) (batch.Job, evidence.Ref, error) {
@@ -135,10 +158,11 @@ func run() error {
 	modularFrom := flag.String("modular-from", "", "原HTML/收据目录；显式唯一modular静态模式")
 	configFrom := flag.String("config-from", "", "原HTML/收据目录；显式唯一config静态模式")
 	historyFrom := flag.String("history-from", "", "原config/收据目录；唯一无参数历史HTML")
+	historyScriptFrom := flag.String("history-script-from", "", "原历史HTML/收据目录；保留双斜线的唯一脚本")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
 	modes := 0
-	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom, *historyFrom} {
+	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom, *historyFrom, *historyScriptFrom} {
 		if value != "" {
 			modes++
 		}
@@ -149,7 +173,9 @@ func run() error {
 	var job batch.Job
 	var origin evidence.Ref
 	var e error
-	if *historyFrom != "" {
+	if *historyScriptFrom != "" {
+		job, origin, e = prepareHistoryScript(*historyScriptFrom)
+	} else if *historyFrom != "" {
 		job, origin, e = prepareHistory(*historyFrom)
 	} else if *configFrom != "" {
 		job, origin, e = prepareScript(*configFrom, configURL, "sina-config-static")
