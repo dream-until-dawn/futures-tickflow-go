@@ -1,0 +1,31 @@
+{
+  "identity": "static-js-unqualified",
+  "bytes": 58861,
+  "sha256": "e0d29d698836751fd6256b2d695fcd323b1485f69756740f5aa0675690c428c2",
+  "encoding": "gb18030 strict; parent HTML declares gb2312",
+  "lines": 1750,
+  "explicit_urls": [
+    "http://weibo.com/n/'",
+    "http://weibo.com/k/'"
+  ],
+  "historical_roster_proved": false,
+  "javascript_executed": false,
+  "followup_requests": 0,
+  "price_requests": 0,
+  "financial_eligible": false,
+  "observed_references": [
+    {
+      "line": 686,
+      "text": "window.open(config.api.get_history + $.param(opt), \"_blank\");"
+    },
+    {
+      "line": 720,
+      "text": "hy = jys_data.hy[index];"
+    },
+    {
+      "line": 733,
+      "text": "var hy = jys_data.hy[val];"
+    }
+  ],
+  "limit": "query_history打开config.api.get_history；下拉框读取jys_data.hy。静态引用不自证历史全集，不执行也不追API。"
+}
