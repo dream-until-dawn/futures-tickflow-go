@@ -1,0 +1,17 @@
+{
+  "engine_commit": "42a0cfe6eeabbd1160fcca2e9a9b6e989e03b473",
+  "index_path": "docs/evidence/sina-final-review-20261114/files.json",
+  "index_sha256": "b14a7f740071c7bff261fe83fb6994c3e80b83a01926eb8ec13ec2e609a0da6d",
+  "git_objects_verified": 42,
+  "documents": 245,
+  "quotes": 238,
+  "null_rejected": 7,
+  "bad_sha_controls": 238,
+  "validation_rows": 27711,
+  "target_venue_rows": 27470,
+  "RB_control_rows": 241,
+  "full_historical_roster": false,
+  "financial_admissions_added": 0,
+  "production_changes": 0,
+  "review": "read actual Go consumer, Python acceptance source and all indexed Git blobs"
+}
