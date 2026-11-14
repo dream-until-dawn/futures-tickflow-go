@@ -113,3 +113,34 @@ func TestModularStaticPinsApprovedPath(t *testing.T) {
 		}
 	}
 }
+
+// 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
+func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
+	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115"} {
+		base := filepath.Join("../../../docs/evidence", folder)
+		raw, err := os.ReadFile(filepath.Join(base, "files.json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var files []struct {
+			File   string
+			Bytes  int
+			SHA256 string
+		}
+		if err := json.Unmarshal(raw, &files); err != nil {
+			t.Fatal(err)
+		}
+		if len(files) != 5 {
+			t.Fatal("静态封存范围变化")
+		}
+		for _, file := range files {
+			data, err := os.ReadFile(filepath.Join(base, file.File))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(data) != file.Bytes || digest(data) != file.SHA256 {
+				t.Fatalf("原字节改变 %s/%s", folder, file.File)
+			}
+		}
+	}
+}
