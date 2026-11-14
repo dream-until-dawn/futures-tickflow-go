@@ -1,0 +1,24 @@
+{
+  "job_sha256": "a3afcbcbfc8f4e0284652e82c045830b600eaeb9fe6391ad03afe8856e814ba0",
+  "state": "received",
+  "evidence": {
+    "id": "sina-control-static",
+    "url": "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js",
+    "sha256": "6583c1120c705a0f63fba7242a0189ff446cbc8b4a2ab1fdd5034eaf93adf365",
+    "retrieved_at": "2026-11-14T16:13:07.8156138Z",
+    "version": "sina-control-static-v1"
+  },
+  "bytes": 1268,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js",
+    "content_type": "application/javascript",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 16:13:07 GMT",
+    "requested_at": "2026-11-14T16:13:07.8156138Z",
+    "complete": true
+  }
+}

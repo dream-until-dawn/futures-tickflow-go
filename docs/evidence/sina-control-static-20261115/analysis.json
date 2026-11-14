@@ -1,0 +1,20 @@
+{
+  "identity": "static-js-unqualified",
+  "bytes": 1268,
+  "sha256": "6583c1120c705a0f63fba7242a0189ff446cbc8b4a2ab1fdd5034eaf93adf365",
+  "encoding": "gb18030 strict; parent HTML declares gb2312",
+  "lines": 51,
+  "explicit_urls": [],
+  "historical_roster_proved": false,
+  "javascript_executed": false,
+  "followup_requests": 0,
+  "price_requests": 0,
+  "financial_eligible": false,
+  "observed_calls": [
+    "view.init",
+    "modular.init",
+    "modular.select.change",
+    "modular.select.query",
+    "modular.select.query_history"
+  ]
+}

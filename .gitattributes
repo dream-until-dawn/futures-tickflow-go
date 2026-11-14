@@ -21,6 +21,7 @@ docs/evidence/sina-vendor-expanded-20261114/build-info.txt binary
 docs/evidence/sina-null-results-20261114/raw/*.jsonp binary
 docs/evidence/sina-null-results-20261114/build-info.txt binary
 docs/evidence/sina-retired-page-20261114/page.jsonp binary
+docs/evidence/sina-control-static-20261115/control.jsonp binary
 # 复用的取得收据/派生对照也属于冻结证据，保留原有CRLF以匹配原摘要。
 docs/evidence/sina-vendor-origin-20261114/*.json binary
 LICENSE  text eol=lf
