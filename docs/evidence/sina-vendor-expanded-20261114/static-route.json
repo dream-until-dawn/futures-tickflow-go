@@ -1,0 +1,16 @@
+{
+  "status": "received",
+  "evidence": {
+    "id": "akshare-cons",
+    "url": "https://raw.githubusercontent.com/akfamily/akshare/main/akshare/futures/cons.py",
+    "sha256": "14cc6dad62d902d6997d58a02118b72daa9fb9d35f7251439700858091d3562b",
+    "retrieved_at": "2026-11-14T14:17:33.2635756Z",
+    "version": "akshare-static-source-v1"
+  },
+  "executed": false,
+  "constant_values": [
+    "http://vip.stock.finance.sina.com.cn/quotes_service/view/js/qihuohangqing.js"
+  ],
+  "new_retired_roster_proved": false,
+  "route": "literal-only-not-followed; no-retired-roster-certification"
+}

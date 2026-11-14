@@ -1,0 +1,24 @@
+{
+  "job_sha256": "5a5f557510790f9faff3aafe168457d18f428e2ac4bc7480543bcd04553a4bd9",
+  "state": "failed",
+  "evidence": {
+    "id": "",
+    "url": "",
+    "sha256": "",
+    "retrieved_at": "0001-01-01T00:00:00Z"
+  },
+  "bytes": 0,
+  "error": "batch: Sina未授权/停主机/既有尝试，禁止请求",
+  "body_state": "none",
+  "http": {
+    "attempted": false,
+    "response_received": false,
+    "status": 0,
+    "content_length": -1,
+    "requested_at": "0001-01-01T00:00:00Z",
+    "complete": false,
+    "failure": "vendor_gate",
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  }
+}

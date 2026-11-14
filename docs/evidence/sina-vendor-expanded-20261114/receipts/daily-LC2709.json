@@ -1,0 +1,26 @@
+{
+  "job_sha256": "d9da4d94e7bd56a7137a068acbdab152a2d9a3171a38c9c2851933dd24aa5cac",
+  "state": "received",
+  "evidence": {
+    "id": "daily-LC2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LC2709\u0026type=2021_04_12",
+    "sha256": "c8bee4f53d8cdfe9d10cd169215afbf6005dc911491b9d1c59dbf0a495ff80c6",
+    "retrieved_at": "2026-11-14T14:16:47.7540046Z",
+    "version": "sina-vendor-v1"
+  },
+  "bytes": 4023,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LC2709\u0026type=2021_04_12",
+    "content_type": "application/javascript; charset=gbk",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 14:16:49 GMT",
+    "requested_at": "2026-11-14T14:16:47.7540046Z",
+    "complete": true,
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  }
+}

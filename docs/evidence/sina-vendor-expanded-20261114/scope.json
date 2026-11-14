@@ -1,0 +1,15 @@
+{
+  "provider": "sina",
+  "class_identity": "vendor/request-bound",
+  "observed_current_codes": 241,
+  "current_raw_quality_available": 65,
+  "new_market_requests": 55,
+  "new_static_requests": 1,
+  "actual_bytes": 701481,
+  "official_dce_gfex_requests": 0,
+  "production_changes": 0,
+  "complete_2021_expired_roster": false,
+  "official_calendar_certified": false,
+  "financial_eligible": false,
+  "timestamp_semantics": "request-start UTC only; neither response completion nor exchange modification; no PIT qualification"
+}

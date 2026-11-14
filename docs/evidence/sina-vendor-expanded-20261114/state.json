@@ -1,0 +1,62 @@
+{
+  "state": "blocked-with-diagnostics",
+  "source_commit": "fdc3143a3568bcb8fb7a48267f285055cd25d62f",
+  "executable_sha256": "8c61c40876d306a5b7cbb70d189121c671ea2e4585516f39465407417b30cfd4",
+  "proposal_sha256": "2615fcce61395a44ccd801cb462cf9ef118f38b21acb1d2b93782537243fce8e",
+  "batches": [
+    {
+      "plan": "proposed-batch-01.json",
+      "state": "completed",
+      "requests": 40,
+      "bytes": 517113,
+      "returncode": 0,
+      "failures": []
+    },
+    {
+      "plan": "proposed-batch-02.json",
+      "state": "failed-stop-host-and-dependent-batches",
+      "requests": 15,
+      "bytes": 166675,
+      "returncode": 1,
+      "failures": [
+        "daily-A2711",
+        "daily-B2612",
+        "daily-B2701",
+        "daily-B2702",
+        "daily-B2703",
+        "daily-B2704",
+        "daily-B2705",
+        "daily-B2706",
+        "daily-B2707",
+        "daily-B2708",
+        "daily-B2709",
+        "daily-B2710",
+        "daily-B2711",
+        "daily-BB2701",
+        "daily-BB2703",
+        "daily-C2703",
+        "daily-C2705",
+        "daily-C2707",
+        "daily-C2709",
+        "daily-C2711",
+        "daily-CS2701",
+        "daily-CS2703",
+        "daily-CS2705",
+        "daily-CS2707",
+        "daily-CS2709",
+        "daily-CS2711"
+      ]
+    }
+  ],
+  "market_requests": 55,
+  "static_requests": 1,
+  "bytes": 701481,
+  "future_market_batches_stopped": true,
+  "static": {
+    "state": "completed",
+    "requests": 1,
+    "bytes": 17693,
+    "returncode": 0,
+    "failures": []
+  }
+}

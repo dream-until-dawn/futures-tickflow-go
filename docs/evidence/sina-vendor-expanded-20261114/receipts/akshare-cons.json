@@ -1,0 +1,24 @@
+{
+  "job_sha256": "770e2abb05a12149d64d85a90f4f1f5eaf26e55413d77c9579dc83e8516219fa",
+  "state": "received",
+  "evidence": {
+    "id": "akshare-cons",
+    "url": "https://raw.githubusercontent.com/akfamily/akshare/main/akshare/futures/cons.py",
+    "sha256": "14cc6dad62d902d6997d58a02118b72daa9fb9d35f7251439700858091d3562b",
+    "retrieved_at": "2026-11-14T14:17:33.2635756Z",
+    "version": "akshare-static-source-v1"
+  },
+  "bytes": 17693,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://raw.githubusercontent.com/akfamily/akshare/main/akshare/futures/cons.py",
+    "content_type": "text/plain; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 14:17:39 GMT",
+    "requested_at": "2026-11-14T14:17:33.2635756Z",
+    "complete": true
+  }
+}

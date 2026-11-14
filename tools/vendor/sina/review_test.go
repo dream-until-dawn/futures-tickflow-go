@@ -50,6 +50,73 @@ func TestSinaGitEvidenceBytesAndScope(t *testing.T) {
 	}
 }
 
+func TestSinaExpansionPreservesFailureAndUnattempted(t *testing.T) {
+	base := "../../../docs/evidence/sina-vendor-expanded-20261114"
+	b, e := os.ReadFile(filepath.Join(base, "files.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var files []struct {
+		File   string
+		Bytes  int
+		SHA256 string
+	}
+	if e = json.Unmarshal(b, &files); e != nil {
+		t.Fatal(e)
+	}
+	if len(files) != 146 {
+		t.Fatal("扩样封存范围变更")
+	}
+	for _, f := range files {
+		raw, e := os.ReadFile(filepath.Join(base, filepath.FromSlash(f.File)))
+		if e != nil {
+			t.Fatal(e)
+		}
+		sum := sha256.Sum256(raw)
+		if len(raw) != f.Bytes || hex.EncodeToString(sum[:]) != f.SHA256 {
+			t.Fatalf("扩样原件改变 %s", f.File)
+		}
+	}
+	b, e = os.ReadFile(filepath.Join(base, "request-ledger.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var ledger []struct {
+		ID, Kind, State string
+		Attempted       bool
+	}
+	if e = json.Unmarshal(b, &ledger); e != nil {
+		t.Fatal(e)
+	}
+	market, static, unattempted := 0, 0, 0
+	for _, r := range ledger {
+		if r.Kind == "static-source" {
+			if r.Attempted {
+				static++
+			}
+			continue
+		}
+		if r.Attempted {
+			market++
+		} else {
+			unattempted++
+		}
+		if r.ID == "daily-A2711" && (!r.Attempted || r.State != "failed") {
+			t.Fatal("null不可改成成功/未发请求")
+		}
+	}
+	if market != 55 || static != 1 || unattempted != 175 {
+		t.Fatalf("真实计数 %d %d %d", market, static, unattempted)
+	}
+	b, e = os.ReadFile(filepath.Join(base, "raw", "daily-A2711.jsonp"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	if len(b) != 76 || !strings.Contains(string(b), "=(null);") {
+		t.Fatal("失败原件不可改写")
+	}
+}
+
 func TestSinaFrozenToolReplaysAndDoesNotPublish(t *testing.T) {
 	root := filepath.Join(t.TempDir(), "private-result")
 	if e := reviewSamples("../../../source/sinavendor/testdata/receipts.json", root); e != nil {

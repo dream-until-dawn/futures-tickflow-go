@@ -1,0 +1,3074 @@
+{
+  "status": "proposal-only-no-network",
+  "already_acquired_current_codes": 11,
+  "remaining_current_codes": 230,
+  "deduplicated": [
+    {
+      "code": "LC2611",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2612",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2702",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2703",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2704",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2705",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2706",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2707",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2708",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2709",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LC2710",
+      "exchange": "GFEX",
+      "node": "lc_qh",
+      "source": {
+        "id": "list-lc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lc_qh&base=futures",
+        "sha256": "7a446f1550af3ca780315b077c540afc14af993d99070317091b2e94a071a0da",
+        "retrieved_at": "2026-11-14T13:40:24.8562551Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PD2612",
+      "exchange": "GFEX",
+      "node": "pd_qh",
+      "source": {
+        "id": "list-pd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pd_qh&base=futures",
+        "sha256": "4519ad85e05c2c1bb161b30b2142c633efeee8734eafdf382e2d9b622d7d77a4",
+        "retrieved_at": "2026-11-14T13:40:27.8577749Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PD2704",
+      "exchange": "GFEX",
+      "node": "pd_qh",
+      "source": {
+        "id": "list-pd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pd_qh&base=futures",
+        "sha256": "4519ad85e05c2c1bb161b30b2142c633efeee8734eafdf382e2d9b622d7d77a4",
+        "retrieved_at": "2026-11-14T13:40:27.8577749Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PD2706",
+      "exchange": "GFEX",
+      "node": "pd_qh",
+      "source": {
+        "id": "list-pd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pd_qh&base=futures",
+        "sha256": "4519ad85e05c2c1bb161b30b2142c633efeee8734eafdf382e2d9b622d7d77a4",
+        "retrieved_at": "2026-11-14T13:40:27.8577749Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PD2708",
+      "exchange": "GFEX",
+      "node": "pd_qh",
+      "source": {
+        "id": "list-pd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pd_qh&base=futures",
+        "sha256": "4519ad85e05c2c1bb161b30b2142c633efeee8734eafdf382e2d9b622d7d77a4",
+        "retrieved_at": "2026-11-14T13:40:27.8577749Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PD2710",
+      "exchange": "GFEX",
+      "node": "pd_qh",
+      "source": {
+        "id": "list-pd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pd_qh&base=futures",
+        "sha256": "4519ad85e05c2c1bb161b30b2142c633efeee8734eafdf382e2d9b622d7d77a4",
+        "retrieved_at": "2026-11-14T13:40:27.8577749Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2611",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2612",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2702",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2703",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2704",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2705",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2706",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PS2708",
+      "exchange": "GFEX",
+      "node": "ps_qh",
+      "source": {
+        "id": "list-ps_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ps_qh&base=futures",
+        "sha256": "a848918c84650f1a2a8e4d306ddc274c1e3942a98d7ac5e3f946f4b5b69889e9",
+        "retrieved_at": "2026-11-14T13:40:25.8565264Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PT2612",
+      "exchange": "GFEX",
+      "node": "pt_qh",
+      "source": {
+        "id": "list-pt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pt_qh&base=futures",
+        "sha256": "25b7e0553a23269e0ccbdd75d5cc1b0bfa6dc99198e8ceefe31d3e9c11edc73a",
+        "retrieved_at": "2026-11-14T13:40:26.8571716Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PT2704",
+      "exchange": "GFEX",
+      "node": "pt_qh",
+      "source": {
+        "id": "list-pt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pt_qh&base=futures",
+        "sha256": "25b7e0553a23269e0ccbdd75d5cc1b0bfa6dc99198e8ceefe31d3e9c11edc73a",
+        "retrieved_at": "2026-11-14T13:40:26.8571716Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PT2706",
+      "exchange": "GFEX",
+      "node": "pt_qh",
+      "source": {
+        "id": "list-pt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pt_qh&base=futures",
+        "sha256": "25b7e0553a23269e0ccbdd75d5cc1b0bfa6dc99198e8ceefe31d3e9c11edc73a",
+        "retrieved_at": "2026-11-14T13:40:26.8571716Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PT2708",
+      "exchange": "GFEX",
+      "node": "pt_qh",
+      "source": {
+        "id": "list-pt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pt_qh&base=futures",
+        "sha256": "25b7e0553a23269e0ccbdd75d5cc1b0bfa6dc99198e8ceefe31d3e9c11edc73a",
+        "retrieved_at": "2026-11-14T13:40:26.8571716Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PT2710",
+      "exchange": "GFEX",
+      "node": "pt_qh",
+      "source": {
+        "id": "list-pt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pt_qh&base=futures",
+        "sha256": "25b7e0553a23269e0ccbdd75d5cc1b0bfa6dc99198e8ceefe31d3e9c11edc73a",
+        "retrieved_at": "2026-11-14T13:40:26.8571716Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2611",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2612",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2702",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2703",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2704",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2705",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2706",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2707",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2708",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2709",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "SI2710",
+      "exchange": "GFEX",
+      "node": "si_qh",
+      "source": {
+        "id": "list-si_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=si_qh&base=futures",
+        "sha256": "00e9790aa6c7cbcb7db7480d174b385a9a1ef1863f32629d2903a002750e14cf",
+        "retrieved_at": "2026-11-14T13:40:23.8556279Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BZ2612",
+      "exchange": "DCE",
+      "node": "bz_qh",
+      "source": {
+        "id": "list-bz_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=bz_qh&base=futures",
+        "sha256": "793433996f35895fc3284c899c0747f5269908862831846af3a407049f076b1e",
+        "retrieved_at": "2026-11-14T13:40:22.8553402Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BZ2702",
+      "exchange": "DCE",
+      "node": "bz_qh",
+      "source": {
+        "id": "list-bz_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=bz_qh&base=futures",
+        "sha256": "793433996f35895fc3284c899c0747f5269908862831846af3a407049f076b1e",
+        "retrieved_at": "2026-11-14T13:40:22.8553402Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BZ2703",
+      "exchange": "DCE",
+      "node": "bz_qh",
+      "source": {
+        "id": "list-bz_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=bz_qh&base=futures",
+        "sha256": "793433996f35895fc3284c899c0747f5269908862831846af3a407049f076b1e",
+        "retrieved_at": "2026-11-14T13:40:22.8553402Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BZ2704",
+      "exchange": "DCE",
+      "node": "bz_qh",
+      "source": {
+        "id": "list-bz_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=bz_qh&base=futures",
+        "sha256": "793433996f35895fc3284c899c0747f5269908862831846af3a407049f076b1e",
+        "retrieved_at": "2026-11-14T13:40:22.8553402Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BZ2705",
+      "exchange": "DCE",
+      "node": "bz_qh",
+      "source": {
+        "id": "list-bz_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=bz_qh&base=futures",
+        "sha256": "793433996f35895fc3284c899c0747f5269908862831846af3a407049f076b1e",
+        "retrieved_at": "2026-11-14T13:40:22.8553402Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LG2703",
+      "exchange": "DCE",
+      "node": "lg_qh",
+      "source": {
+        "id": "list-lg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lg_qh&base=futures",
+        "sha256": "0f77a39887e8a8ba649c38672701d97ba4b5a98110f1debb95cf27a7e42f2eea",
+        "retrieved_at": "2026-11-14T13:40:21.8547649Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LG2705",
+      "exchange": "DCE",
+      "node": "lg_qh",
+      "source": {
+        "id": "list-lg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lg_qh&base=futures",
+        "sha256": "0f77a39887e8a8ba649c38672701d97ba4b5a98110f1debb95cf27a7e42f2eea",
+        "retrieved_at": "2026-11-14T13:40:21.8547649Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LG2707",
+      "exchange": "DCE",
+      "node": "lg_qh",
+      "source": {
+        "id": "list-lg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lg_qh&base=futures",
+        "sha256": "0f77a39887e8a8ba649c38672701d97ba4b5a98110f1debb95cf27a7e42f2eea",
+        "retrieved_at": "2026-11-14T13:40:21.8547649Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LG2709",
+      "exchange": "DCE",
+      "node": "lg_qh",
+      "source": {
+        "id": "list-lg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lg_qh&base=futures",
+        "sha256": "0f77a39887e8a8ba649c38672701d97ba4b5a98110f1debb95cf27a7e42f2eea",
+        "retrieved_at": "2026-11-14T13:40:21.8547649Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2701",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2703",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2705",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2707",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2709",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "A2711",
+      "exchange": "DCE",
+      "node": "dd_qh",
+      "source": {
+        "id": "list-dd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dd_qh&base=futures",
+        "sha256": "51fab2df3f4d8a912efa011c4c324d840118e921ea64be1ed1375327c1943d70",
+        "retrieved_at": "2026-11-14T13:40:12.8517953Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2612",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2701",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2702",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2703",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2704",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2705",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2706",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2707",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2708",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2709",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2710",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "B2711",
+      "exchange": "DCE",
+      "node": "de_qh",
+      "source": {
+        "id": "list-de_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=de_qh&base=futures",
+        "sha256": "0d455e88d7f51d764dba2068d4bc4cc899477f13d0b0ad2c8ea80f38ad9105b2",
+        "retrieved_at": "2026-11-14T13:40:02.8478215Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BB2701",
+      "exchange": "DCE",
+      "node": "jhb_qh",
+      "source": {
+        "id": "list-jhb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jhb_qh&base=futures",
+        "sha256": "d51b217cde33759c080f15f22d37fc29e9af3c9e32123a1b079b1e6996ba5b04",
+        "retrieved_at": "2026-11-14T13:40:09.8509132Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "BB2703",
+      "exchange": "DCE",
+      "node": "jhb_qh",
+      "source": {
+        "id": "list-jhb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jhb_qh&base=futures",
+        "sha256": "d51b217cde33759c080f15f22d37fc29e9af3c9e32123a1b079b1e6996ba5b04",
+        "retrieved_at": "2026-11-14T13:40:09.8509132Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "C2703",
+      "exchange": "DCE",
+      "node": "hym_qh",
+      "source": {
+        "id": "list-hym_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=hym_qh&base=futures",
+        "sha256": "38180698c2101f5c04d14dcd4526d94ba0273217d1a326b13ca836d2e9c15199",
+        "retrieved_at": "2026-11-14T13:40:11.8517104Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "C2705",
+      "exchange": "DCE",
+      "node": "hym_qh",
+      "source": {
+        "id": "list-hym_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=hym_qh&base=futures",
+        "sha256": "38180698c2101f5c04d14dcd4526d94ba0273217d1a326b13ca836d2e9c15199",
+        "retrieved_at": "2026-11-14T13:40:11.8517104Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "C2707",
+      "exchange": "DCE",
+      "node": "hym_qh",
+      "source": {
+        "id": "list-hym_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=hym_qh&base=futures",
+        "sha256": "38180698c2101f5c04d14dcd4526d94ba0273217d1a326b13ca836d2e9c15199",
+        "retrieved_at": "2026-11-14T13:40:11.8517104Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "C2709",
+      "exchange": "DCE",
+      "node": "hym_qh",
+      "source": {
+        "id": "list-hym_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=hym_qh&base=futures",
+        "sha256": "38180698c2101f5c04d14dcd4526d94ba0273217d1a326b13ca836d2e9c15199",
+        "retrieved_at": "2026-11-14T13:40:11.8517104Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "C2711",
+      "exchange": "DCE",
+      "node": "hym_qh",
+      "source": {
+        "id": "list-hym_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=hym_qh&base=futures",
+        "sha256": "38180698c2101f5c04d14dcd4526d94ba0273217d1a326b13ca836d2e9c15199",
+        "retrieved_at": "2026-11-14T13:40:11.8517104Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2701",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2703",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2705",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2707",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2709",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "CS2711",
+      "exchange": "DCE",
+      "node": "ymdf_qh",
+      "source": {
+        "id": "list-ymdf_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=ymdf_qh&base=futures",
+        "sha256": "075c1a607862cc0b38cce8526bca6fa64eb438201304aae22820a31647d0157f",
+        "retrieved_at": "2026-11-14T13:40:15.8526077Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2612",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2701",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2702",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2703",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2704",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2705",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2706",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2707",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2708",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2709",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EB2710",
+      "exchange": "DCE",
+      "node": "byx_qh",
+      "source": {
+        "id": "list-byx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=byx_qh&base=futures",
+        "sha256": "1d3615c24ecbc98cf785b9ddc5aa1f13e76e8e65075a2f2518a89da1d3970689",
+        "retrieved_at": "2026-11-14T13:40:18.8539805Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2612",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2701",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2702",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2703",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2704",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2705",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2706",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2707",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2708",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2709",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "EG2710",
+      "exchange": "DCE",
+      "node": "yec_qh",
+      "source": {
+        "id": "list-yec_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=yec_qh&base=futures",
+        "sha256": "6f24deaacd73a1fccfcb8d00bd9e43ef1c3832b0aa18360a24ec495b49c14876",
+        "retrieved_at": "2026-11-14T13:40:16.8530727Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2612",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2701",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2702",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2703",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2704",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "FB2705",
+      "exchange": "DCE",
+      "node": "xwb_qh",
+      "source": {
+        "id": "list-xwb_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=xwb_qh&base=futures",
+        "sha256": "b275737c6a1a4afc9636ccf075c16402e2f5295b3819c893c4374eb730f83dd5",
+        "retrieved_at": "2026-11-14T13:40:08.8504786Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2612",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2701",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2702",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2703",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2704",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2705",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2706",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2707",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2708",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2709",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2710",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "I2711",
+      "exchange": "DCE",
+      "node": "tks_qh",
+      "source": {
+        "id": "list-tks_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=tks_qh&base=futures",
+        "sha256": "7dceb940449d2bdfb7df89d85e4bb51398665802e0d1a5a85dcf24cbf8ba0bce",
+        "retrieved_at": "2026-11-14T13:40:04.8491938Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2612",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2701",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2702",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2703",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2704",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2705",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2708",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "J2709",
+      "exchange": "DCE",
+      "node": "jt_qh",
+      "source": {
+        "id": "list-jt_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jt_qh&base=futures",
+        "sha256": "9d6abc3c92fb7ca32298d457a4a0c54e22b37e2b75b618c6a64a0053a8087db2",
+        "retrieved_at": "2026-11-14T13:40:13.8518198Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2611",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2612",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2701",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2702",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2703",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2704",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2705",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2706",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2707",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2708",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2709",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JD2710",
+      "exchange": "DCE",
+      "node": "jd_qh",
+      "source": {
+        "id": "list-jd_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jd_qh&base=futures",
+        "sha256": "46e50144a461542c15d598afef74c9308e62201865d2762c473ab2b5dde05663",
+        "retrieved_at": "2026-11-14T13:40:05.8494461Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2612",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2701",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2702",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2703",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2704",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2705",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2706",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2708",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "JM2709",
+      "exchange": "DCE",
+      "node": "jm_qh",
+      "source": {
+        "id": "list-jm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jm_qh&base=futures",
+        "sha256": "17e63eafdffe2b5860d3d6af1af3b0bda55066d1e0bafc4e753ab55cef71e549",
+        "retrieved_at": "2026-11-14T13:40:14.8522028Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2612",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2702",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2703",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2704",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2705",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2706",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2707",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2709",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "L2710",
+      "exchange": "DCE",
+      "node": "lldpe_qh",
+      "source": {
+        "id": "list-lldpe_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lldpe_qh&base=futures",
+        "sha256": "34d8890f5a353299ccac454d12c2cdc38dcf65fac781e6f742c4ad44b9cb2fce",
+        "retrieved_at": "2026-11-14T13:40:06.8497129Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2611",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2701",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2703",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2705",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2707",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "LH2709",
+      "exchange": "DCE",
+      "node": "lh_qh",
+      "source": {
+        "id": "list-lh_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=lh_qh&base=futures",
+        "sha256": "47c4e7ec36af98b3627d6ecd372b8bb605ebc3c5189cb54e1fd0b8e6d18574b8",
+        "retrieved_at": "2026-11-14T13:40:20.8546276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2612",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2703",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2705",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2707",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2708",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2709",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "M2711",
+      "exchange": "DCE",
+      "node": "dp_qh",
+      "source": {
+        "id": "list-dp_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dp_qh&base=futures",
+        "sha256": "6033f93bccec6f08005470805529577990f8ce850a0228bd5b4f2c1ec628afaa",
+        "retrieved_at": "2026-11-14T13:40:03.848276Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2612",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2701",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2702",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2703",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2704",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2705",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2706",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2707",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2708",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2709",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2710",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "P2711",
+      "exchange": "DCE",
+      "node": "zly_qh",
+      "source": {
+        "id": "list-zly_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=zly_qh&base=futures",
+        "sha256": "5fd1bec34d648ffbd78a16cddaed83a7c2914124bfe3e82181b60d8e33c82889",
+        "retrieved_at": "2026-11-14T13:40:01.8473733Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2612",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2701",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2702",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2703",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2704",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2705",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2706",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2707",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2708",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PG2709",
+      "exchange": "DCE",
+      "node": "pg_qh",
+      "source": {
+        "id": "list-pg_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pg_qh&base=futures",
+        "sha256": "4c2a21fbf1efd21213ad3e0755fd7c83da6600a1e1603ba414c959eca99407b4",
+        "retrieved_at": "2026-11-14T13:40:19.8545804Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2612",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2702",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2703",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2704",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2705",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2706",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2709",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "PP2710",
+      "exchange": "DCE",
+      "node": "jbx_qh",
+      "source": {
+        "id": "list-jbx_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=jbx_qh&base=futures",
+        "sha256": "0c453a9eba01e587f56fb726c6c95ccd32bc6ad5efdfb876de981581b7f2d905",
+        "retrieved_at": "2026-11-14T13:40:07.85023Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2612",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2701",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2702",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2703",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2704",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2705",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2706",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2707",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2708",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2709",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "RR2710",
+      "exchange": "DCE",
+      "node": "gm_qh",
+      "source": {
+        "id": "list-gm_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=gm_qh&base=futures",
+        "sha256": "17d4345f7b7feac529bd8cb803bc5f9bfa7e10b971625d812852831e8a477134",
+        "retrieved_at": "2026-11-14T13:40:17.8535057Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2612",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2701",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2702",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2703",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2704",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2705",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2706",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2707",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2708",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2709",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "V2710",
+      "exchange": "DCE",
+      "node": "pvc_qh",
+      "source": {
+        "id": "list-pvc_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=pvc_qh&base=futures",
+        "sha256": "3d11bc01158df6a1f612e9e0c1f814fabd7d1fb8c94c0173e100137b7738ef4b",
+        "retrieved_at": "2026-11-14T13:40:00.8470331Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2612",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2701",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2703",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2705",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2707",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2708",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    },
+    {
+      "code": "Y2709",
+      "exchange": "DCE",
+      "node": "dy_qh",
+      "source": {
+        "id": "list-dy_qh",
+        "url": "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQFuturesData?page=1&sort=position&asc=0&node=dy_qh&base=futures",
+        "sha256": "9ae6362b17e560e4f34505d5e29984744ebba55294f6c9561134984a17a26c83",
+        "retrieved_at": "2026-11-14T13:40:10.8513618Z",
+        "version": "sina-vendor-v1"
+      },
+      "catalog_status": "current-observed-only; expired-roster-unknown"
+    }
+  ],
+  "batches": [
+    {
+      "file": "proposed-batch-01.json",
+      "requests": 40,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    },
+    {
+      "file": "proposed-batch-02.json",
+      "requests": 40,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    },
+    {
+      "file": "proposed-batch-03.json",
+      "requests": 40,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    },
+    {
+      "file": "proposed-batch-04.json",
+      "requests": 40,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    },
+    {
+      "file": "proposed-batch-05.json",
+      "requests": 40,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    },
+    {
+      "file": "proposed-batch-06.json",
+      "requests": 30,
+      "bytes_limit": 3145728,
+      "seconds_per_request": 15,
+      "minimum_interval_seconds": 1,
+      "per_response_bytes_limit": 1048576,
+      "approved": false,
+      "scope": "vendor daily raw only; no calendar or financial admission"
+    }
+  ],
+  "total_request_limit": 230,
+  "total_bytes_limit": 18874368,
+  "overflow_probe_allowance_bytes": 6,
+  "additional_requests_approved": false,
+  "historical_roster_route": {
+    "status": "not-certified-no-known-retired-roster-endpoint",
+    "clue": "frozen AKShare imports zh_subscribe_exchange_symbol_url from akshare.futures.cons",
+    "proposed_next_static_source": "https://raw.githubusercontent.com/akfamily/akshare/main/akshare/futures/cons.py",
+    "extra_static_request_budget": 1,
+    "maximum_bytes": 1048576,
+    "timeout_seconds": 15,
+    "retries": 0,
+    "redirects": 0,
+    "condition": "Only after separate plan review; inspect literal constant. If it resolves to known current-only map, record no new historical route and stop; do not infer retired codes or execute SDK."
+  }
+}
