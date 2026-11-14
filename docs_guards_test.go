@@ -2594,6 +2594,7 @@ var (
 	// skipExt / skipName：**显式**不扫的，每条写明理由。
 	skipExt = map[string]string{
 		".exe":   "二进制（doccheck.exe 之类），本来就含控制字符",
+		".gz":    "gzip压缩的冻结原件夹具是二进制；解压内容由对应测试核完整SHA，不按源码改写原件控制字符或行尾",
 		".jsonp": "fixture：上游原样存下来的响应，不该被本仓的规矩改写",
 		".xml":   "同上",
 	}

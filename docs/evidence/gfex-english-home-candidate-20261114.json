@@ -1,0 +1,91 @@
+{
+  "schema": "gfex-english-home-compatibility-review-v1",
+  "base_commit": "1a65223da053d659d5c3c70e486d5909b9a883d6",
+  "scope": "candidate only; exact GFEX English homepage GET; no live request by upstream",
+  "authorization": {
+    "independently_read_human_reply": true,
+    "decision_doc": "C:/VScodeProject/futures-decision-strategy/docs/public-source-route-decision-20261114.html",
+    "plan_doc": "C:/VScodeProject/futures-decision-strategy/docs/public-source-next-20261114-plan.html"
+  },
+  "source": {
+    "url": "https://www.cs.com.cn/zzqh2020/202601/t20260113_6532950.html",
+    "sha256": "5ec71426dfec7fa421e1a7ff131a5269eff5317b0ddfd198f33e2b47f6c95d6c",
+    "bytes": 22243,
+    "requested_at_utc": "2026-11-14T10:55:26.3580244Z",
+    "local_raw": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\gfex-en-launch-report.body",
+    "local_receipt": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\report.json",
+    "fixture": "archive/batch/testdata/gfex-english-launch-report.html.gz"
+  },
+  "target": "http://www.gfex.com.cn/en/index.shtml",
+  "budget": {
+    "requests": 1,
+    "bytes": 2097152,
+    "total_timeout_seconds": 15,
+    "min_interval_seconds": 1,
+    "retries": 0,
+    "redirects": 0,
+    "credentials": false
+  },
+  "controls": {
+    "schema": "gfex-english-candidate-offline-controls-v1",
+    "base_commit": "1a65223da053d659d5c3c70e486d5909b9a883d6",
+    "positive": "passed",
+    "mutations": [
+      {
+        "guard": "exact-url",
+        "exit_code": 1,
+        "target_reason": "URL边界未拒绝: <nil>",
+        "mutation_detected": true,
+        "overlay": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\exact-url-overlay.json"
+      },
+      {
+        "guard": "pinned-source",
+        "exit_code": 1,
+        "target_reason": "应因报道身份拒绝，got <nil>",
+        "mutation_detected": true,
+        "overlay": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\pinned-source-overlay.json"
+      },
+      {
+        "guard": "single-request",
+        "exit_code": 1,
+        "target_reason": "非法预算被接受",
+        "mutation_detected": true,
+        "overlay": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\single-request-overlay.json"
+      },
+      {
+        "guard": "receipt-source",
+        "exit_code": 1,
+        "target_reason": "收据洗掉明文身份竟通过 <nil>",
+        "mutation_detected": true,
+        "overlay": "C:\\Temp\\tickflow-gfex-english-candidate-20261114-v1\\receipt-source-overlay.json"
+      }
+    ],
+    "market_requests": 0,
+    "synthetic_transport_and_local_server_only": true
+  },
+  "unchanged_existing_source_sha256": {
+    "archive/batch/native_http.go": "8259e70c4382bbcaf5e12083ce4a14a2ca2170e9a773e3acdb8e9b0fd9c556b5",
+    "archive/batch/batch.go": "459335fb176007ba1fbee69ee54690c9ae9d2d56dfde4c8334549423b9cabec6",
+    "archive/batch/download.go": "72dadb871e575a1ee33909788fbd974b6a2bd83a2ae707b25d0a76fa4ef94d9f"
+  },
+  "live_market_requests": 0,
+  "financial_admission_expanded": false,
+  "default_calendar_changed": false,
+  "tag_created": false,
+  "limitations": [
+    "source SHA locks bytes, not source authenticity or historical point-in-time availability",
+    "HTTP plaintext remains Unauthenticated; Complete and HTTP200 do not imply business success",
+    "caller content validator must reject challenge or non-business pages without executing scripts",
+    "only engine may perform the approved single GET after independent candidate/CI review",
+    "source literal check is redundant with the exact frozen source SHA; no separate mutation coverage claimed for that redundant guard"
+  ],
+  "validation": {
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 115,
+    "generator_restore": "passed; fingerprint unchanged 28113820f4f9",
+    "doccheck": "passed; 203 documented and 879 source declarations",
+    "initial_failure": "gzip fixture class unregistered; binary classification reason added; original failure log retained",
+    "candidate_ci": "pending"
+  }
+}

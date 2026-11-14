@@ -1,7 +1,7 @@
 name: Offline verification
 on:
   push:
-    branches: [main, codex/offline-readiness-six, codex/historical-dataflow, codex/historical-session-evidence, codex/native-http-feasibility, codex/delivery-refresh-20261113, codex/calendar-continue-20261113, codex/px-sh-holiday-20261113, codex/ine-history-20261113, codex/ine-2026-20261113, codex/ine-2022-20261113, codex/ine-2023-2024-20261113, codex/lu-2020-20261113]
+    branches: [main, codex/offline-readiness-six, codex/historical-dataflow, codex/historical-session-evidence, codex/native-http-feasibility, codex/delivery-refresh-20261113, codex/calendar-continue-20261113, codex/px-sh-holiday-20261113, codex/ine-history-20261113, codex/ine-2026-20261113, codex/ine-2022-20261113, codex/ine-2023-2024-20261113, codex/lu-2020-20261113, codex/gfex-english-home-20261114]
   pull_request:
   workflow_dispatch:
 
