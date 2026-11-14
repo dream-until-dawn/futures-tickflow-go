@@ -1,0 +1,492 @@
+{
+  "identity": "static-js-unqualified",
+  "bytes": 6779,
+  "sha256": "a8852d372121d29b40cfdd5505a4644cece19a92ccefe4a06a7fd29275a515d5",
+  "encoding": "gb18030 strict; parent HTML declares gb2312",
+  "lines": 210,
+  "explicit_urls": [],
+  "historical_roster_proved": false,
+  "javascript_executed": false,
+  "followup_requests": 0,
+  "price_requests": 0,
+  "financial_eligible": false,
+  "source_literal_url": "http://finance.sina.com.cn/iframe/futures_info_cff.js",
+  "requested_candidate_url": "https://finance.sina.com.cn/iframe/futures_info_cff.js",
+  "source_directly_references_https": false,
+  "catalog": {
+    "identity": "vendor-static-navigation-only",
+    "markets": {
+      "0": "交易所",
+      "1": "上期所",
+      "2": "大商所",
+      "3": "郑商所",
+      "4": "中金所"
+    },
+    "rows": [
+      {
+        "market": "交易所",
+        "product": "品种",
+        "label": "合约",
+        "code": "RB0"
+      },
+      {
+        "market": "上期所",
+        "product": "螺纹钢",
+        "label": "螺纹钢连续",
+        "code": "RB0"
+      },
+      {
+        "market": "上期所",
+        "product": "线材",
+        "label": "线材连续",
+        "code": "WR0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪铜",
+        "label": "沪铜连续",
+        "code": "CU0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪铝",
+        "label": "沪铝连续",
+        "code": "AL0"
+      },
+      {
+        "market": "上期所",
+        "product": "橡胶",
+        "label": "橡胶连续",
+        "code": "RU0"
+      },
+      {
+        "market": "上期所",
+        "product": "燃油",
+        "label": "燃油连续",
+        "code": "FU0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪锌",
+        "label": "沪锌连续",
+        "code": "ZN0"
+      },
+      {
+        "market": "上期所",
+        "product": "黄金",
+        "label": "黄金连续",
+        "code": "AU0"
+      },
+      {
+        "market": "上期所",
+        "product": "白银",
+        "label": "白银连续",
+        "code": "AG0"
+      },
+      {
+        "market": "上期所",
+        "product": "沥青",
+        "label": "沥青连续",
+        "code": "BU0"
+      },
+      {
+        "market": "上期所",
+        "product": "热轧卷板",
+        "label": "热轧卷板连续",
+        "code": "HC0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪镍",
+        "label": "沪镍连续",
+        "code": "NI0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪铅",
+        "label": "沪铅连续",
+        "code": "PB0"
+      },
+      {
+        "market": "上期所",
+        "product": "原油",
+        "label": "原油连续",
+        "code": "SC0"
+      },
+      {
+        "market": "上期所",
+        "product": "沪锡",
+        "label": "沪锡连续",
+        "code": "SN0"
+      },
+      {
+        "market": "上期所",
+        "product": "纸浆",
+        "label": "纸浆连续",
+        "code": "SP0"
+      },
+      {
+        "market": "大商所",
+        "product": "豆一",
+        "label": "豆一连续",
+        "code": "A0"
+      },
+      {
+        "market": "大商所",
+        "product": "豆二",
+        "label": "豆二连续",
+        "code": "B0"
+      },
+      {
+        "market": "大商所",
+        "product": "胶合板",
+        "label": "胶合板连续",
+        "code": "BB0"
+      },
+      {
+        "market": "大商所",
+        "product": "玉米",
+        "label": "玉米连续",
+        "code": "C0"
+      },
+      {
+        "market": "大商所",
+        "product": "玉米淀粉",
+        "label": "玉米淀粉连续",
+        "code": "CS0"
+      },
+      {
+        "market": "大商所",
+        "product": "乙二醇",
+        "label": "乙二醇连续",
+        "code": "EG0"
+      },
+      {
+        "market": "大商所",
+        "product": "纤维板",
+        "label": "纤维板连续",
+        "code": "FB0"
+      },
+      {
+        "market": "大商所",
+        "product": "铁矿石",
+        "label": "铁矿石连续",
+        "code": "I0"
+      },
+      {
+        "market": "大商所",
+        "product": "焦炭",
+        "label": "焦炭连续",
+        "code": "J0"
+      },
+      {
+        "market": "大商所",
+        "product": "鸡蛋",
+        "label": "鸡蛋连续",
+        "code": "JD0"
+      },
+      {
+        "market": "大商所",
+        "product": "焦煤",
+        "label": "焦煤连续",
+        "code": "JM0"
+      },
+      {
+        "market": "大商所",
+        "product": "塑料",
+        "label": "塑料连续",
+        "code": "L0"
+      },
+      {
+        "market": "大商所",
+        "product": "豆粕",
+        "label": "豆粕连续",
+        "code": "M0"
+      },
+      {
+        "market": "大商所",
+        "product": "棕榈",
+        "label": "棕榈连续",
+        "code": "P0"
+      },
+      {
+        "market": "大商所",
+        "product": "PP",
+        "label": "PP连续",
+        "code": "PP0"
+      },
+      {
+        "market": "大商所",
+        "product": "PVC",
+        "label": "PVC连续",
+        "code": "V0"
+      },
+      {
+        "market": "大商所",
+        "product": "豆油",
+        "label": "豆油连续",
+        "code": "Y0"
+      },
+      {
+        "market": "郑商所",
+        "product": "鲜苹果",
+        "label": "鲜苹果连续",
+        "code": "AP0"
+      },
+      {
+        "market": "郑商所",
+        "product": "棉花",
+        "label": "棉花连续",
+        "code": "CF0"
+      },
+      {
+        "market": "郑商所",
+        "product": "红枣",
+        "label": "红枣连续",
+        "code": "CJ0"
+      },
+      {
+        "market": "郑商所",
+        "product": "棉纱",
+        "label": "棉纱连续",
+        "code": "CY0"
+      },
+      {
+        "market": "郑商所",
+        "product": "玻璃",
+        "label": "玻璃连续",
+        "code": "FG0"
+      },
+      {
+        "market": "郑商所",
+        "product": "粳稻",
+        "label": "粳稻连续",
+        "code": "JR0"
+      },
+      {
+        "market": "郑商所",
+        "product": "晚籼稻",
+        "label": "晚籼稻连续",
+        "code": "LR0"
+      },
+      {
+        "market": "郑商所",
+        "product": "郑醇",
+        "label": "郑醇连续",
+        "code": "MA0"
+      },
+      {
+        "market": "郑商所",
+        "product": "菜油",
+        "label": "菜油连续",
+        "code": "OI0"
+      },
+      {
+        "market": "郑商所",
+        "product": "早籼稻",
+        "label": "早籼稻连续",
+        "code": "RI0"
+      },
+      {
+        "market": "郑商所",
+        "product": "菜粕",
+        "label": "菜粕连续",
+        "code": "RM0"
+      },
+      {
+        "market": "郑商所",
+        "product": "菜籽",
+        "label": "菜籽连续",
+        "code": "RS0"
+      },
+      {
+        "market": "郑商所",
+        "product": "硅铁",
+        "label": "硅铁连续",
+        "code": "SF0"
+      },
+      {
+        "market": "郑商所",
+        "product": "锰硅",
+        "label": "锰硅连续",
+        "code": "SM0"
+      },
+      {
+        "market": "郑商所",
+        "product": "白糖",
+        "label": "白糖连续",
+        "code": "SR0"
+      },
+      {
+        "market": "郑商所",
+        "product": "PTA",
+        "label": "PTA连续",
+        "code": "TA0"
+      },
+      {
+        "market": "郑商所",
+        "product": "强麦",
+        "label": "强麦连续",
+        "code": "WH0"
+      },
+      {
+        "market": "郑商所",
+        "product": "动力煤",
+        "label": "动力煤连续",
+        "code": "ZC0"
+      },
+      {
+        "market": "中金所",
+        "product": "沪深300指数期货",
+        "label": "沪深300指数期货0",
+        "code": "IF0"
+      },
+      {
+        "market": "中金所",
+        "product": "沪深300指数期货",
+        "label": "沪深300指数期货2611",
+        "code": "IF2611"
+      },
+      {
+        "market": "中金所",
+        "product": "沪深300指数期货",
+        "label": "沪深300指数期货2612",
+        "code": "IF2612"
+      },
+      {
+        "market": "中金所",
+        "product": "沪深300指数期货",
+        "label": "沪深300指数期货2703",
+        "code": "IF2703"
+      },
+      {
+        "market": "中金所",
+        "product": "沪深300指数期货",
+        "label": "沪深300指数期货2706",
+        "code": "IF2706"
+      },
+      {
+        "market": "中金所",
+        "product": "5年期国债期货",
+        "label": "5年期国债期货0",
+        "code": "TF0"
+      },
+      {
+        "market": "中金所",
+        "product": "5年期国债期货",
+        "label": "5年期国债期货2612",
+        "code": "TF2612"
+      },
+      {
+        "market": "中金所",
+        "product": "5年期国债期货",
+        "label": "5年期国债期货2703",
+        "code": "TF2703"
+      },
+      {
+        "market": "中金所",
+        "product": "5年期国债期货",
+        "label": "5年期国债期货2706",
+        "code": "TF2706"
+      },
+      {
+        "market": "中金所",
+        "product": "10年期国债期货",
+        "label": "10年期国债期货0",
+        "code": "T0"
+      },
+      {
+        "market": "中金所",
+        "product": "10年期国债期货",
+        "label": "10年期国债期货2612",
+        "code": "T2612"
+      },
+      {
+        "market": "中金所",
+        "product": "10年期国债期货",
+        "label": "10年期国债期货2703",
+        "code": "T2703"
+      },
+      {
+        "market": "中金所",
+        "product": "10年期国债期货",
+        "label": "10年期国债期货2706",
+        "code": "T2706"
+      },
+      {
+        "market": "中金所",
+        "product": "上证50指数期货",
+        "label": "上证50指数期货0",
+        "code": "IH0"
+      },
+      {
+        "market": "中金所",
+        "product": "上证50指数期货",
+        "label": "上证50指数期货2611",
+        "code": "IH2611"
+      },
+      {
+        "market": "中金所",
+        "product": "上证50指数期货",
+        "label": "上证50指数期货2612",
+        "code": "IH2612"
+      },
+      {
+        "market": "中金所",
+        "product": "上证50指数期货",
+        "label": "上证50指数期货2703",
+        "code": "IH2703"
+      },
+      {
+        "market": "中金所",
+        "product": "上证50指数期货",
+        "label": "上证50指数期货2706",
+        "code": "IH2706"
+      },
+      {
+        "market": "中金所",
+        "product": "中证500指数期货",
+        "label": "中证500指数期货0",
+        "code": "IC0"
+      },
+      {
+        "market": "中金所",
+        "product": "中证500指数期货",
+        "label": "中证500指数期货2611",
+        "code": "IC2611"
+      },
+      {
+        "market": "中金所",
+        "product": "中证500指数期货",
+        "label": "中证500指数期货2612",
+        "code": "IC2612"
+      },
+      {
+        "market": "中金所",
+        "product": "中证500指数期货",
+        "label": "中证500指数期货2703",
+        "code": "IC2703"
+      },
+      {
+        "market": "中金所",
+        "product": "中证500指数期货",
+        "label": "中证500指数期货2706",
+        "code": "IC2706"
+      }
+    ],
+    "rows_by_market": {
+      "交易所": 1,
+      "上期所": 16,
+      "大商所": 17,
+      "郑商所": 18,
+      "中金所": 23
+    },
+    "real_month_code_rows": 18,
+    "target_market_real_codes": [],
+    "historical_roster_proved": false,
+    "financial_eligible": false,
+    "javascript_executed": false,
+    "network_requests": 0
+  },
+  "limit": "DCE只有17连续代码，GFEX无分组；真实年月仅中金所，不导入，不新增价格。无2021商品退市全集，路线明确缺证后停止。"
+}

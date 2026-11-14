@@ -1,0 +1,24 @@
+{
+  "job_sha256": "4a2e6447175dea2f0bf49385b66885da8ad7a3f9444613fcae2d3b37d8891591",
+  "state": "received",
+  "evidence": {
+    "id": "sina-info-https-candidate",
+    "url": "https://finance.sina.com.cn/iframe/futures_info_cff.js",
+    "sha256": "a8852d372121d29b40cfdd5505a4644cece19a92ccefe4a06a7fd29275a515d5",
+    "retrieved_at": "2026-11-14T16:48:00.5255418Z",
+    "version": "sina-info-https-v1"
+  },
+  "bytes": 6779,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://finance.sina.com.cn/iframe/futures_info_cff.js",
+    "content_type": "application/x-javascript",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 16:48:00 GMT",
+    "requested_at": "2026-11-14T16:48:00.5255418Z",
+    "complete": true
+  }
+}

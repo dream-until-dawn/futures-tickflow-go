@@ -18,13 +18,16 @@ def main():
     p.add_argument("--config", action="store_true", help="封存已批准config静态请求，不追加网络")
     p.add_argument("--history", action="store_true", help="封存唯一无参数历史HTML")
     p.add_argument("--history-script", action="store_true", help="封存唯一双斜线历史脚本")
+    p.add_argument("--info-https", action="store_true", help="封存独立HTTPS可行性候选与原HTTP字面量")
     args = p.parse_args()
     args.destination.mkdir(exist_ok=False)
-    if sum((args.modular, args.config, args.history, args.history_script)) > 1:
+    if sum((args.modular, args.config, args.history, args.history_script, args.info_https)) > 1:
         raise ValueError("只能选择一种已执行模式")
     kind = "history-script" if args.history_script else ("history" if args.history else ("config" if args.config else ("modular" if args.modular else "control")))
     stem = "sina-history-script" if args.history_script else ("sina-history-html" if args.history else f"sina-{kind}-static")
     raw_name = f"{kind}.jsonp"
+    if args.info_https:
+        stem, raw_name = "sina-info-https-candidate", "info.jsonp"
     for source, name in ((args.execution / f"archive/{stem}.body", raw_name), (args.execution / f"archive/{stem}.json", "receipt.json"), (args.execution / "plan.json", "plan.json"), (args.stdout, "result.json")):
         (args.destination / name).write_bytes(source.read_bytes())
     raw = (args.destination / raw_name).read_bytes()
@@ -66,6 +69,11 @@ def main():
         analysis["observed_references"] = [dict(line=i, text=line.strip()) for i, line in enumerate(text.splitlines(), 1) if any(key in line for key in ("YF[", "PZ[", "JYS"))]
         analysis["declared_catalog_objects"] = re.findall(r"\bvar\s+(JYS|PZ|YF)\s*=", text)
         analysis["limit"] = "仅引用目录对象，未定义JYS/PZ/YF，未证明2021起退市全集。其他HTTP字面量不跟随、不擅自改HTTPS。"
+    if args.info_https:
+        from info_catalog import review
+        plan = json.loads((args.destination / "plan.json").read_text(encoding="utf-8"))
+        analysis.pop("observed_calls")
+        analysis.update(source_literal_url=plan["source_literal_url"], requested_candidate_url=plan["requested_candidate_url"], source_directly_references_https=False, catalog=review(raw), limit="DCE只有17连续代码，GFEX无分组；真实年月仅中金所，不导入，不新增价格。无2021商品退市全集，路线明确缺证后停止。")
     (args.destination / "analysis.json").write_text(json.dumps(analysis, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     files = [dict(file=f.name, bytes=len(f.read_bytes()), sha256=hashlib.sha256(f.read_bytes()).hexdigest()) for f in sorted(args.destination.iterdir())]
     (args.destination / "files.json").write_text(json.dumps(files, indent=2) + "\n", encoding="utf-8", newline="\n")

@@ -1,0 +1,8 @@
+{
+  "positive": "test_real_frozen_navigation_is_not_historical_roster (test_info_catalog.InfoCatalogTest.test_real_frozen_navigation_is_not_historical_roster) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n",
+  "negative": "test_real_frozen_navigation_is_not_historical_roster (test_info_catalog.InfoCatalogTest.test_real_frozen_navigation_is_not_historical_roster) ... FAIL\n\n======================================================================\nFAIL: test_real_frozen_navigation_is_not_historical_roster (test_info_catalog.InfoCatalogTest.test_real_frozen_navigation_is_not_historical_roster)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:\\Temp\\tickflow-info-catalog-mutation-2q_b7ulo\\test_info_catalog.py\", line 15, in test_real_frozen_navigation_is_not_historical_roster\n    self.assertEqual(result[\"target_market_real_codes\"], [])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: [{'market': '中金所', 'product': '沪深300指数期货',[1490 chars]06'}] != []\n\nFirst list contains 18 additional elements.\nFirst extra element 0:\n{'market': '中金所', 'product': '沪深300指数期货', 'label': '沪深300指数期货2611', 'code': 'IF2611'}\n\nDiff is 1812 characters long. Set self.maxDiff to None to see it.\n\n----------------------------------------------------------------------\nRan 1 test in 0.005s\n\nFAILED (failures=1)\n",
+  "positive_returncode": 0,
+  "mutation_returncode": 1,
+  "mutation": "remove target-market filter; incorrectly include CFFEX real contracts",
+  "network_requests": 0
+}

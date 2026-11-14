@@ -200,7 +200,7 @@ func TestInfoHTTPSCandidateDoesNotRewriteOriginalLiteral(t *testing.T) {
 
 // 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
 func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
-	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115", "sina-config-static-20261115", "sina-history-html-20261115", "sina-history-script-20261115"} {
+	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115", "sina-config-static-20261115", "sina-history-html-20261115", "sina-history-script-20261115", "sina-info-https-20261115"} {
 		base := filepath.Join("../../../docs/evidence", folder)
 		raw, err := os.ReadFile(filepath.Join(base, "files.json"))
 		if err != nil {
