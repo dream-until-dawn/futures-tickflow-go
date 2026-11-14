@@ -3,15 +3,73 @@
   "bundle_manifest_sha256": "07738da201c6ff377137f020faef91a2aea8e3ac864127bdb129f918b3434d76",
   "zip_sha256": "32f7a057cd78cb909f760e32f1b3f08cbe6a3893cde0c1260bb4e5bae416cd77",
   "engine_thread_id": "01a19f51-fb63-7a73-bf9e-b69e3d44a2b6",
-  "engine_independent_acceptance": "not_started",
-  "whole_bundle_accepted": false,
+  "engine_independent_acceptance": "accepted_declared_staged_scope",
+  "whole_bundle_accepted": true,
   "specific_fix_requests": [],
   "publisher_checks": "passed; do not substitute for engine acceptance",
-  "status_source": "engine direct response says complete v4 bundle not yet reviewed; current dated-parameter task has separate inputs",
-  "followup_requested": "schedule whole-bundle read-only review after current evidence safely sealed",
+  "status_source": "archived engine reports and executed scripts read back, selected files matched engine Git commit ba3283dee0665817163628af7ddd56216096b38c",
+  "followup_requested": "completed within declared staged scope",
   "new_market_requests": 0,
   "GFEX_retry_authorized": false,
   "DCE_authentication_implemented": false,
   "production_changed": false,
-  "tag_created": false
+  "tag_created": false,
+  "initial_report": "not started; retained as earlier checkpoint",
+  "limited_result": {
+    "path": "C:/VScodeProject/futures-decision-strategy/results/dated-parameters-20261114/bundle-v4-verification-v2/independent.json",
+    "sha256": "d2a4bad2199b998cb19f4202db7f462faaaf038f712f1b46883ee2b5f84aafa1",
+    "manifest_members": 152,
+    "exact_git_source_files": 545,
+    "profile_files_present": 11,
+    "portable_rows": 2876,
+    "portable_negatives": 8,
+    "scope_promotion_rejected": true,
+    "portable_review_sha256": "6eb0eb427bed46367dcb7df264f2210175b0422d3114d0d02ad890955581e483"
+  },
+  "additional_requested": [
+    "offline external consumer seven scenarios/eleven profiles/six joined products using cache only",
+    "source-byte mutation/missing/extra/wrong external digest targeted negatives"
+  ],
+  "not_claimed": [
+    "new full market pipeline execution",
+    "eleven calendars rebuilt from all original official sources",
+    "full v0.11 release acceptance",
+    "production dependency update"
+  ],
+  "whole_bundle_definition": "only exact declared v4 staged package, static/source/scope/external consumer/portable EC and listed controls; not full release or all original evidence rebuilding",
+  "declared_stage_scope_accepted": true,
+  "replacement_bundle_required": false,
+  "original_bundle_modified": false,
+  "additional_requested_completed": true,
+  "engine_evidence_commit": "ba3283dee0665817163628af7ddd56216096b38c",
+  "external_consumer": {
+    "result_path": "C:/VScodeProject/futures-decision-strategy/docs/evidence/dated-parameters-20261114/bundle-external-consumer.json",
+    "result_sha256": "f8c0654f603009d64b917ab24ca8c8493abde94aa9513c94d9c5580a32c6dc21",
+    "test_scenarios": 7,
+    "log_sha256": "aa39b2517939e69a644d68bbcae89cda1613d4712ed348a7f3b7b5882d958a58",
+    "module_and_test_files_equal_bundle": true,
+    "environment": {
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOTOOLCHAIN": "local"
+    },
+    "no_replace_in_fixture_mod": true,
+    "byte_negatives": 4,
+    "byte_negative_targets": [
+      "wrong external digest",
+      "missing README",
+      "extra unlisted file",
+      "same-length one-byte consumer source mutation"
+    ]
+  },
+  "executed_script_evidence": {
+    "independent_script": "bundle-independent.py.txt",
+    "independent_script_sha256": "a1375b9b623583b724d42d4950d8cf830f793e9fcac89944fc53832784895626",
+    "consumer_script": "bundle-external-consumer.py.txt",
+    "consumer_script_sha256": "35a57c2a9ed24401418da8cce2fec139c750659ff7cc562219a174d62fa86ca6",
+    "upstream_copy_root": "C:/Temp/tickflow-v4-acceptance-20261114-v1",
+    "upstream_copy_manifest_sha256": "a63216b03a0a676ad305ab75b37cb242389652ff5edb9f09715d2c8ec65c35bf"
+  },
+  "downstream_future_market_goal": "engine keeps 2021 onward after human allowed 2020 or2021 start; retained2020 boundary evidence and old v4 files unchanged"
 }
