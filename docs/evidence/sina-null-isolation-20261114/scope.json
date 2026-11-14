@@ -1,0 +1,17 @@
+{
+  "state": "offline-candidate-no-network",
+  "new_requests": 0,
+  "batches": [
+    40,
+    40,
+    40,
+    40,
+    15
+  ],
+  "per_batch_bytes": 3145728,
+  "total_bytes": 15728640,
+  "overflow_probe_allowance": 5,
+  "old_stop_modified": false,
+  "public_default_changed": false,
+  "financial_eligible": false
+}

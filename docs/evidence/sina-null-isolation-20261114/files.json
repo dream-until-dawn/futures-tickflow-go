@@ -1,0 +1,77 @@
+[
+  {
+    "file": "api-diff.json",
+    "bytes": 52,
+    "sha256": "6f04451488628029b96d38b37c5c395676c89c9e6ea3b576d6fcb18d64b7b9a7"
+  },
+  {
+    "file": "batch-01.json",
+    "bytes": 12992,
+    "sha256": "168862d729608e4bd00e57a082293c5bfaca48de92538f3f39413b777e4d1abf"
+  },
+  {
+    "file": "batch-02.json",
+    "bytes": 12983,
+    "sha256": "39193cf8b42e9e76f730938693c4144883c044bdecd9c396ab01324e422e4853"
+  },
+  {
+    "file": "batch-03.json",
+    "bytes": 12983,
+    "sha256": "9de178ba7a020e18f9dd2fb998a68be1ee46830abc942655d101356a8e5b3f70"
+  },
+  {
+    "file": "batch-04.json",
+    "bytes": 13010,
+    "sha256": "ed09875ea43bc42db96907689e74d710109342348744c182b03cfcaed0b02d35"
+  },
+  {
+    "file": "batch-05.json",
+    "bytes": 4848,
+    "sha256": "d4cc4c5fc43b12d7f10f297f6218e341e82db958ec26c1433fef3254238c2cca"
+  },
+  {
+    "file": "mutations.json",
+    "bytes": 1265,
+    "sha256": "326113163eb6e2b4f5aaffb399b3d1d4dcc00a18854927249e8216497c9a33c1"
+  },
+  {
+    "file": "null-exact-body-baseline.log.txt",
+    "bytes": 78,
+    "sha256": "f378c108899db0fc732ba38fcdfe985d76bc89addd7611da8bcd62bfacd73ec4"
+  },
+  {
+    "file": "null-exact-body-mutated.log.txt",
+    "bytes": 232,
+    "sha256": "81f1251d71e8b9fb41cfcb5effe3d3b607ac1f446e671e93fd8872263aa6d5a1"
+  },
+  {
+    "file": "null-http200-baseline.log.txt",
+    "bytes": 78,
+    "sha256": "ce0d0d91ea208e7bfbd48f89c5ea758652496cb745ee06874753f060714717f4"
+  },
+  {
+    "file": "null-http200-mutated.log.txt",
+    "bytes": 422,
+    "sha256": "000c4440d6d352d9f79f44ae36c27db897abb2050f2b182fe94ca8d4a0fbc20b"
+  },
+  {
+    "file": "null-old-request-baseline.log.txt",
+    "bytes": 78,
+    "sha256": "dea58e92ee9b7651c6f7187d48bd5433998a9e1d28d13b44971e9139c4ce1f95"
+  },
+  {
+    "file": "null-old-request-mutated.log.txt",
+    "bytes": 210,
+    "sha256": "02b4e5b5fdd1aecf674b965e50651e5fcc923badf42d27a5733ca7be3d03aba1"
+  },
+  {
+    "file": "profile.json",
+    "bytes": 507,
+    "sha256": "789db5b29c55102c3f526e5b8c11f737739eb01674c300ab27fd4d71af143578"
+  },
+  {
+    "file": "scope.json",
+    "bytes": 312,
+    "sha256": "f60e1784b530113504b0746224150e8edd6da9b89c1992e81d1f3b59956802db"
+  }
+]

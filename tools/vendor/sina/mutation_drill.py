@@ -14,16 +14,22 @@ CASES = [
     ("missing-day", "source/sinavendor/source.go", "if !ok {", "if !ok && d.Num == 0 {", "./source/sinavendor", "TestSinaVendorMissingWholeRequestAndQuality"),
     ("host-stop", "archive/batch/sina_vendor.go", "d.sina.stopped[u.Host] ||", '(d.sina.stopped[u.Host] && u.Host == "never.invalid") ||', "./archive/batch", "TestSinaVendorNetworkBudgetAndStopHost"),
 ]
+NULL_CASES = [
+    ("null-http200", "tools/vendor/sina/null_archive.go", "d.Status == 200", "d.Status > 0", "./tools/vendor/sina", "TestToolExactNullGuardRejectsEveryOtherForm"),
+    ("null-exact-body", "tools/vendor/sina/null_archive.go", "!bytes.Equal(b, []byte(`var _V21052021_4_12=(null);`))", "(len(b) == 0 && !bytes.Equal(b, []byte(`var _V21052021_4_12=(null);`)))", "./tools/vendor/sina", "TestToolExactNullGuardRejectsEveryOtherForm"),
+    ("null-old-request", "tools/vendor/sina/null_profile.go", "if !p.Allowed[j.URL] {", "if false && !p.Allowed[j.URL] {", "./tools/vendor/sina", "TestToolNullPlanRejectsOldRequestBeforeFetch"),
+]
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("output", type=Path)
+    p.add_argument("--null-tool", action="store_true", help="只核工具层精确null候选，旧三项默认不变")
     args = p.parse_args()
     args.output.mkdir(exist_ok=False)
     env = {**os.environ, "GOPROXY": "off", "GOSUMDB": "off", "GOWORK": "off"}
     results = []
-    for name, source, old, new, package, test in CASES:
+    for name, source, old, new, package, test in (NULL_CASES if args.null_tool else CASES):
         path = ROOT / source
         original = path.read_bytes()
         text = original.decode("utf-8")

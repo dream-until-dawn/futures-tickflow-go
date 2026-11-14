@@ -1,0 +1,8 @@
+--- FAIL: TestToolExactNullGuardRejectsEveryOtherForm (0.08s)
+    --- FAIL: TestToolExactNullGuardRejectsEveryOtherForm/non200 (0.00s)
+        null_archive_test.go:94: 坏元数据/身份可隔离
+    --- FAIL: TestToolExactNullGuardRejectsEveryOtherForm/redirect (0.00s)
+        null_archive_test.go:94: 坏元数据/身份可隔离
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/vendor/sina	0.714s
+FAIL

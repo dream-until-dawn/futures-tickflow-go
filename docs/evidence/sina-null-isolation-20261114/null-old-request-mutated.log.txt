@@ -1,0 +1,5 @@
+--- FAIL: TestToolNullPlanRejectsOldRequestBeforeFetch (0.09s)
+    null_archive_test.go:162: 旧请求防线 <nil> calls2
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/vendor/sina	0.733s
+FAIL

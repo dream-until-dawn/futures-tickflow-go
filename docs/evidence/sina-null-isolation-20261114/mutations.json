@@ -1,0 +1,32 @@
+[
+  {
+    "case": "null-http200",
+    "source": "tools/vendor/sina/null_archive.go",
+    "source_sha256": "3efd82104f7958cf144a59b0d5d5b54ea48677873397b5027df01fa265022e8a",
+    "mutant_sha256": "da4fe8d23529698ee0360705130b76f1306850f444b297503c9b3ecbf5dc4a41",
+    "positive_control": 0,
+    "mutant_returncode": 1,
+    "target_test": "TestToolExactNullGuardRejectsEveryOtherForm",
+    "unchanged_worktree": true
+  },
+  {
+    "case": "null-exact-body",
+    "source": "tools/vendor/sina/null_archive.go",
+    "source_sha256": "3efd82104f7958cf144a59b0d5d5b54ea48677873397b5027df01fa265022e8a",
+    "mutant_sha256": "f69cfe6174335637eb8c54f4cd268f64d42b689572bf3d284e55b21fa5cfde86",
+    "positive_control": 0,
+    "mutant_returncode": 1,
+    "target_test": "TestToolExactNullGuardRejectsEveryOtherForm",
+    "unchanged_worktree": true
+  },
+  {
+    "case": "null-old-request",
+    "source": "tools/vendor/sina/null_profile.go",
+    "source_sha256": "549a2c89d67dbdc0defc48d65ba1c67c288dcc88547cb06b101d455649b6c38f",
+    "mutant_sha256": "f862ca76f51001acd9f2ca42b7c1347b410ff70964fceff4e899ad4f7cc6555c",
+    "positive_control": 0,
+    "mutant_returncode": 1,
+    "target_test": "TestToolNullPlanRejectsOldRequestBeforeFetch",
+    "unchanged_worktree": true
+  }
+]

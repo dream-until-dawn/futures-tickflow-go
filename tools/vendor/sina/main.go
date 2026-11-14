@@ -30,7 +30,12 @@ func run() error {
 	requests := flag.Int("requests", 40, "本批累计请求上限，不得超过40")
 	byteLimit := flag.Int64("bytes", 20<<20, "本批累计读取字节上限，不得超过20MiB")
 	static := flag.Bool("static-cons", false, "仅取已引用的唯一cons.py静态原件；不是市场请求")
+	isolateNull := flag.Bool("isolate-exact-null", false, "显式工具模式：合法null仅记失败隔离；不改变库默认")
+	nullProfilePath := flag.String("null-profile", "", "null工具的已核旧封存及175清单配置")
 	flag.Parse()
+	if (*isolateNull && (*nullProfilePath == "" || *samples != "" || *static)) || (!*isolateNull && *nullProfilePath != "") {
+		return fmt.Errorf("null隔离必须显式独立选择工具配置，不能混用其他入口")
+	}
 	if *root == "" || (*plan == "") == (*samples == "") {
 		return fmt.Errorf("必须指定-root及-plan或-samples其一")
 	}
@@ -43,6 +48,17 @@ func run() error {
 	}
 	var jobs []batch.Job
 	if e = json.Unmarshal(b, &jobs); e != nil {
+		return e
+	}
+	if *isolateNull {
+		report, e := runNullIsolation(context.Background(), *root, jobs, batch.Limits{Requests: *requests, Bytes: *byteLimit, Interval: time.Second, Timeout: 15 * time.Second}, *nullProfilePath)
+		if report != nil {
+			encoder := json.NewEncoder(os.Stdout)
+			encoder.SetIndent("", "  ")
+			if outputErr := encoder.Encode(report); outputErr != nil {
+				return outputErr
+			}
+		}
 		return e
 	}
 	addresses := make([]string, len(jobs))

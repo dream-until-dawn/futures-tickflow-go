@@ -1,0 +1,5 @@
+--- FAIL: TestToolExactNullGuardRejectsEveryOtherForm (0.08s)
+    null_archive_test.go:101: 非精确null可隔离 var _V21052021_4_12=(false);
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/vendor/sina	0.741s
+FAIL

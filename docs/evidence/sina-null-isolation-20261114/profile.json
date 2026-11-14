@@ -1,0 +1,10 @@
+{
+  "version": "sina-tool-exact-null-v1",
+  "prior_evidence": "../sina-vendor-expanded-20261114",
+  "prior_manifest_sha256": "b977e6dd68050b7f519d710d54bd9dc6128763ab83da2464fa9aba684bed5e20",
+  "unattempted": "../sina-vendor-unattempted-20261114.json",
+  "unattempted_sha256": "3062702e4973e3eb298d8cc38dda0155711f657cf56206a359bce4f6d83226a1",
+  "expected_unattempted": 175,
+  "expected_stop_sha256": "70d432863fab0999c712f345e7db9ca14455154e2927fee44b300da4f6d3ce70",
+  "max_quarantined_per_batch": 40
+}
