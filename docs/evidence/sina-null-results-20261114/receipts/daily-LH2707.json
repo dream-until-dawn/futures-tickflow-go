@@ -1,0 +1,28 @@
+{
+  "id": "daily-LH2707",
+  "state": "received",
+  "evidence": {
+    "id": "daily-LH2707",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2707\u0026type=2021_04_12",
+    "sha256": "afb430aaa23977993774d1354b184d0daf315d8511b07bcf9c00a8b3bc9dd2b9",
+    "retrieved_at": "2026-11-14T15:19:32.8735299Z",
+    "version": "sina-tool-exact-null-v1"
+  },
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2707\u0026type=2021_04_12",
+    "content_type": "application/javascript; charset=gbk",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 15:19:34 GMT",
+    "requested_at": "2026-11-14T15:19:32.8735299Z",
+    "complete": true,
+    "unauthenticated": true,
+    "data_class": "sina-vendor-v1"
+  },
+  "bytes": 8875,
+  "records": 72,
+  "covered": false,
+  "financial_eligible": false
+}

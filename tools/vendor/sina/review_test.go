@@ -117,6 +117,63 @@ func TestSinaExpansionPreservesFailureAndUnattempted(t *testing.T) {
 	}
 }
 
+func TestSinaFinalIsolationEvidenceAndUnknownAreNotCoverage(t *testing.T) {
+	base := "../../../docs/evidence/sina-null-results-20261114"
+	b, e := os.ReadFile(filepath.Join(base, "files.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var files []struct {
+		File   string
+		Bytes  int
+		SHA256 string
+	}
+	if e = json.Unmarshal(b, &files); e != nil {
+		t.Fatal(e)
+	}
+	if len(files) != 542 {
+		t.Fatal("最终封存范围变更")
+	}
+	for _, f := range files {
+		raw, e := os.ReadFile(filepath.Join(base, filepath.FromSlash(f.File)))
+		if e != nil {
+			t.Fatal(e)
+		}
+		sum := sha256.Sum256(raw)
+		if len(raw) != f.Bytes || hex.EncodeToString(sum[:]) != f.SHA256 {
+			t.Fatalf("最终原件改变 %s", f.File)
+		}
+	}
+	b, e = os.ReadFile(filepath.Join(base, "request-ledger.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var ledger []isolatedReceipt
+	if e = json.Unmarshal(b, &ledger); e != nil {
+		t.Fatal(e)
+	}
+	normal, unknown := 0, 0
+	for _, r := range ledger {
+		if r.ID == "daily-A2711" || r.Covered || r.FinancialEligible {
+			t.Fatal("重取旧请求或提升资格")
+		}
+		switch r.State {
+		case "received":
+			normal++
+		case "failed-quarantined":
+			unknown++
+			if r.Records != 0 || r.FailureClass != "exact-null-unavailable" || r.Evidence == nil || r.HTTP.Status != 200 {
+				t.Fatal("未知项被改成可用行")
+			}
+		default:
+			t.Fatalf("最终状态不符 %s", r.State)
+		}
+	}
+	if len(ledger) != 175 || normal != 169 || unknown != 6 {
+		t.Fatalf("%d %d %d", len(ledger), normal, unknown)
+	}
+}
+
 func TestSinaFrozenToolReplaysAndDoesNotPublish(t *testing.T) {
 	root := filepath.Join(t.TempDir(), "private-result")
 	if e := reviewSamples("../../../source/sinavendor/testdata/receipts.json", root); e != nil {

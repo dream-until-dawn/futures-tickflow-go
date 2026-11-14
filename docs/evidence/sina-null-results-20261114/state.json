@@ -1,0 +1,66 @@
+{
+  "state": "completed-with-unavailable-contracts",
+  "policy": "sina-tool-exact-null-v1",
+  "source_commit": "ab9c3d88177427e171b0c4c1e0916e617b1a88af",
+  "executable_sha256": "488f16c677087c0827082f7bccec7cf20876c40efad32135b6b8fa3f22fbfb12",
+  "profile_sha256": "789db5b29c55102c3f526e5b8c11f737739eb01674c300ab27fd4d71af143578",
+  "batches": [
+    {
+      "plan": "batch-01.json",
+      "state": "completed-with-quarantined-unavailable",
+      "success": true,
+      "requests": 40,
+      "bytes": 505990,
+      "received": 37,
+      "quarantined": 3,
+      "returncode": 0
+    },
+    {
+      "plan": "batch-02.json",
+      "state": "completed-with-quarantined-unavailable",
+      "success": true,
+      "requests": 40,
+      "bytes": 502982,
+      "received": 39,
+      "quarantined": 1,
+      "returncode": 0
+    },
+    {
+      "plan": "batch-03.json",
+      "state": "completed-with-quarantined-unavailable",
+      "success": true,
+      "requests": 40,
+      "bytes": 557783,
+      "received": 39,
+      "quarantined": 1,
+      "returncode": 0
+    },
+    {
+      "plan": "batch-04.json",
+      "state": "completed-with-quarantined-unavailable",
+      "success": true,
+      "requests": 40,
+      "bytes": 483022,
+      "received": 39,
+      "quarantined": 1,
+      "returncode": 0
+    },
+    {
+      "plan": "batch-05.json",
+      "state": "completed-raw-only",
+      "success": true,
+      "requests": 15,
+      "bytes": 187659,
+      "received": 15,
+      "quarantined": 0,
+      "returncode": 0
+    }
+  ],
+  "requests": 175,
+  "bytes": 2237436,
+  "received": 169,
+  "quarantined": 6,
+  "old_stop_modified": false,
+  "covered": false,
+  "financial_eligible": false
+}

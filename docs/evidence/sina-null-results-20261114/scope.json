@@ -1,0 +1,19 @@
+{
+  "identity": "vendor/sina/request-bound",
+  "source_commit": "ab9c3d88177427e171b0c4c1e0916e617b1a88af",
+  "actual_requests": 175,
+  "actual_bytes": 2237436,
+  "normal_arrays": 169,
+  "failed_quarantined": 6,
+  "normal_target_rows": 19346,
+  "observed_current_codes": 241,
+  "current_array_codes": 234,
+  "old_stop_preserved": true,
+  "old_a2711_retried": false,
+  "unattempted_current_codes": 0,
+  "full_2021_expired_roster": false,
+  "independent_calendar": false,
+  "financial_eligible": false,
+  "production_changed": false,
+  "timestamp_semantics": "request-start UTC; no response-completion or exchange-modification guarantee"
+}

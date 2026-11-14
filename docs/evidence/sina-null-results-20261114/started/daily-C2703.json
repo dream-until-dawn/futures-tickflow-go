@@ -1,0 +1,15 @@
+{
+  "job": {
+    "id": "daily-C2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2703\u0026type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "retrieved_at": "0001-01-01T00:00:00Z",
+    "exchange": "DCE",
+    "product": "c",
+    "version": "sina-vendor-v1"
+  },
+  "marker_created_at": "2026-11-14T15:17:58.4488034Z",
+  "profile_sha256": "789db5b29c55102c3f526e5b8c11f737739eb01674c300ab27fd4d71af143578",
+  "state": "in_progress"
+}
