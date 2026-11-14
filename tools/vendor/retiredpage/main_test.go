@@ -100,3 +100,16 @@ func TestControlStaticRequiresExactPriorHTMLAndReceipt(t *testing.T) {
 		}
 	}
 }
+
+func TestModularStaticPinsApprovedPath(t *testing.T) {
+	source := "../../../docs/evidence/sina-retired-page-20261114"
+	job, ref, err := prepareScript(source, modularURL, "sina-modular-static")
+	if err != nil || job.URL != modularURL || ref.SHA256 != quoteSHA {
+		t.Fatalf("%+v %v", job, err)
+	}
+	for _, target := range []string{"https://example.com/other.js", modularURL + "?extra=1", "http://n.sinaimg.cn/finance/futures/moudler20200421.js"} {
+		if _, _, err := prepareScript(source, target, "x"); err == nil || !strings.Contains(err.Error(), "未批准") {
+			t.Fatalf("未批准路径通过: %s %v", target, err)
+		}
+	}
+}

@@ -26,9 +26,15 @@ const originSHA = "cfa10698129f81c67e95a7dfbf9bae7a7d19fa57c5586f5263b826243560b
 const receiptSHA = "5778f66ae1e51ba8f3d5a56fc6b6ca51650d97db6559a4cfcb3e123e1751cedc"
 const quoteSHA = "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3"
 const controlURL = "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js"
+const modularURL = "https://n.sinaimg.cn/finance/futures/moudler20200421.js"
 
 // prepareControl 只认实际HTML的script src，不执行脚本或扩大公共下载器白名单。
 func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
+	return prepareScript(sourceDir, controlURL, "sina-control-static")
+}
+
+// prepareScript 仅接收本命令固定的两条已逐项批准的静态路径，不接受用户URL。
+func prepareScript(sourceDir, target, id string) (batch.Job, evidence.Ref, error) {
 	body, e := os.ReadFile(filepath.Join(sourceDir, "page.jsonp"))
 	if e != nil {
 		return batch.Job{}, evidence.Ref{}, e
@@ -41,11 +47,14 @@ func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
 	if e = json.Unmarshal(b, &r); e != nil {
 		return batch.Job{}, evidence.Ref{}, e
 	}
-	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']//stock2\.finance\.sina\.com\.cn/futures/page2012/js/control\.js["']`)
+	if target != controlURL && target != modularURL {
+		return batch.Job{}, evidence.Ref{}, fmt.Errorf("未批准静态路径")
+	}
+	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']` + regexp.QuoteMeta("//"+target[len("https://"):]) + `["']`)
 	if digest(body) != quoteSHA || r.Evidence.URL != quoteURL || r.Evidence.Verify(body) != nil || r.State != "received" || r.BodyState != "complete" || r.Bytes != int64(len(body)) || r.HTTP == nil || r.HTTP.Status != 200 || !r.HTTP.Complete || r.HTTP.FinalURL != quoteURL || !src.Match(body) {
 		return batch.Job{}, evidence.Ref{}, fmt.Errorf("原HTML/收据/SHA或准确script src不符")
 	}
-	return batch.Job{ID: "sina-control-static", URL: controlURL, Format: "static-js-unqualified", Version: "sina-control-static-v1"}, r.Evidence, nil
+	return batch.Job{ID: id, URL: target, Format: "static-js-unqualified", Version: "sina-static-v1"}, r.Evidence, nil
 }
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
@@ -100,15 +109,24 @@ func main() {
 func run() error {
 	source := flag.String("source-dir", "", "冻结SDK正文与原收据目录")
 	controlFrom := flag.String("control-from", "", "原HTML/收据目录；显式唯一control.js静态模式")
+	modularFrom := flag.String("modular-from", "", "原HTML/收据目录；显式唯一modular静态模式")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
-	if (*source == "") == (*controlFrom == "") || *root == "" {
+	modes := 0
+	for _, value := range []string{*source, *controlFrom, *modularFrom} {
+		if value != "" {
+			modes++
+		}
+	}
+	if modes != 1 || *root == "" {
 		return fmt.Errorf("需要source-dir或control-from其一与全新root")
 	}
 	var job batch.Job
 	var origin evidence.Ref
 	var e error
-	if *controlFrom != "" {
+	if *modularFrom != "" {
+		job, origin, e = prepareScript(*modularFrom, modularURL, "sina-modular-static")
+	} else if *controlFrom != "" {
 		job, origin, e = prepareControl(*controlFrom)
 	} else {
 		job, origin, e = prepare(*source)
