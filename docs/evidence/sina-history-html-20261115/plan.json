@@ -1,0 +1,21 @@
+{
+  "actual_body_limit": 1048576,
+  "covered": false,
+  "financial_eligible": false,
+  "job": {
+    "id": "sina-history-html",
+    "url": "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php",
+    "format": "static-html-unqualified",
+    "day": 0,
+    "retrieved_at": "0001-01-01T00:00:00Z",
+    "version": "sina-history-html-v1"
+  },
+  "origin": {
+    "id": "sina-config-static",
+    "url": "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js",
+    "sha256": "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585",
+    "retrieved_at": "2026-11-14T16:28:51.7498191Z",
+    "version": "sina-static-v1"
+  },
+  "requests_limit": 1
+}
