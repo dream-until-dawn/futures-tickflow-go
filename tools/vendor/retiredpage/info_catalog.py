@@ -57,3 +57,17 @@ def review(raw):
                 real_month_code_rows=len(real), target_market_real_codes=targets,
                 historical_roster_proved=False, financial_eligible=False,
                 javascript_executed=False, network_requests=0)
+
+
+if __name__ == "__main__":
+    import argparse
+    import io
+    import json
+    from pathlib import Path
+    import sys
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("original", type=Path, help="已冻结的静态目录原件；只读不联网")
+    args = parser.parse_args()
+    print(json.dumps(review(args.original.read_bytes()), ensure_ascii=False, indent=2))
