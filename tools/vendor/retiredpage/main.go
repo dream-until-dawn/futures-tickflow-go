@@ -28,6 +28,28 @@ const quoteSHA = "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612
 const controlURL = "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js"
 const modularURL = "https://n.sinaimg.cn/finance/futures/moudler20200421.js"
 const configURL = "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js"
+const configSHA = "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585"
+const historyURL = "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php"
+
+// prepareHistory 只取原配置明确引用的无参数HTML，不猜交易所、品种或合约参数。
+func prepareHistory(sourceDir string) (batch.Job, evidence.Ref, error) {
+	body, err := os.ReadFile(filepath.Join(sourceDir, "config.jsonp"))
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	raw, err := os.ReadFile(filepath.Join(sourceDir, "receipt.json"))
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	var receipt batch.Receipt
+	if err := json.Unmarshal(raw, &receipt); err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	if digest(body) != configSHA || receipt.Evidence.URL != configURL || receipt.Evidence.Verify(body) != nil || receipt.State != "received" || receipt.BodyState != "complete" || receipt.Bytes != int64(len(body)) || receipt.HTTP == nil || receipt.HTTP.Status != 200 || !receipt.HTTP.Complete || receipt.HTTP.FinalURL != configURL || !bytes.Contains(body, []byte(`get_history:"//vip.stock.finance.sina.com.cn/q/view/vFutures_History.php?"`)) {
+		return batch.Job{}, evidence.Ref{}, fmt.Errorf("历史页配置原件/收据/精确字面量不符")
+	}
+	return batch.Job{ID: "sina-history-html", URL: historyURL, Format: "static-html-unqualified", Version: "sina-history-html-v1"}, receipt.Evidence, nil
+}
 
 // prepareControl 只认实际HTML的script src，不执行脚本或扩大公共下载器白名单。
 func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
@@ -112,10 +134,11 @@ func run() error {
 	controlFrom := flag.String("control-from", "", "原HTML/收据目录；显式唯一control.js静态模式")
 	modularFrom := flag.String("modular-from", "", "原HTML/收据目录；显式唯一modular静态模式")
 	configFrom := flag.String("config-from", "", "原HTML/收据目录；显式唯一config静态模式")
+	historyFrom := flag.String("history-from", "", "原config/收据目录；唯一无参数历史HTML")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
 	modes := 0
-	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom} {
+	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom, *historyFrom} {
 		if value != "" {
 			modes++
 		}
@@ -126,7 +149,9 @@ func run() error {
 	var job batch.Job
 	var origin evidence.Ref
 	var e error
-	if *configFrom != "" {
+	if *historyFrom != "" {
+		job, origin, e = prepareHistory(*historyFrom)
+	} else if *configFrom != "" {
 		job, origin, e = prepareScript(*configFrom, configURL, "sina-config-static")
 	} else if *modularFrom != "" {
 		job, origin, e = prepareScript(*modularFrom, modularURL, "sina-modular-static")

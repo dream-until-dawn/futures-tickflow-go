@@ -124,6 +124,32 @@ func TestConfigStaticPinsApprovedPath(t *testing.T) {
 	}
 }
 
+func TestHistoryHTMLPinsFrozenConfigAndNoParameters(t *testing.T) {
+	source := "../../../docs/evidence/sina-config-static-20261115"
+	job, ref, err := prepareHistory(source)
+	if err != nil || job.URL != historyURL || strings.ContainsAny(job.URL, "?&") || ref.SHA256 != configSHA {
+		t.Fatalf("%+v %v", job, err)
+	}
+	for _, changed := range []string{"config.jsonp", "receipt.json"} {
+		dir := t.TempDir()
+		for _, name := range []string{"config.jsonp", "receipt.json"} {
+			data, err := os.ReadFile(filepath.Join(source, name))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if name == changed {
+				data = append(data, 'x')
+			}
+			if err := os.WriteFile(filepath.Join(dir, name), data, 0600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if _, _, err := prepareHistory(dir); err == nil {
+			t.Fatal("损坏配置/收据通过")
+		}
+	}
+}
+
 // 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
 func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
 	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115", "sina-config-static-20261115"} {
