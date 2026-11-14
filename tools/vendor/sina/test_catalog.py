@@ -2,7 +2,7 @@ import unittest
 import io
 import sys
 from catalog import product_map, list_jobs
-from coverage import contract_observations
+from observations import contract_observations
 
 
 class CatalogTest(unittest.TestCase):

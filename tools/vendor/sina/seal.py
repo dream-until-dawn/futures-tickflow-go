@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 import re
 import sys
-from coverage import unique_object
+from observations import unique_object
 
 
 def sha(raw):
