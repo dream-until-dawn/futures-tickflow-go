@@ -50,6 +50,35 @@ func TestSinaGitEvidenceBytesAndScope(t *testing.T) {
 	}
 }
 
+func TestSinaOriginEvidenceRetainsOriginalLineEndings(t *testing.T) {
+	base := "../../../docs/evidence/sina-vendor-origin-20261114"
+	b, e := os.ReadFile(filepath.Join(base, "files.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var files []struct {
+		File   string
+		Bytes  int
+		SHA256 string
+	}
+	if e = json.Unmarshal(b, &files); e != nil {
+		t.Fatal(e)
+	}
+	if len(files) != 4 {
+		t.Fatal("来源封存范围变更")
+	}
+	for _, f := range files {
+		raw, e := os.ReadFile(filepath.Join(base, f.File))
+		if e != nil {
+			t.Fatal(e)
+		}
+		sum := sha256.Sum256(raw)
+		if len(raw) != f.Bytes || hex.EncodeToString(sum[:]) != f.SHA256 {
+			t.Fatalf("原始出处字节/行尾被改变 %s", f.File)
+		}
+	}
+}
+
 func TestSinaExpansionPreservesFailureAndUnattempted(t *testing.T) {
 	base := "../../../docs/evidence/sina-vendor-expanded-20261114"
 	b, e := os.ReadFile(filepath.Join(base, "files.json"))
