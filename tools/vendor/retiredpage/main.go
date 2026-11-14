@@ -32,6 +32,25 @@ const configSHA = "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b
 const historyURL = "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php"
 const historySHA = "81cf741fad8436bb9477a7884597ea5c37ea40ae14a8527e6c0fc65267e3fa28"
 const historyScriptURL = "https://vip.stock.finance.sina.com.cn/q//view/js/futures_history.js"
+const infoLiteralURL = "http://finance.sina.com.cn/iframe/futures_info_cff.js"
+const infoCandidateURL = "https://finance.sina.com.cn/iframe/futures_info_cff.js"
+
+// prepareInfo 区分原HTML的HTTP字面量与单独批准的HTTPS可行性候选，绝不发HTTP。
+func prepareInfo(sourceDir string) (batch.Job, evidence.Ref, error) {
+	_, ref, err := prepareHistoryScript(sourceDir)
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	body, err := os.ReadFile(filepath.Join(sourceDir, "history.jsonp"))
+	if err != nil {
+		return batch.Job{}, evidence.Ref{}, err
+	}
+	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']` + regexp.QuoteMeta(infoLiteralURL) + `["']`)
+	if digest(body) != historySHA || !src.Match(body) {
+		return batch.Job{}, evidence.Ref{}, fmt.Errorf("HTTP原src不符，不能冒称HTTPS原文")
+	}
+	return batch.Job{ID: "sina-info-https-candidate", URL: infoCandidateURL, Format: "static-js-https-candidate-unqualified", Version: "sina-info-https-v1"}, ref, nil
+}
 
 // prepareHistoryScript 保留原HTML相对路径的双斜线，仅接受准确原件及其真实src。
 func prepareHistoryScript(sourceDir string) (batch.Job, evidence.Ref, error) {
@@ -159,10 +178,11 @@ func run() error {
 	configFrom := flag.String("config-from", "", "原HTML/收据目录；显式唯一config静态模式")
 	historyFrom := flag.String("history-from", "", "原config/收据目录；唯一无参数历史HTML")
 	historyScriptFrom := flag.String("history-script-from", "", "原历史HTML/收据目录；保留双斜线的唯一脚本")
+	infoFrom := flag.String("info-https-from", "", "原历史HTML/收据目录；区分HTTP字面量与独立HTTPS候选")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
 	modes := 0
-	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom, *historyFrom, *historyScriptFrom} {
+	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom, *historyFrom, *historyScriptFrom, *infoFrom} {
 		if value != "" {
 			modes++
 		}
@@ -173,7 +193,9 @@ func run() error {
 	var job batch.Job
 	var origin evidence.Ref
 	var e error
-	if *historyScriptFrom != "" {
+	if *infoFrom != "" {
+		job, origin, e = prepareInfo(*infoFrom)
+	} else if *historyScriptFrom != "" {
 		job, origin, e = prepareHistoryScript(*historyScriptFrom)
 	} else if *historyFrom != "" {
 		job, origin, e = prepareHistory(*historyFrom)
@@ -192,7 +214,13 @@ func run() error {
 	if e = os.Mkdir(*root, 0700); e != nil {
 		return fmt.Errorf("既有/未知目录拒绝重发: %w", e)
 	}
-	plan, e := json.MarshalIndent(map[string]any{"job": job, "origin": origin, "requests_limit": 1, "actual_body_limit": 1 << 20, "covered": false, "financial_eligible": false}, "", "  ")
+	planFields := map[string]any{"job": job, "origin": origin, "requests_limit": 1, "actual_body_limit": 1 << 20, "covered": false, "financial_eligible": false}
+	if *infoFrom != "" {
+		planFields["source_literal_url"] = infoLiteralURL
+		planFields["requested_candidate_url"] = infoCandidateURL
+		planFields["source_directly_references_https"] = false
+	}
+	plan, e := json.MarshalIndent(planFields, "", "  ")
 	if e != nil {
 		return e
 	}

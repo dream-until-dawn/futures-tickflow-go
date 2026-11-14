@@ -174,6 +174,30 @@ func TestHistoryScriptPinsOriginalDoubleSlash(t *testing.T) {
 	}
 }
 
+func TestInfoHTTPSCandidateDoesNotRewriteOriginalLiteral(t *testing.T) {
+	source := "../../../docs/evidence/sina-history-html-20261115"
+	job, ref, err := prepareInfo(source)
+	if err != nil || job.URL != infoCandidateURL || job.URL == infoLiteralURL || ref.SHA256 != historySHA {
+		t.Fatalf("%+v %v", job, err)
+	}
+	dir := t.TempDir()
+	for _, name := range []string{"history.jsonp", "receipt.json"} {
+		data, err := os.ReadFile(filepath.Join(source, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name == "history.jsonp" {
+			data = []byte(strings.ReplaceAll(string(data), infoLiteralURL, infoCandidateURL))
+		}
+		if err := os.WriteFile(filepath.Join(dir, name), data, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, _, err := prepareInfo(dir); err == nil {
+		t.Fatal("伪造HTTPS出处通过")
+	}
+}
+
 // 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
 func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
 	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115", "sina-config-static-20261115", "sina-history-html-20261115", "sina-history-script-20261115"} {
