@@ -1,0 +1,17 @@
+{
+  "schema": "staged-delivery-v4-engine-acceptance-status-v1",
+  "bundle_manifest_sha256": "07738da201c6ff377137f020faef91a2aea8e3ac864127bdb129f918b3434d76",
+  "zip_sha256": "32f7a057cd78cb909f760e32f1b3f08cbe6a3893cde0c1260bb4e5bae416cd77",
+  "engine_thread_id": "01a19f51-fb63-7a73-bf9e-b69e3d44a2b6",
+  "engine_independent_acceptance": "not_started",
+  "whole_bundle_accepted": false,
+  "specific_fix_requests": [],
+  "publisher_checks": "passed; do not substitute for engine acceptance",
+  "status_source": "engine direct response says complete v4 bundle not yet reviewed; current dated-parameter task has separate inputs",
+  "followup_requested": "schedule whole-bundle read-only review after current evidence safely sealed",
+  "new_market_requests": 0,
+  "GFEX_retry_authorized": false,
+  "DCE_authentication_implemented": false,
+  "production_changed": false,
+  "tag_created": false
+}
