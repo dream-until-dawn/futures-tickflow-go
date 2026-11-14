@@ -1,0 +1,8 @@
+{
+  "positive_returncode": 0,
+  "mutation_returncode": 1,
+  "mutation": "active channel suppresses missing peer",
+  "positive": "test_active_channel_missing_peer_with_controlled_clock (test_lifecycle.LifecycleTest.test_active_channel_missing_peer_with_controlled_clock)\n精确固定每轮写入与时间，不靠操作系统亚秒调度证明逐通道门禁。 ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.017s\n\nOK\n",
+  "negative": "test_active_channel_missing_peer_with_controlled_clock (test_lifecycle.LifecycleTest.test_active_channel_missing_peer_with_controlled_clock)\n精确固定每轮写入与时间，不靠操作系统亚秒调度证明逐通道门禁。 ... FAIL\n\n======================================================================\nFAIL: test_active_channel_missing_peer_with_controlled_clock (test_lifecycle.LifecycleTest.test_active_channel_missing_peer_with_controlled_clock)\n精确固定每轮写入与时间，不靠操作系统亚秒调度证明逐通道门禁。\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:\\Temp\\tickflow-active-channel-z1ehz1s8\\test_lifecycle.py\", line 86, in test_active_channel_missing_peer_with_controlled_clock\n    self.assertEqual(status[\"stale_files\"], [\"missing.jsonl\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: [] != ['missing.jsonl']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'missing.jsonl'\n\n- []\n+ ['missing.jsonl']\n\n----------------------------------------------------------------------\nRan 1 test in 0.013s\n\nFAILED (failures=1)\n",
+  "network_requests": 0
+}

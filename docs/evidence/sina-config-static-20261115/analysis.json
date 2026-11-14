@@ -1,0 +1,41 @@
+{
+  "identity": "static-js-unqualified",
+  "bytes": 19586,
+  "sha256": "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585",
+  "encoding": "utf-8 strict; original HTML script charset=utf-8",
+  "lines": 236,
+  "explicit_urls": [
+    "http://finance.sina.com.cn/futures/quote/cff/bc.shtml?code=<%=code%>\",",
+    "http://finance.sina.com.cn/futures/quotes/<%=code%>.shtml\"",
+    "http://finance.sina.com.cn/futures/quotes/<%=code%>.shtml\"><%=name%></a><td><span",
+    "http://finance.sina.com.cn/futures/quotes/<%=code%>.shtml\"><%=name%></a><td><span",
+    "http://s.weibo.com/weibo/${key}\">更多></a></p--><p",
+    "http://s.weibo.com/weibo/${key}\">\"${key}\"</a></p><div",
+    "http://weibo.com/u/${user.id}\"",
+    "http://weibo.com/u/${user.id}\"",
+    "http://weibo.com/${user.id}/${base62_id}?type=repost\"",
+    "http://weibo.com/${user.id}/${base62_id}\"",
+    "http://finance.sina.com.cn/money/forex/hq/${code}.shtml\"",
+    "http://finance.sina.com.cn/futures/quotes/${code}.shtml\"{{/if}}{{/if}}",
+    "http://finance.sina.com.cn/futures/quotes/${code}.shtml\"{{/if}}{{if",
+    "http://finance.sina.com.cn/money/future/${code}/quote.shtml\"{{/if}}{{if",
+    "http://finance.sina.com.cn/realstock/company/${code}/nc.shtml\"{{/if}}",
+    "http://finance.sina.com.cn/realstock/company/sh${HYSYMBOL}/nc.shtml\"",
+    "https://biz.finance.sina.com.cn/futures/ask/')+'\"",
+    "https://biz.finance.sina.com.cn/futures/ask/')+'\"",
+    "http://mark.sina.com.cn/v2/AllResult.php?p_mark=futures_survey&i_mark=${futures_app.vote_code}\">更多></a><h3",
+    "http://mark.sina.com.cn/v2/Result.php?p_mark=futures_survey&i_mark=${futures_app.vote_code}\""
+  ],
+  "historical_roster_proved": false,
+  "javascript_executed": false,
+  "followup_requests": 0,
+  "price_requests": 0,
+  "financial_eligible": false,
+  "observed_references": [
+    {
+      "line": 17,
+      "text": "get_history:\"//vip.stock.finance.sina.com.cn/q/view/vFutures_History.php?\","
+    }
+  ],
+  "limit": "只观察历史查询页路径，未访问该页或其API，不证明目录或历史全集。"
+}

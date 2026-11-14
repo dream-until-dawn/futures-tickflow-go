@@ -66,8 +66,27 @@ class LifecycleTest(unittest.TestCase):
                                          watch=["raw.jsonl", "missing.jsonl"], startup_seconds=0.1)
         self.assertEqual(rc, 1)
         self.assertIn("stalled", events)
+        # 终态快照可能晚于raw最后写入的idle门限；此时raw也应如实列为停写。
+        self.assertIn("missing.jsonl", status["stale_files"])
+        self.assertIn("raw.jsonl", status["files"])
+        self.assertEqual(status["state"], "failed")
+
+    def test_active_channel_missing_peer_with_controlled_clock(self):
+        """精确固定每轮写入与时间，不靠操作系统亚秒调度证明逐通道门禁。"""
+        root = self.base / "controlled"
+        root.mkdir()
+        child = mock.Mock(pid=123, returncode=0)
+        child.poll.side_effect = [None, None, 0, 0]
+        with mock.patch("worker.subprocess.Popen", return_value=child), \
+                mock.patch("worker.time.monotonic", side_effect=[0, 0.01, 0.2, 0.4]), \
+                mock.patch("worker.time.sleep"), \
+                mock.patch("worker.signatures", side_effect=[{"raw.jsonl": [i, i]} for i in (1, 2, 3)]):
+            self.assertEqual(run(root, self.plan("pass", watch=["raw.jsonl", "missing.jsonl"], startup_seconds=0.1)), 1)
+        status = inspect(root)
         self.assertEqual(status["stale_files"], ["missing.jsonl"])
         self.assertEqual(status["state"], "failed")
+        events = [json.loads(line) for line in (root / "events.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertTrue(any(row["state"] == "stalled" and row["stale_files"] == ["missing.jsonl"] for row in events))
 
     def test_status_replace_retries_sharing_conflict_but_is_bounded(self):
         import os

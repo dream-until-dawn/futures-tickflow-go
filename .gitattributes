@@ -73,3 +73,5 @@ examples/** linguist-documentation
 # 原始静态脚本保持字节
 docs/evidence/sina-modular-static-20261115/modular.jsonp binary
 docs/evidence/sina-modular-static-20261115/result.json binary
+docs/evidence/sina-config-static-20261115/config.jsonp binary
+docs/evidence/sina-config-static-20261115/result.json binary

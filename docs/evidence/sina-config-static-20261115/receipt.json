@@ -1,0 +1,24 @@
+{
+  "job_sha256": "ac08539d737c4bb0c60132d4b0c994d7a0e023323e7bde266329761acc7ded17",
+  "state": "received",
+  "evidence": {
+    "id": "sina-config-static",
+    "url": "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js",
+    "sha256": "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585",
+    "retrieved_at": "2026-11-14T16:28:51.7498191Z",
+    "version": "sina-static-v1"
+  },
+  "bytes": 19586,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js",
+    "content_type": "application/x-javascript",
+    "content_length": 19586,
+    "server_date": "Sat, 14 Nov 2026 16:28:51 GMT",
+    "requested_at": "2026-11-14T16:28:51.7498191Z",
+    "complete": true
+  }
+}

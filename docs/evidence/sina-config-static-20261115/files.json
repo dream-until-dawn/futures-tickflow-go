@@ -1,0 +1,27 @@
+[
+  {
+    "file": "analysis.json",
+    "bytes": 2092,
+    "sha256": "ce0807563063c12a3a534ab283bda3b35d7e20079efec820194d4ec9cb52616c"
+  },
+  {
+    "file": "config.jsonp",
+    "bytes": 19586,
+    "sha256": "77bb15bdb406706694409bc51bb5ccad77cd0853bd2e826764e0998c7fd5b585"
+  },
+  {
+    "file": "plan.json",
+    "bytes": 653,
+    "sha256": "49bc3b33c4267b96d3485f7adad95e88fd8b6339e59c4e0236f277ad5ebb69f9"
+  },
+  {
+    "file": "receipt.json",
+    "bytes": 825,
+    "sha256": "213aa1f166aa4c3f695f923e4c8876fbbb4d01885d575a3d322996fd1fa79336"
+  },
+  {
+    "file": "result.json",
+    "bytes": 1248,
+    "sha256": "8151f25fd6f14dfe4625aec5dc27e40cd1c333fa15c1a18d3d75b90649cf06cb"
+  }
+]

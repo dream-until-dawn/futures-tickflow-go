@@ -34,7 +34,7 @@ func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
 	return prepareScript(sourceDir, controlURL, "sina-control-static")
 }
 
-// prepareScript 仅接收本命令固定的两条已逐项批准的静态路径，不接受用户URL。
+// prepareScript 仅接收本命令固定、已逐项批准的静态路径，不接受用户URL。
 func prepareScript(sourceDir, target, id string) (batch.Job, evidence.Ref, error) {
 	body, e := os.ReadFile(filepath.Join(sourceDir, "page.jsonp"))
 	if e != nil {

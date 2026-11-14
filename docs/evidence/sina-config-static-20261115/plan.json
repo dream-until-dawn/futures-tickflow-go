@@ -1,0 +1,21 @@
+{
+  "actual_body_limit": 1048576,
+  "covered": false,
+  "financial_eligible": false,
+  "job": {
+    "id": "sina-config-static",
+    "url": "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js",
+    "format": "static-js-unqualified",
+    "day": 0,
+    "retrieved_at": "0001-01-01T00:00:00Z",
+    "version": "sina-static-v1"
+  },
+  "origin": {
+    "id": "v2105-static-page",
+    "url": "https://finance.sina.com.cn/futures/quotes/V2105.shtml",
+    "sha256": "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3",
+    "retrieved_at": "2026-11-14T15:59:05.1034939Z",
+    "version": "sina-retired-page-v1"
+  },
+  "requests_limit": 1
+}
