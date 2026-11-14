@@ -1,0 +1,37 @@
+{
+  "bytes": 143111,
+  "financial_eligible": false,
+  "kind": "static-html-unqualified",
+  "requests": 1,
+  "results": [
+    {
+      "id": "v2105-static-page",
+      "receipt": {
+        "job_sha256": "8f3b91a0623cfbf18ef71b3cd223dd5a469dd4f3d9ecdda09d9697f06e90fb80",
+        "state": "received",
+        "evidence": {
+          "id": "v2105-static-page",
+          "url": "https://finance.sina.com.cn/futures/quotes/V2105.shtml",
+          "sha256": "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3",
+          "retrieved_at": "2026-11-14T15:59:05.1034939Z",
+          "version": "sina-retired-page-v1"
+        },
+        "bytes": 143111,
+        "body_state": "complete",
+        "http": {
+          "attempted": true,
+          "response_received": true,
+          "status": 200,
+          "final_url": "https://finance.sina.com.cn/futures/quotes/V2105.shtml",
+          "content_type": "text/html",
+          "content_length": -1,
+          "server_date": "Sat, 14 Nov 2026 15:59:06 GMT",
+          "requested_at": "2026-11-14T15:59:05.1034939Z",
+          "complete": true
+        }
+      },
+      "resumed": false
+    }
+  ],
+  "retired_roster_certified": false
+}

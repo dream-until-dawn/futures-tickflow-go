@@ -1,0 +1,20 @@
+{
+  "actual_body_limit": 1048576,
+  "covered": false,
+  "financial_eligible": false,
+  "job": {
+    "id": "v2105-static-page",
+    "url": "https://finance.sina.com.cn/futures/quotes/V2105.shtml",
+    "format": "static-html-unqualified",
+    "day": 0,
+    "retrieved_at": "0001-01-01T00:00:00Z",
+    "version": "sina-retired-page-v1"
+  },
+  "origin": {
+    "id": "akshare-source",
+    "url": "https://raw.githubusercontent.com/akfamily/akshare/main/akshare/futures/futures_zh_sina.py",
+    "sha256": "cfa10698129f81c67e95a7dfbf9bae7a7d19fa57c5586f5263b826243560ba55",
+    "retrieved_at": "2026-11-14T13:06:31.974334Z"
+  },
+  "requests_limit": 1
+}

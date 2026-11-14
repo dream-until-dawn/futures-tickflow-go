@@ -1,0 +1,22 @@
+{
+  "identity": "static-html-unqualified",
+  "title": "PVC2105(V2105)期货行情,新闻,报价_新浪财经_新浪网",
+  "page_sha256": "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3",
+  "bytes": 143111,
+  "encoding": "gb18030 strict; HTML meta declares gb2312",
+  "select_fragments": [
+    "<select class=\"fake-select select-jys\"><option>交易所</option></select>",
+    "<select class=\"fake-select select-pz\"><option>品种</option></select>",
+    "<select class=\"fake-select select-hy\"><option>合约</option></select>",
+    "<select class=\"fake-select select-jys\"><option>交易所</option></select>",
+    "<select class=\"fake-select select-pz\"><option>品种</option></select>",
+    "<select class=\"fake-select select-hy\"><option>合约</option></select>"
+  ],
+  "static_historical_roster_proved": false,
+  "source_field_transcation_date": "2021-05-10; unqualified literal, not last-trading-day evidence",
+  "javascript_executed": false,
+  "cookies_followed": false,
+  "followup_requests": 0,
+  "new_price_codes": 0,
+  "financial_eligible": false
+}
