@@ -114,6 +114,16 @@ func TestModularStaticPinsApprovedPath(t *testing.T) {
 	}
 }
 
+func TestConfigStaticPinsApprovedPath(t *testing.T) {
+	job, ref, err := prepareScript("../../../docs/evidence/sina-retired-page-20261114", configURL, "sina-config-static")
+	if err != nil || job.URL != configURL || ref.SHA256 != quoteSHA {
+		t.Fatalf("%+v %v", job, err)
+	}
+	if _, _, err := prepareScript("../../../docs/evidence/sina-retired-page-20261114", configURL+"?x=1", "x"); err == nil {
+		t.Fatal("未批准配置通过")
+	}
+}
+
 // 原件索引必须在干净克隆中也成立，避免Git换行转换被工作区正确字节掩盖。
 func TestStaticScriptEvidenceFrozenBytes(t *testing.T) {
 	for _, folder := range []string{"sina-control-static-20261115", "sina-modular-static-20261115"} {

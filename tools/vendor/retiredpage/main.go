@@ -27,6 +27,7 @@ const receiptSHA = "5778f66ae1e51ba8f3d5a56fc6b6ca51650d97db6559a4cfcb3e123e1751
 const quoteSHA = "4978059061a9e985ba3484da3e3b53e1560b5fe414319842fb480ed4565612b3"
 const controlURL = "https://stock2.finance.sina.com.cn/futures/page2012/js/control.js"
 const modularURL = "https://n.sinaimg.cn/finance/futures/moudler20200421.js"
+const configURL = "https://n.sinaimg.cn/finance/futures/pc/src/config20240115.js"
 
 // prepareControl 只认实际HTML的script src，不执行脚本或扩大公共下载器白名单。
 func prepareControl(sourceDir string) (batch.Job, evidence.Ref, error) {
@@ -47,7 +48,7 @@ func prepareScript(sourceDir, target, id string) (batch.Job, evidence.Ref, error
 	if e = json.Unmarshal(b, &r); e != nil {
 		return batch.Job{}, evidence.Ref{}, e
 	}
-	if target != controlURL && target != modularURL {
+	if target != controlURL && target != modularURL && target != configURL {
 		return batch.Job{}, evidence.Ref{}, fmt.Errorf("未批准静态路径")
 	}
 	src := regexp.MustCompile(`(?i)<script\b[^>]*\bsrc\s*=\s*["']` + regexp.QuoteMeta("//"+target[len("https://"):]) + `["']`)
@@ -110,10 +111,11 @@ func run() error {
 	source := flag.String("source-dir", "", "冻结SDK正文与原收据目录")
 	controlFrom := flag.String("control-from", "", "原HTML/收据目录；显式唯一control.js静态模式")
 	modularFrom := flag.String("modular-from", "", "原HTML/收据目录；显式唯一modular静态模式")
+	configFrom := flag.String("config-from", "", "原HTML/收据目录；显式唯一config静态模式")
 	root := flag.String("root", "", "必须全新的仓库外结果目录")
 	flag.Parse()
 	modes := 0
-	for _, value := range []string{*source, *controlFrom, *modularFrom} {
+	for _, value := range []string{*source, *controlFrom, *modularFrom, *configFrom} {
 		if value != "" {
 			modes++
 		}
@@ -124,7 +126,9 @@ func run() error {
 	var job batch.Job
 	var origin evidence.Ref
 	var e error
-	if *modularFrom != "" {
+	if *configFrom != "" {
+		job, origin, e = prepareScript(*configFrom, configURL, "sina-config-static")
+	} else if *modularFrom != "" {
 		job, origin, e = prepareScript(*modularFrom, modularURL, "sina-modular-static")
 	} else if *controlFrom != "" {
 		job, origin, e = prepareControl(*controlFrom)
