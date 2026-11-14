@@ -1,0 +1,34 @@
+{
+  "candidate_sha": "852d7111d35f006b927e0939ebb7ef3707f94d50",
+  "status": "first-batch-restricted-consumer-passed; full-historical-coverage-unproved",
+  "parser_positive": 15,
+  "target_negatives": 8,
+  "mechanical_passed": 10,
+  "mechanical_refused": 5,
+  "feed_rows": 1826,
+  "resume_added": 0,
+  "synthetic_calendar_only": true,
+  "official_data_replaced": 0,
+  "financial_admissions_added": 0,
+  "production_changes": 0,
+  "independently_verified_files": 22,
+  "external_evidence_directory": "C:\\VScodeProject\\futures-decision-strategy\\docs\\evidence\\sina-source-acceptance-20261114",
+  "external_manifest_sha256": "fed7527034ba1120fd5d0b2633e56c90c16b1a688fcda952f3c5855c59b1b7e6",
+  "external_acceptance_sha256": "10b1cc900cf6bd2ea1f433defde5f927cd6fe4b6fffc9dcabf45e22187793d87",
+  "ci_verified_directly": {
+    "run": 43602328139,
+    "three_matrices": "success",
+    "linux_126_race": "success"
+  },
+  "source_base": "ad4956fc9ac1cb8bd80c8113c5d7a4188fdd88ee",
+  "api_ast": {
+    "added": 22,
+    "removed": 0,
+    "changed": 0
+  },
+  "limitations": [
+    "external scripts/logs were read and hashes checked; not a production switch",
+    "mechanical calendars not independent official schedules",
+    "new failure gates and expansion runner need their own candidate CI"
+  ]
+}

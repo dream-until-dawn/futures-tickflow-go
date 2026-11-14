@@ -6,12 +6,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
 
+	tf "github.com/dream-until-dawn/futures-tickflow-go"
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
 	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
+	"github.com/dream-until-dawn/futures-tickflow-go/source/sinavendor"
 )
 
 func main() {
@@ -24,6 +27,9 @@ func run() error {
 	root := flag.String("root", "", "归档目录或全新离线结果目录")
 	plan := flag.String("plan", "", "完整冻结Job清单；仅显式Sina匿名HTTPS")
 	samples := flag.String("samples", "", "复用收据文件，同目录须有原样name.jsonp")
+	requests := flag.Int("requests", 40, "本批累计请求上限，不得超过40")
+	byteLimit := flag.Int64("bytes", 20<<20, "本批累计读取字节上限，不得超过20MiB")
+	static := flag.Bool("static-cons", false, "仅取已引用的唯一cons.py静态原件；不是市场请求")
 	flag.Parse()
 	if *root == "" || (*plan == "") == (*samples == "") {
 		return fmt.Errorf("必须指定-root及-plan或-samples其一")
@@ -41,19 +47,42 @@ func run() error {
 	}
 	addresses := make([]string, len(jobs))
 	for i, j := range jobs {
-		if j.Format != "vendor-raw-unqualified" {
+		if !*static && j.Format != "vendor-raw-unqualified" {
 			return fmt.Errorf("仅归档原件，不接受伪装官方/完整覆盖的format")
 		}
 		addresses[i] = j.URL
 	}
-	d, e := batch.NewSinaVendorDownloader(batch.Limits{Requests: 40, Bytes: 20 << 20, Interval: time.Second, Timeout: 15 * time.Second}, addresses)
+	var d *batch.Downloader
+	if *static {
+		d, e = staticDownloader(jobs)
+	} else {
+		d, e = batch.NewSinaVendorDownloader(batch.Limits{Requests: *requests, Bytes: *byteLimit, Interval: time.Second, Timeout: 15 * time.Second}, addresses)
+	}
 	if e != nil {
 		return e
 	}
 	// 此层只验证确有原件，received只指原字节归档；业务解析另行审核。
-	validate := func(_ batch.Job, b []byte, r evidence.Ref) error {
+	validate := func(j batch.Job, b []byte, r evidence.Ref) error {
 		if len(b) == 0 {
 			return fmt.Errorf("空响应未知")
+		}
+		if !*static {
+			u, e := url.Parse(j.URL)
+			if e != nil {
+				return e
+			}
+			if u.Host == "stock2.finance.sina.com.cn" {
+				code := u.Query().Get("symbol")
+				if len(code) < 5 {
+					return fmt.Errorf("缺真实年月代码")
+				}
+				sym, e := tf.ParseSymbol(j.Exchange + "." + j.Product + code[len(code)-4:])
+				if e != nil {
+					return e
+				}
+				_, e = sinavendor.Parse(sinavendor.Document{Symbol: sym, Evidence: r, Raw: b})
+				return e
+			}
 		}
 		return r.Verify(b)
 	}
@@ -68,6 +97,9 @@ func run() error {
 		Bytes    int64          `json:"bytes"`
 		Results  []batch.Result `json:"results"`
 	}{"vendor/sina/raw-only-unqualified", n, size, rr}
+	if *static {
+		out.Class = "static/akshare/source-only"
+	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	if e = enc.Encode(out); e != nil {

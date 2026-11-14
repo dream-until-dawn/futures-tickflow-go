@@ -1,0 +1,362 @@
+[
+  {
+    "id": "daily-LH2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2703&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "lh",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-LH2705",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2705&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "lh",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-LH2707",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2707&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "lh",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-LH2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=LH2709&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "lh",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2612",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2612&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2703&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2705",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2705&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2707",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2707&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2708",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2708&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2709&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-M2711",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2711&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "m",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2612",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2612&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2701",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2701&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2702",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2702&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2703&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2704",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2704&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2705",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2705&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2706",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2706&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2707",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2707&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2708",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2708&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2709&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2710",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2710&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-P2711",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=P2711&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "p",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2612",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2612&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2701",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2701&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2702",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2702&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2703&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2704",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2704&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2705",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2705&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2706",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2706&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2707",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2707&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2708",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2708&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PG2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PG2709&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pg",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2612",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2612&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2702",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2702&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2703",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2703&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2704",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2704&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2705",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2705&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2706",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2706&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  },
+  {
+    "id": "daily-PP2709",
+    "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=PP2709&type=2021_04_12",
+    "format": "vendor-raw-unqualified",
+    "day": 0,
+    "exchange": "DCE",
+    "product": "pp",
+    "version": "sina-vendor-v1"
+  }
+]

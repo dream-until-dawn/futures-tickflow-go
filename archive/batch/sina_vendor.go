@@ -118,8 +118,16 @@ func sinaChallenge(b []byte) bool {
 }
 
 func (d *Downloader) afterSina(a string, r *Download) {
-	if r.Status == 403 || r.Status == 412 || r.Status == 429 || sinaChallenge(r.Body) {
+	if (r.Attempted && (r.Failure != "" || r.Status != 200 || !r.Complete || len(r.Body) == 0)) || sinaChallenge(r.Body) {
 		u, _ := url.Parse(a)
+		d.sina.stopped[u.Host] = true
+	}
+}
+
+func (d *Downloader) failSinaValidation(a string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if u, e := url.Parse(a); e == nil {
 		d.sina.stopped[u.Host] = true
 	}
 }
@@ -192,6 +200,10 @@ func (d *Downloader) restoreSina(root string, jobs []Job) error {
 			d.requests++
 			d.bytes += r.Bytes
 			d.sina.attempted[j.URL] = true
+			if r.State == "failed" {
+				u, _ := url.Parse(j.URL)
+				d.sina.stopped[u.Host] = true
+			}
 			if r.HTTP.RequestedAt.After(d.last) {
 				d.last = r.HTTP.RequestedAt
 			}

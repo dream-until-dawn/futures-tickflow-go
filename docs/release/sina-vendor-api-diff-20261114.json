@@ -1,0 +1,94 @@
+{
+  "added": [
+    {
+      "name": "archive/batch:batch.Download.DataClass",
+      "after": "string `json:\"data_class,omitempty\"`"
+    },
+    {
+      "name": "archive/batch:batch.NewSinaVendorDownloader",
+      "after": "func(l Limits, addresses []string) (*Downloader, error)"
+    },
+    {
+      "name": "archive/batch:batch.SinaProductMapURL",
+      "after": "const  = \"https://vip.stock.finance.sina.com.cn/quotes_service/view/js/qihuohangqing.js\" slot=0"
+    },
+    {
+      "name": "archive/batch:batch.SinaVendorVersion",
+      "after": "const  = \"sina-vendor-v1\" slot=0"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Document",
+      "after": "struct "
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Document.Evidence",
+      "after": "evidence.Ref"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Document.Raw",
+      "after": "[]byte"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Document.Symbol",
+      "after": "tf.Symbol"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.New",
+      "after": "func(cal tf.Calendar, docs []Document, now int64) (*Source, error)"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Parse",
+      "after": "func(d Document) ([]Record, error)"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record",
+      "after": "struct "
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Day",
+      "after": "tf.TradingDay"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Evidence",
+      "after": "evidence.Ref"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Fields",
+      "after": "map[string]string"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Identity",
+      "after": "recv Record func() string"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Row",
+      "after": "int"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Record.Symbol",
+      "after": "tf.Symbol"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Source",
+      "after": "struct "
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Source.Bars",
+      "after": "recv *Source func(ctx context.Context, req tf.BarRequest) ([]tf.Bar, error)"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Source.Calendar",
+      "after": "recv *Source func() tf.Calendar"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Source.Caps",
+      "after": "recv *Source func(k tf.ProductKey) tf.Capabilities"
+    },
+    {
+      "name": "source/sinavendor:sinavendor.Source.Records",
+      "after": "recv *Source func(sym tf.Symbol) []Record"
+    }
+  ],
+  "removed": [],
+  "changed": []
+}

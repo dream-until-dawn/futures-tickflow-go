@@ -49,7 +49,7 @@ func TestSinaVendorNetworkBudgetAndStopHost(t *testing.T) {
 	if _, e := NewSinaVendorDownloader(sinaLimits(), []string{daily, strings.Replace(daily, "%20_=", "%20_other=", 1)}); e == nil {
 		t.Fatal("换callback重复请求")
 	}
-	for _, status := range []int{403, 412, 429, 200} {
+	for _, status := range []int{403, 412, 429, 302, 500, 200} {
 		t.Run(fmt.Sprint(status), func(t *testing.T) {
 			calls := 0
 			body := "denied"

@@ -293,6 +293,9 @@ func Run(ctx context.Context, root string, jobs []Job, down *Downloader, maxLoca
 				err = fmt.Errorf("batch: 未取得可验证正文")
 			}
 			if err != nil {
+				if down != nil && down.sina != nil {
+					down.failSinaValidation(j.URL)
+				}
 				r.State = "failed"
 				r.Error = err.Error()
 			} else {
