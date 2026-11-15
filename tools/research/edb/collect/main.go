@@ -80,6 +80,11 @@ func jobs() []batch.Job {
 	return result
 }
 
+func dailyAnchorJob() batch.Job {
+	q := url.Values{"period": {"86400"}, "symbol": {"INE.ec2602"}, "start_time": {"2025-11-17 00:00:00"}, "end_time": {"2025-11-19 23:59:59"}}
+	return batch.Job{ID: "ec2602-daily-anchor-window", URL: "https://edb.shinnytech.com/md/kline?" + q.Encode(), Format: "edb-csv", Exchange: "INE", Product: "ec", Day: 20251118, Year: 2025, Version: "shinny-edb-anonymous-research-v1"}
+}
+
 // validateCSV 只核非空、列结构、有限数值和递增纳秒时间，不把received等同价格获证。
 func validateCSV(_ batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
@@ -142,6 +147,10 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		return fmt.Errorf("既有/未知目录禁止重发: %w", err)
 	}
 	plan := map[string]any{"jobs": planned, "requests_max": len(planned), "original_all_phase_requests_max": 4, "actual_bytes_total_max": int64(len(planned)) * (2 << 20), "actual_bytes_per_response_max": 2 << 20, "timeout_seconds": 15, "interval_seconds": 2, "document_sha256": docSHA, "official_baseline_sha256": baselineSHA, "token_used": false, "financial_eligible": false}
+	if len(planned) == 1 && planned[0].ID == dailyAnchorJob().ID {
+		delete(plan, "original_all_phase_requests_max")
+		plan["experiment"] = "one separate full-date window; original intraday daily requests are not repeated"
+	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
 		return err
@@ -333,14 +342,21 @@ func run() error {
 	docRoot := flag.String("document-root", "", "既有EDB文档归档根")
 	baseline := flag.String("official-baseline", "", "已冻结官方对照基线")
 	priorEmpty := flag.String("prior-empty-root", "", "另批复核完整空表头后，仅取原计划尚未尝试三项")
+	anchor := flag.Bool("daily-anchor-experiment", false, "另批仅一条EC完整日期窗，查日线时间锚点；不重发原日内URL")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
+	}
+	if *anchor && *priorEmpty != "" {
+		return fmt.Errorf("不能混用独立日期窗和旧计划续取")
 	}
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
 	selected := jobs()
+	if *anchor {
+		selected = []batch.Job{dailyAnchorJob()}
+	}
 	if *priorEmpty != "" {
 		if err := continuationEmpty(*priorEmpty); err == nil {
 			selected = selected[1:]

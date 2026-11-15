@@ -166,3 +166,21 @@ func TestEDBFinalMinuteRequiresLockedSuccessAndKnownEmpty(t *testing.T) {
 		t.Fatal("已请求最后一项允许重复")
 	}
 }
+
+func TestEDBDailyAnchorExperimentIsOneDifferentPublicQuery(t *testing.T) {
+	j := dailyAnchorJob()
+	if j.URL == jobs()[0].URL || j.Exchange != "INE" || j.Product != "ec" || j.Format != "edb-csv" {
+		t.Fatal("实验身份错误", j)
+	}
+	calls := 0
+	err := collectSelected(filepath.Join(t.TempDir(), "anchor"), []batch.Job{j}, func(job batch.Job) (batch.Result, error) {
+		calls++
+		if job.URL != j.URL {
+			t.Fatal("超出唯一URL")
+		}
+		return batch.Result{Receipt: batch.Receipt{State: "received"}}, nil
+	})
+	if err != nil || calls != 1 {
+		t.Fatal(err, calls)
+	}
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "edb-daily-anchor-official-v1",
+  "archive_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902",
+  "records": [
+    {
+      "exchange": "INE",
+      "native": "ec2602",
+      "day": 20251117,
+      "member": "ine所内合约行情报表2025.1月-12月/ine所内合约行情报表2025.1月-12月.xlsx",
+      "member_sha256": "4327ffa5e427969730d7adc47c464e052e550db115aa6f4db8c99bf1030eba94",
+      "row": 3918,
+      "fields": {
+        "open": "1720",
+        "high": "1764.6",
+        "low": "1685",
+        "close": "1726",
+        "volume": "44502",
+        "open_interest": "38880"
+      }
+    },
+    {
+      "exchange": "INE",
+      "native": "ec2602",
+      "day": 20251118,
+      "member": "ine所内合约行情报表2025.1月-12月/ine所内合约行情报表2025.1月-12月.xlsx",
+      "member_sha256": "4327ffa5e427969730d7adc47c464e052e550db115aa6f4db8c99bf1030eba94",
+      "row": 3919,
+      "fields": {
+        "open": "1700",
+        "high": "1717.5",
+        "low": "1658.1",
+        "close": "1678.1",
+        "volume": "29150",
+        "open_interest": "38860"
+      }
+    },
+    {
+      "exchange": "INE",
+      "native": "ec2602",
+      "day": 20251119,
+      "member": "ine所内合约行情报表2025.1月-12月/ine所内合约行情报表2025.1月-12月.xlsx",
+      "member_sha256": "4327ffa5e427969730d7adc47c464e052e550db115aa6f4db8c99bf1030eba94",
+      "row": 3920,
+      "fields": {
+        "open": "1681.7",
+        "high": "1682",
+        "low": "1626",
+        "close": "1640.1",
+        "volume": "18687",
+        "open_interest": "40244"
+      }
+    }
+  ]
+}
