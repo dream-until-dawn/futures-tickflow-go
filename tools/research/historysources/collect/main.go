@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
@@ -46,7 +47,23 @@ func edbDocumentCandidate() batch.Job {
 	return batch.Job{ID: "edb-public-document", URL: "https://doc.shinnytech.com/edb/latest/md_server.html", Format: "html", Version: "shinny-edb-public-document-unqualified"}
 }
 
+func semanticsCandidates() []batch.Job {
+	return []batch.Job{
+		{ID: "semantics-algorithm", URL: "https://www.shinnytech.com/articles/reference/why-our-klines-are-different", Format: "html", Version: "vendor-algorithm-not-edb-daily-version-proof"},
+		{ID: "semantics-old-kline", URL: "https://doc.shinnytech.com/tqsdk/1.8.2/reference/tqsdk.objs.html", Format: "html", Version: "versioned-sdk-schema-not-edb-history-proof"},
+		{ID: "semantics-forum-case", URL: "https://forum.shinnytech.com/question/26581/answer/26582/", Format: "html", Version: "forum-response-not-independent-event-proof"},
+		{ID: "semantics-pk-original", URL: "https://www.czce.com.cn/cn/rootfiles/2021/01/25/1605577988714900-1605577988801327.pdf", Format: "pdf", Version: "official-contract-candidate-2021"},
+		{ID: "semantics-czce-rules", URL: "https://www.czce.com.cn/cn/uploadfile/2021/02/23/20210223143255447.pdf", Format: "pdf", Version: "official-rule-version-candidate-2021"},
+	}
+}
+
 func responseLimit(job batch.Job) int64 {
+	if strings.HasPrefix(job.ID, "semantics-") {
+		if job.Format == "pdf" {
+			return 4 << 20
+		}
+		return 2 << 20
+	}
 	if job.ID == "edb-public-document" {
 		return 2 << 20
 	}
@@ -69,8 +86,18 @@ func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 		markers := map[string]string{"pk-release": "花生期货合约及业务规则", "czce-year2024-reprint": "节假日休市安排", "zhunda-docs": "future_minute", "cy-night-change": "全部夜盘交易品种"}
 		markers["vendor-home"], markers["vendor-history-api"], markers["vendor-realtime-api"] = "准数据", "x-api-key", "timestamp"
 		markers["edb-public-document"] = "免费访问"
+		markers["semantics-algorithm"], markers["semantics-old-kline"], markers["semantics-forum-case"] = "除日线以外", "open_oi", "自对冲"
 		if marker := markers[job.ID]; marker == "" || !bytes.Contains(body, []byte(marker)) {
 			return fmt.Errorf("未取得预期业务正文，停止该主机")
+		}
+	}
+	for _, anchor := range map[string][]string{
+		"semantics-algorithm":  {"除日线以外", "连续交易时段"},
+		"semantics-old-kline":  {"open_oi", "close_oi", "Kline"},
+		"semantics-forum-case": {"行权", "自对冲", "3,575,857"},
+	}[job.ID] {
+		if !bytes.Contains(body, []byte(anchor)) {
+			return fmt.Errorf("未取得指定口径业务正文")
 		}
 	}
 	return nil
@@ -96,6 +123,10 @@ func collectJobs(root string, jobs []batch.Job, fetch func(batch.Job) (batch.Res
 		limits[job.ID] = responseLimit(job)
 	}
 	plan := map[string]any{"jobs": jobs, "requests_max": len(jobs), "bytes_per_response_max": limits, "timeout_seconds": 15, "interval_seconds": 1, "calendar_qualified": false, "market_data_requests": 0}
+	if len(jobs) > 0 && strings.HasPrefix(jobs[0].ID, "semantics-") {
+		plan["interval_seconds"] = 2
+		plan["interval_anchor"] = "previous fetch/archive completed"
+	}
 	raw, err := json.MarshalIndent(plan, "", "  ")
 	if err != nil {
 		return err
@@ -141,14 +172,16 @@ func main() {
 	cyOnly := flag.Bool("cy-only", false, "另批仅核新发现的先锋CY调整提醒，不重复原六项")
 	vendorOnly := flag.Bool("vendor-access-only", false, "另批仅核三个公开文档，不取市场数据/样例包或重跑旧项")
 	edbDocOnly := flag.Bool("edb-doc-only", false, "另批仅核EDB公开文档，不发业务GET或获取token")
+	semanticsOnly := flag.Bool("semantics-only", false, "另批固定五项口径/合约新来源，不重试旧受阻URL")
+	prepareOnly := flag.Bool("prepare-only", false, "仅五项口径资料零请求预检")
 	flag.Parse()
 	modes := 0
-	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly} {
+	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly, *semanticsOnly} {
 		if selected {
 			modes++
 		}
 	}
-	if *root == "" || modes > 1 {
+	if *root == "" || modes > 1 || (*prepareOnly && !*semanticsOnly) {
 		fmt.Fprintln(os.Stderr, "缺少root或混用了独立批次模式")
 		os.Exit(1)
 	}
@@ -163,8 +196,28 @@ func main() {
 	if *edbDocOnly {
 		jobs = []batch.Job{edbDocumentCandidate()}
 	}
+	interval := time.Second
+	if *semanticsOnly {
+		jobs = semanticsCandidates()
+		interval = 2 * time.Second
+		if *prepareOnly {
+			fmt.Printf("五项口径候选预检通过；请求0；最大正文14MiB\n")
+			return
+		}
+		f, e := os.OpenFile("C:/Temp/tickflow-daily-semantics-sources-20261115.started.json", os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+		if e != nil {
+			fmt.Fprintln(os.Stderr, "口径资料已有/未知启动，拒绝重发:", e)
+			os.Exit(1)
+		}
+		e = json.NewEncoder(f).Encode(map[string]string{"target_root": *root})
+		f.Close()
+		if e != nil {
+			fmt.Fprintln(os.Stderr, e)
+			os.Exit(1)
+		}
+	}
 	err := collectJobs(*root, jobs, func(job batch.Job) (batch.Result, error) {
-		if wait := time.Until(last.Add(time.Second)); !last.IsZero() && wait > 0 {
+		if wait := time.Until(last.Add(interval)); !last.IsZero() && wait > 0 {
 			time.Sleep(wait)
 		}
 		transport := &http.Transport{DialContext: (&net.Dialer{Timeout: 15 * time.Second}).DialContext, TLSHandshakeTimeout: 10 * time.Second, DisableKeepAlives: true}
@@ -181,8 +234,9 @@ func main() {
 		if e != nil {
 			return batch.Result{}, e
 		}
-		last = time.Now()
 		results, e := batch.Run(context.Background(), filepath.Join(*root, "archive"), []batch.Job{job}, d, limit, validate)
+		// 锚定归档完成点，不让文件操作开销侵蚀后续请求间隔。
+		last = time.Now()
 		n, size := d.Usage()
 		fmt.Printf("%s actual_attempts=%d actual_bytes=%d\n", job.ID, n, size)
 		if e != nil {

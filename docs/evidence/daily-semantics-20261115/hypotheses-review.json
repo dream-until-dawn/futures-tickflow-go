@@ -1,0 +1,359 @@
+{
+  "schema": "daily-semantics-hypotheses-v1",
+  "manifest_sha256": "dc09ed2937300702ca8225dc4286c8f9da92f32933425ed5cf241b7c6df9a521",
+  "quantity_cases": [
+    {
+      "symbol": "CZCE.AP2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 0,
+      "delta_open_interest": -52,
+      "nonnegative_integer_solution": false,
+      "implied_exercise": null,
+      "implied_self_hedge": null,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.CF2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 0,
+      "delta_open_interest": -512,
+      "nonnegative_integer_solution": false,
+      "implied_exercise": null,
+      "implied_self_hedge": null,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.CJ2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 0,
+      "delta_open_interest": -10,
+      "nonnegative_integer_solution": false,
+      "implied_exercise": null,
+      "implied_self_hedge": null,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.MA2102",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 189,
+      "delta_open_interest": 17,
+      "nonnegative_integer_solution": true,
+      "implied_exercise": 103,
+      "implied_self_hedge": 86,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SA2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 250,
+      "delta_open_interest": -250,
+      "nonnegative_integer_solution": true,
+      "implied_exercise": 0,
+      "implied_self_hedge": 250,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SF2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 200,
+      "delta_open_interest": -200,
+      "nonnegative_integer_solution": true,
+      "implied_exercise": 0,
+      "implied_self_hedge": 200,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.TA2101",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 0,
+      "delta_open_interest": -216,
+      "nonnegative_integer_solution": false,
+      "implied_exercise": null,
+      "implied_self_hedge": null,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.TA2102",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 193,
+      "delta_open_interest": 39,
+      "nonnegative_integer_solution": true,
+      "implied_exercise": 116,
+      "implied_self_hedge": 77,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.ZC2102",
+      "day": 20210104,
+      "same_volume_and_oi_units_times_two_explains_pair": false,
+      "delta_volume": 158,
+      "delta_open_interest": 36,
+      "nonnegative_integer_solution": true,
+      "implied_exercise": 97,
+      "implied_self_hedge": 61,
+      "independent_event_evidence": false,
+      "difference_resolved": false
+    }
+  ],
+  "zero_quote_cases": [
+    {
+      "symbol": "CZCE.CY2104",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.CY2107",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.JR2103",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.LR2107",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.MA2112",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2106",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2107",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2108",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2110",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": true,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2111",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PF2112",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": true,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PM2101",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PM2103",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.PM2107",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.RI2101",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SF2108",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SF2110",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SF2111",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SM2111",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.SM2112",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.UR2106",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": true,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.UR2110",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.UR2111",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.UR2112",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.WH2105",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": true,
+      "equals_reference_settle": true,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    },
+    {
+      "symbol": "CZCE.ZC2110",
+      "day": 20210104,
+      "edb_ohlc_constant": true,
+      "equals_reference_pre_settle": false,
+      "equals_reference_settle": false,
+      "fill_rule_proven": false,
+      "difference_resolved": false
+    }
+  ],
+  "quantity_fit_count": 5,
+  "quantity_model_rejected_count": 4,
+  "zero_quote_pre_settle_match_count": 4,
+  "zero_quote_settle_match_count": 1,
+  "all_differences_remain_unresolved": true,
+  "data_imputed": false,
+  "market_requests": 0,
+  "calendar_qualified": false,
+  "financial_eligible": false
+}
