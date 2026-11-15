@@ -1,0 +1,27 @@
+{
+  "schema": "research-catalog-source-mutations-v1",
+  "mutations": [
+    {
+      "mutation": "range",
+      "target_test": "test_build.CatalogBoundaryTest.test_range_conflict_scope_promotion_and_repeat_do_not_pass",
+      "exit_code": 1,
+      "target_failure": "ValueError not raised",
+      "log_sha256": "3ce88fa71b018332f6b0d4ef73f21f323bc38aada9f9a3069f40c7382a65e3a1"
+    },
+    {
+      "mutation": "input_sha",
+      "target_test": "test_frozen_inputs.FrozenInputTest.test_tamper_and_rewritten_manifest_have_different_target_failures",
+      "exit_code": 1,
+      "target_failure": "ValueError not raised",
+      "log_sha256": "18b55fb32ee19b10c06d4e35377949ff6a7ac5ab301073a4f1ccbbef4824e210"
+    },
+    {
+      "mutation": "three_digit",
+      "target_test": "test_listing.ListingLinkTest.test_three_digit_native_remains_candidates_even_when_unique",
+      "exit_code": 1,
+      "target_failure": "is not None",
+      "log_sha256": "d5e2e43a90399c6a73db6fbe0c8d24b23619335c2d955f88c74681f65337aa8c"
+    }
+  ],
+  "original_sources_unchanged": true
+}

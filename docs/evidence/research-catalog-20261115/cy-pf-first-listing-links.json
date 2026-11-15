@@ -1,0 +1,192 @@
+{
+  "schema": "cy-pf-first-listing-research-links-v1",
+  "entries": [
+    {
+      "product": "CY",
+      "official_written_native": "CY1801",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1801",
+      "snapshot_candidates": [
+        "CZCE.CY1801"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1802",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1802",
+      "snapshot_candidates": [
+        "CZCE.CY1802"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1803",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1803",
+      "snapshot_candidates": [
+        "CZCE.CY1803"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1804",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1804",
+      "snapshot_candidates": [
+        "CZCE.CY1804"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1805",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1805",
+      "snapshot_candidates": [
+        "CZCE.CY1805"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1806",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1806",
+      "snapshot_candidates": [
+        "CZCE.CY1806"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1807",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1807",
+      "snapshot_candidates": [
+        "CZCE.CY1807"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "CY",
+      "official_written_native": "CY1808",
+      "official_native_first_listing_day": 20170818,
+      "canonical_written_directly": true,
+      "official_canonical_symbol": "CZCE.CY1808",
+      "snapshot_candidates": [
+        "CZCE.CY1808"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "PF",
+      "official_written_native": "PF105",
+      "official_native_first_listing_day": 20201012,
+      "canonical_written_directly": false,
+      "official_canonical_symbol": null,
+      "snapshot_candidates": [
+        "CZCE.PF2105"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "PF",
+      "official_written_native": "PF106",
+      "official_native_first_listing_day": 20201012,
+      "canonical_written_directly": false,
+      "official_canonical_symbol": null,
+      "snapshot_candidates": [
+        "CZCE.PF2106"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "PF",
+      "official_written_native": "PF107",
+      "official_native_first_listing_day": 20201012,
+      "canonical_written_directly": false,
+      "official_canonical_symbol": null,
+      "snapshot_candidates": [
+        "CZCE.PF2107"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "PF",
+      "official_written_native": "PF108",
+      "official_native_first_listing_day": 20201012,
+      "canonical_written_directly": false,
+      "official_canonical_symbol": null,
+      "snapshot_candidates": [
+        "CZCE.PF2108"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "product": "PF",
+      "official_written_native": "PF109",
+      "official_native_first_listing_day": 20201012,
+      "canonical_written_directly": false,
+      "official_canonical_symbol": null,
+      "snapshot_candidates": [
+        "CZCE.PF2109"
+      ],
+      "delivery_year_certified_from_this_notice": false,
+      "last_trading_day_certified": false,
+      "annual_calendar_qualified": false,
+      "financial_eligible": false
+    }
+  ],
+  "listing_manifest_sha256": "b64536dfe6698910be8e6afc077e75ffd249495554d7d0585f3f542d0c4cd9e0",
+  "legacy_before_2021_entries_not_added_to_5351": true,
+  "new_symbols_discovered": 0,
+  "new_daily_samples": 0,
+  "calendar_generated": false
+}

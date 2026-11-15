@@ -1,0 +1,26 @@
+{
+  "job_sha256": "f77fcb4699469dded4e84e05c3c978dbdfc39c1f4f979949cd1a8e162dea7f98",
+  "state": "failed",
+  "evidence": {
+    "id": "followup-catalog-journal2019",
+    "url": "https://www.czce.com.cn/cn/rootfiles/2020/01/13/1572882898738930-1572882898769401.pdf",
+    "sha256": "5f9ff986e64ac0ef6c6b5edc61f87f0cbc2a44eca11ae1e03cadfd6dab4b00fa",
+    "retrieved_at": "2026-11-15T13:53:41.4651079Z",
+    "version": "official-journal-candidate-not-annual-calendar"
+  },
+  "bytes": 1781455,
+  "error": "context deadline exceeded",
+  "body_state": "partial",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.czce.com.cn/cn/rootfiles/2020/01/13/1572882898738930-1572882898769401.pdf",
+    "content_type": "application/pdf",
+    "content_length": 2941376,
+    "server_date": "Sun, 15 Nov 2026 13:53:42 GMT",
+    "requested_at": "2026-11-15T13:53:41.4651079Z",
+    "complete": false,
+    "failure": "read_error"
+  }
+}

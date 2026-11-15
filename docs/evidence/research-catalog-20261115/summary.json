@@ -1,0 +1,934 @@
+{
+  "schema": "historical-research-catalog-summary-v1",
+  "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
+  "catalog_bytes": 3327506,
+  "source_packages": [
+    {
+      "id": "shfe",
+      "manifest_sha256": "f72dea10c5f39b342c9ec6366f9d64e011c57cbd066ab2cc277c1da7347e3f69",
+      "lock": "repo/docs/evidence/historical-contract-directory-20261115/daily-1406-full-official-lock.json",
+      "report": "private-reports/daily-1406-full-official-result.json"
+    },
+    {
+      "id": "cffex",
+      "manifest_sha256": "ac33ebd2da9c5a28ee42a0f081760754c35ba6b1ef33e0933fad6e8f76e0e130",
+      "lock": "metadata/daily-cffex-372-lock.json",
+      "report": "reports/full-report.json"
+    },
+    {
+      "id": "czce",
+      "manifest_sha256": "dc09ed2937300702ca8225dc4286c8f9da92f32933425ed5cf241b7c6df9a521",
+      "lock": "metadata/daily-czce-observed-full-lock.json",
+      "report": "reports/full-report.json"
+    }
+  ],
+  "candidates": 5351,
+  "states": {
+    "nonempty": 1954,
+    "not_requested_on_directory_route": 3386,
+    "empty_unavailable": 11
+  },
+  "rows": 377305,
+  "observed_directory_attempts": 1965,
+  "by_product": {
+    "CFFEX.IC": {
+      "candidates": 74,
+      "nonempty": 74,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 5680,
+      "calendar_unknown_actual_rows": 5680,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CFFEX.IF": {
+      "candidates": 74,
+      "nonempty": 74,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 5680,
+      "calendar_unknown_actual_rows": 5680,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CFFEX.IH": {
+      "candidates": 74,
+      "nonempty": 74,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 5680,
+      "calendar_unknown_actual_rows": 5680,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CFFEX.IM": {
+      "candidates": 55,
+      "nonempty": 55,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 4180,
+      "calendar_unknown_actual_rows": 4180,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CFFEX.T": {
+      "candidates": 26,
+      "nonempty": 26,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 4257,
+      "calendar_unknown_actual_rows": 4257,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CFFEX.TF": {
+      "candidates": 26,
+      "nonempty": 26,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 4257,
+      "calendar_unknown_actual_rows": 4257,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CFFEX.TL": {
+      "candidates": 17,
+      "nonempty": 17,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 2586,
+      "calendar_unknown_actual_rows": 2586,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CFFEX.TS": {
+      "candidates": 26,
+      "nonempty": 26,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 0,
+      "rows": 4257,
+      "calendar_unknown_actual_rows": 4257,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CZCE.AP": {
+      "candidates": 47,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 41,
+      "rows": 774,
+      "calendar_unknown_actual_rows": 774,
+      "unresolved_distinct_fields": 1,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.CF": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 652,
+      "calendar_unknown_actual_rows": 652,
+      "unresolved_distinct_fields": 1,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.CJ": {
+      "candidates": 41,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 35,
+      "rows": 674,
+      "calendar_unknown_actual_rows": 674,
+      "unresolved_distinct_fields": 1,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.CY": {
+      "candidates": 83,
+      "nonempty": 10,
+      "empty_unavailable": 2,
+      "not_requested_on_directory_route": 71,
+      "rows": 784,
+      "calendar_unknown_actual_rows": 784,
+      "unresolved_distinct_fields": 8,
+      "missing_reference_days_in_nonempty": 5
+    },
+    "CZCE.FG": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.JR": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 467,
+      "calendar_unknown_actual_rows": 467,
+      "unresolved_distinct_fields": 4,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CZCE.LR": {
+      "candidates": 31,
+      "nonempty": 1,
+      "empty_unavailable": 5,
+      "not_requested_on_directory_route": 25,
+      "rows": 128,
+      "calendar_unknown_actual_rows": 128,
+      "unresolved_distinct_fields": 4,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.MA": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 6,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.OI": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 652,
+      "calendar_unknown_actual_rows": 652,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.PF": {
+      "candidates": 79,
+      "nonempty": 8,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1276,
+      "calendar_unknown_actual_rows": 1276,
+      "unresolved_distinct_fields": 24,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.PK": {
+      "candidates": 41,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 41,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.PL": {
+      "candidates": 23,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 23,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.PM": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 528,
+      "calendar_unknown_actual_rows": 528,
+      "unresolved_distinct_fields": 12,
+      "missing_reference_days_in_nonempty": 2
+    },
+    "CZCE.PR": {
+      "candidates": 33,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 33,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.PX": {
+      "candidates": 43,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 43,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.RI": {
+      "candidates": 42,
+      "nonempty": 2,
+      "empty_unavailable": 4,
+      "not_requested_on_directory_route": 36,
+      "rows": 214,
+      "calendar_unknown_actual_rows": 214,
+      "unresolved_distinct_fields": 4,
+      "missing_reference_days_in_nonempty": 1
+    },
+    "CZCE.RM": {
+      "candidates": 49,
+      "nonempty": 7,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 42,
+      "rows": 802,
+      "calendar_unknown_actual_rows": 802,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.RS": {
+      "candidates": 30,
+      "nonempty": 4,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 26,
+      "rows": 443,
+      "calendar_unknown_actual_rows": 443,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 3
+    },
+    "CZCE.SA": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.SF": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1426,
+      "calendar_unknown_actual_rows": 1426,
+      "unresolved_distinct_fields": 14,
+      "missing_reference_days_in_nonempty": 1
+    },
+    "CZCE.SH": {
+      "candidates": 43,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 43,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.SM": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 8,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.SO": {
+      "candidates": 4,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 4,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.SR": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 652,
+      "calendar_unknown_actual_rows": 652,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.TA": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 3,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.UR": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1429,
+      "calendar_unknown_actual_rows": 1429,
+      "unresolved_distinct_fields": 16,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "CZCE.WH": {
+      "candidates": 42,
+      "nonempty": 6,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 36,
+      "rows": 515,
+      "calendar_unknown_actual_rows": 515,
+      "unresolved_distinct_fields": 4,
+      "missing_reference_days_in_nonempty": 1
+    },
+    "CZCE.ZC": {
+      "candidates": 83,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 71,
+      "rows": 1369,
+      "calendar_unknown_actual_rows": 1369,
+      "unresolved_distinct_fields": 6,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.a": {
+      "candidates": 42,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 42,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.b": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.bb": {
+      "candidates": 66,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 66,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.bz": {
+      "candidates": 20,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 20,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.c": {
+      "candidates": 42,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 42,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.cs": {
+      "candidates": 42,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 42,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.eb": {
+      "candidates": 82,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 82,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.eg": {
+      "candidates": 82,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 82,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.fb": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.i": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.j": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.jd": {
+      "candidates": 82,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 82,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.jm": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.l": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.lg": {
+      "candidates": 14,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 14,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.lh": {
+      "candidates": 37,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 37,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.m": {
+      "candidates": 55,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 55,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.p": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.pg": {
+      "candidates": 82,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 82,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.pp": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.rr": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.v": {
+      "candidates": 83,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 83,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "DCE.y": {
+      "candidates": 55,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 55,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "GFEX.lc": {
+      "candidates": 46,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 46,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "GFEX.pd": {
+      "candidates": 9,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 9,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "GFEX.ps": {
+      "candidates": 29,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 29,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "GFEX.pt": {
+      "candidates": 9,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 9,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "GFEX.si": {
+      "candidates": 51,
+      "nonempty": 0,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 51,
+      "rows": 0,
+      "calendar_unknown_actual_rows": 0,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "INE.bc": {
+      "candidates": 80,
+      "nonempty": 36,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 44,
+      "rows": 8683,
+      "calendar_unknown_actual_rows": 8683,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "INE.ec": {
+      "candidates": 26,
+      "nonempty": 17,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 9,
+      "rows": 4103,
+      "calendar_unknown_actual_rows": 7,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "INE.lu": {
+      "candidates": 82,
+      "nonempty": 35,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 47,
+      "rows": 8464,
+      "calendar_unknown_actual_rows": 7,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "INE.nr": {
+      "candidates": 82,
+      "nonempty": 36,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 46,
+      "rows": 8683,
+      "calendar_unknown_actual_rows": 8683,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "INE.sc": {
+      "candidates": 90,
+      "nonempty": 43,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 47,
+      "rows": 17826,
+      "calendar_unknown_actual_rows": 17826,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ad": {
+      "candidates": 24,
+      "nonempty": 14,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 2844,
+      "calendar_unknown_actual_rows": 14,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ag": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15932,
+      "calendar_unknown_actual_rows": 15932,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.al": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15932,
+      "calendar_unknown_actual_rows": 15932,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ao": {
+      "candidates": 48,
+      "nonempty": 38,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 8592,
+      "calendar_unknown_actual_rows": 14,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.au": {
+      "candidates": 78,
+      "nonempty": 68,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 10494,
+      "calendar_unknown_actual_rows": 10494,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.br": {
+      "candidates": 46,
+      "nonempty": 36,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 8201,
+      "calendar_unknown_actual_rows": 14,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.bu": {
+      "candidates": 86,
+      "nonempty": 76,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 20457,
+      "calendar_unknown_actual_rows": 20457,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.cu": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.fu": {
+      "candidates": 82,
+      "nonempty": 71,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 11,
+      "rows": 15828,
+      "calendar_unknown_actual_rows": 15828,
+      "unresolved_distinct_fields": 1,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.hc": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ni": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.op": {
+      "candidates": 22,
+      "nonempty": 12,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 2159,
+      "calendar_unknown_actual_rows": 14,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.pb": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.rb": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ru": {
+      "candidates": 69,
+      "nonempty": 60,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 9,
+      "rows": 13270,
+      "calendar_unknown_actual_rows": 13270,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.sn": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 1,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.sp": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.ss": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 0,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.wr": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 8,
+      "missing_reference_days_in_nonempty": 0
+    },
+    "SHFE.zn": {
+      "candidates": 82,
+      "nonempty": 72,
+      "empty_unavailable": 0,
+      "not_requested_on_directory_route": 10,
+      "rows": 15933,
+      "calendar_unknown_actual_rows": 15933,
+      "unresolved_distinct_fields": 2,
+      "missing_reference_days_in_nonempty": 0
+    }
+  },
+  "calendar_unknown_actual_rows": 343012,
+  "distinct_fields_still_unresolved": 144,
+  "missing_reference_days_in_nonempty": 28,
+  "reference_missing_excludes_11_empty_responses": true,
+  "old_37_separate_and_unchanged": true,
+  "market_requests": 0,
+  "new_symbols_discovered": 0,
+  "new_annual_calendars": 0,
+  "strict_backtest_admission_expanded": false
+}
