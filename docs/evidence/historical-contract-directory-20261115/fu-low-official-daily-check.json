@@ -1,0 +1,20 @@
+{
+  "schema": "fu-low-reference-cross-check-v1",
+  "day": 20230530,
+  "symbol": "SHFE.fu2306",
+  "edb_low": "3232",
+  "annual_low": "3651",
+  "official_daily": {
+    "open": "3651",
+    "high": "3651",
+    "low": "3651",
+    "close": "3232"
+  },
+  "official_daily_low_equals_annual": true,
+  "official_daily_low_equals_edb": false,
+  "official_daily_geometry_valid": false,
+  "source_sha256": "13797b6a0fd1bbed1360f111665fccc97b949c7b174343be1e3c2eb53ae45d30",
+  "row": 200,
+  "automatic_repair": false,
+  "root_cause_verified": false
+}

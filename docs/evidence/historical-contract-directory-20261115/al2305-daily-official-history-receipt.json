@@ -1,0 +1,24 @@
+{
+  "job_sha256": "8d30f6bc2806602bdaaf62a9132a4cd3ce6fc769694d3e975c3e2ba27de90481",
+  "state": "received",
+  "evidence": {
+    "id": "al2305-daily-official-history",
+    "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=SHFE.al2305",
+    "sha256": "d2a49e6c237446a213005a45b71d8fa2f6d89e20bdaa46051bc53bfa92d3a462",
+    "retrieved_at": "2026-11-15T05:53:01.3399679Z",
+    "version": "shinny-edb-official-history-daily-v1"
+  },
+  "bytes": 14753,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=SHFE.al2305",
+    "content_type": "text/csv; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 05:53:00 GMT",
+    "requested_at": "2026-11-15T05:53:01.3399679Z",
+    "complete": true
+  }
+}

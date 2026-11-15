@@ -1,0 +1,24 @@
+{
+  "job_sha256": "7f14b985cce5e5b37f25abbedbe9feca84af53a5b714d8ce1e138363535f3dac",
+  "state": "received",
+  "evidence": {
+    "id": "shfe-20231225-new-difference-check",
+    "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20231225.dat",
+    "sha256": "a888eaea91246d667256de30c0b299ed32349b1a2123b894b7af2cb8b544ba96",
+    "retrieved_at": "2026-11-15T06:45:47.1556824Z",
+    "version": "new-distinct-differences-check-v1"
+  },
+  "bytes": 134333,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20231225.dat",
+    "content_type": "application/json",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 06:45:47 GMT",
+    "requested_at": "2026-11-15T06:45:47.1556824Z",
+    "complete": true
+  }
+}

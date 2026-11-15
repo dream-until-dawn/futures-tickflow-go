@@ -1,0 +1,21 @@
+{
+  "schema": "historical-archive-v1",
+  "from": 20231225,
+  "to": 20231225,
+  "max_requests": 1,
+  "max_bytes": 2097151,
+  "interval_ms": 2000,
+  "timeout_ms": 15000,
+  "max_local_bytes": 2097152,
+  "jobs": [
+    {
+      "id": "shfe-20231225-new-difference-check",
+      "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20231225.dat",
+      "format": "shfe-json",
+      "day": 20231225,
+      "exchange": "SHFE",
+      "year": 2023,
+      "version": "new-distinct-differences-check-v1"
+    }
+  ]
+}

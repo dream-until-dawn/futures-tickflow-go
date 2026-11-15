@@ -1,0 +1,21 @@
+{
+  "schema": "historical-archive-v1",
+  "from": 20230530,
+  "to": 20230530,
+  "max_requests": 1,
+  "max_bytes": 2097151,
+  "interval_ms": 2000,
+  "timeout_ms": 15000,
+  "max_local_bytes": 2097152,
+  "jobs": [
+    {
+      "id": "shfe-20230530-fu-low-check",
+      "url": "https://www.shfe.com.cn/data/tradedata/future/dailydata/kx20230530.dat",
+      "format": "shfe-json",
+      "day": 20230530,
+      "exchange": "SHFE",
+      "year": 2023,
+      "version": "new-distinct-differences-check-v1"
+    }
+  ]
+}

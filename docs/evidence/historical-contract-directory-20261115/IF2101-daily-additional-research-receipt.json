@@ -1,0 +1,24 @@
+{
+  "job_sha256": "8e92c1729d4ff46342c4e0ab2545dbce759f2231eb7551533f4598007e3a3f62",
+  "state": "received",
+  "evidence": {
+    "id": "IF2101-daily-additional-research",
+    "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=CFFEX.IF2101",
+    "sha256": "f6779eb7e537d50ba33d8e3f5383749e257c3a2be4760039e6aa2ef4d6a827ad",
+    "retrieved_at": "2026-11-15T06:25:37.0215795Z",
+    "version": "shinny-edb-additional-daily-research-v1"
+  },
+  "bytes": 729,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=CFFEX.IF2101",
+    "content_type": "text/csv; charset=utf-8",
+    "content_length": 729,
+    "server_date": "Sun, 15 Nov 2026 06:25:37 GMT",
+    "requested_at": "2026-11-15T06:25:37.0215795Z",
+    "complete": true
+  }
+}

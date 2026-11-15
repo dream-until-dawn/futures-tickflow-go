@@ -42,6 +42,14 @@ func runNative(root string) error {
 }
 
 func captureNative(root, marker string, client *http.Client) (err error) {
+	return captureNativeFor(root, marker, client, nativeCFFEXURL)
+}
+
+func captureNativeFor(root, marker string, client *http.Client, address string) (err error) {
+	month, err := nativeMonth(address)
+	if err != nil {
+		return err
+	}
 	if err = os.Mkdir(root, 0700); err != nil {
 		return err
 	}
@@ -49,13 +57,13 @@ func captureNative(root, marker string, client *http.Client) (err error) {
 	if err != nil {
 		return fmt.Errorf("已有/未知原生HTTP启动，拒绝重发: %w", err)
 	}
-	err = json.NewEncoder(f).Encode(map[string]string{"url": nativeCFFEXURL, "target_root": root, "source_sha256": sdkModuleSHA})
+	err = json.NewEncoder(f).Encode(map[string]string{"url": address, "target_root": root, "source_sha256": sdkModuleSHA})
 	f.Close()
 	if err != nil {
 		return err
 	}
 	at := time.Now().UTC()
-	receipt := map[string]any{"state": "started", "url": nativeCFFEXURL, "requested_at": at, "method": "GET", "attempted": false, "response_received": false, "identity": "native-http/cleartext/unauthenticated/unqualified", "source_sha256": sdkModuleSHA, "financial_eligible": false, "publisher_authentication": false}
+	receipt := map[string]any{"state": "started", "url": address, "requested_at": at, "method": "GET", "attempted": false, "response_received": false, "identity": "native-http/cleartext/unauthenticated/unqualified", "source_sha256": sdkModuleSHA, "financial_eligible": false, "publisher_authentication": false}
 	defer func() {
 		if err != nil {
 			receipt["state"], receipt["error"] = "failed", err.Error()
@@ -74,7 +82,7 @@ func captureNative(root, marker string, client *http.Client) (err error) {
 	h.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, nativeCFFEXURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, address, nil)
 	if err != nil {
 		return err
 	}
@@ -102,8 +110,11 @@ func captureNative(root, marker string, client *http.Client) (err error) {
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("原生HTTP状态%d，禁止跟转/重试", resp.StatusCode)
 	}
-	ref := evidence.Ref{ID: "cffex-202101-native-http", URL: nativeCFFEXURL, SHA256: hex.EncodeToString(sum[:]), RetrievedAt: at, Version: "research-native-http-unauthenticated"}
-	if err = validate(jobs()[1], b, ref); err != nil {
+	ref := evidence.Ref{ID: "cffex-" + month + "-native-http", URL: address, SHA256: hex.EncodeToString(sum[:]), RetrievedAt: at, Version: "research-native-http-unauthenticated"}
+	if err = ref.Verify(b); err != nil {
+		return err
+	}
+	if err = validateNativeMonth(b, month); err != nil {
 		return err
 	}
 	receipt["state"], receipt["evidence"] = "received", ref

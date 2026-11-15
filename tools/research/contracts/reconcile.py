@@ -1,6 +1,8 @@
 """冻结日线小批逐日对账；原表缺日、日历内部缺日和范围外分开报告。"""
 import argparse
+import copy
 import datetime as dt
+import hashlib
 import io
 import json
 import math
@@ -55,10 +57,52 @@ def reconcile(raw, official, calendar, covered_years):
                 outside_official_years=sorted(d for d in actual if d not in official and d//10000 not in covered_years),
                 calendar_interior_missing_days=sorted(trading-set(actual)),
                 calendar_unknown_actual_days=sorted(set(actual)-set(calendar)),
+                calendar_product_profile_available=bool(calendar),
+                calendar_unknown_reason='outside verified profile ranges' if calendar else 'no verified product profile',
                 calendar_closed_actual_days=sorted(d for d in actual if d in calendar and not calendar[d]),
+                zero_volume_days_count=sum(number(r['volume'])==0 for r in actual.values()),
+                zero_ohlc_days_count=sum(any(number(r[f])==0 for f in ['open','high','low','close']) for r in actual.values()),
                 calendar_check_scope='interior first-to-last observed bar only; not lifecycle completeness',
                 missing_rows_imputed=False, settlement_compared=False, turnover_compared=False,
                 official_lifecycle_certified=False, financial_eligible=False)
+
+
+def build_controls(datasets):
+    # 原表先索引一次，避免每个合约重扫五年全表；相交与年份覆盖分开。
+    index,years={},{}
+    for dataset in datasets:
+        for row in dataset['records']:
+            key=(row['exchange'],row['native'])
+            product=re.fullmatch(r'([A-Za-z]{1,3})[0-9]{4}',row['native'])
+            if product is None:raise ValueError('official_canonical_code')
+            records=index.setdefault(key,{})
+            if row['day'] in records:raise ValueError('official_duplicate_day')
+            records[row['day']]=row['fields']
+            if dataset.get('control_scope')!='exact-dates':
+                years.setdefault((row['exchange'],product[1]),set()).add(dataset['year'])
+    return index,years
+
+
+def public_report(report):
+    # 不把数千条供应商价位通过“表示差异”报告变相公开；完整细节只留研究包。
+    full_bytes=(json.dumps(report,ensure_ascii=False,indent=2)+'\n').encode('utf-8')
+    result=copy.deepcopy(report)
+    result['schema']='directory-daily-official-review-public-v1'
+    result['private_full_report_sha256']=hashlib.sha256(full_bytes).hexdigest()
+    result['public_value_scope']='distinct anomaly examples only; bulk representation-equivalent quote values withheld'
+    for item in result['results'].values():
+        representations=[d for d in item['differences'] if d['binary64_equal']]
+        item['all_decimal_difference_fields']=len(item['differences'])
+        item['representation_detail_sha256']=hashlib.sha256(json.dumps(representations,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+        item['differences']=[d for d in item['differences'] if not d['binary64_equal']]
+    return result
+
+
+def check_output(out,repo,data,public):
+    if out.resolve().is_relative_to(data.resolve()):
+        raise ValueError('output_inside_source_tree')
+    if not public and out.resolve().is_relative_to(repo.resolve()):
+        raise ValueError('full_report_inside_repo_use_public_summary')
 
 
 def main():
@@ -66,30 +110,22 @@ def main():
     p.add_argument('--lock', type=Path, required=True)
     p.add_argument('--data-root', type=Path, required=True)
     p.add_argument('--repo-root', type=Path, default=Path(__file__).resolve().parents[3])
+    p.add_argument('--official-root', type=Path, help='迁移包内按SHA命名的官方解码输入目录；省略则沿用原取证路径')
+    p.add_argument('--public-summary',action='store_true',help='只公开聚合与必要异常样例，不公开批量表示等价价格')
     p.add_argument('--out', type=Path, required=True)
     args = p.parse_args()
-    if args.out.resolve().is_relative_to(args.data_root.resolve()):
-        raise ValueError('output_inside_source_tree')
+    check_output(args.out,args.repo_root,args.data_root,args.public_summary)
     lock = json.loads(args.lock.read_bytes())
-    official = [json.loads(locked(Path(r['file']), r['sha256'])) for r in lock['official_inputs']]
+    official = [json.loads(locked(args.official_root/(r['sha256']+'.json') if args.official_root else Path(r['file']), r['sha256'])) for r in lock['official_inputs']]
+    controls_index,year_index=build_controls(official)
+    del official
     calendars = [json.loads(locked(args.repo_root/r['file'], r['sha256'])) for r in lock['calendars']]
     result = {}
     for case in lock['cases']:
         raw = load_case(args.data_root, case)
         exchange, native = case['symbol'].split('.')
-        controls, years = {}, set()
-        for dataset in official:
-            if dataset['product_filter'] not in ('', case['product']):
-                continue
-            if not any(r['exchange'] == exchange and re.fullmatch(re.escape(case['product'])+r'[0-9]{4}',r['native']) for r in dataset['records']):
-                continue
-            if dataset.get('control_scope')!='exact-dates':
-                years.add(dataset['year'])
-            for row in dataset['records']:
-                if row['exchange'] == exchange and row['native'] == native:
-                    if row['day'] in controls:
-                        raise ValueError('official_duplicate_day')
-                    controls[row['day']] = row['fields']
+        controls=controls_index.get((exchange,native),{})
+        years=year_index.get((exchange,case['product']),set())
         if not controls:
             raise ValueError('no_official_control')
         calendar = {}
@@ -104,9 +140,10 @@ def main():
         result[case['symbol']] = reconcile(raw, controls, calendar, years)
         if 'control_identity' in case:
             result[case['symbol']]['control_identity']=case['control_identity']
-    args.out.write_text(json.dumps(dict(schema='directory-daily-official-review-v1', results=result,
-                                        market_requests=0, full_market_coverage_certified=False,
-                                        legacy_37_differences_resolved=False), ensure_ascii=False, indent=2)+'\n',
+    report=dict(schema='directory-daily-official-review-v1', results=result,
+                market_requests=0, full_market_coverage_certified=False,legacy_37_differences_resolved=False)
+    if args.public_summary:report=public_report(report)
+    args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n',
                         encoding='utf-8', newline='\n')
 
 

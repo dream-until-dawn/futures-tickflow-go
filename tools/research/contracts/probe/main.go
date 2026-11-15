@@ -128,7 +128,33 @@ func main() {
 	root := flag.String("out", "", "全新仓外目录")
 	nativePrepare := flag.Bool("prepare-native-cffex", false, "仅核原生HTTP候选出处，不联网/写启动标记")
 	nativeApproved := flag.Bool("execute-approved-cffex-http", false, "仅用户另行批准后，单次精确中金所HTTP月包；不复用旧授权")
+	prepareMonths := flag.Bool("prepare-cffex-months", false, "只预检69个已结束月份的新候选，不联网，旧一次授权不覆盖")
+	executeMonths := flag.Bool("execute-approved-cffex-months", false, "仅获得另外69个月份明确授权后启用")
+	monthsPlan := flag.String("cffex-months-plan", "docs/evidence/historical-contract-directory-20261115/cffex-remaining-months-candidate.json", "固定SHA的69月候选单")
 	flag.Parse()
+	modeCount := 0
+	for _, b := range []bool{*nativePrepare, *nativeApproved, *prepareMonths, *executeMonths} {
+		if b {
+			modeCount++
+		}
+	}
+	if modeCount > 1 {
+		fmt.Fprintln(os.Stderr, "候选模式不能混用")
+		os.Exit(2)
+	}
+	if *prepareMonths {
+		if e := nativePreflight(); e != nil {
+			fmt.Fprintln(os.Stderr, e)
+			os.Exit(1)
+		}
+		j, e := remainingMonths(*monthsPlan)
+		if e != nil {
+			fmt.Fprintln(os.Stderr, e)
+			os.Exit(1)
+		}
+		fmt.Printf("69月候选预检通过：%d项；请求0；仍未获本次授权\n", len(j))
+		return
+	}
 	if *nativePrepare {
 		if *nativeApproved {
 			fmt.Fprintln(os.Stderr, "预检不能混用执行")
@@ -146,7 +172,9 @@ func main() {
 		os.Exit(2)
 	}
 	var e error
-	if *nativeApproved {
+	if *executeMonths {
+		e = runRemainingMonths(*root, *monthsPlan)
+	} else if *nativeApproved {
 		e = runNative(*root)
 	} else {
 		e = run(*root)

@@ -1,0 +1,293 @@
+{
+  "schema": "cffex-native-remaining-months-candidate-v1",
+  "state": "prepared-not-authorized",
+  "jobs": [
+    {
+      "month": "202102",
+      "url": "http://www.cffex.com.cn/sj/historysj/202102/zip/202102.zip"
+    },
+    {
+      "month": "202103",
+      "url": "http://www.cffex.com.cn/sj/historysj/202103/zip/202103.zip"
+    },
+    {
+      "month": "202104",
+      "url": "http://www.cffex.com.cn/sj/historysj/202104/zip/202104.zip"
+    },
+    {
+      "month": "202105",
+      "url": "http://www.cffex.com.cn/sj/historysj/202105/zip/202105.zip"
+    },
+    {
+      "month": "202106",
+      "url": "http://www.cffex.com.cn/sj/historysj/202106/zip/202106.zip"
+    },
+    {
+      "month": "202107",
+      "url": "http://www.cffex.com.cn/sj/historysj/202107/zip/202107.zip"
+    },
+    {
+      "month": "202108",
+      "url": "http://www.cffex.com.cn/sj/historysj/202108/zip/202108.zip"
+    },
+    {
+      "month": "202109",
+      "url": "http://www.cffex.com.cn/sj/historysj/202109/zip/202109.zip"
+    },
+    {
+      "month": "202110",
+      "url": "http://www.cffex.com.cn/sj/historysj/202110/zip/202110.zip"
+    },
+    {
+      "month": "202111",
+      "url": "http://www.cffex.com.cn/sj/historysj/202111/zip/202111.zip"
+    },
+    {
+      "month": "202112",
+      "url": "http://www.cffex.com.cn/sj/historysj/202112/zip/202112.zip"
+    },
+    {
+      "month": "202201",
+      "url": "http://www.cffex.com.cn/sj/historysj/202201/zip/202201.zip"
+    },
+    {
+      "month": "202202",
+      "url": "http://www.cffex.com.cn/sj/historysj/202202/zip/202202.zip"
+    },
+    {
+      "month": "202203",
+      "url": "http://www.cffex.com.cn/sj/historysj/202203/zip/202203.zip"
+    },
+    {
+      "month": "202204",
+      "url": "http://www.cffex.com.cn/sj/historysj/202204/zip/202204.zip"
+    },
+    {
+      "month": "202205",
+      "url": "http://www.cffex.com.cn/sj/historysj/202205/zip/202205.zip"
+    },
+    {
+      "month": "202206",
+      "url": "http://www.cffex.com.cn/sj/historysj/202206/zip/202206.zip"
+    },
+    {
+      "month": "202207",
+      "url": "http://www.cffex.com.cn/sj/historysj/202207/zip/202207.zip"
+    },
+    {
+      "month": "202208",
+      "url": "http://www.cffex.com.cn/sj/historysj/202208/zip/202208.zip"
+    },
+    {
+      "month": "202209",
+      "url": "http://www.cffex.com.cn/sj/historysj/202209/zip/202209.zip"
+    },
+    {
+      "month": "202210",
+      "url": "http://www.cffex.com.cn/sj/historysj/202210/zip/202210.zip"
+    },
+    {
+      "month": "202211",
+      "url": "http://www.cffex.com.cn/sj/historysj/202211/zip/202211.zip"
+    },
+    {
+      "month": "202212",
+      "url": "http://www.cffex.com.cn/sj/historysj/202212/zip/202212.zip"
+    },
+    {
+      "month": "202301",
+      "url": "http://www.cffex.com.cn/sj/historysj/202301/zip/202301.zip"
+    },
+    {
+      "month": "202302",
+      "url": "http://www.cffex.com.cn/sj/historysj/202302/zip/202302.zip"
+    },
+    {
+      "month": "202303",
+      "url": "http://www.cffex.com.cn/sj/historysj/202303/zip/202303.zip"
+    },
+    {
+      "month": "202304",
+      "url": "http://www.cffex.com.cn/sj/historysj/202304/zip/202304.zip"
+    },
+    {
+      "month": "202305",
+      "url": "http://www.cffex.com.cn/sj/historysj/202305/zip/202305.zip"
+    },
+    {
+      "month": "202306",
+      "url": "http://www.cffex.com.cn/sj/historysj/202306/zip/202306.zip"
+    },
+    {
+      "month": "202307",
+      "url": "http://www.cffex.com.cn/sj/historysj/202307/zip/202307.zip"
+    },
+    {
+      "month": "202308",
+      "url": "http://www.cffex.com.cn/sj/historysj/202308/zip/202308.zip"
+    },
+    {
+      "month": "202309",
+      "url": "http://www.cffex.com.cn/sj/historysj/202309/zip/202309.zip"
+    },
+    {
+      "month": "202310",
+      "url": "http://www.cffex.com.cn/sj/historysj/202310/zip/202310.zip"
+    },
+    {
+      "month": "202311",
+      "url": "http://www.cffex.com.cn/sj/historysj/202311/zip/202311.zip"
+    },
+    {
+      "month": "202312",
+      "url": "http://www.cffex.com.cn/sj/historysj/202312/zip/202312.zip"
+    },
+    {
+      "month": "202401",
+      "url": "http://www.cffex.com.cn/sj/historysj/202401/zip/202401.zip"
+    },
+    {
+      "month": "202402",
+      "url": "http://www.cffex.com.cn/sj/historysj/202402/zip/202402.zip"
+    },
+    {
+      "month": "202403",
+      "url": "http://www.cffex.com.cn/sj/historysj/202403/zip/202403.zip"
+    },
+    {
+      "month": "202404",
+      "url": "http://www.cffex.com.cn/sj/historysj/202404/zip/202404.zip"
+    },
+    {
+      "month": "202405",
+      "url": "http://www.cffex.com.cn/sj/historysj/202405/zip/202405.zip"
+    },
+    {
+      "month": "202406",
+      "url": "http://www.cffex.com.cn/sj/historysj/202406/zip/202406.zip"
+    },
+    {
+      "month": "202407",
+      "url": "http://www.cffex.com.cn/sj/historysj/202407/zip/202407.zip"
+    },
+    {
+      "month": "202408",
+      "url": "http://www.cffex.com.cn/sj/historysj/202408/zip/202408.zip"
+    },
+    {
+      "month": "202409",
+      "url": "http://www.cffex.com.cn/sj/historysj/202409/zip/202409.zip"
+    },
+    {
+      "month": "202410",
+      "url": "http://www.cffex.com.cn/sj/historysj/202410/zip/202410.zip"
+    },
+    {
+      "month": "202411",
+      "url": "http://www.cffex.com.cn/sj/historysj/202411/zip/202411.zip"
+    },
+    {
+      "month": "202412",
+      "url": "http://www.cffex.com.cn/sj/historysj/202412/zip/202412.zip"
+    },
+    {
+      "month": "202501",
+      "url": "http://www.cffex.com.cn/sj/historysj/202501/zip/202501.zip"
+    },
+    {
+      "month": "202502",
+      "url": "http://www.cffex.com.cn/sj/historysj/202502/zip/202502.zip"
+    },
+    {
+      "month": "202503",
+      "url": "http://www.cffex.com.cn/sj/historysj/202503/zip/202503.zip"
+    },
+    {
+      "month": "202504",
+      "url": "http://www.cffex.com.cn/sj/historysj/202504/zip/202504.zip"
+    },
+    {
+      "month": "202505",
+      "url": "http://www.cffex.com.cn/sj/historysj/202505/zip/202505.zip"
+    },
+    {
+      "month": "202506",
+      "url": "http://www.cffex.com.cn/sj/historysj/202506/zip/202506.zip"
+    },
+    {
+      "month": "202507",
+      "url": "http://www.cffex.com.cn/sj/historysj/202507/zip/202507.zip"
+    },
+    {
+      "month": "202508",
+      "url": "http://www.cffex.com.cn/sj/historysj/202508/zip/202508.zip"
+    },
+    {
+      "month": "202509",
+      "url": "http://www.cffex.com.cn/sj/historysj/202509/zip/202509.zip"
+    },
+    {
+      "month": "202510",
+      "url": "http://www.cffex.com.cn/sj/historysj/202510/zip/202510.zip"
+    },
+    {
+      "month": "202511",
+      "url": "http://www.cffex.com.cn/sj/historysj/202511/zip/202511.zip"
+    },
+    {
+      "month": "202512",
+      "url": "http://www.cffex.com.cn/sj/historysj/202512/zip/202512.zip"
+    },
+    {
+      "month": "202601",
+      "url": "http://www.cffex.com.cn/sj/historysj/202601/zip/202601.zip"
+    },
+    {
+      "month": "202602",
+      "url": "http://www.cffex.com.cn/sj/historysj/202602/zip/202602.zip"
+    },
+    {
+      "month": "202603",
+      "url": "http://www.cffex.com.cn/sj/historysj/202603/zip/202603.zip"
+    },
+    {
+      "month": "202604",
+      "url": "http://www.cffex.com.cn/sj/historysj/202604/zip/202604.zip"
+    },
+    {
+      "month": "202605",
+      "url": "http://www.cffex.com.cn/sj/historysj/202605/zip/202605.zip"
+    },
+    {
+      "month": "202606",
+      "url": "http://www.cffex.com.cn/sj/historysj/202606/zip/202606.zip"
+    },
+    {
+      "month": "202607",
+      "url": "http://www.cffex.com.cn/sj/historysj/202607/zip/202607.zip"
+    },
+    {
+      "month": "202608",
+      "url": "http://www.cffex.com.cn/sj/historysj/202608/zip/202608.zip"
+    },
+    {
+      "month": "202609",
+      "url": "http://www.cffex.com.cn/sj/historysj/202609/zip/202609.zip"
+    },
+    {
+      "month": "202610",
+      "url": "http://www.cffex.com.cn/sj/historysj/202610/zip/202610.zip"
+    }
+  ],
+  "requests_max": 69,
+  "per_response_max_bytes": 4194304,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "stop_on_first_failure_or_unknown": true,
+  "identity": "native-http/cleartext/unauthenticated/unqualified",
+  "publisher_authentication": false,
+  "financial_eligible": false,
+  "exclude_consumed_january_2021": true,
+  "source_sdk_module_sha256": "c547fcc877d3a4da6d0ed60a8a660a7a4b41e2f85e299818c72eb17b19eb8dca",
+  "current_partial_month_excluded": "202611"
+}

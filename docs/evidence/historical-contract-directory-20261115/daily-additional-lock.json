@@ -1,0 +1,123 @@
+{
+  "schema": "directory-daily-official-lock-v1",
+  "cases": [
+    {
+      "id": "CF2105-daily-additional-research",
+      "symbol": "CZCE.CF2105",
+      "product": "CF",
+      "file": "CF2105-daily-additional-research.body",
+      "sha256": "367e0e0739330832f14afbb23dce68cc57f1c99e8caf842001db34210108d069",
+      "receipt": "CF2105-daily-additional-research.json",
+      "receipt_sha256": "724ecfb2deb31ea6b95d98e5f59cbcaa23f652355c093e39bd6ac0791cf5c63e",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "MA2105-daily-additional-research",
+      "symbol": "CZCE.MA2105",
+      "product": "MA",
+      "file": "MA2105-daily-additional-research.body",
+      "sha256": "34314946ffcfad65e5d0531c7918cd655592ed33eef1f63735dbbf910f871507",
+      "receipt": "MA2105-daily-additional-research.json",
+      "receipt_sha256": "02831e2aaaed7a1883a224931720d41addcab09129acc50908b543c08ad82913",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "SA2105-daily-additional-research",
+      "symbol": "CZCE.SA2105",
+      "product": "SA",
+      "file": "SA2105-daily-additional-research.body",
+      "sha256": "27f2d148ca86aff00c307731aab3a92e4e6b68224d8a578febf7172318147ca0",
+      "receipt": "SA2105-daily-additional-research.json",
+      "receipt_sha256": "a347bd7a237819d993d328bcae5be2f547b740974420c04105a233761944ca05",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "TA2105-daily-additional-research",
+      "symbol": "CZCE.TA2105",
+      "product": "TA",
+      "file": "TA2105-daily-additional-research.body",
+      "sha256": "a86db5a7d667fa1bc7cee30833a32f65fe5baf12ce87624c455203f6c1c56922",
+      "receipt": "TA2105-daily-additional-research.json",
+      "receipt_sha256": "8655dbeb67d86ebb776f4494cca27e3eea7a85c08528cfb1f49ba0927b71f0d3",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "IF2101-daily-additional-research",
+      "symbol": "CFFEX.IF2101",
+      "product": "IF",
+      "file": "IF2101-daily-additional-research.body",
+      "sha256": "f6779eb7e537d50ba33d8e3f5383749e257c3a2be4760039e6aa2ef4d6a827ad",
+      "receipt": "IF2101-daily-additional-research.json",
+      "receipt_sha256": "d553dfbca4411ef4f9524ed589f573d21c030e23f5da466d52da5f43895b0b47",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IF2101",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    },
+    {
+      "id": "IH2101-daily-additional-research",
+      "symbol": "CFFEX.IH2101",
+      "product": "IH",
+      "file": "IH2101-daily-additional-research.body",
+      "sha256": "c1e4e4ae141575a5f1092fdacf3909f232254e0a828c52a7e6054cb8d3d2ebb6",
+      "receipt": "IH2101-daily-additional-research.json",
+      "receipt_sha256": "43e65b84f8484b3ca6c302899c7474d937526fa311bf2356fef3db080d238f12",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IH2101",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    },
+    {
+      "id": "IC2101-daily-additional-research",
+      "symbol": "CFFEX.IC2101",
+      "product": "IC",
+      "file": "IC2101-daily-additional-research.body",
+      "sha256": "bf458f9279fa9a9ee15e10e071edfaa4ecc15f01c0b7cca31c6fca587fdbe208",
+      "receipt": "IC2101-daily-additional-research.json",
+      "receipt_sha256": "7bbedc99d2cdcb813a0f86f4e997f61c35d49e97e43c25a3f72d048e713564d8",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IC2101",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    },
+    {
+      "id": "TF2103-daily-additional-research",
+      "symbol": "CFFEX.TF2103",
+      "product": "TF",
+      "file": "TF2103-daily-additional-research.body",
+      "sha256": "3f210170e0ee3eff64cb9b0808433acc94f3fb7479534d1d1fd88d1fe041d381",
+      "receipt": "TF2103-daily-additional-research.json",
+      "receipt_sha256": "a600eb502d80d292ec14b653328303c9688528332cbb4cb56030c577c68a76a1",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.TF2103",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\czce-decoded.json",
+      "sha256": "86dae0222fc6896b6f81bb9beda41291f837cd9b63e49e74819c246ff7bfe4a7",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\cffex-decoded.json",
+      "sha256": "95b98b80c54b10644d05b0e9cb12da029ce2921eaa794cc9d9d73a112cc03005",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    }
+  ],
+  "calendars": [
+    {
+      "file": "calendar/verified/profiles/listed-2023.json",
+      "sha256": "ca8a0903daab1403e86ef7be52aad446e25de06068ce5297401e5aff1160ac73"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2024.json",
+      "sha256": "8c2744f4ede120090dd1b30a1c2a036a4e495a7918dfe3b671ce968515f6ed49"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2025.json",
+      "sha256": "e5bb05a16d8b8c3a468697f87e611070a597ebecd030bf71bccf81c531ec9438"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2026-to-1104.json",
+      "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
+    }
+  ]
+}
