@@ -1,0 +1,24 @@
+{
+  "job_sha256": "5a9e2e1b4b7f6b0e3520041534df15db3dd241e2505d664698b3d49059a145fb",
+  "state": "received",
+  "evidence": {
+    "id": "followup-minute-forum",
+    "url": "https://forum.shinnytech.com/question/26588/",
+    "sha256": "9d75321ced4006190998caad16de3eaab75b88cc36687e6d10d2f694ea7544d4",
+    "retrieved_at": "2026-11-15T13:32:18.4925573Z",
+    "version": "forum-minute-context-not-edb-daily-version-proof"
+  },
+  "bytes": 56028,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://forum.shinnytech.com/question/26588/",
+    "content_type": "text/html; charset=UTF-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 13:32:19 GMT",
+    "requested_at": "2026-11-15T13:32:18.4925573Z",
+    "complete": true
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "schema": "edb-pk-direct-sources-v1",
+  "base_sha": "7259bd3daa637dbdd7250d918eb90cb13dcc8bf6",
+  "collector_sha": "f4f7134",
+  "sources": [
+    {
+      "id": "followup-rule2019",
+      "ref": {
+        "id": "followup-rule2019",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2019/10/30/20191030161831109.pdf",
+        "sha256": "7db358acc1123c4cad4d71ee5133d4a184a3480bd5b12e8ad6fc9b576014ea9b",
+        "retrieved_at": "2026-11-15T13:32:08.79928Z",
+        "version": "official-2020-effective-candidate-not-continuity-proof"
+      },
+      "bytes": 586012,
+      "body_state": "complete",
+      "receipt_sha256": "1f308a71dab07474a3da8807fa7206557c82ec0e847e2e8f685d26c833f8a18d",
+      "http_status": 200
+    },
+    {
+      "id": "followup-minute-forum",
+      "ref": {
+        "id": "followup-minute-forum",
+        "url": "https://forum.shinnytech.com/question/26588/",
+        "sha256": "9d75321ced4006190998caad16de3eaab75b88cc36687e6d10d2f694ea7544d4",
+        "retrieved_at": "2026-11-15T13:32:18.4925573Z",
+        "version": "forum-minute-context-not-edb-daily-version-proof"
+      },
+      "bytes": 56028,
+      "body_state": "complete",
+      "receipt_sha256": "2651957aaf046947b9b4191cae8241611d4d4ae07751a43d0a1f13b86ac52c1c",
+      "http_status": 200
+    },
+    {
+      "id": "official-sdk-version-blob",
+      "url": "https://api.github.com/repos/shinnytech/tqsdk-python/git/blobs/cb271caffa01166045314e88a3d9e95ca4a0901f",
+      "git_blob": "cb271caffa01166045314e88a3d9e95ca4a0901f",
+      "bytes": 57015,
+      "sha256": "485d1cc77f1fdfe8eaffaead5bd17abfed747ef2de594db268fe5df8ec6180f5",
+      "retrieval": "GitHub connector decoded text; independently recomputed Git blob identity",
+      "scope": "SDK client changelog, not EDB market-data service version",
+      "connector_blob_reads": 2,
+      "duplicate_reason": "first successful response was incorrectly parsed as JSON; no remote failure inferred",
+      "client_entries": [
+        {
+          "version": "3.9.0",
+          "day": 20260116,
+          "topic": "non-price EDB query API"
+        },
+        {
+          "version": "2.8.1",
+          "day": 20210812,
+          "topic": "downloaded history tick-decimal formatting"
+        },
+        {
+          "version": "2.3.5",
+          "day": 20210319,
+          "topic": "no-trade contract download timeout/skip, not OHLC fill"
+        }
+      ]
+    }
+  ],
+  "direct_gets": 2,
+  "direct_body_bytes": 642040,
+  "new_market_api_requests": 0,
+  "web_search_rounds": 5,
+  "web_queries": 18,
+  "new_blocked": [
+    {
+      "url": "https://www.czce.com.cn/",
+      "status": 412,
+      "retried": false
+    }
+  ],
+  "old_failed_urls_retried": false,
+  "discovery_only": [
+    {
+      "url": "https://forum.shinnytech.com/question/26581/",
+      "finding": "same prior reply context, no newly certified service version or event ledger"
+    },
+    {
+      "url": "https://www.founderfu.com/jiaoyitishi/247_368.html",
+      "finding": "index snippet did not yield a verified official holiday original; find returned no match"
+    }
+  ],
+  "official_holiday_original_obtained": false,
+  "pk_initial_day_rule_qualified": false,
+  "annual_calendar_generated": false,
+  "forum_author_staff_identity_independently_verified": false,
+  "pdf_pages": 11,
+  "pdf_visual_pages": [
+    1,
+    6,
+    7,
+    11
+  ]
+}

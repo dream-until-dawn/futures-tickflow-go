@@ -1,0 +1,24 @@
+{
+  "job_sha256": "9b76f328a95f27bd1aeaa8c40eeeb53fda25b021e9a0544c3340c63269614017",
+  "state": "received",
+  "evidence": {
+    "id": "followup-rule2019",
+    "url": "https://www.czce.com.cn/cn/uploadfile/2019/10/30/20191030161831109.pdf",
+    "sha256": "7db358acc1123c4cad4d71ee5133d4a184a3480bd5b12e8ad6fc9b576014ea9b",
+    "retrieved_at": "2026-11-15T13:32:08.79928Z",
+    "version": "official-2020-effective-candidate-not-continuity-proof"
+  },
+  "bytes": 586012,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.czce.com.cn/cn/uploadfile/2019/10/30/20191030161831109.pdf",
+    "content_type": "application/pdf",
+    "content_length": 586012,
+    "server_date": "Sun, 15 Nov 2026 13:32:09 GMT",
+    "requested_at": "2026-11-15T13:32:08.79928Z",
+    "complete": true
+  }
+}

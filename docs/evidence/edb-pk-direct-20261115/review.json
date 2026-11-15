@@ -1,0 +1,25 @@
+{
+  "schema": "edb-pk-direct-followup-v1",
+  "rule_sha256": "7db358acc1123c4cad4d71ee5133d4a184a3480bd5b12e8ad6fc9b576014ea9b",
+  "sdk_git_blob": "cb271caffa01166045314e88a3d9e95ca4a0901f",
+  "sdk_sha256": "485d1cc77f1fdfe8eaffaead5bd17abfed747ef2de594db268fe5df8ec6180f5",
+  "rule": {
+    "board_day": 20191016,
+    "published_day": 20191029,
+    "effective_day": 20200101,
+    "rule_notice": 87,
+    "ohlc_defined_from_trades": true,
+    "volume_and_oi_single_sided_in_this_version": true,
+    "previous_close_context": "matching reference for first trade, not zero-trade OHLC fill",
+    "day_session_break_clause_found": false,
+    "continuity_to_20210104_proven": false,
+    "pk_initial_rule_gap_closed": false,
+    "annual_calendar_qualified": false
+  },
+  "edb_daily_historical_version_identified": false,
+  "post_close_event_ledger_obtained": false,
+  "all_118_differences_remain_unresolved": true,
+  "price_requests": 0,
+  "calendar_generated": false,
+  "financial_eligible": false
+}

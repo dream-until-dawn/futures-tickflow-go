@@ -1,0 +1,24 @@
+{
+  "positive_tests": 11,
+  "mutations": [
+    {
+      "mutation": "effective_conflict",
+      "target_test": "test_both_effective_clauses_must_agree",
+      "target_expected_reason": "^prior_rule_effective_conflict$",
+      "exit_code": 1,
+      "valid_python": true,
+      "target_assertion_failed": true,
+      "log_sha256": "b38d944cbad7a9041ee6de6e199c390dc357077fdff20478674083adb4593340"
+    },
+    {
+      "mutation": "single_side",
+      "target_test": "test_trade_definition_and_absent_break_are_checked_separately",
+      "target_expected_reason": "^prior_rule_marker:单边数量$",
+      "exit_code": 1,
+      "valid_python": true,
+      "target_assertion_failed": true,
+      "log_sha256": "448f10550a70475c971765ddb3ffbee41103c8da5968f269dcbfe42b40027235"
+    }
+  ],
+  "original_source_unchanged": true
+}
