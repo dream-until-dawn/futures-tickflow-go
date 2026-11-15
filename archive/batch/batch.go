@@ -36,6 +36,7 @@ type Downloader struct {
 	nativeHTTP       map[string]NativeHTTPGrant
 	maxResponseBytes int64
 	sina             *sinaPolicy
+	sinaStaticHTTP   bool // 仅独立批准的一个静态HTTP候选，不扩用CFA或公共默认。
 }
 
 // NewDownloader 保留传入Transport的正常TLS校验，不设置InsecureSkipVerify。

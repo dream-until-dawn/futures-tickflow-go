@@ -112,6 +112,10 @@ func (d *Downloader) FetchDetailed(ctx context.Context, address string) (Downloa
 		return result, fmt.Errorf("batch: 响应超过剩余字节预算")
 	}
 	result.Complete = true
+	if d.sinaStaticHTTP && (len(raw) == 0 || sinaChallenge(raw)) {
+		result.Failure = "static_challenge"
+		return result, fmt.Errorf("batch: Sina静态HTTP空正文或挑战，停止唯一请求")
+	}
 	if d.sina != nil && sinaChallenge(raw) {
 		result.Failure = "vendor_challenge"
 		return result, fmt.Errorf("batch: Sina挑战正文，停止该主机")

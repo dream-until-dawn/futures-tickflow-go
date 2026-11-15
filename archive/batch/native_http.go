@@ -120,6 +120,9 @@ func (d *Downloader) markNative(result *Download, address string) {
 		result.Unauthenticated = true
 		result.SourceURL = g.Source.URL
 		result.SourceSHA = g.Source.SHA256
+		if d.sinaStaticHTTP {
+			result.DataClass = SinaStaticHTTPVersion
+		}
 	}
 }
 
@@ -135,6 +138,9 @@ func validateNativeReceipt(d *Downloader, address string, metadata *Download) er
 	g, ok := d.nativeGrant(address)
 	if !ok || metadata == nil || metadata.Transport != "native-http" || !metadata.Unauthenticated || metadata.SourceURL != g.Source.URL || metadata.SourceSHA != g.Source.SHA256 || metadata.FinalURL != address {
 		return fmt.Errorf("batch: native-http收据明文标签或出处不符")
+	}
+	if d.sinaStaticHTTP && metadata.DataClass != SinaStaticHTTPVersion {
+		return fmt.Errorf("batch: Sina静态HTTP恢复缺明文供应商身份")
 	}
 	return nil
 }
