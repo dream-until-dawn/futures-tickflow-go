@@ -1,0 +1,29 @@
+{
+  "schema": "edb-pk-direct-seal-v1",
+  "sealed_root": "C:\\Temp\\tickflow-edb-pk-direct-20261115-v1-sealed",
+  "migrated_root": "C:\\Temp\\tickflow-edb-pk-direct-20261115-v1-migrated",
+  "manifest_sha256": "7b1d69e5e7f94551de8eeb5c181265e43473bec18605cbcc1fa1a2769e1a482c",
+  "files": 38,
+  "bytes": 1988761,
+  "software_sha": "e3c497f6aa156a5e10a3438cac42c50111291c1d",
+  "source_ci_run": 43719935897,
+  "source_ci_success_matrices": 3,
+  "go_modules": 3,
+  "python_tests": 179,
+  "python_directories": 16,
+  "doccheck": {
+    "docs": 203,
+    "source": 893,
+    "whitelist": 0
+  },
+  "initial_validation_failure": "validation clone lacked local main; log preserved; baseline main added without source changes; full rerun passed",
+  "portable_replay_byte_identical": true,
+  "negative_checks": [
+    "file_sha:inputs/rule2019.pdf",
+    "manifest_sha"
+  ],
+  "old_800_file_package_unchanged": true,
+  "full_release": false,
+  "admission_expanded": false,
+  "tag_created": false
+}
