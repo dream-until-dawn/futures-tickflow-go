@@ -1,15 +1,38 @@
 """反例必须指向收据身份和原字节绑定，不能用解析失败代替。"""
 import hashlib
+import csv
+import io
 import json
+import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
 from cffex_months import IDENTITY,verify_month
+from cffex_independent import audit
 
 
 class CffexMonthReceiptTest(unittest.TestCase):
+    def test_independent_fields_detect_mutated_decode(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);text=io.StringIO();writer=csv.writer(text)
+            names={'open':'今开盘','high':'最高价','low':'最低价','close':'今收盘','settle':'今结算',
+                   'pre_settle':'前结算','volume':'成交量','open_interest':'持仓量','turnover':'成交金额'}
+            writer.writerow(['合约代码']+list(names.values()));writer.writerow(['IF2102']+['1']*9)
+            b=io.BytesIO()
+            with zipfile.ZipFile(b,'w') as z:z.writestr('20210201_1.csv',text.getvalue().encode('gb18030'))
+            raw=b.getvalue();(root/'month.body').write_bytes(raw)
+            (root/'receipt.json').write_text(json.dumps(dict(sha256=hashlib.sha256(raw).hexdigest())),encoding='utf-8')
+            data=dict(records=[dict(native='IF2102',day=20210201,fields={k:'1' for k in names})],
+                      summary=dict(excluded_options=0,excluded_aggregate_rows=0))
+            output=root/'decoded.json';output.write_text(json.dumps(data),encoding='utf-8')
+            self.assertEqual(audit(root,output,'202102')['fields'],9)
+            data['records'][0]['fields']['close']='2'
+            output.write_text(json.dumps(data),encoding='utf-8')
+            with self.assertRaisesRegex(ValueError,'^audit_fields$'):audit(root,output,'202102')
+
     def test_receipt_body_binding_and_unauthenticated_identity(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);raw=b'fixture';digest=hashlib.sha256(raw).hexdigest()
@@ -32,4 +55,7 @@ class CffexMonthReceiptTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'^cffex_body_sha$'):verify_month(root,job,{})
 
 
-if __name__=='__main__':unittest.main()
+if __name__=='__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    unittest.main()

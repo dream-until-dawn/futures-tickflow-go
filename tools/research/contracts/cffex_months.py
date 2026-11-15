@@ -2,6 +2,8 @@
 import argparse
 import hashlib
 import json
+import io
+import sys
 from pathlib import Path
 
 from additional import decode_cffex
@@ -80,4 +82,7 @@ def main():
     print(json.dumps({k:v for k,v in report.items() if k not in ('items','contract_keys')},ensure_ascii=False))
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    main()
