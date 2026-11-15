@@ -85,6 +85,29 @@ func dailyAnchorJob() batch.Job {
 	return batch.Job{ID: "ec2602-daily-anchor-window", URL: "https://edb.shinnytech.com/md/kline?" + q.Encode(), Format: "edb-csv", Exchange: "INE", Product: "ec", Day: 20251118, Year: 2025, Version: "shinny-edb-anonymous-research-v1"}
 }
 
+func dailyResearchJobs() []batch.Job {
+	var result []batch.Job
+	for _, item := range []struct{ exchange, product, code string }{{"DCE", "c", "c2105"}, {"DCE", "m", "m2105"}, {"GFEX", "si", "si2308"}} {
+		q := url.Values{"period": {"86400"}, "symbol": {item.exchange + "." + item.code}, "start_time": {"2021-01-01 00:00:00"}, "end_time": {"2026-11-13 23:59:59"}}
+		result = append(result, batch.Job{ID: item.code + "-daily-research", URL: "https://edb.shinnytech.com/md/kline?" + q.Encode(), Format: "edb-csv", Exchange: item.exchange, Product: item.product, Year: 2021, Version: "shinny-edb-anonymous-research-v1"})
+	}
+	return result
+}
+
+func requirePriorResearchFiles(root string) error {
+	expected := map[string]string{"C2105": "2c56358bde9b12247df8ea3aceb384536bb0243e6daeca5e3c337a63cec63828", "M2105": "1627802176871d7bbf5d71118122dace2eb908c02b7f00e0cd323afa57129186", "SI2308": "c63e409fce5de3b67fc1d3adaeeb9cc915a28fbcfd3509b30ff5f63552b902bb"}
+	for name, sha := range expected {
+		body, e := os.ReadFile(filepath.Join(root, name+".jsonp"))
+		if e != nil {
+			return e
+		}
+		if digest(body) != sha {
+			return fmt.Errorf("既有供应商观察原件不符: %s", name)
+		}
+	}
+	return nil
+}
+
 // validateCSV 只核非空、列结构、有限数值和递增纳秒时间，不把received等同价格获证。
 func validateCSV(_ batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
@@ -150,6 +173,11 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 	if len(planned) == 1 && planned[0].ID == dailyAnchorJob().ID {
 		delete(plan, "original_all_phase_requests_max")
 		plan["experiment"] = "one separate full-date window; original intraday daily requests are not repeated"
+	}
+	if len(planned) == 3 && planned[0].ID == dailyResearchJobs()[0].ID {
+		delete(plan, "original_all_phase_requests_max")
+		plan["scope"] = "three previously observed vendor-request codes; not an official historical universe or lifecycle"
+		plan["settlement_and_turnover_available"] = false
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
@@ -343,17 +371,25 @@ func run() error {
 	baseline := flag.String("official-baseline", "", "已冻结官方对照基线")
 	priorEmpty := flag.String("prior-empty-root", "", "另批复核完整空表头后，仅取原计划尚未尝试三项")
 	anchor := flag.Bool("daily-anchor-experiment", false, "另批仅一条EC完整日期窗，查日线时间锚点；不重发原日内URL")
+	research := flag.Bool("daily-research-pilot", false, "日线限定：原C2105/M2105/SI2308观察代码三项研究批，不猜月码")
+	priorResearch := flag.String("prior-research-dir", "", "三份旧供应商观察原件目录；仅研究批使用")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
 	}
-	if *anchor && *priorEmpty != "" {
+	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) {
 		return fmt.Errorf("不能混用独立日期窗和旧计划续取")
 	}
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
 	selected := jobs()
+	if *research {
+		if err := requirePriorResearchFiles(*priorResearch); err != nil {
+			return err
+		}
+		selected = dailyResearchJobs()
+	}
 	if *anchor {
 		selected = []batch.Job{dailyAnchorJob()}
 	}

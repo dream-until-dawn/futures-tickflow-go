@@ -184,3 +184,23 @@ func TestEDBDailyAnchorExperimentIsOneDifferentPublicQuery(t *testing.T) {
 		t.Fatal(err, calls)
 	}
 }
+
+func TestEDBDailyResearchPilotUsesOnlyPriorObservedCodes(t *testing.T) {
+	planned := dailyResearchJobs()
+	if len(planned) != 3 {
+		t.Fatal("超出三项")
+	}
+	for _, j := range planned {
+		if j.Format != "edb-csv" || j.Day != 0 || (j.Exchange != "DCE" && j.Exchange != "GFEX") {
+			t.Fatal("研究身份冒充官方合约日", j)
+		}
+	}
+	if err := requirePriorResearchFiles(t.TempDir()); err == nil {
+		t.Fatal("缺旧原件仍放行")
+	}
+	if err := collectSelected(filepath.Join(t.TempDir(), "daily-only"), planned, func(j batch.Job) (batch.Result, error) {
+		return batch.Result{Receipt: batch.Receipt{State: "received"}}, nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+}

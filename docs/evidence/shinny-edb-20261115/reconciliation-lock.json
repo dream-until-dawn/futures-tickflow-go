@@ -1,0 +1,111 @@
+{
+  "schema": "edb-reconciliation-lock-v1",
+  "official_file": "docs/evidence/shinny-edb-20261115/official-baseline.json",
+  "official_sha256": "1fc30d47bf6403b5f9807508d0aec7407b2c4f339d32451dccf1515c08942759",
+  "minute_cases": [
+    {
+      "id": "ec2602-60",
+      "file": "ec2602-60.body",
+      "receipt": "ec2602-60.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-18+09%3A00%3A00&symbol=INE.ec2602",
+      "bytes": 14548,
+      "sha256": "285e3eeda841195e7c458c758223c72c1ee79241db77317f4a94ef236b0ea1cb",
+      "receipt_sha256": "461a5e97aa84c9ca2280a5a85a468772ed2be7a8c6fb95faee126849f423b1d3",
+      "state": "received",
+      "retrieved_at": "2026-11-15T04:15:36.9010595Z",
+      "exchange": "INE",
+      "product": "ec",
+      "symbol": "INE.ec2602",
+      "day": 20251118,
+      "calendar_file": "calendar/verified/profiles/ine-2025.json",
+      "calendar_sha256": "db657b12a4479c7a9180cac1f4e33446c239f0eb2b1eb626f1e2c889297c8488"
+    },
+    {
+      "id": "br2601-60",
+      "file": "br2601-60.body",
+      "receipt": "br2601-60.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-17+21%3A00%3A00&symbol=SHFE.br2601",
+      "bytes": 21065,
+      "sha256": "ebff92112834a9b2ff2dd4537d01f6c9639bf60863a1b2842465e1140c91940f",
+      "receipt_sha256": "7a550f619eacf20ecca6bbdd95bcaa5dbc5651d85f0c676af05bcc6c37d31f9a",
+      "state": "received",
+      "retrieved_at": "2026-11-15T04:21:23.4009426Z",
+      "exchange": "SHFE",
+      "product": "br",
+      "symbol": "SHFE.br2601",
+      "day": 20251118,
+      "calendar_file": "calendar/verified/profiles/shfe-2025.json",
+      "calendar_sha256": "e5bb05a16d8b8c3a468697f87e611070a597ebecd030bf71bccf81c531ec9438"
+    }
+  ],
+  "daily_case": {
+    "id": "ec2602-daily-anchor-window",
+    "file": "ec2602-daily-anchor-window.body",
+    "receipt": "ec2602-daily-anchor-window.json",
+    "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-19+23%3A59%3A59&period=86400&start_time=2025-11-17+00%3A00%3A00&symbol=INE.ec2602",
+    "bytes": 260,
+    "sha256": "4ee8e333fa0ce65aaac81c1ce22809ee504f87db232f2b23a44fde489514862f",
+    "receipt_sha256": "a3bf665609fd413912c2d31b062154f619c86d6a801fa8bc13cf0c9be35586b0",
+    "state": "received",
+    "retrieved_at": "2026-11-15T04:27:27.9701415Z",
+    "official_file": "docs/evidence/shinny-edb-20261115/daily-anchor-official.json",
+    "official_sha256": "375f87196d23bd743c195e796dd06220b0a732852470ec33bbc37a1172013223"
+  },
+  "all_sample_sources": [
+    {
+      "id": "ec2602-86400",
+      "file": "ec2602-86400.body",
+      "receipt": "ec2602-86400.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=86400&start_time=2025-11-18+09%3A00%3A00&symbol=INE.ec2602",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "2878b2347763558c04bb6a037bc8e77a8cf81316ee3e2993c3b71110daa92dbf",
+      "state": "failed",
+      "retrieved_at": "2026-11-15T04:10:31.7515826Z"
+    },
+    {
+      "id": "br2601-86400",
+      "file": "br2601-86400.body",
+      "receipt": "br2601-86400.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=86400&start_time=2025-11-18+09%3A00%3A00&symbol=SHFE.br2601",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c9ff6a8ca2d832e61437228ed0aba1f7049ad83c871f054cee1ed6875e4a228c",
+      "state": "failed",
+      "retrieved_at": "2026-11-15T04:15:38.9011952Z"
+    },
+    {
+      "id": "ec2602-60",
+      "file": "ec2602-60.body",
+      "receipt": "ec2602-60.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-18+09%3A00%3A00&symbol=INE.ec2602",
+      "bytes": 14548,
+      "sha256": "285e3eeda841195e7c458c758223c72c1ee79241db77317f4a94ef236b0ea1cb",
+      "receipt_sha256": "461a5e97aa84c9ca2280a5a85a468772ed2be7a8c6fb95faee126849f423b1d3",
+      "state": "received",
+      "retrieved_at": "2026-11-15T04:15:36.9010595Z"
+    },
+    {
+      "id": "br2601-60",
+      "file": "br2601-60.body",
+      "receipt": "br2601-60.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-17+21%3A00%3A00&symbol=SHFE.br2601",
+      "bytes": 21065,
+      "sha256": "ebff92112834a9b2ff2dd4537d01f6c9639bf60863a1b2842465e1140c91940f",
+      "receipt_sha256": "7a550f619eacf20ecca6bbdd95bcaa5dbc5651d85f0c676af05bcc6c37d31f9a",
+      "state": "received",
+      "retrieved_at": "2026-11-15T04:21:23.4009426Z"
+    },
+    {
+      "id": "ec2602-daily-anchor-window",
+      "file": "ec2602-daily-anchor-window.body",
+      "receipt": "ec2602-daily-anchor-window.json",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-19+23%3A59%3A59&period=86400&start_time=2025-11-17+00%3A00%3A00&symbol=INE.ec2602",
+      "bytes": 260,
+      "sha256": "4ee8e333fa0ce65aaac81c1ce22809ee504f87db232f2b23a44fde489514862f",
+      "receipt_sha256": "a3bf665609fd413912c2d31b062154f619c86d6a801fa8bc13cf0c9be35586b0",
+      "state": "received",
+      "retrieved_at": "2026-11-15T04:27:27.9701415Z"
+    }
+  ]
+}

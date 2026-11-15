@@ -1,0 +1,114 @@
+{
+  "schema": "edb-independent-reconciliation-v1",
+  "results": {
+    "ec2602-60": {
+      "rows": 225,
+      "first_ns": 1763427600000000000,
+      "last_ns": 1763449140000000000,
+      "exact_expected_grid": true,
+      "aggregates": {
+        "open": "1700.0",
+        "high": "1717.5",
+        "low": "1658.1",
+        "close": "1678.1",
+        "volume": "29150",
+        "open_interest": "38860"
+      },
+      "official_matched_fields": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "open_interest"
+      ],
+      "comparison": "Decimal numeric equality; not original lexical equality",
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false,
+      "symbol": "INE.ec2602",
+      "day": 20251118
+    },
+    "br2601-60": {
+      "rows": 345,
+      "first_ns": 1763384400000000000,
+      "last_ns": 1763449140000000000,
+      "exact_expected_grid": true,
+      "aggregates": {
+        "open": "10475",
+        "high": "10655",
+        "low": "10430",
+        "close": "10505",
+        "volume": "141146",
+        "open_interest": "72021"
+      },
+      "official_matched_fields": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "open_interest"
+      ],
+      "comparison": "Decimal numeric equality; not original lexical equality",
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false,
+      "symbol": "SHFE.br2601",
+      "day": 20251118
+    },
+    "ec2602-daily-anchor-window": {
+      "rows": 3,
+      "records": [
+        {
+          "day": 20251117,
+          "timestamp_ns": 1763308800000000000,
+          "anchor_observed": "00:00 Asia/Shanghai",
+          "matched_fields": [
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "open_interest"
+          ]
+        },
+        {
+          "day": 20251118,
+          "timestamp_ns": 1763395200000000000,
+          "anchor_observed": "00:00 Asia/Shanghai",
+          "matched_fields": [
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "open_interest"
+          ]
+        },
+        {
+          "day": 20251119,
+          "timestamp_ns": 1763481600000000000,
+          "anchor_observed": "00:00 Asia/Shanghai",
+          "matched_fields": [
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "open_interest"
+          ]
+        }
+      ],
+      "observed_scope_only": true,
+      "query_boundary_inclusivity_certified": false,
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false
+    }
+  },
+  "market_requests": 0,
+  "full_market_coverage_certified": false,
+  "redistribution_grant_verified": false,
+  "financial_admission_expanded": false
+}
