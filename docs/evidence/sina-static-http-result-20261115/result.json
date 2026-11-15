@@ -1,0 +1,44 @@
+{
+  "actual_bytes": 6779,
+  "actual_requests": 1,
+  "financial_eligible": false,
+  "historical_roster_certified": false,
+  "http_untrusted": true,
+  "identity": "vendor/cleartext/static-unqualified",
+  "results": [
+    {
+      "id": "sina-static-http",
+      "receipt": {
+        "job_sha256": "9d027aa6c223c73563c11e6d0d0730864191e778d57dd51c49c71c619df5fff5",
+        "state": "received",
+        "evidence": {
+          "id": "sina-static-http",
+          "url": "http://finance.sina.com.cn/iframe/futures_info_cff.js",
+          "sha256": "a8852d372121d29b40cfdd5505a4644cece19a92ccefe4a06a7fd29275a515d5",
+          "retrieved_at": "2026-11-15T01:42:38.0738487Z",
+          "version": "vendor/cleartext/static-unqualified"
+        },
+        "bytes": 6779,
+        "body_state": "complete",
+        "http": {
+          "attempted": true,
+          "response_received": true,
+          "status": 200,
+          "final_url": "http://finance.sina.com.cn/iframe/futures_info_cff.js",
+          "content_type": "application/x-javascript",
+          "content_length": -1,
+          "server_date": "Sun, 15 Nov 2026 01:42:39 GMT",
+          "requested_at": "2026-11-15T01:42:38.0738487Z",
+          "complete": true,
+          "transport": "native-http",
+          "unauthenticated": true,
+          "source_url": "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php",
+          "source_sha256": "81cf741fad8436bb9477a7884597ea5c37ea40ae14a8527e6c0fc65267e3fa28",
+          "data_class": "vendor/cleartext/static-unqualified"
+        }
+      },
+      "resumed": false
+    }
+  ],
+  "script_executed": false
+}

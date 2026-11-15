@@ -1,0 +1,13 @@
+{
+  "review_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\sina-implementation-20261114\\http-candidate-review-01cd7ce",
+  "code_candidate": "01cd7ce4d6663cca005ed4296963e5b3d19b1cf2",
+  "review_sha256": "1797a019067a3e654018f1b7abec41b679a14a7a36f1df4830ea3b20a1c81245",
+  "log_correction_sha256": "d22d488a4f8cfc93a33da85206a6a048758f45fc419e3a34e4a824b1286cce29",
+  "original_review_and_logs_preserved": true,
+  "real_log_bytes_verified": 6,
+  "lf_text_and_crlf_raw_hashes_distinguished": true,
+  "independent_memory_transport_and_tool_state_tests": "passed",
+  "independent_targeted_mutations": 4,
+  "plan_and_binary_independently_checked": true,
+  "market_requests_by_reviewer": 0
+}

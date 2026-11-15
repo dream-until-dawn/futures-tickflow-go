@@ -1,0 +1,37 @@
+[
+  {
+    "file": "comparison.json",
+    "bytes": 12299,
+    "sha256": "a28216f2fc343be9df164d8639b81095646b860a1e272169876dc085651af280"
+  },
+  {
+    "file": "independent-review.json",
+    "bytes": 704,
+    "sha256": "d59b1a20522a282accde52a4a4432947909728b17b6ac66920e7b44b3fb0c3f1"
+  },
+  {
+    "file": "plan.json",
+    "bytes": 932,
+    "sha256": "3544d67ddb03e30b0ad135fe07674d8683af02a3a5de4af12e72093fec56dfc0"
+  },
+  {
+    "file": "raw.jsonp",
+    "bytes": 6779,
+    "sha256": "a8852d372121d29b40cfdd5505a4644cece19a92ccefe4a06a7fd29275a515d5"
+  },
+  {
+    "file": "receipt.json",
+    "bytes": 1118,
+    "sha256": "2c61fb272ead78b3405cec0b5fb8568925a0547af2b13e82bcba5295639feb96"
+  },
+  {
+    "file": "result.json",
+    "bytes": 1620,
+    "sha256": "b6cc3eaf24cd3c87dd45f766f9b3f7d40ad8c05150417e3267342d79bdddfaae"
+  },
+  {
+    "file": "started.json",
+    "bytes": 195,
+    "sha256": "4161f2f989ad09cb45452e4d9f31ba55d8f2675403411dcfa840608604bd2988"
+  }
+]
