@@ -1,0 +1,24 @@
+{
+  "schema": "engine-research-catalog-acceptance-v1",
+  "status": "passed_readonly_csv_scope",
+  "engine_report_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\research-workbench-v2-20261115\\upstream-catalog-csv-readback.json",
+  "engine_report_sha256": "5246531081a55cb4bfbcc93fc324eb391a75b6db4d27edd25e17a7a77a14aabc",
+  "engine_script_path": "C:\\VScodeProject\\futures-decision-strategy\\.test-tmp\\workbench-v2-catalog-csv-readback.py",
+  "engine_script_sha256": "34a427509a63efeb6a01d1a4953bc25a813627166358e3f384a73f484eb2900d",
+  "local_replay_sha256": "76aec118628cb891a891f40169751e246998006f6f48ebcf1c9207dceeb30992",
+  "replay_changes": [
+    "absolute import directory only",
+    "report destination only"
+  ],
+  "report_byte_identical": true,
+  "candidates": 5351,
+  "nonempty_csvs": 1954,
+  "actual_rows": 377305,
+  "negative_controls": 6,
+  "financial_package_protocol_rejected": true,
+  "feed_integrated": false,
+  "price_semantics_accepted": false,
+  "calendar_or_lifecycle_accepted": false,
+  "financial_admission_added": 0,
+  "upstream_fix_requests": []
+}

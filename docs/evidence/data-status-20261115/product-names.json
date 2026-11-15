@@ -1,0 +1,634 @@
+{
+  "schema": "frozen-product-display-names-v1",
+  "source_manifest_sha256": "f72dea10c5f39b342c9ec6366f9d64e011c57cbd066ab2cc277c1da7347e3f69",
+  "source_path": "acquisitions/directory/symbols-response.gz",
+  "source_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "quarantined_identity_conflicts_retained": 51,
+  "products": {
+    "CFFEX.IC": {
+      "name": "中证",
+      "aliases": [
+        "中证"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.IF": {
+      "name": "沪深",
+      "aliases": [
+        "沪深"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.IH": {
+      "name": "上证",
+      "aliases": [
+        "上证"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.IM": {
+      "name": "IM",
+      "aliases": [
+        "IM"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.T": {
+      "name": "债十",
+      "aliases": [
+        "债十"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.TF": {
+      "name": "债五",
+      "aliases": [
+        "债五"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.TL": {
+      "name": "债三十",
+      "aliases": [
+        "债三十"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CFFEX.TS": {
+      "name": "债二",
+      "aliases": [
+        "债二"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.AP": {
+      "name": "苹果",
+      "aliases": [
+        "苹果"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.CF": {
+      "name": "棉花",
+      "aliases": [
+        "棉花"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.CJ": {
+      "name": "红枣",
+      "aliases": [
+        "红枣"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.CY": {
+      "name": "棉纱",
+      "aliases": [
+        "棉纱"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.FG": {
+      "name": "玻璃",
+      "aliases": [
+        "玻璃"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.JR": {
+      "name": "粳稻",
+      "aliases": [
+        "粳稻"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.LR": {
+      "name": "晚稻",
+      "aliases": [
+        "晚稻"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.MA": {
+      "name": "甲醇",
+      "aliases": [
+        "甲醇"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.OI": {
+      "name": "菜油",
+      "aliases": [
+        "菜油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PF": {
+      "name": "短纤",
+      "aliases": [
+        "短纤"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PK": {
+      "name": "花生仁",
+      "aliases": [
+        "花生仁"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PL": {
+      "name": "丙烯",
+      "aliases": [
+        "丙烯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PM": {
+      "name": "普麦",
+      "aliases": [
+        "普麦"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PR": {
+      "name": "瓶片",
+      "aliases": [
+        "瓶片"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.PX": {
+      "name": "对二甲苯",
+      "aliases": [
+        "对二甲苯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.RI": {
+      "name": "早稻",
+      "aliases": [
+        "早稻"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.RM": {
+      "name": "菜粕",
+      "aliases": [
+        "菜粕"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.RS": {
+      "name": "菜籽",
+      "aliases": [
+        "菜籽"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SA": {
+      "name": "纯碱",
+      "aliases": [
+        "纯碱"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SF": {
+      "name": "硅铁",
+      "aliases": [
+        "硅铁"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SH": {
+      "name": "烧碱",
+      "aliases": [
+        "烧碱"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SM": {
+      "name": "锰硅",
+      "aliases": [
+        "锰硅"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SO": {
+      "name": "葵花籽油",
+      "aliases": [
+        "葵花籽油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.SR": {
+      "name": "白糖",
+      "aliases": [
+        "白糖"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.TA": {
+      "name": "PTA",
+      "aliases": [
+        "PTA"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.UR": {
+      "name": "尿素",
+      "aliases": [
+        "尿素"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.WH": {
+      "name": "强麦",
+      "aliases": [
+        "强麦"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "CZCE.ZC": {
+      "name": "郑煤",
+      "aliases": [
+        "郑煤"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.a": {
+      "name": "豆一",
+      "aliases": [
+        "豆一"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.b": {
+      "name": "豆二",
+      "aliases": [
+        "豆二"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.bb": {
+      "name": "胶板",
+      "aliases": [
+        "胶板"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.bz": {
+      "name": "纯苯",
+      "aliases": [
+        "纯苯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.c": {
+      "name": "玉米",
+      "aliases": [
+        "玉米"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.cs": {
+      "name": "淀粉",
+      "aliases": [
+        "淀粉"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.eb": {
+      "name": "苯乙烯",
+      "aliases": [
+        "苯乙烯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.eg": {
+      "name": "甘醇",
+      "aliases": [
+        "甘醇"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.fb": {
+      "name": "纤板",
+      "aliases": [
+        "纤板"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.i": {
+      "name": "铁矿",
+      "aliases": [
+        "铁矿"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.j": {
+      "name": "焦炭",
+      "aliases": [
+        "焦炭"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.jd": {
+      "name": "鸡蛋",
+      "aliases": [
+        "鸡蛋"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.jm": {
+      "name": "焦煤",
+      "aliases": [
+        "焦煤"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.l": {
+      "name": "塑料",
+      "aliases": [
+        "塑料",
+        "聚乙烯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.lg": {
+      "name": "原木",
+      "aliases": [
+        "原木"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.lh": {
+      "name": "生猪",
+      "aliases": [
+        "生猪"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.m": {
+      "name": "豆粕",
+      "aliases": [
+        "豆粕"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.p": {
+      "name": "棕榈",
+      "aliases": [
+        "棕榈"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.pg": {
+      "name": "LPG",
+      "aliases": [
+        "LPG"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.pp": {
+      "name": "PP",
+      "aliases": [
+        "PP"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.rr": {
+      "name": "粳米",
+      "aliases": [
+        "粳米"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.v": {
+      "name": "PVC",
+      "aliases": [
+        "PVC"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "DCE.y": {
+      "name": "豆油",
+      "aliases": [
+        "豆油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "GFEX.lc": {
+      "name": "碳酸锂",
+      "aliases": [
+        "碳酸锂"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "GFEX.pd": {
+      "name": "钯",
+      "aliases": [
+        "钯"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "GFEX.ps": {
+      "name": "多晶硅",
+      "aliases": [
+        "多晶硅"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "GFEX.pt": {
+      "name": "铂",
+      "aliases": [
+        "铂"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "GFEX.si": {
+      "name": "工业硅",
+      "aliases": [
+        "工业硅"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "INE.bc": {
+      "name": "国际铜",
+      "aliases": [
+        "国际铜"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "INE.ec": {
+      "name": "欧线集运",
+      "aliases": [
+        "欧线集运"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "INE.lu": {
+      "name": "低硫燃料油",
+      "aliases": [
+        "低硫燃料油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "INE.nr": {
+      "name": "20号胶",
+      "aliases": [
+        "20号胶"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "INE.sc": {
+      "name": "原油",
+      "aliases": [
+        "原油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ad": {
+      "name": "铝合金",
+      "aliases": [
+        "铝合金"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ag": {
+      "name": "沪银",
+      "aliases": [
+        "沪银"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.al": {
+      "name": "沪铝",
+      "aliases": [
+        "沪铝"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ao": {
+      "name": "氧化铝",
+      "aliases": [
+        "氧化铝"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.au": {
+      "name": "沪金",
+      "aliases": [
+        "沪金"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.br": {
+      "name": "丁橡胶",
+      "aliases": [
+        "丁橡胶"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.bu": {
+      "name": "沥青",
+      "aliases": [
+        "沥青"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.cu": {
+      "name": "沪铜",
+      "aliases": [
+        "沪铜"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.fu": {
+      "name": "燃油",
+      "aliases": [
+        "燃油"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.hc": {
+      "name": "热卷",
+      "aliases": [
+        "热卷"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ni": {
+      "name": "沪镍",
+      "aliases": [
+        "沪镍"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.op": {
+      "name": "胶版纸",
+      "aliases": [
+        "胶版纸"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.pb": {
+      "name": "沪铅",
+      "aliases": [
+        "沪铅"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.rb": {
+      "name": "螺纹",
+      "aliases": [
+        "螺纹"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ru": {
+      "name": "橡胶",
+      "aliases": [
+        "橡胶"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.sn": {
+      "name": "沪锡",
+      "aliases": [
+        "沪锡"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.sp": {
+      "name": "纸浆",
+      "aliases": [
+        "纸浆"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.ss": {
+      "name": "不锈钢",
+      "aliases": [
+        "不锈钢"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.wr": {
+      "name": "线材",
+      "aliases": [
+        "线材"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    },
+    "SHFE.zn": {
+      "name": "沪锌",
+      "aliases": [
+        "沪锌"
+      ],
+      "source": "vendor snapshot ins_name; display only"
+    }
+  }
+}

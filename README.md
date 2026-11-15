@@ -2,6 +2,8 @@
 
 中国期货的行情数据层：拉取、持久化、算指标，并向回测引擎提供可步进的多周期视图。
 
+数据资料范围请看 **[各交易所与品种数据情况总览](docs/data-status.html)**（下载后可离线筛选），另有[Markdown表](docs/data-status.md)和[维护说明](docs/data-status-maintenance-plan.md)。该表区分主目录、其他样本、参考对照、历史日历及未解决缺口，不替代下方软件实现状态表或授予回测准入。
+
 > 哪些包已实现、哪些还没开始，只记在 [contract.md 〇](docs/contract.md) 那张状态表里（它有守卫）；
 > 排期只记在 [design.md 十五](docs/design.md)。这里不抄第二份。已发布的版本以 `git tag -l --sort=version:refname` 为准（不带 `--sort` 是字典序，v0.10.0 会排到 v0.1.0 与 v0.2.0 之间）。
 

@@ -1,0 +1,35 @@
+{
+  "schema": "data-status-source-mutations-v1",
+  "mutations": [
+    {
+      "mutation": "empty",
+      "target": "test_page_model.StatusModelTest.test_empty_coverage_and_supplement_scope_cannot_be_promoted",
+      "exit_code": 1,
+      "target_reason": "ValueError not raised",
+      "log_sha256": "ddd06ac8043ec9992ecc109277b26e00a1b9b4aef316e2830bce2a56046c8376"
+    },
+    {
+      "mutation": "totals",
+      "target": "test_page_model.StatusModelTest.test_missing_contract_counter_and_scope_mutations_are_rejected",
+      "exit_code": 1,
+      "target_reason": "ValueError not raised",
+      "log_sha256": "25b2dad012690526c1ac0f5cc8f90e58dd3ea2e1fbf133ba75035105635466eb"
+    },
+    {
+      "mutation": "repo_sha",
+      "target": "test_page_model.StatusModelTest.test_repo_metadata_same_length_tamper_is_rejected",
+      "exit_code": 1,
+      "target_reason": "ValueError not raised",
+      "log_sha256": "2dd3b1857a73c042ca11f1f47c8b1d5edddcf8aa670d05f9e64ad4b6b127d3ec"
+    },
+    {
+      "mutation": "html_drift",
+      "target": "test_page_model.StatusModelTest.test_manual_html_edit_and_changed_published_model_are_rejected",
+      "exit_code": 1,
+      "target_reason": "ValueError not raised",
+      "log_sha256": "89c428607d4c5908530a34f334475d499791dc64902291a9b438b32dca61c1b0"
+    }
+  ],
+  "positive_status_tests": 13,
+  "original_sources_unchanged": true
+}

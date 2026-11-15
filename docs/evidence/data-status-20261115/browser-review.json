@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "products": 89,
+  "checks": [
+    "all-products",
+    "exchange-filter",
+    "supplementary-not-no-data",
+    "chinese-search",
+    "detail-boundaries",
+    "difference-filter",
+    "cffex-unauthenticated",
+    "no-match",
+    "mobile-width"
+  ],
+  "page_errors": [],
+  "remote_requests": [],
+  "price_or_admission_changed": false
+}

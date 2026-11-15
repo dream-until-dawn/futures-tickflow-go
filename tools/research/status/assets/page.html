@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>期货数据情况 · 按交易所与品种</title>
+<style>@@STYLE@@</style>
+</head>
+<body>
+<header><div class="eyebrow">FUTURES TICKFLOW / 数据资料台账</div>
+<h1>每个品种，数据到哪一步了</h1>
+<p class="intro">来源、实际取得范围、对照与缺口，放在同一张表里。<strong>研究可获得性 ≠ 完整历史 ≠ 回测准入。</strong></p>
+<div class="meta"><span id="snapshot"></span><span>仅元数据 · 可离线使用</span><span class="tag warn">金融准入保持原状</span></div>
+</header>
+<main>
+<section class="kpis" id="kpis" aria-label="主目录全局统计"></section>
+<section class="notice"><strong>先看这三个区别</strong><div class="notice-grid">
+<p><b>主目录不是全项目数据量</b><br>大商所、广期所主目录零行，仍可能有右侧列出的其他供应商样本；各路线不重复加总。</p>
+<p><b>取样比例不是完整率</b><br>非空合约/候选数只表示本路线取得情况。首末日期是合约并集跨度，中间及生命周期仍可能缺数据。</p>
+<p><b>零差异不是核验完成</b><br>无参考不叫一致。中金所参考为明文HTTP；已有制度日历也不自动认证价格或允许完整回测。</p>
+</div></section>
+<section class="exchanges" id="exchanges" aria-label="交易所快速筛选"></section>
+<section class="workspace">
+<div class="toolbar"><div><h2>交易所 × 品种</h2><p id="visible-count" aria-live="polite"></p></div>
+<div class="controls">
+<label>搜索品种<input id="search" type="search" placeholder="中文名称、rb、螺纹钢…"></label>
+<label>交易所<select id="exchange"><option value="">全部交易所</option></select></label>
+<label>资料状态<select id="state"><option value="">全部状态</option><option value="primary">主目录有研究日线</option><option value="sample_only">仅有其他路线样本</option><option value="directory_only">本页仅有目录</option><option value="difference">存在主目录价量待核</option><option value="calendar_gap">存在日历缺证</option></select></label>
+<label>排序<select id="sort"><option value="default">按交易所与代码</option><option value="rows">主目录行数最多</option><option value="differences">主目录待核字段最多</option><option value="unrequested">本路线未请求最多</option></select></label>
+<button id="reset" class="secondary" type="button">清除筛选</button>
+</div></div>
+<div class="table-wrap"><table><thead><tr><th>品种</th><th>日线主目录</th><th>实际观察期</th><th>参考与质量</th><th>已有制度日历</th><th>其他已取样本</th><th>当前结论</th></tr></thead><tbody id="products"></tbody></table></div>
+<p id="empty" hidden>没有匹配的品种。请调整搜索或筛选条件。</p>
+</section>
+<section class="bottom-grid">
+<article><h2>能确认到哪一层</h2><p>主目录已核原件字节身份、行数和日期标签；其他样本是冻结元数据复用，本轮未重数其原CSV。价格语义、零成交OHLC、盘后量仓、官方生命周期、PIT及全市场完整性仍有缺口，不给虚构置信百分比。</p><p><b>结算/金额：</b>参考原表已有这些列（范围同参考，不代表每行有值或单位已核）；主EDB源无这两列，尚未对账或统一交付。新浪结算样本也不能自动补入，逐品种详情另列。</p></article>
+<article><h2>引擎独立验收</h2><p id="engine-status"></p><p>研究目录仍未接入任务Feed；价格、规则、日历及生命周期语义未由本次验收认证。严格金融包协议继续拒绝研究manifest；已有其他资料包的既定范围不由本页改变。</p></article>
+<article><h2>维护与原始依据</h2><p>本页从冻结研究目录、逐合约报告、已冻结制度日历和其他样本元数据生成；显示中文别名仅方便阅读，不作官方挂牌证据。</p><p><a href="data-status.md">完整Markdown表</a> · <a href="data-status.json">机器可读模型</a> · <a href="data-status-maintenance-plan.md">维护与验收记录</a> · <a href="consumer-maintenance.md">使用者维护手册</a></p></article>
+</section>
+<footer><p id="difference-note"></p><p>完整空响应、未报价字段、无参考日期、参考缺日及日历未知分别保留，不自动填数。</p><p>EDB口径、PK2021及其他缺证项待决；受阻入口不重试，未扩大回测准入，未打tag。</p><code id="catalog-sha"></code></footer>
+</main>
+<dialog id="detail"><div class="dialog-head"><h2 id="detail-title"></h2><button id="close-detail" type="button" aria-label="关闭详情">关闭</button></div><div id="detail-body"></div></dialog>
+<script id="status-data" type="application/json">@@DATA@@</script>
+<script>@@SCRIPT@@</script>
+</body>
+</html>
