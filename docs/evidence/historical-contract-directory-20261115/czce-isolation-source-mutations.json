@@ -1,0 +1,32 @@
+{
+  "schema": "czce-isolation-source-mutations-v1",
+  "source_sha256": "bd9d8d65d015a3ba01825fd36034f0ffb269ffd24eccfa8020d450507712b2bb",
+  "positive": "unmutated targeted Go tests passed",
+  "network_requests": 0,
+  "results": [
+    {
+      "mutation": "http-status",
+      "target_test": "^TestCzceEmptyIsolationRejectsPartialErrorAndReboundReceipt$",
+      "target_assertion": "错误/截断/重绑定被当空数据隔离",
+      "mutated_code_compiled": true,
+      "rejected": true,
+      "log": "C:/Temp/tickflow-czce-isolation-mutation-http-status-20261115.log"
+    },
+    {
+      "mutation": "unattempted-set",
+      "target_test": "^TestCzceRemainingSetCannotIncludeAttemptedOrUnknownState$",
+      "target_assertion": "重取失败URL",
+      "mutated_code_compiled": true,
+      "rejected": true,
+      "log": "C:/Temp/tickflow-czce-isolation-mutation-unattempted-set-20261115.log"
+    },
+    {
+      "mutation": "global-stop",
+      "target_test": "^TestCzceIsolationContinuesEmptyButStopsOtherFailure$",
+      "target_assertion": "续取或停止计数错误",
+      "mutated_code_compiled": true,
+      "rejected": true,
+      "log": "C:/Temp/tickflow-czce-isolation-mutation-global-stop-20261115.log"
+    }
+  ]
+}

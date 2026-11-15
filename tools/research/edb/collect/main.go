@@ -379,21 +379,40 @@ func run() error {
 	research := flag.Bool("daily-research-pilot", false, "日线限定：原C2105/M2105/SI2308观察代码三项研究批，不猜月码")
 	priorResearch := flag.String("prior-research-dir", "", "三份旧供应商观察原件目录；仅研究批使用")
 	directoryPlanFile := flag.String("daily-directory-plan", "", "固定SHA执行单，目录和官方合约行双重核验")
+	czceContinuation := flag.String("czce-empty-continuation", "", "用户已选择空表头隔离后的固定164项候选，不重复旧请求")
+	czcePriorRoot := flag.String("czce-prior-root", "", "已封存且停止的旧183项原始目录，只读验证")
 	prepareOnly := flag.Bool("prepare-only", false, "仅目录日线单离线预检，不创建启动标记或网络请求")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
 	}
-	if *prepareOnly && *directoryPlanFile == "" {
+	if *prepareOnly && *directoryPlanFile == "" && *czceContinuation == "" {
 		return fmt.Errorf("prepare-only必须给目录日线执行单")
 	}
 	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) || (*directoryPlanFile != "" && (*anchor || *research || *priorEmpty != "")) {
 		return fmt.Errorf("不能混用独立日期窗和旧计划续取")
 	}
+	if (*czceContinuation == "") != (*czcePriorRoot == "") || (*czceContinuation != "" && (*directoryPlanFile != "" || *anchor || *research || *priorEmpty != "" || *priorResearch != "")) {
+		return fmt.Errorf("隔离续取必须明确父目录，不得混用其他模式")
+	}
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
 	selected := jobs()
+	if *czceContinuation != "" {
+		var err error
+		selected, err = czceRemainingJobs(*czceContinuation, *czcePriorRoot)
+		if err != nil {
+			return err
+		}
+		if *prepareOnly {
+			fmt.Printf("隔离续取离线预检通过：%d项；请求0；旧失败收据不改写\n", len(selected))
+			return nil
+		}
+		if err = reserveDirectoryPlanAt(czceContinuationMarker, *root); err != nil {
+			return err
+		}
+	}
 	if *directoryPlanFile != "" {
 		var err error
 		selected, err = directoryJobs(*directoryPlanFile)
@@ -454,6 +473,9 @@ func run() error {
 		}
 		return results[0], nil
 	})
+	if *czceContinuation != "" {
+		return collectCzceIsolated(*root, selected, fetch)
+	}
 	if len(selected) > 128 {
 		return collectChunks(*root, selected, 128, fetch)
 	}
