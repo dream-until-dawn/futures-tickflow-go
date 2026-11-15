@@ -29,6 +29,10 @@ func candidates() []batch.Job {
 	}
 }
 
+func cyCandidate() batch.Job {
+	return batch.Job{ID: "cy-night-change", URL: "https://www.xfqh.cn/dt/142.52358.html", Format: "html", Version: "broker-trading-reminder-unqualified"}
+}
+
 // validate 仅核传输内容格式；完整规则/日期/许可须另行离线复核，received不表示准入。
 func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
@@ -42,7 +46,7 @@ func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 		return fmt.Errorf("候选不是HTML文档")
 	} else {
 		// 200挑战/空壳不得当正文继续同主机；标题只作取证停止门禁，不作资格认证。
-		markers := map[string]string{"pk-release": "花生期货合约及业务规则", "czce-year2024-reprint": "节假日休市安排", "zhunda-docs": "future_minute"}
+		markers := map[string]string{"pk-release": "花生期货合约及业务规则", "czce-year2024-reprint": "节假日休市安排", "zhunda-docs": "future_minute", "cy-night-change": "全部夜盘交易品种"}
 		if marker := markers[job.ID]; marker == "" || !bytes.Contains(body, []byte(marker)) {
 			return fmt.Errorf("未取得预期业务正文，停止该主机")
 		}
@@ -58,10 +62,14 @@ type observation struct {
 
 // collect 在未知/失败后停止同主机，仍可核其他独立主机；全新根目录保证不能重发旧计划。
 func collect(root string, fetch func(batch.Job) (batch.Result, error)) error {
+	return collectJobs(root, candidates(), fetch)
+}
+
+func collectJobs(root string, jobs []batch.Job, fetch func(batch.Job) (batch.Result, error)) error {
 	if err := os.Mkdir(root, 0700); err != nil {
 		return fmt.Errorf("既有/未知目录禁止采集: %w", err)
 	}
-	plan := map[string]any{"jobs": candidates(), "requests_max": 6, "bytes_per_response_max": 8 << 20, "timeout_seconds": 15, "interval_seconds": 1, "calendar_qualified": false, "market_data_requests": 0}
+	plan := map[string]any{"jobs": jobs, "requests_max": len(jobs), "bytes_per_response_max": 8 << 20, "timeout_seconds": 15, "interval_seconds": 1, "calendar_qualified": false, "market_data_requests": 0}
 	raw, err := json.MarshalIndent(plan, "", "  ")
 	if err != nil {
 		return err
@@ -72,7 +80,7 @@ func collect(root string, fetch func(batch.Job) (batch.Result, error)) error {
 	blocked := map[string]bool{}
 	var results []observation
 	failed := false
-	for _, job := range candidates() {
+	for _, job := range jobs {
 		u, _ := url.Parse(job.URL) // 地址是本文件冻结的常量，没有用户输入URL。
 		item := observation{ID: job.ID, State: "blocked_after_host_failure"}
 		if !blocked[u.Hostname()] {
@@ -104,13 +112,18 @@ func collect(root string, fetch func(batch.Job) (batch.Result, error)) error {
 
 func main() {
 	root := flag.String("root", "", "必须全新仓外目录")
+	cyOnly := flag.Bool("cy-only", false, "另批仅核新发现的先锋CY调整提醒，不重复原六项")
 	flag.Parse()
 	if *root == "" {
 		fmt.Fprintln(os.Stderr, "缺少root")
 		os.Exit(1)
 	}
 	var last time.Time
-	err := collect(*root, func(job batch.Job) (batch.Result, error) {
+	jobs := candidates()
+	if *cyOnly {
+		jobs = []batch.Job{cyCandidate()}
+	}
+	err := collectJobs(*root, jobs, func(job batch.Job) (batch.Result, error) {
 		if wait := time.Until(last.Add(time.Second)); !last.IsZero() && wait > 0 {
 			time.Sleep(wait)
 		}
