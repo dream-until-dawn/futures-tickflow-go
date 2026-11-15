@@ -122,4 +122,9 @@ func TestHistoricalDirectoryOfflineProductConflictsRemainSeparate(t *testing.T) 
 	if _, err = decodeGzipWithPolicy(bytes.NewReader(compressed(raw[:len(raw)-1])), 1<<20, true); err == nil {
 		t.Fatal("离线隔离也必须完整")
 	}
+	foreignShape := strings.Replace(raw, `"CZCE.SR105"`, `"CZCE.SR105F"`, 1)
+	got, err := decodeGzipWithPolicy(bytes.NewReader(compressed(foreignShape)), 1<<20, true)
+	if err == nil || len(got.Contracts) != 0 {
+		t.Fatal("全是冲突不得成为可选目录", got, err)
+	}
 }

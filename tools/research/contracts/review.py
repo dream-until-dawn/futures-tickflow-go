@@ -34,7 +34,7 @@ def summarize(inventory, official):
                 selected_by_delivery_year=dict(sorted(Counter(str(c['delivery_year']) for c in eligible).items())),
                 official_observed_contracts=len(observed), official_present_in_snapshot=len(observed & keys),
                 official_absent_from_snapshot=sorted(observed - keys),
-                product_identity_conflicts=inventory.get('product_identity_conflicts', []),
+                identity_conflicts=inventory.get('identity_conflicts', []),
                 evidence_scope='official existing decoded rows cross-check, not new full annual re-decoding',
                 listing_dates_available=False, point_in_time_catalog=False,
                 complete_historical_listing_certified=False, financial_admission_expanded=False)

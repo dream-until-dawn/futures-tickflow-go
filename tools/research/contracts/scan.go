@@ -19,13 +19,14 @@ type contract struct {
 	Year      int         `json:"delivery_year"`
 	Month     int         `json:"delivery_month"`
 	Expiry    json.Number `json:"expiry_seconds"`
+	Conflict  string      `json:"conflict,omitempty"`
 }
 
 type inventory struct {
 	ByClass   map[string]int `json:"by_class"`
 	ByMarket  map[string]int `json:"by_market"`
 	Contracts []contract     `json:"contracts"`
-	Conflicts []contract     `json:"product_identity_conflicts"`
+	Conflicts []contract     `json:"identity_conflicts"`
 }
 
 var futureKey = regexp.MustCompile(`^([A-Za-z]+)([0-9]{3,4})$`)
@@ -88,7 +89,16 @@ func scanWithPolicy(r io.Reader, quarantine bool) (inventory, error) {
 			return inventory{}, fmt.Errorf("catalog_identity: %s", key)
 		}
 		match := futureKey.FindStringSubmatch(parts[1])
+		expiry, err := strconv.ParseFloat(string(entry.Expiry), 64)
+		if err != nil || !(expiry > 0 && expiry < 1e11) {
+			return inventory{}, fmt.Errorf("catalog_expiry: %s", key)
+		}
+		canonical := fmt.Sprintf("%s.%s%02d%02d", entry.Exchange, entry.Product, entry.Year%100, entry.Month)
 		if match == nil {
+			if quarantine {
+				result.Conflicts = append(result.Conflicts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry, "source_key_shape"})
+				continue
+			}
 			return inventory{}, fmt.Errorf("catalog_product: %s", key)
 		}
 		yearDigits := 2
@@ -102,23 +112,18 @@ func scanWithPolicy(r io.Reader, quarantine bool) (inventory, error) {
 		if match[2] != fmt.Sprintf("%0*d%02d", yearDigits, entry.Year%yearMod, entry.Month) {
 			return inventory{}, fmt.Errorf("catalog_delivery: %s", key)
 		}
-		expiry, err := strconv.ParseFloat(string(entry.Expiry), 64)
-		if err != nil || !(expiry > 0 && expiry < 1e11) {
-			return inventory{}, fmt.Errorf("catalog_expiry: %s", key)
-		}
-		canonical := fmt.Sprintf("%s.%s%02d%02d", entry.Exchange, entry.Product, entry.Year%100, entry.Month)
 		if match[1] != entry.Product {
 			if !quarantine {
 				return inventory{}, fmt.Errorf("catalog_product: %s", key)
 			}
-			result.Conflicts = append(result.Conflicts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry})
+			result.Conflicts = append(result.Conflicts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry, "source_product_mismatch"})
 			continue
 		}
 		if canonicalSeen[canonical] {
 			return inventory{}, fmt.Errorf("catalog_duplicate_identity: %s", canonical)
 		}
 		canonicalSeen[canonical] = true
-		result.Contracts = append(result.Contracts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry})
+		result.Contracts = append(result.Contracts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry, ""})
 	}
 	if token, err := d.Token(); err != nil || token != json.Delim('}') {
 		return inventory{}, fmt.Errorf("catalog_end: %v", err)
