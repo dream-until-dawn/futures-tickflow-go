@@ -134,11 +134,14 @@ type outcome struct {
 }
 
 func collect(root string, fetch func(batch.Job) (batch.Result, error)) error {
+	return collectSelected(root, jobs(), fetch)
+}
+
+func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (batch.Result, error)) error {
 	if err := os.Mkdir(root, 0700); err != nil {
 		return fmt.Errorf("既有/未知目录禁止重发: %w", err)
 	}
-	planned := jobs()
-	plan := map[string]any{"jobs": planned, "requests_max": 4, "actual_bytes_total_max": 8 << 20, "actual_bytes_per_response_max": 2 << 20, "timeout_seconds": 15, "interval_seconds": 2, "document_sha256": docSHA, "official_baseline_sha256": baselineSHA, "token_used": false, "financial_eligible": false}
+	plan := map[string]any{"jobs": planned, "requests_max": len(planned), "original_all_phase_requests_max": 4, "actual_bytes_total_max": int64(len(planned)) * (2 << 20), "actual_bytes_per_response_max": 2 << 20, "timeout_seconds": 15, "interval_seconds": 2, "document_sha256": docSHA, "official_baseline_sha256": baselineSHA, "token_used": false, "financial_eligible": false}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
 		return err
@@ -168,10 +171,93 @@ func collect(root string, fetch func(batch.Job) (batch.Result, error)) error {
 	return failure
 }
 
+// continuationEmpty 仅允许已完整确认的首个空CSV资源之后取未尝试项；
+// HTTP错误、截断、未知状态、改写旧计划或已有后续启动都不能绕过。
+func continuationEmpty(root string) error {
+	if _, err := os.Stat(filepath.Join(root, "continuation-started.json")); !os.IsNotExist(err) {
+		return fmt.Errorf("后续已有/未知启动，不得重试")
+	}
+	read := func(name string, target any) error {
+		raw, err := os.ReadFile(filepath.Join(root, name))
+		if err != nil {
+			return err
+		}
+		return json.Unmarshal(raw, target)
+	}
+	var plan struct {
+		Jobs []batch.Job `json:"jobs"`
+	}
+	if err := read("plan.json", &plan); err != nil {
+		return err
+	}
+	actual, _ := json.Marshal(plan.Jobs)
+	expected, _ := json.Marshal(jobs())
+	if !bytes.Equal(actual, expected) {
+		return fmt.Errorf("旧计划不符，禁止后续")
+	}
+	var receipt batch.Receipt
+	if err := read("archive/ec2602-86400.json", &receipt); err != nil {
+		return err
+	}
+	body, err := os.ReadFile(filepath.Join(root, "archive/ec2602-86400.body"))
+	if err != nil {
+		return err
+	}
+	h := receipt.HTTP
+	jobRaw, _ := json.Marshal(jobs()[0])
+	if !bytes.Equal(body, []byte("datetime_nano,open,high,low,close,volume,open_oi,close_oi\r\n")) || receipt.Evidence.Verify(body) != nil || receipt.Bytes != int64(len(body)) || receipt.State != "failed" || receipt.BodyState != "complete" || receipt.JobSHA != digest(jobRaw) || receipt.Evidence.URL != jobs()[0].URL || h == nil || h.Status != 200 || !h.Complete || !h.Attempted || !h.ResponseReceived || h.FinalURL != jobs()[0].URL || h.Failure != "" {
+		return fmt.Errorf("仅完整200空表头资源允许未尝试项后续，权限/超时/未知均拒绝")
+	}
+	var results []outcome
+	if err := read("results.json", &results); err != nil {
+		return err
+	}
+	entries, err := os.ReadDir(filepath.Join(root, "archive"))
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		if entry.Name() != "ec2602-86400.json" && entry.Name() != "ec2602-86400.body" {
+			return fmt.Errorf("额外旧启动/收据/锁未知，禁止后续")
+		}
+	}
+	if len(results) != 4 || results[0].ID != jobs()[0].ID || results[0].State != "failed" {
+		return fmt.Errorf("旧结果未知")
+	}
+	for i := 1; i < 4; i++ {
+		if results[i].ID != jobs()[i].ID || results[i].State != "not_run" {
+			return fmt.Errorf("后续已有启动，拒绝重复")
+		}
+		if _, err := os.Stat(filepath.Join(root, "archive", jobs()[i].ID+".json")); !os.IsNotExist(err) {
+			return fmt.Errorf("后续有收据或状态未知")
+		}
+	}
+	return nil
+}
+
+// reserveContinuation 在原批次追加一次性启动记录；新目录不能重置已用许可/未知启动。
+func reserveContinuation(priorRoot, targetRoot string) error {
+	if _, err := os.Stat(targetRoot); !os.IsNotExist(err) {
+		return fmt.Errorf("后续输出目录已有或未知")
+	}
+	f, err := os.OpenFile(filepath.Join(priorRoot, "continuation-started.json"), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if err != nil {
+		return fmt.Errorf("后续启动记录已存在或未知: %w", err)
+	}
+	raw, _ := json.Marshal(map[string]any{"target_root": targetRoot, "planned_ids": []string{"ec2602-60", "br2601-86400", "br2601-60"}, "started_at": time.Now().UTC(), "first_empty_not_retried": true})
+	_, err = f.Write(append(raw, '\n'))
+	closeErr := f.Close()
+	if err != nil {
+		return err
+	}
+	return closeErr
+}
+
 func run() error {
 	root := flag.String("root", "", "必须全新仓外样本目录")
 	docRoot := flag.String("document-root", "", "既有EDB文档归档根")
 	baseline := flag.String("official-baseline", "", "已冻结官方对照基线")
+	priorEmpty := flag.String("prior-empty-root", "", "另批复核完整空表头后，仅取原计划尚未尝试三项")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
@@ -179,8 +265,18 @@ func run() error {
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
+	selected := jobs()
+	if *priorEmpty != "" {
+		if err := continuationEmpty(*priorEmpty); err != nil {
+			return err
+		}
+		if err := reserveContinuation(*priorEmpty, *root); err != nil {
+			return err
+		}
+		selected = selected[1:]
+	}
 	var last time.Time
-	return collect(*root, func(j batch.Job) (batch.Result, error) {
+	return collectSelected(*root, selected, func(j batch.Job) (batch.Result, error) {
 		if delay := time.Until(last.Add(2 * time.Second)); !last.IsZero() && delay > 0 {
 			time.Sleep(delay)
 		}

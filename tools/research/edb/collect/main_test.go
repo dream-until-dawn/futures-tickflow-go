@@ -74,3 +74,53 @@ func TestEDBDataRequiresLockedCompleteDocument(t *testing.T) {
 		t.Fatal("换文档放行取数")
 	}
 }
+
+func TestEDBContinuationOnlyAcceptsCompleteEmptyAndReservesOnce(t *testing.T) {
+	root := t.TempDir()
+	os.Mkdir(filepath.Join(root, "archive"), 0700)
+	write := func(name string, value any) {
+		raw, _ := json.Marshal(value)
+		if err := os.WriteFile(filepath.Join(root, name), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("plan.json", map[string]any{"jobs": jobs()})
+	results := make([]outcome, 4)
+	for i, j := range jobs() {
+		state := "not_run"
+		if i == 0 {
+			state = "failed"
+		}
+		results[i] = outcome{ID: j.ID, State: state}
+	}
+	write("results.json", results)
+	body := []byte("datetime_nano,open,high,low,close,volume,open_oi,close_oi\r\n")
+	os.WriteFile(filepath.Join(root, "archive/ec2602-86400.body"), body, 0600)
+	jobRaw, _ := json.Marshal(jobs()[0])
+	receipt := batch.Receipt{JobSHA: digest(jobRaw), State: "failed", BodyState: "complete", Bytes: int64(len(body)), Evidence: evidence.Ref{ID: jobs()[0].ID, URL: jobs()[0].URL, SHA256: digest(body), RetrievedAt: time.Now().UTC()}, HTTP: &batch.Download{Status: 200, Attempted: true, ResponseReceived: true, Complete: true, FinalURL: jobs()[0].URL}}
+	for _, status := range []int{200, 403, 412, 500, 0} {
+		receipt.HTTP.Status = status
+		write("archive/ec2602-86400.json", receipt)
+		if err := continuationEmpty(root); (err == nil) != (status == 200) {
+			t.Fatal("完整空资源/权限门禁失效", status, err)
+		}
+	}
+	receipt.HTTP.Status = 200
+	receipt.BodyState = "partial"
+	write("archive/ec2602-86400.json", receipt)
+	if err := continuationEmpty(root); err == nil {
+		t.Fatal("截断原件允许后续")
+	}
+	receipt.BodyState = "complete"
+	write("archive/ec2602-86400.json", receipt)
+	target := filepath.Join(t.TempDir(), "new")
+	if err := reserveContinuation(root, target); err != nil {
+		t.Fatal(err)
+	}
+	if err := continuationEmpty(root); err == nil {
+		t.Fatal("持久旧启动被重置")
+	}
+	if err := reserveContinuation(root, filepath.Join(t.TempDir(), "other")); err == nil {
+		t.Fatal("换目录重启后续")
+	}
+}
