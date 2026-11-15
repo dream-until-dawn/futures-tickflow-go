@@ -42,6 +42,17 @@ func vendorAccessCandidates() []batch.Job {
 	}
 }
 
+func edbDocumentCandidate() batch.Job {
+	return batch.Job{ID: "edb-public-document", URL: "https://doc.shinnytech.com/edb/latest/md_server.html", Format: "html", Version: "shinny-edb-public-document-unqualified"}
+}
+
+func responseLimit(job batch.Job) int64 {
+	if job.ID == "edb-public-document" {
+		return 2 << 20
+	}
+	return 8 << 20
+}
+
 // validate 仅核传输内容格式；完整规则/日期/许可须另行离线复核，received不表示准入。
 func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
@@ -57,6 +68,7 @@ func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 		// 200挑战/空壳不得当正文继续同主机；标题只作取证停止门禁，不作资格认证。
 		markers := map[string]string{"pk-release": "花生期货合约及业务规则", "czce-year2024-reprint": "节假日休市安排", "zhunda-docs": "future_minute", "cy-night-change": "全部夜盘交易品种"}
 		markers["vendor-home"], markers["vendor-history-api"], markers["vendor-realtime-api"] = "准数据", "x-api-key", "timestamp"
+		markers["edb-public-document"] = "免费访问"
 		if marker := markers[job.ID]; marker == "" || !bytes.Contains(body, []byte(marker)) {
 			return fmt.Errorf("未取得预期业务正文，停止该主机")
 		}
@@ -79,7 +91,11 @@ func collectJobs(root string, jobs []batch.Job, fetch func(batch.Job) (batch.Res
 	if err := os.Mkdir(root, 0700); err != nil {
 		return fmt.Errorf("既有/未知目录禁止采集: %w", err)
 	}
-	plan := map[string]any{"jobs": jobs, "requests_max": len(jobs), "bytes_per_response_max": 8 << 20, "timeout_seconds": 15, "interval_seconds": 1, "calendar_qualified": false, "market_data_requests": 0}
+	limits := map[string]int64{}
+	for _, job := range jobs {
+		limits[job.ID] = responseLimit(job)
+	}
+	plan := map[string]any{"jobs": jobs, "requests_max": len(jobs), "bytes_per_response_max": limits, "timeout_seconds": 15, "interval_seconds": 1, "calendar_qualified": false, "market_data_requests": 0}
 	raw, err := json.MarshalIndent(plan, "", "  ")
 	if err != nil {
 		return err
@@ -124,8 +140,15 @@ func main() {
 	root := flag.String("root", "", "必须全新仓外目录")
 	cyOnly := flag.Bool("cy-only", false, "另批仅核新发现的先锋CY调整提醒，不重复原六项")
 	vendorOnly := flag.Bool("vendor-access-only", false, "另批仅核三个公开文档，不取市场数据/样例包或重跑旧项")
+	edbDocOnly := flag.Bool("edb-doc-only", false, "另批仅核EDB公开文档，不发业务GET或获取token")
 	flag.Parse()
-	if *root == "" || (*cyOnly && *vendorOnly) {
+	modes := 0
+	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly} {
+		if selected {
+			modes++
+		}
+	}
+	if *root == "" || modes > 1 {
 		fmt.Fprintln(os.Stderr, "缺少root或混用了独立批次模式")
 		os.Exit(1)
 	}
@@ -136,6 +159,9 @@ func main() {
 	}
 	if *vendorOnly {
 		jobs = vendorAccessCandidates()
+	}
+	if *edbDocOnly {
+		jobs = []batch.Job{edbDocumentCandidate()}
 	}
 	err := collectJobs(*root, jobs, func(job batch.Job) (batch.Result, error) {
 		if wait := time.Until(last.Add(time.Second)); !last.IsZero() && wait > 0 {
@@ -150,12 +176,13 @@ func main() {
 			}
 			return proxy, e
 		}
-		d, e := batch.NewDownloader(&http.Client{Transport: transport}, batch.Limits{Requests: 1, Bytes: (8 << 20) - 1, Interval: time.Second, Timeout: 15 * time.Second})
+		limit := responseLimit(job)
+		d, e := batch.NewDownloader(&http.Client{Transport: transport}, batch.Limits{Requests: 1, Bytes: limit - 1, Interval: time.Second, Timeout: 15 * time.Second})
 		if e != nil {
 			return batch.Result{}, e
 		}
 		last = time.Now()
-		results, e := batch.Run(context.Background(), filepath.Join(*root, "archive"), []batch.Job{job}, d, 8<<20, validate)
+		results, e := batch.Run(context.Background(), filepath.Join(*root, "archive"), []batch.Job{job}, d, limit, validate)
 		n, size := d.Usage()
 		fmt.Printf("%s actual_attempts=%d actual_bytes=%d\n", job.ID, n, size)
 		if e != nil {

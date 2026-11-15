@@ -98,3 +98,18 @@ func TestVendorAccessModeOnlyCollectsThreePublicDocuments(t *testing.T) {
 		t.Fatal("同一供应商未知后仍继续", calls, err)
 	}
 }
+
+func TestEDBDocumentPhaseDoesNotIncludeMarketOrToken(t *testing.T) {
+	j := edbDocumentCandidate()
+	calls := 0
+	err := collectJobs(filepath.Join(t.TempDir(), "edb-doc"), []batch.Job{j}, func(job batch.Job) (batch.Result, error) {
+		calls++
+		if job.URL != "https://doc.shinnytech.com/edb/latest/md_server.html" || responseLimit(job) != 2<<20 {
+			t.Fatal("EDB文档范围或预算被扩展", job)
+		}
+		return batch.Result{Receipt: batch.Receipt{State: "received"}}, nil
+	})
+	if err != nil || calls != 1 {
+		t.Fatal(err, calls)
+	}
+}
