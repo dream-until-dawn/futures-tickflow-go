@@ -1,0 +1,287 @@
+{
+  "schema": "edb-daily-vendor-cross-check-v1",
+  "results": {
+    "DCE.c2105": {
+      "rows": 89,
+      "first_day": "2021-01-04",
+      "last_day": "2021-05-19",
+      "overlapping_days": 87,
+      "matched_values": 502,
+      "differences": [
+        {
+          "day": "2021-01-05",
+          "field": "volume",
+          "edb": "472285",
+          "sina": "472262"
+        },
+        {
+          "day": "2021-01-05",
+          "field": "open_interest",
+          "edb": "1094574",
+          "sina": "1094596"
+        },
+        {
+          "day": "2021-01-07",
+          "field": "volume",
+          "edb": "510463",
+          "sina": "510450"
+        },
+        {
+          "day": "2021-01-08",
+          "field": "close",
+          "edb": "2836",
+          "sina": "2835.000"
+        },
+        {
+          "day": "2021-01-08",
+          "field": "volume",
+          "edb": "630350",
+          "sina": "630344"
+        },
+        {
+          "day": "2021-01-08",
+          "field": "open_interest",
+          "edb": "1116754",
+          "sina": "1116759"
+        },
+        {
+          "day": "2021-01-18",
+          "field": "volume",
+          "edb": "727775",
+          "sina": "727752"
+        },
+        {
+          "day": "2021-01-18",
+          "field": "open_interest",
+          "edb": "1102730",
+          "sina": "1102739"
+        },
+        {
+          "day": "2021-01-22",
+          "field": "volume",
+          "edb": "832591",
+          "sina": "832473"
+        },
+        {
+          "day": "2021-01-22",
+          "field": "open_interest",
+          "edb": "1047012",
+          "sina": "1046926"
+        },
+        {
+          "day": "2021-01-26",
+          "field": "volume",
+          "edb": "502124",
+          "sina": "502120"
+        },
+        {
+          "day": "2021-01-26",
+          "field": "open_interest",
+          "edb": "994151",
+          "sina": "994152"
+        },
+        {
+          "day": "2021-02-01",
+          "field": "volume",
+          "edb": "731015",
+          "sina": "731003"
+        },
+        {
+          "day": "2021-02-01",
+          "field": "open_interest",
+          "edb": "984516",
+          "sina": "984504"
+        },
+        {
+          "day": "2021-02-04",
+          "field": "close",
+          "edb": "2784",
+          "sina": "2783.000"
+        },
+        {
+          "day": "2021-02-04",
+          "field": "volume",
+          "edb": "433197",
+          "sina": "433194"
+        },
+        {
+          "day": "2021-03-05",
+          "field": "open_interest",
+          "edb": "714488",
+          "sina": "714487"
+        },
+        {
+          "day": "2021-04-08",
+          "field": "volume",
+          "edb": "512908",
+          "sina": "476130"
+        },
+        {
+          "day": "2021-04-08",
+          "field": "open_interest",
+          "edb": "381212",
+          "sina": "381233"
+        },
+        {
+          "day": "2021-05-12",
+          "field": "open_interest",
+          "edb": "3973",
+          "sina": "4873"
+        }
+      ],
+      "edb_only_days": [
+        "2021-05-14",
+        "2021-05-18"
+      ],
+      "sina_only_days": [],
+      "comparison": "six fields, exact Decimal numeric equality, vendor cross-check only",
+      "official_reconciled": false,
+      "lifecycle_certified": false,
+      "calendar_certified": false,
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false
+    },
+    "DCE.m2105": {
+      "rows": 89,
+      "first_day": "2021-01-04",
+      "last_day": "2021-05-19",
+      "overlapping_days": 88,
+      "matched_values": 511,
+      "differences": [
+        {
+          "day": "2021-01-08",
+          "field": "volume",
+          "edb": "1406258",
+          "sina": "1406235"
+        },
+        {
+          "day": "2021-01-08",
+          "field": "open_interest",
+          "edb": "1696313",
+          "sina": "1696334"
+        },
+        {
+          "day": "2021-01-22",
+          "field": "volume",
+          "edb": "1749260",
+          "sina": "1749207"
+        },
+        {
+          "day": "2021-01-22",
+          "field": "open_interest",
+          "edb": "1499347",
+          "sina": "1499344"
+        },
+        {
+          "day": "2021-01-25",
+          "field": "volume",
+          "edb": "1864471",
+          "sina": "1864441"
+        },
+        {
+          "day": "2021-01-25",
+          "field": "open_interest",
+          "edb": "1461306",
+          "sina": "1461321"
+        },
+        {
+          "day": "2021-01-26",
+          "field": "close",
+          "edb": "3432",
+          "sina": "3433.000"
+        },
+        {
+          "day": "2021-01-26",
+          "field": "volume",
+          "edb": "1224106",
+          "sina": "1224087"
+        },
+        {
+          "day": "2021-01-26",
+          "field": "open_interest",
+          "edb": "1453658",
+          "sina": "1453657"
+        },
+        {
+          "day": "2021-02-01",
+          "field": "volume",
+          "edb": "1311557",
+          "sina": "1311549"
+        },
+        {
+          "day": "2021-02-01",
+          "field": "open_interest",
+          "edb": "1386514",
+          "sina": "1386518"
+        },
+        {
+          "day": "2021-02-02",
+          "field": "volume",
+          "edb": "1189886",
+          "sina": "1189851"
+        },
+        {
+          "day": "2021-02-02",
+          "field": "open_interest",
+          "edb": "1401930",
+          "sina": "1401927"
+        },
+        {
+          "day": "2021-04-08",
+          "field": "volume",
+          "edb": "317519",
+          "sina": "261793"
+        },
+        {
+          "day": "2021-04-08",
+          "field": "open_interest",
+          "edb": "420610",
+          "sina": "404753"
+        },
+        {
+          "day": "2021-05-12",
+          "field": "volume",
+          "edb": "854",
+          "sina": "814"
+        },
+        {
+          "day": "2021-05-12",
+          "field": "open_interest",
+          "edb": "5507",
+          "sina": "5547"
+        }
+      ],
+      "edb_only_days": [
+        "2021-05-18"
+      ],
+      "sina_only_days": [],
+      "comparison": "six fields, exact Decimal numeric equality, vendor cross-check only",
+      "official_reconciled": false,
+      "lifecycle_certified": false,
+      "calendar_certified": false,
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false
+    },
+    "GFEX.si2308": {
+      "rows": 156,
+      "first_day": "2022-12-22",
+      "last_day": "2023-08-14",
+      "overlapping_days": 156,
+      "matched_values": 936,
+      "differences": [],
+      "edb_only_days": [],
+      "sina_only_days": [],
+      "comparison": "six fields, exact Decimal numeric equality, vendor cross-check only",
+      "official_reconciled": false,
+      "lifecycle_certified": false,
+      "calendar_certified": false,
+      "settlement_compared": false,
+      "turnover_compared": false,
+      "financial_eligible": false
+    }
+  },
+  "market_requests": 0,
+  "full_market_coverage_certified": false
+}

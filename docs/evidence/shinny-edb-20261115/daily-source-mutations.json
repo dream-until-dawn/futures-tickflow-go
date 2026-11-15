@@ -1,0 +1,15 @@
+{
+  "schema": "edb-daily-source-mutation-v1",
+  "positive_control_passed": true,
+  "mutations": [
+    {
+      "mutation": "hide_field_difference",
+      "target_test_fails": true
+    },
+    {
+      "mutation": "remove_day_order",
+      "target_test_fails": true
+    }
+  ],
+  "market_requests": 0
+}
