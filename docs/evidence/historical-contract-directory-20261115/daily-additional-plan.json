@@ -3,7 +3,7 @@
   "jobs": [
     {
       "id": "CF2105-daily-additional-research",
-      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF2105",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF105",
       "format": "edb-csv",
       "exchange": "CZCE",
       "product": "CF",
@@ -13,7 +13,7 @@
     },
     {
       "id": "MA2105-daily-additional-research",
-      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA2105",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA105",
       "format": "edb-csv",
       "exchange": "CZCE",
       "product": "MA",
@@ -23,7 +23,7 @@
     },
     {
       "id": "SA2105-daily-additional-research",
-      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA2105",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA105",
       "format": "edb-csv",
       "exchange": "CZCE",
       "product": "SA",
@@ -33,7 +33,7 @@
     },
     {
       "id": "TA2105-daily-additional-research",
-      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA2105",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA105",
       "format": "edb-csv",
       "exchange": "CZCE",
       "product": "TA",
@@ -105,5 +105,6 @@
   "interval_seconds": 2,
   "stop_on_first_failure_or_unknown": true,
   "financial_eligible": false,
-  "control_scope": "exact observed dates only; CFFEX is unauthenticated cleartext control, not certified official provenance"
+  "control_scope": "exact observed dates only; CFFEX is unauthenticated cleartext control, not certified official provenance",
+  "identity_note": "CZCE request uses exact three-digit source key, matched to explicit snapshot delivery year and four-digit canonical control key; no network was made for rejected prior plan"
 }

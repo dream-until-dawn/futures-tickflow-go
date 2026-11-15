@@ -13,7 +13,7 @@ import (
 const directoryPlanSHA = "f10b77e067fdbe543a31c49e1aee278b192de1375a5818aef5de7c3ce6bfa334"
 const officialInventoryPlanSHA = "924f7c2159ffbf48a22cc1dfc93cd2f625ac75dcb069deb7a7560f5c4d078291"
 const officialHistoryPlanSHA = "b04c0e8f8178832be71efadc76226199fba8142966643b9658ccf2903892e239"
-const additionalMarketsPlanSHA = "5fcec8226edd7e63edf8e5dcce6a57708dccf595f4c8ed77f3c88d4f6420950f"
+const additionalMarketsPlanSHA = "fccf6b372e1c53fe6d2254d524d9ae3f3d677926684fbffd084c8a0810fec200"
 
 func approvedDirectoryPlanSHA(raw []byte) (string, error) {
 	sha := digest(raw)
@@ -72,15 +72,16 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 	}
 	var inv struct {
 		Contracts []struct {
-			Key string `json:"source_key"`
+			Key       string `json:"source_key"`
+			Canonical string `json:"canonical"`
 		} `json:"contracts"`
 	}
 	if err = json.Unmarshal(inventoryRaw, &inv); err != nil {
 		return nil, err
 	}
-	keys := map[string]bool{}
+	keys := map[string]string{}
 	for _, c := range inv.Contracts {
-		keys[c.Key] = true
+		keys[c.Key] = c.Canonical
 	}
 	observed := map[string]bool{}
 	for _, input := range p.Inputs {
@@ -109,7 +110,8 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 		}
 		q := u.Query()
 		key := q.Get("symbol")
-		if u.Scheme != "https" || u.Host != "edb.shinnytech.com" || u.Path != "/md/kline" || u.User != nil || u.Fragment != "" || len(q) != 4 || q.Get("period") != "86400" || q.Get("start_time") != "2021-01-01 00:00:00" || q.Get("end_time") != "2026-11-13 23:59:59" || !keys[key] || !observed[key] || seen[job.URL] {
+		canonical, exists := keys[key]
+		if u.Scheme != "https" || u.Host != "edb.shinnytech.com" || u.Path != "/md/kline" || u.User != nil || u.Fragment != "" || len(q) != 4 || q.Get("period") != "86400" || q.Get("start_time") != "2021-01-01 00:00:00" || q.Get("end_time") != "2026-11-13 23:59:59" || !exists || !observed[canonical] || seen[job.URL] {
 			return nil, fmt.Errorf("日线URL/目录/官方观察不符")
 		}
 		seen[job.URL] = true

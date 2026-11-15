@@ -37,11 +37,16 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 	jobs := []batch.Job{}
 	for i := 1; i <= 6; i++ {
 		key := fmt.Sprintf("SHFE.rb240%d", i)
-		keys = append(keys, map[string]string{"source_key": key})
+		keys = append(keys, map[string]string{"source_key": key, "canonical": key})
 		rows = append(rows, map[string]string{"exchange": "SHFE", "native": key[5:]})
 		q := url.Values{"symbol": {key}, "period": {"86400"}, "start_time": {"2021-01-01 00:00:00"}, "end_time": {"2026-11-13 23:59:59"}}
 		jobs = append(jobs, batch.Job{ID: fmt.Sprint(i), URL: "https://edb.shinnytech.com/md/kline?" + q.Encode()})
 	}
+	// 郑商所源键与规范键并不相同，不能靠给URL补四位年月伪造源身份。
+	keys[0] = map[string]string{"source_key": "CZCE.CF105", "canonical": "CZCE.CF2105"}
+	rows[0] = map[string]string{"exchange": "CZCE", "native": "CF2105"}
+	q := url.Values{"symbol": {"CZCE.CF105"}, "period": {"86400"}, "start_time": {"2021-01-01 00:00:00"}, "end_time": {"2026-11-13 23:59:59"}}
+	jobs[0].URL = "https://edb.shinnytech.com/md/kline?" + q.Encode()
 	inv, _ := json.Marshal(map[string]any{"contracts": keys})
 	official, _ := json.Marshal(map[string]any{"records": rows})
 	if err := os.WriteFile(filepath.Join(root, "inventory.json"), inv, 0600); err != nil {
