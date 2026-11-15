@@ -1,0 +1,987 @@
+{
+  "schema": "directory-daily-official-lock-v1",
+  "cases": [
+    {
+      "id": "ad2512-daily-directory-pilot",
+      "symbol": "SHFE.ad2512",
+      "product": "ad",
+      "file": "ad2512-daily-directory-pilot.body",
+      "sha256": "e6cc029124cfa602aa67247e537990893a88b1c592d43c18d3b1a92559f763ff",
+      "receipt": "ad2512-daily-directory-pilot.json",
+      "receipt_sha256": "42e2500215721971ad41d573673949315b8dc435b47a73b982ee112435ad8a43",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2512"
+    },
+    {
+      "id": "ad2601-daily-directory-pilot",
+      "symbol": "SHFE.ad2601",
+      "product": "ad",
+      "file": "ad2601-daily-directory-pilot.body",
+      "sha256": "21d0fa9ade12e7d7d4918c2e267c6dc2d857677e0d286fda81697e27dd0c58e1",
+      "receipt": "ad2601-daily-directory-pilot.json",
+      "receipt_sha256": "d1679072c218e29032e4f71bf83fee14d516041eee0846fdee181ec72a14cea8",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2601"
+    },
+    {
+      "id": "ad2602-daily-directory-pilot",
+      "symbol": "SHFE.ad2602",
+      "product": "ad",
+      "file": "ad2602-daily-directory-pilot.body",
+      "sha256": "0befd356420352f9c17cd03cf49656b115d0af17bfb9167cbc1a91abc25a4261",
+      "receipt": "ad2602-daily-directory-pilot.json",
+      "receipt_sha256": "f1f3ccc5ae6fba005693491f3af1b4f7d5aaabd97102917fb704b03c8796377f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2602"
+    },
+    {
+      "id": "ad2603-daily-directory-pilot",
+      "symbol": "SHFE.ad2603",
+      "product": "ad",
+      "file": "ad2603-daily-directory-pilot.body",
+      "sha256": "f518ad43557ec5c26e5ff2fb7a3087b69cc58bc81acb533c990506d67beabfc3",
+      "receipt": "ad2603-daily-directory-pilot.json",
+      "receipt_sha256": "99781dc71132f12777b7d9151133fdd5e8595ad07992954eec2b5cf0a4eb4620",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2603"
+    },
+    {
+      "id": "ad2604-daily-directory-pilot",
+      "symbol": "SHFE.ad2604",
+      "product": "ad",
+      "file": "ad2604-daily-directory-pilot.body",
+      "sha256": "d198a4cd451082621adda79d092c19019760f0ffa6bcea24ebda81d34925f2ed",
+      "receipt": "ad2604-daily-directory-pilot.json",
+      "receipt_sha256": "22a07faff795a20417245e631a21a3a889e99a6a6ab1afee8c2d8cc34a39d042",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2604"
+    },
+    {
+      "id": "ad2605-daily-directory-pilot",
+      "symbol": "SHFE.ad2605",
+      "product": "ad",
+      "file": "ad2605-daily-directory-pilot.body",
+      "sha256": "46b700944afd4c75f0a04511440c97909e557229bbb7530ae865c290d85a5eab",
+      "receipt": "ad2605-daily-directory-pilot.json",
+      "receipt_sha256": "3ec87d84763d42c65f952683513a1b7be883a800e1ec7bfed02b997a04d3555f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2605"
+    },
+    {
+      "id": "ad2606-daily-directory-pilot",
+      "symbol": "SHFE.ad2606",
+      "product": "ad",
+      "file": "ad2606-daily-directory-pilot.body",
+      "sha256": "28009b87c2bd39215bdb65a0a275f09c4517230bb88494c3974221efe1cea377",
+      "receipt": "ad2606-daily-directory-pilot.json",
+      "receipt_sha256": "df2de0dac98aa4a80f1d1d26df98d0d3552e2a269aba95a755f995c190b0deeb",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2606"
+    },
+    {
+      "id": "ad2607-daily-directory-pilot",
+      "symbol": "SHFE.ad2607",
+      "product": "ad",
+      "file": "ad2607-daily-directory-pilot.body",
+      "sha256": "6f1aeb1eb1cb6153fd59be3c98d8f5677cc3424d4fe6075a2e335cf3440bffb8",
+      "receipt": "ad2607-daily-directory-pilot.json",
+      "receipt_sha256": "4900e089eadf23a46120b3674c26988979a302f8a58eb8aff07a6fc267e9818a",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2607"
+    },
+    {
+      "id": "ad2608-daily-directory-pilot",
+      "symbol": "SHFE.ad2608",
+      "product": "ad",
+      "file": "ad2608-daily-directory-pilot.body",
+      "sha256": "dd8c40295b750fe54ef5885df2d5d3ddef5cbe8027177404cc7270e64385d262",
+      "receipt": "ad2608-daily-directory-pilot.json",
+      "receipt_sha256": "541e36b83cffa6d58fd7043ed8fba47867a59efd53ee16ce4462d35aa456511f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2608"
+    },
+    {
+      "id": "ad2609-daily-directory-pilot",
+      "symbol": "SHFE.ad2609",
+      "product": "ad",
+      "file": "ad2609-daily-directory-pilot.body",
+      "sha256": "a6a6ffd6357f9c8782450e21f7037ef84eff5c89a40318326e5bbd53f8f93a00",
+      "receipt": "ad2609-daily-directory-pilot.json",
+      "receipt_sha256": "46d2b8a36944f9f877c40005fe574cfb743e6ec677125b0f1fe439651f9c3e1f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2609"
+    },
+    {
+      "id": "ad2610-daily-directory-pilot",
+      "symbol": "SHFE.ad2610",
+      "product": "ad",
+      "file": "ad2610-daily-directory-pilot.body",
+      "sha256": "d8bfa84a8892613f3fa0c7ca9e3d56936b32a30e1f8f6e10dbc09befb0cd96d6",
+      "receipt": "ad2610-daily-directory-pilot.json",
+      "receipt_sha256": "d02349b0fe42a09bb8b418f5c0189234954e76664353f7b14ae22862ad9064d1",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2610"
+    },
+    {
+      "id": "ad2611-daily-directory-pilot",
+      "symbol": "SHFE.ad2611",
+      "product": "ad",
+      "file": "ad2611-daily-directory-pilot.body",
+      "sha256": "80c068f9011dff0495c68d4c2fe823893357a7ae3fe79ec678febad2fd7061da",
+      "receipt": "ad2611-daily-directory-pilot.json",
+      "receipt_sha256": "c63be4671cf67d19241e5d9fb2b85a3ab79de3a2476468622e60ad766a806d2a",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2611"
+    },
+    {
+      "id": "ad2612-daily-directory-pilot",
+      "symbol": "SHFE.ad2612",
+      "product": "ad",
+      "file": "ad2612-daily-directory-pilot.body",
+      "sha256": "0083d5ed1cba27f4042070cb9737678922ee3acb4af399eaa130850b85520878",
+      "receipt": "ad2612-daily-directory-pilot.json",
+      "receipt_sha256": "e4a4dc3f34aa316e435eec1035669f772ce6690bf7e59248ed4bc5357e10281c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2612"
+    },
+    {
+      "id": "ao2401-daily-directory-pilot",
+      "symbol": "SHFE.ao2401",
+      "product": "ao",
+      "file": "ao2401-daily-directory-pilot.body",
+      "sha256": "9b891bca8a165ada8bbc9192307acf274b3a98fdba33aca1e74722f6030e375b",
+      "receipt": "ao2401-daily-directory-pilot.json",
+      "receipt_sha256": "0ae21cf941570597d7720526cc57e306b7a81395f7495e81bd9a736b15d8fb00",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2401"
+    },
+    {
+      "id": "ao2402-daily-directory-pilot",
+      "symbol": "SHFE.ao2402",
+      "product": "ao",
+      "file": "ao2402-daily-directory-pilot.body",
+      "sha256": "51d90877c9cd8399a7c6c344ce4c4456d8b1b9665c47c6ea80bb24d261217355",
+      "receipt": "ao2402-daily-directory-pilot.json",
+      "receipt_sha256": "4d838c7acc944921b483f1f8ac012da05405733f7a05fae1127f912916d17268",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2402"
+    },
+    {
+      "id": "ao2403-daily-directory-pilot",
+      "symbol": "SHFE.ao2403",
+      "product": "ao",
+      "file": "ao2403-daily-directory-pilot.body",
+      "sha256": "5ce7d46fd2aacf265a10bfee7a693d99ca65ad8124d83c03ec310adcf5a57e18",
+      "receipt": "ao2403-daily-directory-pilot.json",
+      "receipt_sha256": "4226d5547e6fec2d62d9d4f14955c13cf4707444be2040b8365553d70c61389c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2403"
+    },
+    {
+      "id": "ao2404-daily-directory-pilot",
+      "symbol": "SHFE.ao2404",
+      "product": "ao",
+      "file": "ao2404-daily-directory-pilot.body",
+      "sha256": "18563e655897ced200cb079f8b6eae674ce81ddf442960315e4cac7de47e0f77",
+      "receipt": "ao2404-daily-directory-pilot.json",
+      "receipt_sha256": "d17f9b93540c9bd738f3bbe1e3df1e8ae628aa278d932de1a9c10bed7ff23803",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2404"
+    },
+    {
+      "id": "ao2406-daily-directory-pilot",
+      "symbol": "SHFE.ao2406",
+      "product": "ao",
+      "file": "ao2406-daily-directory-pilot.body",
+      "sha256": "df5e9df75e840f576c95cd11c03e147d07a941b3e042287af75031410f3c17ce",
+      "receipt": "ao2406-daily-directory-pilot.json",
+      "receipt_sha256": "105c1e9a89b2f5b074c0ba76ddd776dee2888f61d9ecd54f9d1988ef65dd537b",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2406"
+    },
+    {
+      "id": "ao2407-daily-directory-pilot",
+      "symbol": "SHFE.ao2407",
+      "product": "ao",
+      "file": "ao2407-daily-directory-pilot.body",
+      "sha256": "724beeb6fb608934895f11cb19fb7c076b15a23065338d101264338a98a3c571",
+      "receipt": "ao2407-daily-directory-pilot.json",
+      "receipt_sha256": "7990ac0c4d46db38db670bf0e24050ddfc954a4755ea68e3d31a870cbe2b4fb8",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2407"
+    },
+    {
+      "id": "ao2408-daily-directory-pilot",
+      "symbol": "SHFE.ao2408",
+      "product": "ao",
+      "file": "ao2408-daily-directory-pilot.body",
+      "sha256": "2df2348ce87913bbe931c4f047971590c4f902878fd677046f564a79011675d6",
+      "receipt": "ao2408-daily-directory-pilot.json",
+      "receipt_sha256": "850225ccdc45c69c01a50ea9f0cbd824a0c5d77c9529db42d91b3689ec0e9ebc",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2408"
+    },
+    {
+      "id": "ao2409-daily-directory-pilot",
+      "symbol": "SHFE.ao2409",
+      "product": "ao",
+      "file": "ao2409-daily-directory-pilot.body",
+      "sha256": "4fca682e8edbcabcd287c24734d4e34fc5f157030de03eac4347ea6dbee95932",
+      "receipt": "ao2409-daily-directory-pilot.json",
+      "receipt_sha256": "c92bad06d8858ad70cd42ac1f46ab82e4f77d10bd34b1a724fb5edacf4a8f268",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2409"
+    },
+    {
+      "id": "ao2410-daily-directory-pilot",
+      "symbol": "SHFE.ao2410",
+      "product": "ao",
+      "file": "ao2410-daily-directory-pilot.body",
+      "sha256": "98d037418987361413fef56ec64ca5eb77335d30d9373bea96b6c3b8e3d9a135",
+      "receipt": "ao2410-daily-directory-pilot.json",
+      "receipt_sha256": "ab9dd28199c130e10db363766ff6562871e2befc3405f3bb5e8119ac59d61bd7",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2410"
+    },
+    {
+      "id": "ao2411-daily-directory-pilot",
+      "symbol": "SHFE.ao2411",
+      "product": "ao",
+      "file": "ao2411-daily-directory-pilot.body",
+      "sha256": "dc842bbd39ff2dabdce354b83e6eb51bf45f94d7a8b07e3e09257371aec55125",
+      "receipt": "ao2411-daily-directory-pilot.json",
+      "receipt_sha256": "e7812fdd21897f4972597c05ea8118f9295f3066db45f93e3373ebea70f0b9c0",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2411"
+    },
+    {
+      "id": "ao2412-daily-directory-pilot",
+      "symbol": "SHFE.ao2412",
+      "product": "ao",
+      "file": "ao2412-daily-directory-pilot.body",
+      "sha256": "1ae39fb8315e6b17686497b5a7e2065afb24f294fb49e32bd4861b2acdff556c",
+      "receipt": "ao2412-daily-directory-pilot.json",
+      "receipt_sha256": "6fb022c82589731b088eb8ea1c443f3ea2930e0ac67e5cf214a05ee18f252ed2",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2412"
+    },
+    {
+      "id": "ao2501-daily-directory-pilot",
+      "symbol": "SHFE.ao2501",
+      "product": "ao",
+      "file": "ao2501-daily-directory-pilot.body",
+      "sha256": "627384030ddd0589df8d0ea0e4301ec9a7f82415369fdec7f603fbcb3eb7f57d",
+      "receipt": "ao2501-daily-directory-pilot.json",
+      "receipt_sha256": "eb546e7f5797222e4f3303cbb43d6d5934b981dfe5290a82dd323d301fc26e51",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2501"
+    },
+    {
+      "id": "ao2502-daily-directory-pilot",
+      "symbol": "SHFE.ao2502",
+      "product": "ao",
+      "file": "ao2502-daily-directory-pilot.body",
+      "sha256": "ee8f6f309c004b50bf2d9414f72efd1d2d36dc91da4dba2648dc592356a41db0",
+      "receipt": "ao2502-daily-directory-pilot.json",
+      "receipt_sha256": "3dc542888255bdfbf4be90919a89e9ec120128ba25979ebada00f1427c2434e3",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2502"
+    },
+    {
+      "id": "ao2503-daily-directory-pilot",
+      "symbol": "SHFE.ao2503",
+      "product": "ao",
+      "file": "ao2503-daily-directory-pilot.body",
+      "sha256": "ac7e0bcab326f6a9ea4c9c5f9d37867915ef04f0b609cf36af7cc5f187d24177",
+      "receipt": "ao2503-daily-directory-pilot.json",
+      "receipt_sha256": "2dc81aafc61ced06e0bae2eada7bc4bb84aa7449348dc499df0dd517ff0dbfad",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2503"
+    },
+    {
+      "id": "ao2504-daily-directory-pilot",
+      "symbol": "SHFE.ao2504",
+      "product": "ao",
+      "file": "ao2504-daily-directory-pilot.body",
+      "sha256": "779be3dfd36665e3d8667e4e6e0f80ce62485c9c72317c55e1ef230dc74038ba",
+      "receipt": "ao2504-daily-directory-pilot.json",
+      "receipt_sha256": "6cf0eee5f8afa0536cbb2b462aeb36bc836db4c3ae83e90b31ee33bbd8b0ea95",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2504"
+    },
+    {
+      "id": "ao2506-daily-directory-pilot",
+      "symbol": "SHFE.ao2506",
+      "product": "ao",
+      "file": "ao2506-daily-directory-pilot.body",
+      "sha256": "367c4a7aa6bbaca3f4c4469220ccb3d0407ecde4f77d30a689c06f9ec02ac5c4",
+      "receipt": "ao2506-daily-directory-pilot.json",
+      "receipt_sha256": "d0484241825dfa6a0745552d6f336813eb40eada626dcdd377f7e8f7500e4d21",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2506"
+    },
+    {
+      "id": "ao2507-daily-directory-pilot",
+      "symbol": "SHFE.ao2507",
+      "product": "ao",
+      "file": "ao2507-daily-directory-pilot.body",
+      "sha256": "274573438f350ccda0cd95ac1d6c8428eccb0408d62d16586a59bba7f248aafe",
+      "receipt": "ao2507-daily-directory-pilot.json",
+      "receipt_sha256": "6b07096620ecb46000cb1e1e1011c33c1558b044096346b03e6e960cb4dcd5f0",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2507"
+    },
+    {
+      "id": "ao2508-daily-directory-pilot",
+      "symbol": "SHFE.ao2508",
+      "product": "ao",
+      "file": "ao2508-daily-directory-pilot.body",
+      "sha256": "eb54db1e7a8f9625664c527f8bd4c2692ac41fc438b00545225eda2338181369",
+      "receipt": "ao2508-daily-directory-pilot.json",
+      "receipt_sha256": "e210c8caa435b8124846ebf77c35dcd73b05fa421a09a1af536dbceeb9a4e0b8",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2508"
+    },
+    {
+      "id": "ao2509-daily-directory-pilot",
+      "symbol": "SHFE.ao2509",
+      "product": "ao",
+      "file": "ao2509-daily-directory-pilot.body",
+      "sha256": "34a9cf9b3fffd6eeda543bae5abf78fc28fb3472ab14b8f884693085ec897470",
+      "receipt": "ao2509-daily-directory-pilot.json",
+      "receipt_sha256": "d94c69870c3d06337a756ab8b944190e8da52660f2140b1278b6f32b82dd69cb",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2509"
+    },
+    {
+      "id": "ao2510-daily-directory-pilot",
+      "symbol": "SHFE.ao2510",
+      "product": "ao",
+      "file": "ao2510-daily-directory-pilot.body",
+      "sha256": "68910153a8965c88dfe756b287cb328b0bc6aac30ff4cad8f5ad63ffbfad8d33",
+      "receipt": "ao2510-daily-directory-pilot.json",
+      "receipt_sha256": "4ea3102acdc2772e3e6abf52c86e49902351ec6fd30fc5c2025cd4849f24313c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2510"
+    },
+    {
+      "id": "ao2511-daily-directory-pilot",
+      "symbol": "SHFE.ao2511",
+      "product": "ao",
+      "file": "ao2511-daily-directory-pilot.body",
+      "sha256": "252dd99cbd2ecb167bd238d07e850d8d8658fa25c56b53fb62ca05728049832a",
+      "receipt": "ao2511-daily-directory-pilot.json",
+      "receipt_sha256": "245eac24a42167095ec3c0ab9fff2def503b0ee3b472cda9c99c71ee503b9243",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2511"
+    },
+    {
+      "id": "ao2512-daily-directory-pilot",
+      "symbol": "SHFE.ao2512",
+      "product": "ao",
+      "file": "ao2512-daily-directory-pilot.body",
+      "sha256": "f48aeaccda7bcc6c0e1ef1f86f6d923131bfa7f644a5fe8acd3c84ee472d56d3",
+      "receipt": "ao2512-daily-directory-pilot.json",
+      "receipt_sha256": "3fef4d8c50692b90af9dd56db935360de4117c1475c0cfb3d93a427b42d904ba",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2512"
+    },
+    {
+      "id": "ao2601-daily-directory-pilot",
+      "symbol": "SHFE.ao2601",
+      "product": "ao",
+      "file": "ao2601-daily-directory-pilot.body",
+      "sha256": "770b5343b4040b0fbe41b82e586858079bd62dd88a8ba0f0f2a04e38843b127a",
+      "receipt": "ao2601-daily-directory-pilot.json",
+      "receipt_sha256": "b9e9c4507fbf97c94a1742af65327ba9714715b83d86c6421d139d238ef06fe6",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2601"
+    },
+    {
+      "id": "ao2602-daily-directory-pilot",
+      "symbol": "SHFE.ao2602",
+      "product": "ao",
+      "file": "ao2602-daily-directory-pilot.body",
+      "sha256": "99f97cf12dab614c7cab478b7e9422a4e92508ad37ecfbd02af101836b5aca57",
+      "receipt": "ao2602-daily-directory-pilot.json",
+      "receipt_sha256": "55d70aeac37be619c1c74f7ddbb0a40f6f890b3f8d93260626a7c296330c86c4",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2602"
+    },
+    {
+      "id": "ao2603-daily-directory-pilot",
+      "symbol": "SHFE.ao2603",
+      "product": "ao",
+      "file": "ao2603-daily-directory-pilot.body",
+      "sha256": "d94fb8a31df6c9c3f89c70abceb2859492a559669296d27dfa3403a8532f4d6b",
+      "receipt": "ao2603-daily-directory-pilot.json",
+      "receipt_sha256": "3c64081ef691b30384af3662d413ffe27aa01f200444c9afcb1b2f77cbe1d460",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2603"
+    },
+    {
+      "id": "ao2604-daily-directory-pilot",
+      "symbol": "SHFE.ao2604",
+      "product": "ao",
+      "file": "ao2604-daily-directory-pilot.body",
+      "sha256": "0e87a8a26541ff18181e142b84183b381f2e81d2fc84c14c3a7ae9ff943817f3",
+      "receipt": "ao2604-daily-directory-pilot.json",
+      "receipt_sha256": "a85501eb36a008902db5465704a86051827f3e0ff2e0550b68933545ae27db9f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2604"
+    },
+    {
+      "id": "ao2605-daily-directory-pilot",
+      "symbol": "SHFE.ao2605",
+      "product": "ao",
+      "file": "ao2605-daily-directory-pilot.body",
+      "sha256": "ad7df71aa5b51eedd2ecf170003af23192b5770490b324fbe2dcfce65efbe8d3",
+      "receipt": "ao2605-daily-directory-pilot.json",
+      "receipt_sha256": "561461ca65ae8c1c5c5e066e61218047846320af81be804a1f30048edb6f7891",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2605"
+    },
+    {
+      "id": "ao2606-daily-directory-pilot",
+      "symbol": "SHFE.ao2606",
+      "product": "ao",
+      "file": "ao2606-daily-directory-pilot.body",
+      "sha256": "951dc445d63281d0813327a82e97f0dcead5d61c40a8a0078d4f5b813d58d825",
+      "receipt": "ao2606-daily-directory-pilot.json",
+      "receipt_sha256": "b4aa7ddb163d41669fd0f316d7f8a70a4f58f5b6016aecbf0cdc01d60187cee7",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2606"
+    },
+    {
+      "id": "ao2607-daily-directory-pilot",
+      "symbol": "SHFE.ao2607",
+      "product": "ao",
+      "file": "ao2607-daily-directory-pilot.body",
+      "sha256": "c2e830e6cb8a729e1280f07f4745698126dc9ad3b099a98f752376de82c4a7cc",
+      "receipt": "ao2607-daily-directory-pilot.json",
+      "receipt_sha256": "5e76f4d53be03dc0569be84f3ba5ad2d9dc55ad33dc9d4c1701ca8b076aa8d9d",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2607"
+    },
+    {
+      "id": "ao2608-daily-directory-pilot",
+      "symbol": "SHFE.ao2608",
+      "product": "ao",
+      "file": "ao2608-daily-directory-pilot.body",
+      "sha256": "8842031e414c7e182f2738767f21822d72cbd592677d5117861bac190228553a",
+      "receipt": "ao2608-daily-directory-pilot.json",
+      "receipt_sha256": "2640820405c7105ba22e6b73417b8129ad97f6e8ab5a302d2f27825c5aec2505",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2608"
+    },
+    {
+      "id": "ao2609-daily-directory-pilot",
+      "symbol": "SHFE.ao2609",
+      "product": "ao",
+      "file": "ao2609-daily-directory-pilot.body",
+      "sha256": "9c6fc55c96ad345429317cef68e388c53f7593462b5eb2a71582b21c2bf33462",
+      "receipt": "ao2609-daily-directory-pilot.json",
+      "receipt_sha256": "5810879895f4dfcdbe36a7b67d4ba1c0c53e8afbb1464ba23643830a655eb467",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2609"
+    },
+    {
+      "id": "ao2610-daily-directory-pilot",
+      "symbol": "SHFE.ao2610",
+      "product": "ao",
+      "file": "ao2610-daily-directory-pilot.body",
+      "sha256": "83fec60862cab75bfd4349fe2a0666d06ef50c76f4afb4e4d1140f148ff32931",
+      "receipt": "ao2610-daily-directory-pilot.json",
+      "receipt_sha256": "303952e1c0ba4d53726a7cbdf648f023da687a4b4086a97207d09ac8391a0a86",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2610"
+    },
+    {
+      "id": "ao2611-daily-directory-pilot",
+      "symbol": "SHFE.ao2611",
+      "product": "ao",
+      "file": "ao2611-daily-directory-pilot.body",
+      "sha256": "d8001c68a04f12febcb1562c656daecf941aefca0f50ed6262bcbb0032ed19a8",
+      "receipt": "ao2611-daily-directory-pilot.json",
+      "receipt_sha256": "e34d4840819fe04f39bc3a9ca530621ffbc2001d77928ab29b853f68eb446e70",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2611"
+    },
+    {
+      "id": "ao2612-daily-directory-pilot",
+      "symbol": "SHFE.ao2612",
+      "product": "ao",
+      "file": "ao2612-daily-directory-pilot.body",
+      "sha256": "17014e052d51bc67b7e4887a1eae8f9f64c5ac602c53bee05893d3532ec6a437",
+      "receipt": "ao2612-daily-directory-pilot.json",
+      "receipt_sha256": "9d863a0c886041feb3105b5ee42ed425fc2fe466bdfa7163cb565951e6a34529",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2612"
+    },
+    {
+      "id": "br2401-daily-directory-pilot",
+      "symbol": "SHFE.br2401",
+      "product": "br",
+      "file": "br2401-daily-directory-pilot.body",
+      "sha256": "7091a5154ce2013647945fa96f54230c46f95ad3f5eef37f16e2a8ffb38af14d",
+      "receipt": "br2401-daily-directory-pilot.json",
+      "receipt_sha256": "fc1df44d203152dbc64f1bdafed86a9760f0d6315dd55051ad8e58e7204b9bae",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2401"
+    },
+    {
+      "id": "br2402-daily-directory-pilot",
+      "symbol": "SHFE.br2402",
+      "product": "br",
+      "file": "br2402-daily-directory-pilot.body",
+      "sha256": "40fd1958c8e92b83d127c87ef8f18305470a2b51ee96a90d40b41806719d0156",
+      "receipt": "br2402-daily-directory-pilot.json",
+      "receipt_sha256": "d43b0f39e5156c6fee190a0b59ca81bbc1044a7a236606a308e695637c2bc369",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2402"
+    },
+    {
+      "id": "br2403-daily-directory-pilot",
+      "symbol": "SHFE.br2403",
+      "product": "br",
+      "file": "br2403-daily-directory-pilot.body",
+      "sha256": "4831f7758aac2d082515b02fdadec2b73c2eeb4bfb9ba18c7b74d6057ae65432",
+      "receipt": "br2403-daily-directory-pilot.json",
+      "receipt_sha256": "11445886a5ef064f49a42213d58c3a5b2a8312280ec23271a53566ec9aae6259",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2403"
+    },
+    {
+      "id": "br2404-daily-directory-pilot",
+      "symbol": "SHFE.br2404",
+      "product": "br",
+      "file": "br2404-daily-directory-pilot.body",
+      "sha256": "5c7273a6dbb4bfa2b54185b9bf75013666fe916f26071c19099e9480e21f9c07",
+      "receipt": "br2404-daily-directory-pilot.json",
+      "receipt_sha256": "c85cf7240d1d4da07cfe59cf40676b0b59c8b59333ca8e3a6cc67f16ba47e8e9",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2404"
+    },
+    {
+      "id": "br2406-daily-directory-pilot",
+      "symbol": "SHFE.br2406",
+      "product": "br",
+      "file": "br2406-daily-directory-pilot.body",
+      "sha256": "e456e2032bc48efeabe0626207694d2f7c55fa38eb4f2346487baeacfbb59c70",
+      "receipt": "br2406-daily-directory-pilot.json",
+      "receipt_sha256": "86259c2486116e385d6f85d0676d2c55412e164e164282b2ec1bfce4328f188a",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2406"
+    },
+    {
+      "id": "br2407-daily-directory-pilot",
+      "symbol": "SHFE.br2407",
+      "product": "br",
+      "file": "br2407-daily-directory-pilot.body",
+      "sha256": "d35bae938e52f079af532cf0d76440a0f204df7634b56136623c2a423a4d1ef4",
+      "receipt": "br2407-daily-directory-pilot.json",
+      "receipt_sha256": "a5d412711e9c590a46bfd678da778552e6e3a411da1d7d0e083621b5304a7d10",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2407"
+    },
+    {
+      "id": "br2408-daily-directory-pilot",
+      "symbol": "SHFE.br2408",
+      "product": "br",
+      "file": "br2408-daily-directory-pilot.body",
+      "sha256": "2b3fc6ff1a208b31d8fee9fcf476603f91923515bf7da6e4bc58fe7b71103c49",
+      "receipt": "br2408-daily-directory-pilot.json",
+      "receipt_sha256": "1f7eb666cf505d937d916f87370cd0d95dadb3f4c1066127d30f660bf85074ac",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2408"
+    },
+    {
+      "id": "br2409-daily-directory-pilot",
+      "symbol": "SHFE.br2409",
+      "product": "br",
+      "file": "br2409-daily-directory-pilot.body",
+      "sha256": "dea6953118306a14665831a20deec192f12878e306cd6cbfcfbe67e83350e103",
+      "receipt": "br2409-daily-directory-pilot.json",
+      "receipt_sha256": "25bf9a078a99d34f936579bb696420a6ead8464e1707399cadad640c05c6c1d9",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2409"
+    },
+    {
+      "id": "br2410-daily-directory-pilot",
+      "symbol": "SHFE.br2410",
+      "product": "br",
+      "file": "br2410-daily-directory-pilot.body",
+      "sha256": "aff342fec2f8265b165e26613a994472bd90d250693b9927b8a3de672925fcb2",
+      "receipt": "br2410-daily-directory-pilot.json",
+      "receipt_sha256": "3dc743e68382c801bfe5986a259369a014528df65798189fdf0a02efd8168c8e",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2410"
+    },
+    {
+      "id": "br2411-daily-directory-pilot",
+      "symbol": "SHFE.br2411",
+      "product": "br",
+      "file": "br2411-daily-directory-pilot.body",
+      "sha256": "759fbc87332ba57ceab6d455fee2a74cd7235dbb79956f3ff0bbd4f0007b3300",
+      "receipt": "br2411-daily-directory-pilot.json",
+      "receipt_sha256": "fc239d0ac69d2bd308dbd97952f32a4539f701db6d7714e4dc276cd185a49cd1",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2411"
+    },
+    {
+      "id": "br2412-daily-directory-pilot",
+      "symbol": "SHFE.br2412",
+      "product": "br",
+      "file": "br2412-daily-directory-pilot.body",
+      "sha256": "47a1d6827b32b69048b89d878979440f111a35cbe8931cdcdd7cea1fd3f72557",
+      "receipt": "br2412-daily-directory-pilot.json",
+      "receipt_sha256": "e4dcf449c1b41bbc5a90ff8ce45a7ad59fcac1c022dd34ea07ed2ce0a44938d9",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2412"
+    },
+    {
+      "id": "br2501-daily-directory-pilot",
+      "symbol": "SHFE.br2501",
+      "product": "br",
+      "file": "br2501-daily-directory-pilot.body",
+      "sha256": "61f9754c16db0c33a3c7e5d36b3cccf0cb443f91c315be3fc203012f6b03852e",
+      "receipt": "br2501-daily-directory-pilot.json",
+      "receipt_sha256": "51b8ae6d9ad0066dd402aab78a0c4001ab3f39b55f6c682e6b40827cbc91eea2",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2501"
+    },
+    {
+      "id": "br2502-daily-directory-pilot",
+      "symbol": "SHFE.br2502",
+      "product": "br",
+      "file": "br2502-daily-directory-pilot.body",
+      "sha256": "4ceda8369ed3f654d98ff1bfeb02b5031f578870b1b6285bf1118e996651b63c",
+      "receipt": "br2502-daily-directory-pilot.json",
+      "receipt_sha256": "3eb5f27ed2a2d2e2e8b92505951ea8d6e24ded4fc4ed584841b32f81bb058711",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2502"
+    },
+    {
+      "id": "br2503-daily-directory-pilot",
+      "symbol": "SHFE.br2503",
+      "product": "br",
+      "file": "br2503-daily-directory-pilot.body",
+      "sha256": "9b2bbdab04276ab93cb9ad66c99ed6dadfd9554131ef384166fc777f9fb3932b",
+      "receipt": "br2503-daily-directory-pilot.json",
+      "receipt_sha256": "889a07eb4fb271ea37ce7eb9f961cd6cc509a646dff09bb5349bfa4cf913f5dd",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2503"
+    },
+    {
+      "id": "br2504-daily-directory-pilot",
+      "symbol": "SHFE.br2504",
+      "product": "br",
+      "file": "br2504-daily-directory-pilot.body",
+      "sha256": "9552c4cc085c0d89218668a7ee16f37aab98d12fc963422f31674027ca67f2fb",
+      "receipt": "br2504-daily-directory-pilot.json",
+      "receipt_sha256": "c34bcd0b5c7c0ad2300f6c15435f72e9c005316a12a147d2adb1abc535793d5b",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2504"
+    },
+    {
+      "id": "br2506-daily-directory-pilot",
+      "symbol": "SHFE.br2506",
+      "product": "br",
+      "file": "br2506-daily-directory-pilot.body",
+      "sha256": "aed6cd15f6c1202f5884a4f3bf6fc4d9b02b18d49d3ddb50be868eed32aead4e",
+      "receipt": "br2506-daily-directory-pilot.json",
+      "receipt_sha256": "5a792dd0b40dc109706831d81162644ff55c80b6b187faa2ef69c14791f2c2d4",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2506"
+    },
+    {
+      "id": "br2507-daily-directory-pilot",
+      "symbol": "SHFE.br2507",
+      "product": "br",
+      "file": "br2507-daily-directory-pilot.body",
+      "sha256": "6ab3e14d0e8fa2ad67e851f4f813cf3f768bef1a7784194fc6bdf69938c2d70c",
+      "receipt": "br2507-daily-directory-pilot.json",
+      "receipt_sha256": "fc00bd96c1bf8d4686d57627b4f4ce82b1225fbd75f4557890721c7c64530ad6",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2507"
+    },
+    {
+      "id": "br2508-daily-directory-pilot",
+      "symbol": "SHFE.br2508",
+      "product": "br",
+      "file": "br2508-daily-directory-pilot.body",
+      "sha256": "edd30b84ec35e012bba894b28022c48c5ac9e61923b52798bd80d3070e44aae8",
+      "receipt": "br2508-daily-directory-pilot.json",
+      "receipt_sha256": "706e14dd26a0f0ea94f9400b045db09e1a22f163e469cabb5d04b7407ae22b4b",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2508"
+    },
+    {
+      "id": "br2509-daily-directory-pilot",
+      "symbol": "SHFE.br2509",
+      "product": "br",
+      "file": "br2509-daily-directory-pilot.body",
+      "sha256": "fa62bc564abe83ca22cd8a903b0b2134a05852b5f2722dd84f1a29f9348086d6",
+      "receipt": "br2509-daily-directory-pilot.json",
+      "receipt_sha256": "13c7ae49da45aeecd3cb28856d5059c82a844afbba8d3e7ec2266781621ef604",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2509"
+    },
+    {
+      "id": "br2510-daily-directory-pilot",
+      "symbol": "SHFE.br2510",
+      "product": "br",
+      "file": "br2510-daily-directory-pilot.body",
+      "sha256": "8276e177b36e65b0b3f758f6ac82304e19bb06d6b624c0dacc263c7d85f303b0",
+      "receipt": "br2510-daily-directory-pilot.json",
+      "receipt_sha256": "43a01154533d1e8c0bf16314f5e61babefa4505098940b0eb425f8f92a7d01dc",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2510"
+    },
+    {
+      "id": "br2511-daily-directory-pilot",
+      "symbol": "SHFE.br2511",
+      "product": "br",
+      "file": "br2511-daily-directory-pilot.body",
+      "sha256": "0024d69285eb595e974264a08f6ffaf5728e2b7b59827fdad78aa6a42be5d958",
+      "receipt": "br2511-daily-directory-pilot.json",
+      "receipt_sha256": "6c94bb77dcccff0337cd8ac97808d9853a763ab40600c1d675a65be01c68cb23",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2511"
+    },
+    {
+      "id": "br2512-daily-directory-pilot",
+      "symbol": "SHFE.br2512",
+      "product": "br",
+      "file": "br2512-daily-directory-pilot.body",
+      "sha256": "3b7b7b6d21b7c658b7fce173f215634bed8b65febae4b22d9c267a67a97bcaab",
+      "receipt": "br2512-daily-directory-pilot.json",
+      "receipt_sha256": "108de6084d1c9702c8c298fc2ebd78156708c45753c45adc15f109efb801c75f",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2512"
+    },
+    {
+      "id": "br2601-daily-directory-pilot",
+      "symbol": "SHFE.br2601",
+      "product": "br",
+      "file": "br2601-daily-directory-pilot.body",
+      "sha256": "519ab62df7da14f7de84eee57ad6e98b7b370a5fdbd940f8c4336a7beed7a6e0",
+      "receipt": "br2601-daily-directory-pilot.json",
+      "receipt_sha256": "716e4460d00ef08fd3ac2631b04c5fc25e6678449a7de8c7d98eafbb7ebde04d",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2601"
+    },
+    {
+      "id": "br2602-daily-directory-pilot",
+      "symbol": "SHFE.br2602",
+      "product": "br",
+      "file": "br2602-daily-directory-pilot.body",
+      "sha256": "dc0e0a534575a5beb3b51c0e62f116564c61179c837439284f8462485a22e6dd",
+      "receipt": "br2602-daily-directory-pilot.json",
+      "receipt_sha256": "e0c79822d69b91022cad6e81cd48aea9e14c8adf5f75802b6f09942dc9f1c68c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2602"
+    },
+    {
+      "id": "br2603-daily-directory-pilot",
+      "symbol": "SHFE.br2603",
+      "product": "br",
+      "file": "br2603-daily-directory-pilot.body",
+      "sha256": "53a47445483bdc2f489c8ccbaf0fa5ca2fbe7bc027d14e8b76ce3b25bf351d08",
+      "receipt": "br2603-daily-directory-pilot.json",
+      "receipt_sha256": "29616df61e20ef601e5eca1debf6ab631f208801f2f7885332ad57665141bb58",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2603"
+    },
+    {
+      "id": "br2604-daily-directory-pilot",
+      "symbol": "SHFE.br2604",
+      "product": "br",
+      "file": "br2604-daily-directory-pilot.body",
+      "sha256": "8c695d1b9a9354c7b05a0f1c2c47c699db6a4d5fc5fcb011e2ebc21e3323c34e",
+      "receipt": "br2604-daily-directory-pilot.json",
+      "receipt_sha256": "2fe87e39ea44a8b842bcc0d40bdf2ecd634685d68beb1dfc1a364389e1c1d94c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2604"
+    },
+    {
+      "id": "br2605-daily-directory-pilot",
+      "symbol": "SHFE.br2605",
+      "product": "br",
+      "file": "br2605-daily-directory-pilot.body",
+      "sha256": "a104cbf06a5fb091ebc119bcf7943d0910d86300fa65c3f03c2dfeb26c73d59e",
+      "receipt": "br2605-daily-directory-pilot.json",
+      "receipt_sha256": "09193616bf6bfc2b25563ec476817d679e8a429dcf7e5068428b912459469090",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2605"
+    },
+    {
+      "id": "br2606-daily-directory-pilot",
+      "symbol": "SHFE.br2606",
+      "product": "br",
+      "file": "br2606-daily-directory-pilot.body",
+      "sha256": "1e0c5227cb6ade8635e385b7df68acec1010d7e60cd43b3cb0199d63ca43c439",
+      "receipt": "br2606-daily-directory-pilot.json",
+      "receipt_sha256": "e53f1c1e442f9484ad142dbfdec8ceffce27fd1950a3bceb95eb351a86ed83f5",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2606"
+    },
+    {
+      "id": "br2607-daily-directory-pilot",
+      "symbol": "SHFE.br2607",
+      "product": "br",
+      "file": "br2607-daily-directory-pilot.body",
+      "sha256": "15c8d785ccc0a68fa1bd4bec0640b463d960ed9f83e0ac51a353a269bcfdd2bc",
+      "receipt": "br2607-daily-directory-pilot.json",
+      "receipt_sha256": "02d67379ba15f1dc2925dbbbd523524f25e56bc36f1e17730e9fe02fe0211ddc",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2607"
+    },
+    {
+      "id": "br2608-daily-directory-pilot",
+      "symbol": "SHFE.br2608",
+      "product": "br",
+      "file": "br2608-daily-directory-pilot.body",
+      "sha256": "2b46916dfb4827cae16b0a2ea98d67f25dc28fc78e22ce31083a960a0710c182",
+      "receipt": "br2608-daily-directory-pilot.json",
+      "receipt_sha256": "4ea86f4320dae5fc2b59709cc5370b44f8110b0b99b02e8fa0a894c6b048684c",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2608"
+    },
+    {
+      "id": "br2609-daily-directory-pilot",
+      "symbol": "SHFE.br2609",
+      "product": "br",
+      "file": "br2609-daily-directory-pilot.body",
+      "sha256": "9aed8d99a4137e29696600c7a8d5121623bc884a478df8c5f30014cab330d43c",
+      "receipt": "br2609-daily-directory-pilot.json",
+      "receipt_sha256": "d5c3386b50b78d59c3d4517aaa6680f10f1712ffaf7d83f1478799d968b7325e",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2609"
+    },
+    {
+      "id": "br2610-daily-directory-pilot",
+      "symbol": "SHFE.br2610",
+      "product": "br",
+      "file": "br2610-daily-directory-pilot.body",
+      "sha256": "583ca92e0c4c9b8d0e8f746ef009fb3f5c5622799ef7968ba72de7cc88fe56cc",
+      "receipt": "br2610-daily-directory-pilot.json",
+      "receipt_sha256": "b47d8e53ae4683b3370a83fcbb220bdcb4dbd6248905c4d22cfb5fa6269039ce",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2610"
+    },
+    {
+      "id": "br2611-daily-directory-pilot",
+      "symbol": "SHFE.br2611",
+      "product": "br",
+      "file": "br2611-daily-directory-pilot.body",
+      "sha256": "431a8fd8bd2c08d76b3a795cebfa50fadccc45f6c8dc4b71dddf0d9f498cefd4",
+      "receipt": "br2611-daily-directory-pilot.json",
+      "receipt_sha256": "54768cc2417d9290247a0b68ce2a2b91699ba0bcaa8ec59cfd91d633e51d4fb6",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2611"
+    },
+    {
+      "id": "br2612-daily-directory-pilot",
+      "symbol": "SHFE.br2612",
+      "product": "br",
+      "file": "br2612-daily-directory-pilot.body",
+      "sha256": "00360995720e768ec14956dcb5fb6fa15dbf1a0f040e6fea1b91d10a5ce2fd22",
+      "receipt": "br2612-daily-directory-pilot.json",
+      "receipt_sha256": "5cd60e870aedf105ae3f2a737cbbcc9079916ae222882c9d726175943128b704",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2612"
+    },
+    {
+      "id": "op2602-daily-directory-pilot",
+      "symbol": "SHFE.op2602",
+      "product": "op",
+      "file": "op2602-daily-directory-pilot.body",
+      "sha256": "0965b24d1de447d2ae40589282f23f5b98183a0b911a155fc750411cb7c490fc",
+      "receipt": "op2602-daily-directory-pilot.json",
+      "receipt_sha256": "d3adb3cc3e089d6eb632dc0e830815f2786c63de1b1a3b7f082dc414f0a4cc57",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2602"
+    },
+    {
+      "id": "op2603-daily-directory-pilot",
+      "symbol": "SHFE.op2603",
+      "product": "op",
+      "file": "op2603-daily-directory-pilot.body",
+      "sha256": "2ed86c3ba3c9d46663debd97f76afeca8ba7d2b85db0f66516e4277b8257ba81",
+      "receipt": "op2603-daily-directory-pilot.json",
+      "receipt_sha256": "21bbe5075aec7e492d8d84a91f1cd812ce5fc2ae4939acad0713b0a624b4d6f0",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2603"
+    },
+    {
+      "id": "op2604-daily-directory-pilot",
+      "symbol": "SHFE.op2604",
+      "product": "op",
+      "file": "op2604-daily-directory-pilot.body",
+      "sha256": "3c6be1397efea490f68cafc5ff84e9fc71e1fbb86a4b7ad377835583644b7e7b",
+      "receipt": "op2604-daily-directory-pilot.json",
+      "receipt_sha256": "48b605fe49b39b5752b5d6d266b470ed5ce1cc5281839448193a09604d2e5cc0",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2604"
+    },
+    {
+      "id": "op2605-daily-directory-pilot",
+      "symbol": "SHFE.op2605",
+      "product": "op",
+      "file": "op2605-daily-directory-pilot.body",
+      "sha256": "4a2fe734eab49e95674949c08c1f869f6bce2fb2229fa2fc8b3e5c56618df38f",
+      "receipt": "op2605-daily-directory-pilot.json",
+      "receipt_sha256": "a4255c37919ac0bcc35be3de8c5c9102de212a8d0712be733c240bbb67b7b831",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2605"
+    },
+    {
+      "id": "op2606-daily-directory-pilot",
+      "symbol": "SHFE.op2606",
+      "product": "op",
+      "file": "op2606-daily-directory-pilot.body",
+      "sha256": "44269b0f3e2252838742f962b44686219cae91f55d6a31f8d3c2b3d990ce0759",
+      "receipt": "op2606-daily-directory-pilot.json",
+      "receipt_sha256": "83b2ada6b658954ebcdd242d3034b2ab83620e87c8cef1607322fc153beca108",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2606"
+    },
+    {
+      "id": "op2607-daily-directory-pilot",
+      "symbol": "SHFE.op2607",
+      "product": "op",
+      "file": "op2607-daily-directory-pilot.body",
+      "sha256": "9b15132b380f3567512c3e5cd964807688d7c4cd4f9d18ec4e23059e950238ff",
+      "receipt": "op2607-daily-directory-pilot.json",
+      "receipt_sha256": "b46362f16af774fae7396974f1b3bb6b5409e89de9643e702be5daed7fc4946a",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2607"
+    },
+    {
+      "id": "op2608-daily-directory-pilot",
+      "symbol": "SHFE.op2608",
+      "product": "op",
+      "file": "op2608-daily-directory-pilot.body",
+      "sha256": "0388db43bc08a032ad7fa288e66eebfeef993885e75b38c667e1a8adcfcd2f28",
+      "receipt": "op2608-daily-directory-pilot.json",
+      "receipt_sha256": "efd62edd39b7cd286d9e08ef882f036897fa27692666a732490902a3bf84f843",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2608"
+    },
+    {
+      "id": "op2609-daily-directory-pilot",
+      "symbol": "SHFE.op2609",
+      "product": "op",
+      "file": "op2609-daily-directory-pilot.body",
+      "sha256": "0e5bbfc3792f18e6c23c012e736f373bd4e111464f55d79dac69575463a5586a",
+      "receipt": "op2609-daily-directory-pilot.json",
+      "receipt_sha256": "8ce7483f87f8e71d979eed66ff10f43e4319b08daa2989868c37e07fd1c1d282",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2609"
+    },
+    {
+      "id": "op2610-daily-directory-pilot",
+      "symbol": "SHFE.op2610",
+      "product": "op",
+      "file": "op2610-daily-directory-pilot.body",
+      "sha256": "c250cec1d0b453aaa92a514aaa29270c2383117183cfb5465d18892c56199313",
+      "receipt": "op2610-daily-directory-pilot.json",
+      "receipt_sha256": "e41c92f89f5ed5807e46ab4710c364572f0d2eca3fa1ef22c131e29b16e89845",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2610"
+    },
+    {
+      "id": "op2611-daily-directory-pilot",
+      "symbol": "SHFE.op2611",
+      "product": "op",
+      "file": "op2611-daily-directory-pilot.body",
+      "sha256": "37303c7e696414bb95277e39f2554af42a0752f08639bc1d8f4ef68499f9eb94",
+      "receipt": "op2611-daily-directory-pilot.json",
+      "receipt_sha256": "0917dc25460207d9ca722b961f6e1fb0022a4dfb50f3e051f0475215acb72c38",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2611"
+    },
+    {
+      "id": "op2612-daily-directory-pilot",
+      "symbol": "SHFE.op2612",
+      "product": "op",
+      "file": "op2612-daily-directory-pilot.body",
+      "sha256": "3a88d665757a2f60af5b0f49db474480bb5ed2d003338a3455a37a8fbaacd072",
+      "receipt": "op2612-daily-directory-pilot.json",
+      "receipt_sha256": "523d3517c3fba6545a565482126ffa70c9f247ba1df3cb585d679a3bbd163c77",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2612"
+    }
+  ],
+  "calendars": [
+    {
+      "file": "calendar/verified/profiles/listed-2023.json",
+      "sha256": "ca8a0903daab1403e86ef7be52aad446e25de06068ce5297401e5aff1160ac73"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2024.json",
+      "sha256": "8c2744f4ede120090dd1b30a1c2a036a4e495a7918dfe3b671ce968515f6ed49"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2025.json",
+      "sha256": "e5bb05a16d8b8c3a468697f87e611070a597ebecd030bf71bccf81c531ec9438"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2026-to-1104.json",
+      "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\ao-decoded.json",
+      "sha256": "83ad995ff54a26514dc7407d07e7e64ac44d15c0ad325d8c3ff2b988df541006",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\br-decoded.json",
+      "sha256": "7940b3f66fa8cf861436a5809554db68b931cc8e441b7104cab2953c45d709bd",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ad-decoded.json",
+      "sha256": "f29dc82359127c52266475207d9ef617a77de896bc61d51ffd83253bd8bbc613",
+      "rows": 1456,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ao-decoded.json",
+      "sha256": "97a6e37d54de63289f0efe03472e2a0c0a8cf55a0b11fd17c94342500d5d8d71",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\br-decoded.json",
+      "sha256": "19354aee6434ace0bcca2719c39ad7cc3b8249b4725f3fb1a17e90df250ecda1",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\op-decoded.json",
+      "sha256": "3ac010031d266ee6b8efbe388359e715ed98e3289bb7167e4aff92a5e7a8ff62",
+      "rows": 770,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    }
+  ]
+}

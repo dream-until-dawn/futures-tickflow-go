@@ -3,6 +3,8 @@ import argparse
 import datetime as dt
 import io
 import json
+import math
+import re
 import sys
 from pathlib import Path
 
@@ -32,7 +34,10 @@ def reconcile(raw, official, calendar, covered_years):
                 unknown.append(dict(day=day, field=field, official=official[day][field]))
                 continue
             if value != control:
-                differences.append(dict(day=day, field=field, edb=str(value), official=str(control)))
+                # 逐字面数值不同仍保留；另标注精确binary64等价，不用epsilon抹掉差异。
+                a, b = float(value), float(control)
+                differences.append(dict(day=day, field=field, edb=str(value), official=str(control),
+                                        binary64_equal=math.isfinite(a) and math.isfinite(b) and a == b))
             else:
                 matched += 1
     start, end = min(actual), max(actual)
@@ -40,6 +45,8 @@ def reconcile(raw, official, calendar, covered_years):
     return dict(rows=len(actual), first_day=start, last_day=end, official_days=len(official),
                 overlapping_days=len(set(actual)&set(official)), matched_values=matched,
                 differences=differences, official_unpriced_fields=unknown,
+                binary64_equivalent_differences=sum(d['binary64_equal'] for d in differences),
+                binary64_distinct_differences=sum(not d['binary64_equal'] for d in differences),
                 missing_official_days=sorted(set(official)-set(actual)),
                 extra_in_official_years=sorted(d for d in set(actual)-set(official) if d//10000 in covered_years),
                 outside_official_years=sorted(d for d in actual if d//10000 not in covered_years),
@@ -69,7 +76,9 @@ def main():
         exchange, native = case['symbol'].split('.')
         controls, years = {}, set()
         for dataset in official:
-            if dataset['product_filter'] != case['product']:
+            if dataset['product_filter'] not in ('', case['product']):
+                continue
+            if not any(r['exchange'] == exchange and re.fullmatch(re.escape(case['product'])+r'[0-9]{4}',r['native']) for r in dataset['records']):
                 continue
             years.add(dataset['year'])
             for row in dataset['records']:

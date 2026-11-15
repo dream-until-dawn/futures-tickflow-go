@@ -12,10 +12,11 @@ import (
 
 const directoryPlanSHA = "f10b77e067fdbe543a31c49e1aee278b192de1375a5818aef5de7c3ce6bfa334"
 const officialInventoryPlanSHA = "924f7c2159ffbf48a22cc1dfc93cd2f625ac75dcb069deb7a7560f5c4d078291"
+const officialHistoryPlanSHA = "b04c0e8f8178832be71efadc76226199fba8142966643b9658ccf2903892e239"
 
 func approvedDirectoryPlanSHA(raw []byte) (string, error) {
 	sha := digest(raw)
-	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA {
+	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA {
 		return "", fmt.Errorf("日线执行单SHA不符")
 	}
 	return sha, nil
@@ -96,7 +97,7 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 			observed[row.Exchange+"."+row.Native] = true
 		}
 	}
-	if len(p.Jobs) == 0 || len(p.Jobs) > 128 {
+	if len(p.Jobs) == 0 || len(p.Jobs) > 2048 {
 		return nil, fmt.Errorf("日线冻结批次超范围")
 	}
 	seen := map[string]bool{}

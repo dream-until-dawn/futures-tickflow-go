@@ -179,10 +179,10 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		plan["scope"] = "three previously observed vendor-request codes; not an official historical universe or lifecycle"
 		plan["settlement_and_turnover_available"] = false
 	}
-	if len(planned) > 0 && strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") {
+	if len(planned) > 0 && (strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") || strings.HasSuffix(planned[0].ID, "-daily-official-history")) {
 		delete(plan, "original_all_phase_requests_max")
 		plan["scope"] = "frozen directory and official-row observed contracts; daily only"
-		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA}
+		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA}
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
@@ -430,7 +430,7 @@ func run() error {
 		}
 	}
 	var last time.Time
-	return collectSelected(*root, selected, func(j batch.Job) (batch.Result, error) {
+	fetch := func(j batch.Job) (batch.Result, error) {
 		if delay := time.Until(last.Add(2 * time.Second)); !last.IsZero() && delay > 0 {
 			time.Sleep(delay)
 		}
@@ -458,7 +458,11 @@ func run() error {
 			return batch.Result{}, fmt.Errorf("结果数不符")
 		}
 		return results[0], nil
-	})
+	}
+	if len(selected) > 128 {
+		return collectChunks(*root, selected, 128, fetch)
+	}
+	return collectSelected(*root, selected, fetch)
 }
 
 func main() {

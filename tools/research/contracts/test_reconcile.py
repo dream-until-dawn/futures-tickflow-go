@@ -24,7 +24,17 @@ class DirectoryDailyReconcileTest(unittest.TestCase):
         raw, official = self.fixture()
         result = reconcile(raw.replace(b',4,5,6',b',7,5,6'), official, {}, {2021})
         self.assertEqual(result['matched_values'],5)
-        self.assertEqual(result['differences'],[dict(day=20210104,field='volume',edb='7',official='4')])
+        self.assertEqual(result['differences'],[dict(day=20210104,field='volume',edb='7',official='4',binary64_equal=False)])
+        self.assertEqual(result['binary64_distinct_differences'],1)
+
+    def test_binary64_representation_difference_still_preserves_raw_decimal(self):
+        raw,official=self.fixture()
+        official[20210104]['close']='2.0000000000000001'
+        result=reconcile(raw,official,{}, {2021})
+        self.assertEqual(result['matched_values'],5)
+        self.assertEqual(result['binary64_equivalent_differences'],1)
+        self.assertEqual(result['binary64_distinct_differences'],0)
+        self.assertEqual(result['differences'][0]['official'],'2.0000000000000001')
 
     def test_missing_official_and_unknown_calendar_are_not_success(self):
         raw, official = self.fixture()

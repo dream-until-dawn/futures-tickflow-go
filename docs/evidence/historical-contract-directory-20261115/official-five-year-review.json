@@ -1,0 +1,121 @@
+{
+  "schema": "official-five-year-directory-review-v1",
+  "years": [
+    {
+      "year": 2021,
+      "rows": 45198,
+      "contracts": 376,
+      "by_exchange": {
+        "SHFE": 45198
+      },
+      "first_day": 20210104,
+      "last_day": 20211231,
+      "original_sha256": "e9962695770b84da1001a108fd42b2422ce5be2b9c954fcd7c40e879c32eba48",
+      "original_bytes": 20448589,
+      "original_receipt_sha256": "4f42b3a43f29cd08e7714bf0be2b630ab14b9dbf9d72022edbfaa325dfc9e4aa",
+      "original_retrieved_at": "2026-11-05T05:20:39.047098Z",
+      "original_url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119586875148395.zip",
+      "decoded_sha256": "8e47ec167de6c7beb1f9d7e6d758699d3cf4cc1f75e0770750c33fd63218e70f",
+      "decoded_file": "C:\\Temp\\tickflow-official-history-decoded-20261115-v1\\2021.json",
+      "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+      "excluded_options": 402410,
+      "excluded_tas": 0
+    },
+    {
+      "year": 2022,
+      "rows": 45796,
+      "contracts": 380,
+      "by_exchange": {
+        "SHFE": 45796
+      },
+      "first_day": 20220104,
+      "last_day": 20221230,
+      "original_sha256": "38be8b5ff728a6aa34aa1e25a961857cac319a194db8f9c161d3e1af10b5399c",
+      "original_bytes": 18790402,
+      "original_receipt_sha256": "e2d8ed4269af041fb649698c4e91751c54271aaa268955df041434831673c57b",
+      "original_retrieved_at": "2026-11-05T05:20:39.246435Z",
+      "original_url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119587093379978.zip",
+      "decoded_sha256": "5f673759a5f331782e5caccd9f4de2a89bc6a9cc82eb16025ebf40e1c0421865",
+      "decoded_file": "C:\\Temp\\tickflow-official-history-decoded-20261115-v1\\2022.json",
+      "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+      "excluded_options": 377026,
+      "excluded_tas": 0
+    },
+    {
+      "year": 2023,
+      "rows": 48356,
+      "contracts": 405,
+      "by_exchange": {
+        "SHFE": 48356
+      },
+      "first_day": 20230103,
+      "last_day": 20231229,
+      "original_sha256": "605e119b8f6e7cd73b02fa18aa75ce1b388d5628aa024d7f5b7961d028a9ec2c",
+      "original_bytes": 24187534,
+      "original_receipt_sha256": "1dd35f0bc1cde6ee2ed6f28bdeb1c8e26c4c155a0b627e29e057517f9254d2f6",
+      "original_retrieved_at": "2026-11-05T05:20:39.438674Z",
+      "original_url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202401/P020240119587353273027.zip",
+      "decoded_sha256": "5b24051e781c7fd74a0fb2622838d80d3c5352c68ccd9d568cddfc80122fe01b",
+      "decoded_file": "C:\\Temp\\tickflow-official-history-decoded-20261115-v1\\2023.json",
+      "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+      "excluded_options": 488330,
+      "excluded_tas": 0
+    },
+    {
+      "year": 2024,
+      "rows": 66758,
+      "contracts": 540,
+      "by_exchange": {
+        "INE": 14970,
+        "SHFE": 51788
+      },
+      "first_day": 20240102,
+      "last_day": 20241231,
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e",
+      "original_bytes": 35087891,
+      "original_receipt_sha256": "be4377bb048144465b4cee2df80627bff62b66ef91b70265a6f565dfbdd83bc7",
+      "original_retrieved_at": "2026-11-05T05:20:39.666382Z",
+      "original_url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202501/P020250103380580546440.zip",
+      "decoded_sha256": "c33930153038cd8871cc440d1f17e295f03364468efd0022376e3a90daf13ccc",
+      "decoded_file": "C:\\Temp\\tickflow-official-history-decoded-20261115-v1\\2024.json",
+      "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+      "excluded_options": 582336,
+      "excluded_tas": 0
+    },
+    {
+      "year": 2025,
+      "rows": 69294,
+      "contracts": 567,
+      "by_exchange": {
+        "INE": 15066,
+        "SHFE": 54228
+      },
+      "first_day": 20250102,
+      "last_day": 20251231,
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902",
+      "original_bytes": 76397695,
+      "original_receipt_sha256": "e17afb0770d4afe86e9fbd620ab0523caad88f7dc1b3bb30743985e29506e7b9",
+      "original_retrieved_at": "2026-11-05T05:20:39.999585Z",
+      "original_url": "https://www.shfe.com.cn/reports/tradedata/datadownload/historicaldata/futures/202601/P020260317382428557825.zip",
+      "decoded_sha256": "68188cfc76a61c886bbf8348fc672a6060fcfdb2adbae8dee97f4e25e0d87914",
+      "decoded_file": "C:\\Temp\\tickflow-official-history-decoded-20261115-v1\\2025.json",
+      "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+      "excluded_options": 963142,
+      "excluded_tas": 0
+    }
+  ],
+  "official_contracts": 1406,
+  "official_present_in_snapshot": 1406,
+  "official_absent_from_snapshot": [],
+  "observed_contracts_sha256": "6ea2eb07d6d3f174b5015e30f10661d887b3c911e547299adc9ee7ae6ef289f6",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "total_contract_days": 275402,
+  "by_market_contracts": {
+    "SHFE": 1239,
+    "INE": 167
+  },
+  "official_listing_or_delisting_certified": false,
+  "complete_six_market_history_certified": false,
+  "market_requests": 0,
+  "original_retrieval_time_preserved": true
+}

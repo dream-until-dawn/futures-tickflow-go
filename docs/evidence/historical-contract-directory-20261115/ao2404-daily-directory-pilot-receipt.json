@@ -1,0 +1,24 @@
+{
+  "job_sha256": "ffb71d66451cb32711dd7e4429864122347998ab3e99a71fbf5b1072bf55f746",
+  "state": "received",
+  "evidence": {
+    "id": "ao2404-daily-directory-pilot",
+    "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=SHFE.ao2404",
+    "sha256": "18563e655897ced200cb079f8b6eae674ce81ddf442960315e4cac7de47e0f77",
+    "retrieved_at": "2026-11-15T05:23:57.685354Z",
+    "version": "shinny-edb-directory-daily-v1"
+  },
+  "bytes": 10797,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59\u0026period=86400\u0026start_time=2021-01-01+00%3A00%3A00\u0026symbol=SHFE.ao2404",
+    "content_type": "text/csv; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 05:23:57 GMT",
+    "requested_at": "2026-11-15T05:23:57.685354Z",
+    "complete": true
+  }
+}
