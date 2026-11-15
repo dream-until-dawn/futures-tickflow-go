@@ -3,19 +3,26 @@
   "file_bytes": 3728110,
   "pdf_pages": 65,
   "reviewed_actual_pages": [
+    20,
     49,
-    50
+    50,
+    63
   ],
   "reviewed_printed_pages": [
+    19,
     48,
-    49
+    49,
+    62
   ],
   "rendered_files": [
     "pdf-pages/listing-49.png",
-    "pdf-pages/listing-50.png"
+    "pdf-pages/listing-50.png",
+    "pdf-pages/crosscheck-20.png",
+    "pdf-pages/crosscheck-63.png"
   ],
   "renderer": "bundled pdftoppm; scale-to 1800",
   "visual_inspection": "105/106 notices, effective and listing dates, cross-page night clause and six full first contracts read directly from both PNGs",
   "font_warnings": "Poppler reported unavailable optional Latin font aliases; required Chinese/number clauses were legible on both inspected pages",
-  "qualification_added": false
+  "qualification_added": false,
+  "crosscheck_clauses_read_directly": "PR monthly row and unit footnotes; full 115 notice including six contracts, 6850 reference and notice/first-day dates"
 }

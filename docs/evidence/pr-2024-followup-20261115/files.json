@@ -1,0 +1,117 @@
+[
+  {
+    "file": "build-info-year-end.txt",
+    "bytes": 903,
+    "sha256": "ac116fed5f1ce86f50c200f4cf00e9e99f88655e954daf2ca1d1e06c111a8e38"
+  },
+  {
+    "file": "build-info.txt",
+    "bytes": 894,
+    "sha256": "e71271006d7a01641c614b2b51bfdc884368a48ca021ea485d797586f7994e21"
+  },
+  {
+    "file": "engine-readback.json",
+    "bytes": 1305,
+    "sha256": "4ba0303a9f73d4d9ed9ae703ffe4a863416ec514870fe2f3fc13ffa5e9ebf86b"
+  },
+  {
+    "file": "first-day-crosscheck.json",
+    "bytes": 1633,
+    "sha256": "6bd8644396b085f71f580e5aec78c927baf1024f9a54b7dbfa7d0abdd94a75ca"
+  },
+  {
+    "file": "guard-mutations.json",
+    "bytes": 496,
+    "sha256": "3bacbecbaa6f44e39eabaedff2343b0698385ef439f04236c4565cddfbb0f965"
+  },
+  {
+    "file": "initial-price-notice-115.txt",
+    "bytes": 311,
+    "sha256": "1900688eaf38e6cde49f81b367d6fafc0b3829aa9d35f4e455285c806363029e"
+  },
+  {
+    "file": "listing-facts.json",
+    "bytes": 1354,
+    "sha256": "abc8e98b2be2d9258be5ca3a092dcf30a5cb2d4fe0cf13bddf10b46b3b2953f6"
+  },
+  {
+    "file": "listing-page-49.txt",
+    "bytes": 1241,
+    "sha256": "5513bef5be9f78c6bf4081ef9d64be242d5918333245e2e0dbcdec3fe2b9e46f"
+  },
+  {
+    "file": "listing-page-50.txt",
+    "bytes": 1268,
+    "sha256": "e2bd0f8b197b1f76986a9d4f5e0897422eee7ded9f8436c4ea9470a30a751eb3"
+  },
+  {
+    "file": "night-hours-baseline.log.txt",
+    "bytes": 246,
+    "sha256": "0d1f53ac4ba051edec142d4188eccecd64d7ffd3e1e500fbb6c7345994d37ffe"
+  },
+  {
+    "file": "night-hours-mutated.log.txt",
+    "bytes": 1078,
+    "sha256": "6ee543ff287d9eb81876cc2ca2b0f91b221f1dd1af59306e1f6d1a320474e102"
+  },
+  {
+    "file": "pr-first-rules-plan.json",
+    "bytes": 947,
+    "sha256": "ad83c08656f9cfefb94648f2e0de52cf1dbd5876fedf5db3b1a2fa3e139e11da"
+  },
+  {
+    "file": "pr-first-rules-receipt.json",
+    "bytes": 909,
+    "sha256": "33a30cc9e26cf3b98b67b395b2cb62ed9f73c635560d2f1cadac16bbcd076cf7"
+  },
+  {
+    "file": "pr-first-rules-response.txt",
+    "bytes": 709,
+    "sha256": "0924fdd2c76f90ba24733629950cc7305824adf0088bb3a329c9d1f3d033f751"
+  },
+  {
+    "file": "request-ledger.json",
+    "bytes": 1099,
+    "sha256": "89fda299c86b478941ac6b072f25729f754f50b3c43926704e3bc1ce65f37dda"
+  },
+  {
+    "file": "resource404-baseline.log.txt",
+    "bytes": 90,
+    "sha256": "a53a874979b634698dd818dd1a673c836a138ba18079bd236fb3dbae2750ea9a"
+  },
+  {
+    "file": "resource404-mutated.log.txt",
+    "bytes": 218,
+    "sha256": "ba9952a44ba90708dd63463f0591a80c27e970f46e93c9e787688407fcde5412"
+  },
+  {
+    "file": "sealing.json",
+    "bytes": 937,
+    "sha256": "0a77e3bbcfbf77058d00d962f93a5c79a3b2d7a306759ef769d4b5ec10876bce"
+  },
+  {
+    "file": "statistics-page-20.txt",
+    "bytes": 1972,
+    "sha256": "ea65d615e8496530d0c8ba899a90a4e0f654e339a05072fb320114ea39983aec"
+  },
+  {
+    "file": "visual-review.json",
+    "bytes": 965,
+    "sha256": "a313bdb3b8ec2fb68c7aa8331ea7664fe1c7c99ad65d66615f33d288bd423d5e"
+  },
+  {
+    "file": "year-end-2025-candidate-plan.json",
+    "bytes": 682,
+    "sha256": "7ef6c063bb99925b547c4930a3b6d844889b3a2b9a901b8a9118884a58006461"
+  },
+  {
+    "file": "year-end-2025-candidate-receipt.json",
+    "bytes": 940,
+    "sha256": "c48bf163203be81bb3f507ed4950f345b7842e46894cd06789e48fbabd1b3818"
+  },
+  {
+    "file": "year-end-2025-candidate-response.txt",
+    "bytes": 2787,
+    "sha256": "f4494dc81237924056e63203d71924bbd856afc52930284088b959d94ea090ab"
+  }
+]

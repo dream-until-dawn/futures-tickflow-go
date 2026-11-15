@@ -1,0 +1,65 @@
+{
+  "source_pdf_sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+  "source_pdf_pages": [
+    20,
+    63
+  ],
+  "printed_pages": [
+    19,
+    62
+  ],
+  "notice_number": "2024-115",
+  "notice_date": 20240828,
+  "first_announced_date": 20240830,
+  "announced_first_contracts": [
+    "PR2503",
+    "PR2504",
+    "PR2505",
+    "PR2506",
+    "PR2507",
+    "PR2508"
+  ],
+  "announced_initial_price_text": "6850元/吨",
+  "same_day_raw_native_codes": [
+    "PR503",
+    "PR504",
+    "PR505",
+    "PR506",
+    "PR507",
+    "PR508"
+  ],
+  "same_day_volume_sum": 168599,
+  "monthly_pr_volume": 168599,
+  "month_table_volume_unit": "手",
+  "month_table_volume_convention": "单边计算",
+  "month_table_pr_contract_size": "15吨/手",
+  "first_day_pre_settle_raw": [
+    "6850.00",
+    "6850.00",
+    "6850.00",
+    "6850.00",
+    "6850.00",
+    "6850.00"
+  ],
+  "anchor_parity": true,
+  "scope": "single first-day/month aggregate crosscheck only; pre_settle equals listing reference, not evidence of trading on a prior day; no global raw-code year mapping or whole-year regime",
+  "calendar_certified": false,
+  "lifecycle_certified": false,
+  "financial_eligible": false,
+  "market_requests": 0,
+  "negative_controls": [
+    {
+      "case": "double-volume",
+      "rejected_reason": "monthly_volume_anchor"
+    },
+    {
+      "case": "wrong-reference",
+      "rejected_reason": "initial_reference_anchor"
+    },
+    {
+      "case": "missing-first-contract",
+      "rejected_reason": "first_contract_set"
+    }
+  ],
+  "arithmetic": "integer volume and Decimal reference-price comparison; raw strings retained"
+}

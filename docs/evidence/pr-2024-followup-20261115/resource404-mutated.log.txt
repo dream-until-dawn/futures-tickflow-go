@@ -1,0 +1,5 @@
+--- FAIL: TestPRContinuationRequiresCompleteResource404 (0.02s)
+    main_test.go:61: 404/挑战门禁错误 403 <nil>
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/calendar/pr2024/collect	0.508s
+FAIL

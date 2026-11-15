@@ -88,3 +88,6 @@ docs/evidence/sina-static-http-result-20261115/*.json binary
 docs/evidence/pr-2024-followup-20261115/*-response.txt binary
 docs/evidence/pr-2024-followup-20261115/build-info*.txt binary
 docs/evidence/pr-2024-followup-20261115/listing-page-*.txt binary
+docs/evidence/pr-2024-followup-20261115/statistics-page-20.txt binary
+docs/evidence/pr-2024-followup-20261115/initial-price-notice-115.txt binary
+docs/evidence/pr-2024-followup-20261115/*.log.txt binary

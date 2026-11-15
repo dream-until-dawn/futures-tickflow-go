@@ -1,0 +1,20 @@
+{
+  "sealed": "C:\\Temp\\tickflow-pr-2024-20261115-v2-sealed",
+  "migration": "C:\\Temp\\tickflow-pr-2024-20261115-v2-migration",
+  "tamper_copy": "C:\\Temp\\tickflow-pr-2024-20261115-v2-tamper",
+  "manifest_sha256": "cbfa905ca649a63294f5127b2d247c8702ccc39e2a77449cecfc7af3d6e521d6",
+  "indexed_files": 225,
+  "indexed_bytes": 8517697,
+  "copy_and_migration_verified": true,
+  "tamper_rejected_target": "acquisition/archive/pr-first-rules.body",
+  "original_seal_unchanged_after_control": true,
+  "full_pdf_included": true,
+  "engine_178_original_items_included": true,
+  "first_day_decimal_negative_controls_included": true,
+  "previous_seal": "C:\\Temp\\tickflow-pr-2024-20261115-v1-sealed",
+  "previous_manifest_sha256": "49ec1f97c959d583670ea39ee871cefd48f41a015af34fb630fa0a4141aa90e4",
+  "previous_seal_preserved": true,
+  "snapshot_before_final_seal_pointer": true,
+  "calendar_certified": false,
+  "financial_eligible": false
+}

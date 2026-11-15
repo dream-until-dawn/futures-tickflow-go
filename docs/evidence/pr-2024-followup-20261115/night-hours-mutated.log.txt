@@ -1,0 +1,16 @@
+test_six_actual_business_mutations_hit_target_reason (test_review_listing.PRListingTest.test_six_actual_business_mutations_hit_target_reason) ... 
+  test_six_actual_business_mutations_hit_target_reason (test_review_listing.PRListingTest.test_six_actual_business_mutations_hit_target_reason) (reason='night_hours') ... FAIL
+
+======================================================================
+FAIL: test_six_actual_business_mutations_hit_target_reason (test_review_listing.PRListingTest.test_six_actual_business_mutations_hit_target_reason) (reason='night_hours')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Temp\tickflow-pr-night-3oedgfyc\test_review_listing.py", line 34, in test_six_actual_business_mutations_hit_target_reason
+    with self.assertRaisesRegex(ValueError, "^"+reason+"$"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

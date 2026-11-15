@@ -1,0 +1,20 @@
+{
+  "code_candidate": "513b5e1394a22766db7f62b1479c89e992c9beda",
+  "cases": [
+    {
+      "case": "complete404-only",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "404/挑战门禁错误",
+      "network_requests": 0
+    },
+    {
+      "case": "night-hours-clause",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "night_hours: ValueError not raised",
+      "network_requests": 0
+    }
+  ],
+  "market_requests": 0
+}

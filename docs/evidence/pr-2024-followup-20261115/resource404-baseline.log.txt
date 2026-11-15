@@ -1,0 +1,1 @@
+ok  	github.com/dream-until-dawn/futures-tickflow-go/tools/calendar/pr2024/collect	0.537s
