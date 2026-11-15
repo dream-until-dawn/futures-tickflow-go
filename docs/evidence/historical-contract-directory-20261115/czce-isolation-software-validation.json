@@ -1,0 +1,32 @@
+{
+  "schema": "czce-isolation-software-validation-v1",
+  "software_sha": "cacc060de39afe6a5a319d140f3640ef1f1dd661",
+  "full_log": "C:/Temp/tickflow-czce-isolation-validation-cacc060.log",
+  "full_log_sha256": "651f5d03661c217db52667add04e4b50aff1784d938887e11146a95631d8d50b",
+  "full_module_sweep_exit_code": 0,
+  "go_modules": [
+    ".",
+    "adapter",
+    "tools/probe/shinny"
+  ],
+  "gofmt_vet_test": true,
+  "python_tests": 168,
+  "python_directories": 15,
+  "restoration_drill": true,
+  "workspace_fingerprint_unchanged": true,
+  "doccheck": {
+    "document_declarations": 203,
+    "source_declarations": 893,
+    "whitelist": 0
+  },
+  "ci_run": 43696492059,
+  "ci_matrices": 3,
+  "ci_state": "success",
+  "source_mutations_compile_valid_target_failures": 3,
+  "api_library_tree_unchanged_from": "3b4248bdb08ef620217468a496192aae3817381a",
+  "legacy_37_report_unchanged": true,
+  "request_execution_state": "completed-with-unavailable",
+  "unavailable_is_not_coverage": true,
+  "financial_eligible": false,
+  "tag_created": false
+}

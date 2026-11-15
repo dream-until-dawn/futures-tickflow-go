@@ -1,0 +1,81 @@
+{
+  "schema": "historical-directory-scope-matrix-v1",
+  "rows": [
+    {
+      "exchange": "SHFE",
+      "supplier_snapshot_expiry_since_2021_candidates": 1439,
+      "acquired_reference_observed_contracts": 1239,
+      "nonempty_daily_responses_in_this_directory_route": 1239,
+      "empty_daily_responses_in_this_route": 0,
+      "candidates_without_reference_observation": 200,
+      "reference_scope": "2021-2025 annual official ZIPs",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    },
+    {
+      "exchange": "INE",
+      "supplier_snapshot_expiry_since_2021_candidates": 360,
+      "acquired_reference_observed_contracts": 167,
+      "nonempty_daily_responses_in_this_directory_route": 167,
+      "empty_daily_responses_in_this_route": 0,
+      "candidates_without_reference_observation": 193,
+      "reference_scope": "2021-2025 annual official ZIPs",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    },
+    {
+      "exchange": "CZCE",
+      "supplier_snapshot_expiry_since_2021_candidates": 1505,
+      "acquired_reference_observed_contracts": 187,
+      "nonempty_daily_responses_in_this_directory_route": 176,
+      "empty_daily_responses_in_this_route": 11,
+      "candidates_without_reference_observation": 1318,
+      "reference_scope": "20210104 official daily table only",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    },
+    {
+      "exchange": "CFFEX",
+      "supplier_snapshot_expiry_since_2021_candidates": 372,
+      "acquired_reference_observed_contracts": 372,
+      "nonempty_daily_responses_in_this_directory_route": 372,
+      "empty_daily_responses_in_this_route": 0,
+      "candidates_without_reference_observation": 0,
+      "reference_scope": "202101-202610 unauthenticated native HTTP month candidates",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    },
+    {
+      "exchange": "DCE",
+      "supplier_snapshot_expiry_since_2021_candidates": 1531,
+      "acquired_reference_observed_contracts": 0,
+      "nonempty_daily_responses_in_this_directory_route": 0,
+      "empty_daily_responses_in_this_route": 0,
+      "candidates_without_reference_observation": 1531,
+      "reference_scope": "no new official reference in this route; old blocked endpoints not retried",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    },
+    {
+      "exchange": "GFEX",
+      "supplier_snapshot_expiry_since_2021_candidates": 144,
+      "acquired_reference_observed_contracts": 0,
+      "nonempty_daily_responses_in_this_directory_route": 0,
+      "empty_daily_responses_in_this_route": 0,
+      "candidates_without_reference_observation": 144,
+      "reference_scope": "no new official reference in this route; old blocked endpoints not retried",
+      "official_lifecycle_certified": false,
+      "new_strict_backtest_admission": false
+    }
+  ],
+  "totals": {
+    "snapshot_standard_candidates": 5351,
+    "reference_observed_contracts": 1965,
+    "nonempty_received": 1954,
+    "empty_unavailable": 11,
+    "candidates_without_reference_observation": 3386
+  },
+  "prior_vendor_only_three_samples": "DCE c2105/m2105 and GFEX si2308 previously received334 rows are separate; not new official evidence or additional rows in this route",
+  "full_market_complete": false,
+  "limits": "snapshot names and observed contract-days do not certify listing completeness, listing/delisting boundaries, historical calendars or point-in-time availability"
+}

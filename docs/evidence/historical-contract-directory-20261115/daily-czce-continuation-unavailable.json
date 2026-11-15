@@ -1,0 +1,108 @@
+{
+  "schema": "czce-continued-empty-observations-v1",
+  "new_unavailable": [
+    {
+      "symbol": "CZCE.CY2103",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY103",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "bb633d5d49c6dc6348f77dcc760627b40c2d282514bcbec2e39b8a3b777b38e4",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.LR2101",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR101",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "4f70d7167a031b835f39725512acb2e3f283cd39adfb9ad37ed5c225b512b587",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.LR2103",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR103",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "8a9e3f03765bec1e024bdd5e13df9c18f5e1f43de205b6a9caa66e8be1760644",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.LR2105",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR105",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "9d1bb563ad7f5f3a8acc3f6c8bae51384bf5f4e226d8a78b12679892c930acdf",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.LR2109",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR109",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "80ab270196ed87139b8a4ed4663ec92048d6683af9317e57002d581772aa9b2d",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.LR2111",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR111",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "a9bf32d4f1c3b861093e6ee351961159c6c3df6305baa7350145e144ffaafded",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.RI2103",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI103",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "ca44273ed947bc13e04bafa32805c98f3e7121b53085ea4efc51431954044e73",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.RI2105",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI105",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "9c7912865775beda206b9849916ac890a518d000d0df107a7c9b3f6227f6ddae",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.RI2107",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI107",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "871ee4e411ad3f1ea536727e46c61d97026ae0c71df5deb261d3c78a20fad048",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    },
+    {
+      "symbol": "CZCE.RI2109",
+      "source_url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI109",
+      "raw_receipt_state": "failed",
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c08eb3e156172d9cb236a0ba7d826257061e5ad44ed5d5745478cff4003c0f75",
+      "bytes": 59,
+      "counts_as_success": false,
+      "counts_as_coverage": false
+    }
+  ],
+  "original_cy2102_receipt_unchanged": true,
+  "full_observed_reference_contracts": 187,
+  "counts_as_coverage": false
+}

@@ -33,3 +33,21 @@
 独立核查收据发现，旧循环以每项归档开始为计时锚点，不同文件操作开销会侵蚀实际请求间隔；中金所69月包、368日线和郑商所19响应的最小本地墙钟收据间隔分别为1.999624、1.995929和1.999868秒。墙钟收据没有持久化单调请求起点，不能反向认证每个实际请求严格满两秒；这不是一份“间隔全部通过”证明。计划中的两秒目标与已发生证据分开，详见[限制复核](evidence/historical-contract-directory-20261115/request-spacing-limits-review.json)。
 
 未来代码改为上一请求及归档返回后再等待两秒（使用Go单调时间），比请求起点间隔更保守；慢请求功能正向通过，独立副本故意改回起点锚定后命中目标断言，见[源码破坏反例](evidence/historical-contract-directory-20261115/completion-spacing-source-mutation.json)。没有为修正间隔而重发任何旧请求，没有改写原始收据或封存包。新代码在选定续取策略后仍须重新从干净提交编译，旧baf4c0f执行文件不得冒称带有本修正。
+
+## 164项续取最终执行及对账
+
+来源干净提交cacc060，零请求预检先按外部可信manifest核验旧目录，随后唯一目录`C:/Temp/tickflow-edb-czce-continuation-20261115-v1`执行164项，全部结束：154份非空格式有效响应/17,553行，10份完整空表头不可用，其他失败0、未运行0，实际982,284字节。原19项和旧四项不重取；原CY2102仍failed，新10份空表头原收据也仍failed，协调报告才单列unavailable，不提升覆盖。全局启动标记已使用，原任务和本续取均不得重启；没有自动顺延任务。
+
+187个2021-01-04已观察候选合计176份非空日线/19,930行，11份空不可用。只有单日参考，不是全年或全市场数据完整性。176个参考日中相交160，16未见EDB行；这16行参考均量0/零OHLC，不能称丢失了16个已证实成交日，也不能据此证明其余日期完整。相交六字段842值相同，118值不同；104项分属26个参考零量日的官方零OHLC与EDB非零OHLC，14项为量仓不同（9持仓、5成交量，含早期三项，不另加）。不把118项都称确定供应商错误，不自动选源修补，不从字段值猜测填充规则。
+
+[最终锁](evidence/historical-contract-directory-20261115/daily-czce-observed-full-lock.json)只列176份非空响应；[最终汇总](evidence/historical-contract-directory-20261115/daily-czce-observed-final-summary.json)、[差异分类](evidence/historical-contract-directory-20261115/czce-final-difference-classification.json)及[10份新不可用](evidence/historical-contract-directory-20261115/daily-czce-continuation-unavailable.json)分别记录，未计入的原CY2102另保留旧失败链。全部118差异字段及16缺参考日期已独立回读原始日表/CSV；批量价位见证仅私有存放，公开给聚合/哈希和必要量仓样例。19,770个实际日期无本批参考，19,930行全部无获证产品日历，3,224个零量日不是实际成交保证。
+
+新164项的候选语义、实际Go JobSHA与原件SHA逐项独立复算一致。最小本地墙钟请求起点间隔2.296302秒；代码在上次归档完成后单调等待两秒，但收据未持久化单调请求起点，仍不宣称独立认证了每个实际网络起点的精确间隔。旧时间间隔限制和旧收据不改写。
+
+全路线累计1,965次EDB尝试、1,954非空格式有效响应/377,305行，空响应11；旧37供应商差异、SHFE/INE26值差异、中金所12个参考缺日期继续待核。中金所同源目录明确四个2603合约expire为3月13日15:00东八区，不能用目录到期3月10日解释EDB尾部，但这也不是官方生命周期证明或缺日根因。见[目录日期交叉核验](evidence/historical-contract-directory-20261115/cffex-catalog-expiry-crosscheck.json)。
+
+已准备[供应商/官方待核问题单](edb-daily-anomaly-questions-20261115.md)，没有外发、联系采购、使用账户或申请API权限。剩余质量、官方全年目录/挂牌/PIT及产品日历缺证不是增加请求次数就能证明；郑商所年包412和DCE/GFEX旧受阻入口不重试、不绕过。未改变默认Source、金融准入或旧v4包，暂不打tag。
+
+新私有封存包`C:/Temp/tickflow-czce-observed-final-20261115-v1-sealed`清单覆盖756件/6,043,811字节，manifest SHA256 `dc09ed2937300702ca8225dc4286c8f9da92f32933425ed5cf241b7c6df9a521`。迁移后只用包内输入重放176份完整对账及118字段/16缺日独立原件见证，两份输出逐字节相同；原包及迁移包重放前后SHA不变，空表头副本加行命中file_sha，重算篡改manifest仍命中外部可信manifest_sha。见[封存收据](evidence/historical-contract-directory-20261115/czce-final-seal-review.json)。封存完成只证明这些原件与复算可迁移，不证明11份空数据或其余市场已覆盖。
+
+软件基线cacc060在干净副本通过三Go模块gofmt/vet/test、168项Python/15目录和生成器还原指纹一致；CI43696492059三矩阵成功。当前[六市场范围矩阵](evidence/historical-contract-directory-20261115/directory-market-scope-matrix.json)区分供应商快照5351标准候选、具参考观察1965合约、1954非空/11空，与另外3386个无本轮参考观察候选；后者不等于不存在，也未被宣称已采齐或官方挂牌全集。旧DCE/GFEX三份供应商样本另册，不借此称官方缺口已补齐。
