@@ -1,0 +1,24 @@
+{
+  "schema": "edb-document-review-v1",
+  "url": "https://doc.shinnytech.com/edb/latest/md_server.html",
+  "bytes": 21201,
+  "sha256": "1491f0e0642c233c14a17b9dc8b02400debffb171c6d27496fb43562c8162a6c",
+  "retrieved_at": "2026-11-15T04:03:04.9617123Z",
+  "body_file": "C:\\Temp\\tickflow-edb-document-20261115-v1\\acquisition\\archive\\edb-public-document.body",
+  "reviewed_full_text": true,
+  "anonymous_daily_access_documented": true,
+  "anonymous_minute_access": "recent one year",
+  "documented_use": [
+    "local download",
+    "research",
+    "reconciliation"
+  ],
+  "query_timezone": "Asia/Shanghai",
+  "datetime_nano": "Unix epoch ns at bar start",
+  "daily_semantics": "trading day, not natural 24 hours",
+  "volume_unit": "lots",
+  "turnover_field_available": false,
+  "settlement_field_available": false,
+  "redistribution_grant_verified": false,
+  "source_is_not_independent_of_existing_shinny_provider": true
+}

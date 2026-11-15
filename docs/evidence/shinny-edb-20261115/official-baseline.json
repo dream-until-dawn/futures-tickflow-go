@@ -1,0 +1,50 @@
+{
+  "schema": "edb-official-baseline-v1",
+  "archive": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\shfe-annual-2025.body",
+  "archive_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902",
+  "archive_bytes": 76397695,
+  "records": [
+    {
+      "exchange": "INE",
+      "native": "ec2602",
+      "day": 20251118,
+      "member": "ine所内合约行情报表2025.1月-12月/ine所内合约行情报表2025.1月-12月.xlsx",
+      "member_sha256": "4327ffa5e427969730d7adc47c464e052e550db115aa6f4db8c99bf1030eba94",
+      "row": 3919,
+      "fields": {
+        "pre_settle": "1727.9",
+        "open": "1700",
+        "high": "1717.5",
+        "low": "1658.1",
+        "close": "1678.1",
+        "settle": "1685",
+        "volume": "29150",
+        "turnover": "245599.78099999999",
+        "open_interest": "38860"
+      },
+      "turnover_unit": "unknown"
+    },
+    {
+      "exchange": "SHFE",
+      "native": "br2601",
+      "day": 20251118,
+      "member": "上期所合约行情报表/所内合约行情报表2025.11.xlsx",
+      "member_sha256": "25ce395def661a8068b4f8ea9b0798dbee2ed95b1d6aed34c285ba0291e8cf43",
+      "row": 54573,
+      "fields": {
+        "pre_settle": "10410",
+        "open": "10475",
+        "high": "10655",
+        "low": "10430",
+        "close": "10505",
+        "settle": "10545",
+        "volume": "141146",
+        "turnover": "744229.53249999997",
+        "open_interest": "72021"
+      },
+      "turnover_unit": "unknown"
+    }
+  ],
+  "source_reused": true,
+  "vendor_comparison_performed": false
+}

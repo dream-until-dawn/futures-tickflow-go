@@ -95,3 +95,6 @@ docs/evidence/history-source-discovery-20261115/*-receipt.json binary
 docs/evidence/history-source-discovery-20261115/*.log.txt binary
 docs/evidence/vendor-sample-access-20261115/*-receipt.json binary
 docs/evidence/vendor-sample-access-20261115/*.log.txt binary
+docs/evidence/shinny-edb-20261115/*.json text eol=lf
+docs/evidence/shinny-edb-20261115/*-receipt.json binary
+docs/evidence/shinny-edb-20261115/*.log.txt binary

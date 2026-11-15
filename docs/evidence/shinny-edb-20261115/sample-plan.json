@@ -1,0 +1,51 @@
+{
+  "schema": "edb-exact-sample-plan-v1",
+  "jobs": [
+    {
+      "id": "ec2602-86400",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=86400&start_time=2025-11-18+09%3A00%3A00&symbol=INE.ec2602",
+      "period": 86400,
+      "symbol": "INE.ec2602",
+      "start": "2025-11-18 09:00:00",
+      "end": "2025-11-18 15:00:00",
+      "official_day": 20251118
+    },
+    {
+      "id": "ec2602-60",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-18+09%3A00%3A00&symbol=INE.ec2602",
+      "period": 60,
+      "symbol": "INE.ec2602",
+      "start": "2025-11-18 09:00:00",
+      "end": "2025-11-18 15:00:00",
+      "official_day": 20251118
+    },
+    {
+      "id": "br2601-86400",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=86400&start_time=2025-11-18+09%3A00%3A00&symbol=SHFE.br2601",
+      "period": 86400,
+      "symbol": "SHFE.br2601",
+      "start": "2025-11-18 09:00:00",
+      "end": "2025-11-18 15:00:00",
+      "official_day": 20251118
+    },
+    {
+      "id": "br2601-60",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2025-11-18+15%3A00%3A00&period=60&start_time=2025-11-17+21%3A00%3A00&symbol=SHFE.br2601",
+      "period": 60,
+      "symbol": "SHFE.br2601",
+      "start": "2025-11-17 21:00:00",
+      "end": "2025-11-18 15:00:00",
+      "official_day": 20251118
+    }
+  ],
+  "requests_max": 4,
+  "actual_bytes_total_max": 8388608,
+  "actual_bytes_per_response_max": 2097152,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "document_sha256": "1491f0e0642c233c14a17b9dc8b02400debffb171c6d27496fb43562c8162a6c",
+  "official_baseline_sha256": "1fc30d47bf6403b5f9807508d0aec7407b2c4f339d32451dccf1515c08942759",
+  "accounts_or_tokens": false,
+  "first_failure_stops_rest": true,
+  "raw_samples_publish_to_git": false
+}

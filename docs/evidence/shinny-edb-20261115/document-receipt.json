@@ -1,0 +1,24 @@
+{
+  "job_sha256": "bcca92da3d64087849483c1c573139ebe3903f85f709c517f5a295fe57573240",
+  "state": "received",
+  "evidence": {
+    "id": "edb-public-document",
+    "url": "https://doc.shinnytech.com/edb/latest/md_server.html",
+    "sha256": "1491f0e0642c233c14a17b9dc8b02400debffb171c6d27496fb43562c8162a6c",
+    "retrieved_at": "2026-11-15T04:03:04.9617123Z",
+    "version": "shinny-edb-public-document-unqualified"
+  },
+  "bytes": 21201,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://doc.shinnytech.com/edb/latest/md_server.html",
+    "content_type": "text/html; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 04:03:05 GMT",
+    "requested_at": "2026-11-15T04:03:04.9617123Z",
+    "complete": true
+  }
+}
