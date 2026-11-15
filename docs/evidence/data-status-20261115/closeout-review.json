@@ -1,0 +1,36 @@
+{
+  "schema": "data-status-document-review-v1",
+  "root": "C:\\Temp\\tickflow-data-status-review-20261115-v1-sealed",
+  "migrated_root": "C:\\Temp\\tickflow-data-status-review-20261115-v1-migrated",
+  "manifest_sha256": "2845716530606ac64d56c9730413fd4776a07a24a0c89c130efe118ebb7daa54",
+  "files": 128,
+  "bytes": 24474508,
+  "software_sha": "c38c503f87dbe00990ddf8ba664df7242966f468",
+  "source_ci_run": 43728225123,
+  "source_ci_success_matrices": 3,
+  "go_modules": 3,
+  "python_tests": 205,
+  "python_directories": 18,
+  "doccheck": {
+    "docs": 203,
+    "source": 893,
+    "whitelist": 0
+  },
+  "html_sha256": "7c11ed917159df064b9296fb5f134798a955e450fc0e91b3ed7510defcd8e927",
+  "model_sha256": "e66724f0d90fb577b25977a954f1edde04716f48b476baa56d78fea192159c70",
+  "published_docs_migration_reproduction": true,
+  "browser_desktop_mobile_checks": 9,
+  "browser_remote_requests": 0,
+  "source_mutations": 4,
+  "engine_csv_report_replayed_byte_identical": true,
+  "initial_ci_failure_preserved": true,
+  "negative_checks": [
+    "file_sha:repo/docs/data-status.html",
+    "manifest_sha"
+  ],
+  "raw_price_csv_included": false,
+  "full_go_release": false,
+  "new_market_requests": 0,
+  "financial_admission_expanded": false,
+  "tag_created": false
+}
