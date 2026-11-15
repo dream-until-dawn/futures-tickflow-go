@@ -1,0 +1,15 @@
+test_timestamp_example_is_local_evidence_only (test_access_review.AccessReviewTest.test_timestamp_example_is_local_evidence_only) ... FAIL
+
+======================================================================
+FAIL: test_timestamp_example_is_local_evidence_only (test_access_review.AccessReviewTest.test_timestamp_example_is_local_evidence_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Temp\tickflow-vendor-access-mutations-20261115-v1\time-mutated\test_access_review.py", line 27, in test_timestamp_example_is_local_evidence_only
+    self.assertFalse(access_review.example_time(current)['consistent_with_utc8'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

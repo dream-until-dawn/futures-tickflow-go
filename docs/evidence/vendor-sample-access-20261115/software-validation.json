@@ -1,0 +1,20 @@
+{
+  "schema": "vendor-access-local-validation-v1",
+  "source_commit": "3767a5946133efe6cc313ea0163a13ef403f7dd8",
+  "clean_clone": "C:/Temp/tickflow-vendor-sample-offline-20261115-v1/clean",
+  "go_modules": 3,
+  "gofmt_vet_test": "passed",
+  "python_tests": 140,
+  "python_directories": 13,
+  "restoration": "passed-identical-worktree-fingerprint",
+  "log": "C:\\Temp\\tickflow-vendor-sample-offline-20261115-v1\\module-sweep-3767a59.log",
+  "log_sha256": "f85c9f8ddc806b1cc149d20fbfddddb87a4e0db35b03990e1f9371057050d83d",
+  "doccheck": {
+    "documented": 203,
+    "source": 893,
+    "whitelist": 0,
+    "result": "passed"
+  },
+  "remote_ci_not_claimed_by_this_local_record": true,
+  "source_admission_changed": false
+}

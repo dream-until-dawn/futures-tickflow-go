@@ -1,0 +1,5 @@
+--- FAIL: TestVendorAccessModeOnlyCollectsThreePublicDocuments (0.01s)
+    main_test.go:98: 同一供应商未知后仍继续 [https://zhundata.cn/ https://zhundata.cn/hist-quotes-api.html https://zhundata.cn/realtime-quotes-api.html] 部分来源失败，原响应保留；不重试失败主机
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/research/historysources/collect	0.540s
+FAIL

@@ -1,0 +1,6 @@
+test_timestamp_example_is_local_evidence_only (test_access_review.AccessReviewTest.test_timestamp_example_is_local_evidence_only) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK

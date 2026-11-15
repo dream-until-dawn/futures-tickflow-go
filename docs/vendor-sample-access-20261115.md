@@ -56,4 +56,16 @@
 
 ## 验证和交付状态
 
-新增公开文档模式仅三条精确URL；同主机未知后停止，有正反控制。离线审核覆盖API标记缺失、股票示例替换、时间戳偏移，以及“发现许可链接”仍不等于取得数据授权。真实期货样本/单位/许可/对账未完成时，不提供Source适配、不扩大六品种日历或回测准入。封存迁移及最终软件检查结果将在实际通过后补记。
+新增公开文档模式仅三条精确URL；同主机未知后停止，有正反控制。离线审核覆盖API标记缺失、股票示例替换、时间戳偏移，以及“发现许可链接”仍不等于取得数据授权。真实期货样本/单位/许可/对账未完成时，不提供Source适配、不扩大六品种日历或回测准入。
+
+准确源码`3767a5946133efe6cc313ea0163a13ef403f7dd8`在全新干净克隆通过三Go模块gofmt/vet/test、**140项Python（13目录）**和生成器还原演练（前后内容指纹相同）；doccheck 203/893/0白名单通过。源码破坏反控分别移除同一供应商失败后的停止、把时间差核对硬编码为true，均被对应目标反例准确检出，正控通过；不把构建/导入错误算有效反例。[本地验证收据](evidence/vendor-sample-access-20261115/software-validation.json)及[目标破坏结果](evidence/vendor-sample-access-20261115/guard-mutations.json)固定准确SHA，远端CI和最终main须核当前实际提交，不能推未来已绿。
+
+补充封存`C:/Temp/tickflow-vendor-access-20261115-v2-sealed`：**54文件、35,891,115字节**（另manifest自身），manifest SHA256 `a296d9f9cdab30ecd551090c267d99744dffb0c31e27b850865e8848aeb3a564`。包含3新文档/原收据、原网盘说明复用、官方2024 ZIP复用、审核源码/反例及草稿；不是取得了54件供应商行情。迁移完整集合/长度/SHA一致，迁移包中离线重算报告完全一致，仅篡改副本中历史API原件的变动被拒；原包/迁移再核不变。二进制留原工作目录，最终封存指针和后续CI不循环包含。
+
+首次v1迁移复算未禁Python导入缓存，新增`tools/__pycache__/review.cpython-314.pyc`，被完整文件集合核查拒绝；v1包和失败迁移保留。另建v2，只读复算使用`python -B -X utf8`，不删除/忽略缓存来冲绿，也不改原失败记录。纯资料审核的复算命令（输出在包外）：
+
+```text
+python -B -X utf8 tools/research/historysources/access_review.py --lock docs/evidence/vendor-sample-access-20261115/source-lock.json --root C:/Temp/tickflow-vendor-access-20261115-v1/acquisition/archive --out C:/Temp/vendor-access-review.json
+```
+
+精确[封存收据](evidence/vendor-sample-access-20261115/sealing.json)和[Git文件索引](evidence/vendor-sample-access-20261115/files.json)可逐件核验。本轮是“明确资料/授权阻塞及可复用准备”的交付，不是新供应商适配、完成对账或新版阶段发行包；PR待决、未打tag。

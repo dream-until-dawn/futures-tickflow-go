@@ -1,0 +1,28 @@
+{
+  "schema": "vendor-access-target-mutations-v1",
+  "source_commit": "3767a5946133efe6cc313ea0163a13ef403f7dd8",
+  "network_requests": 0,
+  "original_source_modified": false,
+  "results": [
+    {
+      "name": "host-baseline",
+      "returncode": 0,
+      "target_reason": null
+    },
+    {
+      "name": "host-mutated",
+      "returncode": 1,
+      "target_reason": "同一供应商未知后仍继续"
+    },
+    {
+      "name": "time-baseline",
+      "returncode": 0,
+      "target_reason": null
+    },
+    {
+      "name": "time-mutated",
+      "returncode": 1,
+      "target_reason": "True is not false"
+    }
+  ]
+}

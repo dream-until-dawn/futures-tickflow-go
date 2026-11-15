@@ -1,0 +1,28 @@
+{
+  "schema": "vendor-access-sealing-review-v1",
+  "sealed": "C:\\Temp\\tickflow-vendor-access-20261115-v2-sealed",
+  "migration": "C:\\Temp\\tickflow-vendor-access-20261115-v2-sealed-migration",
+  "tamper_copy": "C:\\Temp\\tickflow-vendor-access-20261115-v2-sealed-tamper",
+  "files": 54,
+  "bytes": 35891115,
+  "manifest_sha256": "a296d9f9cdab30ecd551090c267d99744dffb0c31e27b850865e8848aeb3a564",
+  "migration_exact": true,
+  "mutated_files_rejected": [
+    "acquisition-working/acquisition/archive/vendor-history-api.body"
+  ],
+  "offline_review_recomputed_identical": true,
+  "official_original_reused": true,
+  "executables_excluded": true,
+  "seal_pointer_and_future_ci_logs_excluded": true,
+  "vendor_samples": 0,
+  "license_grants": 0,
+  "official_comparison_performed": false,
+  "prior_attempt_preserved": {
+    "sealed": "C:\\Temp\\tickflow-vendor-access-20261115-v1-sealed",
+    "migration": "C:\\Temp\\tickflow-vendor-access-20261115-v1-sealed-migration",
+    "unexpected_generated_files": [
+      "tools/__pycache__/review.cpython-314.pyc"
+    ],
+    "reason": "Python import cache writes caught by exact file-set verification; new package instructions and replay use -B, originals not rewritten."
+  }
+}
