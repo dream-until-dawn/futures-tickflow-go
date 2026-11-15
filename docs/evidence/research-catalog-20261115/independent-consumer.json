@@ -1,0 +1,39 @@
+{
+  "candidate_contracts": 5351,
+  "nonempty": 1954,
+  "empty_unavailable": 11,
+  "unrequested": 3386,
+  "rows": 377305,
+  "rows_by_source": {
+    "shfe": 320798,
+    "cffex": 36577,
+    "czce": 19930
+  },
+  "independent_integer_day_recount": true,
+  "financial_eligible": false,
+  "schema": "research-catalog-independent-consumer-v1",
+  "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
+  "consumer_source_sha256": "f0d2ec86fb457433f4eb5e1651417e57ca1ee6740980213d619e3fee225a8daf",
+  "negative_checks": [
+    {
+      "case": "financial",
+      "target_reason": "financial scope",
+      "exit_code": 1,
+      "log_sha256": "73efe323d2b0097f3a2550ff4017b246b1283b0663cd56f884c52ab27f18abaf"
+    },
+    {
+      "case": "empty",
+      "target_reason": "empty coverage",
+      "exit_code": 1,
+      "log_sha256": "0a180a9a9f6f5f86347f2e90dcf6fb9ee0cce2807eaa8bc8ae72636fa1d5ad78"
+    },
+    {
+      "case": "universe",
+      "target_reason": "candidate set",
+      "exit_code": 1,
+      "log_sha256": "2cd2b760509a5d00ef94919a7eda049c6c0d0fefab316270cccac453ebae9868"
+    }
+  ],
+  "generator_imported": false,
+  "price_fields_recomputed": false
+}

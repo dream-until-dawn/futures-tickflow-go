@@ -1,0 +1,36 @@
+{
+  "schema": "research-catalog-delivery-seal-v1",
+  "sealed_root": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-sealed",
+  "migrated_root": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-migrated",
+  "manifest_sha256": "4e9df6a6ef1cef4789e445b7016aad2906c57b7fc95c898e2fd11bfe6cbefd5b",
+  "files": 4174,
+  "bytes": 62954491,
+  "zip_path": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1.zip",
+  "zip_sha256": "f04a826666cc70abd6ea764740c4a687d275c95ff73a6469fd7e551dd2af19a3",
+  "zip_bytes": 13755712,
+  "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
+  "software_sha": "6ec985271e05ccdea9dbd907bcf880f71b4091f7",
+  "source_ci_run": 43722471842,
+  "source_ci_success_matrices": 3,
+  "go_modules": 3,
+  "python_tests": 192,
+  "python_directories": 17,
+  "portable_catalog_and_listing_byte_identical": true,
+  "independent_consumer_after_migration": true,
+  "zip_roundtrip_verified": true,
+  "negative_checks": [
+    "file_sha:catalog.json",
+    "manifest_sha"
+  ],
+  "complete_old_source_package_counts": [
+    7287,
+    1861,
+    756
+  ],
+  "source_input_mode": "only used files under original trusted manifests; not complete old source archives",
+  "market_requests": 0,
+  "new_annual_calendars": 0,
+  "full_go_release": false,
+  "strict_backtest_admission_expanded": false,
+  "tag_created": false
+}
