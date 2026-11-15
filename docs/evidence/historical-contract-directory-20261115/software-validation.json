@@ -1,0 +1,36 @@
+{
+  "schema": "historical-daily-software-validation-v1",
+  "source_commit": "e512dd2970c22d97403b34157e0400b6c4655cec",
+  "clean_clone": "C:/Temp/tickflow-historical-directory-validation-70fd930",
+  "validation_log": "C:\\Temp\\tickflow-historical-directory-validation-e512dd2.log",
+  "validation_log_sha256": "640085aea2450dd4f24663dad23c9d49c103dcb380fe27a57ded611dc65ca128",
+  "go_modules": 3,
+  "gofmt": true,
+  "vet": true,
+  "tests": true,
+  "python_tests": 165,
+  "python_directories": 15,
+  "generator_drill": true,
+  "drill_fingerprint_unchanged": true,
+  "doccheck": {
+    "document_declarations": 203,
+    "source_declarations": 893,
+    "whitelist": 0
+  },
+  "library_trees_unchanged_against": "a2a6888826cfcbdc73a4c1d510623eb6c8fa0280",
+  "ci_run": 43689282656,
+  "ci_conclusion": "success",
+  "remaining_native_69_executed": false,
+  "tag_created": false,
+  "ci_matrices": [
+    "ubuntu-latest/1.23.x success",
+    "ubuntu-latest/1.26.x success",
+    "windows-latest/1.26.x success"
+  ],
+  "linux_1_26_race": "success",
+  "migration_replays_verified": [
+    "main1406",
+    "additional8",
+    "legacy37"
+  ]
+}

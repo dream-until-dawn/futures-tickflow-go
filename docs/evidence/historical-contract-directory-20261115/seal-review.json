@@ -1,0 +1,24 @@
+{
+  "schema": "historical-research-seal-review-v1",
+  "root": "C:\\Temp\\tickflow-historical-directory-daily-20261115-v1-sealed",
+  "files": 7287,
+  "bytes": 458233010,
+  "manifest_sha256": "f72dea10c5f39b342c9ec6366f9d64e011c57cbd066ab2cc277c1da7347e3f69",
+  "source_commit": "e512dd2970c22d97403b34157e0400b6c4655cec",
+  "raw_supplier_csv_public": false,
+  "market_requests": 0,
+  "remaining_69_months_executed": false,
+  "original_set_verified": true,
+  "migration": "C:\\Temp\\tickflow-historical-directory-daily-20261115-v1-sealed-migration",
+  "migration_all_files_verified": true,
+  "public_replays_byte_equal": [
+    "main1406",
+    "additional8",
+    "legacy37"
+  ],
+  "private_full_report_sha_recomputed": true,
+  "post_replay_migration_unchanged": true,
+  "tampered_copy_rejected": "file_sha:raw/edb/ao2405-daily-directory-pilot.body",
+  "recomputed_manifest_copy_rejected": "manifest_sha",
+  "originals_modified": false
+}
