@@ -114,13 +114,55 @@ func TestEDBContinuationOnlyAcceptsCompleteEmptyAndReservesOnce(t *testing.T) {
 	receipt.BodyState = "complete"
 	write("archive/ec2602-86400.json", receipt)
 	target := filepath.Join(t.TempDir(), "new")
-	if err := reserveContinuation(root, target); err != nil {
+	if err := reserveContinuation(root, target, jobs()[1:]); err != nil {
 		t.Fatal(err)
 	}
 	if err := continuationEmpty(root); err == nil {
 		t.Fatal("持久旧启动被重置")
 	}
-	if err := reserveContinuation(root, filepath.Join(t.TempDir(), "other")); err == nil {
+	if err := reserveContinuation(root, filepath.Join(t.TempDir(), "other"), jobs()[1:]); err == nil {
 		t.Fatal("换目录重启后续")
+	}
+}
+
+func TestEDBFinalMinuteRequiresLockedSuccessAndKnownEmpty(t *testing.T) {
+	root := t.TempDir()
+	os.Mkdir(filepath.Join(root, "archive"), 0700)
+	write := func(name string, value any) {
+		raw, _ := json.Marshal(value)
+		if e := os.WriteFile(filepath.Join(root, name), raw, 0600); e != nil {
+			t.Fatal(e)
+		}
+	}
+	write("plan.json", map[string]any{"jobs": jobs()[1:]})
+	results := []outcome{{ID: jobs()[1].ID, State: "received"}, {ID: jobs()[2].ID, State: "failed"}, {ID: jobs()[3].ID, State: "not_run"}}
+	write("results.json", results)
+	bodies := [][]byte{[]byte("datetime_nano,open,high,low,close,volume,open_oi,close_oi\n1763427600000000000,1,2,1,2,3,4,5\n"), []byte("datetime_nano,open,high,low,close,volume,open_oi,close_oi\r\n")}
+	var last batch.Receipt
+	for i, j := range jobs()[1:3] {
+		body := bodies[i]
+		os.WriteFile(filepath.Join(root, "archive", j.ID+".body"), body, 0600)
+		jobRaw, _ := json.Marshal(j)
+		r := batch.Receipt{JobSHA: digest(jobRaw), State: results[i].State, BodyState: "complete", Bytes: int64(len(body)), Evidence: evidence.Ref{ID: j.ID, URL: j.URL, SHA256: digest(body), RetrievedAt: time.Now().UTC()}, HTTP: &batch.Download{Status: 200, Attempted: true, ResponseReceived: true, Complete: true, FinalURL: j.URL}}
+		write("archive/"+j.ID+".json", r)
+		last = r
+	}
+	if e := continuationLastBRWithEC(root, digest(bodies[0])); e != nil {
+		t.Fatal("正控失败", e)
+	}
+	if e := continuationLastBRWithEC(root, digest([]byte("wrong"))); e == nil {
+		t.Fatal("换成功原件后仍允许续取")
+	}
+	last.HTTP.Status = 403
+	write("archive/br2601-86400.json", last)
+	if e := continuationLastBRWithEC(root, digest(bodies[0])); e == nil {
+		t.Fatal("权限错误允许续取")
+	}
+	last.HTTP.Status = 200
+	write("archive/br2601-86400.json", last)
+	results[2].State = "received"
+	write("results.json", results)
+	if e := continuationLastBRWithEC(root, digest(bodies[0])); e == nil {
+		t.Fatal("已请求最后一项允许重复")
 	}
 }

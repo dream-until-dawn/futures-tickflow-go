@@ -236,7 +236,7 @@ func continuationEmpty(root string) error {
 }
 
 // reserveContinuation 在原批次追加一次性启动记录；新目录不能重置已用许可/未知启动。
-func reserveContinuation(priorRoot, targetRoot string) error {
+func reserveContinuation(priorRoot, targetRoot string, selected []batch.Job) error {
 	if _, err := os.Stat(targetRoot); !os.IsNotExist(err) {
 		return fmt.Errorf("后续输出目录已有或未知")
 	}
@@ -244,13 +244,88 @@ func reserveContinuation(priorRoot, targetRoot string) error {
 	if err != nil {
 		return fmt.Errorf("后续启动记录已存在或未知: %w", err)
 	}
-	raw, _ := json.Marshal(map[string]any{"target_root": targetRoot, "planned_ids": []string{"ec2602-60", "br2601-86400", "br2601-60"}, "started_at": time.Now().UTC(), "first_empty_not_retried": true})
+	ids := make([]string, len(selected))
+	for i, j := range selected {
+		ids[i] = j.ID
+	}
+	raw, _ := json.Marshal(map[string]any{"target_root": targetRoot, "planned_ids": ids, "started_at": time.Now().UTC(), "first_empty_not_retried": true})
 	_, err = f.Write(append(raw, '\n'))
 	closeErr := f.Close()
 	if err != nil {
 		return err
 	}
 	return closeErr
+}
+
+// continuationLastBR 只闭合原四项中的最后一分钟项；两日线空资源不重取，
+// 已成功EC分钟须是本轮锁定原件，不能把任意错误改成“空”来重开新批。
+func continuationLastBR(root string) error {
+	return continuationLastBRWithEC(root, "285e3eeda841195e7c458c758223c72c1ee79241db77317f4a94ef236b0ea1cb")
+}
+
+func continuationLastBRWithEC(root, expectedEC string) error {
+	if _, err := os.Stat(filepath.Join(root, "continuation-started.json")); !os.IsNotExist(err) {
+		return fmt.Errorf("最后一项已有/未知启动")
+	}
+	read := func(name string, target any) error {
+		raw, e := os.ReadFile(filepath.Join(root, name))
+		if e != nil {
+			return e
+		}
+		return json.Unmarshal(raw, target)
+	}
+	var plan struct {
+		Jobs []batch.Job `json:"jobs"`
+	}
+	if e := read("plan.json", &plan); e != nil {
+		return e
+	}
+	a, _ := json.Marshal(plan.Jobs)
+	b, _ := json.Marshal(jobs()[1:])
+	if !bytes.Equal(a, b) {
+		return fmt.Errorf("不是原三项后续计划")
+	}
+	var results []outcome
+	if e := read("results.json", &results); e != nil {
+		return e
+	}
+	if len(results) != 3 || results[0].ID != jobs()[1].ID || results[0].State != "received" || results[1].ID != jobs()[2].ID || results[1].State != "failed" || results[2].ID != jobs()[3].ID || results[2].State != "not_run" {
+		return fmt.Errorf("旧三项结果未知或最后一项已启动")
+	}
+	allowed := map[string]bool{}
+	for i, j := range jobs()[1:3] {
+		allowed[j.ID+".body"], allowed[j.ID+".json"] = true, true
+		var r batch.Receipt
+		if e := read("archive/"+j.ID+".json", &r); e != nil {
+			return e
+		}
+		body, e := os.ReadFile(filepath.Join(root, "archive", j.ID+".body"))
+		if e != nil {
+			return e
+		}
+		jobRaw, _ := json.Marshal(j)
+		h := r.HTTP
+		if r.Evidence.Verify(body) != nil || r.Evidence.URL != j.URL || r.JobSHA != digest(jobRaw) || r.Bytes != int64(len(body)) || r.BodyState != "complete" || h == nil || h.Status != 200 || !h.Attempted || !h.ResponseReceived || !h.Complete || h.FinalURL != j.URL || h.Failure != "" {
+			return fmt.Errorf("原件或完整200身份不符")
+		}
+		if i == 0 {
+			if r.State != "received" || digest(body) != expectedEC || validateCSV(j, body, r.Evidence) != nil {
+				return fmt.Errorf("成功EC分钟原件不符")
+			}
+		} else if r.State != "failed" || !bytes.Equal(body, []byte("datetime_nano,open,high,low,close,volume,open_oi,close_oi\r\n")) {
+			return fmt.Errorf("BR不是完整空资源")
+		}
+	}
+	entries, e := os.ReadDir(filepath.Join(root, "archive"))
+	if e != nil {
+		return e
+	}
+	for _, entry := range entries {
+		if !allowed[entry.Name()] {
+			return fmt.Errorf("额外旧启动/锁/收据")
+		}
+	}
+	return nil
 }
 
 func run() error {
@@ -267,13 +342,16 @@ func run() error {
 	}
 	selected := jobs()
 	if *priorEmpty != "" {
-		if err := continuationEmpty(*priorEmpty); err != nil {
+		if err := continuationEmpty(*priorEmpty); err == nil {
+			selected = selected[1:]
+		} else if lastErr := continuationLastBR(*priorEmpty); lastErr == nil {
+			selected = selected[3:]
+		} else {
+			return fmt.Errorf("没有可受控续取的原计划未尝试项: %v / %v", err, lastErr)
+		}
+		if err := reserveContinuation(*priorEmpty, *root, selected); err != nil {
 			return err
 		}
-		if err := reserveContinuation(*priorEmpty, *root); err != nil {
-			return err
-		}
-		selected = selected[1:]
 	}
 	var last time.Time
 	return collectSelected(*root, selected, func(j batch.Job) (batch.Result, error) {
