@@ -1,0 +1,24 @@
+{
+  "schema": "two-official-https-candidates-v1",
+  "source": "installed AKShare source read statically, SDK not executed",
+  "installed_version": "1.18.64",
+  "module_sha256": "c547fcc877d3a4da6d0ed60a8a660a7a4b41e2f85e299818c72eb17b19eb8dca",
+  "source_native_protocol": "http",
+  "experimental_request_protocol": "https only; no fallback",
+  "prior_ledgers_checked": 68,
+  "exact_url_matches": 0,
+  "per_host_attempts": 1,
+  "timeout_seconds": 15,
+  "per_response_max_bytes": 4194304,
+  "jobs": [
+    {
+      "exchange": "CZCE",
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2021/20210104/FutureDataDaily.txt"
+    },
+    {
+      "exchange": "CFFEX",
+      "url": "https://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip"
+    }
+  ],
+  "financial_admission_expanded": false
+}

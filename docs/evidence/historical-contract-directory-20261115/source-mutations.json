@@ -1,0 +1,37 @@
+{
+  "schema": "directory-source-mutations-v1",
+  "source_commit": "70fd9308f414ab4566ee311b56c11d3b24710c38",
+  "root": "C:\\Temp\\tickflow-directory-mutations-20261115-v1",
+  "rejected_compile_only_attempt": "json_tail initial mutant did not compile and was not counted",
+  "mutations": [
+    {
+      "name": "json_tail",
+      "positive_exit": 0,
+      "mutated_exit": 1,
+      "target_reason": "错误输入不得发布部分目录",
+      "target_assertion_killed": true
+    },
+    {
+      "name": "strict_product_identity",
+      "positive_exit": 0,
+      "mutated_exit": 1,
+      "target_reason": "严格旧入口不可改成默许",
+      "target_assertion_killed": true
+    },
+    {
+      "name": "stop_all_chunks",
+      "positive_exit": 0,
+      "mutated_exit": 1,
+      "target_reason": "请求账/失败状态不符",
+      "target_assertion_killed": true
+    },
+    {
+      "name": "unique_plan_marker",
+      "positive_exit": 0,
+      "mutated_exit": 1,
+      "target_reason": "换采集目录不得重复启动",
+      "target_assertion_killed": true
+    }
+  ],
+  "market_requests": 0
+}
