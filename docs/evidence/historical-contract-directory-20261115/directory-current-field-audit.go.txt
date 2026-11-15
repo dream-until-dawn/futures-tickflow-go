@@ -1,0 +1,82 @@
+package main
+
+import (
+	"compress/gzip"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	f, e := os.Open(os.Args[1])
+	if e != nil {
+		panic(e)
+	}
+	defer f.Close()
+	h := sha256.New()
+	if _, e = io.Copy(h, f); e != nil {
+		panic(e)
+	}
+	digest := hex.EncodeToString(h.Sum(nil))
+	if digest != "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94" {
+		panic("input SHA")
+	}
+	f.Seek(0, 0)
+	z, e := gzip.NewReader(f)
+	if e != nil {
+		panic(e)
+	}
+	defer z.Close()
+	d := json.NewDecoder(z)
+	t, e := d.Token()
+	if e != nil || t != json.Delim('{') {
+		panic("start")
+	}
+	fields := map[string]int{}
+	total, futures := 0, 0
+	for d.More() {
+		if _, e = d.Token(); e != nil {
+			panic(e)
+		}
+		var raw map[string]json.RawMessage
+		if e = d.Decode(&raw); e != nil {
+			panic(e)
+		}
+		total++
+		var cls string
+		if e = json.Unmarshal(raw["class"], &cls); e != nil {
+			panic(e)
+		}
+		if cls != "FUTURE" {
+			continue
+		}
+		futures++
+		for key := range raw {
+			fields[key]++
+		}
+	}
+	if t, e = d.Token(); e != nil || t != json.Delim('}') {
+		panic("end")
+	}
+	var tail any
+	if e = d.Decode(&tail); e != io.EOF {
+		panic(fmt.Sprint("tail/CRC ", e))
+	}
+	dateKeys := map[string]int{}
+	for key, n := range fields {
+		lower := strings.ToLower(key)
+		if strings.Contains(lower, "date") || strings.Contains(lower, "time") || strings.Contains(lower, "list") || strings.Contains(lower, "start") {
+			dateKeys[key] = n
+		}
+	}
+	if total != 253419 || futures != 7837 {
+		panic("class count")
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	enc.Encode(map[string]any{"schema": "directory-current-field-observation-v1", "input_sha256": digest, "entries": total, "futures": futures, "distinct_field_names": len(fields), "date_time_listing_named_fields": dateKeys, "market_requests": 0, "scope": "all top-level FUTURE attributes; names are not a historical lifecycle guarantee"})
+}

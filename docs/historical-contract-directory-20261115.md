@@ -109,3 +109,5 @@ FU另日日表也已完整200/119,600字节：开、高、低均3651，收盘323
 私有研究包`C:/Temp/tickflow-historical-directory-daily-20261115-v1-sealed`有7,287文件、458,233,010字节，manifest SHA256 `f72dea10c5f39b342c9ec6366f9d64e011c57cbd066ab2cc277c1da7347e3f69`。本包不是完整Go发行版或旧第4版的替换；仅提供研究原件、定向复算源码/控制输入及编译元信息。迁移副本全文件SHA通过，最终1406报告、额外8样本报告和旧37供应商报告三份包外重放逐字节一致；完整私有报告SHA也重算一致。副本改CSV命中file_sha，重算篡改manifest仍命中外部可信manifest_sha；原件及迁移副本重放前后文件集合未改。包内README说明先验可信SHA、使用-B并输出包外，不会借复核运行采集器。
 
 公开仅保存聚合、收据、哈希和少量真实异常样例；6,757项表示等价的批量价位明细在私有包，不通过JSON变相推送原价序列。`--public-summary`生成公开报告，默认完整报告禁止写入仓库。代码和数据的SHA只锁字节，不认证中金所明文发布者、不认证行情真值/金融资格。详见[软件收据](evidence/historical-contract-directory-20261115/software-validation.json)和[封存迁移收据](evidence/historical-contract-directory-20261115/seal-review.json)。69月候选已编译及零请求预检，仍需新的明确人工决定，未执行、未打tag。
+
+对当前封存gzip另作独立完整字段扫描：253,419总记录/7,837 FUTURE与主扫描一致，FUTURE顶层实际共40种属性名；日期/时间/上市/起始相关名字仅expire_datetime与trading_time，两者均7,837次。没有借用旧2026-09-10快照47字段的统计当作当前证据；本检查仍不把字段名或交易时段快照提升为官方历史生命周期。见[当前字段复核](evidence/historical-contract-directory-20261115/directory-current-field-audit.json)及相应审计源码。原包没有改写，该收据引用包内同一gzip SHA。
