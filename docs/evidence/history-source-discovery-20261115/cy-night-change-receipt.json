@@ -1,0 +1,25 @@
+{
+  "job_sha256": "2c341cf3b2603090c609ed5d2d57e08bf389a0ea722558de1bb5ac7bd9a6ac27",
+  "state": "failed",
+  "evidence": {
+    "id": "cy-night-change",
+    "url": "https://www.xfqh.cn/dt/142.52358.html",
+    "sha256": "de9612e5cd887f379f327f4a6074961a9d8d825fb1ed348d93a60f314fd447a6",
+    "retrieved_at": "2026-11-15T03:13:10.4226586Z",
+    "version": "broker-trading-reminder-unqualified"
+  },
+  "bytes": 24249,
+  "error": "未取得预期业务正文，停止该主机",
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.xfqh.cn/dt/142.52358.html",
+    "content_type": "text/html;charset=gb18030",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:13:10 GMT",
+    "requested_at": "2026-11-15T03:13:10.4226586Z",
+    "complete": true
+  }
+}

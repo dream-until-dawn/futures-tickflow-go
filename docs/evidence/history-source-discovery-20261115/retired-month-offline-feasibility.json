@@ -1,0 +1,78 @@
+{
+  "schema": "retired-month-research-feasibility-v1",
+  "network_requests": 0,
+  "scan_json_files": 645,
+  "existing_distinct_attempted_codes": 241,
+  "scan_scope": "current repository docs/evidence JSON + frozen sinavendor testdata receipts; not a machine-global network ledger",
+  "candidates": [
+    {
+      "code": "C2101",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2101&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "M2101",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2101&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "C2109",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2109&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "M2109",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2109&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "C2201",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=C2201&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "M2201",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=M2201&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "SI2309",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=SI2309&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    },
+    {
+      "code": "SI2401",
+      "identity": "hypothesized_month_code_not_directory_observed",
+      "url": "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_V21052021_4_12=/InnerFuturesNewService.getDailyKLine?symbol=SI2401&type=2021_04_12",
+      "existing_attempt_matches": [],
+      "eligible_for_future_plan": true
+    }
+  ],
+  "existing_default_strict_stop": true,
+  "old_null_profile_reusable": false,
+  "execution_approved": false,
+  "proposed_limits": {
+    "requests": 8,
+    "bytes_actual_max": 8388608,
+    "interval_seconds": 2,
+    "timeout_seconds": 15,
+    "stop_on_null_unknown_or_failure": true
+  },
+  "financial_eligible": false,
+  "calendar_qualified": false,
+  "reason": "New explicit method approval and complete prior-ledger reconciliation are required before any new attempt; new directories do not override a previous host stop."
+}

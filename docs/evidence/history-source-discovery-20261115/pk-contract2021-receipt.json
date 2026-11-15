@@ -1,0 +1,26 @@
+{
+  "job_sha256": "6c2725df2b942b7742c8d6bdf42e92bba52b8094552903cb8ab3dd95ba4b56f2",
+  "state": "failed",
+  "evidence": {
+    "id": "pk-contract2021",
+    "url": "https://www.investor.org.cn/xxzx/tjzl/tjnrgmjytx/bk/kj/202302/P020230226499757160919.pdf",
+    "sha256": "c640d82acea61b7cf3baab4d9ebcb643fe5fa009e43bc67d8390544794c3fdae",
+    "retrieved_at": "2026-11-15T03:10:13.6080031Z",
+    "version": "investor-site-copy-unqualified"
+  },
+  "bytes": 8388608,
+  "error": "batch: 响应超过剩余字节预算",
+  "body_state": "partial",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.investor.org.cn/xxzx/tjzl/tjnrgmjytx/bk/kj/202302/P020230226499757160919.pdf",
+    "content_type": "application/pdf",
+    "content_length": 36791414,
+    "server_date": "Sun, 15 Nov 2026 03:10:13 GMT",
+    "requested_at": "2026-11-15T03:10:13.6080031Z",
+    "complete": false,
+    "failure": "byte_limit"
+  }
+}

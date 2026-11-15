@@ -91,3 +91,5 @@ docs/evidence/pr-2024-followup-20261115/listing-page-*.txt binary
 docs/evidence/pr-2024-followup-20261115/statistics-page-20.txt binary
 docs/evidence/pr-2024-followup-20261115/initial-price-notice-115.txt binary
 docs/evidence/pr-2024-followup-20261115/*.log.txt binary
+docs/evidence/history-source-discovery-20261115/*-receipt.json binary
+docs/evidence/history-source-discovery-20261115/*.log.txt binary

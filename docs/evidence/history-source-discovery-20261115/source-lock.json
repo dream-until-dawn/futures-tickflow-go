@@ -1,0 +1,117 @@
+{
+  "schema": "historical-source-lock-v1",
+  "reviewable": [
+    {
+      "id": "czce-year2024-reprint",
+      "url": "https://m.hicend.com.cn/h5/CommonArticleDetail/10933",
+      "bytes": 21553,
+      "sha256": "2f9f32f30a1045d6a8bce6fb207bf703bbc758ad09c6ca1f288b2ce131155822",
+      "receipt_sha256": "f48ffad027f914d1a03fa681cd7ef73ef7eb9b50fd8328598a055b5e9f59a434",
+      "retrieved_at": "2026-11-15T03:10:12.606412Z",
+      "identity": "broker-reprint-unqualified",
+      "receipt_state": "received",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\czce-year2024-reprint.body"
+    },
+    {
+      "id": "zhunda-docs",
+      "url": "https://zhundata.cn/hist-data-cloud.html",
+      "bytes": 197188,
+      "sha256": "49bd48c00f1034616a18c8903aef71dd1ae5cf16cbed19081966d4eb45447c07",
+      "receipt_sha256": "8ffd0a9ad691d7d0ffea2514d4037c37136f11a0beecd5eec43a657ccaaa7f29",
+      "retrieved_at": "2026-11-15T03:10:14.6067097Z",
+      "identity": "vendor-documentation-unqualified",
+      "receipt_state": "received",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\zhunda-docs.body"
+    },
+    {
+      "id": "cy-night-change",
+      "url": "https://www.xfqh.cn/dt/142.52358.html",
+      "bytes": 24249,
+      "sha256": "de9612e5cd887f379f327f4a6074961a9d8d825fb1ed348d93a60f314fd447a6",
+      "receipt_sha256": "c33d25c8d22fa0523c4f0f272e239f2e4efc5baea374bb423c1c13bd1a9c8611",
+      "retrieved_at": "2026-11-15T03:13:10.4226586Z",
+      "identity": "broker-trading-reminder-unqualified",
+      "receipt_state": "failed",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-cy-20261115-v1\\acquisition\\archive\\cy-night-change.body"
+    }
+  ],
+  "sources": [
+    {
+      "id": "czce-year2024-reprint",
+      "url": "https://m.hicend.com.cn/h5/CommonArticleDetail/10933",
+      "bytes": 21553,
+      "sha256": "2f9f32f30a1045d6a8bce6fb207bf703bbc758ad09c6ca1f288b2ce131155822",
+      "receipt_sha256": "f48ffad027f914d1a03fa681cd7ef73ef7eb9b50fd8328598a055b5e9f59a434",
+      "retrieved_at": "2026-11-15T03:10:12.606412Z",
+      "identity": "broker-reprint-unqualified",
+      "receipt_state": "received",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\czce-year2024-reprint.body"
+    },
+    {
+      "id": "pk-contract2021",
+      "url": "https://www.investor.org.cn/xxzx/tjzl/tjnrgmjytx/bk/kj/202302/P020230226499757160919.pdf",
+      "bytes": 8388608,
+      "sha256": "c640d82acea61b7cf3baab4d9ebcb643fe5fa009e43bc67d8390544794c3fdae",
+      "receipt_sha256": "8597e4b1932ccc828ae456f1bbef55f9c89f84e4d0f146ad4cbe380d30764ef1",
+      "retrieved_at": "2026-11-15T03:10:13.6080031Z",
+      "identity": "investor-site-copy-unqualified",
+      "receipt_state": "failed",
+      "body_state": "partial",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\pk-contract2021.body"
+    },
+    {
+      "id": "pk-release",
+      "url": "https://htfc.com/main/a/20240603/80164382.shtml",
+      "bytes": 15781,
+      "sha256": "e066bf50d90e1d4e315b0a433a0fb9502eaa267444a1638c7b81af2440de52d1",
+      "receipt_sha256": "ba3292f9cbf58ded2331dd1b08fdb9909db04ba286576f488c69f63137b33c99",
+      "retrieved_at": "2026-11-15T03:10:11.6057802Z",
+      "identity": "broker-reprint-unqualified",
+      "receipt_state": "failed",
+      "body_state": "complete",
+      "http_status": 403,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\pk-release.body"
+    },
+    {
+      "id": "zhunda-docs",
+      "url": "https://zhundata.cn/hist-data-cloud.html",
+      "bytes": 197188,
+      "sha256": "49bd48c00f1034616a18c8903aef71dd1ae5cf16cbed19081966d4eb45447c07",
+      "receipt_sha256": "8ffd0a9ad691d7d0ffea2514d4037c37136f11a0beecd5eec43a657ccaaa7f29",
+      "retrieved_at": "2026-11-15T03:10:14.6067097Z",
+      "identity": "vendor-documentation-unqualified",
+      "receipt_state": "received",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-20261115-v1\\acquisition\\archive\\zhunda-docs.body"
+    },
+    {
+      "id": "cy-night-change",
+      "url": "https://www.xfqh.cn/dt/142.52358.html",
+      "bytes": 24249,
+      "sha256": "de9612e5cd887f379f327f4a6074961a9d8d825fb1ed348d93a60f314fd447a6",
+      "receipt_sha256": "c33d25c8d22fa0523c4f0f272e239f2e4efc5baea374bb423c1c13bd1a9c8611",
+      "retrieved_at": "2026-11-15T03:13:10.4226586Z",
+      "identity": "broker-trading-reminder-unqualified",
+      "receipt_state": "failed",
+      "body_state": "complete",
+      "http_status": 200,
+      "file": "C:\\Temp\\tickflow-history-sources-cy-20261115-v1\\acquisition\\archive\\cy-night-change.body"
+    }
+  ],
+  "source_basis": [
+    "0ab7add53f73a0f7a88c12601ec632643eed5cec",
+    "a8822dffc1470e19f4fe558ed0c4dc606ae1f8ef"
+  ],
+  "new_verified_profiles": 0,
+  "financial_admission_expanded": false
+}

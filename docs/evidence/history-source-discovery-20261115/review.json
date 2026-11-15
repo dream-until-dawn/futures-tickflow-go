@@ -1,0 +1,91 @@
+{
+  "schema": "history-source-offline-review-v1",
+  "facts": {
+    "czce-year2024-reprint": {
+      "identity": "broker_reprint",
+      "page_date": "2023-12-27",
+      "notice_date": "2023-12-26",
+      "holidays_checked": 7,
+      "calendar_qualified": false,
+      "pending": [
+        "exchange-original",
+        "applicable-rule-continuity",
+        "detailed-resumption-notices",
+        "2025-year-boundary"
+      ]
+    },
+    "zhunda-docs": {
+      "identity": "vendor_documentation_examples_only",
+      "market_dataset_obtained": false,
+      "contract_example_rows": [
+        {
+          "exchange": "DCE",
+          "code": "A2605",
+          "symbol": "豆一2605",
+          "trading_date": "2026-03-13",
+          "datetime": "2026-03-12 21:01:00",
+          "pre_close": "4849.0",
+          "open": "4858.0",
+          "high": "4870.0",
+          "low": "4854.0",
+          "close": "4865.0",
+          "volume": "3928.0",
+          "total_turnover": "190975390.0",
+          "open_interest": "241813.0"
+        },
+        {
+          "exchange": "DCE",
+          "code": "A2605",
+          "symbol": "豆一2605",
+          "trading_date": "2026-03-13",
+          "datetime": "2026-03-12 21:02:00",
+          "pre_close": "4849.0",
+          "open": "4865.0",
+          "high": "4877.0",
+          "low": "4865.0",
+          "close": "4873.0",
+          "volume": "2177.0",
+          "total_turnover": "106062460.0",
+          "open_interest": "242060.0"
+        }
+      ],
+      "same_second_tick_rows": 2,
+      "concrete_minute_example_code": "A2605",
+      "synthetic_codes": [
+        "A99",
+        "A88",
+        "A888"
+      ],
+      "timestamp_convention_certified": false,
+      "volume_amount_units_certified": false,
+      "historical_roster_certified": false,
+      "license_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false,
+      "pending": [
+        "raw-contract-samples-and-universe",
+        "timestamp-start-or-end-timezone",
+        "volume-increment-or-cumulative-and-units",
+        "license-and-redistribution",
+        "independent-exchange-reconciliation",
+        "real-calendar-and-lifecycle"
+      ]
+    },
+    "cy-night-change": {
+      "identity": "broker_client_reminder",
+      "page_date": "2019-12-17 16:30",
+      "title_trading_day": 20191218,
+      "asserted_effective_evening": 20191211,
+      "night_hours": "21:00-23:00",
+      "original_receipt_state": "failed",
+      "offline_recovery": "strict_gb18030_from_complete_archived_response",
+      "exchange_notice_obtained": false,
+      "full_product_scope_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false
+    }
+  },
+  "market_requests": 0,
+  "new_verified_profiles": 0,
+  "financial_admission_expanded": false
+}

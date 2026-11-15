@@ -1,0 +1,24 @@
+{
+  "job_sha256": "943332ae08971e2f7eccc02a17b8bd0f72551b4c5af7fcfe5dfeed237bb2c32f",
+  "state": "received",
+  "evidence": {
+    "id": "czce-year2024-reprint",
+    "url": "https://m.hicend.com.cn/h5/CommonArticleDetail/10933",
+    "sha256": "2f9f32f30a1045d6a8bce6fb207bf703bbc758ad09c6ca1f288b2ce131155822",
+    "retrieved_at": "2026-11-15T03:10:12.606412Z",
+    "version": "broker-reprint-unqualified"
+  },
+  "bytes": 21553,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://m.hicend.com.cn/h5/CommonArticleDetail/10933",
+    "content_type": "text/html;charset=UTF-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:10:09 GMT",
+    "requested_at": "2026-11-15T03:10:12.606412Z",
+    "complete": true
+  }
+}

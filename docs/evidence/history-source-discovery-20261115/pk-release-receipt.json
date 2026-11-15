@@ -1,0 +1,26 @@
+{
+  "job_sha256": "03597b5aad21954a284d32a686ddd6f6311c3b7414bbef3066cd576177efd029",
+  "state": "failed",
+  "evidence": {
+    "id": "pk-release",
+    "url": "https://htfc.com/main/a/20240603/80164382.shtml",
+    "sha256": "e066bf50d90e1d4e315b0a433a0fb9502eaa267444a1638c7b81af2440de52d1",
+    "retrieved_at": "2026-11-15T03:10:11.6057802Z",
+    "version": "broker-reprint-unqualified"
+  },
+  "bytes": 15781,
+  "error": "batch: HTTP 403",
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 403,
+    "final_url": "https://htfc.com/main/a/20240603/80164382.shtml",
+    "content_type": "text/html",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:10:11 GMT",
+    "requested_at": "2026-11-15T03:10:11.6057802Z",
+    "complete": true,
+    "failure": "http_status"
+  }
+}
