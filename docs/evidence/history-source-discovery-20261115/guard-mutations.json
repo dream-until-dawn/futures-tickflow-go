@@ -1,0 +1,41 @@
+{
+  "schema": "history-source-target-mutations-v1",
+  "source_commit": "a2dd04b598456162aae170a8e4b79bf570917b87",
+  "network_requests": 0,
+  "original_source_modified": false,
+  "targeted_mutations": 3,
+  "results": [
+    {
+      "name": "go-host-baseline",
+      "returncode": 0,
+      "target_reason": null
+    },
+    {
+      "name": "go-host-mutated",
+      "returncode": 1,
+      "target_reason": "失败主机仍被请求"
+    },
+    {
+      "name": "python-baseline",
+      "returncode": 0,
+      "target_reason": null
+    },
+    {
+      "name": "cy-effective-mutated",
+      "returncode": 1,
+      "target_reason": "ValueError not raised"
+    },
+    {
+      "name": "vendor-night-mutated",
+      "returncode": 1,
+      "target_reason": "ValueError not raised",
+      "failure_count": 1
+    }
+  ],
+  "discarded_experiment": {
+    "directory": "C:\\Temp\\tickflow-history-sources-mutations-20261115-v1",
+    "name": "vendor-night-mutated",
+    "returncode": 0,
+    "reason": "The first replacement disabled only the left operand of an or condition; the trading-date operand remained active. Preserve it as an incomplete mutation, not evidence of a deleted-guard test passing."
+  }
+}

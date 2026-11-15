@@ -1,0 +1,9 @@
+test_annual_positive_and_changed_holiday (test_review.SourceReviewTest.test_annual_positive_and_changed_holiday) ... ok
+test_cy_dates_encoding_and_hours (test_review.SourceReviewTest.test_cy_dates_encoding_and_hours) ... ok
+test_partial_wrong_identity_and_mutated_source_are_rejected (test_review.SourceReviewTest.test_partial_wrong_identity_and_mutated_source_are_rejected) ... ok
+test_vendor_examples_are_not_market_dataset (test_review.SourceReviewTest.test_vendor_examples_are_not_market_dataset) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.017s
+
+OK

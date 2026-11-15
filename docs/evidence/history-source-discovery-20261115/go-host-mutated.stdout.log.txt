@@ -1,0 +1,8 @@
+--- FAIL: TestHistorySourcesHostFailureAndUnknownDoNotRetry (0.02s)
+    --- FAIL: TestHistorySourcesHostFailureAndUnknownDoNotRetry/failed (0.01s)
+        main_test.go:37: 失败主机仍被请求或无关主机错误停止 [pk-release pk-rules pk-amendment czce-year2024-reprint pk-contract2021 zhunda-docs]
+    --- FAIL: TestHistorySourcesHostFailureAndUnknownDoNotRetry/unknown (0.01s)
+        main_test.go:37: 失败主机仍被请求或无关主机错误停止 [pk-release pk-rules pk-amendment czce-year2024-reprint pk-contract2021 zhunda-docs]
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/research/historysources/collect	0.599s
+FAIL

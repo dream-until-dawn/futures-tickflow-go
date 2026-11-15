@@ -1,0 +1,16 @@
+test_vendor_examples_are_not_market_dataset (test_review.SourceReviewTest.test_vendor_examples_are_not_market_dataset) ... 
+  test_vendor_examples_are_not_market_dataset (test_review.SourceReviewTest.test_vendor_examples_are_not_market_dataset) (reason='vendor_night_trading_date') ... FAIL
+
+======================================================================
+FAIL: test_vendor_examples_are_not_market_dataset (test_review.SourceReviewTest.test_vendor_examples_are_not_market_dataset) (reason='vendor_night_trading_date')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Temp\tickflow-history-sources-mutations-20261115-v2\test_review.py", line 40, in test_vendor_examples_are_not_market_dataset
+    with self.assertRaisesRegex(ValueError, reason):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

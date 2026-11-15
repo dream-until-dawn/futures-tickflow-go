@@ -1,0 +1,1 @@
+ok  	github.com/dream-until-dawn/futures-tickflow-go/tools/research/historysources/collect	0.554s

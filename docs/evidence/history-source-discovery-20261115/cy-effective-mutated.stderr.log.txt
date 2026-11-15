@@ -1,0 +1,15 @@
+test_cy_dates_encoding_and_hours (test_review.SourceReviewTest.test_cy_dates_encoding_and_hours) ... FAIL
+
+======================================================================
+FAIL: test_cy_dates_encoding_and_hours (test_review.SourceReviewTest.test_cy_dates_encoding_and_hours)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Temp\tickflow-history-sources-mutations-20261115-v1\cy-effective\test_review.py", line 49, in test_cy_dates_encoding_and_hours
+    with self.assertRaisesRegex(ValueError, 'cy_change_clause'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

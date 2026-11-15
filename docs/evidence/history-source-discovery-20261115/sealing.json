@@ -1,0 +1,18 @@
+{
+  "schema": "historical-source-sealing-review-v1",
+  "sealed": "C:\\Temp\\tickflow-history-sources-20261115-v1-sealed",
+  "migration": "C:\\Temp\\tickflow-history-sources-20261115-v1-sealed-migration",
+  "tamper_copy": "C:\\Temp\\tickflow-history-sources-20261115-v1-sealed-tamper",
+  "manifest_sha256": "b185cf8abd7a4112b4da9a8ef83f11b4be3d66e486889251ddcd0297ef978d96",
+  "files": 74,
+  "bytes": 8843096,
+  "migration_exact": true,
+  "tamper_rejected": [
+    "first/acquisition/archive/pk-release.body"
+  ],
+  "offline_review_recomputed_identical": true,
+  "executables_excluded": true,
+  "final_seal_pointer_and_future_ci_logs_excluded": true,
+  "new_verified_profiles": 0,
+  "financial_eligible": false
+}
