@@ -1,0 +1,24 @@
+{
+  "job_sha256": "10d6e2c999a22559ef530f5b0a58be77d7843ad3257ef0bb1aa699f8c71806d4",
+  "state": "received",
+  "evidence": {
+    "id": "semantics-czce-rules",
+    "url": "https://www.czce.com.cn/cn/uploadfile/2021/02/23/20210223143255447.pdf",
+    "sha256": "08df1b911d52a73ffcde874600345bc264f95de8c1f29fa16d2989b6ff7d3b0f",
+    "retrieved_at": "2026-11-15T09:43:49.4142672Z",
+    "version": "official-rule-version-candidate-2021"
+  },
+  "bytes": 439018,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.czce.com.cn/cn/uploadfile/2021/02/23/20210223143255447.pdf",
+    "content_type": "application/pdf",
+    "content_length": 439018,
+    "server_date": "Sun, 15 Nov 2026 09:43:50 GMT",
+    "requested_at": "2026-11-15T09:43:49.4142672Z",
+    "complete": true
+  }
+}

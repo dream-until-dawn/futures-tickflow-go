@@ -1,0 +1,24 @@
+{
+  "job_sha256": "6354df87091400371fb81574616969feafc7d972e9b8666755e0757520cda18c",
+  "state": "received",
+  "evidence": {
+    "id": "semantics-old-kline",
+    "url": "https://doc.shinnytech.com/tqsdk/1.8.2/reference/tqsdk.objs.html",
+    "sha256": "ace9baf1d4e6eec8d584ff8e589a566e3bb20efede417d13451fcf17ec07b0ee",
+    "retrieved_at": "2026-11-15T09:43:39.7944862Z",
+    "version": "versioned-sdk-schema-not-edb-history-proof"
+  },
+  "bytes": 70746,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://doc.shinnytech.com/tqsdk/1.8.2/reference/tqsdk.objs.html",
+    "content_type": "text/html",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 09:43:40 GMT",
+    "requested_at": "2026-11-15T09:43:39.7944862Z",
+    "complete": true
+  }
+}

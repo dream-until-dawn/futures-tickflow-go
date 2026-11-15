@@ -1,0 +1,37 @@
+{
+  "schema": "semantics-source-mutations-v1",
+  "positive_control_tests": 7,
+  "network_requests": 0,
+  "results": [
+    {
+      "mutation": "negative-flows",
+      "source_file": "review.py",
+      "source_sha256": "49ad092efdfb92185bdb0138db1bed4d8bd64254a69b044015c0e1021b0128ca",
+      "target_test": "test_review.SemanticsHypothesisTest.test_negative_and_half_event_solutions_rejected",
+      "expected_failure": "True is not false",
+      "mutant_valid_python": true,
+      "target_rejected": true,
+      "log": "C:/Temp/tickflow-semantics-mutations-20261115-v1/negative-flows.log"
+    },
+    {
+      "mutation": "half-flows",
+      "source_file": "review.py",
+      "source_sha256": "49ad092efdfb92185bdb0138db1bed4d8bd64254a69b044015c0e1021b0128ca",
+      "target_test": "test_review.SemanticsHypothesisTest.test_negative_and_half_event_solutions_rejected",
+      "expected_failure": "True is not false",
+      "mutant_valid_python": true,
+      "target_rejected": true,
+      "log": "C:/Temp/tickflow-semantics-mutations-20261115-v1/half-flows.log"
+    },
+    {
+      "mutation": "effective-conflict",
+      "source_file": "facts.py",
+      "source_sha256": "5523d8a8b7dee650cf543e172b9f7e33a379cb149ee7c6882b6e303e92ff6667",
+      "target_test": "test_facts.OfficialFactBoundaryTest.test_conflicting_title_and_footer_effective_dates_rejected",
+      "expected_failure": "ValueError not raised",
+      "mutant_valid_python": true,
+      "target_rejected": true,
+      "log": "C:/Temp/tickflow-semantics-mutations-20261115-v1/effective-conflict.log"
+    }
+  ]
+}

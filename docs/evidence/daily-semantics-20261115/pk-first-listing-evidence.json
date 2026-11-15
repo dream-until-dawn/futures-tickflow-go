@@ -1,0 +1,86 @@
+{
+  "schema": "pk-2021-listing-only-evidence-v1",
+  "entries": [
+    {
+      "symbol": "CZCE.PK2110",
+      "source_key": "CZCE.PK110",
+      "official_first_listing_day": 20210201,
+      "source_contract_effective_day": 20210201,
+      "listing_notice": 9,
+      "contract_notice": 8,
+      "volume_multiple_tonnes": 5,
+      "price_tick_yuan_per_tonne": 2,
+      "source_snapshot_identity_matched": true,
+      "actual_last_trading_day_derived": false,
+      "full_lifecycle_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "CZCE.PK2111",
+      "source_key": "CZCE.PK111",
+      "official_first_listing_day": 20210201,
+      "source_contract_effective_day": 20210201,
+      "listing_notice": 9,
+      "contract_notice": 8,
+      "volume_multiple_tonnes": 5,
+      "price_tick_yuan_per_tonne": 2,
+      "source_snapshot_identity_matched": true,
+      "actual_last_trading_day_derived": false,
+      "full_lifecycle_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "CZCE.PK2112",
+      "source_key": "CZCE.PK112",
+      "official_first_listing_day": 20210201,
+      "source_contract_effective_day": 20210201,
+      "listing_notice": 9,
+      "contract_notice": 8,
+      "volume_multiple_tonnes": 5,
+      "price_tick_yuan_per_tonne": 2,
+      "source_snapshot_identity_matched": true,
+      "actual_last_trading_day_derived": false,
+      "full_lifecycle_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false
+    },
+    {
+      "symbol": "CZCE.PK2201",
+      "source_key": "CZCE.PK201",
+      "official_first_listing_day": 20210201,
+      "source_contract_effective_day": 20210201,
+      "listing_notice": 9,
+      "contract_notice": 8,
+      "volume_multiple_tonnes": 5,
+      "price_tick_yuan_per_tonne": 2,
+      "source_snapshot_identity_matched": true,
+      "actual_last_trading_day_derived": false,
+      "full_lifecycle_certified": false,
+      "calendar_qualified": false,
+      "financial_eligible": false
+    }
+  ],
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "sources": {
+    "pk-original": {
+      "sha256": "83db54939066d9aed186f5c8557ee118b8773f7c3e988bbeafb794f2127660ed",
+      "pages": 158,
+      "extraction_sha256": "4ae794fc7de1d860cbb3dbdfc9bc1b8a60f084271a6491f1298db07628849bc6"
+    },
+    "czce-rules": {
+      "sha256": "08df1b911d52a73ffcde874600345bc264f95de8c1f29fa16d2989b6ff7d3b0f",
+      "pages": 11,
+      "extraction_sha256": "644a09eb03d5a825232038dd632e1ed95f42fcd5fc716aa315f8bf1d0c8409ba"
+    },
+    "pk-journal-reused": {
+      "sha256": "d452c93c7411fa1ece5646d985a70e8e99054aac5153120345f23bc8b38e4966",
+      "pages": 47,
+      "extraction_sha256": "d3932eed46f04b311485a61322cdfc27dfe6f1b56848d204410d09edaf1ca0f3"
+    }
+  },
+  "new_market_data_requests": 0,
+  "not_an_addition_to_price_reference_coverage": true,
+  "limits": "not newly discovered contracts; new complete official contract and existing listing notice linked, no whole-year night or lifecycle proof"
+}

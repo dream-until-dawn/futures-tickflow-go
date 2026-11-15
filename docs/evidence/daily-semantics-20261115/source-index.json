@@ -1,0 +1,136 @@
+{
+  "schema": "daily-semantics-source-index-v1",
+  "sources": [
+    {
+      "id": "semantics-algorithm",
+      "ref": {
+        "id": "semantics-algorithm",
+        "url": "https://www.shinnytech.com/articles/reference/why-our-klines-are-different",
+        "sha256": "4d3d28714766d72fe1344b59292a5479e85b2dd233ea3f45e7fe84cbe8431cc3",
+        "retrieved_at": "2026-11-15T09:43:37.5000795Z",
+        "version": "vendor-algorithm-not-edb-daily-version-proof"
+      },
+      "bytes": 46075,
+      "body_complete": true,
+      "receipt_sha256": "0ec43277cebe63cc456f6b4301d1ad9626dc0a51beb95a174d647667ad44115d",
+      "identity": "publisher official HTTPS endpoint, applicability remains scoped"
+    },
+    {
+      "id": "semantics-czce-rules",
+      "ref": {
+        "id": "semantics-czce-rules",
+        "url": "https://www.czce.com.cn/cn/uploadfile/2021/02/23/20210223143255447.pdf",
+        "sha256": "08df1b911d52a73ffcde874600345bc264f95de8c1f29fa16d2989b6ff7d3b0f",
+        "retrieved_at": "2026-11-15T09:43:49.4142672Z",
+        "version": "official-rule-version-candidate-2021"
+      },
+      "bytes": 439018,
+      "body_complete": true,
+      "receipt_sha256": "9f4e7bbfb136dd30505c8ce7a7f8459113cd18ebbc41d06f7536ffdf8ba48c92",
+      "identity": "publisher official HTTPS endpoint, applicability remains scoped"
+    },
+    {
+      "id": "semantics-forum-case",
+      "ref": {
+        "id": "semantics-forum-case",
+        "url": "https://forum.shinnytech.com/question/26581/answer/26582/",
+        "sha256": "a9133cfcb617490494d6af6880455cbc60218187aecf201bf88ea8ad8af41e88",
+        "retrieved_at": "2026-11-15T09:43:42.1550015Z",
+        "version": "forum-response-not-independent-event-proof"
+      },
+      "bytes": 55671,
+      "body_complete": true,
+      "receipt_sha256": "21dae66daab82c2e143b67b4d8a2aca19ceac9a2a547c5eef56736938db1959a",
+      "identity": "forum account statement, identity/event records not verified"
+    },
+    {
+      "id": "semantics-old-kline",
+      "ref": {
+        "id": "semantics-old-kline",
+        "url": "https://doc.shinnytech.com/tqsdk/1.8.2/reference/tqsdk.objs.html",
+        "sha256": "ace9baf1d4e6eec8d584ff8e589a566e3bb20efede417d13451fcf17ec07b0ee",
+        "retrieved_at": "2026-11-15T09:43:39.7944862Z",
+        "version": "versioned-sdk-schema-not-edb-history-proof"
+      },
+      "bytes": 70746,
+      "body_complete": true,
+      "receipt_sha256": "4227da897a7cf6b6c176fb292732053579f32562f474dbc53c2d2ad1e23afe92",
+      "identity": "publisher official HTTPS endpoint, applicability remains scoped"
+    },
+    {
+      "id": "semantics-pk-original",
+      "ref": {
+        "id": "semantics-pk-original",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2021/01/25/1605577988714900-1605577988801327.pdf",
+        "sha256": "83db54939066d9aed186f5c8557ee118b8773f7c3e988bbeafb794f2127660ed",
+        "retrieved_at": "2026-11-15T09:43:44.7049307Z",
+        "version": "official-contract-candidate-2021"
+      },
+      "bytes": 1257937,
+      "body_complete": true,
+      "receipt_sha256": "ae06b4230f36629c5f49619c2bc770762b097443e7b9c7b667b7cef348d58aaf",
+      "identity": "publisher official HTTPS endpoint, applicability remains scoped"
+    }
+  ],
+  "direct_https_attempts": 5,
+  "direct_body_bytes": 1869447,
+  "web_fetch_failures": [
+    {
+      "url": "https://www.czce.com.cn/cn/uploadfile/2020/04/09/20200409164855111.pdf",
+      "state": "web_fetch_timeout",
+      "remote_http_status_known": false,
+      "direct_retry_attempted": false
+    },
+    {
+      "url": "https://www.czce.com.cn/cn/rootfiles/2023/04/27/1684183740156168-1684183740201714.pdf",
+      "state": "web_fetch_timeout",
+      "remote_http_status_known": false,
+      "direct_retry_attempted": false
+    },
+    {
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Option/2026/20260911/OptionDataDaily.txt",
+      "state": "web_fetch_timeout",
+      "remote_http_status_known": false,
+      "direct_retry_attempted": false
+    },
+    {
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Option/2026/20261013/OptionDataDaily.txt",
+      "state": "web_fetch_timeout",
+      "remote_http_status_known": false,
+      "direct_retry_attempted": false
+    }
+  ],
+  "old_journal_reused": {
+    "sha256": "d452c93c7411fa1ece5646d985a70e8e99054aac5153120345f23bc8b38e4966",
+    "original_retrieved_at": "2026-11-12T14:13:48.454129+00:00",
+    "new_download": false
+  },
+  "pdf_full_pages": {
+    "pk_original": 158,
+    "czce_rules": 11,
+    "reused_pk_journal": 47
+  },
+  "pdf_visual_pages_checked": {
+    "pk_original": [
+      1,
+      2
+    ],
+    "czce_rules": [
+      1,
+      5,
+      6,
+      7,
+      9
+    ],
+    "reused_pk_journal": [
+      43
+    ]
+  },
+  "font_warnings": "Poppler reported missing optional western display fonts; all eight critical rendered pages visually checked readable; not all216 pages visually checked",
+  "calendar_qualified": false,
+  "financial_eligible": false,
+  "new_direct_market_data_requests": 0,
+  "web_option_daily_fetch_invocations": 2,
+  "web_option_daily_bodies_received": 0,
+  "web_option_daily_remote_http_status_known": false
+}

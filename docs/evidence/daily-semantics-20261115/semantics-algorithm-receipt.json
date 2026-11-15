@@ -1,0 +1,24 @@
+{
+  "job_sha256": "aaa23d7abcf49495e363e27ef7b10cfcef721caa5af32a6d6b79a35b5be2b2d4",
+  "state": "received",
+  "evidence": {
+    "id": "semantics-algorithm",
+    "url": "https://www.shinnytech.com/articles/reference/why-our-klines-are-different",
+    "sha256": "4d3d28714766d72fe1344b59292a5479e85b2dd233ea3f45e7fe84cbe8431cc3",
+    "retrieved_at": "2026-11-15T09:43:37.5000795Z",
+    "version": "vendor-algorithm-not-edb-daily-version-proof"
+  },
+  "bytes": 46075,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.shinnytech.com/articles/reference/why-our-klines-are-different",
+    "content_type": "text/html; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sat, 14 Nov 2026 09:10:05 GMT",
+    "requested_at": "2026-11-15T09:43:37.5000795Z",
+    "complete": true
+  }
+}

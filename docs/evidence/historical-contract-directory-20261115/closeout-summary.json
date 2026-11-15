@@ -288,5 +288,8 @@
     "reference_missing_days": 16,
     "reference_missing_days_nonzero_volume": 0
   },
-  "historical_stage_not_current": "v3 partial 3-field comparison is included in final118, not additional"
+  "historical_stage_not_current": "v3 partial 3-field comparison is included in final118, not additional",
+  "latest_semantics_review": "docs/evidence/daily-semantics-20261115/hypotheses-review.json",
+  "official_listing_only_evidence": "docs/evidence/daily-semantics-20261115/pk-first-listing-evidence.json",
+  "price_reference_coverage_unchanged_by_listing_evidence": true
 }

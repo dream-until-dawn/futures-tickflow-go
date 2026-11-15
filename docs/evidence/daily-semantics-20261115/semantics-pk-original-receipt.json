@@ -1,0 +1,24 @@
+{
+  "job_sha256": "b3454bcba5dfcb92f1d5ddee55db6c3b5508511a08f62568b57ea2ed85f33138",
+  "state": "received",
+  "evidence": {
+    "id": "semantics-pk-original",
+    "url": "https://www.czce.com.cn/cn/rootfiles/2021/01/25/1605577988714900-1605577988801327.pdf",
+    "sha256": "83db54939066d9aed186f5c8557ee118b8773f7c3e988bbeafb794f2127660ed",
+    "retrieved_at": "2026-11-15T09:43:44.7049307Z",
+    "version": "official-contract-candidate-2021"
+  },
+  "bytes": 1257937,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.czce.com.cn/cn/rootfiles/2021/01/25/1605577988714900-1605577988801327.pdf",
+    "content_type": "application/pdf",
+    "content_length": 1257937,
+    "server_date": "Sun, 15 Nov 2026 09:43:45 GMT",
+    "requested_at": "2026-11-15T09:43:44.7049307Z",
+    "complete": true
+  }
+}
