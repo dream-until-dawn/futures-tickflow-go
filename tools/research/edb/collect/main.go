@@ -179,10 +179,10 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		plan["scope"] = "three previously observed vendor-request codes; not an official historical universe or lifecycle"
 		plan["settlement_and_turnover_available"] = false
 	}
-	if len(planned) == 6 && planned[0].ID == "ao2405-daily-directory-pilot" {
+	if len(planned) > 0 && strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") {
 		delete(plan, "original_all_phase_requests_max")
-		plan["scope"] = "six frozen directory and official-row observed contracts; daily only"
-		plan["daily_directory_plan_sha256"] = directoryPlanSHA
+		plan["scope"] = "frozen directory and official-row observed contracts; daily only"
+		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA}
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
@@ -378,7 +378,7 @@ func run() error {
 	anchor := flag.Bool("daily-anchor-experiment", false, "另批仅一条EC完整日期窗，查日线时间锚点；不重发原日内URL")
 	research := flag.Bool("daily-research-pilot", false, "日线限定：原C2105/M2105/SI2308观察代码三项研究批，不猜月码")
 	priorResearch := flag.String("prior-research-dir", "", "三份旧供应商观察原件目录；仅研究批使用")
-	directoryPlanFile := flag.String("daily-directory-plan", "", "六项固定SHA执行单，目录和官方合约行双重核验")
+	directoryPlanFile := flag.String("daily-directory-plan", "", "固定SHA执行单，目录和官方合约行双重核验")
 	prepareOnly := flag.Bool("prepare-only", false, "仅目录日线单离线预检，不创建启动标记或网络请求")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {

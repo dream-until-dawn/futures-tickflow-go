@@ -70,3 +70,29 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 		t.Fatal("目录原件变动未拒绝")
 	}
 }
+
+func TestEDBApprovedDirectoryPlansHaveNoRepeatedURLs(t *testing.T) {
+	seen := map[string]bool{}
+	for _, name := range []string{"daily-pilot-plan.json", "daily-official-inventory-plan.json"} {
+		raw, err := os.ReadFile(filepath.Join("..", "..", "..", "..", "docs", "evidence", "historical-contract-directory-20261115", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err = approvedDirectoryPlanSHA(raw); err != nil {
+			t.Fatal(err)
+		}
+		var plan directoryPlan
+		if err = json.Unmarshal(raw, &plan); err != nil {
+			t.Fatal(err)
+		}
+		for _, job := range plan.Jobs {
+			if seen[job.URL] {
+				t.Fatal("不同执行单重复了URL", job.URL)
+			}
+			seen[job.URL] = true
+		}
+	}
+	if len(seen) != 98 {
+		t.Fatal("冻结的官方观察全集计数漂移", len(seen))
+	}
+}

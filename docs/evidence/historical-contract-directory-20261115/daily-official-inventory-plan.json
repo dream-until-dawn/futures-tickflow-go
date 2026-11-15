@@ -1,0 +1,980 @@
+{
+  "schema": "edb-directory-official-inventory-batch-v1",
+  "jobs": [
+    {
+      "id": "ad2512-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2512",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2601-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2601",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2602-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2602",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2603-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2603",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2604-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2604",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2605-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2605",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2606-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2606",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2607-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2607",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2608-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2608",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2609-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2609",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2610-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2610",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2611-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2611",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ad2612-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2612",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ad",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2401-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2401",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2402-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2402",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2403-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2403",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2404-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2404",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2406-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2406",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2407-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2407",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2408-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2408",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2409-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2409",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2410-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2410",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2411-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2411",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2412-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2412",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2501-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2501",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2502-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2502",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2503-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2503",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2504-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2504",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2506-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2506",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2507-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2507",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2508-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2508",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2509-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2509",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2510-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2510",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2511-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2511",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2512-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2512",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2601-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2601",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2602-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2602",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2603-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2603",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2604-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2604",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2605-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2605",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2606-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2606",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2607-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2607",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2608-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2608",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2609-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2609",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2610-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2610",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2611-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2611",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "ao2612-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2612",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "ao",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2401-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2401",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2402-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2402",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2403-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2403",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2404-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2404",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2406-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2406",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2407-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2407",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2408-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2408",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2409-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2409",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2410-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2410",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2411-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2411",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2412-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2412",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2501-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2501",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2502-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2502",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2503-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2503",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2504-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2504",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2506-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2506",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2507-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2507",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2508-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2508",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2509-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2509",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2510-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2510",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2511-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2511",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2512-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2512",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2601-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2601",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2602-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2602",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2603-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2603",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2604-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2604",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2605-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2605",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2606-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2606",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2607-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2607",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2608-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2608",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2609-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2609",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2610-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2610",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2611-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2611",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "br2612-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2612",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "br",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2602-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2602",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2603-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2603",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2604-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2604",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2605-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2605",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2606-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2606",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2607-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2607",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2608-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2608",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2609-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2609",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2610-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2610",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2611-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2611",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    },
+    {
+      "id": "op2612-daily-directory-pilot",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2612",
+      "format": "edb-csv",
+      "exchange": "SHFE",
+      "product": "op",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-directory-daily-v1"
+    }
+  ],
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\ao-decoded.json",
+      "sha256": "83ad995ff54a26514dc7407d07e7e64ac44d15c0ad325d8c3ff2b988df541006",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\br-decoded.json",
+      "sha256": "7940b3f66fa8cf861436a5809554db68b931cc8e441b7104cab2953c45d709bd",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ad-decoded.json",
+      "sha256": "f29dc82359127c52266475207d9ef617a77de896bc61d51ffd83253bd8bbc613",
+      "rows": 1456,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ao-decoded.json",
+      "sha256": "97a6e37d54de63289f0efe03472e2a0c0a8cf55a0b11fd17c94342500d5d8d71",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\br-decoded.json",
+      "sha256": "19354aee6434ace0bcca2719c39ad7cc3b8249b4725f3fb1a17e90df250ecda1",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\op-decoded.json",
+      "sha256": "3ac010031d266ee6b8efbe388359e715ed98e3289bb7167e4aff92a5e7a8ff62",
+      "rows": 770,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    }
+  ],
+  "requests_max": 92,
+  "bytes_per_response_max": 2097152,
+  "actual_total_bytes_max": 192937984,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "stop_on_first_failure_or_unknown": true,
+  "financial_eligible": false
+}

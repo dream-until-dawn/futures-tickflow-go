@@ -1,0 +1,127 @@
+{
+  "schema": "directory-daily-official-lock-v1",
+  "cases": [
+    {
+      "id": "ao2405-daily-directory-pilot",
+      "symbol": "SHFE.ao2405",
+      "product": "ao",
+      "file": "ao2405-daily-directory-pilot.body",
+      "sha256": "62ef6fc955f8621dbfa448bd99624f0be278334aad54999b5a246ad863cced31",
+      "receipt": "ao2405-daily-directory-pilot.json",
+      "receipt_sha256": "0bdfd2a80935c34dc5a7e308dcbe69416a9186bda001f64d6b4d568cf3c7550d",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2405"
+    },
+    {
+      "id": "br2405-daily-directory-pilot",
+      "symbol": "SHFE.br2405",
+      "product": "br",
+      "file": "br2405-daily-directory-pilot.body",
+      "sha256": "47bcea4f60b85bcde2669ad782ceaa959f8b3c7709e00883dde1ccc97d793793",
+      "receipt": "br2405-daily-directory-pilot.json",
+      "receipt_sha256": "16fd53798209b620219dbc4a0029f3527ba3292775dc3902ce8e8df1e776cbe6",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2405"
+    },
+    {
+      "id": "ao2505-daily-directory-pilot",
+      "symbol": "SHFE.ao2505",
+      "product": "ao",
+      "file": "ao2505-daily-directory-pilot.body",
+      "sha256": "1034d370399b9ecde565e1cb25fe92ca29ab86a92896e0a49705da770ba9d3b9",
+      "receipt": "ao2505-daily-directory-pilot.json",
+      "receipt_sha256": "0e858d318720bbea411f0797d92c331d5dfe16a32580da823a13cea3cfb6b1b9",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ao2505"
+    },
+    {
+      "id": "br2505-daily-directory-pilot",
+      "symbol": "SHFE.br2505",
+      "product": "br",
+      "file": "br2505-daily-directory-pilot.body",
+      "sha256": "56f9f0331affbf93f89489bf275a045dc7b8cb839e70b47259bf43b7d278db95",
+      "receipt": "br2505-daily-directory-pilot.json",
+      "receipt_sha256": "5a18c44df45076dca1d9ec4209c09303ba016d6352201bc8d6ed560655dc5118",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.br2505"
+    },
+    {
+      "id": "ad2511-daily-directory-pilot",
+      "symbol": "SHFE.ad2511",
+      "product": "ad",
+      "file": "ad2511-daily-directory-pilot.body",
+      "sha256": "bc502b5846c9d8e5e4e7a3f8112a1500a9f2b3a17ef27dd6aad23e667a2212cf",
+      "receipt": "ad2511-daily-directory-pilot.json",
+      "receipt_sha256": "9b2bf7d1744bd15322ed911ebfbd527b65958d7719f3731f3201883a299c01de",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.ad2511"
+    },
+    {
+      "id": "op2601-daily-directory-pilot",
+      "symbol": "SHFE.op2601",
+      "product": "op",
+      "file": "op2601-daily-directory-pilot.body",
+      "sha256": "bd7777df94973e3c1d29c620f0a2116335c175944bc34d8f7df97dd2e277b7e1",
+      "receipt": "op2601-daily-directory-pilot.json",
+      "receipt_sha256": "04e2340a35aa93b24b077c743576cec5ade0086c5a907c7b58d7f740a6985049",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=SHFE.op2601"
+    }
+  ],
+  "calendars": [
+    {
+      "file": "calendar/verified/profiles/listed-2023.json",
+      "sha256": "ca8a0903daab1403e86ef7be52aad446e25de06068ce5297401e5aff1160ac73"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2024.json",
+      "sha256": "8c2744f4ede120090dd1b30a1c2a036a4e495a7918dfe3b671ce968515f6ed49"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2025.json",
+      "sha256": "e5bb05a16d8b8c3a468697f87e611070a597ebecd030bf71bccf81c531ec9438"
+    },
+    {
+      "file": "calendar/verified/profiles/shfe-2026-to-1104.json",
+      "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\ao-decoded.json",
+      "sha256": "83ad995ff54a26514dc7407d07e7e64ac44d15c0ad325d8c3ff2b988df541006",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\br-decoded.json",
+      "sha256": "7940b3f66fa8cf861436a5809554db68b931cc8e441b7104cab2953c45d709bd",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ad-decoded.json",
+      "sha256": "f29dc82359127c52266475207d9ef617a77de896bc61d51ffd83253bd8bbc613",
+      "rows": 1456,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ao-decoded.json",
+      "sha256": "97a6e37d54de63289f0efe03472e2a0c0a8cf55a0b11fd17c94342500d5d8d71",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\br-decoded.json",
+      "sha256": "19354aee6434ace0bcca2719c39ad7cc3b8249b4725f3fb1a17e90df250ecda1",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\op-decoded.json",
+      "sha256": "3ac010031d266ee6b8efbe388359e715ed98e3289bb7167e4aff92a5e7a8ff62",
+      "rows": 770,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    }
+  ]
+}
