@@ -57,8 +57,16 @@ func semanticsCandidates() []batch.Job {
 	}
 }
 
+// followupCandidates 固定两个新文档入口；不含旧超时PDF、行情API或受阻首页。
+func followupCandidates() []batch.Job {
+	return []batch.Job{
+		{ID: "followup-rule2019", URL: "https://www.czce.com.cn/cn/uploadfile/2019/10/30/20191030161831109.pdf", Format: "pdf", Version: "official-2020-effective-candidate-not-continuity-proof"},
+		{ID: "followup-minute-forum", URL: "https://forum.shinnytech.com/question/26588/", Format: "html", Version: "forum-minute-context-not-edb-daily-version-proof"},
+	}
+}
+
 func responseLimit(job batch.Job) int64 {
-	if strings.HasPrefix(job.ID, "semantics-") {
+	if strings.HasPrefix(job.ID, "semantics-") || strings.HasPrefix(job.ID, "followup-") {
 		if job.Format == "pdf" {
 			return 4 << 20
 		}
@@ -87,14 +95,16 @@ func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 		markers["vendor-home"], markers["vendor-history-api"], markers["vendor-realtime-api"] = "准数据", "x-api-key", "timestamp"
 		markers["edb-public-document"] = "免费访问"
 		markers["semantics-algorithm"], markers["semantics-old-kline"], markers["semantics-forum-case"] = "除日线以外", "open_oi", "自对冲"
+		markers["followup-minute-forum"] = "盘前"
 		if marker := markers[job.ID]; marker == "" || !bytes.Contains(body, []byte(marker)) {
 			return fmt.Errorf("未取得预期业务正文，停止该主机")
 		}
 	}
 	for _, anchor := range map[string][]string{
-		"semantics-algorithm":  {"除日线以外", "连续交易时段"},
-		"semantics-old-kline":  {"open_oi", "close_oi", "Kline"},
-		"semantics-forum-case": {"行权", "自对冲", "3,575,857"},
+		"semantics-algorithm":   {"除日线以外", "连续交易时段"},
+		"semantics-old-kline":   {"open_oi", "close_oi", "Kline"},
+		"semantics-forum-case":  {"行权", "自对冲", "3,575,857"},
+		"followup-minute-forum": {"盘前", "分钟", "合成规则"},
 	}[job.ID] {
 		if !bytes.Contains(body, []byte(anchor)) {
 			return fmt.Errorf("未取得指定口径业务正文")
@@ -173,15 +183,16 @@ func main() {
 	vendorOnly := flag.Bool("vendor-access-only", false, "另批仅核三个公开文档，不取市场数据/样例包或重跑旧项")
 	edbDocOnly := flag.Bool("edb-doc-only", false, "另批仅核EDB公开文档，不发业务GET或获取token")
 	semanticsOnly := flag.Bool("semantics-only", false, "另批固定五项口径/合约新来源，不重试旧受阻URL")
-	prepareOnly := flag.Bool("prepare-only", false, "仅五项口径资料零请求预检")
+	followupOnly := flag.Bool("followup-only", false, "另批固定两项新规则/分钟口径文档，不重跑旧项")
+	prepareOnly := flag.Bool("prepare-only", false, "仅口径资料零请求预检")
 	flag.Parse()
 	modes := 0
-	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly, *semanticsOnly} {
+	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly, *semanticsOnly, *followupOnly} {
 		if selected {
 			modes++
 		}
 	}
-	if *root == "" || modes > 1 || (*prepareOnly && !*semanticsOnly) {
+	if *root == "" || modes > 1 || (*prepareOnly && !*semanticsOnly && !*followupOnly) {
 		fmt.Fprintln(os.Stderr, "缺少root或混用了独立批次模式")
 		os.Exit(1)
 	}
@@ -197,14 +208,23 @@ func main() {
 		jobs = []batch.Job{edbDocumentCandidate()}
 	}
 	interval := time.Second
-	if *semanticsOnly {
+	if *semanticsOnly || *followupOnly {
 		jobs = semanticsCandidates()
+		marker := "C:/Temp/tickflow-daily-semantics-sources-20261115.started.json"
+		if *followupOnly {
+			jobs = followupCandidates()
+			marker = "C:/Temp/tickflow-edb-pk-followup-20261115.started.json"
+		}
 		interval = 2 * time.Second
 		if *prepareOnly {
-			fmt.Printf("五项口径候选预检通过；请求0；最大正文14MiB\n")
+			var total int64
+			for _, job := range jobs {
+				total += responseLimit(job)
+			}
+			fmt.Printf("%d项口径候选预检通过；请求0；最大正文%d字节\n", len(jobs), total)
 			return
 		}
-		f, e := os.OpenFile("C:/Temp/tickflow-daily-semantics-sources-20261115.started.json", os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+		f, e := os.OpenFile(marker, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 		if e != nil {
 			fmt.Fprintln(os.Stderr, "口径资料已有/未知启动，拒绝重发:", e)
 			os.Exit(1)
