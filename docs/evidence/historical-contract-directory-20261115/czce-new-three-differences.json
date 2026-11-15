@@ -1,0 +1,47 @@
+{
+  "schema": "czce-single-day-distinct-difference-witness-v1",
+  "state": "raw-cells-rechecked",
+  "market_requests": 0,
+  "items": [
+    {
+      "symbol": "CZCE.AP2101",
+      "source_native": "AP101",
+      "day": 20210104,
+      "field": "open_interest",
+      "edb": "264",
+      "official": "212",
+      "official_line": 3,
+      "official_column": "持仓量",
+      "official_raw_sha256": "d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12",
+      "edb_raw_sha256": "d0e3e84179124f07d3442b39516ddc436e012700136458f14ee210d859c64594",
+      "cause": "unresolved; no automatic source selection or repair"
+    },
+    {
+      "symbol": "CZCE.CF2101",
+      "source_native": "CF101",
+      "day": 20210104,
+      "field": "open_interest",
+      "edb": "60995",
+      "official": "60483",
+      "official_line": 10,
+      "official_column": "持仓量",
+      "official_raw_sha256": "d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12",
+      "edb_raw_sha256": "71f1b324065a3fd29ed90b0bc14151cb47ab10128d185e31030b84287b3c409a",
+      "cause": "unresolved; no automatic source selection or repair"
+    },
+    {
+      "symbol": "CZCE.CJ2101",
+      "source_native": "CJ101",
+      "day": 20210104,
+      "field": "open_interest",
+      "edb": "111",
+      "official": "101",
+      "official_line": 17,
+      "official_column": "持仓量",
+      "official_raw_sha256": "d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12",
+      "edb_raw_sha256": "f11b7e33c200db59f59c9240f9aab0178d224d6614db71d69da6d5b01aa93582",
+      "cause": "unresolved; no automatic source selection or repair"
+    }
+  ],
+  "limits": "仅确认两份原件不同，不裁定根因，不解决旧37或SHFE/INE26项"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "czce-partial-seal-review-v1",
+  "seal_state": "verified",
+  "acquisition_state": "stopped-on-complete-empty-header-not-completed",
+  "root": "C:/Temp/tickflow-czce-observed-partial-20261115-v1-sealed",
+  "manifest_sha256": "507d60ecce19ec79598509c4bf73f7f2df339811cd9968e2e1ba13fc3a029a9e",
+  "files": 101,
+  "bytes": 2563486,
+  "software_sha": "baf4c0feea39b89f8bc449ccf61930f1c9269ad9",
+  "migration_root": "C:/Temp/tickflow-czce-observed-partial-20261115-v1-sealed-migration",
+  "full_22_report_byte_equal": true,
+  "migration_unchanged_after_replay": true,
+  "original_unchanged": true,
+  "negative_changed_empty_body": "file_sha:acquisition/archive/CY2102-daily-additional-research.body",
+  "negative_rehashed_manifest": "manifest_sha",
+  "network_requests_in_verification": 0,
+  "financial_eligible": false
+}

@@ -1,0 +1,257 @@
+{
+  "schema": "directory-daily-official-lock-v1",
+  "cases": [
+    {
+      "id": "AP2101-daily-additional-research",
+      "symbol": "CZCE.AP2101",
+      "product": "AP",
+      "file": "AP2101-daily-additional-research.body",
+      "sha256": "d0e3e84179124f07d3442b39516ddc436e012700136458f14ee210d859c64594",
+      "receipt": "AP2101-daily-additional-research.json",
+      "receipt_sha256": "3c4a69b5a67b595a019d98c3337a38c98b77f848fcaa5e76a5b59ef7ec1a47a1",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP101",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "AP2103-daily-additional-research",
+      "symbol": "CZCE.AP2103",
+      "product": "AP",
+      "file": "AP2103-daily-additional-research.body",
+      "sha256": "74450d1cb36a5e7e3b3861292027f390dbb6eac0be497c78d1bb535a7587750b",
+      "receipt": "AP2103-daily-additional-research.json",
+      "receipt_sha256": "bb8a0d076612b03f97761b6e3d0bd4017b4a1e07f3fa595f9938c7df0840d9b5",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP103",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "AP2105-daily-additional-research",
+      "symbol": "CZCE.AP2105",
+      "product": "AP",
+      "file": "AP2105-daily-additional-research.body",
+      "sha256": "20ffbe21acd5e17d05ef97f20ced73f328c0252d0e6d8a6123df71e875c67ab4",
+      "receipt": "AP2105-daily-additional-research.json",
+      "receipt_sha256": "dba82206385de29826db527f200463121da4d24616d143c5b05e23bc085ac841",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "AP2110-daily-additional-research",
+      "symbol": "CZCE.AP2110",
+      "product": "AP",
+      "file": "AP2110-daily-additional-research.body",
+      "sha256": "6630dee9f7d0ff52d2326bf4a3170fc6ba42c1381aafcd1dd0752d6bd3318281",
+      "receipt": "AP2110-daily-additional-research.json",
+      "receipt_sha256": "2abef35a7f5e286426513a776c9141a215f2645d19bb0bf19ec1e85a030c1dfe",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP110",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "AP2111-daily-additional-research",
+      "symbol": "CZCE.AP2111",
+      "product": "AP",
+      "file": "AP2111-daily-additional-research.body",
+      "sha256": "316b27ff6282feb9e2161d99af96affdec291a2a45f557fda543660a1f9f39b4",
+      "receipt": "AP2111-daily-additional-research.json",
+      "receipt_sha256": "ed678a373e0d9080fa3556d4c5f7b8b3bda4cb1c22f4833819bf2e4f2aeb4ae3",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP111",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "AP2112-daily-additional-research",
+      "symbol": "CZCE.AP2112",
+      "product": "AP",
+      "file": "AP2112-daily-additional-research.body",
+      "sha256": "55404f49059ac633a18300361cebd0ba1370e2f23ecd3a55c28ef44e02e7dade",
+      "receipt": "AP2112-daily-additional-research.json",
+      "receipt_sha256": "24db22839b3f18e2714446f81b97e8f3e4787186f1c6060abe8aa0ec07b2c301",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP112",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2101-daily-additional-research",
+      "symbol": "CZCE.CF2101",
+      "product": "CF",
+      "file": "CF2101-daily-additional-research.body",
+      "sha256": "71f1b324065a3fd29ed90b0bc14151cb47ab10128d185e31030b84287b3c409a",
+      "receipt": "CF2101-daily-additional-research.json",
+      "receipt_sha256": "aa9f3bdf35463f90f5dc79f8a0dea7f981632b82ba8984c95fe3526e06539d66",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF101",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2103-daily-additional-research",
+      "symbol": "CZCE.CF2103",
+      "product": "CF",
+      "file": "CF2103-daily-additional-research.body",
+      "sha256": "1a1c6764b2b29c63b949387e83f60297f561c71024acabafeb2eba8b0edf21da",
+      "receipt": "CF2103-daily-additional-research.json",
+      "receipt_sha256": "e987c5ea73cd9260d3e2ae7d2fd9a0f29b73e3345c48fc3738632f69968b3160",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF103",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2105-daily-additional-research",
+      "symbol": "CZCE.CF2105",
+      "product": "CF",
+      "file": "CF2105-daily-additional-research.body",
+      "sha256": "367e0e0739330832f14afbb23dce68cc57f1c99e8caf842001db34210108d069",
+      "receipt": "CF2105-daily-additional-research.json",
+      "receipt_sha256": "724ecfb2deb31ea6b95d98e5f59cbcaa23f652355c093e39bd6ac0791cf5c63e",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2107-daily-additional-research",
+      "symbol": "CZCE.CF2107",
+      "product": "CF",
+      "file": "CF2107-daily-additional-research.body",
+      "sha256": "0fed544e2157e3b66872e872399b7a8af152406f1dd3432dc925f78c06cf8c0d",
+      "receipt": "CF2107-daily-additional-research.json",
+      "receipt_sha256": "0240ecf2185210a76107e84267c2e4efb02cd67ac65d20c33b9fd6b96227991b",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF107",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2109-daily-additional-research",
+      "symbol": "CZCE.CF2109",
+      "product": "CF",
+      "file": "CF2109-daily-additional-research.body",
+      "sha256": "6a2727f86587674ff191962f40c8955edbb5c817c5d68647245ca5d00bce89b6",
+      "receipt": "CF2109-daily-additional-research.json",
+      "receipt_sha256": "bdb178890242dc334f0841e3ce5e85c54f4600b72ee278680bf45148cd4c63f1",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF109",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CF2111-daily-additional-research",
+      "symbol": "CZCE.CF2111",
+      "product": "CF",
+      "file": "CF2111-daily-additional-research.body",
+      "sha256": "e155788aa2ab2b39f58217ae4eb5c63bef8fb566319a55caa3fbfe6d7e6e1783",
+      "receipt": "CF2111-daily-additional-research.json",
+      "receipt_sha256": "667bd33664a81d1395ac9a1fcff38ae6d45ba57c618173af533633603bd97674",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF111",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2101-daily-additional-research",
+      "symbol": "CZCE.CJ2101",
+      "product": "CJ",
+      "file": "CJ2101-daily-additional-research.body",
+      "sha256": "f11b7e33c200db59f59c9240f9aab0178d224d6614db71d69da6d5b01aa93582",
+      "receipt": "CJ2101-daily-additional-research.json",
+      "receipt_sha256": "5bd05f919484d77ad3e276afb384adc848ea55b52ae9b20f62a6bb086a933621",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ101",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2103-daily-additional-research",
+      "symbol": "CZCE.CJ2103",
+      "product": "CJ",
+      "file": "CJ2103-daily-additional-research.body",
+      "sha256": "0a0d2dd14717f985947ba5ad3e02da2482161d8b0c831244fd67d6872d840535",
+      "receipt": "CJ2103-daily-additional-research.json",
+      "receipt_sha256": "dc92b2d18dbedbfc9e7de0f0a04b4cc6067e378db089682efebabbc66c407c85",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ103",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2105-daily-additional-research",
+      "symbol": "CZCE.CJ2105",
+      "product": "CJ",
+      "file": "CJ2105-daily-additional-research.body",
+      "sha256": "80156d2eccb5812ed6335a6f56193b4528563fe9160a4cc06be08f2fde0e213a",
+      "receipt": "CJ2105-daily-additional-research.json",
+      "receipt_sha256": "d7716bef2a58e8730fa63bbd2a7a32010623632880aea507daa534df482abebc",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2107-daily-additional-research",
+      "symbol": "CZCE.CJ2107",
+      "product": "CJ",
+      "file": "CJ2107-daily-additional-research.body",
+      "sha256": "3c372b6aca79a3bbf1efefe5b468c4839c4fc654ccb251f6bcc22701fc0107b1",
+      "receipt": "CJ2107-daily-additional-research.json",
+      "receipt_sha256": "f1c7f910a980be02acbe3a8be4ceabc9d6c104069268c5e2d91acfe6cb8a9d76",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ107",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2109-daily-additional-research",
+      "symbol": "CZCE.CJ2109",
+      "product": "CJ",
+      "file": "CJ2109-daily-additional-research.body",
+      "sha256": "09957860772a7be548961495eb04d8bf415cd7a28c87c1f40d6b6fe1f6bcb30b",
+      "receipt": "CJ2109-daily-additional-research.json",
+      "receipt_sha256": "7600d73ce1e73a0152bc96c229295e134999e9275b44998aa00302eab8cddb12",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ109",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CJ2112-daily-additional-research",
+      "symbol": "CZCE.CJ2112",
+      "product": "CJ",
+      "file": "CJ2112-daily-additional-research.body",
+      "sha256": "dbe3f65805104774bd6d0bacbfd1683d5386fe7959496a155b0f676fb83df602",
+      "receipt": "CJ2112-daily-additional-research.json",
+      "receipt_sha256": "ec8c5e10b125e142c16d5443d3d143e6fb078924a1dde8cbe7823df021101f90",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ112",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "CY2101-daily-additional-research",
+      "symbol": "CZCE.CY2101",
+      "product": "CY",
+      "file": "CY2101-daily-additional-research.body",
+      "sha256": "68c8b9b02cb19d85f400765d0cc791eb69c6bebb1b6a5ca46e78727f280c0ca3",
+      "receipt": "CY2101-daily-additional-research.json",
+      "receipt_sha256": "2358f0cf87ebb15dfe650beca034cd4c06ee13b98daff2590d4082099d117f06",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY101",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "MA2105-daily-additional-research",
+      "symbol": "CZCE.MA2105",
+      "product": "MA",
+      "file": "MA2105-daily-additional-research.body",
+      "sha256": "34314946ffcfad65e5d0531c7918cd655592ed33eef1f63735dbbf910f871507",
+      "receipt": "MA2105-daily-additional-research.json",
+      "receipt_sha256": "02831e2aaaed7a1883a224931720d41addcab09129acc50908b543c08ad82913",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "SA2105-daily-additional-research",
+      "symbol": "CZCE.SA2105",
+      "product": "SA",
+      "file": "SA2105-daily-additional-research.body",
+      "sha256": "27f2d148ca86aff00c307731aab3a92e4e6b68224d8a578febf7172318147ca0",
+      "receipt": "SA2105-daily-additional-research.json",
+      "receipt_sha256": "a347bd7a237819d993d328bcae5be2f547b740974420c04105a233761944ca05",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "id": "TA2105-daily-additional-research",
+      "symbol": "CZCE.TA2105",
+      "product": "TA",
+      "file": "TA2105-daily-additional-research.body",
+      "sha256": "a86db5a7d667fa1bc7cee30833a32f65fe5baf12ce87624c455203f6c1c56922",
+      "receipt": "TA2105-daily-additional-research.json",
+      "receipt_sha256": "8655dbeb67d86ebb776f4494cca27e3eea7a85c08528cfb1f49ba0927b71f0d3",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA105",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:/Temp/tickflow-additional-markets-20261115-v2/czce-decoded.json",
+      "sha256": "86dae0222fc6896b6f81bb9beda41291f837cd9b63e49e74819c246ff7bfe4a7",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    }
+  ],
+  "calendars": [],
+  "financial_eligible": false,
+  "control_scope": "exact 20210104 reference only; 18 new received, 1 failed-empty, 164 not attempted; no annual coverage claim"
+}
