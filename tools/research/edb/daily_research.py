@@ -1,8 +1,10 @@
 """离线比较EDB与既存新浪日线；供应商相符不等于官方获证。"""
 import argparse
 import datetime as dt
+import io
 import json
 import re
+import sys
 from pathlib import Path
 
 from review import FIELDS, ZONE, load_case, locked, number, rows
@@ -78,4 +80,6 @@ def main():
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     main()

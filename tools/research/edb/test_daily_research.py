@@ -1,4 +1,6 @@
 """字段差异须如实报告，结构错和重复须拒绝。"""
+import io
+import sys
 import unittest
 
 from daily_research import compare_vendors
@@ -37,4 +39,6 @@ var _V21052021_4_12=([{"d":"2021-01-04","o":"1.0","h":"3","l":"1","c":"2","v":"4
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
     unittest.main()

@@ -1,0 +1,13 @@
+{
+  "schema": "edb-private-seal-review-v1",
+  "root": "C:\\Temp\\tickflow-edb-daily-20261115-v1-sealed",
+  "files": 92,
+  "bytes": 82386413,
+  "manifest_sha256": "214259ed02d7d023eda2ed61f9129f499f13700f66a48aa52b1863f58c9ef95e",
+  "migration_verified": true,
+  "tamper_rejected": "content_sha:data/c2105-daily-research.body",
+  "originals_modified": false,
+  "market_requests": 0,
+  "migration_replays_byte_equal": true,
+  "post_replay_file_set_unchanged": true
+}
