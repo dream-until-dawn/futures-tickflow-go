@@ -122,6 +122,11 @@ func TestHistoricalDirectoryOfflineProductConflictsRemainSeparate(t *testing.T) 
 	if _, err = decodeGzipWithPolicy(bytes.NewReader(compressed(raw[:len(raw)-1])), 1<<20, true); err == nil {
 		t.Fatal("离线隔离也必须完整")
 	}
+	withShapeConflict := strings.Replace(raw, `"CZCE.TC604"`, `"CZCE.TC604F"`, 1)
+	positive, err := decodeGzipWithPolicy(bytes.NewReader(compressed(withShapeConflict)), 1<<20, true)
+	if err != nil || len(positive.Contracts) != 1 || len(positive.Conflicts) != 1 || positive.Conflicts[0].Conflict != "source_key_shape" {
+		t.Fatal("非标准键须单列而非丢失或冒充标准合约", positive, err)
+	}
 	foreignShape := strings.Replace(raw, `"CZCE.SR105"`, `"CZCE.SR105F"`, 1)
 	got, err := decodeGzipWithPolicy(bytes.NewReader(compressed(foreignShape)), 1<<20, true)
 	if err == nil || len(got.Contracts) != 0 {

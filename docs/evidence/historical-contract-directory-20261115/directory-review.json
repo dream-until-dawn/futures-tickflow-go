@@ -1,0 +1,612 @@
+{
+  "schema": "historical-directory-review-v1",
+  "total_entries": 253419,
+  "by_class": {
+    "FUTURE": 7837,
+    "FUTURE_COMBINE": 23604,
+    "FUTURE_CONT": 89,
+    "FUTURE_INDEX": 89,
+    "FUTURE_OPTION": 211133,
+    "INDEX": 4,
+    "OPTION": 10642,
+    "SPOT": 21
+  },
+  "futures_by_market": {
+    "CFFEX": 601,
+    "CZCE": 1997,
+    "DCE": 2412,
+    "GFEX": 144,
+    "INE": 401,
+    "SHFE": 2282
+  },
+  "six_market_futures": 7786,
+  "expiry_not_before_2021": 5351,
+  "selected_by_market": {
+    "CFFEX": 372,
+    "CZCE": 1505,
+    "DCE": 1531,
+    "GFEX": 144,
+    "INE": 360,
+    "SHFE": 1439
+  },
+  "selected_by_delivery_year": {
+    "2021": 687,
+    "2022": 709,
+    "2023": 726,
+    "2024": 789,
+    "2025": 815,
+    "2026": 876,
+    "2027": 739,
+    "2028": 7,
+    "2029": 3
+  },
+  "official_observed_contracts": 98,
+  "official_present_in_snapshot": 98,
+  "official_absent_from_snapshot": [],
+  "identity_conflicts": [
+    {
+      "source_key": "CZCE.TC604",
+      "canonical": "CZCE.ZC1604",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "delivery_year": 2016,
+      "delivery_month": 4,
+      "expiry_seconds": 1460098800.0,
+      "conflict": "source_product_mismatch"
+    },
+    {
+      "source_key": "CZCE.TC601",
+      "canonical": "CZCE.ZC1601",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "delivery_year": 2016,
+      "delivery_month": 1,
+      "expiry_seconds": 1452236400.0,
+      "conflict": "source_product_mismatch"
+    },
+    {
+      "source_key": "CZCE.TC603",
+      "canonical": "CZCE.ZC1603",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "delivery_year": 2016,
+      "delivery_month": 3,
+      "expiry_seconds": 1457334000.0,
+      "conflict": "source_product_mismatch"
+    },
+    {
+      "source_key": "DCE.l2602F",
+      "canonical": "DCE.l2602",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 2,
+      "expiry_seconds": 1769756400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2603F",
+      "canonical": "DCE.l2603",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 3,
+      "expiry_seconds": 1772175600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2604F",
+      "canonical": "DCE.l2604",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 4,
+      "expiry_seconds": 1774940400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2602F",
+      "canonical": "DCE.pp2602",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 2,
+      "expiry_seconds": 1769756400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2603F",
+      "canonical": "DCE.pp2603",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 3,
+      "expiry_seconds": 1772175600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2604F",
+      "canonical": "DCE.pp2604",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 4,
+      "expiry_seconds": 1774940400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2602F",
+      "canonical": "DCE.v2602",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 2,
+      "expiry_seconds": 1769756400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2603F",
+      "canonical": "DCE.v2603",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 3,
+      "expiry_seconds": 1772175600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2604F",
+      "canonical": "DCE.v2604",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 4,
+      "expiry_seconds": 1774940400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2605F",
+      "canonical": "DCE.l2605",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 5,
+      "expiry_seconds": 1777532400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2605F",
+      "canonical": "DCE.pp2605",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 5,
+      "expiry_seconds": 1777532400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2605F",
+      "canonical": "DCE.v2605",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 5,
+      "expiry_seconds": 1777532400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2606F",
+      "canonical": "DCE.l2606",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 6,
+      "expiry_seconds": 1780038000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2606F",
+      "canonical": "DCE.pp2606",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 6,
+      "expiry_seconds": 1780038000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2606F",
+      "canonical": "DCE.v2606",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 6,
+      "expiry_seconds": 1780038000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2607F",
+      "canonical": "DCE.l2607",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 7,
+      "expiry_seconds": 1782802800.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2607F",
+      "canonical": "DCE.pp2607",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 7,
+      "expiry_seconds": 1782802800.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2607F",
+      "canonical": "DCE.v2607",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 7,
+      "expiry_seconds": 1782802800.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2608F",
+      "canonical": "DCE.l2608",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 8,
+      "expiry_seconds": 1785481200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2608F",
+      "canonical": "DCE.pp2608",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 8,
+      "expiry_seconds": 1785481200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2608F",
+      "canonical": "DCE.v2608",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 8,
+      "expiry_seconds": 1785481200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2609F",
+      "canonical": "DCE.l2609",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 9,
+      "expiry_seconds": 1788159600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2609F",
+      "canonical": "DCE.pp2609",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 9,
+      "expiry_seconds": 1788159600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2609F",
+      "canonical": "DCE.v2609",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 9,
+      "expiry_seconds": 1788159600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2610F",
+      "canonical": "DCE.l2610",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 10,
+      "expiry_seconds": 1790751600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2610F",
+      "canonical": "DCE.pp2610",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 10,
+      "expiry_seconds": 1790751600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2610F",
+      "canonical": "DCE.v2610",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 10,
+      "expiry_seconds": 1790751600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2611F",
+      "canonical": "DCE.l2611",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 11,
+      "expiry_seconds": 1793343600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2611F",
+      "canonical": "DCE.pp2611",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 11,
+      "expiry_seconds": 1793343600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2611F",
+      "canonical": "DCE.v2611",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 11,
+      "expiry_seconds": 1793343600.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2612F",
+      "canonical": "DCE.l2612",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2026,
+      "delivery_month": 12,
+      "expiry_seconds": 1796022000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2612F",
+      "canonical": "DCE.pp2612",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2026,
+      "delivery_month": 12,
+      "expiry_seconds": 1796022000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2612F",
+      "canonical": "DCE.v2612",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2026,
+      "delivery_month": 12,
+      "expiry_seconds": 1796022000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2701F",
+      "canonical": "DCE.l2701",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2027,
+      "delivery_month": 1,
+      "expiry_seconds": 1798700400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2701F",
+      "canonical": "DCE.pp2701",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2027,
+      "delivery_month": 1,
+      "expiry_seconds": 1798700400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2701F",
+      "canonical": "DCE.v2701",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2027,
+      "delivery_month": 1,
+      "expiry_seconds": 1798700400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2702F",
+      "canonical": "DCE.l2702",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2027,
+      "delivery_month": 2,
+      "expiry_seconds": 1801206000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2702F",
+      "canonical": "DCE.pp2702",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2027,
+      "delivery_month": 2,
+      "expiry_seconds": 1801206000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2702F",
+      "canonical": "DCE.v2702",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2027,
+      "delivery_month": 2,
+      "expiry_seconds": 1801206000.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2703F",
+      "canonical": "DCE.l2703",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2027,
+      "delivery_month": 3,
+      "expiry_seconds": 1803625200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2703F",
+      "canonical": "DCE.pp2703",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2027,
+      "delivery_month": 3,
+      "expiry_seconds": 1803625200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2703F",
+      "canonical": "DCE.v2703",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2027,
+      "delivery_month": 3,
+      "expiry_seconds": 1803625200.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2704F",
+      "canonical": "DCE.l2704",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2027,
+      "delivery_month": 4,
+      "expiry_seconds": 1806476400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2704F",
+      "canonical": "DCE.pp2704",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2027,
+      "delivery_month": 4,
+      "expiry_seconds": 1806476400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2704F",
+      "canonical": "DCE.v2704",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2027,
+      "delivery_month": 4,
+      "expiry_seconds": 1806476400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.l2705F",
+      "canonical": "DCE.l2705",
+      "exchange": "DCE",
+      "product": "l",
+      "delivery_year": 2027,
+      "delivery_month": 5,
+      "expiry_seconds": 1809068400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.pp2705F",
+      "canonical": "DCE.pp2705",
+      "exchange": "DCE",
+      "product": "pp",
+      "delivery_year": 2027,
+      "delivery_month": 5,
+      "expiry_seconds": 1809068400.0,
+      "conflict": "source_key_shape"
+    },
+    {
+      "source_key": "DCE.v2705F",
+      "canonical": "DCE.v2705",
+      "exchange": "DCE",
+      "product": "v",
+      "delivery_year": 2027,
+      "delivery_month": 5,
+      "expiry_seconds": 1809068400.0,
+      "conflict": "source_key_shape"
+    }
+  ],
+  "evidence_scope": "official existing decoded rows cross-check, not new full annual re-decoding",
+  "listing_dates_available": false,
+  "point_in_time_catalog": false,
+  "complete_historical_listing_certified": false,
+  "financial_admission_expanded": false,
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "original_scan_state": "failed",
+  "original_scan_error": "catalog_product: CZCE.TC604",
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\ao-decoded.json",
+      "sha256": "83ad995ff54a26514dc7407d07e7e64ac44d15c0ad325d8c3ff2b988df541006",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\br-decoded.json",
+      "sha256": "7940b3f66fa8cf861436a5809554db68b931cc8e441b7104cab2953c45d709bd",
+      "rows": 2904,
+      "manifest_sha256": "9c1df600f83339abf2d8de7b260cb291058cede78119974f1d868b4bf6855ee8",
+      "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ad-decoded.json",
+      "sha256": "f29dc82359127c52266475207d9ef617a77de896bc61d51ffd83253bd8bbc613",
+      "rows": 1456,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\ao-decoded.json",
+      "sha256": "97a6e37d54de63289f0efe03472e2a0c0a8cf55a0b11fd17c94342500d5d8d71",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\br-decoded.json",
+      "sha256": "19354aee6434ace0bcca2719c39ad7cc3b8249b4725f3fb1a17e90df250ecda1",
+      "rows": 2916,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-calendar-2025-20261112-sealed\\op-decoded.json",
+      "sha256": "3ac010031d266ee6b8efbe388359e715ed98e3289bb7167e4aff92a5e7a8ff62",
+      "rows": 770,
+      "manifest_sha256": "723d908dc4f219b638706be86ad51698fe4be1415d08f8e626a888b0c10d4ece",
+      "original_sha256": "fe0122e1ff0e072fc200ce924c488407a0305d3e5790692a19efc999709d4902"
+    }
+  ],
+  "market_requests": 0
+}

@@ -1,0 +1,19 @@
+{
+  "body_complete": true,
+  "content_encoding": "gzip",
+  "error": "catalog_product: CZCE.TC604",
+  "etag": "\"4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94\"",
+  "expanded_limit": 805306368,
+  "finished_at": "2026-11-15T05:07:34.497006Z",
+  "full_history_certified": false,
+  "requests_max": 1,
+  "server_date": "Sun, 15 Nov 2026 05:04:10 GMT",
+  "sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "started_at": "2026-11-15T05:04:10.1786009Z",
+  "state": "failed",
+  "status": 200,
+  "timeout_seconds": 1200,
+  "url": "https://openmd.shinnytech.com/t/md/symbols/latest.json",
+  "wire_bytes": 11771799,
+  "wire_limit": 33554432
+}

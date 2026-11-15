@@ -179,6 +179,11 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		plan["scope"] = "three previously observed vendor-request codes; not an official historical universe or lifecycle"
 		plan["settlement_and_turnover_available"] = false
 	}
+	if len(planned) == 6 && planned[0].ID == "ao2405-daily-directory-pilot" {
+		delete(plan, "original_all_phase_requests_max")
+		plan["scope"] = "six frozen directory and official-row observed contracts; daily only"
+		plan["daily_directory_plan_sha256"] = directoryPlanSHA
+	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
 		return err
@@ -373,17 +378,36 @@ func run() error {
 	anchor := flag.Bool("daily-anchor-experiment", false, "另批仅一条EC完整日期窗，查日线时间锚点；不重发原日内URL")
 	research := flag.Bool("daily-research-pilot", false, "日线限定：原C2105/M2105/SI2308观察代码三项研究批，不猜月码")
 	priorResearch := flag.String("prior-research-dir", "", "三份旧供应商观察原件目录；仅研究批使用")
+	directoryPlanFile := flag.String("daily-directory-plan", "", "六项固定SHA执行单，目录和官方合约行双重核验")
+	prepareOnly := flag.Bool("prepare-only", false, "仅目录日线单离线预检，不创建启动标记或网络请求")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
 	}
-	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) {
+	if *prepareOnly && *directoryPlanFile == "" {
+		return fmt.Errorf("prepare-only必须给目录日线执行单")
+	}
+	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) || (*directoryPlanFile != "" && (*anchor || *research || *priorEmpty != "")) {
 		return fmt.Errorf("不能混用独立日期窗和旧计划续取")
 	}
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
 	selected := jobs()
+	if *directoryPlanFile != "" {
+		var err error
+		selected, err = directoryJobs(*directoryPlanFile)
+		if err != nil {
+			return err
+		}
+		if *prepareOnly {
+			fmt.Printf("离线预检通过：%d项；真实市场请求0\n", len(selected))
+			return nil
+		}
+		if err = reserveDirectoryPlan(*directoryPlanFile, *root); err != nil {
+			return err
+		}
+	}
 	if *research {
 		if err := requirePriorResearchFiles(*priorResearch); err != nil {
 			return err
