@@ -1,0 +1,1854 @@
+{
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "schema": "edb-czce-single-day-observed-daily-v1",
+  "jobs": [
+    {
+      "id": "AP2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "AP2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "AP2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "AP2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "AP2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "AP2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CF2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CF2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CF2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CF2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CF2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CJ2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "CY2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "FG2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "JR2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "LR2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "MA2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "OI2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PF2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "PM2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RI2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RM2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RS2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RS2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RS2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "RS2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SA2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SF2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SM2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "SR2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "TA2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "UR2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "WH2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC101",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2102-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC102",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC103",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2104-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC104",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2106-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC106",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2107-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC107",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2108-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC108",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2109-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC109",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2110-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC110",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2111-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC111",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    },
+    {
+      "id": "ZC2112-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC112",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-czce-observed-daily-research-v1"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:/Temp/tickflow-additional-markets-20261115-v2/czce-decoded.json",
+      "sha256": "86dae0222fc6896b6f81bb9beda41291f837cd9b63e49e74819c246ff7bfe4a7",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    }
+  ],
+  "requests_max": 183,
+  "bytes_per_response_max": 2097152,
+  "actual_total_bytes_max": 383778816,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "stop_on_first_failure_or_unknown": true,
+  "financial_eligible": false,
+  "control_scope": "20210104 exact reference day only; no annual calendar or lifecycle certification"
+}
