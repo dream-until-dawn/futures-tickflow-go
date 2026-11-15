@@ -109,3 +109,17 @@ func TestHistoricalDirectoryBadResponseDoesNotPublishInventory(t *testing.T) {
 		})
 	}
 }
+
+func TestHistoricalDirectoryOfflineProductConflictsRemainSeparate(t *testing.T) {
+	raw := `{"CZCE.SR105":` + sampleEntry + `,"CZCE.TC604":` + strings.ReplaceAll(strings.ReplaceAll(sampleEntry, `"product_id":"SR"`, `"product_id":"ZC"`), `"delivery_year":2021,"delivery_month":5`, `"delivery_year":2016,"delivery_month":4`) + `}`
+	if _, err := decodeGzip(bytes.NewReader(compressed(raw)), 1<<20); err == nil {
+		t.Fatal("严格旧入口不可改成默许")
+	}
+	result, err := decodeGzipWithPolicy(bytes.NewReader(compressed(raw)), 1<<20, true)
+	if err != nil || len(result.Contracts) != 1 || len(result.Conflicts) != 1 || result.Conflicts[0].SourceKey != "CZCE.TC604" || result.ByClass["FUTURE"] != 2 {
+		t.Fatal("冲突不能丢失或纳入可选候选", result, err)
+	}
+	if _, err = decodeGzipWithPolicy(bytes.NewReader(compressed(raw[:len(raw)-1])), 1<<20, true); err == nil {
+		t.Fatal("离线隔离也必须完整")
+	}
+}

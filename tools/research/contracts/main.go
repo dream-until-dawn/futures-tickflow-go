@@ -48,13 +48,17 @@ func (h *heartbeat) Write(b []byte) (int, error) {
 }
 
 func decodeGzip(r io.Reader, max int64) (inventory, error) {
+	return decodeGzipWithPolicy(r, max, false)
+}
+
+func decodeGzipWithPolicy(r io.Reader, max int64, quarantine bool) (inventory, error) {
 	gz, err := gzip.NewReader(r)
 	if err != nil {
 		return inventory{}, err
 	}
 	defer gz.Close()
 	limited := &io.LimitedReader{R: gz, N: max + 1}
-	result, err := scan(limited)
+	result, err := scanWithPolicy(limited, quarantine)
 	if err != nil {
 		return inventory{}, err
 	}
@@ -142,10 +146,18 @@ func acquire(root string, client *http.Client, address string) (err error) {
 
 func main() {
 	root := flag.String("out", "", "全新仓外目录，存在即拒绝")
+	offline := flag.String("offline-file", "", "仅离线重扫既有gzip，隔离产品身份冲突；绝不联网")
 	flag.Parse()
 	if *root == "" {
 		fmt.Fprintln(os.Stderr, "必须给出-out")
 		os.Exit(2)
+	}
+	if *offline != "" {
+		if err := offlineScan(*offline, *root); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
 	}
 	transport := &http.Transport{Proxy: nil, DisableCompression: true, DialContext: (&net.Dialer{Timeout: 15 * time.Second}).DialContext, TLSHandshakeTimeout: 15 * time.Second, ResponseHeaderTimeout: 30 * time.Second}
 	client := &http.Client{Transport: transport, Timeout: 20 * time.Minute, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
@@ -154,4 +166,35 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println("目录原件完整；仍不是官方历史挂牌全集或回测准入")
+}
+
+func offlineScan(input, root string) error {
+	if err := os.Mkdir(root, 0700); err != nil {
+		return err
+	}
+	file, err := os.Open(input)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	hash := sha256.New()
+	if _, err = io.Copy(hash, file); err != nil {
+		return err
+	}
+	if _, err = file.Seek(0, 0); err != nil {
+		return err
+	}
+	result, err := decodeGzipWithPolicy(file, expandedLimit, true)
+	if err != nil {
+		return err
+	}
+	if err = save(root, "inventory.json", result); err != nil {
+		return err
+	}
+	b, err := os.ReadFile(filepath.Join(root, "inventory.json"))
+	if err != nil {
+		return err
+	}
+	sum := sha256.Sum256(b)
+	return save(root, "scan-review.json", map[string]any{"state": "derived-complete", "input_sha256": hex.EncodeToString(hash.Sum(nil)), "inventory_sha256": hex.EncodeToString(sum[:]), "gzip_and_json_complete": true, "market_requests": 0, "product_conflicts_quarantined": len(result.Conflicts)})
 }

@@ -25,13 +25,19 @@ type inventory struct {
 	ByClass   map[string]int `json:"by_class"`
 	ByMarket  map[string]int `json:"by_market"`
 	Contracts []contract     `json:"contracts"`
+	Conflicts []contract     `json:"product_identity_conflicts"`
 }
 
 var futureKey = regexp.MustCompile(`^([A-Za-z]+)([0-9]{3,4})$`)
 var markets = map[string]bool{"SHFE": true, "INE": true, "DCE": true, "CZCE": true, "GFEX": true, "CFFEX": true}
 
 func scan(r io.Reader) (inventory, error) {
-	result := inventory{ByClass: map[string]int{}, ByMarket: map[string]int{}, Contracts: []contract{}}
+	return scanWithPolicy(r, false)
+}
+
+// 显式离线恢复才隔离品种别名冲突；原严格取证默认仍报错，不改旧收据。
+func scanWithPolicy(r io.Reader, quarantine bool) (inventory, error) {
+	result := inventory{ByClass: map[string]int{}, ByMarket: map[string]int{}, Contracts: []contract{}, Conflicts: []contract{}}
 	d := json.NewDecoder(r)
 	if token, err := d.Token(); err != nil || token != json.Delim('{') {
 		return inventory{}, fmt.Errorf("catalog_start: %v", err)
@@ -82,7 +88,7 @@ func scan(r io.Reader) (inventory, error) {
 			return inventory{}, fmt.Errorf("catalog_identity: %s", key)
 		}
 		match := futureKey.FindStringSubmatch(parts[1])
-		if match == nil || match[1] != entry.Product {
+		if match == nil {
 			return inventory{}, fmt.Errorf("catalog_product: %s", key)
 		}
 		yearDigits := 2
@@ -101,6 +107,13 @@ func scan(r io.Reader) (inventory, error) {
 			return inventory{}, fmt.Errorf("catalog_expiry: %s", key)
 		}
 		canonical := fmt.Sprintf("%s.%s%02d%02d", entry.Exchange, entry.Product, entry.Year%100, entry.Month)
+		if match[1] != entry.Product {
+			if !quarantine {
+				return inventory{}, fmt.Errorf("catalog_product: %s", key)
+			}
+			result.Conflicts = append(result.Conflicts, contract{key, canonical, entry.Exchange, entry.Product, entry.Year, entry.Month, entry.Expiry})
+			continue
+		}
 		if canonicalSeen[canonical] {
 			return inventory{}, fmt.Errorf("catalog_duplicate_identity: %s", canonical)
 		}
