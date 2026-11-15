@@ -1,0 +1,38 @@
+{
+  "schema": "historical-source-software-validation-v1",
+  "source_commit": "a2dd04b598456162aae170a8e4b79bf570917b87",
+  "candidate_commit": "ff2c71a5858ad701349dcde519c81c040e97cccd",
+  "local": {
+    "clean_clone": "C:/Temp/tickflow-history-sources-offline-20261115-v1/clean",
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 137,
+    "python_test_directories": 13,
+    "restoration_drill": "passed-identical-worktree-fingerprint",
+    "log": "C:\\Temp\\tickflow-history-sources-offline-20261115-v1\\module-sweep-a2dd04b-with-main.log",
+    "log_sha256": "e5cc7de22caa421e34f56ae510f72e691f3e657dcf8fb32261431ca6b1a1bbce",
+    "prior_failures_preserved": [
+      "module-sweep-3966845.log: UTF8 stream wrappers and clone prerequisites",
+      "module-sweep-a2dd04b.log: missing local main reference"
+    ]
+  },
+  "doccheck": {
+    "documented": 203,
+    "source": 893,
+    "whitelist": 0,
+    "result": "passed"
+  },
+  "ci": {
+    "run_id": 43672359093,
+    "head_sha": "ff2c71a5858ad701349dcde519c81c040e97cccd",
+    "matrix": {
+      "linux_go1_23": "success",
+      "linux_go1_26": "success",
+      "windows_go1_26": "success"
+    },
+    "linux_go1_26_race": "success"
+  },
+  "new_verified_profiles": 0,
+  "public_library_tree_changed": false,
+  "tag_created": false
+}

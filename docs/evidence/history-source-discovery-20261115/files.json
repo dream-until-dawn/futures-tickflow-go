@@ -87,6 +87,11 @@
       "sha256": "b66aecfa5cf87cc66286c6de55afcdb39274c7053ab82869cc12e65b1118666a"
     },
     {
+      "path": "software-validation.json",
+      "bytes": 1300,
+      "sha256": "1e36aef6f25793594c62923f40d8f6f0c9f02157c148029d60ef66e67ff445e3"
+    },
+    {
       "path": "source-lock.json",
       "bytes": 5188,
       "sha256": "1c616b53e1aca551e95f0f91e7c33b5423a64024b0c5437615a1aedbeebdc28e"

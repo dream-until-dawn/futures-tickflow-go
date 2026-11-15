@@ -97,4 +97,6 @@ python -X utf8 tools/research/historysources/review.py --lock docs/evidence/hist
 
 新增补充封存`C:/Temp/tickflow-history-sources-20261115-v1-sealed`：**74文件、8,843,096字节**（另manifest自身），manifest SHA256 `b185cf8abd7a4112b4da9a8ef83f11b4be3d66e486889251ddcd0297ef978d96`。完整及partial原字节、原收据、两版破坏实验和离线工具均保存；迁移集合/长度/SHA一致，从迁移包独立复算三个资料审核与既有结果完全相同；篡改副本准确拒绝`first/acquisition/archive/pk-release.body`变化，再核原包/迁移包不变。二进制保留原工作目录不纳入本包，最终封存指针与后续CI日志不作循环包含。详见[封存收据](evidence/history-source-discovery-20261115/sealing.json)及[Git证据索引](evidence/history-source-discovery-20261115/files.json)。
 
-这不是第5版阶段发行包，也不是PK/CY完整官方资格包。当前仅待最终证据/文档候选CI；本功能分支加入既有三平台工作流白名单，不改变测试政策。无新tag，业务库/API/默认源与六品种日历覆盖保持。
+准确证据候选`ff2c71a5858ad701349dcde519c81c040e97cccd`的[CI 43672359093](https://github.com/dream-until-dawn/futures-tickflow-go/actions/runs/43672359093)已实际核三矩阵全部success、Linux1.26 race success。软件相对a2dd无改，准确验证收据见[软件核验记录](evidence/history-source-discovery-20261115/software-validation.json)。最后的文档收口不冒称未来提交已经通过；实际使用的main/SHA及其CI以Git和工作流为准。
+
+这不是第5版阶段发行包，也不是PK/CY完整官方资格包。本功能分支加入既有三平台工作流白名单，不改变测试政策。无新tag，业务库/API/默认源与六品种日历覆盖保持。
