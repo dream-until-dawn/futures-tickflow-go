@@ -1,0 +1,42 @@
+{
+  "candidate": "01cd7ce4d6663cca005ed4296963e5b3d19b1cf2",
+  "cases": [
+    {
+      "case": "source-pin",
+      "target_test": "TestSinaStaticHTTPPinsOriginalSourceHashEvenWhenRehashed",
+      "source": "archive/batch/sina_static_http.go",
+      "source_sha256": "29b8dec3c7eaf68256706338385f8c013b9b0a91220791d3b65f0c12f048045e",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "重算SHA竟绕过冻结出处"
+    },
+    {
+      "case": "plaintext-class",
+      "target_test": "TestSinaStaticHTTPReceiptCannotLoseVendorClass",
+      "source": "archive/batch/native_http.go",
+      "source_sha256": "8f4b32ec6e5fcff3cdc917eeb1783208703cfb3b21c37790a89a35100ed770c3",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "供应商身份洗白未拒"
+    },
+    {
+      "case": "exclusive-marker",
+      "target_test": "TestSinaHTTPExclusiveMarkerNeverOverwrites",
+      "source": "tools/vendor/sinahttp/main.go",
+      "source_sha256": "9c96c36cdc2413e4cb436dac16af2f28d601adb70c26bd4eabb13049238beb12",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "独占标记未拒绝重复"
+    },
+    {
+      "case": "unknown-start",
+      "target_test": "TestSinaHTTPPersistentStartRejectsUnknownAndRepeat",
+      "source": "tools/vendor/sinahttp/main.go",
+      "source_sha256": "9c96c36cdc2413e4cb436dac16af2f28d601adb70c26bd4eabb13049238beb12",
+      "baseline_returncode": 0,
+      "mutated_returncode": 1,
+      "target_reason": "未知启动重发"
+    }
+  ],
+  "market_requests": 0
+}

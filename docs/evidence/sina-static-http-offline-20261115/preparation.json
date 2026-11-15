@@ -1,0 +1,31 @@
+{
+  "code_candidate": "01cd7ce4d6663cca005ed4296963e5b3d19b1cf2",
+  "baseline": "8436d7a8f49f315d0a6068414d5b68c0e13e2e9b",
+  "go_modules": 3,
+  "python_tests": 130,
+  "full_module_sweep": "passed",
+  "doccheck": {
+    "declarations": 203,
+    "source_declarations": 893,
+    "whitelist": 0
+  },
+  "mutation_controls": 4,
+  "public_ast_added_including_fields": 7,
+  "public_ast_removed": 0,
+  "public_ast_changed": 0,
+  "binary": "C:/Temp/tickflow-sina-http-candidate-20261115-v1/sinahttp.exe",
+  "binary_sha256": "d20c59f441fd039ad8c43c060ea993da839f2016ef196e9d03918f19560cb3b3",
+  "go_version": "go1.26.1",
+  "build_modified": false,
+  "build_command": "go build -o C:/Temp/tickflow-sina-http-candidate-20261115-v1/sinahttp.exe ./tools/vendor/sinahttp",
+  "execution_root": "C:\\Temp\\tickflow-sina-static-http-live-20261115-v1",
+  "plan_sha256": "3544d67ddb03e30b0ad135fe07674d8683af02a3a5de4af12e72093fec56dfc0",
+  "observed_execution_entries": [
+    "plan.json"
+  ],
+  "prepare_only": true,
+  "actual_http_requests": 0,
+  "independent_review_pending": true,
+  "production_changes": 0,
+  "financial_admissions_added": 0
+}

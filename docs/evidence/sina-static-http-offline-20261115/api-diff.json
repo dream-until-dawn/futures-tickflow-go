@@ -1,0 +1,34 @@
+{
+  "added": [
+    {
+      "name": "archive/batch:batch.NewSinaStaticHTTPDownloader",
+      "after": "func(l Limits, g SinaStaticHTTPGrant) (*Downloader, error)"
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPGrant",
+      "after": "struct "
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPGrant.Method",
+      "after": "string"
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPGrant.Source",
+      "after": "evidence.Ref"
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPGrant.SourceBody",
+      "after": "[]byte"
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPGrant.URL",
+      "after": "string"
+    },
+    {
+      "name": "archive/batch:batch.SinaStaticHTTPVersion",
+      "after": "const  = \"vendor/cleartext/static-unqualified\" slot=0"
+    }
+  ],
+  "removed": [],
+  "changed": []
+}

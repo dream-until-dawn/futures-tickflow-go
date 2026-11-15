@@ -1,0 +1,5 @@
+--- FAIL: TestSinaHTTPExclusiveMarkerNeverOverwrites (0.02s)
+    main_test.go:29: 独占标记未拒绝重复: <nil>
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/vendor/sinahttp	0.904s
+FAIL

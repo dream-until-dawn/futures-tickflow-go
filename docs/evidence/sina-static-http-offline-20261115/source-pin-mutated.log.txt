@@ -1,0 +1,5 @@
+--- FAIL: TestSinaStaticHTTPPinsOriginalSourceHashEvenWhenRehashed (0.00s)
+    sina_static_http_test.go:98: 重算SHA竟绕过冻结出处: <nil>
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/archive/batch	2.846s
+FAIL

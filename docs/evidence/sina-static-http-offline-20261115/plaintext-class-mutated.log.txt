@@ -1,0 +1,5 @@
+--- FAIL: TestSinaStaticHTTPReceiptCannotLoseVendorClass (0.01s)
+    sina_static_http_test.go:135: 供应商身份洗白未拒: <nil>
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/archive/batch	0.901s
+FAIL

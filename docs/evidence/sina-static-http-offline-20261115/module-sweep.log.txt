@@ -1,0 +1,239 @@
+本仓 Go 模块（枚举出来的，不是写死的）：
+   .
+   adapter
+   tools/probe/shinny
+
+   .                            gofmt ok
+   .                            vet   ok
+   .                            test  ok
+   adapter                      gofmt ok
+   adapter                      vet   ok
+   adapter                      test  ok
+   tools/probe/shinny           gofmt ok
+   tools/probe/shinny           vet   ok
+   tools/probe/shinny           test  ok
+
+Python 工具测试（单独一格，不算 Go 模块）：
+Python 测试目录：tools/archive
+test_crc_truncation_and_expansion_budget (test_decode_annual.DecodeTest.test_crc_truncation_and_expansion_budget) ... ok
+test_filter_does_not_make_unknown_code_valid (test_decode_annual.DecodeTest.test_filter_does_not_make_unknown_code_valid) ... ok
+test_only_explicit_merged_contract_is_carried (test_decode_annual.DecodeTest.test_only_explicit_merged_contract_is_carried) ... ok
+test_options_and_tas_are_excluded_and_counted (test_decode_annual.DecodeTest.test_options_and_tas_are_excluded_and_counted) ... ok
+test_real_control_and_decimal_preservation (test_decode_annual.DecodeTest.test_real_control_and_decimal_preservation) ... ok
+test_wrong_date_header_duplicate_and_unknown_fail (test_decode_annual.DecodeTest.test_wrong_date_header_duplicate_and_unknown_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.017s
+
+OK
+Python 测试目录：tools/audit
+test_duplicate_manifest_key_and_untrusted_digest (test_delivery_bundle.DeliveryBundleTest.test_duplicate_manifest_key_and_untrusted_digest) ... ok
+test_noncanonical_parent_path_matches_resolved_root (test_delivery_bundle.DeliveryBundleTest.test_noncanonical_parent_path_matches_resolved_root)
+复现Windows临时目录别名的同类路径问题，不依赖创建链接的特权。 ... ok
+test_positive_migration_and_exact_rejection_matrix (test_delivery_bundle.DeliveryBundleTest.test_positive_migration_and_exact_rejection_matrix) ... ok
+test_scope_escalation_even_with_new_correct_manifest (test_delivery_bundle.DeliveryBundleTest.test_scope_escalation_even_with_new_correct_manifest) ... ok
+test_active_and_incomplete_are_not_success (test_evidence_bundle.EvidenceTest.test_active_and_incomplete_are_not_success) ... ok
+test_copy_and_mutation_matrix (test_evidence_bundle.EvidenceTest.test_copy_and_mutation_matrix) ... ok
+test_plan_mismatch_rejected_before_sealing (test_evidence_bundle.EvidenceTest.test_plan_mismatch_rejected_before_sealing) ... ok
+test_directory_discovery_is_not_a_fixed_list (test_python_sweep.PythonSweepTest.test_directory_discovery_is_not_a_fixed_list) ... ok
+test_worker_exit_codes (test_python_sweep.PythonSweepTest.test_worker_exit_codes) ... ok
+test_cli_sealed_bundle_and_manifest (test_review_long_gap.ReviewTest.test_cli_sealed_bundle_and_manifest) ... ok
+test_complete_and_negative_evidence (test_review_long_gap.ReviewTest.test_complete_and_negative_evidence) ... ok
+test_rejects_broken_jsonl (test_review_long_gap.ReviewTest.test_rejects_broken_jsonl) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.914s
+
+OK
+Python 测试目录：tools/calendar/annual
+test_fact_pin_and_qualification_scope (test_build.AnnualBuildTest.test_fact_pin_and_qualification_scope) ... ok
+test_ine_2023_2024_cutovers_listing_and_leap_day (test_build.AnnualBuildTest.test_ine_2023_2024_cutovers_listing_and_leap_day) ... ok
+test_ine_2026_partition_and_no_future_boundary (test_build.AnnualBuildTest.test_ine_2026_partition_and_no_future_boundary) ... ok
+test_ine_day_only_product_and_night_boundaries (test_build.AnnualBuildTest.test_ine_day_only_product_and_night_boundaries) ... ok
+test_leap_day_first_night_and_rule_cutover (test_build.AnnualBuildTest.test_leap_day_first_night_and_rule_cutover) ... ok
+test_listing_partial_coverage_and_first_night (test_build.AnnualBuildTest.test_listing_partial_coverage_and_first_night) ... ok
+test_lu_2020_listing_scope_and_first_nights (test_build.AnnualBuildTest.test_lu_2020_listing_scope_and_first_nights) ... ok
+test_lu_2022_annual_direct_clauses_and_first_nights (test_build.AnnualBuildTest.test_lu_2022_annual_direct_clauses_and_first_nights) ... ok
+test_observation_cell_identity (test_build.AnnualBuildTest.test_observation_cell_identity) ... ok
+test_partial_year_does_not_invent_future_boundary (test_build.AnnualBuildTest.test_partial_year_does_not_invent_future_boundary) ... ok
+test_review_and_partition_refusal (test_build.AnnualBuildTest.test_review_and_partition_refusal) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.237s
+
+OK
+Python 测试目录：tools/calendar/listed2023
+test_fact_mutations_hit_target_guard (test_build.ListedCalendarTest.test_fact_mutations_hit_target_guard) ... ok
+test_original_evidence_refusals (test_build.ListedCalendarTest.test_original_evidence_refusals) ... ok
+test_real_boundary_expectations (test_build.ListedCalendarTest.test_real_boundary_expectations) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.042s
+
+OK
+Python 测试目录：tools/calendar/lu2021
+test_boundaries_and_friday_night (test_build.CalendarBuildTest.test_boundaries_and_friday_night) ... ok
+test_challenge_not_article (test_build.CalendarBuildTest.test_challenge_not_article) ... ok
+test_profile_and_holiday_mutations (test_build.CalendarBuildTest.test_profile_and_holiday_mutations) ... ok
+test_rule_search_and_boundary_refusal (test_build.CalendarBuildTest.test_rule_search_and_boundary_refusal) ... ok
+test_source_hash_and_path (test_build.CalendarBuildTest.test_source_hash_and_path) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.120s
+
+OK
+Python 测试目录：tools/calendar/word97
+test_active_order_excludes_residue_and_uses_minifat (test_reader.Word97ReaderTest.test_active_order_excludes_residue_and_uses_minifat) ... ok
+test_active_piece_bounds_and_identity_refusals (test_reader.Word97ReaderTest.test_active_piece_bounds_and_identity_refusals) ... ok
+test_fib_encryption_and_clx_refusals (test_reader.Word97ReaderTest.test_fib_encryption_and_clx_refusals) ... ok
+test_header_fat_and_directory_refusals (test_reader.Word97ReaderTest.test_header_fat_and_directory_refusals) ... ok
+test_partial_and_oversized_inputs_fail_closed (test_reader.Word97ReaderTest.test_partial_and_oversized_inputs_fail_closed) ... ok
+test_unknown_compressed_charset_and_missing_final_paragraph (test_reader.Word97ReaderTest.test_unknown_compressed_charset_and_missing_final_paragraph) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.005s
+
+OK
+Python 测试目录：tools/probe
+test_positive_and_invalid_matrix (test_nonight_plan.NonightPlanTest.test_positive_and_invalid_matrix) ... ok
+test_cli_credential_source_and_expired_windows (test_nonight_preflight.PreflightTest.test_cli_credential_source_and_expired_windows) ... ok
+test_environment_takes_precedence (test_nonight_preflight.PreflightTest.test_environment_takes_precedence) ... ok
+test_missing_credentials_emits_no_command (test_nonight_preflight.PreflightTest.test_missing_credentials_emits_no_command) ... ok
+test_parameterized_plan_and_synthetic_gate (test_nonight_preflight.PreflightTest.test_parameterized_plan_and_synthetic_gate) ... ok
+test_preserves_existing_evidence (test_nonight_preflight.PreflightTest.test_preserves_existing_evidence) ... ok
+test_rejects_contract_and_repo_path (test_nonight_preflight.PreflightTest.test_rejects_contract_and_repo_path) ... ok
+test_valid_and_missing (test_nonight_preflight.PreflightTest.test_valid_and_missing) ... ok
+test_complete_and_mutations (test_review_daynodes.DayNodeReviewTest.test_complete_and_mutations) ... ok
+test_raw_tamper_rejected_even_with_unchanged_summary (test_review_daynodes.DayNodeReviewTest.test_raw_tamper_rejected_even_with_unchanged_summary) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.480s
+
+OK
+Python 测试目录：tools/probe/capture_task
+test_kill_owned_supervisor_and_child (test_crash.CrashTest.test_kill_owned_supervisor_and_child) ... ok
+test_missing_corrupt_and_future_heartbeat_are_unknown (test_crash.CrashTest.test_missing_corrupt_and_future_heartbeat_are_unknown) ... ok
+test_active_channel_does_not_hide_missing_channel (test_lifecycle.LifecycleTest.test_active_channel_does_not_hide_missing_channel) ... ok
+test_active_channel_missing_peer_with_controlled_clock (test_lifecycle.LifecycleTest.test_active_channel_missing_peer_with_controlled_clock)
+精确固定每轮写入与时间，不靠操作系统亚秒调度证明逐通道门禁。 ... ok
+test_detached_worker_survives_launcher_exit (test_lifecycle.LifecycleTest.test_detached_worker_survives_launcher_exit) ... ok
+test_empty_file_and_escaping_link_are_not_activity (test_lifecycle.LifecycleTest.test_empty_file_and_escaping_link_are_not_activity) ... ok
+test_existing_directory_is_preserved (test_lifecycle.LifecycleTest.test_existing_directory_is_preserved) ... ok
+test_no_output_stalls_then_times_out (test_lifecycle.LifecycleTest.test_no_output_stalls_then_times_out) ... ok
+test_nonzero_preserves_log (test_lifecycle.LifecycleTest.test_nonzero_preserves_log) ... ok
+test_rejects_bad_plan (test_lifecycle.LifecycleTest.test_rejects_bad_plan) ... ok
+test_spawn_failure_and_no_secret_echo (test_lifecycle.LifecycleTest.test_spawn_failure_and_no_secret_echo) ... ok
+test_stale_heartbeat_and_terminal_state (test_lifecycle.LifecycleTest.test_stale_heartbeat_and_terminal_state) ... ok
+test_stall_and_recovery (test_lifecycle.LifecycleTest.test_stall_and_recovery) ... ok
+test_status_replace_retries_sharing_conflict_but_is_bounded (test_lifecycle.LifecycleTest.test_status_replace_retries_sharing_conflict_but_is_bounded) ... ok
+test_write_then_success_and_nonzero (test_lifecycle.LifecycleTest.test_write_then_success_and_nonzero) ... ok
+test_zero_without_data_is_failure (test_lifecycle.LifecycleTest.test_zero_without_data_is_failure) ... ok
+test_other_roots_are_not_children (test_paths.PathBoundaryTest.test_other_roots_are_not_children) ... ok
+test_recorded_drive_aliases_and_case (test_paths.PathBoundaryTest.test_recorded_drive_aliases_and_case) ... ok
+test_resolved_boundary_and_strict_child (test_paths.PathBoundaryTest.test_resolved_boundary_and_strict_child) ... ok
+test_unc_aliases (test_paths.PathBoundaryTest.test_unc_aliases) ... ok
+test_unknown_namespaces_fail_closed (test_paths.PathBoundaryTest.test_unknown_namespaces_fail_closed) ... ok
+test_after_window_missing_data_stalls (test_phase_plan.PhasePlanTest.test_after_window_missing_data_stalls) ... ok
+test_detached_cli_uses_fixed_env_and_run_log (test_phase_plan.PhasePlanTest.test_detached_cli_uses_fixed_env_and_run_log) ... ok
+test_environment_is_frozen_without_copying_credentials (test_phase_plan.PhasePlanTest.test_environment_is_frozen_without_copying_credentials) ... ok
+test_other_channel_still_reports_missing (test_phase_plan.PhasePlanTest.test_other_channel_still_reports_missing) ... ok
+test_outside_output_rejected_before_creating_directory (test_phase_plan.PhasePlanTest.test_outside_output_rejected_before_creating_directory) ... ok
+test_planned_pause_does_not_report_stall (test_phase_plan.PhasePlanTest.test_planned_pause_does_not_report_stall) ... ok
+test_quiet_does_not_allow_missing_file_or_nonzero_exit (test_phase_plan.PhasePlanTest.test_quiet_does_not_allow_missing_file_or_nonzero_exit) ... ok
+test_rejects_invalid_windows_and_secret_parameters (test_phase_plan.PhasePlanTest.test_rejects_invalid_windows_and_secret_parameters) ... ok
+test_window_boundary_is_half_open (test_phase_plan.PhasePlanTest.test_window_boundary_is_half_open) ... ok
+test_build_ignores_external_workspace_and_flags (test_preparation.PreparationTest.test_build_ignores_external_workspace_and_flags) ... ok
+test_dirty_source_rejected_without_output (test_preparation.PreparationTest.test_dirty_source_rejected_without_output) ... ok
+test_expired_or_insufficient_deadline_rejected (test_preparation.PreparationTest.test_expired_or_insufficient_deadline_rejected) ... ok
+test_independent_spawn_denial_never_silently_falls_back (test_preparation.PreparationTest.test_independent_spawn_denial_never_silently_falls_back) ... ok
+test_parameter_command_and_classification_tampering_rejected (test_preparation.PreparationTest.test_parameter_command_and_classification_tampering_rejected) ... ok
+test_process_scope_is_explicit_and_real_cannot_use_job (test_preparation.PreparationTest.test_process_scope_is_explicit_and_real_cannot_use_job) ... ok
+test_real_launch_calls_go_preflight_again (test_preparation.PreparationTest.test_real_launch_calls_go_preflight_again) ... ok
+test_real_spec_timezone_matches_independent_reviewer (test_preparation.PreparationTest.test_real_spec_timezone_matches_independent_reviewer) ... ok
+test_stage_binds_manifest_and_copies_bytes (test_preparation.PreparationTest.test_stage_binds_manifest_and_copies_bytes) ... ok
+test_tampered_binary_rejected_before_task_creation (test_preparation.PreparationTest.test_tampered_binary_rejected_before_task_creation) ... ok
+test_zero_or_skipped_preflight_does_not_pass (test_preparation.PreparationTest.test_zero_or_skipped_preflight_does_not_pass) ... ok
+test_invalid_identity_and_timeout_rejected (test_process_wait.ProcessWaitTest.test_invalid_identity_and_timeout_rejected) ... ok
+test_waits_for_file_owner_and_timeout_does_not_kill (test_process_wait.ProcessWaitTest.test_waits_for_file_owner_and_timeout_does_not_kill) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 11.987s
+
+OK
+Python 测试目录：tools/probe/session_end
+test_both_sources_must_agree (test_clock_probe.ClockProofTest.test_both_sources_must_agree) ... ok
+test_invalid_response_matrix (test_clock_probe.ClockProofTest.test_invalid_response_matrix) ... ok
+test_roundtrip_clock_jump_and_excessive_offset (test_clock_probe.ClockProofTest.test_roundtrip_clock_jump_and_excessive_offset) ... ok
+test_valid_offset_interval_is_not_a_point (test_clock_probe.ClockProofTest.test_valid_offset_interval_is_not_a_point) ... ok
+test_dns_timeout_and_failure_are_bounded (test_clock_probe.RetryClockTest.test_dns_timeout_and_failure_are_bounded) ... ok
+test_network_failure_exhausts_without_source_substitution (test_clock_probe.RetryClockTest.test_network_failure_exhausts_without_source_substitution) ... ok
+test_quality_failure_is_not_retried (test_clock_probe.RetryClockTest.test_quality_failure_is_not_retried) ... ok
+test_total_cycle_budget_does_not_reset_per_request (test_clock_probe.RetryClockTest.test_total_cycle_budget_does_not_reset_per_request) ... ok
+test_transient_network_failure_retained_and_six_valid_samples (test_clock_probe.RetryClockTest.test_transient_network_failure_retained_and_six_valid_samples) ... ok
+test_whole_cycle_wall_clock_jump_rejected (test_clock_probe.RetryClockTest.test_whole_cycle_wall_clock_jump_rejected) ... ok
+test_capture_starts_only_after_valid_clock_is_active (test_preparation.NightPreparationTest.test_capture_starts_only_after_valid_clock_is_active) ... ok
+test_day_session_and_calendar_boundaries (test_preparation.NightPreparationTest.test_day_session_and_calendar_boundaries) ... ok
+test_identity_requires_exact_key_complete_rows_and_fields (test_preparation.NightPreparationTest.test_identity_requires_exact_key_complete_rows_and_fields) ... ok
+test_launch_rejects_early_stale_and_tampered_artifacts (test_preparation.NightPreparationTest.test_launch_rejects_early_stale_and_tampered_artifacts) ... ok
+test_valid_spec_and_invalid_matrix (test_preparation.NightPreparationTest.test_valid_spec_and_invalid_matrix) ... ok
+test_complete_raw_packets_and_coverage (test_review_clock.ClockReviewTest.test_complete_raw_packets_and_coverage) ... ok
+test_empty_and_missing_window_rejected (test_review_clock.ClockReviewTest.test_empty_and_missing_window_rejected) ... ok
+test_mutation_matrix (test_review_clock.ClockReviewTest.test_mutation_matrix) ... ok
+test_positive_and_negative_inter_cycle_jump (test_review_clock.ClockReviewTest.test_positive_and_negative_inter_cycle_jump) ... ok
+test_recorder_persists_identity_and_sequence (test_review_clock.ClockReviewTest.test_recorder_persists_identity_and_sequence) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.116s
+
+OK
+Python 测试目录：tools/vendor/retiredpage
+test_bad_encoding_and_empty_directory_rejected (test_info_catalog.InfoCatalogTest.test_bad_encoding_and_empty_directory_rejected) ... ok
+test_duplicate_and_missing_parent_rejected (test_info_catalog.InfoCatalogTest.test_duplicate_and_missing_parent_rejected) ... ok
+test_executable_or_unrecognized_statement_rejected (test_info_catalog.InfoCatalogTest.test_executable_or_unrecognized_statement_rejected) ... ok
+test_real_frozen_navigation_is_not_historical_roster (test_info_catalog.InfoCatalogTest.test_real_frozen_navigation_is_not_historical_roster) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.024s
+
+OK
+Python 测试目录：tools/vendor/sina
+test_contracts_keep_only_observed_real_codes (test_catalog.CatalogTest.test_contracts_keep_only_observed_real_codes) ... ok
+test_inert_product_constant_and_precise_plan (test_catalog.CatalogTest.test_inert_product_constant_and_precise_plan) ... ok
+test_invalid_encoding_is_not_replaced (test_catalog.CatalogTest.test_invalid_encoding_is_not_replaced) ... ok
+test_reject_expression_duplicate_node_and_structure (test_catalog.CatalogTest.test_reject_expression_duplicate_node_and_structure) ... ok
+test_failure_stops_all_dependent_market_batches (test_expand.ExpansionTest.test_failure_stops_all_dependent_market_batches) ... 批次1 failed-stop-host-and-dependent-batches；累计1请求/10字节
+blocked-with-diagnostics
+ok
+test_positive_six_batches_and_existing_directory_refused (test_expand.ExpansionTest.test_positive_six_batches_and_existing_directory_refused) ... 批次1 completed；累计40请求/10字节
+批次2 completed；累计80请求/20字节
+批次3 completed；累计120请求/30字节
+批次4 completed；累计160请求/40字节
+批次5 completed；累计200请求/50字节
+批次6 completed；累计230请求/60字节
+completed-raw-only
+ok
+test_full_schedule_and_quarantine_are_not_coverage (test_isolate_remaining.IsolationCoordinatorTest.test_full_schedule_and_quarantine_are_not_coverage) ... 批次1：completed-with-quarantined-unavailable；实际40请求，正常39，失败隔离1
+批次2：completed-with-quarantined-unavailable；实际80请求，正常78，失败隔离2
+批次3：completed-with-quarantined-unavailable；实际120请求，正常117，失败隔离3
+批次4：completed-with-quarantined-unavailable；实际160请求，正常156，失败隔离4
+批次5：completed-with-quarantined-unavailable；实际175请求，正常170，失败隔离5
+ok
+test_other_failure_stops_all_later_batches (test_isolate_remaining.IsolationCoordinatorTest.test_other_failure_stops_all_later_batches) ... 批次1：blocked-with-diagnostics；实际2请求，正常1，失败隔离0
+ok
+test_prior_raw_mutation_rejected_before_output (test_seal_isolation.IsolationSealTest.test_prior_raw_mutation_rejected_before_output) ... ok
+test_real_positive_and_state_promotion_rejected (test_seal_isolation.IsolationSealTest.test_real_positive_and_state_promotion_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.296s
+
+OK
+封存542件，实际175请求/2237436字节；正常169，失败隔离6，原stop逐件SHA不变
+
+生成器还原演练（单独一格，不算模块）：
+   演练 rebuild_docs_test.py --drill    ok
+   演练前后工作区内容指纹                        相同（e3b0c44298fc）
+
+✅ 3 个模块，gofmt / vet / test 全过；生成器还原演练过，演练前后工作区内容指纹相同。
+✅ 已枚举的 Python 工具测试通过（零项或全跳过会拒绝）。
+⚠️ 而这只说明【被枚举到的】模块都过了 ——
+   判据是「目录里有 go.mod」；一个不用 go.mod 组织的东西它照样看不见。

@@ -1,0 +1,27 @@
+{
+  "execution_root": "C:\\Temp\\tickflow-sina-static-http-live-20261115-v1",
+  "binary_sha256": "d20c59f441fd039ad8c43c060ea993da839f2016ef196e9d03918f19560cb3b3",
+  "job": {
+    "id": "sina-static-http",
+    "url": "http://finance.sina.com.cn/iframe/futures_info_cff.js",
+    "format": "vendor/cleartext/static-unqualified",
+    "day": 0,
+    "retrieved_at": "0001-01-01T00:00:00Z",
+    "version": "vendor/cleartext/static-unqualified"
+  },
+  "source": {
+    "id": "sina-history-html",
+    "url": "https://vip.stock.finance.sina.com.cn/q/view/vFutures_History.php",
+    "sha256": "81cf741fad8436bb9477a7884597ea5c37ea40ae14a8527e6c0fc65267e3fa28",
+    "retrieved_at": "2026-11-14T16:36:00.9037709Z",
+    "version": "sina-history-html-v1"
+  },
+  "limits": {
+    "Requests": 1,
+    "Bytes": 1048575,
+    "Interval": 1000000000,
+    "Timeout": 15000000000
+  },
+  "historical_roster_certified": false,
+  "financial_eligible": false
+}

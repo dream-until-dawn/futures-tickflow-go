@@ -1,0 +1,5 @@
+--- FAIL: TestSinaHTTPPersistentStartRejectsUnknownAndRepeat (0.04s)
+    main_test.go:106: 未知启动重发
+FAIL
+FAIL	github.com/dream-until-dawn/futures-tickflow-go/tools/vendor/sinahttp	0.681s
+FAIL

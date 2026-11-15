@@ -1,0 +1,72 @@
+[
+  {
+    "file": "api-diff.json",
+    "bytes": 859,
+    "sha256": "3f461c71a70627cce900abb8ba787dda86518b5ec7e59e1ebb885e5a61860cec"
+  },
+  {
+    "file": "build-info.txt",
+    "bytes": 901,
+    "sha256": "aadee4153555024c7e54eb651aefaa6f4c22f39a58230e875b180f6288ce89ab"
+  },
+  {
+    "file": "exclusive-marker-baseline.log.txt",
+    "bytes": 82,
+    "sha256": "0eb41ac871117f0c0e21d106f77a89b4a8a5582e339454cf92e11e9e1ec3fe85"
+  },
+  {
+    "file": "exclusive-marker-mutated.log.txt",
+    "bytes": 209,
+    "sha256": "072a62d01ca42e850c2797f518b381af879c05629efbf153281790a2eb2e5b52"
+  },
+  {
+    "file": "execution-plan.json",
+    "bytes": 932,
+    "sha256": "3544d67ddb03e30b0ad135fe07674d8683af02a3a5de4af12e72093fec56dfc0"
+  },
+  {
+    "file": "module-sweep.log.txt",
+    "bytes": 20456,
+    "sha256": "b161747d56d3af527e1afad7c8770ec9e647ebe4b5ea198dcc91d7aa391b4d57"
+  },
+  {
+    "file": "mutations.json",
+    "bytes": 1596,
+    "sha256": "4597b0ad94b921e288f9443131545ba473b5f6b4519d4d43ca7877ffd4f5914b"
+  },
+  {
+    "file": "plaintext-class-baseline.log.txt",
+    "bytes": 74,
+    "sha256": "3e7c3e772c3d9c7c334401fe81d82a396cb5361f89886a903fbac6522796d822"
+  },
+  {
+    "file": "plaintext-class-mutated.log.txt",
+    "bytes": 218,
+    "sha256": "ef7079692faff532289282f84d1ead260467f0ccbb09f335f8a9fb2772cf9778"
+  },
+  {
+    "file": "preparation.json",
+    "bytes": 1127,
+    "sha256": "190622e74a055d5995d163faf02b2ce62d5c4c03395db1ba94e75c8af346f0f3"
+  },
+  {
+    "file": "source-pin-baseline.log.txt",
+    "bytes": 74,
+    "sha256": "f616ea43fb88a0fb16177530d15fca92cb19ffd4dd1f55ee4ad6c8269b844bf2"
+  },
+  {
+    "file": "source-pin-mutated.log.txt",
+    "bytes": 230,
+    "sha256": "f3aaa6926eecbe107f54302988021874537509fdeb78a8082e1b99e99f7b4f24"
+  },
+  {
+    "file": "unknown-start-baseline.log.txt",
+    "bytes": 82,
+    "sha256": "d52745673bcf1aa5fba4fc75ae604284a0ce4b37b71c050ff04c47c2797bb7bc"
+  },
+  {
+    "file": "unknown-start-mutated.log.txt",
+    "bytes": 202,
+    "sha256": "3d6f4a6c0cfffd1a5ec72afb3e22fd8bc222487e8b7cb012738b854de7a7d1c6"
+  }
+]

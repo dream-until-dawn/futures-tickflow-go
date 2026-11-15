@@ -81,3 +81,5 @@ docs/evidence/sina-history-script-20261115/history-script.jsonp binary
 docs/evidence/sina-history-script-20261115/result.json binary
 docs/evidence/sina-info-https-20261115/info.jsonp binary
 docs/evidence/sina-info-https-20261115/result.json binary
+docs/evidence/sina-static-http-offline-20261115/build-info.txt binary
+docs/evidence/sina-static-http-offline-20261115/*.log.txt binary
