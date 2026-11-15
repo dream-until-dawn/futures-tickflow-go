@@ -1,0 +1,20 @@
+{
+  "root": "C:/Temp/tickflow-cffex-months-daily-20261115-v1-sealed",
+  "files": 1861,
+  "bytes": 97400603,
+  "manifest_sha256": "ac33ebd2da9c5a28ee42a0f081760754c35ba6b1ef33e0933fad6e8f76e0e130",
+  "software_sha": "9e3dfb4a3857622087b29793dc8be8063b73ee6c",
+  "publisher_authentication": false,
+  "financial_eligible": false,
+  "state": "verified",
+  "migration_root": "C:/Temp/tickflow-cffex-months-daily-20261115-v1-sealed-migration",
+  "replay_root": "C:/Temp/tickflow-cffex-package-replay-20261115-v1",
+  "monthly_70_outputs_byte_equal": true,
+  "independent_audit_byte_equal": true,
+  "full_372_report_byte_equal": true,
+  "migration_unchanged_after_replay": true,
+  "negative_csv_mutation": "file_sha:raw/edb/IC2102-daily-additional-research.body",
+  "negative_rehashed_manifest": "manifest_sha",
+  "original_unchanged": true,
+  "network_requests": 0
+}

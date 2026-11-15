@@ -1,0 +1,34 @@
+{
+  "schema": "cffex-research-software-validation-v1",
+  "software_sha": "9e3dfb4a3857622087b29793dc8be8063b73ee6c",
+  "clean_clone": "C:/Temp/tickflow-cffex-validation-e35ec85",
+  "full_log": "C:/Temp/tickflow-cffex-validation-9e3dfb4.log",
+  "module_sweep_exit_code": 0,
+  "go_modules": [
+    ".",
+    "adapter",
+    "tools/probe/shinny"
+  ],
+  "gofmt_vet_test": true,
+  "python_tests": 168,
+  "python_directories": 15,
+  "restoration_drill": true,
+  "workspace_fingerprint_unchanged": true,
+  "doccheck": {
+    "document_declarations": 203,
+    "source_declarations": 893,
+    "whitelist": 0
+  },
+  "ci_run": 43693387042,
+  "ci_state": "success",
+  "api_library_directories_unchanged_from": "39b879a9a43db081eb4851bfdbad4d9507c32581",
+  "legacy_37_report_unchanged": true,
+  "first_candidate_ci": {
+    "sha": "e35ec8500a03fcd8eca90baa747f2452943f02e0",
+    "run": 43692625476,
+    "state": "failed",
+    "reason": "new Python scripts missing stdout/stderr UTF-8 wrappers; fixed and full rerun passed"
+  },
+  "financial_eligible": false,
+  "tag_created": false
+}

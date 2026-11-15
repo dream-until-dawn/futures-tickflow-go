@@ -1,0 +1,26 @@
+{
+  "job_sha256": "7d0f48351306aa38c309a2e89267957d00876f2178fe5a059d75789df7463102",
+  "state": "failed",
+  "evidence": {
+    "id": "czce-annual-2021-https",
+    "url": "https://www.czce.com.cn/cn/exchange/datahistory2021.zip",
+    "sha256": "3c49bd36221b8347e7d9b15968627520736f336fd09a9704603d7b93784da4e0",
+    "retrieved_at": "2026-11-15T08:11:55.8482345Z",
+    "version": "sdk-address-candidate-not-qualified"
+  },
+  "bytes": 2780,
+  "error": "batch: HTTP 412",
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 412,
+    "final_url": "https://www.czce.com.cn/cn/exchange/datahistory2021.zip",
+    "content_type": "text/html; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 08:11:56 GMT",
+    "requested_at": "2026-11-15T08:11:55.8482345Z",
+    "complete": true,
+    "failure": "http_status"
+  }
+}
