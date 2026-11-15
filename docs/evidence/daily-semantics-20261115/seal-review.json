@@ -1,0 +1,23 @@
+{
+  "schema": "daily-semantics-seal-review-v1",
+  "root": "C:\\Temp\\tickflow-daily-semantics-evidence-20261115-v1-sealed",
+  "migrated_root": "C:\\Temp\\tickflow-daily-semantics-evidence-20261115-v1-migrated",
+  "manifest_sha256": "ae6f1432edd6a6150a4f0fffac47d353710e32ffc2e70d3645a614597491ecbc",
+  "files": 800,
+  "bytes": 14582768,
+  "software_sha": "f5a63c83d8aba1934f1f75aeb744ea030cb104d5",
+  "source_ci_run": 43702564975,
+  "source_ci_matrices": 3,
+  "python_tests": 175,
+  "python_directories": 16,
+  "go_modules": 3,
+  "replay_original_and_migrated_byte_identical": true,
+  "old_package_unchanged": true,
+  "negative_checks": [
+    "file_sha:official/83db54939066d9aed186f5c8557ee118b8773f7c3e988bbeafb794f2127660ed.pdf",
+    "manifest_sha"
+  ],
+  "full_release": false,
+  "admission_expanded": false,
+  "tag_created": false
+}
