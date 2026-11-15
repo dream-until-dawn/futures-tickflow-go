@@ -11,6 +11,7 @@ from additional import decode_cffex
 PLAN_SHA='849ed0d68e21aa34fd36fc8f266ca42e72bb54e5b72956fe0d8762813da4053b'
 INVENTORY_SHA='c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545'
 IDENTITY='native-http/cleartext/unauthenticated/unqualified'
+SDK_SHA='c547fcc877d3a4da6d0ed60a8a660a7a4b41e2f85e299818c72eb17b19eb8dca'
 
 
 def sha(raw):
@@ -24,7 +25,10 @@ def verify_month(root,job,known):
     if (r.get('state')!='received' or r.get('status')!=200 or
         r.get('body_complete') is not True or r.get('url')!=job['url'] or
         r.get('identity')!=IDENTITY or r.get('publisher_authentication') is not False or
-        r.get('financial_eligible') is not False):raise ValueError('cffex_receipt_identity')
+        r.get('financial_eligible') is not False or r.get('method')!='GET' or
+        r.get('attempted') is not True or r.get('response_received') is not True or
+        r.get('source_sha256')!=SDK_SHA or r.get('evidence',{}).get('url')!=job['url']):
+        raise ValueError('cffex_receipt_identity')
     raw=(root/'month.body').read_bytes()
     digest=sha(raw)
     if len(raw)>4<<20 or len(raw)!=r.get('bytes') or digest!=r.get('sha256') or digest!=r.get('evidence',{}).get('sha256'):

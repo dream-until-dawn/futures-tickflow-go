@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
-from cffex_months import IDENTITY,verify_month
+from cffex_months import IDENTITY,SDK_SHA,verify_month
 from cffex_independent import audit
 
 
@@ -39,7 +39,8 @@ class CffexMonthReceiptTest(unittest.TestCase):
             job=dict(month='202102',url='http://www.cffex.com.cn/sj/historysj/202102/zip/202102.zip')
             receipt=dict(state='received',status=200,body_complete=True,url=job['url'],
                          identity=IDENTITY,publisher_authentication=False,financial_eligible=False,
-                         bytes=len(raw),sha256=digest,evidence=dict(sha256=digest))
+                         method='GET',attempted=True,response_received=True,source_sha256=SDK_SHA,
+                         bytes=len(raw),sha256=digest,evidence=dict(sha256=digest,url=job['url']))
             (root/'month.body').write_bytes(raw)
             def put(r): (root/'receipt.json').write_text(json.dumps(r),encoding='utf-8')
             put(receipt)
@@ -48,7 +49,8 @@ class CffexMonthReceiptTest(unittest.TestCase):
                 self.assertEqual(summary['body_sha256'],digest)
                 self.assertEqual(decoder.call_args.kwargs['month'],'202102')
             for change in [dict(publisher_authentication=True),dict(url=job['url'].replace('202102','202103')),
-                           dict(body_complete=False),dict(financial_eligible=True),dict(state='failed')]:
+                           dict(body_complete=False),dict(financial_eligible=True),dict(state='failed'),
+                           dict(attempted=False),dict(response_received=False),dict(method='POST'),dict(source_sha256='bad')]:
                 put({**receipt,**change})
                 with self.assertRaisesRegex(ValueError,'^cffex_receipt_identity$'):verify_month(root,job,{})
             put(receipt);(root/'month.body').write_bytes(b'changed')

@@ -112,6 +112,8 @@ FU另日日表也已完整200/119,600字节：开、高、低均3651，收盘323
 
 ## 软件与私有封存收尾
 
+后续非阻塞补证先做郑商所2021全年入口的单次HTTPS可行性核查。已安装AKShare同一SHA源码的`_futures_daily_czce`明确给出`http://www.czce.com.cn/cn/exchange/datahistory{year}.zip`与同名TXT成员规则；当前只冻结HTTPS对应`https://www.czce.com.cn/cn/exchange/datahistory2021.zip`，不声称已证实2021包存在。最多1GET/16MiB/15秒/不跟转不重试、不账户；固定仓外启动标记，按实际CRC/目标成员认结构。失败即保留待决，不擅自切明文HTTP，其他年份也不扩散试探。该核查不触碰DCE/GFEX旧入口，不修改公共归档API。
+
 源码基线`e512dd2970c22d97403b34157e0400b6c4655cec`在新干净克隆通过三个Go模块gofmt/vet/test、165项Python/15目录、生成器还原（内容指纹一致）及doccheck。CI `43689282656` Linux1.23、Linux1.26、Windows1.26三矩阵全部成功，Linux1.26 race成功；另两矩阵race按原设计跳过。四项有效目标源码破坏针对`70fd930`守卫基线均命中目标断言；首次仅编译失败的无效突变没有算通过。后续新增源键/报告发布范围/明文候选用正反测试与完整门禁验证，未把旧突变结果冒称所有新守卫均已破坏过。公共库目录/API树与本轮起点a2a6888一致，未改变默认Source或准入。
 
 私有研究包`C:/Temp/tickflow-historical-directory-daily-20261115-v1-sealed`有7,287文件、458,233,010字节，manifest SHA256 `f72dea10c5f39b342c9ec6366f9d64e011c57cbd066ab2cc277c1da7347e3f69`。本包不是完整Go发行版或旧第4版的替换；仅提供研究原件、定向复算源码/控制输入及编译元信息。迁移副本全文件SHA通过，最终1406报告、额外8样本报告和旧37供应商报告三份包外重放逐字节一致；完整私有报告SHA也重算一致。副本改CSV命中file_sha，重算篡改manifest仍命中外部可信manifest_sha；原件及迁移副本重放前后文件集合未改。包内README说明先验可信SHA、使用-B并输出包外，不会借复核运行采集器。
