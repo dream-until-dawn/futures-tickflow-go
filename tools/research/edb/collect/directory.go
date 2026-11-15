@@ -14,10 +14,11 @@ const directoryPlanSHA = "f10b77e067fdbe543a31c49e1aee278b192de1375a5818aef5de7c
 const officialInventoryPlanSHA = "924f7c2159ffbf48a22cc1dfc93cd2f625ac75dcb069deb7a7560f5c4d078291"
 const officialHistoryPlanSHA = "b04c0e8f8178832be71efadc76226199fba8142966643b9658ccf2903892e239"
 const additionalMarketsPlanSHA = "fccf6b372e1c53fe6d2254d524d9ae3f3d677926684fbffd084c8a0810fec200"
+const cffexObservedPlanSHA = "ea5e467a2c15fdaebef9e85dc8e6209695c508bbae007581503fe6ae3eecd233"
 
 func approvedDirectoryPlanSHA(raw []byte) (string, error) {
 	sha := digest(raw)
-	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA && sha != additionalMarketsPlanSHA {
+	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA && sha != additionalMarketsPlanSHA && sha != cffexObservedPlanSHA {
 		return "", fmt.Errorf("日线执行单SHA不符")
 	}
 	return sha, nil

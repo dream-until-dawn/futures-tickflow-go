@@ -182,7 +182,7 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 	if len(planned) > 0 && (strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") || strings.HasSuffix(planned[0].ID, "-daily-official-history") || strings.HasSuffix(planned[0].ID, "-daily-additional-research")) {
 		delete(plan, "original_all_phase_requests_max")
 		plan["scope"] = "frozen directory and official-row observed contracts; daily only"
-		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA, additionalMarketsPlanSHA}
+		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA, additionalMarketsPlanSHA, cffexObservedPlanSHA}
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {

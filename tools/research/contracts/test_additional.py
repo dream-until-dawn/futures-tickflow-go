@@ -40,6 +40,23 @@ class AdditionalMarketTest(unittest.TestCase):
         self.assertEqual(unknown,[])
         self.assertEqual(stats['excluded_options'],1)
 
+    def test_cffex_explicit_month_rejects_other_month_and_invalid_day(self):
+        columns={**FIELD_COLUMNS,'pre_settle':'前结算','volume':'成交量','turnover':'成交金额'}
+        s=io.StringIO();writer=csv.writer(s);writer.writerow(['合约代码']+list(columns.values()))
+        writer.writerow(['IF2102']+['1']*len(columns))
+        def package(name):
+            b=io.BytesIO()
+            with zipfile.ZipFile(b,'w') as z:z.writestr(name,s.getvalue().encode('gb18030'))
+            return b.getvalue()
+        known={'IF2102':[('CFFEX.IF2102','IF')]}
+        rows,unknown=decode_cffex(package('20210201_1.csv'),known,month='202102')
+        self.assertEqual(rows[0]['day'],20210201)
+        self.assertEqual(unknown,[])
+        with self.assertRaisesRegex(ValueError,'^cffex_unknown_member$'):
+            decode_cffex(package('20210104_1.csv'),known,month='202102')
+        with self.assertRaises(ValueError):
+            decode_cffex(package('20210230_1.csv'),known,month='202102')
+
 
 if __name__=='__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

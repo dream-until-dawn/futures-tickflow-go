@@ -24,7 +24,8 @@ func collectChunks(root string, jobs []batch.Job, size int, fetch func(batch.Job
 	if err := os.Mkdir(root, 0700); err != nil {
 		return fmt.Errorf("既有/未知主任务禁止重发: %w", err)
 	}
-	planned, err := json.MarshalIndent(map[string]any{"jobs": jobs, "batch_size_max": size, "requests_max": len(jobs), "stop_all_on_first_failure": true, "official_history_plan_sha256": officialHistoryPlanSHA}, "", "  ")
+	// 实际冻结SHA在目录单标记中记录；通用分批器不能冒称始终执行SHFE/INE旧单。
+	planned, err := json.MarshalIndent(map[string]any{"jobs": jobs, "batch_size_max": size, "requests_max": len(jobs), "stop_all_on_first_failure": true}, "", "  ")
 	if err != nil {
 		return err
 	}

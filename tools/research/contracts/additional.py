@@ -47,14 +47,17 @@ def decode_czce(raw,known,stats=None):
     return mapped(rows,known,20210104)
 
 
-def decode_cffex(raw,known,stats=None):
+def decode_cffex(raw,known,stats=None,month='202101'):
+    # 月份由已核收据绑定，不能让跨月CSV混入控制数据。
+    if not re.fullmatch(r'[0-9]{6}',month):raise ValueError('cffex_month')
+    dt.datetime.strptime(month,'%Y%m')
     stats=stats if stats is not None else {}
     stats['excluded_options']=0
     stats['excluded_aggregate_rows']=0
     records,unresolved,seen=[],[],set()
     with safe_archive(raw,64<<20) as z:
         for name in sorted(z.namelist()):
-            m=re.fullmatch(r'(202101[0-9]{2})_1\.csv',name)
+            m=re.fullmatch(r'('+re.escape(month)+r'[0-9]{2})_1\.csv',name)
             if not m:raise ValueError('cffex_unknown_member')
             day=int(m[1]);data=z.read(name);digest=hashlib.sha256(data).hexdigest()
             dt.datetime.strptime(str(day),'%Y%m%d')
