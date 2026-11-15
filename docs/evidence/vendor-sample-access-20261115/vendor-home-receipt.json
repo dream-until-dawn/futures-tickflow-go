@@ -1,0 +1,24 @@
+{
+  "job_sha256": "52b842765354f11ae6acbe03900a28d76883b422f18a8c8944fda89c23cb210c",
+  "state": "received",
+  "evidence": {
+    "id": "vendor-home",
+    "url": "https://zhundata.cn/",
+    "sha256": "6d5329a07abd8dcb17815c2d2e642292cb577ed7843a9b50a846a002a6f34a0d",
+    "retrieved_at": "2026-11-15T03:41:39.9302299Z",
+    "version": "vendor-public-doc-unqualified"
+  },
+  "bytes": 16077,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://zhundata.cn/",
+    "content_type": "text/html",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:41:40 GMT",
+    "requested_at": "2026-11-15T03:41:39.9302299Z",
+    "complete": true
+  }
+}

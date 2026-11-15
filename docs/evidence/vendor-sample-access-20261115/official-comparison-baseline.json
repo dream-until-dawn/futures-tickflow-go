@@ -1,0 +1,114 @@
+{
+  "schema": "vendor-comparison-official-baseline-v1",
+  "identity": "existing_official_original_reused_not_new_vendor_data",
+  "archive": "C:\\Temp\\tickflow-calendar-2024-20261112-sealed\\shfe-annual-2024.body",
+  "archive_bytes": 35087891,
+  "archive_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e",
+  "decoder": "tools/archive/decode_annual.py",
+  "decoder_sha256": "9cde7d7a94f22a7781ee8bf04504431789ed2496bf88e9eed65ea3082a30be7b",
+  "rows": [
+    {
+      "exchange": "INE",
+      "native": "ec2404",
+      "day": 20240104,
+      "member": "ine所内合约行情报表2024.1月-12月/ine所内合约行情报表2024.1月-12月.xlsx",
+      "member_sha256": "b657edfe72874ba02c6696ee6fd0db7908a8e093cd10fafe2a188d419e759c73",
+      "row": 2911,
+      "fields": {
+        "pre_settle": "2326.1999999999998",
+        "open": "2549.8000000000002",
+        "high": "2650",
+        "low": "2110.3000000000002",
+        "close": "2446.4",
+        "settle": "2370.1",
+        "volume": "158118",
+        "turnover": "1873838.754",
+        "open_interest": "37199"
+      },
+      "turnover_unit": "unknown"
+    },
+    {
+      "exchange": "INE",
+      "native": "ec2404",
+      "day": 20240219,
+      "member": "ine所内合约行情报表2024.1月-12月/ine所内合约行情报表2024.1月-12月.xlsx",
+      "member_sha256": "b657edfe72874ba02c6696ee6fd0db7908a8e093cd10fafe2a188d419e759c73",
+      "row": 2937,
+      "fields": {
+        "pre_settle": "2096.4",
+        "open": "2150",
+        "high": "2220",
+        "low": "2120",
+        "close": "2189.9",
+        "settle": "2171.8000000000002",
+        "volume": "19028",
+        "turnover": "206626.30050000001",
+        "open_interest": "24360"
+      },
+      "turnover_unit": "unknown"
+    },
+    {
+      "exchange": "INE",
+      "native": "ec2412",
+      "day": 20241008,
+      "member": "ine所内合约行情报表2024.1月-12月/ine所内合约行情报表2024.1月-12月.xlsx",
+      "member_sha256": "b657edfe72874ba02c6696ee6fd0db7908a8e093cd10fafe2a188d419e759c73",
+      "row": 3634,
+      "fields": {
+        "pre_settle": "2371.1999999999998",
+        "open": "2250",
+        "high": "2270",
+        "low": "1825.8",
+        "close": "1900",
+        "settle": "2032.8",
+        "volume": "52521",
+        "turnover": "533837.65399999998",
+        "open_interest": "24293"
+      },
+      "turnover_unit": "unknown"
+    },
+    {
+      "exchange": "SHFE",
+      "native": "br2501",
+      "day": 20241101,
+      "member": "上期所合约行情报表2024/所内合约行情报表2024.11.xlsx",
+      "member_sha256": "096d211a8d54ca95ff0f1591f326408819e7aa50685dfbc0d1342a0d497c7f22",
+      "row": 35407,
+      "fields": {
+        "pre_settle": "14740",
+        "open": "14670",
+        "high": "14775",
+        "low": "14430",
+        "close": "14505",
+        "settle": "14575",
+        "volume": "60619",
+        "turnover": "441871.02500000002",
+        "open_interest": "40821"
+      },
+      "turnover_unit": "unknown"
+    },
+    {
+      "exchange": "SHFE",
+      "native": "br2501",
+      "day": 20241104,
+      "member": "上期所合约行情报表2024/所内合约行情报表2024.11.xlsx",
+      "member_sha256": "096d211a8d54ca95ff0f1591f326408819e7aa50685dfbc0d1342a0d497c7f22",
+      "row": 35408,
+      "fields": {
+        "pre_settle": "14575",
+        "open": "14515",
+        "high": "14540",
+        "low": "14205",
+        "close": "14340",
+        "settle": "14330",
+        "volume": "56799",
+        "turnover": "406980.35499999998",
+        "open_interest": "42302"
+      },
+      "turnover_unit": "unknown"
+    }
+  ],
+  "vendor_sample_received": false,
+  "comparison_performed": false,
+  "reason": "Official side prepared only; missing licensed corresponding vendor samples and unit/time metadata."
+}

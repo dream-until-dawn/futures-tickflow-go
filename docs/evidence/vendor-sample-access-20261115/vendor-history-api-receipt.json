@@ -1,0 +1,24 @@
+{
+  "job_sha256": "8a06b6adf50c6bf0cb48b32b6ff302a3f2f524c24018742f7b79ee1ae5f7c727",
+  "state": "received",
+  "evidence": {
+    "id": "vendor-history-api",
+    "url": "https://zhundata.cn/hist-quotes-api.html",
+    "sha256": "28f99988e22d1b98903eb821cc63ed82df73317b171a70126c9cfac2bd319ec5",
+    "retrieved_at": "2026-11-15T03:41:40.9307214Z",
+    "version": "vendor-public-doc-unqualified"
+  },
+  "bytes": 333048,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://zhundata.cn/hist-quotes-api.html",
+    "content_type": "text/html",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:41:40 GMT",
+    "requested_at": "2026-11-15T03:41:40.9307214Z",
+    "complete": true
+  }
+}

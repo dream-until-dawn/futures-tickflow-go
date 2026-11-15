@@ -1,0 +1,19 @@
+{
+  "schema": "vendor-sample-access-observations-v1",
+  "direct_document_requests": 3,
+  "direct_response_bytes": 429712,
+  "browser_discovery_queries": 5,
+  "web_share_observation": "non-retryable error; no HTTP response supplied",
+  "computer_use_runtime": "Computer Use has been stopped for this turn because it could not determine the current browser URL on Windows with enough confidence to enforce policy.",
+  "share_page_state_observed": false,
+  "ui_action_outcome": "unknown",
+  "ui_retry_or_other_automation": false,
+  "share_api_requests": 0,
+  "api_market_queries": 0,
+  "accounts_or_keys_used": false,
+  "external_messages_to_vendor": 0,
+  "raw_contract_samples_obtained": 0,
+  "license_grants_obtained": 0,
+  "official_comparison_performed": false,
+  "network_phase_finished": true
+}

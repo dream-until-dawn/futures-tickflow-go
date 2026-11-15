@@ -1,0 +1,24 @@
+{
+  "job_sha256": "78af4a225d75c789e65cbe97765d8c8187cb9b8049db1d5ae22b65df28bc37c5",
+  "state": "received",
+  "evidence": {
+    "id": "vendor-realtime-api",
+    "url": "https://zhundata.cn/realtime-quotes-api.html",
+    "sha256": "33e44c174a866233d9666efae5226231563a26400e36c7f1ef9e19d7537787a4",
+    "retrieved_at": "2026-11-15T03:41:41.9316965Z",
+    "version": "vendor-public-doc-unqualified"
+  },
+  "bytes": 80587,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://zhundata.cn/realtime-quotes-api.html",
+    "content_type": "text/html",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 03:41:42 GMT",
+    "requested_at": "2026-11-15T03:41:41.9316965Z",
+    "complete": true
+  }
+}

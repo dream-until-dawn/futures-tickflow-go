@@ -1,0 +1,41 @@
+{
+  "schema": "vendor-access-document-review-v1",
+  "historical_api": {
+    "key_required": true,
+    "method": "POST",
+    "actual_queries": 0,
+    "access_grant_verified": false
+  },
+  "inspected_legal_link_candidates": [],
+  "data_use_grant_verified": false,
+  "redistribution_grant_verified": false,
+  "license_conclusion": "not_established_by_inspected_public_documents",
+  "realtime_example": {
+    "asset": "stock.sz.000001",
+    "origin": "documentation_example_not_market_capture",
+    "current_field": true,
+    "time": {
+      "epoch_utc": "2026-08-17T03:14:39+00:00",
+      "displayed": "2026-08-17 11:14:39",
+      "implied_offset_seconds": 28800,
+      "consistent_with_utc8": true,
+      "minute_label": "11:15",
+      "label_minus_event_seconds": 21,
+      "timestamp_semantics_certified": false,
+      "closed_bar_certified": false
+    },
+    "example_money_key": true,
+    "table_amount_key": true
+  },
+  "futures_time_units": {
+    "timezone": null,
+    "minute_start_or_end": null,
+    "volume_unit": null,
+    "turnover_currency_and_scale": null,
+    "increment_or_cumulative": null
+  },
+  "concrete_contract_sample_obtained": false,
+  "official_reconciliation": "not_performed_no_licensed_raw_sample",
+  "new_verified_profiles": 0,
+  "financial_admission_expanded": false
+}

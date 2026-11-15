@@ -1,0 +1,33 @@
+{
+  "schema": "vendor-access-source-lock-v1",
+  "source_commit": "760f6c5f24ccf266743503750d5e5ee17f28aa90",
+  "sources": [
+    {
+      "id": "vendor-history-api",
+      "url": "https://zhundata.cn/hist-quotes-api.html",
+      "bytes": 333048,
+      "sha256": "28f99988e22d1b98903eb821cc63ed82df73317b171a70126c9cfac2bd319ec5",
+      "retrieved_at": "2026-11-15T03:41:40.9307214Z",
+      "receipt_sha256": "0ed9b46285a640610eb92802e6e5f3216a37d9c3e5f35d4a8c522bb6c4aea1c5",
+      "file": "C:\\Temp\\tickflow-vendor-access-20261115-v1\\acquisition\\archive\\vendor-history-api.body"
+    },
+    {
+      "id": "vendor-home",
+      "url": "https://zhundata.cn/",
+      "bytes": 16077,
+      "sha256": "6d5329a07abd8dcb17815c2d2e642292cb577ed7843a9b50a846a002a6f34a0d",
+      "retrieved_at": "2026-11-15T03:41:39.9302299Z",
+      "receipt_sha256": "39efe11daeefa6b6ace838ba61aaeecd348761a946c81984f97f6555d1d0d541",
+      "file": "C:\\Temp\\tickflow-vendor-access-20261115-v1\\acquisition\\archive\\vendor-home.body"
+    },
+    {
+      "id": "vendor-realtime-api",
+      "url": "https://zhundata.cn/realtime-quotes-api.html",
+      "bytes": 80587,
+      "sha256": "33e44c174a866233d9666efae5226231563a26400e36c7f1ef9e19d7537787a4",
+      "retrieved_at": "2026-11-15T03:41:41.9316965Z",
+      "receipt_sha256": "5f45ca23aab6bb8177b06a2a030b4d33c046fb737b34975262c67f727ef27b99",
+      "file": "C:\\Temp\\tickflow-vendor-access-20261115-v1\\acquisition\\archive\\vendor-realtime-api.body"
+    }
+  ]
+}
