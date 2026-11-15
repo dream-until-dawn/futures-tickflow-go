@@ -1,0 +1,23 @@
+{
+  "job_sha256": "0d5c12f7b73e455a2aaba1852982fe0de4c38d79a06acaa9175c2ceaa1463f90",
+  "state": "received",
+  "evidence": {
+    "id": "czce-20210104-https-official",
+    "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2021/20210104/FutureDataDaily.txt",
+    "sha256": "d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12",
+    "retrieved_at": "2026-11-15T05:53:51.8611629Z"
+  },
+  "bytes": 30498,
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 200,
+    "final_url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2021/20210104/FutureDataDaily.txt",
+    "content_type": "text/plain; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 05:53:52 GMT",
+    "requested_at": "2026-11-15T05:53:51.8611629Z",
+    "complete": true
+  }
+}

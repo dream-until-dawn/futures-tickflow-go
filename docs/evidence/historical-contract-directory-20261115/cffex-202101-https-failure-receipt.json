@@ -1,0 +1,22 @@
+{
+  "job_sha256": "14ea8041b0f7c78d3c7c50ce69fc630f0407b451ad62214003e7d46ad4480d40",
+  "state": "failed",
+  "evidence": {
+    "id": "",
+    "url": "",
+    "sha256": "",
+    "retrieved_at": "0001-01-01T00:00:00Z"
+  },
+  "bytes": 0,
+  "error": "Get \"https://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip\": EOF",
+  "body_state": "none",
+  "http": {
+    "attempted": true,
+    "response_received": false,
+    "status": 0,
+    "content_length": -1,
+    "requested_at": "2026-11-15T05:53:52.185302Z",
+    "complete": false,
+    "failure": "network"
+  }
+}

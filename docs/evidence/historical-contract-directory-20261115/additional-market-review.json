@@ -1,0 +1,41 @@
+{
+  "schema": "additional-observed-markets-v1",
+  "results": [
+    {
+      "market": "czce",
+      "rows": 187,
+      "contracts": 187,
+      "days": 1,
+      "unresolved": [],
+      "decoded_file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\czce-decoded.json",
+      "decoded_sha256": "86dae0222fc6896b6f81bb9beda41291f837cd9b63e49e74819c246ff7bfe4a7",
+      "original_sha256": "d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12",
+      "control_identity": "official HTTPS endpoint, TLS transport",
+      "turnover_unit": "wanyuan explicit header",
+      "volume_unit": "lots explicit header",
+      "original_retrieved_at": "2026-11-15T05:53:51.8611629Z",
+      "financial_eligible": false,
+      "excluded_class_counts": {}
+    },
+    {
+      "market": "cffex",
+      "rows": 420,
+      "contracts": 24,
+      "days": 20,
+      "unresolved": [],
+      "decoded_file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\cffex-decoded.json",
+      "decoded_sha256": "95b98b80c54b10644d05b0e9cb12da029ce2921eaa794cc9d9d73a112cc03005",
+      "original_sha256": "0a6263a64d32b0bd804288f896adfc25bfbb0ff205c7f65e101ccb0a1df91cad",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified",
+      "turnover_unit": "unknown in CSV header",
+      "volume_unit": "not stated in CSV header",
+      "original_retrieved_at": "2026-11-15T06:01:52.3201975Z",
+      "financial_eligible": false,
+      "excluded_class_counts": {
+        "excluded_options": 5284,
+        "excluded_aggregate_rows": 160
+      }
+    }
+  ],
+  "market_requests": 0
+}

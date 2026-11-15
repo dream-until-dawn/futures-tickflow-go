@@ -53,6 +53,13 @@ class DirectoryDailyReconcileTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'^daily_anchor$'):
             reconcile(raw.replace(b'1609689600000000000',b'1609693200000000000'),official,{}, {2021})
 
+    def test_partial_year_is_not_full_year_and_commas_are_numeric(self):
+        raw,official=self.fixture();official[20210104]['volume']='1,234'
+        result=reconcile(raw.replace(b',4,5,6',b',1234,5,6'),official,{},set())
+        self.assertEqual(result['matched_values'],6)
+        self.assertEqual(result['outside_official_years'],[])
+        self.assertEqual(result['extra_in_official_years'],[])
+
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

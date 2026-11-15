@@ -13,10 +13,11 @@ import (
 const directoryPlanSHA = "f10b77e067fdbe543a31c49e1aee278b192de1375a5818aef5de7c3ce6bfa334"
 const officialInventoryPlanSHA = "924f7c2159ffbf48a22cc1dfc93cd2f625ac75dcb069deb7a7560f5c4d078291"
 const officialHistoryPlanSHA = "b04c0e8f8178832be71efadc76226199fba8142966643b9658ccf2903892e239"
+const additionalMarketsPlanSHA = "5fcec8226edd7e63edf8e5dcce6a57708dccf595f4c8ed77f3c88d4f6420950f"
 
 func approvedDirectoryPlanSHA(raw []byte) (string, error) {
 	sha := digest(raw)
-	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA {
+	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA && sha != additionalMarketsPlanSHA {
 		return "", fmt.Errorf("日线执行单SHA不符")
 	}
 	return sha, nil

@@ -29,7 +29,10 @@ def reconcile(raw, official, calendar, covered_years):
         for field in FIELDS:
             value = number(actual[day]['close_oi' if field == 'open_interest' else field])
             try:
-                control = number(official[day][field])
+                control_text=official[day][field]
+                if re.fullmatch(r'[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?',control_text):
+                    control_text=control_text.replace(',','')
+                control = number(control_text)
             except (ValueError, ArithmeticError):
                 unknown.append(dict(day=day, field=field, official=official[day][field]))
                 continue
@@ -49,7 +52,7 @@ def reconcile(raw, official, calendar, covered_years):
                 binary64_distinct_differences=sum(not d['binary64_equal'] for d in differences),
                 missing_official_days=sorted(set(official)-set(actual)),
                 extra_in_official_years=sorted(d for d in set(actual)-set(official) if d//10000 in covered_years),
-                outside_official_years=sorted(d for d in actual if d//10000 not in covered_years),
+                outside_official_years=sorted(d for d in actual if d not in official and d//10000 not in covered_years),
                 calendar_interior_missing_days=sorted(trading-set(actual)),
                 calendar_unknown_actual_days=sorted(set(actual)-set(calendar)),
                 calendar_closed_actual_days=sorted(d for d in actual if d in calendar and not calendar[d]),
@@ -80,7 +83,8 @@ def main():
                 continue
             if not any(r['exchange'] == exchange and re.fullmatch(re.escape(case['product'])+r'[0-9]{4}',r['native']) for r in dataset['records']):
                 continue
-            years.add(dataset['year'])
+            if dataset.get('control_scope')!='exact-dates':
+                years.add(dataset['year'])
             for row in dataset['records']:
                 if row['exchange'] == exchange and row['native'] == native:
                     if row['day'] in controls:
@@ -98,6 +102,8 @@ def main():
                         raise ValueError('calendar_duplicate_day')
                     calendar[row['day']] = bool(row['sessions'])
         result[case['symbol']] = reconcile(raw, controls, calendar, years)
+        if 'control_identity' in case:
+            result[case['symbol']]['control_identity']=case['control_identity']
     args.out.write_text(json.dumps(dict(schema='directory-daily-official-review-v1', results=result,
                                         market_requests=0, full_market_coverage_certified=False,
                                         legacy_37_differences_resolved=False), ensure_ascii=False, indent=2)+'\n',

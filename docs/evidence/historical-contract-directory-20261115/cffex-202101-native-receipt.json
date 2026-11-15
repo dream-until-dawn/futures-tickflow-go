@@ -1,0 +1,24 @@
+{
+  "attempted": true,
+  "body_complete": true,
+  "bytes": 194254,
+  "evidence": {
+    "id": "cffex-202101-native-http",
+    "url": "http://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip",
+    "sha256": "0a6263a64d32b0bd804288f896adfc25bfbb0ff205c7f65e101ccb0a1df91cad",
+    "retrieved_at": "2026-11-15T06:01:52.3201975Z",
+    "version": "research-native-http-unauthenticated"
+  },
+  "financial_eligible": false,
+  "identity": "native-http/cleartext/unauthenticated/unqualified",
+  "method": "GET",
+  "publisher_authentication": false,
+  "requested_at": "2026-11-15T06:01:52.3201975Z",
+  "response_received": true,
+  "server_date": "Sun, 15 Nov 2026 05:59:55 GMT",
+  "sha256": "0a6263a64d32b0bd804288f896adfc25bfbb0ff205c7f65e101ccb0a1df91cad",
+  "source_sha256": "c547fcc877d3a4da6d0ed60a8a660a7a4b41e2f85e299818c72eb17b19eb8dca",
+  "state": "received",
+  "status": 200,
+  "url": "http://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip"
+}

@@ -73,7 +73,7 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 
 func TestEDBApprovedDirectoryPlansHaveNoRepeatedURLs(t *testing.T) {
 	seen := map[string]bool{}
-	for _, name := range []string{"daily-pilot-plan.json", "daily-official-inventory-plan.json", "daily-official-history-master-plan.json"} {
+	for _, name := range []string{"daily-pilot-plan.json", "daily-official-inventory-plan.json", "daily-official-history-master-plan.json", "daily-additional-plan.json"} {
 		raw, err := os.ReadFile(filepath.Join("..", "..", "..", "..", "docs", "evidence", "historical-contract-directory-20261115", name))
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +92,7 @@ func TestEDBApprovedDirectoryPlansHaveNoRepeatedURLs(t *testing.T) {
 			seen[job.URL] = true
 		}
 	}
-	if len(seen) != 1406 {
+	if len(seen) != 1414 {
 		t.Fatal("冻结的官方观察全集计数漂移", len(seen))
 	}
 }

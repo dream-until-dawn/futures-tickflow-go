@@ -1,0 +1,109 @@
+{
+  "schema": "edb-additional-two-markets-daily-v1",
+  "jobs": [
+    {
+      "id": "CF2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF2105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "MA2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA2105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "SA2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA2105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "TA2105-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA2105",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "IF2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IF2101",
+      "format": "edb-csv",
+      "exchange": "CFFEX",
+      "product": "IF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "IH2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IH2101",
+      "format": "edb-csv",
+      "exchange": "CFFEX",
+      "product": "IH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "IC2101-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.IC2101",
+      "format": "edb-csv",
+      "exchange": "CFFEX",
+      "product": "IC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    },
+    {
+      "id": "TF2103-daily-additional-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CFFEX.TF2103",
+      "format": "edb-csv",
+      "exchange": "CFFEX",
+      "product": "TF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-additional-daily-research-v1"
+    }
+  ],
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\czce-decoded.json",
+      "sha256": "86dae0222fc6896b6f81bb9beda41291f837cd9b63e49e74819c246ff7bfe4a7",
+      "control_identity": "official HTTPS endpoint, TLS transport"
+    },
+    {
+      "file": "C:\\Temp\\tickflow-additional-markets-20261115-v2\\cffex-decoded.json",
+      "sha256": "95b98b80c54b10644d05b0e9cb12da029ce2921eaa794cc9d9d73a112cc03005",
+      "control_identity": "native-http/cleartext/unauthenticated/unqualified"
+    }
+  ],
+  "requests_max": 8,
+  "bytes_per_response_max": 2097152,
+  "actual_total_bytes_max": 16777216,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "stop_on_first_failure_or_unknown": true,
+  "financial_eligible": false,
+  "control_scope": "exact observed dates only; CFFEX is unauthenticated cleartext control, not certified official provenance"
+}

@@ -72,4 +72,8 @@
 
 两次HTTPS实际结果：郑商所2021-01-04日表完整200，30,498字节，SHA256 `d9c133c18eba8f0ac00b3872f8f661c2628b917c578533a8b57c904f99586b12`，UTF-8，标题日期及表头的“成交量(手)”“成交额(万元)”已核。中金所2021年1月包在收到响应前EOF，0字节，无HTTP状态；不能说成远端403、月包不存在或TLS失败的特定原因。两主机均未重试。
 
-为中金所准备一个独立待批候选：只按已核AKShare原生路径取`http://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip`一次，4MiB/15秒，拒绝跟转/重试/Cookie/账户头；输出`native-http/cleartext/unauthenticated/unqualified`，不能认证发布者或扩大金融接入。固定SDK原文SHA、精确URL和仓外一次性标记；普通HTTPS默认入口保持，旧协会/新浪原生HTTP角色不复用。工具已有`--prepare-native-cffex`零请求预检及`--execute-approved-cffex-http`显式执行开关。**目前未获本次原生HTTP决定，未执行；执行须另行人工明确同意。**这是资料读取协议的具体选择，主线Git授权不替代本次选择。
+为中金所准备独立原生HTTP候选：只按已核AKShare原生路径取`http://www.cffex.com.cn/sj/historysj/202101/zip/202101.zip`一次，4MiB/15秒，拒绝跟转/重试/Cookie/账户头；输出`native-http/cleartext/unauthenticated/unqualified`，不能认证发布者或扩大金融接入。固定SDK原文SHA、精确URL和仓外一次性标记；普通HTTPS默认入口保持，旧协会/新浪原生HTTP角色不复用。**用户随后明确同意“允许这一次原生HTTP取证”，实际单次GET取得完整200、194,254字节，SHA256 `0a6263a64d32b0bd804288f896adfc25bfbb0ff205c7f65e101ccb0a1df91cad`。该次许可已耗尽，不得重发本月或自动取其他月份。**
+
+中金所月包20份GB18030 CSV已逐件CRC/日期核验，实际包含期货与期权混装：保留420个期货合约日/24个具体合约，明确排除5,284个期权行与160个汇总行；不能把`_1.csv`当作纯期货文件。成交量及成交金额列没有明确单位，保留待核；未按SDK或数值猜测万元，不恢复缺失字段。郑商所单日日表有187个期货合约，三位原码只在已有完整目录的唯一候选下映射到四位年月，原码保留；成交量手/成交额万元由原表表头支持。两份资料合约在目录中的未解身份0，但这不是全年挂牌全集。见[新两市场样本与来源置信度](evidence/historical-contract-directory-20261115/additional-market-review.json)。
+
+后续仅冻结八个EDB日线样本（郑商所CF2105/MA2105/SA2105/TA2105，中金所IF2101/IH2101/IC2101/TF2103），[精确执行单](evidence/historical-contract-directory-20261115/daily-additional-plan.json) SHA256 `5fcec8226edd7e63edf8e5dcce6a57708dccf595f4c8ed77f3c88d4f6420950f`，8GET/16MiB/每件15秒/至少2秒。先离线预检，等待SHFE/INE主任务结束后再运行，避免同一EDB主机并发越过间隔。仅逐日比较已有参考日期：中金所是与明文未认证月包比较，不提升成已认证官方对账；其他日期无控制，不按有一日日表就称全年缺日已核。不会据此放开新的严格回测或金融接入。
