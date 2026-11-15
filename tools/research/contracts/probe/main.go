@@ -126,12 +126,32 @@ func run(root string) error {
 
 func main() {
 	root := flag.String("out", "", "全新仓外目录")
+	nativePrepare := flag.Bool("prepare-native-cffex", false, "仅核原生HTTP候选出处，不联网/写启动标记")
+	nativeApproved := flag.Bool("execute-approved-cffex-http", false, "仅用户另行批准后，单次精确中金所HTTP月包；不复用旧授权")
 	flag.Parse()
+	if *nativePrepare {
+		if *nativeApproved {
+			fmt.Fprintln(os.Stderr, "预检不能混用执行")
+			os.Exit(2)
+		}
+		if err := nativePreflight(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		fmt.Println("原生HTTP候选预检通过；实际请求0；仍待本次人工许可", nativeCFFEXURL)
+		return
+	}
 	if *root == "" {
 		fmt.Fprintln(os.Stderr, "必须给-out")
 		os.Exit(2)
 	}
-	if e := run(*root); e != nil {
+	var e error
+	if *nativeApproved {
+		e = runNative(*root)
+	} else {
+		e = run(*root)
+	}
+	if e != nil {
 		fmt.Fprintln(os.Stderr, e)
 		os.Exit(1)
 	}
