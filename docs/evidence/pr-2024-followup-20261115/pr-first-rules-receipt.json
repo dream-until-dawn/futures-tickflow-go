@@ -1,0 +1,26 @@
+{
+  "job_sha256": "1a7e9cdac31196aac34d4e8280d3d840c6dcb47936034c19e4e7257a6c07ef09",
+  "state": "failed",
+  "evidence": {
+    "id": "pr-first-rules",
+    "url": "https://www.czce.com.cn/cn/uploadfile/2024/08/30/20240830162542437.pdf",
+    "sha256": "0924fdd2c76f90ba24733629950cc7305824adf0088bb3a329c9d1f3d033f751",
+    "retrieved_at": "2026-11-15T02:12:19.5706471Z",
+    "version": "official-candidate-unqualified"
+  },
+  "bytes": 709,
+  "error": "batch: HTTP 404",
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 404,
+    "final_url": "https://www.czce.com.cn/cn/uploadfile/2024/08/30/20240830162542437.pdf",
+    "content_type": "text/html; charset=utf-8",
+    "content_length": 709,
+    "server_date": "Sun, 15 Nov 2026 02:12:21 GMT",
+    "requested_at": "2026-11-15T02:12:19.5706471Z",
+    "complete": true,
+    "failure": "http_status"
+  }
+}

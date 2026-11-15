@@ -85,3 +85,6 @@ docs/evidence/sina-static-http-offline-20261115/build-info.txt binary
 docs/evidence/sina-static-http-offline-20261115/*.log.txt binary
 docs/evidence/sina-static-http-result-20261115/raw.jsonp binary
 docs/evidence/sina-static-http-result-20261115/*.json binary
+docs/evidence/pr-2024-followup-20261115/*-response.txt binary
+docs/evidence/pr-2024-followup-20261115/build-info*.txt binary
+docs/evidence/pr-2024-followup-20261115/listing-page-*.txt binary

@@ -1,0 +1,21 @@
+{
+  "pdf_sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+  "file_bytes": 3728110,
+  "pdf_pages": 65,
+  "reviewed_actual_pages": [
+    49,
+    50
+  ],
+  "reviewed_printed_pages": [
+    48,
+    49
+  ],
+  "rendered_files": [
+    "pdf-pages/listing-49.png",
+    "pdf-pages/listing-50.png"
+  ],
+  "renderer": "bundled pdftoppm; scale-to 1800",
+  "visual_inspection": "105/106 notices, effective and listing dates, cross-page night clause and six full first contracts read directly from both PNGs",
+  "font_warnings": "Poppler reported unavailable optional Latin font aliases; required Chinese/number clauses were legible on both inspected pages",
+  "qualification_added": false
+}

@@ -1,0 +1,35 @@
+{
+  "actual_attempts": 2,
+  "actual_bytes": 3496,
+  "discovery_queries": 8,
+  "new_valid_official_originals": 0,
+  "retries": 0,
+  "following_redirects": 0,
+  "price_requests": 0,
+  "dce_gfex_sina_requests": 0,
+  "first_batch_second_job_attempted": false,
+  "distinct_year_end_followup_requires_complete404": true,
+  "stopped_after_412": true,
+  "entries": [
+    {
+      "id": "pr-first-rules",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/08/30/20240830162542437.pdf",
+      "state": "failed",
+      "status": 404,
+      "bytes": 709,
+      "sha256": "0924fdd2c76f90ba24733629950cc7305824adf0088bb3a329c9d1f3d033f751",
+      "requested_at": "2026-11-15T02:12:19.5706471Z",
+      "complete": true
+    },
+    {
+      "id": "year-end-2025-candidate",
+      "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2024/12/1726399021155050.htm",
+      "state": "failed",
+      "status": 412,
+      "bytes": 2787,
+      "sha256": "f4494dc81237924056e63203d71924bbd856afc52930284088b959d94ea090ab",
+      "requested_at": "2026-11-15T02:17:56.3765969Z",
+      "complete": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "calendar_qualified": false,
+  "discovery_http_literal": "http://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2024/12/1726399021155050.htm",
+  "discovery_page": "https://www.zrhxqh.com/cn/about/detail/id/15139.html",
+  "jobs": [
+    {
+      "id": "pr-first-rules",
+      "url": "https://www.czce.com.cn/cn/uploadfile/2024/08/30/20240830162542437.pdf",
+      "format": "pdf",
+      "day": 0,
+      "retrieved_at": "0001-01-01T00:00:00Z",
+      "version": "official-candidate-unqualified"
+    },
+    {
+      "id": "year-end-2025-candidate",
+      "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2024/12/1726399021155050.htm",
+      "format": "html-candidate",
+      "day": 0,
+      "retrieved_at": "0001-01-01T00:00:00Z",
+      "version": "official-candidate-unqualified"
+    }
+  ],
+  "max_actual_bytes_per_request": 12582912,
+  "max_actual_requests": 2,
+  "timeout_seconds": 15,
+  "year_end_is_independent_https_candidate": true
+}

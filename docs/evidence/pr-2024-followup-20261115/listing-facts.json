@@ -1,0 +1,47 @@
+{
+  "product": "CZCE.PR",
+  "source_pdf_pages": [
+    49,
+    50
+  ],
+  "printed_pages": [
+    48,
+    49
+  ],
+  "notice_date": 20240816,
+  "first_availability_time_proved": false,
+  "rules_announced_effective_date": 20240830,
+  "first_announced_trading_day": 20240830,
+  "first_night_wall_date": 20240830,
+  "announced_day_sections": [
+    "09:00-11:30",
+    "13:30-15:00"
+  ],
+  "announced_night": "21:00-23:00",
+  "first_contracts": [
+    "PR2503",
+    "PR2504",
+    "PR2505",
+    "PR2506",
+    "PR2507",
+    "PR2508"
+  ],
+  "midday_break_certified": false,
+  "annual_calendar_certified": false,
+  "full_lifecycle_certified": false,
+  "financial_eligible": false,
+  "scope": "announced listing facts only; no inferred yearly hours, holidays or raw-code decade mapping",
+  "source": {
+    "file": "czce-pr-journal-pdf.body",
+    "bytes": 3728110,
+    "ref": {
+      "id": "czce-pr-journal-pdf",
+      "url": "https://www.czce.com.cn/cn/rootfiles/2024/09/14/1726389999932285-1726389999951648.pdf",
+      "sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+      "retrieved_at": "2026-11-12T14:13:54.479375+00:00",
+      "version": "official-original"
+    }
+  },
+  "source_scope": "actual PDF pages visually inspected; notice date not first network/public availability",
+  "independent_price_readback": "engine-readback.json"
+}

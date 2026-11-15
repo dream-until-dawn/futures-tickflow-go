@@ -1,0 +1,18 @@
+C:/Temp/tickflow-pr-2024-20261115-v1/probe-year-end.exe: go1.26.1
+	path	github.com/dream-until-dawn/futures-tickflow-go/tools/calendar/pr2024/collect
+	mod	github.com/dream-until-dawn/futures-tickflow-go	v0.10.1-0.20261115021703-7f34e11e4db8	
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	DefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,gotestjsonbuildtext=1,httpcookiemaxnum=0,multipathtcp=0,randseednop=0,rsa1024min=0,tlsmlkem=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlmaxqueryparams=0,urlstrictcolons=0,x509rsacrt=0,x509sha256skid=0,x509usepolicies=0
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=windows
+	build	GOAMD64=v1
+	build	vcs=git
+	build	vcs.revision=7f34e11e4db8ba8760c9124e88263bbe024c280d
+	build	vcs.time=2026-11-15T02:17:03Z
+	build	vcs.modified=false

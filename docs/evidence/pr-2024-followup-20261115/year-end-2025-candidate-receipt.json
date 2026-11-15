@@ -1,0 +1,26 @@
+{
+  "job_sha256": "19e30bab95a6813bb5fbb0f2e80fe1e10272c652a906b9e61e903132ca3db2d5",
+  "state": "failed",
+  "evidence": {
+    "id": "year-end-2025-candidate",
+    "url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2024/12/1726399021155050.htm",
+    "sha256": "f4494dc81237924056e63203d71924bbd856afc52930284088b959d94ea090ab",
+    "retrieved_at": "2026-11-15T02:17:56.3765969Z",
+    "version": "official-candidate-unqualified"
+  },
+  "bytes": 2787,
+  "error": "batch: HTTP 412",
+  "body_state": "complete",
+  "http": {
+    "attempted": true,
+    "response_received": true,
+    "status": 412,
+    "final_url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2024/12/1726399021155050.htm",
+    "content_type": "text/html; charset=utf-8",
+    "content_length": -1,
+    "server_date": "Sun, 15 Nov 2026 02:17:57 GMT",
+    "requested_at": "2026-11-15T02:17:56.3765969Z",
+    "complete": true,
+    "failure": "http_status"
+  }
+}
