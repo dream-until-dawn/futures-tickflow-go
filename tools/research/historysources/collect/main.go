@@ -184,15 +184,16 @@ func main() {
 	edbDocOnly := flag.Bool("edb-doc-only", false, "另批仅核EDB公开文档，不发业务GET或获取token")
 	semanticsOnly := flag.Bool("semantics-only", false, "另批固定五项口径/合约新来源，不重试旧受阻URL")
 	followupOnly := flag.Bool("followup-only", false, "另批固定两项新规则/分钟口径文档，不重跑旧项")
+	catalogOnly := flag.Bool("catalog-evidence-only", false, "仅新官方公报一项，不重跑旧受阻入口")
 	prepareOnly := flag.Bool("prepare-only", false, "仅口径资料零请求预检")
 	flag.Parse()
 	modes := 0
-	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly, *semanticsOnly, *followupOnly} {
+	for _, selected := range []bool{*cyOnly, *vendorOnly, *edbDocOnly, *semanticsOnly, *followupOnly, *catalogOnly} {
 		if selected {
 			modes++
 		}
 	}
-	if *root == "" || modes > 1 || (*prepareOnly && !*semanticsOnly && !*followupOnly) {
+	if *root == "" || modes > 1 || (*prepareOnly && !*semanticsOnly && !*followupOnly && !*catalogOnly) {
 		fmt.Fprintln(os.Stderr, "缺少root或混用了独立批次模式")
 		os.Exit(1)
 	}
@@ -208,12 +209,16 @@ func main() {
 		jobs = []batch.Job{edbDocumentCandidate()}
 	}
 	interval := time.Second
-	if *semanticsOnly || *followupOnly {
+	if *semanticsOnly || *followupOnly || *catalogOnly {
 		jobs = semanticsCandidates()
 		marker := "C:/Temp/tickflow-daily-semantics-sources-20261115.started.json"
 		if *followupOnly {
 			jobs = followupCandidates()
 			marker = "C:/Temp/tickflow-edb-pk-followup-20261115.started.json"
+		}
+		if *catalogOnly {
+			jobs = catalogEvidenceCandidates()
+			marker = "C:/Temp/tickflow-research-catalog-source-20261115.started.json"
 		}
 		interval = 2 * time.Second
 		if *prepareOnly {
