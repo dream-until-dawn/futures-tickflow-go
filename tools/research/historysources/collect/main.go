@@ -1,4 +1,4 @@
-// Command collect 获取本轮冻结的六个公开资料候选；不发现链接、不取行情、不重试。
+// Command collect 获取按阶段冻结的公开资料候选；不发现链接、不取行情、不重试。
 package main
 
 import (
@@ -33,6 +33,15 @@ func cyCandidate() batch.Job {
 	return batch.Job{ID: "cy-night-change", URL: "https://www.xfqh.cn/dt/142.52358.html", Format: "html", Version: "broker-trading-reminder-unqualified"}
 }
 
+// vendorAccessCandidates 只取公开说明，不能借此发API请求或使用任何账户密钥。
+func vendorAccessCandidates() []batch.Job {
+	return []batch.Job{
+		{ID: "vendor-home", URL: "https://zhundata.cn/", Format: "html", Version: "vendor-public-doc-unqualified"},
+		{ID: "vendor-history-api", URL: "https://zhundata.cn/hist-quotes-api.html", Format: "html", Version: "vendor-public-doc-unqualified"},
+		{ID: "vendor-realtime-api", URL: "https://zhundata.cn/realtime-quotes-api.html", Format: "html", Version: "vendor-public-doc-unqualified"},
+	}
+}
+
 // validate 仅核传输内容格式；完整规则/日期/许可须另行离线复核，received不表示准入。
 func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
@@ -47,6 +56,7 @@ func validate(job batch.Job, body []byte, ref evidence.Ref) error {
 	} else {
 		// 200挑战/空壳不得当正文继续同主机；标题只作取证停止门禁，不作资格认证。
 		markers := map[string]string{"pk-release": "花生期货合约及业务规则", "czce-year2024-reprint": "节假日休市安排", "zhunda-docs": "future_minute", "cy-night-change": "全部夜盘交易品种"}
+		markers["vendor-home"], markers["vendor-history-api"], markers["vendor-realtime-api"] = "准数据", "x-api-key", "timestamp"
 		if marker := markers[job.ID]; marker == "" || !bytes.Contains(body, []byte(marker)) {
 			return fmt.Errorf("未取得预期业务正文，停止该主机")
 		}
@@ -113,15 +123,19 @@ func collectJobs(root string, jobs []batch.Job, fetch func(batch.Job) (batch.Res
 func main() {
 	root := flag.String("root", "", "必须全新仓外目录")
 	cyOnly := flag.Bool("cy-only", false, "另批仅核新发现的先锋CY调整提醒，不重复原六项")
+	vendorOnly := flag.Bool("vendor-access-only", false, "另批仅核三个公开文档，不取市场数据/样例包或重跑旧项")
 	flag.Parse()
-	if *root == "" {
-		fmt.Fprintln(os.Stderr, "缺少root")
+	if *root == "" || (*cyOnly && *vendorOnly) {
+		fmt.Fprintln(os.Stderr, "缺少root或混用了独立批次模式")
 		os.Exit(1)
 	}
 	var last time.Time
 	jobs := candidates()
 	if *cyOnly {
 		jobs = []batch.Job{cyCandidate()}
+	}
+	if *vendorOnly {
+		jobs = vendorAccessCandidates()
 	}
 	err := collectJobs(*root, jobs, func(job batch.Job) (batch.Result, error) {
 		if wait := time.Until(last.Add(time.Second)); !last.IsZero() && wait > 0 {

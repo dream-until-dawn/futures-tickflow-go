@@ -74,3 +74,27 @@ func TestHistorySourcesFormatAndDigestAreBothRequired(t *testing.T) {
 		}
 	}
 }
+
+func TestVendorAccessModeOnlyCollectsThreePublicDocuments(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "vendor-docs")
+	calls := []string{}
+	err := collectJobs(root, vendorAccessCandidates(), func(j batch.Job) (batch.Result, error) {
+		calls = append(calls, j.URL)
+		if j.Format != "html" || j.Version != "vendor-public-doc-unqualified" {
+			t.Fatal("公开文档身份被改成市场数据或授权", j)
+		}
+		return batch.Result{Receipt: batch.Receipt{State: "received"}}, nil
+	})
+	if err != nil || len(calls) != 3 || calls[0] != "https://zhundata.cn/" || calls[1] != "https://zhundata.cn/hist-quotes-api.html" || calls[2] != "https://zhundata.cn/realtime-quotes-api.html" {
+		t.Fatal("公开文档模式范围不符", calls, err)
+	}
+	// 同主机首项未知就停；不能靠后面的另一个文档继续探测它。
+	calls = nil
+	err = collectJobs(filepath.Join(t.TempDir(), "unknown"), vendorAccessCandidates(), func(j batch.Job) (batch.Result, error) {
+		calls = append(calls, j.URL)
+		return batch.Result{}, errors.New("synthetic unknown")
+	})
+	if err == nil || len(calls) != 1 {
+		t.Fatal("同一供应商未知后仍继续", calls, err)
+	}
+}
