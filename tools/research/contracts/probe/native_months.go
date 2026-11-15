@@ -150,8 +150,9 @@ func runRemainingMonths(root, planFile string) error {
 		if e = checkpoint(); e != nil {
 			return e
 		}
-		last = time.Now()
 		e = captureNativeFor(filepath.Join(root, j.Month), filepath.Join(root, j.Month+".started.json"), client, j.URL)
+		// 以上次请求和写盘完成为锚点；启动前写盘开销不再侵蚀下一次请求间隔。
+		last = time.Now()
 		if e != nil {
 			states[i]["state"], states[i]["error"] = "failed", e.Error()
 			if ce := checkpoint(); ce != nil {

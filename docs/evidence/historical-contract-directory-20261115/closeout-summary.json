@@ -276,5 +276,6 @@
     "review_scope": "22 received contracts only; no success claim for CY2102 or 164 unattempted jobs"
   },
   "new_czce_distinct_differences": 3,
-  "czce_daily_state": "stopped; continuation strategy undecided; no restart"
+  "czce_daily_state": "stopped; continuation strategy undecided; no restart",
+  "request_spacing_limits": "old starts not independently certified >=2s; future fix waits after fetch completion; see request-spacing-limits-review.json"
 }

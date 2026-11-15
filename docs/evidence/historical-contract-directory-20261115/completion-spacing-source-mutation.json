@@ -1,0 +1,11 @@
+{
+  "schema": "completion-spacing-source-mutation-v1",
+  "source_sha256": "a937f69b9af69d731831931220397d5e230e54cf472c3c59855faff294b2c801",
+  "mutation": "completion anchor replaced by request-start anchor",
+  "target": "TestEDBSpacingStartsAfterSlowPreviousRequestCompletes",
+  "positive_control": "unmutated targeted Go tests passed",
+  "mutated_code_compiled": true,
+  "target_assertion_failed": true,
+  "log": "C:/Temp/tickflow-spacing-mutation-20261115.log",
+  "network_requests": 0
+}

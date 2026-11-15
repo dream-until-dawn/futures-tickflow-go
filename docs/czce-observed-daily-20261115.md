@@ -23,3 +23,9 @@
 22个参考日都能在这22份已接收日线中找到；2,355个实际日期没有本批参考，全部2,377行没有获证产品日历，34个零成交量日不保证实际交易。该缺日计数不覆盖失败CY2102、其余164项、全年或官方挂牌边界。详见[部分对账锁](evidence/historical-contract-directory-20261115/daily-czce-partial-lock.json)、[部分汇总](evidence/historical-contract-directory-20261115/daily-czce-partial-summary.json)与[私有封存复核](evidence/historical-contract-directory-20261115/czce-partial-seal-review.json)。原件保留仓外，公开仅聚合、哈希和必要3项异常。
 
 软件baf4c0f的CI43694408249三矩阵全部通过（含全模块、168项Python、还原及Linux1.26 race），工作区定向目录守卫/文档守卫通过；软件验证成功不改变采集任务failed状态。私有包清单覆盖101件、2,563,486字节，manifest SHA256 `507d60ecce19ec79598509c4bf73f7f2df339811cd9968e2e1ba13fc3a029a9e`；迁移只用包内输入重放22合约报告逐字节相同，空正文副本篡改及重算manifest反例分别命中file_sha/manifest_sha。旧中金所和更早封存包不修改。
+
+## 节流锚点收尾修正
+
+独立核查收据发现，旧循环以每项归档开始为计时锚点，不同文件操作开销会侵蚀实际请求间隔；中金所69月包、368日线和郑商所19响应的最小本地墙钟收据间隔分别为1.999624、1.995929和1.999868秒。墙钟收据没有持久化单调请求起点，不能反向认证每个实际请求严格满两秒；这不是一份“间隔全部通过”证明。计划中的两秒目标与已发生证据分开，详见[限制复核](evidence/historical-contract-directory-20261115/request-spacing-limits-review.json)。
+
+未来代码改为上一请求及归档返回后再等待两秒（使用Go单调时间），比请求起点间隔更保守；慢请求功能正向通过，独立副本故意改回起点锚定后命中目标断言，见[源码破坏反例](evidence/historical-contract-directory-20261115/completion-spacing-source-mutation.json)。没有为修正间隔而重发任何旧请求，没有改写原始收据或封存包。新代码在选定续取策略后仍须重新从干净提交编译，旧baf4c0f执行文件不得冒称带有本修正。

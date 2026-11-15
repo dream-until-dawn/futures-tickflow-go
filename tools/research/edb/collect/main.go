@@ -429,11 +429,7 @@ func run() error {
 			return err
 		}
 	}
-	var last time.Time
-	fetch := func(j batch.Job) (batch.Result, error) {
-		if delay := time.Until(last.Add(2 * time.Second)); !last.IsZero() && delay > 0 {
-			time.Sleep(delay)
-		}
+	fetch := completionPacedFetch(2*time.Second, func(j batch.Job) (batch.Result, error) {
 		transport := &http.Transport{DialContext: (&net.Dialer{Timeout: 15 * time.Second}).DialContext, TLSHandshakeTimeout: 10 * time.Second, DisableKeepAlives: true}
 		defer transport.CloseIdleConnections()
 		transport.Proxy = func(r *http.Request) (*url.URL, error) {
@@ -447,7 +443,6 @@ func run() error {
 		if err != nil {
 			return batch.Result{}, err
 		}
-		last = time.Now()
 		results, err := batch.Run(context.Background(), filepath.Join(*root, "archive"), []batch.Job{j}, d, 2<<20, validateCSV)
 		n, size := d.Usage()
 		fmt.Printf("%s actual_attempts=%d actual_bytes=%d\n", j.ID, n, size)
@@ -458,7 +453,7 @@ func run() error {
 			return batch.Result{}, fmt.Errorf("结果数不符")
 		}
 		return results[0], nil
-	}
+	})
 	if len(selected) > 128 {
 		return collectChunks(*root, selected, 128, fetch)
 	}

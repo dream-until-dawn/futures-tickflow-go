@@ -1,0 +1,26 @@
+{
+  "schema": "request-spacing-limits-review-v1",
+  "items": [
+    {
+      "root": "C:/Temp/tickflow-cffex-remaining-months-20261115-v1",
+      "receipts": 69,
+      "minimum_local_wallclock_request_stamp_gap_seconds": 1.999624
+    },
+    {
+      "root": "C:/Temp/tickflow-edb-cffex-daily-20261115-v1",
+      "receipts": 368,
+      "minimum_local_wallclock_request_stamp_gap_seconds": 1.995929
+    },
+    {
+      "root": "C:/Temp/tickflow-edb-czce-daily-20261115-v1",
+      "receipts": 19,
+      "minimum_local_wallclock_request_stamp_gap_seconds": 1.999868
+    }
+  ],
+  "exact_two_second_actual_start_spacing_independently_certified": false,
+  "reason": "old loop anchors interval before per-request filesystem work; request wallclock stamps have no persisted monotonic start anchors",
+  "future_fix": "wait at least two monotonic seconds after previous fetch/archive completes; slow-request functional test and source mutation verified",
+  "historical_receipts_unchanged": true,
+  "requests_replayed": false,
+  "network_requests_in_review": 0
+}
