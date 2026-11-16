@@ -79,6 +79,7 @@ class Accumulator:
                 original_acquisition_unknown=False, dates=set(), contracts=set(),
                 evidence_shas=set(), completeness='observed_only',
                 expected_contract_days=None,
+                valid_ohlc_dates=set(),
                 limitations='已观察字段范围，非挂牌全集或连续覆盖证明；零值/异常与缺失另列；不扩大回测准入。'))
             group['rows'] += 1
             group['original_acquisition_unknown'] |= uncertain
@@ -103,6 +104,8 @@ class Accumulator:
                 o, h, l, c = (values[field] for field in fields)
                 valid = 0 < l <= min(o, c) <= max(o, c) <= h
             if valid:
+                if kind == 'ohlc':
+                    group['valid_ohlc_dates'].add(day)
                 group['valid_rows'] += 1
                 group['valid_first'] = min(group['valid_first'] or day, day)
                 group['valid_last'] = max(group['valid_last'] or day, day)
@@ -112,6 +115,9 @@ class Accumulator:
         for _, raw in sorted(self.groups.items()):
             group = dict(raw)
             group['observed_days'] = len(group.pop('dates'))
+            valid_dates = group.pop('valid_ohlc_dates')
+            group['valid_days_by_year'] = {year: sum(day.startswith(year) for day in valid_dates)
+                                           for year in sorted({day[:4] for day in valid_dates})}
             group['contracts'] = len(group['contracts'])
             group['evidence_shas'] = sorted(group['evidence_shas'])
             group['evidence_count'] = len(group['evidence_shas'])
@@ -124,7 +130,7 @@ class Accumulator:
         return result
 
 
-def attach(data, inventory):
+def attach(data, inventory, gate_facts=None):
     if inventory['strict_backtest_admission_expanded'] is not False:
         raise ValueError('inventory_admission_promotion')
     keys = {p['key'] for p in data['products']}
@@ -138,6 +144,11 @@ def attach(data, inventory):
     quality=inventory.get('history_quality',{}).get('by_product',{})
     data['products']=[dict(p,extension_quality=quality.get(p['key'])) for p in data['products']]
     data['products'] = [dict(p,usage_readiness=assess(p)) for p in data['products']]
+    gate_facts = gate_facts or data.get('user_data_gate_facts')
+    if gate_facts:
+        from data_gates import assess as assess_data_gates
+        data['user_data_gate_facts'] = gate_facts
+        data['products'] = [dict(p,user_data_gates=assess_data_gates(p,gate_facts)) for p in data['products']]
     extension=inventory.get('history_extension')
     if extension:
         if extension['strict_backtest_admission_expanded'] is not False:raise ValueError('extension_scope_promotion')

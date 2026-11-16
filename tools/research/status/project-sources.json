@@ -5406,5 +5406,11 @@
   ],
   "consumer_premarket": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\consumer-independent-readback.json",
   "history_quality": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\daily-combined-summary.json",
-  "history_extension": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\new-route-catalog.json"
+  "history_extension": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\new-route-catalog.json",
+  "clear_parameters": [
+    {
+      "root": "C:/Temp/tickflow-czce-clear-20261116-v1",
+      "review": "C:/VScodeProject/futures-tickflow-go/docs/evidence/czce-clear-20261116-review.json"
+    }
+  ]
 }

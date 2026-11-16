@@ -1,0 +1,135 @@
+{
+  "schema": "user-data-gates-v1",
+  "synthetic": true,
+  "policy": {
+    "baseline_year": 2021,
+    "latest_completed_day": 20261116,
+    "current_trade_day": 20261117,
+    "minimum_lots_kind": "effective_min_open"
+  },
+  "products": [
+    {
+      "key": "SHFE.rb",
+      "name": "螺纹钢",
+      "gates": {
+        "backtest": {
+          "status": "pending",
+          "hard_items": {
+            "history_ohlc": {
+              "status": "pending",
+              "scope": [],
+              "evidence_ids": [],
+              "reason": "仅合成格式示例，未评估真实硬项",
+              "coverage": {
+                "first": 20261116,
+                "last": 20261116,
+                "listing_day": null,
+                "artifact_ids": [
+                  "synthetic-daily"
+                ],
+                "valid_days_by_year": {
+                  "2026": 1
+                }
+              }
+            },
+            "current_margin": {
+              "status": "pending",
+              "scope": [],
+              "evidence_ids": [],
+              "reason": "仅合成格式示例，未评估真实硬项"
+            },
+            "effective_min_open": {
+              "status": "pending",
+              "scope": [],
+              "evidence_ids": [],
+              "reason": "仅合成格式示例，未评估真实硬项"
+            }
+          },
+          "eligible_contracts": [],
+          "blocking_reasons": [
+            "history_ohlc: 仅合成格式示例，未评估真实硬项",
+            "current_margin: 仅合成格式示例，未评估真实硬项",
+            "effective_min_open: 仅合成格式示例，未评估真实硬项"
+          ]
+        },
+        "daily_signal": {
+          "status": "pending",
+          "hard_items": {
+            "settlement": {
+              "status": "pending",
+              "scope": [],
+              "evidence_ids": [],
+              "reason": "仅合成格式示例，不是取证或日更实测"
+            },
+            "daily_update": {
+              "status": "pending",
+              "scope": [],
+              "evidence_ids": [],
+              "reason": "仅合成格式示例，不是取证或日更实测"
+            }
+          },
+          "eligible_contracts": [],
+          "blocking_reasons": [
+            "settlement: 仅合成格式示例，不是取证或日更实测",
+            "daily_update: 仅合成格式示例，不是取证或日更实测"
+          ]
+        }
+      },
+      "bonus": {
+        "calendar": "not_assessed",
+        "history_rules": "not_assessed",
+        "lifecycle": "not_assessed",
+        "pit": "not_assessed",
+        "reconciliation": "synthetic_only",
+        "runtime_observations": "not_assessed"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "synthetic-original",
+      "role": "source-original",
+      "path": "synthetic-source.txt",
+      "bytes": 36,
+      "sha256": "864383dfcc2bdbda31de8a82056eab3002355831e3196d400c43ea4ca20bb4ad",
+      "source_url": null,
+      "source_day": 20261116,
+      "retrieved_at": null,
+      "version": "synthetic-interface-example-only"
+    },
+    {
+      "id": "synthetic-daily",
+      "role": "daily-records",
+      "path": "daily.jsonl",
+      "bytes": 258,
+      "sha256": "171a51441c254357e8a434d6dde0b8c14c827d4a13aee8ca5df4cf9ca7021024",
+      "source_url": null,
+      "source_day": 20261116,
+      "retrieved_at": null,
+      "version": "synthetic-interface-example-only"
+    }
+  ],
+  "current_contracts": [
+    {
+      "product_key": "SHFE.rb",
+      "symbol": "SHFE.rb2701",
+      "source_native": "rb2701",
+      "source_snapshot_day": 20261116,
+      "as_of_trade_day": 20261117,
+      "margin": {
+        "long": "0.07",
+        "short": "0.07",
+        "unit": "ratio",
+        "basis": "exchange_spec",
+        "evidence_ids": [
+          "synthetic-original"
+        ]
+      },
+      "effective_min_open_lots": null,
+      "ordinary_min_order_lots": 1,
+      "minimum_lots_kind": "effective_min_open",
+      "special_adjustments_reviewed": false,
+      "minimum_evidence_ids": []
+    }
+  ]
+}

@@ -32,6 +32,7 @@ def source_cells(p, exchanges):
             if route.startswith('official-'):return exchanges[p['exchange']]['short']+'（官方）'
             if route.startswith('cffex-'):return '中金所（明文）'
             if route.startswith('parameters'):return '上期所（业务表）'
+            if route=='czce-clear-parameters':return '郑商所（结算参数表）'
             if route.startswith('engine-rb-public-'):return '上期所（业务表）'
             if route.startswith('sina-'):return '新浪（样本）'
             if route.startswith('edb-'):return '天勤 EDB'
@@ -56,7 +57,7 @@ def markdown(data):
     s=data['summary'];states=s['states']
     lines=['# 各交易所与品种数据情况','',
         '资料快照：'+data['as_of']+'。本页与[可筛选HTML总览](data-status.html)由同一冻结模型生成。', '',
-        '**读法：**非空/空/未请求是日线主目录的合约状态；其他样本另列，不重复加总。观察期是品种内合约并集起止，不是连续覆盖。无对照不等于一致，制度日历不等于价格或生命周期获证。所有主目录记录仍为研究用途，未扩大回测准入。','',
+        '**读法：**非空/空/未请求是日线主目录的合约状态；其他样本另列，不重复加总。观察期是品种内合约并集起止，不是连续覆盖。无对照不等于一致，制度日历不等于价格或生命周期获证。用户指定的两道数据门槛见[独立结果表](data-usage-readiness.md)，当前参数回放历史属于情景；旧严格金融包协议和生产任务未改。','',
         f"主目录{s['candidates']:,}候选、{states['nonempty']:,}非空、{states['empty_unavailable']:,}完整空响应、{states['not_requested_on_directory_route']:,}本路线未请求；{s['rows']:,}行。六交易所{s['products']}品种含{s['financial_products']}个中金所金融品种，不能冒充全市场官方挂牌全集。",'']
     lines += ['格内只列已取得资料的来源；没有确认的留空。原表列存在不保证逐行有值或完成统一交付。点击HTML品种名查看覆盖日期和质量详情。','']
     if data.get('research_union'):
@@ -135,6 +136,9 @@ def check_docs(repo, config):
     inventory=next((r for r in config['repo_inputs'] if r['id']=='project_inventory'),None)
     if inventory and data.get('project_inventory')!=locked_repo(repo,inventory):
         raise ValueError('status_inventory_binding')
+    facts=next((r for r in config['repo_inputs'] if r['id']=='user_gate_facts'),None)
+    if facts and data.get('user_data_gate_facts')!=locked_repo(repo,facts):
+        raise ValueError('status_user_gate_facts_binding')
     extension=data.get('project_inventory',{}).get('history_extension')
     if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
@@ -174,7 +178,7 @@ def main():
     if 'project_inventory' in repo_data:
         extension=repo_data['project_inventory'].get('history_extension')
         if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
-        data=attach(data,repo_data['project_inventory'])
+        data=attach(data,repo_data['project_inventory'],repo_data.get('user_gate_facts'))
     data['provenance']=dict(bundle_manifest_sha256=config['bundle_manifest_sha256'],catalog_sha256=config['catalog_sha256'],
                             repo_inputs=config['repo_inputs'],profiles=config['profiles'])
     a.out_root.mkdir(parents=True)

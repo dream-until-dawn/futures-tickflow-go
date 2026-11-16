@@ -25,7 +25,8 @@
 <label>排序<select id="sort"><option value="default">按交易所与代码</option><option value="rows">主目录行数最多</option><option value="differences">主目录待核字段最多</option><option value="unrequested">本路线未请求最多</option></select></label>
 <button id="reset" class="secondary" type="button">清除筛选</button>
 </div></div>
-<div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th><th>分钟/现场</th><th>目录/生命周期</th><th>保证金/手续费/涨跌停</th></tr></thead><tbody id="products"></tbody></table></div>
+<p>回测硬项：2021年前后以来OHLC（后上市的取上市以来）＋当前保证金率＋实际最低开仓（含已生效专项）。逐日信号硬项：有效结算价＋按交易日抓取更新。其他资料为加分项；点击品种查看逐项依据和具体合约范围。</p>
+<div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th><th>分钟/现场</th><th>目录/生命周期</th><th>保证金/手续费/涨跌停</th><th>回测数据门槛</th><th>逐日信号数据门槛</th></tr></thead><tbody id="products"></tbody></table></div>
 <p id="empty" hidden>没有匹配的品种。请调整搜索或筛选条件。</p>
 </section>
 <section class="notice" id="shared-documents"><h2>共享官方网页原件</h2><p>公告与当前网页独立列示，适用品种、客户及有效期仍需逐项核对；不自动填为历史制度证据。</p><div id="shared-list"></div></section>
@@ -34,7 +35,7 @@
 <article><h2>引擎独立验收</h2><p id="engine-status"></p><p>研究目录仍未接入任务Feed；价格、规则、日历及生命周期语义未由本次验收认证。严格金融包协议继续拒绝研究manifest；已有其他资料包的既定范围不由本页改变。</p></article>
 <article><h2>维护与原始依据</h2><p>本页从官方累计目录、业务参数、EDB封存正文、真实源样本、历史日历和旧现场登记生成。输入逐件摘要及仓库证据目录见完整资料索引；迁移重复、合成数据不计入行情。中文别名仅方便阅读。</p><p><a href="data-usage-readiness.md">回测与盘前判断条件</a> · <a href="data-status.md">来源和覆盖明细表</a> · <a href="data-status.json">全项目机器可读模型</a> · <a href="evidence/project-data-inventory-20261116.json">完整资料索引</a> · <a href="data-status-project-inventory-plan.md">全项目盘点范围</a> · <a href="data-status-maintenance-plan.md">维护与验收记录</a> · <a href="consumer-maintenance.md">使用者维护手册</a></p></article>
 </section>
-<footer><p id="difference-note"></p><p>完整空响应、未报价字段、无参考日期、参考缺日及日历未知分别保留，不自动填数。</p><p>EDB口径、PK2021及其他缺证项待决；受阻入口不重试，未扩大回测准入，未打tag。</p><code id="catalog-sha"></code></footer>
+<footer><p id="difference-note"></p><p>完整空响应、未报价字段、无参考日期、参考缺日及日历未知分别保留，不自动填数。</p><p>EDB口径、PK2021及其他缺证项待决；受阻入口不重试。用户两道数据门槛独立展示；旧严格金融包及生产任务未改，未打tag。</p><code id="catalog-sha"></code></footer>
 </main>
 <dialog id="detail"><div class="dialog-head"><h2 id="detail-title"></h2><button id="close-detail" type="button" aria-label="关闭详情">关闭</button></div><div id="detail-body"></div></dialog>
 <script id="status-data" type="application/json">@@DATA@@</script>

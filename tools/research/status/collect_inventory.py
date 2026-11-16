@@ -247,6 +247,9 @@ def main():
     for entry in config['edb_roots']:collector.edb(Path(entry['path']),entry['route'])
     for entry in config['sina_bodies']:collector.sina(Path(entry['path']),entry['exchange'],entry['native'],entry['evidence'],entry['route'])
     collector.profiles()
+    from clear_parameters import append_inventory as append_clear_parameters
+    for entry in config.get('clear_parameters', []):
+        append_clear_parameters(collector, entry)
     if config.get('engine_snapshot'):
         from snapshot_inventory import append_snapshot
         append_snapshot(collector,config['engine_snapshot'],config['known_products'])

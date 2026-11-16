@@ -22,6 +22,11 @@ async function main() {
   try {
     await page.goto(pathToFileURL(path.resolve(document)).href);
     assert.equal(await page.locator('#products tr').count(), data.summary.products);
+    for (const p of data.products) {
+      const cells=page.locator('[data-product="'+p.key+'"] td');
+      assert.match(await cells.nth(11).innerText(), p.user_data_gates.backtest.status==='pass'?/通过/:/待补证|未达到/);
+      assert.match(await cells.nth(12).innerText(), p.user_data_gates.daily_signal.status==='pass'?/通过/:/待补证|未达到/);
+    }
     assert.equal(await page.locator('#shared-list details').count(), data.project_inventory.shared_documents.length);
     assert.equal(await page.locator('#shared-list a').count(), 7);
     await page.locator('#shared-list summary').first().click();
@@ -51,6 +56,10 @@ async function main() {
     assert.equal(await page.locator('#products tr').getAttribute('data-product'), 'SHFE.rb');
     await page.locator('.product-title').click();
     assert.equal(await page.locator('#detail').isVisible(), true);
+    assert.match(await page.locator('#detail-body').innerText(), /用户指定的两道数据门槛/);
+    assert.match(await page.locator('#detail-body').innerText(), /SHFE.rb2711/);
+    assert.match(await page.locator('#detail-body').innerText(), /逐年观察日期/);
+    assert.match(await page.locator('#detail-body').innerText(), /专项|具名模型审核/);
     assert.match(await page.locator('#detail-body').innerText(), /主EDB无此列/);
     assert.match(await page.locator('#detail-body').innerText(), /SHFE 官方日行情/);
     assert.match(await page.locator('#detail-body').innerText(), /前结算价/);

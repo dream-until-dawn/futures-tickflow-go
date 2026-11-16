@@ -33,6 +33,8 @@ class InventoryTest(unittest.TestCase):
         self.assertEqual(rows['volume']['valid_rows'],3)
         self.assertNotIn('turnover',rows)
         self.assertIsNone(rows['ohlc']['expected_contract_days'])
+        self.assertEqual(rows['ohlc']['valid_days_by_year'], {'2026':3})
+        self.assertEqual(rows['settlement']['valid_days_by_year'], {})
 
     def test_duplicate_same_route_rejected_other_source_kept_separate(self):
         stats=Accumulator();row=self.record(20260105,volume=1)

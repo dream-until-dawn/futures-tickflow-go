@@ -2,6 +2,8 @@
 const status = JSON.parse(document.getElementById('status-data').textContent);
 const $ = id => document.getElementById(id);
 const number = n => n.toLocaleString('zh-CN');
+const gateLabel = state => ({pass:'通过（限所列范围）',pending:'待补证',not_met:'未达到'}[state]||'待核算');
+const gateItemLabel = name => ({history_ohlc:'长期日线OHLC',current_margin:'当前保证金率',effective_min_open:'实际最低开仓手数',settlement:'有效结算价',daily_update:'按交易日抓取更新'}[name]||name);
 const stateLabels = {primary:'主目录有研究日线', sample_only:'仅其他路线样本', directory_only:'本页仅有目录'};
 
 // 所有来源文字用textContent插入，原件名称不能变成HTML或执行代码。
@@ -45,7 +47,11 @@ function render() {
       cell=append(row,'td');
       for(const source of sources) append(cell,'div',source,'source-name');
     }
-    const captions=['交易所','品种','OHLC（日线）','成交量','持仓量','结算价','成交额','历史交易日历','分钟/现场','目录/生命周期','保证金/手续费/涨跌停'];
+    if(p.user_data_gates) {
+      append(row,'td',gateLabel(p.user_data_gates.backtest.status));
+      append(row,'td',gateLabel(p.user_data_gates.daily_signal.status));
+    }
+    const captions=['交易所','品种','OHLC（日线）','成交量','持仓量','结算价','成交额','历史交易日历','分钟/现场','目录/生命周期','保证金/手续费/涨跌停','回测数据门槛','逐日信号数据门槛'];
     [...row.children].forEach((cell,index)=>{cell.dataset.label=captions[index];});
   }
   $('visible-count').textContent='当前显示 '+list.length+' / '+status.products.length+' 品种 · 来源表示部分资料已取得，点击品种查看范围';
@@ -90,11 +96,22 @@ function coverageDetails(p) {
 }
 function details(p) {
   $('detail-title').textContent=p.name+' · '+p.key;$('detail-body').replaceChildren();
+  if(p.user_data_gates) {
+    const g=p.user_data_gates;
+    detailSection('用户指定的两道数据门槛',[
+      '回测：'+gateLabel(g.backtest.status)+'；当前适用合约 '+(g.backtest.eligible_contracts.join('、')||'尚无完整交集')+'。',
+      ...Object.entries(g.backtest.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),
+      '历史有效OHLC逐年观察日期（各来源最大值，不相加）：'+Object.entries(g.backtest.hard_items.history_ohlc.coverage.valid_days_by_year).map(([year,count])=>year+'年'+count+'日').join('、')+'；缺日和版本待核仍保留。',
+      '逐日信号：'+gateLabel(g.daily_signal.status)+'；目标日 '+status.user_data_gate_facts.latest_completed_day+'，'+g.daily_signal.eligible_contracts.length+'个合约。',
+      ...Object.entries(g.daily_signal.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),
+      '日历、历史制度、PIT、生命周期、对账和运行成熟度为加分项；旧严格金融包不是这两道门槛的附加条件。当前参数回放历史属于情景，不代表历史实际制度。'
+    ]);
+  }
   if(p.usage_readiness) {
     const r=p.usage_readiness;
-    detailSection('用于回测和盘前判断的条件',[
+    detailSection('补充观察（不增加新硬项）',[
       '价格研究回测：'+(r.research_backtest==='partial_price_research'?'已有部分有效价格观察。':'未核到有效OHLC行。')+r.research_conditions,
-      '完整回测：本表未认证。'+r.full_backtest_gaps,
+      '旧严格金融包观察（非用户新数据门槛）：'+r.full_backtest_gaps,
       r.latest_official?'最新官方日表 '+r.latest_official.day+'，基本有效OHLC '+(r.latest_official.valid_rows??'未知')+'/'+r.latest_official.rows+'条，取得 '+timeText(r.latest_official.acquired_at)+'。':'本表没有当前官方日表的完整取得事实。',
       '盘前持续交付：'+r.preopen_conditions
     ]);
@@ -122,7 +139,7 @@ function details(p) {
   const wrapper=append(extra,'div',undefined,'detail-samples');const table=append(wrapper,'table');
   for(const s of p.supplementary) {const tr=append(table,'tr');append(tr,'td',s.source+' / '+s.symbol);append(tr,'td',s.rows+'行；'+s.first+'—'+s.last);append(tr,'td',s.comparison+(s.zero_settlement?'；零结算 '+s.zero_settlement:'')+(s.invalid_days?'；异常日 '+s.invalid_days:''));}
   if(!p.supplementary.length)append(extra,'p','本页未收录其他路线样本，不能作全项目“无数据”结论。');
-  detailSection('当前结论',['仅研究定位；官方历史合约全集及逐合约挂牌/摘牌仍未证，完整回测资格不新增。','供应商中文简称：'+p.vendor_name+'；显示别名不作为官方规则证据。']);
+  detailSection('补充边界',['官方历史合约全集及逐合约挂牌/摘牌仍未证；与用户新两门槛独立展示，旧严格金融包协议和生产任务未改。','供应商中文简称：'+p.vendor_name+'；显示别名不作为官方规则证据。']);
   $('detail').showModal();$('close-detail').focus();
 }
 $('close-detail').addEventListener('click',()=>$('detail').close());

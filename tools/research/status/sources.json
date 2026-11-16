@@ -27,12 +27,17 @@
     {
       "id": "project_inventory",
       "file": "docs/evidence/project-data-inventory-20261116.json",
-      "sha256": "3a7f50e23bf1373b6e046e8600163d7ef5dc245be54ac0e665cf87f69c087dd8"
+      "sha256": "cd9fd7dcca7d4a4b61dae4041527bf7ced1f5ef7b204830ba2542fffce5e60fc"
     },
     {
       "id": "project_source_plan",
       "file": "tools/research/status/project-sources.json",
-      "sha256": "8e0e7fdf983c536fa6583ef54857640cea51ade6c1868533655121cbd251ce68"
+      "sha256": "290fc6b938151855b4955ceedcdb4a3bf3304d04cbe9fd1e0ad32745faa25ca5"
+    },
+    {
+      "id": "user_gate_facts",
+      "file": "docs/data-gate-facts.json",
+      "sha256": "151511219f387256164c2832d2da47a07d0ba8fbb64ee48ea11ed0ebad30f3ba"
     }
   ],
   "profiles": [
@@ -81,5 +86,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "5bc01adc5853bada58c465c4d68d2ba7c6c37b50092738fdb21ef8dbcd6dd77a"
+  "published_model_sha256": "dfe5752b455e03f26e1444ce1c8d1888b4ee0f7576367d54dd18c193b0a462b8"
 }
