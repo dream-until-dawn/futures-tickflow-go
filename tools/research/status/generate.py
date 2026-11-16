@@ -20,24 +20,36 @@ def locked_repo(root, item):
     return json.loads(raw)
 
 
+def source_cells(p, exchanges):
+    """列来源只依据实际取得资料；空响应、未请求和未知范围保持空白。"""
+    quotes=[]
+    if p['nonempty']:quotes.append('天勤 EDB')
+    if any(s['source']=='EDB旧有限日线样本' for s in p['supplementary']):quotes.append('天勤 EDB（样本）')
+    if any(s['source']=='新浪当期列表日线样本' for s in p['supplementary']):quotes.append('新浪（样本）')
+    official=('中金所（明文原表列）' if p['exchange']=='CFFEX' else exchanges[p['exchange']]['short']+'（官方原表列）') if p['reference_days'] else ''
+    if official:quotes.append(official)
+    settlement=[official] if official else []
+    # 未记录字段有效计数时不推定有结算值；零结算不作为有效结算价。
+    if any(s['source']=='新浪当期列表日线样本' and 'absent_settlement' in s and 'zero_settlement' in s and s['rows']-s['absent_settlement']-s['zero_settlement']>0 for s in p['supplementary']):
+        settlement.append('新浪（样本）')
+    return [quotes,quotes,quotes,settlement,[official] if official else [],['官方公告／规则'] if p['calendar_ranges'] else []]
+
+
 def markdown(data):
     s=data['summary'];states=s['states']
     lines=['# 各交易所与品种数据情况','',
         '资料快照：'+data['as_of']+'。本页与[可筛选HTML总览](data-status.html)由同一冻结模型生成。', '',
         '**读法：**非空/空/未请求是日线主目录的合约状态；其他样本另列，不重复加总。观察期是品种内合约并集起止，不是连续覆盖。无对照不等于一致，制度日历不等于价格或生命周期获证。所有主目录记录仍为研究用途，未扩大回测准入。','',
         f"主目录{s['candidates']:,}候选、{states['nonempty']:,}非空、{states['empty_unavailable']:,}完整空响应、{states['not_requested_on_directory_route']:,}本路线未请求；{s['rows']:,}行。六交易所{s['products']}品种含{s['financial_products']}个中金所金融品种，不能冒充全市场官方挂牌全集。",'']
+    lines += ['格内只列已取得资料的来源；没有确认的留空。原表列存在不保证逐行有值或完成统一交付。点击HTML品种名查看覆盖日期和质量详情。','']
     for exchange, label in data['exchanges'].items():
         lines += ['## '+label['name']+'（'+exchange+'）','',
-            '| 品种 | 主目录：非空/空/本路线未请求 | 日线行数与观察期 | 参考与待核 | 已有制度日历范围 | 其他样本（不相加） |',
-            '| --- | ---: | --- | --- | --- | --- |']
+            '| 品种 | OHLC（日线） | 成交量 | 持仓量 | 结算价 | 成交额 | 历史交易日历 |',
+            '| --- | --- | --- | --- | --- | --- | --- |']
         for p in data['products']:
             if p['exchange']!=exchange:continue
-            span=(p['first']+'—'+p['last']) if p['first'] else '主目录未观察'
-            reference=('待核'+str(p['distinct_fields'])+'字段；缺参考'+str(p['missing_reference_days'])+'合约日') if p['reference_days'] else '主目录未对照'
-            if exchange=='CFFEX':reference+='；明文参考未认证'
-            calendar='；'.join(r['first']+'—'+r['last'] for r in p['calendar_ranges']) or '未获证'
-            samples=str(len(p['supplementary']))+'份供应商样本（元数据）' if p['supplementary'] else '本页未收录其他样本'
-            lines.append('| '+p['name'].replace('|','\\|')+' `'+p['code']+'` | '+str(p['nonempty'])+'/'+str(p['empty_unavailable'])+'/'+str(p['not_requested_on_directory_route'])+' | '+str(p['rows'])+'；'+span+' | '+reference+' | '+calendar+' | '+samples+' |')
+            cells=['；'.join(s) for s in source_cells(p,data['exchanges'])]
+            lines.append('| '+p['name'].replace('|','\\|')+' `'+p['code']+'` | '+' | '.join(cells)+' |')
         lines.append('')
     lines += ['## 字段、置信度与不足','',
         '- 日线主源为Shinny EDB；其历史版本、零成交OHLC和盘后量仓语义仍有待核，不能用收盘价代替结算价。已有参考原表归档了结算/成交额列（范围同参考，不保证每行有值、单位或资格已证）；主EDB没有这两列，未完成对账/统一Source交付。',
@@ -52,6 +64,7 @@ def markdown(data):
 
 def render_html(data, assets):
     # 防止源名称中的HTML结束标签突破内嵌JSON脚本；前端只用textContent写数据。
+    data=dict(data,products=[dict(p,source_cells=source_cells(p,data['exchanges'])) for p in data['products']])
     payload=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e').replace('&','\\u0026')
     return (assets/'page.html').read_text(encoding='utf-8').replace('@@STYLE@@',(assets/'style.css').read_text(encoding='utf-8')).replace('@@SCRIPT@@',(assets/'page.js').read_text(encoding='utf-8')).replace('@@DATA@@',payload)
 

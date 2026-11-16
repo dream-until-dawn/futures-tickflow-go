@@ -15,25 +15,18 @@ function append(parent, tag, text, className) {const node=element(tag,text,class
 function tag(parent, text, className='') {return append(parent,'span',text,'tag '+className);}
 const summary = status.summary;
 $('snapshot').textContent = '资料快照 '+status.as_of+' · 行情日期逐行列出';
-const kpis = [
-  ['品种',summary.products,'商品/航运 '+summary.commodity_and_shipping_products+' · 金融 '+summary.financial_products],
-  ['供应商候选合约',summary.candidates,'不是官方历史挂牌全集'],
-  ['主目录非空日线',summary.states.nonempty,'合约份数，不是完整率'],
-  ['完整空响应',summary.states.empty_unavailable,'保留失败，不计覆盖'],
-  ['本路线未请求',summary.states.not_requested_on_directory_route,'不等于项目从未采样'],
-  ['主目录日线行',summary.rows,'跨合约行数，非交易日数']
-];
-for (const [label,value,note] of kpis) {const card=append($('kpis'),'div',undefined,'kpi');append(card,'small',label);append(card,'strong',number(value));append(card,'small',note);}
 for (const [key,exchange] of Object.entries(status.exchanges)) {
   const products=status.products.filter(p=>p.exchange===key);
   const card=append($('exchanges'),'button',undefined,'exchange-card');card.type='button';card.dataset.exchange=key;
   append(card,'strong',exchange.short+' '+key);append(card,'small',exchange.type+' · '+products.length+'品种');
-  append(card,'span','主目录 '+number(products.reduce((n,p)=>n+p.rows,0))+' 行');
+  append(card,'span',products.filter(p=>p.rows||p.supplementary.length).length+'个品种已取日线资料');
   card.addEventListener('click',()=>{$('exchange').value=key;render();});
   const option=append($('exchange'),'option',exchange.short+' '+key);option.value=key;
 }
 function rangeText(p) {return p.first ? p.first+' 至 '+p.last : '主目录未观察';}
 function calendarText(p) {return p.calendar_ranges.length ? p.calendar_ranges[0].first+' 至 '+p.calendar_ranges.at(-1).last : '未获证产品历史范围';}
+// 只按已取得的冻结资料映射来源；目录候选和完整空响应不能填入数据格。
+function sourceCells(p) {return p.source_cells;}
 function render() {
   const query=$('search').value.trim().toLowerCase(), exchange=$('exchange').value, state=$('state').value;
   const list=status.products.filter(p=> (!exchange||p.exchange===exchange) &&
@@ -44,27 +37,17 @@ function render() {
   $('products').replaceChildren();
   for(const p of list) {
     const row=append($('products'),'tr');row.dataset.product=p.key;
+    append(row,'td',status.exchanges[p.exchange].short,'exchange-name');
     let cell=append(row,'td');const button=append(cell,'button',p.name,'product-title');button.type='button';button.addEventListener('click',()=>details(p));
-    append(cell,'div',p.key,'mono sub');append(cell,'div',p.category,'sub');
-    cell=append(row,'td');append(cell,'strong',number(p.nonempty)+' / '+number(p.candidates)+' 合约');
-    append(cell,'div','空 '+p.empty_unavailable+' · 本路线未请求 '+p.not_requested_on_directory_route,'sub');
-    const meter=append(cell,'div',undefined,'meter');const fill=append(meter,'span');fill.style.width=(p.nonempty/p.candidates*100)+'%';
-    append(cell,'div',p.source+' · '+number(p.rows)+'行','sub');
-    cell=append(row,'td');append(cell,'div',rangeText(p));append(cell,'div','合约并集跨度；不是连续覆盖','sub');
-    cell=append(row,'td');
-    if(!p.reference_days) {tag(cell,'主目录未对照','muted-tag');append(cell,'div','没有参考不算零差异通过','sub');}
-    else {append(cell,'div','参考 '+number(p.reference_days)+' 合约日');tag(cell,'待核 '+p.distinct_fields+' 字段',p.distinct_fields?'warn':'');append(cell,'div','缺参考 '+p.missing_reference_days+' 合约日；未报价 '+number(p.unpriced_fields)+' 字段','sub');}
-    if(p.exchange==='CFFEX') tag(cell,'明文参考 · 未认证','warn');
-    cell=append(row,'td');append(cell,'div',calendarText(p));append(cell,'div',p.calendar_ranges.length ? '仅制度记录范围；不授予价格资格' : '不套用当前模板补历史','sub');
-    if(p.calendar_unknown_rows) append(cell,'div','实际行中 '+number(p.calendar_unknown_rows)+' 行日历未知','sub');
-    cell=append(row,'td');append(cell,'div',p.supplementary.length ? p.supplementary.length+'份有限样本' : '本页未收录其他样本');
-    append(cell,'div',p.supplementary.length ? [...new Set(p.supplementary.map(s=>s.source))].join('；') : '不能据此推断项目绝无其他数据','sub');
-    cell=append(row,'td');tag(cell,stateLabels[p.state],p.state==='sample_only'?'sample':p.state==='directory_only'?'muted-tag':'');append(cell,'div','本目录仅研究用途','sub');
-    const more=append(cell,'button','查看细节');more.type='button';more.addEventListener('click',()=>details(p));
-    const captions=['品种','日线主目录','实际观察期','参考与质量','已有制度日历','其他已取样本','当前结论'];
+    append(cell,'div',p.code,'mono sub');
+    for(const sources of sourceCells(p)) {
+      cell=append(row,'td');
+      for(const source of sources) append(cell,'div',source,'source-name');
+    }
+    const captions=['交易所','品种','OHLC（日线）','成交量','持仓量','结算价','成交额','历史交易日历'];
     [...row.children].forEach((cell,index)=>{cell.dataset.label=captions[index];});
   }
-  $('visible-count').textContent='当前显示 '+list.length+' / '+status.products.length+' 品种 · 主目录统计与其他样本分层，全部保留准入边界';
+  $('visible-count').textContent='当前显示 '+list.length+' / '+status.products.length+' 品种 · 来源表示部分资料已取得，点击品种查看范围';
   $('empty').hidden=list.length!==0;
   document.querySelectorAll('.exchange-card').forEach(c=>c.classList.toggle('active',c.dataset.exchange===exchange));
 }

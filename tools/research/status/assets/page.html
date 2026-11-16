@@ -9,17 +9,12 @@
 </head>
 <body>
 <header><div class="eyebrow">FUTURES TICKFLOW / 数据资料台账</div>
-<h1>每个品种，数据到哪一步了</h1>
-<p class="intro">来源、实际取得范围、对照与缺口，放在同一张表里。<strong>研究可获得性 ≠ 完整历史 ≠ 回测准入。</strong></p>
+<h1>各品种已取得的数据来源</h1>
+<p class="intro">先选交易所，再看品种。<strong>格内填写已取得数据的来源；未确认取得的留空。</strong></p>
 <div class="meta"><span id="snapshot"></span><span>仅元数据 · 可离线使用</span><span class="tag warn">金融准入保持原状</span></div>
 </header>
 <main>
-<section class="kpis" id="kpis" aria-label="主目录全局统计"></section>
-<section class="notice"><strong>先看这三个区别</strong><div class="notice-grid">
-<p><b>主目录不是全项目数据量</b><br>大商所、广期所主目录零行，仍可能有右侧列出的其他供应商样本；各路线不重复加总。</p>
-<p><b>取样比例不是完整率</b><br>非空合约/候选数只表示本路线取得情况。首末日期是合约并集跨度，中间及生命周期仍可能缺数据。</p>
-<p><b>零差异不是核验完成</b><br>无参考不叫一致。中金所参考为明文HTTP；已有制度日历也不自动认证价格或允许完整回测。</p>
-</div></section>
+<section class="notice"><strong>如何看这张表</strong><p>各列均为日线数据（交易日历除外）。有来源表示已取得部分资料，不表示历史齐全或已准入回测；点击品种查看具体日期、数量和质量限制。空白表示本页冻结资料未确认，不等于全项目不存在。官方“原表列”尚未全部统一交付；“新浪样本”不代表每行有结算价。资料快照仍为2026-11-15，本次仅调整展示。</p></section>
 <section class="exchanges" id="exchanges" aria-label="交易所快速筛选"></section>
 <section class="workspace">
 <div class="toolbar"><div><h2>交易所 × 品种</h2><p id="visible-count" aria-live="polite"></p></div>
@@ -30,7 +25,7 @@
 <label>排序<select id="sort"><option value="default">按交易所与代码</option><option value="rows">主目录行数最多</option><option value="differences">主目录待核字段最多</option><option value="unrequested">本路线未请求最多</option></select></label>
 <button id="reset" class="secondary" type="button">清除筛选</button>
 </div></div>
-<div class="table-wrap"><table><thead><tr><th>品种</th><th>日线主目录</th><th>实际观察期</th><th>参考与质量</th><th>已有制度日历</th><th>其他已取样本</th><th>当前结论</th></tr></thead><tbody id="products"></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th></tr></thead><tbody id="products"></tbody></table></div>
 <p id="empty" hidden>没有匹配的品种。请调整搜索或筛选条件。</p>
 </section>
 <section class="bottom-grid">

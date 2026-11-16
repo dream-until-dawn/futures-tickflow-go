@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from page_model import model, profile_ranges
-from generate import markdown, render_html, locked_repo, check_docs, check_rendered
+from generate import source_cells, markdown, render_html, locked_repo, check_docs, check_rendered
 
 
 class StatusModelTest(unittest.TestCase):
@@ -30,6 +30,24 @@ class StatusModelTest(unittest.TestCase):
         self.assertEqual(len(p['supplementary']),2);self.assertEqual(p['reference_days'],0)
         self.assertFalse(p['financial_eligible'])
         self.assertIn('2候选',markdown(data));self.assertNotIn('5,351',markdown(data))
+
+    def test_source_matrix_does_not_turn_empty_or_unknown_into_data(self):
+        data=model(*self.fixture());p=next(p for p in data['products'] if p['key']=='DCE.m')
+        cells=source_cells(p,data['exchanges'])
+        self.assertEqual(cells[0],['天勤 EDB（样本）','新浪（样本）'])
+        self.assertEqual(cells[3:], [['新浪（样本）'],[],[]])
+        p['supplementary']=[];p['empty_unavailable']=1
+        self.assertEqual(source_cells(p,data['exchanges']),[[],[],[],[],[],[]])
+        p['reference_days']=1;p['exchange']='CFFEX'
+        self.assertEqual(source_cells(p,data['exchanges'])[3],['中金所（明文原表列）'])
+        p['reference_days']=0
+        p['supplementary']=[dict(source='新浪当期列表日线样本',rows=2,absent_settlement=1,zero_settlement=1)]
+        self.assertEqual(source_cells(p,data['exchanges'])[3],[])
+        del p['supplementary'][0]['absent_settlement']
+        self.assertEqual(source_cells(p,data['exchanges'])[3],[])
+        p['supplementary'][0]['absent_settlement']=1
+        p['supplementary'][0]['rows']=3
+        self.assertEqual(source_cells(p,data['exchanges'])[3],['新浪（样本）'])
 
     def test_missing_contract_counter_and_scope_mutations_are_rejected(self):
         args=self.fixture();args[0]['summary']['rows']=99

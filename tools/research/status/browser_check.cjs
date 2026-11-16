@@ -26,9 +26,15 @@ async function main() {
     await page.selectOption('#exchange', 'DCE');
     assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.exchange === 'DCE').length);
     const soybean = page.locator('[data-product="DCE.m"]');
-    assert.match(await soybean.locator('td').nth(1).innerText(), /^0 \/ /);
-    assert.match(await soybean.locator('td').nth(3).innerText(), /主目录未对照/);
-    assert.match(await soybean.locator('td').nth(5).innerText(), /份有限样本/);
+    assert.match(await soybean.locator('td').nth(2).innerText(), /新浪（样本）/);
+    assert.doesNotMatch(await soybean.locator('td').nth(2).innerText(), /官方/);
+    assert.equal(await soybean.locator('td').nth(6).innerText(), '');
+    assert.equal(await soybean.locator('td').nth(7).innerText(), '');
+    // 对全部品种逐格核空白和来源，不能把未请求或缺证显示为有数据。
+    for (const p of data.products.filter(p=>p.exchange==='DCE')) {
+      const cells=page.locator('[data-product="'+p.key+'"] td');
+      assert.equal(await cells.nth(6).innerText(), '');
+    }
     await page.click('#reset');
     await page.fill('#search', '螺纹钢');
     assert.equal(await page.locator('#products tr').count(), 1);
@@ -45,8 +51,8 @@ async function main() {
     await page.selectOption('#exchange', 'CFFEX');
     assert.equal(await page.locator('#products tr').count(), 8);
     for (const row of await page.locator('#products tr').all()) {
-      assert.match(await row.innerText(), /明文参考/);
-      assert.match(await row.innerText(), /本目录仅研究用途/);
+      assert.match(await row.innerText(), /明文原表列/);
+      assert.doesNotMatch(await row.locator('td').nth(5).innerText(), /EDB/);
     }
     await page.fill('#search', 'NOT_A_REAL_PRODUCT');
     assert.equal(await page.locator('#products tr').count(), 0);
