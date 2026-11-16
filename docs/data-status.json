@@ -101410,37 +101410,49 @@
     ]
   },
   "history_consumer_readback": {
-    "schema": "signal-history-v3-direct-independent-readback-v1",
-    "source_report_path": "C:\\VScodeProject\\futures-decision-strategy\\docs\\evidence\\scenario-signal-history-v3-20261117\\limited-acceptance.json",
-    "source_report_sha256": "1df69f7306817544822774cf8985508b5cac7843b834b81bcc638f15b759a702",
-    "manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+    "schema": "signal-history-v5-formal-queue-independent-readback-v1",
+    "source_report_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v5-queue-20261117\\acceptance.json",
+    "source_report_sha256": "c99d86cac98802ce4578fcc4ae95e966d724d487157e882b1ecef24e1ab129cb",
+    "manifest_sha256": "2d4d5a294a89c51332e5a738df19950fc67552197d49fa1debbbe15b16ed679c",
+    "sqlite_sha256": "bf7a8ad401dc6ed795071e2f7eda264c6453b59c6f8d971872da428532e43b9c",
+    "sqlite_integrity": "ok",
+    "registered_output_files_verified": 12,
     "tested_contracts": [
       {
         "contract": "INE.sc2612",
-        "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\INE.sc2612\\result.json",
-        "result_sha256": "69d13e10eaa61ea0e4dd5c7123e6cb41bcb848d98a2ca2da18d5f40cf6a6e4e7",
+        "job": "c515ec0ba0e64813b97a61791cbc4db3",
         "status": "complete",
+        "queue_state": "succeeded",
+        "returncode": 0,
         "observations": 715,
         "ready_days": 109,
-        "target_ready": true
+        "target_ready": true,
+        "result_sha256": "76fd384aade8222e45bed6e9aa950bea62b22cfd63af004f28089d78acab0bcb",
+        "receipt_sha256": "8057ab0278141b4a514739e996098b7c7d17f0a36a5926c44f30e1c03960663a"
       },
       {
         "contract": "SHFE.rb2612",
-        "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\SHFE.rb2612\\result.json",
-        "result_sha256": "806ea70ac8920a09c062067412bc0b09b2b8e114f4432b8e1f13a5c797b94002",
+        "job": "ef348e7038354f7998f15bc380d4eca7",
         "status": "insufficient_history",
+        "queue_state": "succeeded",
+        "returncode": 0,
         "observations": 221,
         "ready_days": 0,
-        "target_ready": false
+        "target_ready": false,
+        "result_sha256": "18987a1653199cad09ed92690233e21c2ae9c9b7530455bfb81aed1483e35abe",
+        "receipt_sha256": "6dfbd79e6a73b5bda3572c369e94cd8a9ec32774777f9ed5b163c8073de0b86a"
       },
       {
         "contract": "CZCE.SO2705",
-        "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\CZCE.SO2705\\result.json",
-        "result_sha256": "882801a13645a73e04834659ab3b5c5f1ed1e02edbb6afdfd1b33d86078a993d",
+        "job": "5e4f221b2e7943c38c0af22210b7282f",
         "status": "insufficient_history",
+        "queue_state": "succeeded",
+        "returncode": 0,
         "observations": 3,
         "ready_days": 0,
-        "target_ready": false
+        "target_ready": false,
+        "result_sha256": "3d8f24b350c6c40b323d25de921c9aed1fdc16535eed894bf7d572616cb1103f",
+        "receipt_sha256": "c830d3c310772ea38c3fed7ddaaa9f93ad427e27e658f2a8da5e0473e45d612f"
       }
     ],
     "ready_products": [
@@ -101449,16 +101461,34 @@
     "ready_contracts": [
       "INE.sc2612"
     ],
-    "whole_bundle_queue_ready": false,
-    "limits": [
-      "仅三约实际直接消费，未验证SC2703或全52正式队列",
-      "两个全年中间JSON超既有32MiB门禁，v3拒绝保留",
-      "同一默认指标607根门槛不改，不补造日期或主连，未增加真实前向样本"
-    ],
+    "whole_bundle_queue_ready": true,
     "target_day": 20261116,
     "signal_trade_day": 20261117,
     "indicator": "CN MACD(12,26,9)",
-    "indicator_first_ready_observation": 607
+    "indicator_first_ready_observation": 607,
+    "negative_controls_sha256": "9e2684e9ee3395193697780049308c49415fcd09e547184ecd30fec0b82bd5ad",
+    "negative_controls": [
+      {
+        "case": "future-target",
+        "status": "rejected-before-freeze",
+        "reason": "目标不是包内已完成日，逐日信号不得偷换旧日"
+      },
+      {
+        "case": "outside-scope",
+        "status": "rejected-before-freeze",
+        "reason": "具体合约不在通过范围"
+      }
+    ],
+    "financial_qualified": false,
+    "forward_samples_added": 0,
+    "production_deployed": false,
+    "limits": [
+      "独立读回报告、一致SQLite、12份登记产物和3条结果，未据对话消息判通过",
+      "仅三个合约正式本地队列；未做全52队列或真实前向",
+      "SC2703只满足长度条件，未作实际Go消费，不自动推广",
+      "旧v3/v4拒绝保留，不调整门槛、算法、32MiB或便携规则",
+      "使用本地兼容候选，生产和用户暂缓发布决定不变"
+    ]
   },
   "project_inventory": {
     "schema": "project-data-inventory-v1",
@@ -263118,8 +263148,8 @@
       },
       {
         "id": "history_consumer_readback",
-        "file": "docs/signal-history-consumer-readback-20261117.json",
-        "sha256": "93174da26e358a2c184b84d9b0c1816a0c9a56c398b6621bb0024fed2000923d"
+        "file": "docs/signal-history-v5-consumer-readback-20261117.json",
+        "sha256": "e553ae74bcf1545c12f97ac97bdef8dbe2d100e26e19074f62f46fd0d0379c5e"
       }
     ],
     "profiles": [

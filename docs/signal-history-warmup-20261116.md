@@ -35,3 +35,11 @@ v4最终manifest为 `fca9085482b4a6cf8572a58dcd9bc57fa139910b4b0a47e9ab026de104b
 v5目录 `C:/Temp/tickflow-signal-history-delivery-20261117-v5`，manifest SHA256 `2d4d5a294a89c51332e5a738df19950fc67552197d49fa1debbbe15b16ed679c`。已用接收方原checked/parse_json/portable完整核918件、453个JSON和127888行JSONL，全部预检通过；461件原始/价格artifact与v4逐字节一致，门槛/日期/范围不变。[完整预检](signal-history-v5-preflight-20261117.json)与[持久私有封存](signal-history-v5-seal-20261117.json)可复核。此处尚不把预检通过当正式队列通过，实际结果另行读回。
 
 旧消费者修正亦已从实际归档逐件读回：52份单日信号不再误示资金约束，8份独立RB回测流水探针均保留真实结果及不足状态；[修正读回](signal-history-engine-fixed-readback-20261117.json)。这些探针不是多合约连续净值、盈利认证或生产变更。所有本轮策略演示截至20261116，不冒充17交易日首个夜盘开盘前已完成的真实前向。
+
+## v5正式队列独立读回（2026-11-17）
+
+已独立核对消费者实际验收报告、SQLite一致副本及三项成功任务的全部12份登记产物，逐件摘要及字节数一致。三任务均succeeded/returncode 0：SC2612为715观察日、109个可计算日、目标日就绪；RB2612的221日及SO2705的3日仍为insufficient_history。完整包通过原冻结预算及便携检查，实际策略执行仅限这三个合约，不外推为52品种/527合约都已实测；SC2703仅长度满足，尚未执行验证。
+
+[本仓独立读回](signal-history-v5-consumer-readback-20261117.json)绑定报告SHA256 `c99d86cac98802ce4578fcc4ae95e966d724d487157e882b1ecef24e1ab129cb` 和SQLite摘要。未来目标日、范围外合约两项反向控制均在冻结前被拒绝，新增任务及Go执行均0，原三项成功状态不变。v3大小拒绝、v4路径拒绝及各旧证据继续保留；上文待验描述为当时状态，由本条更新。
+
+正式队列结果与v3直接消费的逐日Signals一致。未改变指标算法、资金门禁或生产服务，financial_qualified=false，真实前向新增0；16日行情对应17日判断研究，不冒充已在17日首次夜盘开盘前运行。数据硬门槛仍为回测1品种RB、逐日信号52品种/527适用合约；策略预热不足单列说明。

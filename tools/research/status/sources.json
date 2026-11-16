@@ -46,8 +46,8 @@
     },
     {
       "id": "history_consumer_readback",
-      "file": "docs/signal-history-consumer-readback-20261117.json",
-      "sha256": "93174da26e358a2c184b84d9b0c1816a0c9a56c398b6621bb0024fed2000923d"
+      "file": "docs/signal-history-v5-consumer-readback-20261117.json",
+      "sha256": "e553ae74bcf1545c12f97ac97bdef8dbe2d100e26e19074f62f46fd0d0379c5e"
     }
   ],
   "profiles": [
@@ -96,5 +96,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "071191e398cea2fd1be35dc504478a9a0926f472af026efb70e0d3482ee2df39"
+  "published_model_sha256": "c6fbf728fa66e8675ada68b003bd5abadc1d3650de4c76a36c536b92d66cbd0c"
 }
