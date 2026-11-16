@@ -1,6 +1,6 @@
 {
   "repo": "C:\\VScodeProject\\futures-tickflow-go",
-  "registered_at_utc": "2026-11-16T11:53:13.725658+00:00",
+  "registered_at_utc": "2026-11-16T13:11:25.400338+00:00",
   "official_catalog_manifest": "C:/VScodeProject/futures-decision-strategy/results/all-market-price-catalog-20261114/catalog-v2/manifest.json",
   "known_products": [
     "SHFE.ad",
@@ -109,6 +109,14 @@
     {
       "path": "C:/Temp/tickflow-edb-daily-20261115-v1-sealed/data",
       "route": "edb-pilot"
+    },
+    {
+      "path": "C:/Temp/tickflow-edb-retained-history-20261116-v1",
+      "route": "edb-retained-history"
+    },
+    {
+      "path": "C:/Temp/tickflow-edb-retained-remaining-20261116-v1",
+      "route": "edb-retained-continuation"
     }
   ],
   "cffex_roots": [
@@ -5248,7 +5256,8 @@
     "official_catalog_last_day": "2026-11-13",
     "later_engine_update": "另已取得11/16两个官方日表并独立回读548合约日/4932原字段；只扩实际观察，不代表全历史/全品种完整。",
     "excluded": "合成/变异/迁移重复不计行情；旧探针只有文档读数而无原件的，不推成可用行情。",
-    "full_project_inventory_is_market_completeness": false
+    "full_project_inventory_is_market_completeness": false,
+    "latest_history_extension": "本轮419个有实际历史参考身份的原未请求候选均已处理，342非空/77完整空；独立对账差异另列，不改原研究包或扩大准入。"
   },
   "additional_inputs": [
     "C:/Temp/tickflow-historical-directory-daily-20261115-v1-sealed/acquisitions/directory/receipt.json",
@@ -5275,7 +5284,88 @@
     "C:\\Temp\\tickflow-official-day-20261116-v1\\shfe\\originals\\shfe-daily-20261116.body",
     "C:\\Temp\\tickflow-official-day-20261116-v1\\shfe\\originals\\shfe-daily-20261116.json",
     "C:\\Temp\\tickflow-official-day-20261116-v1\\czce\\originals\\czce-daily-20261116.body",
-    "C:\\Temp\\tickflow-official-day-20261116-v1\\czce\\originals\\czce-daily-20261116.json"
+    "C:\\Temp\\tickflow-official-day-20261116-v1\\czce\\originals\\czce-daily-20261116.json",
+    "C:/Temp/tickflow-edb-retained-history-20261116-v1/archive/JR2401-retained-history.body",
+    "C:/Temp/tickflow-edb-retained-history-20261116-v1/master-results.json",
+    "C:/Temp/tickflow-edb-retained-remaining-20261116-v1/report.json",
+    "C:/Temp/tickflow-edb-retained-remaining-20261116-v1/plan.json",
+    "C:/Temp/tickflow-edb-retained-history-20261116-v1/remaining-336.started.json",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\JR2509-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2401-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\LR2509-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2401-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\PM2509-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2401-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\RI2509-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2401-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\WH2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2312-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2401-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2402-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2403-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2404-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2405-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2406-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2407-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2408-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2409-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2410-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2411-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2412-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2501-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2502-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2503-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2504-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2505-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2506-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2507-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2508-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2509-retained-history.body",
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2510-retained-history.body"
   ],
   "engine_snapshot": {
     "archive": "C:/VScodeProject/futures-decision-strategy/results/review-rb-20261116/input-snapshot.tgz",
@@ -5299,5 +5389,22 @@
       "root": "C:\\Temp\\tickflow-reference-20261116-v1",
       "review": "C:\\Temp\\tickflow-old-originals-recovery-20261116-v1\\reference-20261116-review.json"
     }
-  ]
+  ],
+  "retained_references": [
+    {
+      "root": "C:/Temp/tickflow-calendar-continue-20261113",
+      "review": "C:\\Temp\\tickflow-history-capability-20261116-v1\\calendar-references.json"
+    },
+    {
+      "root": "C:/Temp/tickflow-px-sh-expiry-20261113",
+      "review": "C:\\Temp\\tickflow-history-capability-20261116-v1\\expiry-references.json"
+    },
+    {
+      "root": "C:/Temp/tickflow-px-sh-expiry-rest-20261113",
+      "review": "C:\\Temp\\tickflow-history-capability-20261116-v1\\expiry-rest-references.json"
+    }
+  ],
+  "consumer_premarket": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\consumer-independent-readback.json",
+  "history_quality": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\daily-combined-summary.json",
+  "history_extension": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\new-route-catalog.json"
 }

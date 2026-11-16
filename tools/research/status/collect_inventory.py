@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 from inventory_model import Accumulator, product, utc
+from observed_directory import ObservedDirectory
 
 
 class Collector:
@@ -24,6 +25,7 @@ class Collector:
         self.seen_bodies = set()
         self.body_routes = {}
         self.not_located = []
+        self.canonical_bindings = {}
 
     def read(self, path):
         raw = path.read_bytes()
@@ -37,13 +39,16 @@ class Collector:
         if hashlib.sha256(raw).hexdigest() != meta['records_sha256']:
             raise ValueError('inventory_catalog_sha')
         count = 0
+        directory = ObservedDirectory(route, meta['at_utc'], self.canonical_bindings)
         for line in raw.splitlines():
             row = json.loads(line)
             record = row['record']
             self.stats.add(route, record['exchange']+' 官方日行情', record, meta['at_utc'])
+            directory.add(record)
             count += 1
         if count != meta['rows']:
             raise ValueError('inventory_catalog_count')
+        self.extra.extend(directory.finish())
 
     def edb(self, root, route):
         if not root.is_dir() or not any(root.rglob('*.body')):
@@ -208,7 +213,7 @@ class Collector:
             if row['route'] in dates:
                 row['last_acquired_date']=dates[row['route']]
                 row['limitations']+=' 原始取得仅有同目录说明中的日期；精确时间未知。'
-            if row['kind'] in {'directory','margin','fees','limits'} and row['route']!='supplier-directory':
+            if row['kind'] in {'directory','margin','fees','limits'} and row['route']!='supplier-directory' and not row['route'].endswith('-observed-directory'):
                 row['limitations']='日期是实际取得的业务参数/生命周期快照日，不是政策有效区间；公司实收、账户/用途差别及完整版本链未统一认证；不扩大准入。'
             if row['kind']=='turnover':row['limitations']+=' 成交额原值单位尚未统一认证，不直接跨源相加。'
             if row['route']=='cffex-monthly':row['limitations']+=' 明文HTTP不能认证发布者，CSV量额单位尚未核清。'
@@ -227,11 +232,12 @@ def main():
     if args.out.exists():raise ValueError('inventory_output_exists')
     config=json.loads(args.config.read_bytes())
     collector=Collector(Path(config['repo']))
+    from reference_inventory import append_reference, append_retained
+    for entry in config.get('reference_snapshots',[]):append_reference(collector,entry)
+    for entry in config.get('retained_references',[]):append_retained(collector,entry)
     print('只读核官方累计目录',flush=True)
     collector.catalog(Path(config['official_catalog_manifest']))
     for entry in config.get('official_increments',[]):collector.catalog(Path(entry['manifest']),entry['route'])
-    from reference_inventory import append_reference
-    for entry in config.get('reference_snapshots',[]):append_reference(collector,entry)
     print('只读核中金所月包及早期样本',flush=True)
     for root in config.get('cffex_roots',[]):collector.cffex(Path(root))
     collector.cffex_fixture()
@@ -254,11 +260,27 @@ def main():
     collector.not_located.extend(config.get('not_located',[]))
     result=collector.finish(config['registered_at_utc'])
     result['scope_review']=config.get('scope_review',{})
+    if config.get('consumer_premarket'):
+        consumer=json.loads(collector.read(Path(config['consumer_premarket'])))
+        if consumer['financial_admission_added'] is not False:raise ValueError('consumer_scope_promotion')
+        result['consumer_premarket']=consumer
+    if config.get('history_quality'):
+        quality=json.loads(collector.read(Path(config['history_quality'])))
+        result['history_quality']=quality
+        for row in result['datasets']:
+            if row['route'] in {'edb-retained-history','edb-retained-continuation'} and row['product'] in quality['by_product']:
+                row['comparison_pending']=quality['by_product'][row['product']]
+                row['limitations']+=' 本轮数值差异、官方观察缺日另列待核；不补值或覆盖旧差异。'
+    if config.get('history_extension'):
+        extension=json.loads(collector.read(Path(config['history_extension'])))
+        if extension['strict_backtest_admission_expanded'] is not False:raise ValueError('extension_scope_promotion')
+        result['history_extension']=extension
     if config.get('gap_review'):
         review=json.loads(collector.read(Path(config['gap_review'])))
         result['shared_documents']=review['notice_originals']
         # 补证报告是实际读取输入，也纳入本次集合；不把原件恢复失败改成成功。
         result['input_files']=sorted(collector.inputs,key=lambda r:(r['path'],r['sha256']))
+    result['input_files']=sorted(collector.inputs,key=lambda r:(r['path'],r['sha256']))
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(datasets=len(result['datasets']),inputs=len(result['input_files']),evidence=len(result['evidence_files'])),ensure_ascii=False))

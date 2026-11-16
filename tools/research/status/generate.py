@@ -9,6 +9,7 @@ import sys
 from page_model import model
 from extract_names import FrozenInputs, PACKS
 from inventory_model import attach, LABELS
+from usage_readiness import markdown as readiness_markdown
 
 
 def locked_repo(root, item):
@@ -58,6 +59,9 @@ def markdown(data):
         '**读法：**非空/空/未请求是日线主目录的合约状态；其他样本另列，不重复加总。观察期是品种内合约并集起止，不是连续覆盖。无对照不等于一致，制度日历不等于价格或生命周期获证。所有主目录记录仍为研究用途，未扩大回测准入。','',
         f"主目录{s['candidates']:,}候选、{states['nonempty']:,}非空、{states['empty_unavailable']:,}完整空响应、{states['not_requested_on_directory_route']:,}本路线未请求；{s['rows']:,}行。六交易所{s['products']}品种含{s['financial_products']}个中金所金融品种，不能冒充全市场官方挂牌全集。",'']
     lines += ['格内只列已取得资料的来源；没有确认的留空。原表列存在不保证逐行有值或完成统一交付。点击HTML品种名查看覆盖日期和质量详情。','']
+    if data.get('research_union'):
+        union=data['research_union'];states=union['states']
+        lines += [f"原封存目录不改写；与本轮独立补充路线取并集后，同一{union['candidates']}候选中{states['nonempty']}非空、{states['empty_unavailable']}完整空、{states['not_requested_on_directory_route']}本路线未请求，共{union['rows']}行。其他来源重叠不相加；新差异另列待核。",'']
     for exchange, label in data['exchanges'].items():
         lines += ['## '+label['name']+'（'+exchange+'）','',
             '| 品种 | OHLC（日线） | 成交量 | 持仓量 | 结算价 | 成交额 | 历史交易日历 | 分钟/现场 | 目录/生命周期 | 保证金/手续费/涨跌停 |',
@@ -98,7 +102,7 @@ def markdown(data):
         '- DCE/GFEX主目录零行不等于项目无数据：新浪当期列表样本和旧EDB样本单列，尚未认证官方历史全集、制度和全生命周期。',
         '- 字节身份/计数复现可信；价格语义、官方生命周期、历史PIT、许可再分发、账户费用和所有品种逐日完整性仍不足，不给虚构置信百分比。',
         '- 引擎已通过限定范围的独立CSV研究消费验收及反例；未接入任务Feed，未核价格/制度语义或放宽金融协议。', '',
-        '来源锁、维护步骤及验收记录见[维护计划](data-status-maintenance-plan.md)；使用边界见[使用者维护手册](consumer-maintenance.md)。']
+        '按品种的[回测与盘前判断条件](data-usage-readiness.md)另列；来源锁、维护步骤及验收记录见[维护计划](data-status-maintenance-plan.md)；使用边界见[使用者维护手册](consumer-maintenance.md)。']
     return '\n'.join(lines)+'\n'
 
 
@@ -114,6 +118,8 @@ def check_rendered(repo, data):
     for name,text in expected.items():
         if (repo/'docs'/name).read_bytes()!=text.encode('utf-8'):
             raise ValueError('status_render_drift:' + name)
+    if data.get('project_inventory') and (repo/'docs/data-usage-readiness.md').read_text(encoding='utf-8')!=readiness_markdown(data):
+        raise ValueError('status_readiness_render_drift')
 
 
 def check_docs(repo, config):
@@ -129,6 +135,8 @@ def check_docs(repo, config):
     inventory=next((r for r in config['repo_inputs'] if r['id']=='project_inventory'),None)
     if inventory and data.get('project_inventory')!=locked_repo(repo,inventory):
         raise ValueError('status_inventory_binding')
+    extension=data.get('project_inventory',{}).get('history_extension')
+    if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
         raise ValueError('status_product_inventory_binding')
     check_rendered(repo,data)
@@ -164,12 +172,15 @@ def main():
         raise ValueError('status_engine_scope')
     data['engine_acceptance']=engine
     if 'project_inventory' in repo_data:
+        extension=repo_data['project_inventory'].get('history_extension')
+        if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
         data=attach(data,repo_data['project_inventory'])
     data['provenance']=dict(bundle_manifest_sha256=config['bundle_manifest_sha256'],catalog_sha256=config['catalog_sha256'],
                             repo_inputs=config['repo_inputs'],profiles=config['profiles'])
     a.out_root.mkdir(parents=True)
     for name,value in [('data-status.json',json.dumps(data,ensure_ascii=False,indent=2)+'\n'),
-                       ('data-status.md',markdown(data)),('data-status.html',render_html(data,Path(__file__).parent/'assets'))]:
+                       ('data-status.md',markdown(data)),('data-status.html',render_html(data,Path(__file__).parent/'assets')),
+                       ('data-usage-readiness.md',readiness_markdown(data))]:
         (a.out_root/name).write_text(value,encoding='utf-8',newline='\n')
     print(json.dumps(data['summary'],ensure_ascii=False))
 

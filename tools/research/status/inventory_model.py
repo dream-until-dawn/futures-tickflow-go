@@ -132,7 +132,32 @@ def attach(data, inventory):
     if unexpected:
         raise ValueError('inventory_unmapped_products:' + ','.join(sorted(unexpected)))
     data = dict(data, project_inventory=inventory)
+    from usage_readiness import assess
     data['products'] = [dict(p, datasets=[r for r in inventory['datasets'] if r['product'] == p['key']]) for p in data['products']]
+    data['products'] = [dict(p,consumer_premarket=inventory.get('consumer_premarket',{}).get('products',{}).get(p['key'])) for p in data['products']]
+    quality=inventory.get('history_quality',{}).get('by_product',{})
+    data['products']=[dict(p,extension_quality=quality.get(p['key'])) for p in data['products']]
+    data['products'] = [dict(p,usage_readiness=assess(p)) for p in data['products']]
+    extension=inventory.get('history_extension')
+    if extension:
+        if extension['strict_backtest_admission_expanded'] is not False:raise ValueError('extension_scope_promotion')
+        base=extension['base_summary']
+        if any(base[k]!=data['summary'][k] for k in ('candidates','rows','states')):raise ValueError('extension_base_totals')
+        symbols=set();states=dict(data['summary']['states']);new_rows=0;by_product={}
+        for entry in extension['entries']:
+            key=entry['exchange']+'.'+entry['product']
+            if entry['symbol'] in symbols or key not in keys or entry['previous_state']!='not_requested_on_directory_route' or entry['financial_eligible'] is not False:raise ValueError('extension_identity_or_prior_state')
+            symbols.add(entry['symbol']);state=entry['state']
+            if state not in {'nonempty','empty_unavailable','failed','not_run'}:raise ValueError('extension_state')
+            if state=='empty_unavailable' and (entry['rows']!=0 or entry['counts_as_success'] is not False or entry['counts_as_coverage'] is not False):raise ValueError('extension_empty_promotion')
+            if state!='not_run':
+                states['not_requested_on_directory_route']-=1
+                states[state]=states.get(state,0)+1
+            new_rows+=entry['rows'];group=by_product.setdefault(key,{})
+            group[state]=group.get(state,0)+1
+        if new_rows!=extension['rows'] or states['not_requested_on_directory_route']<0:raise ValueError('extension_row_totals')
+        data['research_union']=dict(candidates=base['candidates'],rows=base['rows']+new_rows,states=states,base_preserved=True)
+        data['products']=[dict(p,extension_availability=by_product.get(p['key'])) for p in data['products']]
     return data
 
 

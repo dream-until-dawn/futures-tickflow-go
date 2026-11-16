@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import sys
 import xml.etree.ElementTree as ET
+from inventory_model import utc
 
 
 def compare(raw, review):
@@ -62,11 +63,36 @@ def append_reference(collector, entry):
         raise ValueError('reference_failure_not_promotable')
     compare(raw, review)
     for row in review['entries']:
+        collector.canonical_bindings.setdefault(('CZCE',row['native']),set()).add(row['canonical'])
         fields = {key: value or None for key, value in
                   [('listing_day', row['listed_declared']), ('expiry_day', row['last_trading_declared'])]}
         collector.stats.add('czce-reference-snapshots', '郑商所（日期绑定参考原件）',
             dict(exchange='CZCE', native=row['native'], day=review['observed_day'], fields=fields,
                  evidence=dict(sha256=review['body_sha256'], retrieved_at=review['requested_at'])))
+
+
+def append_retained(collector, entry):
+    root=Path(entry['root']);meta_raw=collector.read(root/'requests.json')
+    receipts={r['id']:r for r in json.loads(meta_raw)}
+    reviews=json.loads(collector.read(Path(entry['review'])))
+    for review in reviews:
+        receipt=receipts[review['id']]
+        if (hashlib.sha256(meta_raw).hexdigest()!=review['receipt_set_sha256'] or
+                receipt['status']!=200 or receipt['transport_state']!='complete' or receipt['final_url']!=receipt['url'] or
+                utc(receipt['requested_utc'])!=utc(review['requested_at'])):
+            raise ValueError('retained_reference_receipt')
+        raw=collector.read(root/(review['id']+'.body'))
+        match=re.fullmatch(r'https://www\.czce\.com\.cn/cn/DFSStaticFiles/Future/(\d{4})/(\d{8})/FutureDataReferenceData\.xml',receipt['url'])
+        if (not match or match[1]!=match[2][:4] or int(match[2])!=review['observed_day'] or
+                receipt['sha256']!=review['body_sha256'] or len(raw)!=receipt['bytes']):
+            raise ValueError('retained_reference_identity')
+        compare(raw,review)
+        for row in review['entries']:
+            collector.canonical_bindings.setdefault(('CZCE',row['native']),set()).add(row['canonical'])
+            collector.stats.add('czce-reference-retained','郑商所（留存历史参考原件）',
+                dict(exchange='CZCE',native=row['native'],day=review['observed_day'],
+                     fields=dict(listing_day=row['listed_declared'] or None,expiry_day=row['last_trading_declared'] or None),
+                     evidence=dict(sha256=review['body_sha256'],retrieved_at=review['requested_at'])))
 
 
 if __name__ == '__main__':

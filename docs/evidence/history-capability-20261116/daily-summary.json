@@ -1,0 +1,68 @@
+{
+  "requests": 83,
+  "bytes": 1084766,
+  "states": {
+    "received": 82,
+    "failed": 1,
+    "not_run": 336
+  },
+  "successful_rows": 19047,
+  "overlapping_days": 19047,
+  "matched_fields": 99664,
+  "new_distinct_fields": 14618,
+  "official_unpriced_fields": 0,
+  "missing_reference_days": 790,
+  "failed_symbol": "CZCE.JR2401",
+  "old_144_and_37_resolved": false,
+  "financial_admission_added": 0,
+  "all_later_not_run": true,
+  "by_product": {
+    "CZCE.AP": {
+      "contracts": 13,
+      "rows": 3141,
+      "overlapping_days": 3141,
+      "distinct_fields": 421,
+      "missing_official_days": 4
+    },
+    "CZCE.CF": {
+      "contracts": 11,
+      "rows": 2660,
+      "overlapping_days": 2660,
+      "distinct_fields": 697,
+      "missing_official_days": 0
+    },
+    "CZCE.CJ": {
+      "contracts": 12,
+      "rows": 2902,
+      "overlapping_days": 2902,
+      "distinct_fields": 442,
+      "missing_official_days": 0
+    },
+    "CZCE.CY": {
+      "contracts": 23,
+      "rows": 4779,
+      "overlapping_days": 4779,
+      "distinct_fields": 12398,
+      "missing_official_days": 786
+    },
+    "CZCE.FG": {
+      "contracts": 23,
+      "rows": 5565,
+      "overlapping_days": 5565,
+      "distinct_fields": 660,
+      "missing_official_days": 0
+    }
+  },
+  "differences_by_field": {
+    "open": 3186,
+    "high": 3186,
+    "low": 3186,
+    "close": 3186,
+    "open_interest": 1008,
+    "volume": 866
+  },
+  "zero_volume_official_difference_fields": 12727,
+  "missing_official_dates_with_basic_valid_ohlc": 0,
+  "source_key_binding": "先由锁定供应商目录及显式年月参考绑定源三位码与规范码；不按最近十年猜测",
+  "comparison_scope": "现有官方累计目录逐合约日相交；价格来源/版本/PIT和数量口径未因此认证"
+}

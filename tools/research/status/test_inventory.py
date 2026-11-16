@@ -80,6 +80,22 @@ class InventoryTest(unittest.TestCase):
         bad=copy.deepcopy(inventory);bad['strict_backtest_admission_expanded']=True
         with self.assertRaisesRegex(ValueError,'^inventory_admission_promotion$'):attach(data,bad)
 
+    def test_extension_union_keeps_base_and_rejects_empty_promotion(self):
+        base=dict(candidates=5,rows=10,states=dict(nonempty=1,empty_unavailable=1,not_requested_on_directory_route=3))
+        data=dict(summary=base,products=[dict(key='CZCE.AP')])
+        entries=[dict(symbol='CZCE.AP2401',exchange='CZCE',product='AP',previous_state='not_requested_on_directory_route',financial_eligible=False,state='nonempty',rows=2),
+                 dict(symbol='CZCE.AP2403',exchange='CZCE',product='AP',previous_state='not_requested_on_directory_route',financial_eligible=False,state='empty_unavailable',rows=0,counts_as_success=False,counts_as_coverage=False)]
+        extension=dict(base_summary=base,entries=entries,rows=2,strict_backtest_admission_expanded=False)
+        inventory=dict(strict_backtest_admission_expanded=False,datasets=[],history_extension=extension)
+        result=attach(data,inventory)
+        self.assertEqual(result['summary'],base)
+        self.assertEqual(result['research_union']['states'],dict(nonempty=2,empty_unavailable=2,not_requested_on_directory_route=1))
+        self.assertEqual(result['research_union']['rows'],12)
+        bad=copy.deepcopy(inventory);bad['history_extension']['entries'][1]['counts_as_success']=True
+        with self.assertRaisesRegex(ValueError,'extension_empty_promotion'):attach(data,bad)
+        bad=copy.deepcopy(inventory);bad['history_extension']['entries'][0]['previous_state']='nonempty'
+        with self.assertRaisesRegex(ValueError,'extension_identity_or_prior_state'):attach(data,bad)
+
     def test_snapshot_checks_external_identity_and_each_member(self):
         body=b'{"MainDays":[]}'
         manifest=json.dumps(dict(files={'inputs/main.json':dict(bytes=len(body),sha256=hashlib.sha256(body).hexdigest())})).encode()

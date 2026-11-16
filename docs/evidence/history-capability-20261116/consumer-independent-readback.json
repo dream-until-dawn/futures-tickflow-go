@@ -1,0 +1,106 @@
+{
+  "schema": "consumer-premarket-independent-readback-v1",
+  "archive_sha256": "4941bab00fc2933b56e248a38c53108f58266c21244f65e10ee740b1904d2973",
+  "manifest_sha256": "6b7effdadea8a6ce8c0d7ea219cd43d049d0f24260c438e8c42af9a3999c6ba1",
+  "original_members_verified": 26,
+  "observed_at_utc": "2026-11-16T12:28:46.951082+00:00",
+  "rb_packets": [
+    {
+      "market_day": 20261105,
+      "execution_day": 20261106,
+      "consumed_by_utc": "2026-11-05T08:40:50.65119486Z",
+      "persisted_at": "2026-11-05T08:40:50.654038245Z",
+      "first_open": "2026-11-05T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "f48d967d45d178c43fafda9eb078523e63f937e3936d7ac3e4f48b8e2073762f"
+    },
+    {
+      "market_day": 20261109,
+      "execution_day": 20261110,
+      "consumed_by_utc": "2026-11-09T08:47:23.740035026Z",
+      "persisted_at": "2026-11-09T08:47:23.741515463Z",
+      "first_open": "2026-11-09T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "1781f8582230b7b97dc6dffc66f5e9c51b41208a04f7d344f1eb661c4e431a6d"
+    },
+    {
+      "market_day": 20261110,
+      "execution_day": 20261111,
+      "consumed_by_utc": "2026-11-10T08:46:58.859753208Z",
+      "persisted_at": "2026-11-10T08:46:58.860951114Z",
+      "first_open": "2026-11-10T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "f7fb9760eea0751953e5e954c8a9c9b6a623fc184b840e2d2fe83d7d9cd6c897"
+    },
+    {
+      "market_day": 20261111,
+      "execution_day": 20261112,
+      "consumed_by_utc": "2026-11-11T08:47:19.139349909Z",
+      "persisted_at": "2026-11-11T08:47:19.140861749Z",
+      "first_open": "2026-11-11T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "10ee162e49d26304fe4bcc439a96741c2edae0bf8c86d9a5b2ed56aa15dc5342"
+    },
+    {
+      "market_day": 20261112,
+      "execution_day": 20261113,
+      "consumed_by_utc": "2026-11-12T10:46:47.247286303Z",
+      "persisted_at": "2026-11-12T10:46:47.248484297Z",
+      "first_open": "2026-11-12T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "7e1d5f0b2cd9a65f1e9f08327ede05c0c5281ddb6695fe0435bd6647548f21d1"
+    },
+    {
+      "market_day": 20261113,
+      "execution_day": 20261116,
+      "consumed_by_utc": "2026-11-13T08:48:57.187023547Z",
+      "persisted_at": "2026-11-13T08:48:57.207203784Z",
+      "first_open": "2026-11-13T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "b682cbd6086c0530f21ac92a8aa22df6bd3055c9b533a839dbd7acf3e7543c24"
+    },
+    {
+      "market_day": 20261116,
+      "execution_day": 20261117,
+      "consumed_by_utc": "2026-11-16T08:49:14.449354585Z",
+      "persisted_at": "2026-11-16T08:49:14.489173716Z",
+      "first_open": "2026-11-16T21:00:00+08:00",
+      "contract": "SHFE.rb2701",
+      "packet_sha256": "9b600ec445836018920628994b3fb397386207e82418e307442a22b0f5f88ba5"
+    }
+  ],
+  "rm_previews": [
+    {
+      "market_day": 20261116,
+      "execution_day": 20261117,
+      "first_open": "2026-11-16T21:00:00+08:00",
+      "contract": "CZCE.RM2701",
+      "preview_sha256": "2b065b60eabbaf86e39a7a55286a6bff31bb244fcc3f60061d24cc9a4a36b8e2"
+    },
+    {
+      "market_day": 20261116,
+      "execution_day": 20261117,
+      "first_open": "2026-11-16T21:00:00+08:00",
+      "contract": "CZCE.RM2701",
+      "preview_sha256": "2ceb7bd785053ade81af5a7e9e79e6614a7078a562e2b088bcddfa5ee8c8072e"
+    }
+  ],
+  "products": {
+    "SHFE.rb": {
+      "contract": "SHFE.rb2701",
+      "successful_market_dates": 7,
+      "latest_next_day_chain": 6,
+      "layer": "sealed_consumption",
+      "independently_verified": true
+    },
+    "CZCE.RM": {
+      "contract": "CZCE.RM2701",
+      "successful_market_dates": 1,
+      "latest_next_day_chain": null,
+      "layer": "unapproved_model_preview",
+      "independently_verified": true
+    }
+  },
+  "limits": "选择性原件的身份/日期/合约/时限及RM目标OHLC结构复核；不是完整可运行输入。RB旧7包未含全部原日表，不复算其全部行情；HTTP首次取得未知。RB含失败后正常重试，不代表首次调度连胜。RM零CreatedAt不作时钟，两预览仅算一个品种/日；独立观察UTC仅本机墙钟，非独立NTP授时。无账户/订单/金融准入认定。",
+  "financial_admission_added": false
+}

@@ -1,0 +1,794 @@
+{
+  "requests": 419,
+  "bytes": 4505781,
+  "states": {
+    "received": 342,
+    "unavailable_complete_empty": 77
+  },
+  "successful_rows": 80315,
+  "overlapping_days": 80315,
+  "matched_fields": 444641,
+  "new_distinct_fields": 37249,
+  "official_unpriced_fields": 0,
+  "missing_reference_days": 1591,
+  "failures": [
+    {
+      "id": "JR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "be0ae633fc83143b734aca469e6d826157f2e9068177ea7c9be2226b32a7e80a",
+      "requested_at": "2026-11-16T12:16:39.7884609Z"
+    },
+    {
+      "id": "JR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "80ea2dcf06a0d99e10719b503c76865997ad2a9a132be430cea5ec0d4b00b646",
+      "requested_at": "2026-11-16T12:38:03.585395Z"
+    },
+    {
+      "id": "JR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "cb67d8eb2016c278aa700ee7b4302a4b33b83cefebd00b87b8d7d78acd00b981",
+      "requested_at": "2026-11-16T12:38:05.928119Z"
+    },
+    {
+      "id": "JR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "d25aa5f22ad3e5a075e7048125c72488fbd43d2f6a7f6a14a9e858981047e632",
+      "requested_at": "2026-11-16T12:38:08.2319427Z"
+    },
+    {
+      "id": "JR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c40ee779141e8b2587f58eb3287075af62696d442da3aba356386f3216f83a86",
+      "requested_at": "2026-11-16T12:38:10.5339826Z"
+    },
+    {
+      "id": "JR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "504725d2aaa8ff8d56213f046ffd8501313c6435eb18bf19f91cdbb7da768ecd",
+      "requested_at": "2026-11-16T12:38:12.8539656Z"
+    },
+    {
+      "id": "JR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "720e4a68460433c370a426ba9702b385dadff63be6eed4534812c55b32acdf87",
+      "requested_at": "2026-11-16T12:38:15.1576878Z"
+    },
+    {
+      "id": "JR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c7b1e23a0ef97a93b679012df4ac0a84b763a8cf3daa078dce2c1e9523f17211",
+      "requested_at": "2026-11-16T12:38:17.4849002Z"
+    },
+    {
+      "id": "JR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "79086a0b2abb06e9661422251d36d8fab4e07499dd6c7039857734339404fd60",
+      "requested_at": "2026-11-16T12:38:19.7980404Z"
+    },
+    {
+      "id": "JR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "d240fd4d5eb11a8b90f310d376864326d98933106f6b9fa850e2d42e98a908af",
+      "requested_at": "2026-11-16T12:38:22.1081508Z"
+    },
+    {
+      "id": "JR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR509",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "533b32980b824246be898491b308ef4d6086c6ac4f8f3c378bae3e7d8ac270b7",
+      "requested_at": "2026-11-16T12:38:24.4397116Z"
+    },
+    {
+      "id": "LR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "fbc965aecce7c73abea842f6b10623aaa368e432f8d32c1543f2164b396b3496",
+      "requested_at": "2026-11-16T12:38:26.746478Z"
+    },
+    {
+      "id": "LR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "8aaa33921fcdd6400eadb33ada6a6dd107d2296ffea8943a668571ec524f70f1",
+      "requested_at": "2026-11-16T12:38:29.054905Z"
+    },
+    {
+      "id": "LR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "84cbad8cf1651191e85350141fe677a2a70e2304dbd0dc6727974908362b3f18",
+      "requested_at": "2026-11-16T12:38:31.3522882Z"
+    },
+    {
+      "id": "LR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "cee0e2b7642e2605c5e626f9d332c2dfa289583e8093e14e81c509a5fe2a5298",
+      "requested_at": "2026-11-16T12:38:33.6788409Z"
+    },
+    {
+      "id": "LR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "aaa1994a89e5b241a7c3a2bb66f24f59aa5486ba77d2a453e7f78af833da7344",
+      "requested_at": "2026-11-16T12:38:35.9788672Z"
+    },
+    {
+      "id": "LR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "613e022301307467538959b78c8e4ed2b10af715374491a5b175899cf78208eb",
+      "requested_at": "2026-11-16T12:38:38.2789031Z"
+    },
+    {
+      "id": "LR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "b87b0a25fe9f00892b4d02c1bb24a6d57ba7a02fc09c645d321339a7e43062ab",
+      "requested_at": "2026-11-16T12:38:40.5971367Z"
+    },
+    {
+      "id": "LR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "09ba2a16060eb66be910d7851ee5a640997aa70666efc8cae1789e4b733e3697",
+      "requested_at": "2026-11-16T12:38:42.903287Z"
+    },
+    {
+      "id": "LR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "4b8b3a44890f53cd7dfadf9431db907cd02801ce173544d7c8e2939fe5b50fd3",
+      "requested_at": "2026-11-16T12:38:45.2166327Z"
+    },
+    {
+      "id": "LR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "0fb04ec90c1bde811d5d13da2025bd659b772b4c10728b2cc3c97ba255fbfda6",
+      "requested_at": "2026-11-16T12:38:47.5450774Z"
+    },
+    {
+      "id": "LR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR509",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "a0300a0e3f3f90d191e435255b8d6fe7a41b5a290949455c08945beeb51863c1",
+      "requested_at": "2026-11-16T12:38:49.8858028Z"
+    },
+    {
+      "id": "PM2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "bc7b078e5ec228cad21ae4b3a02a9246de81c84f529a9ad7ff8ed20e2dae7434",
+      "requested_at": "2026-11-16T12:41:32.7575271Z"
+    },
+    {
+      "id": "PM2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "81a67ebf30e44f8356915d1b7bb35d78a8fd93a8c563c016309d99b7a924e49b",
+      "requested_at": "2026-11-16T12:41:35.0922302Z"
+    },
+    {
+      "id": "PM2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "61fb851e8f6514f2ed8ee1ac0dd89adbf718a76a995a83c5eeb4a8012eb90ee6",
+      "requested_at": "2026-11-16T12:41:37.3994075Z"
+    },
+    {
+      "id": "PM2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "7580853e5ede844a7120f7e08dad511bd039bdd71131cdaaeaf4b008765cb88b",
+      "requested_at": "2026-11-16T12:41:39.7058026Z"
+    },
+    {
+      "id": "PM2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "14f1ace210d1e7ae1893b39852ad017e2c94fa5809e37acd2e2e4ea39716c6c5",
+      "requested_at": "2026-11-16T12:41:42.0141785Z"
+    },
+    {
+      "id": "PM2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "6608274e562c0de8e977e42cf364f0462b4c7e9d4af06bed4aa0f8983187e6b0",
+      "requested_at": "2026-11-16T12:41:44.3247972Z"
+    },
+    {
+      "id": "PM2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "a26c86e40d562363758a7be7487f74c87e3e7941df3f0e6aa82683a898573b0a",
+      "requested_at": "2026-11-16T12:41:46.6435335Z"
+    },
+    {
+      "id": "PM2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "27e202d666966e257204d2e056d090971f8931443032586a0b4d1278d63c59b8",
+      "requested_at": "2026-11-16T12:41:48.9529179Z"
+    },
+    {
+      "id": "PM2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "929e6de0e5a70f7dbc6b092310bd28a3550c596ead9f60a4aead1250bbde2d38",
+      "requested_at": "2026-11-16T12:41:51.2582272Z"
+    },
+    {
+      "id": "PM2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "31e5218e5cee815bb3db1d19d5c3579c600ce3907e8fa7ce9f25f5e02357bf46",
+      "requested_at": "2026-11-16T12:41:53.6089342Z"
+    },
+    {
+      "id": "PM2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM509",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "b13540041e0278c750663f797ce3c36b906c74dcd6f1f1e0c7d9bcdf106393eb",
+      "requested_at": "2026-11-16T12:41:55.9158629Z"
+    },
+    {
+      "id": "RI2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "d08564d7a2330b8b018ea6514d24969e4df53ecb8f141a0069f0e9c4eb2e0390",
+      "requested_at": "2026-11-16T12:43:22.2360711Z"
+    },
+    {
+      "id": "RI2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "6f4dfefdfd35bd298ba0d080a19bab4e26faf86d99e0fa35bd5db568cb6a68e8",
+      "requested_at": "2026-11-16T12:43:29.2104284Z"
+    },
+    {
+      "id": "RI2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "23bf905cf0094308efb99c812e2c540de793d23a5bcdeafbd545e84be6dc30c6",
+      "requested_at": "2026-11-16T12:43:36.7411582Z"
+    },
+    {
+      "id": "RI2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "22afecce03dcd6bdedc3ed340011e3f06f6ccb6b5b060909bba1a5e9502c41a4",
+      "requested_at": "2026-11-16T12:43:39.6908641Z"
+    },
+    {
+      "id": "RI2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "797a93e07f595521635263b40f963679063edc9b0d1909d870e5584319e77722",
+      "requested_at": "2026-11-16T12:43:45.5342369Z"
+    },
+    {
+      "id": "RI2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "f74f23c3d446e69821c3346490386e14b9a67cd5a0ebc6e97cd8deef7f34568b",
+      "requested_at": "2026-11-16T12:43:51.9155764Z"
+    },
+    {
+      "id": "RI2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "76af10a0232c273f5249c777ab28916535c0d058369424356096a80fa4920eb9",
+      "requested_at": "2026-11-16T12:43:56.0938563Z"
+    },
+    {
+      "id": "RI2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "86e967be694851063aa98019310e96ea53856803c3352768252eac600f243eab",
+      "requested_at": "2026-11-16T12:43:58.5413858Z"
+    },
+    {
+      "id": "RI2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c204c59fb9ebf13ea265327421d6d76c89b3de5e4cd190b6bfba116eabe9ad20",
+      "requested_at": "2026-11-16T12:44:00.8518209Z"
+    },
+    {
+      "id": "RI2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "832148ab1ea387fb462321f221f56931854ed44c25857c1d7aa7ea15bfba1ada",
+      "requested_at": "2026-11-16T12:44:03.1519479Z"
+    },
+    {
+      "id": "RI2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI509",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "d0916c4b0c0aaba92268c4ed70584e5a28e8d08d826793073a976af4a3ef5492",
+      "requested_at": "2026-11-16T12:44:05.4560047Z"
+    },
+    {
+      "id": "WH2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "be489b6b710fc327ffaca1c15c66ae5eb1b33fe98704b4454b25442028dccaa2",
+      "requested_at": "2026-11-16T12:50:30.8204619Z"
+    },
+    {
+      "id": "WH2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "7abf12048f90f4591e53978f96ec78bc367b5d68d0fcbbf2e1bae81364803c14",
+      "requested_at": "2026-11-16T12:50:33.1237904Z"
+    },
+    {
+      "id": "WH2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "5012aa94c906ff574e887d7daa30cc4eec36327569af23ac110f106ea2cd7047",
+      "requested_at": "2026-11-16T12:50:35.4422343Z"
+    },
+    {
+      "id": "WH2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "a74a202d28fd4f918f47a10335b78e34ddf8d78289f0f8ab1817003eb1d485f5",
+      "requested_at": "2026-11-16T12:50:37.9070516Z"
+    },
+    {
+      "id": "WH2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "943ae1d2fa67755ef92f4a291ba0b7870fd9d66b4255c52fbd53b9da08c6c561",
+      "requested_at": "2026-11-16T12:50:40.2317247Z"
+    },
+    {
+      "id": "WH2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "c7c788f69a513327224fa23cacafa4c3410c680c2f0148c6f57f029b09871fcd",
+      "requested_at": "2026-11-16T12:50:42.5530284Z"
+    },
+    {
+      "id": "WH2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "6673496ca5c09d611254139b585d79ebe0bfd8b751f737772d15bf281fb9e67c",
+      "requested_at": "2026-11-16T12:50:44.853028Z"
+    },
+    {
+      "id": "WH2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "b38e31185b3fb6f45b19565b1b6bc86218f27b10220cfcd8212f283573386097",
+      "requested_at": "2026-11-16T12:50:47.1580063Z"
+    },
+    {
+      "id": "WH2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "0a1c275372e73cf99a598d374b59e2865a6954d84967bbd5a6d4aa60e9a41d86",
+      "requested_at": "2026-11-16T12:50:49.4713156Z"
+    },
+    {
+      "id": "WH2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "8539fc5645ab73653e6a374adee97fbce4309b081860faee76f0f5e9485c2e0f",
+      "requested_at": "2026-11-16T12:50:51.7731361Z"
+    },
+    {
+      "id": "ZC2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC312",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "6a8db81560beaeaea8c0ca941458dc64a4104735510a4f21e567b68325acd63c",
+      "requested_at": "2026-11-16T12:50:56.3805082Z"
+    },
+    {
+      "id": "ZC2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC401",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "728b18d777898dd4650ecddc3dc08153bb2efeb31700ed44fc0b65a10aec5c1d",
+      "requested_at": "2026-11-16T12:50:58.7484434Z"
+    },
+    {
+      "id": "ZC2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC402",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "43e7fe42b2527a5d69e8984da395e3d31f9ba4387775facdb55e1cc6b52c09c7",
+      "requested_at": "2026-11-16T12:51:01.074976Z"
+    },
+    {
+      "id": "ZC2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC403",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "6105adac0873854f600b4126e1ab387ae8daf88a4c056eeccea2f25b7c045ffb",
+      "requested_at": "2026-11-16T12:51:03.4194113Z"
+    },
+    {
+      "id": "ZC2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC404",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "2fc06ef6a54425df198f5e702e99f597038e4a6f86c0015a270dc6bf5f702700",
+      "requested_at": "2026-11-16T12:51:05.723634Z"
+    },
+    {
+      "id": "ZC2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC405",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "a801cf316f406da0620e03fd935acb177915cedda9d0d053c008b10e88991621",
+      "requested_at": "2026-11-16T12:51:08.0287547Z"
+    },
+    {
+      "id": "ZC2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC406",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "5b78c8d0111bdd18bdd745ee9c8a3cbf23031a1b0ec7bae95c48a478054eb8cb",
+      "requested_at": "2026-11-16T12:51:10.3370671Z"
+    },
+    {
+      "id": "ZC2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC407",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "90e5bec6b0d83bea6b6ebd1c93580eebb55f9dcbb3a1f115f9c4e4149936fd8f",
+      "requested_at": "2026-11-16T12:51:12.6351448Z"
+    },
+    {
+      "id": "ZC2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC408",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "399f11bf3ab48239b11fa87a803598118e734e615eab82c7e169c306fce47fb1",
+      "requested_at": "2026-11-16T12:51:14.9305354Z"
+    },
+    {
+      "id": "ZC2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC409",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "79732b3b4730efe8428fd8e08e63c2b4c89a657959534e8c2912924f96cc0af5",
+      "requested_at": "2026-11-16T12:51:17.2362238Z"
+    },
+    {
+      "id": "ZC2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC410",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "ee827ab911bde73047497baa8f7a6f48c6d1a14b7916135a18146ec502cdb8f2",
+      "requested_at": "2026-11-16T12:51:19.6181272Z"
+    },
+    {
+      "id": "ZC2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC411",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "f28b646f7f9ba1d9a036c6e8a6bc49b071eb22b524b9f8824f95455aba93942f",
+      "requested_at": "2026-11-16T12:51:21.9276697Z"
+    },
+    {
+      "id": "ZC2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC412",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "fa26f6cb017f8a2e60777fd3b108015d3cb1650e35b063cba2af738864b73d0c",
+      "requested_at": "2026-11-16T12:51:24.2510627Z"
+    },
+    {
+      "id": "ZC2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC501",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "f5a9f08ee9c8655ead22d7f7ca396ade4f02922c700c54a0e73c2191e8b16268",
+      "requested_at": "2026-11-16T12:51:26.5591134Z"
+    },
+    {
+      "id": "ZC2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC502",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "bbbfaf94a95fcc94501f3d1c1577032f671f1e041443d1d6d079ce2d1a424ecf",
+      "requested_at": "2026-11-16T12:51:28.8566712Z"
+    },
+    {
+      "id": "ZC2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC503",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "fb080b2f10ad7d6f7ec1b0e252a579b64a0386bea8b8899cb442cc94ef339d81",
+      "requested_at": "2026-11-16T12:51:31.1727412Z"
+    },
+    {
+      "id": "ZC2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC504",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "1e564e9e7dedb13e27a9fb3af4a21b38ff791b014501330678dd2c6007337d67",
+      "requested_at": "2026-11-16T12:51:33.4739697Z"
+    },
+    {
+      "id": "ZC2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC505",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "dd08fae44147ef4c9a825afabbba5e1e89b742ecddd82c747f99292be10b2498",
+      "requested_at": "2026-11-16T12:51:35.7711335Z"
+    },
+    {
+      "id": "ZC2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC506",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "b5a9f6a3635f7d12f71d5d09bbd9a132f8f5f3c971358e8d6c644516997a8b6d",
+      "requested_at": "2026-11-16T12:51:38.0810468Z"
+    },
+    {
+      "id": "ZC2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC507",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "167aec62b6afd9f31d13ea0bce4c468c2386c83334332f834aa7d55f31fc392c",
+      "requested_at": "2026-11-16T12:51:40.446608Z"
+    },
+    {
+      "id": "ZC2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC508",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "ab174e4249fa42ecd0c83e05ca52e017d43f1626ebacca82761460148905c1d4",
+      "requested_at": "2026-11-16T12:51:42.7914853Z"
+    },
+    {
+      "id": "ZC2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC509",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "2afa061155cc77082406d6afb41dbf131cacbc851aa5b03f9ff4a5c80a3c7464",
+      "requested_at": "2026-11-16T12:51:45.1095277Z"
+    },
+    {
+      "id": "ZC2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC510",
+      "complete_empty": true,
+      "body_sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd",
+      "receipt_sha256": "be1b0d6f945b7b34cca67978d006e3b9be05e079b5c815ff3903393f9b740d9a",
+      "requested_at": "2026-11-16T12:51:47.4785543Z"
+    }
+  ],
+  "old_144_and_37_resolved": false,
+  "financial_admission_added": 0,
+  "comparison_scope": "已锁目录与显式年月参考绑定源键；官方累计目录相交对账，不认证版本/PIT/完整生命周期",
+  "by_product": {
+    "CZCE.AP": {
+      "contracts": 13,
+      "rows": 3141,
+      "overlapping_days": 3141,
+      "distinct_fields": 421,
+      "missing_official_days": 4
+    },
+    "CZCE.CF": {
+      "contracts": 11,
+      "rows": 2660,
+      "overlapping_days": 2660,
+      "distinct_fields": 697,
+      "missing_official_days": 0
+    },
+    "CZCE.CJ": {
+      "contracts": 12,
+      "rows": 2902,
+      "overlapping_days": 2902,
+      "distinct_fields": 442,
+      "missing_official_days": 0
+    },
+    "CZCE.CY": {
+      "contracts": 23,
+      "rows": 4779,
+      "overlapping_days": 4779,
+      "distinct_fields": 12398,
+      "missing_official_days": 786
+    },
+    "CZCE.FG": {
+      "contracts": 23,
+      "rows": 5565,
+      "overlapping_days": 5565,
+      "distinct_fields": 660,
+      "missing_official_days": 0
+    },
+    "CZCE.MA": {
+      "contracts": 23,
+      "rows": 5561,
+      "overlapping_days": 5561,
+      "distinct_fields": 868,
+      "missing_official_days": 4
+    },
+    "CZCE.OI": {
+      "contracts": 11,
+      "rows": 2660,
+      "overlapping_days": 2660,
+      "distinct_fields": 467,
+      "missing_official_days": 0
+    },
+    "CZCE.PF": {
+      "contracts": 23,
+      "rows": 5436,
+      "overlapping_days": 5436,
+      "distinct_fields": 3538,
+      "missing_official_days": 129
+    },
+    "CZCE.PK": {
+      "contracts": 12,
+      "rows": 2890,
+      "overlapping_days": 2890,
+      "distinct_fields": 432,
+      "missing_official_days": 3
+    },
+    "CZCE.PR": {
+      "contracts": 8,
+      "rows": 1549,
+      "overlapping_days": 1549,
+      "distinct_fields": 988,
+      "missing_official_days": 7
+    },
+    "CZCE.PX": {
+      "contracts": 18,
+      "rows": 3990,
+      "overlapping_days": 3990,
+      "distinct_fields": 5373,
+      "missing_official_days": 143
+    },
+    "CZCE.RM": {
+      "contracts": 13,
+      "rows": 3145,
+      "overlapping_days": 3145,
+      "distinct_fields": 570,
+      "missing_official_days": 0
+    },
+    "CZCE.RS": {
+      "contracts": 7,
+      "rows": 1506,
+      "overlapping_days": 1506,
+      "distinct_fields": 2924,
+      "missing_official_days": 187
+    },
+    "CZCE.SA": {
+      "contracts": 23,
+      "rows": 5565,
+      "overlapping_days": 5565,
+      "distinct_fields": 988,
+      "missing_official_days": 0
+    },
+    "CZCE.SF": {
+      "contracts": 23,
+      "rows": 5542,
+      "overlapping_days": 5542,
+      "distinct_fields": 953,
+      "missing_official_days": 23
+    },
+    "CZCE.SH": {
+      "contracts": 18,
+      "rows": 4086,
+      "overlapping_days": 4086,
+      "distinct_fields": 2266,
+      "missing_official_days": 47
+    },
+    "CZCE.SM": {
+      "contracts": 23,
+      "rows": 5537,
+      "overlapping_days": 5537,
+      "distinct_fields": 1269,
+      "missing_official_days": 28
+    },
+    "CZCE.SR": {
+      "contracts": 11,
+      "rows": 2660,
+      "overlapping_days": 2660,
+      "distinct_fields": 479,
+      "missing_official_days": 0
+    },
+    "CZCE.TA": {
+      "contracts": 23,
+      "rows": 5557,
+      "overlapping_days": 5557,
+      "distinct_fields": 1029,
+      "missing_official_days": 8
+    },
+    "CZCE.UR": {
+      "contracts": 23,
+      "rows": 5563,
+      "overlapping_days": 5563,
+      "distinct_fields": 407,
+      "missing_official_days": 2
+    },
+    "CZCE.WH": {
+      "contracts": 1,
+      "rows": 21,
+      "overlapping_days": 21,
+      "distinct_fields": 80,
+      "missing_official_days": 220
+    }
+  },
+  "differences_by_field": {
+    "open": 7331,
+    "high": 7331,
+    "low": 7331,
+    "close": 7331,
+    "open_interest": 4110,
+    "volume": 3815
+  },
+  "zero_volume_official_difference_fields": 29359,
+  "missing_official_dates_with_basic_valid_ohlc": 0
+}

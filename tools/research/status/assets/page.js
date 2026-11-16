@@ -32,7 +32,7 @@ function render() {
   const query=$('search').value.trim().toLowerCase(), exchange=$('exchange').value, state=$('state').value;
   const list=status.products.filter(p=> (!exchange||p.exchange===exchange) &&
     (!query||[p.key,p.code,p.name,p.vendor_name].join(' ').toLowerCase().includes(query)) &&
-    (!state || (state==='difference' ? p.distinct_fields>0 : state==='calendar_gap' ? p.calendar_gap : (p.datasets?pageState(p):p.state)===state)));
+    (!state || (state==='difference' ? (p.distinct_fields>0||(p.extension_quality?.distinct_fields||0)>0) : state==='calendar_gap' ? p.calendar_gap : (p.datasets?pageState(p):p.state)===state)));
   const sort=$('sort').value;
   if(sort!=='default') {const field={rows:'rows',differences:'distinct_fields',unrequested:'not_requested_on_directory_route'}[sort];list.sort((a,b)=>b[field]-a[field]||a.key.localeCompare(b.key));}
   $('products').replaceChildren();
@@ -54,7 +54,7 @@ function render() {
 }
 function detailSection(title, texts) {const section=append($('detail-body'),'section',undefined,'detail-section');append(section,'h3',title);for(const text of texts)append(section,'p',text);return section;}
 const kindLabels={ohlc:'日线 OHLC',volume:'成交量',open_interest:'持仓量',settlement:'结算价',pre_settlement:'前结算价',turnover:'成交额',calendar:'历史交易日历',minute:'分钟样本',live_frames:'现场原始帧',directory:'合约目录 / 生命周期快照',margin:'交易所保证金表',fees:'交易所手续费表',limits:'涨跌停参数表'};
-const completenessLabels={observed_only:'部分观察，尚未证明历史完整',verified_calendar_range:'所列自然日连续，已核公布日程',candidate_directory:'候选目录，非官方挂牌全集',recorded_original_not_located:'旧验收记录；本轮原件暂未定位'};
+const completenessLabels={observed_contracts_only:'日表出现合约，不是挂牌全集',observed_only:'部分观察，尚未证明历史完整',verified_calendar_range:'所列自然日连续，已核公布日程',candidate_directory:'候选目录，非官方挂牌全集',recorded_original_not_located:'旧验收记录；本轮原件暂未定位'};
 function timeText(value) {return value ? new Date(value).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})+'（东八区）' : '未知（无可核时间记录）';}
 function coverageDetails(p) {
   detailSection('各类数据的覆盖、完整性和更新',['每条按数据类型与来源独立列出，重叠不相加。字段观察期、原件采集、归档及索引时间分开；最初采集时间未证时保留未知。业务参数日期只是快照日，不自动证明有效期或公司实收。']);
@@ -78,6 +78,11 @@ function coverageDetails(p) {
       pairs.push(['更新时间口径','原件取证回执；不是交易所发布时刻。无记录则未知，归档/索引另列。'],['全历史完整率','未知；未用官方挂牌全集/有效日历闭合分母']);
       for(const [key,value] of pairs){append(dl,'dt',key);append(dl,'dd',value);}
       append(card,'p',r.limitations,'sub');
+      if(r.comparison_pending)append(card,'p','本轮新路线对账：相交 '+r.comparison_pending.overlapping_days+' 合约日；'+r.comparison_pending.distinct_fields+' 个字段数值差异、'+r.comparison_pending.missing_official_days+' 个官方观察日期未出现在该EDB样本；另列待核，不覆盖旧差异。','sub');
+      if(r.contract_observations?.length) {
+        const list=append(card,'details',undefined,'contract-list');append(list,'summary','查看实际出现的 '+r.contract_observations.length+' 个合约');
+        for(const c of r.contract_observations)append(list,'p',(c.canonical||c.symbol)+(c.canonical?'':'（原生码，年份未获证）')+'；观察 '+c.first+' → '+c.last+'；'+c.observed_days+'个日表记录日');
+      }
       if(r.file)append(card,'code',r.file);
       if(r.evidence_shas?.length)append(card,'div','证据 SHA256 '+r.evidence_shas[0],'mono sub');
     }
@@ -85,6 +90,19 @@ function coverageDetails(p) {
 }
 function details(p) {
   $('detail-title').textContent=p.name+' · '+p.key;$('detail-body').replaceChildren();
+  if(p.usage_readiness) {
+    const r=p.usage_readiness;
+    detailSection('用于回测和盘前判断的条件',[
+      '价格研究回测：'+(r.research_backtest==='partial_price_research'?'已有部分有效价格观察。':'未核到有效OHLC行。')+r.research_conditions,
+      '完整回测：本表未认证。'+r.full_backtest_gaps,
+      r.latest_official?'最新官方日表 '+r.latest_official.day+'，基本有效OHLC '+(r.latest_official.valid_rows??'未知')+'/'+r.latest_official.rows+'条，取得 '+timeText(r.latest_official.acquired_at)+'。':'本表没有当前官方日表的完整取得事实。',
+      '盘前持续交付：'+r.preopen_conditions
+    ]);
+  }
+  if(p.extension_availability)detailSection('本轮历史日线补充（旧封存不改写）',[
+    '新增非空 '+(p.extension_availability.nonempty||0)+' 份；完整空表头 '+(p.extension_availability.empty_unavailable||0)+' 份；空数据不计成功或覆盖。',
+    p.extension_quality?'相交 '+p.extension_quality.overlapping_days+' 合约日；'+p.extension_quality.distinct_fields+'字段数值不同、'+p.extension_quality.missing_official_days+'个官方观察日期未出现在本来源。完整差异留私有研究包，未自动修复。':'无新增非空样本；不据此填数据来源。'
+  ]);
   coverageDetails(p);
   detailSection('原研究目录统计（仅该路线）',[
     p.source+'；非空 '+p.nonempty+'，完整空响应 '+p.empty_unavailable+'，仅本路线未请求 '+p.not_requested_on_directory_route+'。',
@@ -126,3 +144,6 @@ for(const item of status.project_inventory?.shared_documents||[]) {
 }
 
 if(status.project_inventory) $('inventory-scope').textContent='已登记 '+status.project_inventory.datasets.length+' 条分品种/类型/来源资料记录，核读 '+status.project_inventory.input_files.length+' 件输入；'+status.project_inventory.not_located.length+' 项旧原件待定位。登记日期不等于行情更新日期。'+(status.project_inventory.scope_review?.later_engine_update||'');
+
+if(status.research_union){const u=status.research_union;$('inventory-scope').textContent+=' EDB研究路线并集：'+u.states.nonempty+'份非空、'+u.states.empty_unavailable+'份完整空、'+u.states.not_requested_on_directory_route+'项未请求，'+number(u.rows)+'行；其他来源不相加。';}
+if(status.project_inventory?.history_quality)$('difference-note').textContent+=' 本轮新路线另有 '+status.project_inventory.history_quality.new_distinct_fields+' 个数值差异字段待核。';

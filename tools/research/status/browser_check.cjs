@@ -54,6 +54,7 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /主EDB无此列/);
     assert.match(await page.locator('#detail-body').innerText(), /SHFE 官方日行情/);
     assert.match(await page.locator('#detail-body').innerText(), /前结算价/);
+    assert.match(await page.locator('#detail-body').innerText(), /7个行情日消费事实/);
     assert.match(await page.locator('#detail-body').innerText(), /引擎RB冻结行情（派生）/);
     assert.match(await page.locator('#detail-body').innerText(), /2026-11-16/);
     assert.match(await page.locator('#detail-body').innerText(), /快照导出/);
@@ -64,8 +65,20 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /官方历史合约全集/);
     await page.click('#close-detail');
     await page.click('#reset');
+    await page.fill('#search','RM');
+    await page.locator('[data-product="CZCE.RM"] .product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /仅单日未审核模型预览/);
+    await page.click('#close-detail');await page.click('#reset');
+    await page.fill('#search','AP');
+    await page.locator('[data-product="CZCE.AP"] .product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /本轮历史日线补充/);
+    assert.ok(await page.locator('#detail-body .contract-list').count()>0);
+    await page.locator('#detail-body .contract-list summary').first().click();
+    assert.match(await page.locator('#detail-body .contract-list').first().innerText(), /日表记录日/);
+    await page.screenshot({path:path.join(output,'history-details.png')});
+    await page.click('#close-detail');await page.click('#reset');
     await page.selectOption('#state', 'difference');
-    assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.distinct_fields > 0).length);
+    assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.distinct_fields > 0 || (p.extension_quality?.distinct_fields||0)>0).length);
     await page.click('#reset');
     await page.selectOption('#exchange', 'CFFEX');
     assert.equal(await page.locator('#products tr').count(), 8);
@@ -87,10 +100,10 @@ async function main() {
     await fs.writeFile(path.join(output, 'browser-review.json'), JSON.stringify({
       status: 'passed', products: data.summary.products, checks: [
         'all-products', 'exchange-filter', 'supplementary-not-no-data', 'chinese-search',
-        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width', 'shared-originals'
+        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width', 'shared-originals', 'consumer-scope', 'historical-contract-details'
       ], page_errors: errors, remote_requests: remote, price_or_admission_changed: false
     }, null, 2) + '\n');
-    process.stdout.write('离线文档桌面/移动端及十项交互检查通过，无远端请求。\n');
+    process.stdout.write('离线文档桌面/移动端及资料详情检查通过，无远端请求。\n');
   } finally { await browser.close(); }
 }
 main().catch(error => { process.stderr.write(String(error.stack || error) + '\n'); process.exitCode = 1; });
