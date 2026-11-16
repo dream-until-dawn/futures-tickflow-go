@@ -179,10 +179,10 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		plan["scope"] = "three previously observed vendor-request codes; not an official historical universe or lifecycle"
 		plan["settlement_and_turnover_available"] = false
 	}
-	if len(planned) > 0 && (strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") || strings.HasSuffix(planned[0].ID, "-daily-official-history") || strings.HasSuffix(planned[0].ID, "-daily-additional-research")) {
+	if len(planned) > 0 && (strings.HasSuffix(planned[0].ID, "-daily-directory-pilot") || strings.HasSuffix(planned[0].ID, "-daily-official-history") || strings.HasSuffix(planned[0].ID, "-daily-additional-research") || strings.HasSuffix(planned[0].ID, "-retained-history")) {
 		delete(plan, "original_all_phase_requests_max")
 		plan["scope"] = "frozen directory and official-row observed contracts; daily only"
-		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA, additionalMarketsPlanSHA, cffexObservedPlanSHA, czceObservedPlanSHA}
+		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA, additionalMarketsPlanSHA, cffexObservedPlanSHA, czceObservedPlanSHA, retainedHistoryPlanSHA}
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
@@ -381,12 +381,13 @@ func run() error {
 	directoryPlanFile := flag.String("daily-directory-plan", "", "固定SHA执行单，目录和官方合约行双重核验")
 	czceContinuation := flag.String("czce-empty-continuation", "", "用户已选择空表头隔离后的固定164项候选，不重复旧请求")
 	czcePriorRoot := flag.String("czce-prior-root", "", "已封存且停止的旧183项原始目录，只读验证")
+	retainedParent := flag.String("retained-history-parent", "", "仅验证新419项旧任务后续336项，旧失败不重试")
 	prepareOnly := flag.Bool("prepare-only", false, "仅目录日线单离线预检，不创建启动标记或网络请求")
 	flag.Parse()
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
 	}
-	if *prepareOnly && *directoryPlanFile == "" && *czceContinuation == "" {
+	if *prepareOnly && *directoryPlanFile == "" && *czceContinuation == "" && *retainedParent == "" {
 		return fmt.Errorf("prepare-only必须给目录日线执行单")
 	}
 	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) || (*directoryPlanFile != "" && (*anchor || *research || *priorEmpty != "")) {
@@ -398,7 +399,24 @@ func run() error {
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
 	}
+	if *retainedParent != "" && (*directoryPlanFile != "" || *czceContinuation != "" || *anchor || *research || *priorEmpty != "" || *priorResearch != "") {
+		return fmt.Errorf("历史隔离续取不能混用其他模式")
+	}
 	selected := jobs()
+	if *retainedParent != "" {
+		var err error
+		selected, err = retainedRemainingJobs(*retainedParent)
+		if err != nil {
+			return err
+		}
+		if *prepareOnly {
+			fmt.Printf("336项未请求集合预检通过；真实请求0\n")
+			return nil
+		}
+		if err = reserveDirectoryPlanAt(filepath.Join(*retainedParent, "remaining-336.started.json"), *root); err != nil {
+			return err
+		}
+	}
 	if *czceContinuation != "" {
 		var err error
 		selected, err = czceRemainingJobs(*czceContinuation, *czcePriorRoot)
@@ -473,6 +491,9 @@ func run() error {
 		}
 		return results[0], nil
 	})
+	if *retainedParent != "" {
+		return collectEmptyIsolated(*root, selected, 336, retainedHistoryPlanSHA, fetch)
+	}
 	if *czceContinuation != "" {
 		return collectCzceIsolated(*root, selected, fetch)
 	}

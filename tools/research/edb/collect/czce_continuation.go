@@ -192,13 +192,17 @@ type isolationReport struct {
 }
 
 func collectCzceIsolated(root string, jobs []batch.Job, fetch func(batch.Job) (batch.Result, error)) error {
-	if len(jobs) == 0 || len(jobs) > 164 {
+	return collectEmptyIsolated(root, jobs, 164, czceContinuationSHA, fetch)
+}
+
+func collectEmptyIsolated(root string, jobs []batch.Job, limit int, candidate string, fetch func(batch.Job) (batch.Result, error)) error {
+	if len(jobs) == 0 || len(jobs) > limit {
 		return fmt.Errorf("隔离续取数量越界")
 	}
 	if e := os.Mkdir(root, 0700); e != nil {
 		return fmt.Errorf("续取已有/未知目录禁止重发: %w", e)
 	}
-	plan, _ := json.MarshalIndent(map[string]any{"jobs": jobs, "candidate_sha256": czceContinuationSHA, "requests_max": len(jobs), "bytes_per_response_max": 2 << 20, "timeout_seconds": 15, "interval_after_completion_seconds": 2, "empty_not_coverage": true, "financial_eligible": false}, "", "  ")
+	plan, _ := json.MarshalIndent(map[string]any{"jobs": jobs, "candidate_sha256": candidate, "requests_max": len(jobs), "bytes_per_response_max": 2 << 20, "timeout_seconds": 15, "interval_after_completion_seconds": 2, "empty_not_coverage": true, "financial_eligible": false}, "", "  ")
 	if e := os.WriteFile(filepath.Join(root, "plan.json"), append(plan, '\n'), 0600); e != nil {
 		return e
 	}
