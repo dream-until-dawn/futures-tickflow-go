@@ -1,6 +1,6 @@
 {
   "schema": "data-status-input-lock-v1",
-  "as_of": "2026-11-15",
+  "as_of": "2026-11-16",
   "bundle_manifest_sha256": "4e9df6a6ef1cef4789e445b7016aad2906c57b7fc95c898e2fd11bfe6cbefd5b",
   "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
   "repo_inputs": [
@@ -27,12 +27,12 @@
     {
       "id": "project_inventory",
       "file": "docs/evidence/project-data-inventory-20261116.json",
-      "sha256": "f607b1fe5bf65109b83db2d25e422a000141f073cafb1a8c2c9eda7b000ad184"
+      "sha256": "b515b97df7882540863cad96851e144c61c471ea01ec4d82c96350ff025feead"
     },
     {
       "id": "project_source_plan",
       "file": "tools/research/status/project-sources.json",
-      "sha256": "299625b11445a8b6cd8187d25dc427ad25b7c5ec1ebb7e8bf736ee67ac5f5904"
+      "sha256": "eeee184f8925f9624abe61a6663ac61f3cc9ab920576b95627a958c6b8b74405"
     }
   ],
   "profiles": [
@@ -81,5 +81,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "cb6160e4a1ff04aec71522b12f8c267c74b26d86f10c6e1247119214c13e8036"
+  "published_model_sha256": "93fc2ea2e57bcc495f79edb384a49de08983adec35a829640b4ce579a069d25a"
 }

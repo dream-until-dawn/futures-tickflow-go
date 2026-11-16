@@ -230,6 +230,8 @@ def main():
     print('只读核官方累计目录',flush=True)
     collector.catalog(Path(config['official_catalog_manifest']))
     for entry in config.get('official_increments',[]):collector.catalog(Path(entry['manifest']),entry['route'])
+    from reference_inventory import append_reference
+    for entry in config.get('reference_snapshots',[]):append_reference(collector,entry)
     print('只读核中金所月包及早期样本',flush=True)
     for root in config.get('cffex_roots',[]):collector.cffex(Path(root))
     collector.cffex_fixture()

@@ -153,10 +153,40 @@
   ],
   "official_requests": 2,
   "official_bytes": 162047,
-  "total_requests": 9,
-  "total_body_bytes": 1166887,
+  "total_requests": 11,
+  "total_body_bytes": 1764573,
   "financial_admissions_added": 0,
   "old_differences_resolved": 0,
   "source_feed_or_production_changed": false,
-  "tag_created": false
+  "tag_created": false,
+  "reference_snapshots": [
+    {
+      "day": 20210104,
+      "rows": 187,
+      "raw_sha256": "e2f3b4f656a2c6501e98efc71f3ed9ef4bcf6d499acf390f84ee578f8f8194aa",
+      "bytes": 243035,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2021/20210104/FutureDataReferenceData.xml",
+      "requested_at": "2026-11-16T11:36:12.7032052Z",
+      "finished_at": "2026-11-16T11:36:12.989835Z",
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "independent_comparison": "原生码、显式年月、首次/最后交易日与Go解码逐条一致；只是日期绑定参考陈述"
+    },
+    {
+      "day": 20261116,
+      "rows": 247,
+      "raw_sha256": "1f545f56ed5841b1d7dfd705075e00356b801e656366c9f09c9f01513a3185cf",
+      "bytes": 354651,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261116/FutureDataReferenceData.xml",
+      "requested_at": "2026-11-16T11:29:30.6609552Z",
+      "finished_at": "2026-11-16T11:29:30.9485102Z",
+      "original_receipt_state": "failed",
+      "independent_comparison": "原生码、显式年月、首次/最后交易日与Go解码逐条一致；只是日期绑定参考陈述"
+    }
+  ],
+  "remaining_blockers": [
+    "三项旧原件需要持有人备份或原字节；不得以新历史替代",
+    "EDB版本/盘后量仓口径、PK2021及既有差异未获直接证据",
+    "DCE/GFEX及其他旧受阻入口不重试",
+    "参考快照不构成全市场历史目录、生命周期版本链或回测准入"
+  ]
 }

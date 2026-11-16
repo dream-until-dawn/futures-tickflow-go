@@ -22,6 +22,10 @@ async function main() {
   try {
     await page.goto(pathToFileURL(path.resolve(document)).href);
     assert.equal(await page.locator('#products tr').count(), data.summary.products);
+    assert.equal(await page.locator('#shared-list details').count(), data.project_inventory.shared_documents.length);
+    assert.equal(await page.locator('#shared-list a').count(), 7);
+    await page.locator('#shared-list summary').first().click();
+    assert.match(await page.locator('#shared-list details').first().innerText(), /SHA256/);
     await page.screenshot({ path: path.join(output, 'desktop.png') });
     await page.selectOption('#exchange', 'DCE');
     assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.exchange === 'DCE').length);
@@ -83,10 +87,10 @@ async function main() {
     await fs.writeFile(path.join(output, 'browser-review.json'), JSON.stringify({
       status: 'passed', products: data.summary.products, checks: [
         'all-products', 'exchange-filter', 'supplementary-not-no-data', 'chinese-search',
-        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width'
+        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width', 'shared-originals'
       ], page_errors: errors, remote_requests: remote, price_or_admission_changed: false
     }, null, 2) + '\n');
-    process.stdout.write('离线文档桌面/移动端及九项交互检查通过，无远端请求。\n');
+    process.stdout.write('离线文档桌面/移动端及十项交互检查通过，无远端请求。\n');
   } finally { await browser.close(); }
 }
 main().catch(error => { process.stderr.write(String(error.stack || error) + '\n'); process.exitCode = 1; });

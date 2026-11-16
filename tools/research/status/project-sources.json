@@ -5289,5 +5289,15 @@
       "route": "official-day-20261116"
     }
   ],
-  "gap_review": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\data-gap-progress-20261116.json"
+  "gap_review": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\data-gap-progress-20261116.json",
+  "reference_snapshots": [
+    {
+      "root": "C:\\Temp\\tickflow-reference-20210104-v1",
+      "review": "C:\\Temp\\tickflow-old-originals-recovery-20261116-v1\\reference-20210104-review.json"
+    },
+    {
+      "root": "C:\\Temp\\tickflow-reference-20261116-v1",
+      "review": "C:\\Temp\\tickflow-old-originals-recovery-20261116-v1\\reference-20261116-review.json"
+    }
+  ]
 }

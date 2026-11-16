@@ -116,4 +116,13 @@ $('difference-note').textContent='主目录待核 '+summary.unresolved_fields+' 
 $('catalog-sha').textContent='研究目录 SHA256 '+status.provenance.catalog_sha256;
 render();
 
+for(const item of status.project_inventory?.shared_documents||[]) {
+  const box=append($('shared-list'),'details');const title=append(box,'summary',item.title);
+  append(box,'p','原件取得 '+timeText(item.requested_at)+'；发布日 '+(item.publisher_date||'未知')+'。'+item.readback);
+  append(box,'code','SHA256 '+item.sha256);
+  if(item.local_guard_correction)append(box,'p',item.local_guard_correction);
+  const url=new URL(item.url);
+  if(url.protocol==='https:'&&url.hostname==='www.shfe.com.cn') {const link=append(box,'a','查看来源网页');link.href=url.href;link.rel='noopener noreferrer';}
+}
+
 if(status.project_inventory) $('inventory-scope').textContent='已登记 '+status.project_inventory.datasets.length+' 条分品种/类型/来源资料记录，核读 '+status.project_inventory.input_files.length+' 件输入；'+status.project_inventory.not_located.length+' 项旧原件待定位。登记日期不等于行情更新日期。'+(status.project_inventory.scope_review?.later_engine_update||'');

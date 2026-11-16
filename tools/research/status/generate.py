@@ -85,6 +85,12 @@ def markdown(data):
                 if r.get('last_exported_at'):time+='；快照导出 '+r['last_exported_at']
                 lines.append('| '+LABELS.get(r['kind'],r['kind'])+' / '+r['source']+' | '+span+' | '+count+'；'+r['completeness']+' | '+time+' |')
             lines.append('')
+    shared=data.get('project_inventory',{}).get('shared_documents',[])
+    if shared:
+        lines += ['## 共享官方网页原件（适用性另核）','','这组资料是公告或当前网页，不自动填为所有品种的历史规则、日历或交易许可。','']
+        for item in shared:
+            lines.append('- ['+item['title']+']('+item['url']+')；取得 '+item['requested_at']+'；SHA256 '+item['sha256']+'。'+item['readback'])
+        lines.append('')
     lines += ['## 字段、置信度与不足','',
         '- 日线主源为Shinny EDB；其历史版本、零成交OHLC和盘后量仓语义仍有待核，不能用收盘价代替结算价。已有参考原表归档了结算/成交额列（范围同参考，不保证每行有值、单位或资格已证）；主EDB没有这两列，未完成对账/统一Source交付。',
         '- SHFE/INE参考为2021—2025官方HTTPS年度原表；CZCE仅核2021-01-04；CFFEX为封存明文HTTP月包及有限参考，发布者未认证。对照仅覆盖实际参考合约日。',
