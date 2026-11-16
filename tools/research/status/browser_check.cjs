@@ -60,6 +60,8 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /SHFE.rb2711/);
     assert.match(await page.locator('#detail-body').innerText(), /逐年观察日期/);
     assert.match(await page.locator('#detail-body').innerText(), /专项|具名模型审核/);
+    assert.match(await page.locator('#detail-body').innerText(), /实际就绪策略信号 0/);
+    assert.match(await page.locator('#detail-body').innerText(), /本包只含目标日结算，不含保证金或最低开仓/);
     assert.match(await page.locator('#detail-body').innerText(), /主EDB无此列/);
     assert.match(await page.locator('#detail-body').innerText(), /SHFE 官方日行情/);
     assert.match(await page.locator('#detail-body').innerText(), /前结算价/);

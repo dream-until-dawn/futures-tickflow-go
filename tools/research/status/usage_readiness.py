@@ -70,6 +70,9 @@ def markdown(data):
                     '回测长历史按自2021年前后的逐年有效OHLC观察核，逐年实际日期数在详情；不将起止跨度冒充逐日完整。2021年后新上市品种的上市日起点尚未绑定到本轮机器事实时保留待补证。当前RB最低开仓依据是指定日、指定12合约的具名模型审核，实际客户适用性另核；不是同交易所的普遍声明。','',
                     '逐日信号通过表示已有目标日有效结算和既有按日采集/校验入口；不代表全部合约、不代表后台自动服务已部署，也不承诺未来每次更新成功。郑商所三位原生码用同日XML显式年月绑定。','',
                     '| 品种 | 回测门槛 | 逐日信号门槛 | 硬项缺口 / 通过范围 |','| --- | --- | --- | --- |']
+        readback=data.get('user_data_gate_readback')
+        if readback:
+            gate_lines[2:2]=[f'**策略实测另列：**已读回{readback["result_files_checked"]}份真实信号消费结果并逐约核结算；单日MACD均预热不足，实际就绪信号{readback["ready_signals"]}。这是策略样本窗口限制，不把52个品种的数据门槛重新判失败。该首包不含保证金/最低开仓，通用假设文案的误示已反馈；旧结果留存，回测消费另核。见[独立读回](data-gates-consumer-readback-20261116.json)。','']
         for product in gated:
             b=product['user_data_gates']['backtest'];s=product['user_data_gates']['daily_signal']
             detail='；'.join(b['blocking_reasons']+s['blocking_reasons']) or ('回测当前约束情景：'+','.join(b['eligible_contracts']))

@@ -106,6 +106,11 @@ function details(p) {
       ...Object.entries(g.daily_signal.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),
       '日历、历史制度、PIT、生命周期、对账和运行成熟度为加分项；旧严格金融包不是这两道门槛的附加条件。当前参数回放历史属于情景，不代表历史实际制度。'
     ]);
+    const readback=status.user_data_gate_readback;
+    if(readback?.results.some(r=>r.product===p.key))detailSection('本轮引擎实际消费（补充项）',[
+      '已逐件核'+readback.result_files_checked+'份结果的摘要、合约及真实结算。该单日MACD作业均为预热不足，实际就绪策略信号 '+readback.ready_signals+'；不改变上方数据门槛。',
+      '本包只含目标日结算，不含保证金或最低开仓约束；该版通用假设文案已反馈修正，原结果保留。未新增真实前向样本，未部署生产。'
+    ]);
   }
   if(p.usage_readiness) {
     const r=p.usage_readiness;

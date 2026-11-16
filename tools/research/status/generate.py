@@ -98,7 +98,7 @@ def markdown(data):
         lines.append('')
     lines += ['## 字段、置信度与不足','',
         '- 日线主源为Shinny EDB；其历史版本、零成交OHLC和盘后量仓语义仍有待核，不能用收盘价代替结算价。已有参考原表归档了结算/成交额列（范围同参考，不保证每行有值、单位或资格已证）；主EDB没有这两列，未完成对账/统一Source交付。',
-        '- SHFE/INE参考为2021—2025官方HTTPS年度原表；CZCE仅核2021-01-04；CFFEX为封存明文HTTP月包及有限参考，发布者未认证。对照仅覆盖实际参考合约日。',
+        '- 旧主目录对账基线包括SHFE/INE年度原表及CZCE的2021-01-04有限截面，不能据此裁掉全项目后续累计目录、日表及参考快照；最新准确范围见逐来源详情。CFFEX明文HTTP月包不能认证传输发布者。',
         f"- 主目录{s['unresolved_fields']}个数值字段仍待核，另有旧供应商间{s['legacy_vendor_distinct_fields']}项差异不重复合并；参考未报价、无参考日期、完整空响应、日历未知和缺日分别保留。",
         '- DCE/GFEX主目录零行不等于项目无数据：新浪当期列表样本和旧EDB样本单列，尚未认证官方历史全集、制度和全生命周期。',
         '- 字节身份/计数复现可信；价格语义、官方生命周期、历史PIT、许可再分发、账户费用和所有品种逐日完整性仍不足，不给虚构置信百分比。',
@@ -139,6 +139,9 @@ def check_docs(repo, config):
     facts=next((r for r in config['repo_inputs'] if r['id']=='user_gate_facts'),None)
     if facts and data.get('user_data_gate_facts')!=locked_repo(repo,facts):
         raise ValueError('status_user_gate_facts_binding')
+    readback=next((r for r in config['repo_inputs'] if r['id']=='user_gate_readback'),None)
+    if readback and data.get('user_data_gate_readback')!=locked_repo(repo,readback):
+        raise ValueError('status_user_gate_readback_binding')
     extension=data.get('project_inventory',{}).get('history_extension')
     if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
@@ -175,6 +178,8 @@ def main():
     if engine['report_byte_identical'] is not True or engine['financial_admission_added']!=0 or engine['price_semantics_accepted'] is not False or engine['feed_integrated'] is not False:
         raise ValueError('status_engine_scope')
     data['engine_acceptance']=engine
+    if 'user_gate_readback' in repo_data:
+        data['user_data_gate_readback']=repo_data['user_gate_readback']
     if 'project_inventory' in repo_data:
         extension=repo_data['project_inventory'].get('history_extension')
         if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')

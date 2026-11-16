@@ -1,0 +1,45 @@
+{
+  "schema": "user-data-gate-delivery-seal-v1",
+  "sealed_at": "2026-11-16T15:26:01.138475+00:00",
+  "archives": [
+    {
+      "name": "rb-scenario",
+      "path": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261116\\two-gates-v1\\rb-scenario.zip",
+      "bytes": 1251607,
+      "sha256": "2d601fa73051a3ac38b595e78ecfd24563bafa6f49623da1f4d43681c56a17dd",
+      "files": 182,
+      "content_manifest_sha256": "b1973629424bc6155f6f825830f6d01f51e1a1d3e3369feb8b2aef0fb366cf3e",
+      "source_manifest_sha256": "20c0b2a8665ae02ed9701c793e3e5c995e3938da3e8bfd37d0478b56f0ab1c69",
+      "migration_verified": true,
+      "mutated_copy_rejected": true
+    },
+    {
+      "name": "signal",
+      "path": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261116\\two-gates-v1\\signal.zip",
+      "bytes": 71384,
+      "sha256": "5f8e9793b32d09da47118b87e5a3a924e57daccd3622c3854b06d9a37a7aaf98",
+      "files": 11,
+      "content_manifest_sha256": "27415f7d91f544dd740feee94b9a3e23bf6a5d5739ea06e295bb7d837ff6dd8b",
+      "source_manifest_sha256": "e6c8a72c101e0111eb331c0a8db029410ff99765575928f43182bb2e7ac41a1d",
+      "migration_verified": true,
+      "mutated_copy_rejected": true
+    },
+    {
+      "name": "czce-clear",
+      "path": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261116\\two-gates-v1\\czce-clear.zip",
+      "bytes": 6498,
+      "sha256": "9024272c7ee53880205d6827af876ec287d7ad5b2a84159a1a748b605ada6a3f",
+      "files": 4,
+      "content_manifest_sha256": "58a55fcd242c7ae6318de0e55a352ffa82f034373d95b8a341ed8dca2371a091",
+      "source_manifest_sha256": null,
+      "migration_verified": true,
+      "mutated_copy_rejected": true
+    }
+  ],
+  "limits": [
+    "原件字节保持不变，迁移及篡改反例仅操作独立副本",
+    "重复原件是交付副本，不新增行情覆盖或请求次数",
+    "SHA仅证明字节身份，不解决来源口径或制度适用缺口",
+    "持久私有目录位于代码仓库外，未公开原始行情或执行生产操作"
+  ]
+}

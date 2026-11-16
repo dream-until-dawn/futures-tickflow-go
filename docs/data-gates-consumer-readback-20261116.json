@@ -1,0 +1,335 @@
+{
+  "schema": "signal-consumer-independent-readback-v1",
+  "source_report_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-final-signal-20261116\\output\\acceptance.json",
+  "source_report_sha256": "2560f3dfbf5f9d567c8afc1b9511cb53f18c99357a69d741e3fdf2f5589fdbe5",
+  "manifest_sha256": "e6c8a72c101e0111eb331c0a8db029410ff99765575928f43182bb2e7ac41a1d",
+  "products": 52,
+  "result_files_checked": 52,
+  "target_day": 20261116,
+  "signal_trade_day": 20261117,
+  "ready_signals": 0,
+  "all_status": "insufficient_history",
+  "financial_qualified": false,
+  "forward_samples_added": 0,
+  "backtest_consumer_acceptance": "pending_separate_actual_report",
+  "limits": [
+    "已逐份回读摘要、合约资格、实际结算和无前向新增，不把对话声称当证据",
+    "单日不足MACD预热；数据门槛通过不等于已经输出可执行策略动作",
+    "该版signal假设文案泛用了保证金/最低开仓说明，但本包未交付这些参数；已反馈改为不适用，原结果保留",
+    "未复演对方Docker镜像，运行镜像身份另由引擎验收记录绑定"
+  ],
+  "results": [
+    {
+      "product": "SHFE.ad",
+      "contract": "SHFE.ad2701",
+      "job": "87ab93da80e247a4a5c3fc40ec103417",
+      "result_sha256": "46f1583f7dd1afacbda1f3948c59785530379ebbfe035433a2411d7b88159868"
+    },
+    {
+      "product": "SHFE.ag",
+      "contract": "SHFE.ag2701",
+      "job": "3bf8bc16a4f04f70a8a5cfcfb6e10b82",
+      "result_sha256": "db39e464f3fb1061787f1440b635023e5f4c5a39f3e78e79bfa8d95bced3c828"
+    },
+    {
+      "product": "SHFE.al",
+      "contract": "SHFE.al2701",
+      "job": "59277254023840f48a821465d9ed8c97",
+      "result_sha256": "24a14bc5382af711c05c6d90e3151bc7994da6f2adf907569b6d6029ddc84a00"
+    },
+    {
+      "product": "SHFE.ao",
+      "contract": "SHFE.ao2701",
+      "job": "e58e3dfd78a94a139e2bf2e6b03c2f89",
+      "result_sha256": "497bab0b9643dbcfab77d7b361a82b35c0f1421c0a7879b9b79af41728546a7d"
+    },
+    {
+      "product": "SHFE.au",
+      "contract": "SHFE.au2701",
+      "job": "c54545f6955b407f9e0c8edf188e97d4",
+      "result_sha256": "060da6fcddb1b0c10cde1d10ea5fad7e7a7318baad6b05281683096731d0d0f5"
+    },
+    {
+      "product": "SHFE.br",
+      "contract": "SHFE.br2701",
+      "job": "bed6eacc4d4d47dc82ee35ab4c5335bc",
+      "result_sha256": "3c1711caa687abf996778d496ff0524faa39bd50df4d6849aec3590557943c4a"
+    },
+    {
+      "product": "SHFE.bu",
+      "contract": "SHFE.bu2701",
+      "job": "4dfbf9f4b0fc4cfa98845922d4fdeb1f",
+      "result_sha256": "9c9559abf9efe99d360b32e2c7c689ac6cf180a4f6ed076487a39406da57de43"
+    },
+    {
+      "product": "SHFE.cu",
+      "contract": "SHFE.cu2701",
+      "job": "00fe47b98d984400bb1bcdab7900a80f",
+      "result_sha256": "d9f5c0b2a92faa0fdf2d9cd3e72e03486fed0df5f7d5a8aa9482599f65d59b4e"
+    },
+    {
+      "product": "SHFE.fu",
+      "contract": "SHFE.fu2701",
+      "job": "4d8705a3751a42c79dd669fef0362d5c",
+      "result_sha256": "d5d9cbe7cbd26e289dafcd83179cd55f4e390d5b766916a6275320fb429534f8"
+    },
+    {
+      "product": "SHFE.hc",
+      "contract": "SHFE.hc2701",
+      "job": "3461ea04237242f9ac7b3bd720e60954",
+      "result_sha256": "5fe1e48f5f21e4bac868c82ff29a17466251b17b3626adb6b56aa1b2b487550a"
+    },
+    {
+      "product": "SHFE.ni",
+      "contract": "SHFE.ni2701",
+      "job": "dad87df88b1241978c556e857e9aa236",
+      "result_sha256": "eca9ccdcb69ec5ef53adec5eafe53995dbbdd309d7f8ad0d6cb23ce5f8dbc162"
+    },
+    {
+      "product": "SHFE.op",
+      "contract": "SHFE.op2701",
+      "job": "86fbf238dcfd4756a15da85ece1e2aa6",
+      "result_sha256": "249937676a115dae31209407764f81d77560c99d33df88e0b34297e697b04bfe"
+    },
+    {
+      "product": "SHFE.pb",
+      "contract": "SHFE.pb2701",
+      "job": "3b6a60f9abf64f35b5da470795dc3f6a",
+      "result_sha256": "9a9dd763740d0c8e6638473fab89ebf38b4b6956ed0ad5960baff57e58e0325a"
+    },
+    {
+      "product": "SHFE.rb",
+      "contract": "SHFE.rb2701",
+      "job": "bc2718a4a02e4f2d869b2f52408b09be",
+      "result_sha256": "49f7d05d555709e56b454f9d8d8884da63eb97074f5f7de1fdb68518be2a7d73"
+    },
+    {
+      "product": "SHFE.ru",
+      "contract": "SHFE.ru2701",
+      "job": "a7d03fc7bc584422bb0669caddaa0f7e",
+      "result_sha256": "16a2ad36546f3f28d1020297b057a1ccf907292e10b8021b88edf6a1958a1264"
+    },
+    {
+      "product": "SHFE.sn",
+      "contract": "SHFE.sn2701",
+      "job": "0d843869f4114a69b3c5da835e0d1de5",
+      "result_sha256": "bed7a96bddc422ba555c1694501c8ed83c5669dc0273bb86c3dbee7bac408b04"
+    },
+    {
+      "product": "SHFE.sp",
+      "contract": "SHFE.sp2701",
+      "job": "c341226ee5774cf8b4a7e141df906283",
+      "result_sha256": "0256ff99f2966e63bba4071538a7629c5249d7667ff1cb391fb35dc63deac434"
+    },
+    {
+      "product": "SHFE.ss",
+      "contract": "SHFE.ss2701",
+      "job": "c508facbc9aa4eb89581343ce766cc2b",
+      "result_sha256": "9c462af8f707fd6d6bc396894f623588391130e168ecf9765d7736258d945247"
+    },
+    {
+      "product": "SHFE.wr",
+      "contract": "SHFE.wr2701",
+      "job": "4dd49c20b81a4856b0779d138ae2a18e",
+      "result_sha256": "73fd73d63b79a2725155067974a4074bf75b2c3aede3434cea66887a701bbb5b"
+    },
+    {
+      "product": "SHFE.zn",
+      "contract": "SHFE.zn2701",
+      "job": "ac7ecc09c4fa4be381867a25683b10fc",
+      "result_sha256": "7beada145268a813e42e111a4d55981c281740c23b1f442aaeca3076227d9a0b"
+    },
+    {
+      "product": "INE.bc",
+      "contract": "INE.bc2701",
+      "job": "da62ff7bf53346a9ab8f651af6649849",
+      "result_sha256": "9cba858e09c4c226c8fa139daca497071a5ed00f59d9077ba27bb089a6f8278d"
+    },
+    {
+      "product": "INE.ec",
+      "contract": "INE.ec2701",
+      "job": "588bee73dbe146d38bb0460b54c11181",
+      "result_sha256": "68c1f43e6750948720abd191da390364a2c7dc8c55c14306243428b67626f1be"
+    },
+    {
+      "product": "INE.lu",
+      "contract": "INE.lu2701",
+      "job": "ec577095111448338e52d3675117e649",
+      "result_sha256": "6689e0e1e20b5e52713c6b41a28a331d7533c142aef0cce0721b3bb270e0e088"
+    },
+    {
+      "product": "INE.nr",
+      "contract": "INE.nr2701",
+      "job": "c6f0638844ed46409d6ee3d1726b64d2",
+      "result_sha256": "508445f016f708ebdf37278ff8c445ccd1b0f55b0eb165d264f83f0685173eb4"
+    },
+    {
+      "product": "INE.sc",
+      "contract": "INE.sc2701",
+      "job": "c7e4c65a5bc442aa9c9174e98915c12b",
+      "result_sha256": "1039be3d84acfbed71e0dc56d4d3615d7dc4d4741c84ce10733a404f929f503e"
+    },
+    {
+      "product": "CZCE.AP",
+      "contract": "CZCE.AP2701",
+      "job": "bfd6fbdbaf31482cac25b8c0d2d2a70f",
+      "result_sha256": "3f1bd92d36c003685618fbf3ab15b7a2cd44f1fe155554b12b4457cf02b0a7f0"
+    },
+    {
+      "product": "CZCE.CF",
+      "contract": "CZCE.CF2701",
+      "job": "263b94f3ba6a4849a5d52b3ab06fc282",
+      "result_sha256": "2402bcab8e37df3e3d99ea9e836c52e93e382f85e9c561da428b2ab506df23c2"
+    },
+    {
+      "product": "CZCE.CJ",
+      "contract": "CZCE.CJ2701",
+      "job": "287a514195864a2aa470914ced174614",
+      "result_sha256": "a23d9331f6e67f244ae78f1a4b029fa43e9df130c34f91f636110b7cd6d2f472"
+    },
+    {
+      "product": "CZCE.CY",
+      "contract": "CZCE.CY2701",
+      "job": "03742ba2c24c48b39fae0742b0d0117f",
+      "result_sha256": "88dfff38cc0701a600f326c6f3f90c19f3d23040f2af620c074ef6a781c67da8"
+    },
+    {
+      "product": "CZCE.FG",
+      "contract": "CZCE.FG2701",
+      "job": "d136461a307247bea00f37ed5726c222",
+      "result_sha256": "a21c7a4c2ef7c3161b6e7b27a851347d06cb398911edcd1c47a82457ca5d7ffd"
+    },
+    {
+      "product": "CZCE.JR",
+      "contract": "CZCE.JR2701",
+      "job": "2097a034f7b94e25aadc22f6db71800d",
+      "result_sha256": "d01f21f184ea71b5493d57016baa294bd1aef0e433709500f0e8baf8bac1e028"
+    },
+    {
+      "product": "CZCE.MA",
+      "contract": "CZCE.MA2701",
+      "job": "2d313c54b0904f0b8b0f6dfb41e10d0b",
+      "result_sha256": "517abc1b84a0918e30563302899431897108f5405f030917de06ea96d85fa9ae"
+    },
+    {
+      "product": "CZCE.OI",
+      "contract": "CZCE.OI2701",
+      "job": "bb1a5677ad0643659583be05b4f65870",
+      "result_sha256": "eb4ed529420739f247360eef15185d4e54f5e339ca0a2ff881a7a546032c4b2b"
+    },
+    {
+      "product": "CZCE.PF",
+      "contract": "CZCE.PF2701",
+      "job": "2a540359d2b24de094c0438d2782b595",
+      "result_sha256": "14d77a4f8224fd007f82d7945a5eef7328fde3af661f0f67d300b185fbde8bee"
+    },
+    {
+      "product": "CZCE.PK",
+      "contract": "CZCE.PK2701",
+      "job": "e8796c5494bd4e61a082e899dfd6999f",
+      "result_sha256": "921baa46e857b92ae453063a55f86557a861c50cf9f4913e70faa35734d581a8"
+    },
+    {
+      "product": "CZCE.PL",
+      "contract": "CZCE.PL2701",
+      "job": "d452e12cdf8b4a85978e5b6d2eef909e",
+      "result_sha256": "a3f5a6b756e4dc32aab8a9b0e992943d6f755b8ee1f0f8b7d03135f4dd877ec5"
+    },
+    {
+      "product": "CZCE.PM",
+      "contract": "CZCE.PM2701",
+      "job": "d1a47bf861084e5d854be022829fa82e",
+      "result_sha256": "4da9c3ebc7c121e78eb916f0124f490be6d8f07b17a6c3602abb6324eceda394"
+    },
+    {
+      "product": "CZCE.PR",
+      "contract": "CZCE.PR2701",
+      "job": "b561d62ca67a4a66862d5b6750083425",
+      "result_sha256": "ef0c1e013492415f250f794d6f489af18882ae7d424631aae1d16b78687c4ebf"
+    },
+    {
+      "product": "CZCE.PX",
+      "contract": "CZCE.PX2701",
+      "job": "f5f93be6ae3444938b5267d977400179",
+      "result_sha256": "4c059471cb00253a73076d6cdabf20066f4ebf8012bca07730babd5e5b38886f"
+    },
+    {
+      "product": "CZCE.RI",
+      "contract": "CZCE.RI2701",
+      "job": "3a5f191a4dcf449ca59831540b35f99a",
+      "result_sha256": "b155230e1ffe113a7b6ba5ff2df8068e75683fb53b345fbb6df39bee3a211634"
+    },
+    {
+      "product": "CZCE.RM",
+      "contract": "CZCE.RM2701",
+      "job": "411b6cd9029b408088806d06b97aee6b",
+      "result_sha256": "3632187f42dce5210424606e15e6768f9bfce5cc79f80bab7ff91130413f1011"
+    },
+    {
+      "product": "CZCE.RS",
+      "contract": "CZCE.RS2701",
+      "job": "ae030642af914eb59caadd60cbe90ec8",
+      "result_sha256": "56e679ab4dbbd9498273db552f77d66a9c936bd359d1df30b3d3d913a562213a"
+    },
+    {
+      "product": "CZCE.SA",
+      "contract": "CZCE.SA2701",
+      "job": "ccddbd1e973b4554841291c35e7b6556",
+      "result_sha256": "f4d3a07e6f458249e6faa6da79d42fd60873ecfd9a971df2096b5562012589dd"
+    },
+    {
+      "product": "CZCE.SF",
+      "contract": "CZCE.SF2701",
+      "job": "74946e951ced42268cdfb6c439eec0a2",
+      "result_sha256": "acd5d9571eb2ffffcfe8413e4e3953c1e4fb1a3bb38aea6a4c4fcedb40ffc51c"
+    },
+    {
+      "product": "CZCE.SH",
+      "contract": "CZCE.SH2701",
+      "job": "74e691dcdba14113b8bfb8832aaa28bf",
+      "result_sha256": "1caf608f0384125807ad73abbc4398e38eb3b77d7f912c3e1ca4d0cebf3eb8cd"
+    },
+    {
+      "product": "CZCE.SM",
+      "contract": "CZCE.SM2701",
+      "job": "02e706d744cb454b8d1bb0d23a8d5118",
+      "result_sha256": "58180e3ddd3115041ce7e28a76fb775596935c295bd1a689302cf156686315d2"
+    },
+    {
+      "product": "CZCE.SO",
+      "contract": "CZCE.SO2705",
+      "job": "07f5bac6cbf04ae999c656e615882be9",
+      "result_sha256": "d827439bc65d0f7bec3dd2dfe70de677f0ff7bc29dc0c1d804bc87a2e0726dd3"
+    },
+    {
+      "product": "CZCE.SR",
+      "contract": "CZCE.SR2701",
+      "job": "554e0292f6cc465c861e513c4d0adf57",
+      "result_sha256": "83985002f864c0b9b5b92ed8450c79bc29fb20f2d36cc84c4fb732b6cd501cdb"
+    },
+    {
+      "product": "CZCE.TA",
+      "contract": "CZCE.TA2701",
+      "job": "92cd3f14f5894357a5f13e9fc3f6ac9e",
+      "result_sha256": "4dc534b515b4b852774cec5e8dbbffde0e0e6878a18643c4bd54a1a67be909e0"
+    },
+    {
+      "product": "CZCE.UR",
+      "contract": "CZCE.UR2701",
+      "job": "05272d2a800745c6ac8b258eee5ef720",
+      "result_sha256": "0f4dd6b2f20ce323760cf36305886b0dedeaf17f2f9b3762ca6cf83d4de0fa40"
+    },
+    {
+      "product": "CZCE.WH",
+      "contract": "CZCE.WH2701",
+      "job": "03d1e02866134f47ba20c842e6b9e8ab",
+      "result_sha256": "6e9cf6a1d2eecaf8ec6a6ee6a8db794ec74bb4f80dd1264ac66d624b8e922f1e"
+    },
+    {
+      "product": "CZCE.ZC",
+      "contract": "CZCE.ZC2701",
+      "job": "2e30d259aa0e4ac6b4b47d7f26631503",
+      "result_sha256": "5764788ce1046bf9089369703afa37b4444023bd22b7f4bfe155cfe9bc1e89c8"
+    }
+  ]
+}
