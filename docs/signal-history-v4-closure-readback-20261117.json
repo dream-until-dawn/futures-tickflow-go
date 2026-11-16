@@ -1,0 +1,12 @@
+{
+  "schema": "signal-history-v4-closure-independent-readback-v1",
+  "manifest_sha256": "fca9085482b4a6cf8572a58dcd9bc57fa139910b4b0a47e9ab026de104b07c9b",
+  "parent_manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "artifacts_verified": 918,
+  "original_and_price_artifacts_byte_equal": 461,
+  "gate_policy_scope_unchanged": true,
+  "total_artifact_bytes": 174880702,
+  "largest_json_bytes": 16498987,
+  "json_limit_unchanged": 33554432,
+  "whole_bundle_queue_ready": "pending_actual_consumer"
+}

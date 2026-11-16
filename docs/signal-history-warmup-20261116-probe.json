@@ -1,0 +1,14 @@
+{
+  "records_checked": 685574,
+  "records_sha256": "57c148fa66ce8276f92ee7883fe0aa909a643559efaab23833663caea868b3d8",
+  "selected_history_rows": 28344,
+  "contracts_with_history": 503,
+  "source_files": 128,
+  "source_bytes": 10316754,
+  "missing_or_mismatched_sources": [],
+  "products_with_at_least_35_observed_days": 51,
+  "short_products": {
+    "CZCE.SO": 3
+  },
+  "parse_plan_sha256": "c5edff30c9dcab004db8f3aaddb3ee4efedb28eec17fef398c4733e3b0a12980"
+}

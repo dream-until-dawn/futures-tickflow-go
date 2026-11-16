@@ -1,0 +1,8 @@
+{
+  "schema": "portable-parent-projection-plan-v1",
+  "network_requests": 0,
+  "source_root": "C:/Temp/tickflow-signal-history-delivery-20261117-v4-final",
+  "source_manifest_sha256": "fca9085482b4a6cf8572a58dcd9bc57fa139910b4b0a47e9ab026de104b07c9b",
+  "parent_artifact_id": "history-parent-plan",
+  "parent_plan_sha256": "c5edff30c9dcab004db8f3aaddb3ee4efedb28eec17fef398c4733e3b0a12980"
+}

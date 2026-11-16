@@ -1,0 +1,15 @@
+{
+  "schema": "signal-history-private-seal-v1",
+  "archive": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261116\\two-gates-v1\\signal-history-v3.zip",
+  "archive_bytes": 123990082,
+  "archive_sha256": "4a0ec144846a31b260d4cbf9d76892b5b55e836ff6f2865022c74dd78fc8593c",
+  "files": 920,
+  "manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "content_manifest_sha256": "2327fd3acd419bba24581b68a43133e5e7d1f6e7590a5aef37c36ab9939c275b",
+  "all_archive_members_verified": true,
+  "limits": [
+    "原件和既有交付目录不改写；持久目录保留独立ZIP副本",
+    "仅字节封存，策略就绪仍需真实消费者验证",
+    "额外delivery-files.json是外层归档清单，不新增行情或请求"
+  ]
+}

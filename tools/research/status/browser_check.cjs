@@ -61,7 +61,7 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /逐年观察日期/);
     assert.match(await page.locator('#detail-body').innerText(), /专项|具名模型审核/);
     assert.match(await page.locator('#detail-body').innerText(), /实际就绪策略信号 0/);
-    assert.match(await page.locator('#detail-body').innerText(), /本包只含目标日结算，不含保证金或最低开仓/);
+    assert.match(await page.locator('#detail-body').innerText(), /首包只含目标日结算，不含保证金或最低开仓/);
     assert.match(await page.locator('#detail-body').innerText(), /主EDB无此列/);
     assert.match(await page.locator('#detail-body').innerText(), /SHFE 官方日行情/);
     assert.match(await page.locator('#detail-body').innerText(), /前结算价/);
@@ -79,6 +79,12 @@ async function main() {
     await page.fill('#search','RM');
     await page.locator('[data-product="CZCE.RM"] .product-title').click();
     assert.match(await page.locator('#detail-body').innerText(), /仅单日未审核模型预览/);
+    await page.click('#close-detail');await page.click('#reset');
+    await page.fill('#search','SC');
+    await page.locator('[data-product="INE.sc"] .product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /完整结算历史后的有限实测/);
+    assert.match(await page.locator('#detail-body').innerText(), /INE.sc2612/);
+    assert.match(await page.locator('#detail-body').innerText(), /109个历史观察日/);
     await page.click('#close-detail');await page.click('#reset');
     await page.fill('#search','AP');
     await page.locator('[data-product="CZCE.AP"] .product-title').click();

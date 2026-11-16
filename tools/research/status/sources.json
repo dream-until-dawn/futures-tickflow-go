@@ -43,6 +43,11 @@
       "id": "user_gate_readback",
       "file": "docs/data-gates-consumer-readback-20261116.json",
       "sha256": "28af95579e395fdbf90f6f93e73ecfe079e5804c3d55c3655f9778c060811c74"
+    },
+    {
+      "id": "history_consumer_readback",
+      "file": "docs/signal-history-consumer-readback-20261117.json",
+      "sha256": "93174da26e358a2c184b84d9b0c1816a0c9a56c398b6621bb0024fed2000923d"
     }
   ],
   "profiles": [
@@ -91,5 +96,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "11d9db3651526c707b468202c327bc3cf5669146a1ad87bd3976fa18f3789e33"
+  "published_model_sha256": "071191e398cea2fd1be35dc504478a9a0926f472af026efb70e0d3482ee2df39"
 }

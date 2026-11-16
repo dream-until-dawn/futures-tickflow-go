@@ -1,0 +1,51 @@
+{
+  "schema": "signal-history-v3-direct-independent-readback-v1",
+  "source_report_path": "C:\\VScodeProject\\futures-decision-strategy\\docs\\evidence\\scenario-signal-history-v3-20261117\\limited-acceptance.json",
+  "source_report_sha256": "1df69f7306817544822774cf8985508b5cac7843b834b81bcc638f15b759a702",
+  "manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "tested_contracts": [
+    {
+      "contract": "INE.sc2612",
+      "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\INE.sc2612\\result.json",
+      "result_sha256": "69d13e10eaa61ea0e4dd5c7123e6cb41bcb848d98a2ca2da18d5f40cf6a6e4e7",
+      "status": "complete",
+      "observations": 715,
+      "ready_days": 109,
+      "target_ready": true
+    },
+    {
+      "contract": "SHFE.rb2612",
+      "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\SHFE.rb2612\\result.json",
+      "result_sha256": "806ea70ac8920a09c062067412bc0b09b2b8e114f4432b8e1f13a5c797b94002",
+      "status": "insufficient_history",
+      "observations": 221,
+      "ready_days": 0,
+      "target_ready": false
+    },
+    {
+      "contract": "CZCE.SO2705",
+      "result_path": "C:\\VScodeProject\\futures-decision-strategy\\results\\scenario-signal-v3-20261117\\CZCE.SO2705\\result.json",
+      "result_sha256": "882801a13645a73e04834659ab3b5c5f1ed1e02edbb6afdfd1b33d86078a993d",
+      "status": "insufficient_history",
+      "observations": 3,
+      "ready_days": 0,
+      "target_ready": false
+    }
+  ],
+  "ready_products": [
+    "INE.sc"
+  ],
+  "ready_contracts": [
+    "INE.sc2612"
+  ],
+  "whole_bundle_queue_ready": false,
+  "limits": [
+    "仅三约实际直接消费，未验证SC2703或全52正式队列",
+    "两个全年中间JSON超既有32MiB门禁，v3拒绝保留",
+    "同一默认指标607根门槛不改，不补造日期或主连，未增加真实前向样本"
+  ],
+  "target_day": 20261116,
+  "signal_trade_day": 20261117,
+  "indicator": "CN MACD(12,26,9)",
+  "indicator_first_ready_observation": 607
+}

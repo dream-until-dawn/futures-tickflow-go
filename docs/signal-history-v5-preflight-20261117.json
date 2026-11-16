@@ -1,0 +1,15 @@
+{
+  "schema": "signal-history-v5-full-receiver-preflight-v1",
+  "manifest_sha256": "2d4d5a294a89c51332e5a738df19950fc67552197d49fa1debbbe15b16ed679c",
+  "receiver_checker_sha256": "50262ef1a0232c35b30c2ef34eea97c643f5bf3f651948c63de4ce11b66124d9",
+  "artifacts_checked": 918,
+  "json_checked": 453,
+  "jsonl_rows_portable_checked": 127888,
+  "original_and_price_artifacts_byte_equal": 461,
+  "gate_policy_scope_unchanged": true,
+  "original_parent_plan_not_misrepresented": true,
+  "preflight": "passed",
+  "formal_queue": "pending_actual_store_submit",
+  "old_v4_failed_job_verified": "cbe3b79a12ba40f7a2d36434ec632971",
+  "old_v4_returncode": null
+}

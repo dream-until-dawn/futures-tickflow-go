@@ -1,0 +1,21 @@
+{
+  "schema": "official-numeric-text-independent-readback-v1",
+  "manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "source_id": "warmup-shfe-annual-2024",
+  "original_sha256": "68505aefe460ffa3167bd200477a5ebb05a8aaac5e477bb013e97ffbcf7bc99e",
+  "member": "ine所内合约行情报表2024.1月-12月/ine所内合约行情报表2024.1月-12月.xlsx",
+  "symbol": "INE.sc2612",
+  "day": 20240102,
+  "cells": [
+    {
+      "sheet": "xl/worksheets/sheet1.xml",
+      "cell": "I14282",
+      "value": "532.70000000000005",
+      "style": "3"
+    }
+  ],
+  "limits": [
+    "验证原始XML数值文本，不把底层存储精度当可交易最小价位",
+    "数据原样保留，消费者须有界解析；不得为兼容12位小数上限静默截断"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "signal-history-package-independent-readback-v1",
+  "manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "artifacts_verified": 919,
+  "records_verified": 64218,
+  "historical_records": 63670,
+  "target_records": 548,
+  "eligible_contracts": 527,
+  "contracts_with_at_least_607_observations": {
+    "INE.sc2612": 715,
+    "INE.sc2703": 657
+  },
+  "actual_strategy_ready": "pending_external_runtime",
+  "limits": [
+    "独立核原件/派生产物身份和记录规则，不冒称已实测策略ready",
+    "未更改607根默认指标门槛，未拼接主连或补造日期"
+  ]
+}

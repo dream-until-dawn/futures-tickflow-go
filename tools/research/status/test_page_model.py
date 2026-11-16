@@ -112,6 +112,22 @@ class StatusModelTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'^status_user_gate_readback_binding$'):
                 check_docs(target,config)
 
+    def test_history_readback_scope_cannot_be_promoted_inside_rehashed_model(self):
+        repo=Path(__file__).resolve().parents[3]
+        config=json.loads((Path(__file__).parent/'sources.json').read_bytes())
+        data=json.loads((repo/'docs/data-status.json').read_bytes())
+        data['history_consumer_readback']['ready_contracts'].append('SHFE.rb2612')
+        raw=(json.dumps(data,ensure_ascii=False,indent=2)+'\n').encode()
+        with tempfile.TemporaryDirectory() as directory:
+            target=Path(directory)
+            for entry in config['repo_inputs']+config['profiles']:
+                path=target/entry['file'];path.parent.mkdir(parents=True,exist_ok=True)
+                path.write_bytes((repo/entry['file']).read_bytes())
+            (target/'docs/data-status.json').write_bytes(raw)
+            config['published_model_sha256']=hashlib.sha256(raw).hexdigest()
+            with self.assertRaisesRegex(ValueError,'^status_history_consumer_readback_binding$'):
+                check_docs(target,config)
+
     def test_manual_html_edit_and_changed_published_model_are_rejected(self):
         data=model(*self.fixture())
         with tempfile.TemporaryDirectory() as d:

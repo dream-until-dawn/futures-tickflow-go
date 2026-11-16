@@ -107,10 +107,20 @@ function details(p) {
       '日历、历史制度、PIT、生命周期、对账和运行成熟度为加分项；旧严格金融包不是这两道门槛的附加条件。当前参数回放历史属于情景，不代表历史实际制度。'
     ]);
     const readback=status.user_data_gate_readback;
-    if(readback?.results.some(r=>r.product===p.key))detailSection('本轮引擎实际消费（补充项）',[
+    if(readback?.results.some(r=>r.product===p.key))detailSection('首批单日包消费（历史记录）',[
       '已逐件核'+readback.result_files_checked+'份结果的摘要、合约及真实结算。该单日MACD作业均为预热不足，实际就绪策略信号 '+readback.ready_signals+'；不改变上方数据门槛。',
-      '本包只含目标日结算，不含保证金或最低开仓约束；该版通用假设文案已反馈修正，原结果保留。未新增真实前向样本，未部署生产。'
+      '首包只含目标日结算，不含保证金或最低开仓约束；该版通用假设文案已在后续本地候选修正，旧结果保留。未新增真实前向样本，未部署生产。'
     ]);
+    const history=status.history_consumer_readback;
+    if(history) {
+      const tested=history.tested_contracts.filter(r=>r.contract.replace(/[0-9]+$/,'')===p.key);
+      if(tested.length)detailSection('补充：完整结算历史后的有限实测',[
+        ...tested.map(r=>r.contract+'：'+r.observations+'条实际观察；'+r.ready_days+'个历史观察日可计算指标价格条件；目标日'+(r.target_ready?'已到列就绪判定':'样本不足')+'。'),
+        '当前固定CN MACD实际第607条才可就绪；这是策略窗口限制，不增加数据门槛，也不等于已产生可执行动作。',
+        history.whole_bundle_queue_ready===true?'该版整包已按原冻结预算核验；仅所列有限合约实测，未认证全52连续队列或部署。':'该版整包尚未通过队列冻结；直接消费的成功与整包可入队分开。',
+        '原始数值精度照留；历史字段仅结算，非长期OHLC回测包；没有真实前向新增或生产变更。'
+      ]);
+    }
   }
   if(p.usage_readiness) {
     const r=p.usage_readiness;

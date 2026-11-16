@@ -73,6 +73,11 @@ def markdown(data):
         readback=data.get('user_data_gate_readback')
         if readback:
             gate_lines[2:2]=[f'**策略实测另列：**已读回{readback["result_files_checked"]}份真实信号消费结果并逐约核结算；单日MACD均预热不足，实际就绪信号{readback["ready_signals"]}。这是策略样本窗口限制，不把52个品种的数据门槛重新判失败。该首包不含保证金/最低开仓，通用假设文案的误示已反馈；旧结果留存，回测消费另核。见[独立读回](data-gates-consumer-readback-20261116.json)。','']
+        history=data.get('history_consumer_readback')
+        if history:
+            ready='、'.join(history['ready_contracts']) or '无'
+            freeze='该版按原冻结预算通过，仅所列有限约实测' if history['whole_bundle_queue_ready'] is True else '该版整包尚未通过冻结，仅直接消费实测'
+            gate_lines[2:2]=['**补充完整结算历史后的最新有限实测：**'+ready+'达到当前CN MACD目标日列就绪判定（实际需第607条）；其余所测RB/SO仍不足。'+freeze+'。价格条件可算不是订单或真实前向，其他未测合约不自动外推。详见[预热维护与实际证据](signal-history-warmup-20261116.md)。','']
         for product in gated:
             b=product['user_data_gates']['backtest'];s=product['user_data_gates']['daily_signal']
             detail='；'.join(b['blocking_reasons']+s['blocking_reasons']) or ('回测当前约束情景：'+','.join(b['eligible_contracts']))

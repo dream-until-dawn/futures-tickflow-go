@@ -142,6 +142,13 @@ def check_docs(repo, config):
     readback=next((r for r in config['repo_inputs'] if r['id']=='user_gate_readback'),None)
     if readback and data.get('user_data_gate_readback')!=locked_repo(repo,readback):
         raise ValueError('status_user_gate_readback_binding')
+    history_readback=next((r for r in config['repo_inputs'] if r['id']=='history_consumer_readback'),None)
+    if history_readback and data.get('history_consumer_readback')!=locked_repo(repo,history_readback):
+        raise ValueError('status_history_consumer_readback_binding')
+    if history_readback:
+        history=data['history_consumer_readback'];facts=data['user_data_gate_facts']
+        if history['target_day']!=facts['latest_completed_day'] or history['signal_trade_day']!=facts['current_trade_day']:
+            raise ValueError('status_history_consumer_readback_day_scope')
     extension=data.get('project_inventory',{}).get('history_extension')
     if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
@@ -180,6 +187,8 @@ def main():
     data['engine_acceptance']=engine
     if 'user_gate_readback' in repo_data:
         data['user_data_gate_readback']=repo_data['user_gate_readback']
+    if 'history_consumer_readback' in repo_data:
+        data['history_consumer_readback']=repo_data['history_consumer_readback']
     if 'project_inventory' in repo_data:
         extension=repo_data['project_inventory'].get('history_extension')
         if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')

@@ -1,0 +1,22 @@
+{
+  "schema": "derived-reference-closure-plan-v1",
+  "network_requests": 0,
+  "source_root": "C:\\Temp\\tickflow-signal-history-delivery-20261116-v3",
+  "source_manifest_sha256": "71d1044d8b0312a3d0184bb6e0aeed321563658c580a59b933fc67edb2a8e75b",
+  "unbundle_derived": [
+    {
+      "id": "decoded-shfe-annual-2024",
+      "bytes": 33661039,
+      "sha256": "c33930153038cd8871cc440d1f17e295f03364468efd0022376e3a90daf13ccc"
+    },
+    {
+      "id": "decoded-shfe-annual-2025",
+      "bytes": 34948068,
+      "sha256": "68188cfc76a61c886bbf8348fc672a6060fcfdb2adbae8dee97f4e25e0d87914"
+    }
+  ],
+  "original_bindings": {
+    "decoded-shfe-annual-2024": "warmup-shfe-annual-2024",
+    "decoded-shfe-annual-2025": "warmup-shfe-annual-2025"
+  }
+}

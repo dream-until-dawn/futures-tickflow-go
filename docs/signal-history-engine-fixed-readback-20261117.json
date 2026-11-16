@@ -1,0 +1,448 @@
+{
+  "schema": "scenario-fixed-results-independent-readback-v1",
+  "source_commit": "545f7f639507d14e50ee52228583d2c5e0bcadb4",
+  "image_id": "sha256:5af9472ba4b9916f482699e48096a353e05e475f09d6f7dfe92603bf6e44e083",
+  "reports": [
+    {
+      "case": "signal",
+      "report_sha256": "2bc133ccfac47467258cc16d5c16327ca012a212529bf94354e01ec8c05836c4",
+      "archive_sha256": "74ef4578df49cab9a65a483b7c6bee2fb3e6d2925133128ba14fdb0866188b00",
+      "verified_results": 52,
+      "results": [
+        {
+          "contract": "SHFE.ad2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "88f371dda6f1597e40539fec773797e3e701e9737c8912238afe6901af6f7aea"
+        },
+        {
+          "contract": "SHFE.ag2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "b6ec35d8f833bcc8885d2fb0a39a563ad631dba59a9998bc73e1f4025e2ac899"
+        },
+        {
+          "contract": "SHFE.al2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "8635b15ae694bc2342cb46cc602de256ea8f14d516ef120714daace866b982e4"
+        },
+        {
+          "contract": "SHFE.ao2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "83f1f0b375975bcb32d080194b79f8bb17c2057432012c0e100f276aa70bff84"
+        },
+        {
+          "contract": "SHFE.au2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "d94ec8acdd1d3771e3ab06e2e600d4cfb62e63947187549acc9f746280192f86"
+        },
+        {
+          "contract": "SHFE.br2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "ed32c366727060258a89815800c90825a35cd955681e82c3a3b94a7095ccaa03"
+        },
+        {
+          "contract": "SHFE.bu2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "fa21bde945513dbd3e6583a03938737c0ee41fc27f71fa918c812b6424959829"
+        },
+        {
+          "contract": "SHFE.cu2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "94f0532f434358d05c8790a0fc921b79fe61672d37acd8ad1bb95cb321a985b7"
+        },
+        {
+          "contract": "SHFE.fu2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "ac34fbbe407ecdf49b184d92a8606c2459d71db8f96851c3d5c33fdf060ab28a"
+        },
+        {
+          "contract": "SHFE.hc2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "a130ae1160222a550ec04a9527c890b8b3cc353e5e4215a9dcc7b3bf247a29ca"
+        },
+        {
+          "contract": "SHFE.ni2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "133be02cdc93afc0614ea1e3c2e9608a84aa740d3965e87bf96692d3dec3907a"
+        },
+        {
+          "contract": "SHFE.op2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "41e251bcf358bf4dac690d6fdf73c4d0669894e71c845449a7a37bc82bd4b63d"
+        },
+        {
+          "contract": "SHFE.pb2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "b671e7ef518878199cdfa7d9bedf0a88cf8024c2df65e501e3e5ee272fef85e8"
+        },
+        {
+          "contract": "SHFE.rb2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "4bddc954a7917c37365f23c67de3aa4c58947e91a1dfb639925ce44b281b2399"
+        },
+        {
+          "contract": "SHFE.ru2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "2b28dbb1f26a1cf44f589e25867061efaee41830ce82a0a98085edddb459ff58"
+        },
+        {
+          "contract": "SHFE.sn2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "a1cb868d7ed3cbed474a7327ea14a49ad5febcf79573cc3a3a48399815f4a37a"
+        },
+        {
+          "contract": "SHFE.sp2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "2ad84d3bbc0f17a5de65b0ddcebe901c2b3f99ec915b8aa293d30076a7f89cbc"
+        },
+        {
+          "contract": "SHFE.ss2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "0d50cb786f607e367db14d8147cbe60cb96a126bfcbc46a48ced43467dcd1077"
+        },
+        {
+          "contract": "SHFE.wr2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "0418d240f26464f227e56b17a94a8df7735735a5448980c167b8c4aa8ec66c0a"
+        },
+        {
+          "contract": "SHFE.zn2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "ff45c20c2b4f9a5f5e17e976be78d849cd4b6cfcae8aa8ce52cc125141a03d76"
+        },
+        {
+          "contract": "INE.bc2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "9aab3b3ea32f5a7e23a6c63ea8c950a1f87407d79227a029385538cc6695e2e7"
+        },
+        {
+          "contract": "INE.ec2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "196c48865b2baab74975ff85e39eb6f536f93ffb8c563e3c1c9787e784b74c6e"
+        },
+        {
+          "contract": "INE.lu2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "e6bdfe254ddd3654f097cf6b25ff560bc9db20940d0200869699adb85371845d"
+        },
+        {
+          "contract": "INE.nr2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "ec4f962dea715a5c24bca9779a8318c44a6f117a071385d4eb2fc7a5734b2618"
+        },
+        {
+          "contract": "INE.sc2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "4aff0584ca87e486e45a46b17125d7113c22054bfc17a5135772c80f637cfd73"
+        },
+        {
+          "contract": "CZCE.AP2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "633f876abfb17031e6df39afe89b3a4a0c7af9edf80fd762050fffa144886053"
+        },
+        {
+          "contract": "CZCE.CF2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "e93a5ac0b3f522f484f05d560c4dd04fb540c50330aff0cadda4621f58750e9e"
+        },
+        {
+          "contract": "CZCE.CJ2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "bfaa13e8a33418211a15102b73bf69d68168e544eea6a15a46357ff5fedcec7b"
+        },
+        {
+          "contract": "CZCE.CY2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "95e54f771d28a942da74b05b3994088ccee85a66e40cc70e537fab7ac94fc298"
+        },
+        {
+          "contract": "CZCE.FG2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "e9c9c4d67b8bd46457ba778ad9ec9ef8b7f713002035c7978da9ddd4a0533090"
+        },
+        {
+          "contract": "CZCE.JR2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "28d34c291e4b3626d94da54ce5841c0d825c88da654dd532b4e00bd22fc3b792"
+        },
+        {
+          "contract": "CZCE.MA2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "d85e117aa3e0e79e7d4b6392125dabf19889bf99ea4c154ed1ed9c21cef0f709"
+        },
+        {
+          "contract": "CZCE.OI2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "2ba7461f4b2a8bc984f63985ff881f7d7edfe537c6954eeb2c3dec4442b138c2"
+        },
+        {
+          "contract": "CZCE.PF2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "45f26387c590331e00bf8874ff53f3e64c8c53eef4ff062aaa9e3861b2388afe"
+        },
+        {
+          "contract": "CZCE.PK2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "483cbf0baf249a851f4585b6fd199ffa8cc6ef4fbe5943ca388535cb3c2979a1"
+        },
+        {
+          "contract": "CZCE.PL2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "735b0ceb26717dad16f93439dcb2f1ad1c6a376925efb630bf0e80f74bcb2ab0"
+        },
+        {
+          "contract": "CZCE.PM2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "9a31e6a72d72f6674258f3d1110bccd3633d260ca414b1112c87f8c685d6cd25"
+        },
+        {
+          "contract": "CZCE.PR2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "7c0bdc33b8b5277ccac7c14dc3eb71faceb8254f3472ac63153ddd56180c053c"
+        },
+        {
+          "contract": "CZCE.PX2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "bf20412c3086cac47b99b991285dcbcb45226fdef98be69efe32bfd03e1696f4"
+        },
+        {
+          "contract": "CZCE.RI2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "292d38a5212f97dcc9c7095c546f466709926aa981b008be123ef0959e923509"
+        },
+        {
+          "contract": "CZCE.RM2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "7a26fae645289a8299c84792defae2ee5b73067265a8e483ab39a6708e5a0037"
+        },
+        {
+          "contract": "CZCE.RS2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "16793dba67ba79d4779af5b9e071634ef2a0f2e9a78f3adffbdbd494d1b16fe9"
+        },
+        {
+          "contract": "CZCE.SA2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "4b311cbaa58d6bd836085e5a27af7bcb295b73116b2a8afbb78978c75c17c26e"
+        },
+        {
+          "contract": "CZCE.SF2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "d64cf01d41b68029d9bb40b7295d85106765d778b13dea9a7fdfc3e9f638a33e"
+        },
+        {
+          "contract": "CZCE.SH2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "069621697de2a4ff8ac866ace13e14565acdc5a524363340020d50dfad917ca7"
+        },
+        {
+          "contract": "CZCE.SM2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "9a705bea1c0f1f3092a7f2e650233c793b6a27967c015b147d4d76d668f9cb29"
+        },
+        {
+          "contract": "CZCE.SO2705",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "b1877f15d27a4ae40e506d42ef5ddd5485f81303773cc0058920e32d0049b63c"
+        },
+        {
+          "contract": "CZCE.SR2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "73b996f13e37b620bec90cfc8e8b3a3d51b0aad35a0d32e10c000329a782c880"
+        },
+        {
+          "contract": "CZCE.TA2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "3f093c89673c9891f67c15f741c2999cac8af2191c0573c1224bb44b8e367448"
+        },
+        {
+          "contract": "CZCE.UR2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "8a61681dd81d115668bb8daa6d1266d42c7cb3386470e3576a74894e566266d5"
+        },
+        {
+          "contract": "CZCE.WH2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "627c638c06b75fdd1a675b7452a0e8297da13c935e634f304d1dff89d924424b"
+        },
+        {
+          "contract": "CZCE.ZC2701",
+          "status": "insufficient_history",
+          "warmup_days": 1,
+          "ready_days": 0,
+          "result_sha256": "76e4b14b78c99c174294c9fb2653352a10d86c245fe2878f59fdd1bce0a46cc1"
+        }
+      ]
+    },
+    {
+      "case": "rb",
+      "report_sha256": "2f09c1209f1421500853f214e813c02cc1b3a9d8e25dac81cdcce1f9a051f333",
+      "archive_sha256": "056927bd7ffaf22f252251e9b7c2c56bba9634061d52d7c3a0ffbd62381bf258",
+      "verified_results": 8,
+      "results": [
+        {
+          "contract": "SHFE.rb2105",
+          "status": "complete",
+          "warmup_days": 1,
+          "ready_days": 86,
+          "result_sha256": "b5aa01b1d4babcc0d3a57100c4bf44c3e151861fc812d8fa52097a667448f4e9"
+        },
+        {
+          "contract": "SHFE.rb2105",
+          "status": "insufficient_history",
+          "warmup_days": 87,
+          "ready_days": 0,
+          "result_sha256": "5bdb082d1c3e0e889dd337660ce6d5362a466effb0ccea360ec8c69d71b8bb5b"
+        },
+        {
+          "contract": "SHFE.rb2306",
+          "status": "complete",
+          "warmup_days": 1,
+          "ready_days": 244,
+          "result_sha256": "4387372e102f5e43a576e75f26b8657db335e85b593f992eeced14bb62ec2319"
+        },
+        {
+          "contract": "SHFE.rb2306",
+          "status": "insufficient_history",
+          "warmup_days": 245,
+          "ready_days": 0,
+          "result_sha256": "e1a20bca96ac5730d9c09a5633084202b4fe483dcc9fa5796c93568014822aff"
+        },
+        {
+          "contract": "SHFE.rb2602",
+          "status": "complete",
+          "warmup_days": 1,
+          "ready_days": 246,
+          "result_sha256": "5b18f1b8a8748155965720dcf3c95560cc1b3f8cc1a9b134364963c65516e922"
+        },
+        {
+          "contract": "SHFE.rb2602",
+          "status": "insufficient_history",
+          "warmup_days": 247,
+          "ready_days": 0,
+          "result_sha256": "0ce01942eb8b753ca2290b76466ae0514fb395b77f16956e2522545f407f1ce8"
+        },
+        {
+          "contract": "SHFE.rb2612",
+          "status": "complete",
+          "warmup_days": 1,
+          "ready_days": 220,
+          "result_sha256": "ff4343c029108b48816e23b06957a42cb21b2c48e18f25bf311384f94627a616"
+        },
+        {
+          "contract": "SHFE.rb2612",
+          "status": "insufficient_history",
+          "warmup_days": 221,
+          "ready_days": 0,
+          "result_sha256": "9ed4a62a339718894ec92047a41f084fa9bdbca891e415d99c8f5bc7ad2209e5"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "只读归档实际结果并核SHA；未据消息认定通过，未自行重跑对方容器",
+    "回测流水探针不等于默认MACD已就绪或收益认证",
+    "旧误示、单根失败记录仍保留，生产暂缓不变"
+  ]
+}
