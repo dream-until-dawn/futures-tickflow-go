@@ -8,6 +8,7 @@ import sys
 
 from page_model import model
 from extract_names import FrozenInputs, PACKS
+from inventory_model import attach, LABELS
 
 
 def locked_repo(root, item):
@@ -22,6 +23,21 @@ def locked_repo(root, item):
 
 def source_cells(p, exchanges):
     """列来源只依据实际取得资料；空响应、未请求和未知范围保持空白。"""
+    if 'datasets' in p:
+        kinds=[{'ohlc'},{'volume'},{'open_interest'},{'settlement'},{'turnover'},{'calendar'},
+               {'minute','live_frames'},{'directory'},{'margin','fees','limits'}]
+        def short_source(row):
+            route=row['route']
+            if route=='official-catalog':return exchanges[p['exchange']]['short']+'（官方）'
+            if route.startswith('cffex-'):return '中金所（明文）'
+            if route.startswith('parameters'):return '上期所（业务表）'
+            if route.startswith('engine-rb-public-'):return '上期所（业务表）'
+            if route.startswith('sina-'):return '新浪（样本）'
+            if route.startswith('edb-'):return '天勤 EDB'
+            if route=='verified-calendar':return '官方公告／规则'
+            return row['source']
+        return [list(dict.fromkeys(short_source(r) for r in p['datasets'] if r['kind'] in group and r['present_rows'] and
+                (r['kind']!='settlement' or r.get('valid_rows') is None or r['valid_rows']>0))) for group in kinds]
     quotes=[]
     if p['nonempty']:quotes.append('天勤 EDB')
     if any(s['source']=='EDB旧有限日线样本' for s in p['supplementary']):quotes.append('天勤 EDB（样本）')
@@ -44,13 +60,31 @@ def markdown(data):
     lines += ['格内只列已取得资料的来源；没有确认的留空。原表列存在不保证逐行有值或完成统一交付。点击HTML品种名查看覆盖日期和质量详情。','']
     for exchange, label in data['exchanges'].items():
         lines += ['## '+label['name']+'（'+exchange+'）','',
-            '| 品种 | OHLC（日线） | 成交量 | 持仓量 | 结算价 | 成交额 | 历史交易日历 |',
-            '| --- | --- | --- | --- | --- | --- | --- |']
+            '| 品种 | OHLC（日线） | 成交量 | 持仓量 | 结算价 | 成交额 | 历史交易日历 | 分钟/现场 | 目录/生命周期 | 保证金/手续费/涨跌停 |',
+            '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
         for p in data['products']:
             if p['exchange']!=exchange:continue
             cells=['；'.join(s) for s in source_cells(p,data['exchanges'])]
+            if len(cells)==6:cells+=['','','']
             lines.append('| '+p['name'].replace('|','\\|')+' `'+p['code']+'` | '+' | '.join(cells)+' |')
         lines.append('')
+    if 'project_inventory' in data:
+        lines += ['## 各类数据的范围、完整性和更新时间','',
+                  '下表按来源分列，不相加。起止为该字段实际有值的观察日期；有效范围另注。原件取得、归档回执及派生索引时间不同；未知不取文件修改时间补齐。','']
+        for p in data['products']:
+            if not p.get('datasets'):continue
+            lines += ['### '+p['name']+' '+p['key'],'',
+                      '| 类型 / 来源 | 观察起止 | 完整性 | 最后取得 / 其他更新时间 |',
+                      '| --- | --- | --- | --- |']
+            for r in p['datasets']:
+                span=(r.get('first') or '未知')+' → '+(r.get('last') or '未知')
+                count=str(r['present_rows'])+'有值 / '+str(r['rows'])+'原记录；有效'+str(r.get('valid_rows') if r.get('valid_rows') is not None else '未知')
+                time=r.get('last_acquired_at') or r.get('last_acquired_date') or '未知'
+                if r.get('last_receipt_at'):time+='；归档回执 '+r['last_receipt_at']
+                if r.get('last_indexed_at'):time+='；索引 '+r['last_indexed_at']
+                if r.get('last_exported_at'):time+='；快照导出 '+r['last_exported_at']
+                lines.append('| '+LABELS.get(r['kind'],r['kind'])+' / '+r['source']+' | '+span+' | '+count+'；'+r['completeness']+' | '+time+' |')
+            lines.append('')
     lines += ['## 字段、置信度与不足','',
         '- 日线主源为Shinny EDB；其历史版本、零成交OHLC和盘后量仓语义仍有待核，不能用收盘价代替结算价。已有参考原表归档了结算/成交额列（范围同参考，不保证每行有值、单位或资格已证）；主EDB没有这两列，未完成对账/统一Source交付。',
         '- SHFE/INE参考为2021—2025官方HTTPS年度原表；CZCE仅核2021-01-04；CFFEX为封存明文HTTP月包及有限参考，发布者未认证。对照仅覆盖实际参考合约日。',
@@ -86,6 +120,11 @@ def check_docs(repo, config):
         raise ValueError('status_published_scope')
     for item in config['repo_inputs']+config['profiles']:
         locked_repo(repo,item)
+    inventory=next((r for r in config['repo_inputs'] if r['id']=='project_inventory'),None)
+    if inventory and data.get('project_inventory')!=locked_repo(repo,inventory):
+        raise ValueError('status_inventory_binding')
+    if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
+        raise ValueError('status_product_inventory_binding')
     check_rendered(repo,data)
     return data['summary']
 
@@ -118,6 +157,8 @@ def main():
     if engine['report_byte_identical'] is not True or engine['financial_admission_added']!=0 or engine['price_semantics_accepted'] is not False or engine['feed_integrated'] is not False:
         raise ValueError('status_engine_scope')
     data['engine_acceptance']=engine
+    if 'project_inventory' in repo_data:
+        data=attach(data,repo_data['project_inventory'])
     data['provenance']=dict(bundle_manifest_sha256=config['bundle_manifest_sha256'],catalog_sha256=config['catalog_sha256'],
                             repo_inputs=config['repo_inputs'],profiles=config['profiles'])
     a.out_root.mkdir(parents=True)

@@ -23,6 +23,16 @@
       "id": "engine_acceptance",
       "file": "docs/evidence/data-status-20261115/engine-acceptance.json",
       "sha256": "d902c92904e19b1499653cc86c5aea21788f96238ae8b4403eb17785362aa8e7"
+    },
+    {
+      "id": "project_inventory",
+      "file": "docs/evidence/project-data-inventory-20261116.json",
+      "sha256": "f607b1fe5bf65109b83db2d25e422a000141f073cafb1a8c2c9eda7b000ad184"
+    },
+    {
+      "id": "project_source_plan",
+      "file": "tools/research/status/project-sources.json",
+      "sha256": "299625b11445a8b6cd8187d25dc427ad25b7c5ec1ebb7e8bf736ee67ac5f5904"
     }
   ],
   "profiles": [
@@ -71,5 +81,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "e66724f0d90fb577b25977a954f1edde04716f48b476baa56d78fea192159c70"
+  "published_model_sha256": "cb6160e4a1ff04aec71522b12f8c267c74b26d86f10c6e1247119214c13e8036"
 }

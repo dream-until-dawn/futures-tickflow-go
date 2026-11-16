@@ -7,3 +7,6 @@
 /* 数据矩阵保持同类字段对齐，空格不放占位文字。 */
 .table-wrap>table{min-width:1080px;table-layout:fixed}.table-wrap>table th{width:13%}.table-wrap>table th:nth-child(1){width:9%}.table-wrap>table th:nth-child(2){width:13%}.table-wrap>table td{padding:14px 10px}.source-name{font-size:12px;margin:3px 0;color:#245b75}.table-wrap>table tr:nth-child(even){background:#f7fafc}.notice p{font-size:13px;max-width:1100px}.exchange-name{font-weight:600;color:#586c7c}
 @media(max-width:600px){.table-wrap>table{min-width:0}.table-wrap>table td:nth-child(2){background:#f3f7fa}.table-wrap>table td:first-child{grid-column:auto}.table-wrap>table td:nth-child(2)::before{display:none}}
+
+/* 每类数据分别显示覆盖与更新，手机也保持标签和值对应。 */
+.table-wrap>table{min-width:1450px}.table-wrap>table th{width:9%}.table-wrap>table th:nth-child(1){width:7%}.table-wrap>table th:nth-child(2){width:9%}dialog{width:min(1040px,calc(100vw - 28px))}.dataset-card{border:1px solid #dce4ea;border-radius:8px;padding:14px;margin:12px 0;background:#f8fbfd}.dataset-card h4{margin:0 0 10px;font-size:14px}.dataset-card dl{display:grid;grid-template-columns:125px 1fr;margin:0;font-size:12px;gap:7px 12px}.dataset-card dt{color:#586c7c}.dataset-card dd{margin:0;overflow-wrap:anywhere}@media(max-width:600px){.table-wrap>table{min-width:0}.dataset-card dl{grid-template-columns:90px 1fr}.dataset-card{padding:12px}}

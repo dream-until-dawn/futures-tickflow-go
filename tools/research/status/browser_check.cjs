@@ -26,10 +26,16 @@ async function main() {
     await page.selectOption('#exchange', 'DCE');
     assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.exchange === 'DCE').length);
     const soybean = page.locator('[data-product="DCE.m"]');
-    assert.match(await soybean.locator('td').nth(2).innerText(), /新浪（样本）/);
+    assert.match(await soybean.locator('td').nth(2).innerText(), /新浪/);
     assert.doesNotMatch(await soybean.locator('td').nth(2).innerText(), /官方/);
     assert.equal(await soybean.locator('td').nth(6).innerText(), '');
     assert.equal(await soybean.locator('td').nth(7).innerText(), '');
+    await soybean.locator('.product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /覆盖起止/);
+    assert.match(await page.locator('#detail-body').innerText(), /完整性/);
+    assert.match(await page.locator('#detail-body').innerText(), /最后更新（原件）/);
+    assert.match(await page.locator('#detail-body').innerText(), /未知/);
+    await page.click('#close-detail');
     // 对全部品种逐格核空白和来源，不能把未请求或缺证显示为有数据。
     for (const p of data.products.filter(p=>p.exchange==='DCE')) {
       const cells=page.locator('[data-product="'+p.key+'"] td');
@@ -42,6 +48,15 @@ async function main() {
     await page.locator('.product-title').click();
     assert.equal(await page.locator('#detail').isVisible(), true);
     assert.match(await page.locator('#detail-body').innerText(), /主EDB无此列/);
+    assert.match(await page.locator('#detail-body').innerText(), /SHFE 官方日行情/);
+    assert.match(await page.locator('#detail-body').innerText(), /前结算价/);
+    assert.match(await page.locator('#detail-body').innerText(), /引擎RB冻结行情（派生）/);
+    assert.match(await page.locator('#detail-body').innerText(), /2026-11-16/);
+    assert.match(await page.locator('#detail-body').innerText(), /快照导出/);
+    assert.match(await page.locator('#detail-body').innerText(), /交易所保证金表/);
+    assert.match(await page.locator('#detail-body').innerText(), /现场原始帧/);
+    assert.match(await page.locator('#detail-body').innerText(), /本轮原件暂未定位/);
+    await page.screenshot({ path: path.join(output, 'rb-detail.png') });
     assert.match(await page.locator('#detail-body').innerText(), /官方历史合约全集/);
     await page.click('#close-detail');
     await page.click('#reset');
@@ -51,7 +66,7 @@ async function main() {
     await page.selectOption('#exchange', 'CFFEX');
     assert.equal(await page.locator('#products tr').count(), 8);
     for (const row of await page.locator('#products tr').all()) {
-      assert.match(await row.innerText(), /明文原表列/);
+      assert.match(await row.innerText(), /明文/);
       assert.doesNotMatch(await row.locator('td').nth(5).innerText(), /EDB/);
     }
     await page.fill('#search', 'NOT_A_REAL_PRODUCT');

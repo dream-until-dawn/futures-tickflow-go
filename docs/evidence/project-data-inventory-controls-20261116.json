@@ -1,0 +1,41 @@
+{
+  "schema": "project-inventory-mutation-controls-v1",
+  "controls": [
+    {
+      "control": "receipt-time",
+      "file": "inventory_model.py",
+      "target_test": "test_retained_receipt_and_missing_time_never_become_download_time",
+      "exit_code": 1,
+      "target_assertion_failed": true
+    },
+    {
+      "control": "duplicate",
+      "file": "inventory_model.py",
+      "target_test": "test_duplicate_same_route_rejected_other_source_kept_separate",
+      "exit_code": 1,
+      "target_assertion_failed": true
+    },
+    {
+      "control": "catalog-sha",
+      "file": "collect_inventory.py",
+      "target_test": "test_tampered_catalog_and_mismatched_count_rejected",
+      "exit_code": 1,
+      "target_assertion_failed": true
+    },
+    {
+      "control": "snapshot-member",
+      "file": "snapshot_inventory.py",
+      "target_test": "test_snapshot_checks_external_identity_and_each_member",
+      "exit_code": 1,
+      "target_assertion_failed": true
+    }
+  ],
+  "market_requests": 0,
+  "real_readback": {
+    "input_files": 9175,
+    "datasets": 1169,
+    "inventory_sha256": "f607b1fe5bf65109b83db2d25e422a000141f073cafb1a8c2c9eda7b000ad184",
+    "published_uses_reproduced_bytes": true,
+    "financial_admissions_added": 0
+  }
+}

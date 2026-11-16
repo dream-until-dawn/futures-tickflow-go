@@ -11,27 +11,27 @@
 <header><div class="eyebrow">FUTURES TICKFLOW / 数据资料台账</div>
 <h1>各品种已取得的数据来源</h1>
 <p class="intro">先选交易所，再看品种。<strong>格内填写已取得数据的来源；未确认取得的留空。</strong></p>
-<div class="meta"><span id="snapshot"></span><span>仅元数据 · 可离线使用</span><span class="tag warn">金融准入保持原状</span></div>
+<div class="meta"><span id="snapshot"></span><span>全项目资料登记 · 可离线使用</span><span class="tag warn">金融准入保持原状</span></div>
 </header>
 <main>
-<section class="notice"><strong>如何看这张表</strong><p>各列均为日线数据（交易日历除外）。有来源表示已取得部分资料，不表示历史齐全或已准入回测；点击品种查看具体日期、数量和质量限制。空白表示本页冻结资料未确认，不等于全项目不存在。官方“原表列”尚未全部统一交付；“新浪样本”不代表每行有结算价。资料快照仍为2026-11-15，本次仅调整展示。</p></section>
+<section class="notice"><strong>全项目已有资料 · 按数据类型查来源</strong><p>来源表示已取得部分资料，不表示历史齐全。点击品种，查看每类数据各来源的覆盖起止、完整性和最后更新时间。官方日行情、业务参数、供应商样本、分钟/现场、目录和历史日历统一登记；相互重叠不相加。空格表示当前登记未确认取得；旧原件暂未定位的记录另有标记。</p><p id="inventory-scope"></p></section>
 <section class="exchanges" id="exchanges" aria-label="交易所快速筛选"></section>
 <section class="workspace">
 <div class="toolbar"><div><h2>交易所 × 品种</h2><p id="visible-count" aria-live="polite"></p></div>
 <div class="controls">
 <label>搜索品种<input id="search" type="search" placeholder="中文名称、rb、螺纹钢…"></label>
 <label>交易所<select id="exchange"><option value="">全部交易所</option></select></label>
-<label>资料状态<select id="state"><option value="">全部状态</option><option value="primary">主目录有研究日线</option><option value="sample_only">仅有其他路线样本</option><option value="directory_only">本页仅有目录</option><option value="difference">存在主目录价量待核</option><option value="calendar_gap">存在日历缺证</option></select></label>
+<label>资料状态<select id="state"><option value="">全部状态</option><option value="primary">有官方日线资料</option><option value="sample_only">仅供应商日线样本</option><option value="directory_only">未登记日线资料</option><option value="difference">存在主目录价量待核</option><option value="calendar_gap">存在日历缺证</option></select></label>
 <label>排序<select id="sort"><option value="default">按交易所与代码</option><option value="rows">主目录行数最多</option><option value="differences">主目录待核字段最多</option><option value="unrequested">本路线未请求最多</option></select></label>
 <button id="reset" class="secondary" type="button">清除筛选</button>
 </div></div>
-<div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th></tr></thead><tbody id="products"></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th><th>分钟/现场</th><th>目录/生命周期</th><th>保证金/手续费/涨跌停</th></tr></thead><tbody id="products"></tbody></table></div>
 <p id="empty" hidden>没有匹配的品种。请调整搜索或筛选条件。</p>
 </section>
 <section class="bottom-grid">
-<article><h2>能确认到哪一层</h2><p>主目录已核原件字节身份、行数和日期标签；其他样本是冻结元数据复用，本轮未重数其原CSV。价格语义、零成交OHLC、盘后量仓、官方生命周期、PIT及全市场完整性仍有缺口，不给虚构置信百分比。</p><p><b>结算/金额：</b>参考原表已有这些列（范围同参考，不代表每行有值或单位已核）；主EDB源无这两列，尚未对账或统一交付。新浪结算样本也不能自动补入，逐品种详情另列。</p></article>
+<article><h2>能确认到哪一层</h2><p>本次逐列重数了官方目录、业务参数、EDB及新浪原字节；旧现场原件当前未定位时只保留文档登记。价格语义、零成交OHLC、盘后量仓、官方生命周期、PIT及全市场完整性仍有缺口，不给虚构置信百分比。</p><p><b>结算/金额：</b>参考原表已有这些列（范围同参考，不代表每行有值或单位已核）；主EDB源无这两列，尚未对账或统一交付。新浪结算样本也不能自动补入，逐品种详情另列。</p></article>
 <article><h2>引擎独立验收</h2><p id="engine-status"></p><p>研究目录仍未接入任务Feed；价格、规则、日历及生命周期语义未由本次验收认证。严格金融包协议继续拒绝研究manifest；已有其他资料包的既定范围不由本页改变。</p></article>
-<article><h2>维护与原始依据</h2><p>本页从冻结研究目录、逐合约报告、已冻结制度日历和其他样本元数据生成；显示中文别名仅方便阅读，不作官方挂牌证据。</p><p><a href="data-status.md">完整Markdown表</a> · <a href="data-status.json">机器可读模型</a> · <a href="data-status-maintenance-plan.md">维护与验收记录</a> · <a href="consumer-maintenance.md">使用者维护手册</a></p></article>
+<article><h2>维护与原始依据</h2><p>本页从官方累计目录、业务参数、EDB封存正文、真实源样本、历史日历和旧现场登记生成。输入逐件摘要及仓库证据目录见完整资料索引；迁移重复、合成数据不计入行情。中文别名仅方便阅读。</p><p><a href="data-status.md">来源和覆盖明细表</a> · <a href="data-status.json">全项目机器可读模型</a> · <a href="evidence/project-data-inventory-20261116.json">完整资料索引</a> · <a href="data-status-project-inventory-plan.md">全项目盘点范围</a> · <a href="data-status-maintenance-plan.md">维护与验收记录</a> · <a href="consumer-maintenance.md">使用者维护手册</a></p></article>
 </section>
 <footer><p id="difference-note"></p><p>完整空响应、未报价字段、无参考日期、参考缺日及日历未知分别保留，不自动填数。</p><p>EDB口径、PK2021及其他缺证项待决；受阻入口不重试，未扩大回测准入，未打tag。</p><code id="catalog-sha"></code></footer>
 </main>
