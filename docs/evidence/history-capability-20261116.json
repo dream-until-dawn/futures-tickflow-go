@@ -1,0 +1,650 @@
+{
+  "schema": "retained-history-completion-v1",
+  "market_requests": 0,
+  "snapshots": 9,
+  "contract_observations": 1999,
+  "unique_contracts": 419,
+  "financial_admission_added": 0,
+  "readback": "旧HTTP完整200/长度/SHA及直接XML与Go逐字段复核；冲突保留，不认证完整有效链",
+  "snapshot_last_day_changes": [
+    {
+      "symbol": "CZCE.AP2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.AP2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.AP2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.AP2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.CF2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.CF2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.CJ2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.CJ2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.CY2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.FG2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.JR2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.JR2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.LR2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.LR2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.MA2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.OI2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.OI2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.PF2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.PK2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.PK2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.PK2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.PM2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.PM2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.PX2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.PX2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.PX2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.RI2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.RI2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.RM2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.RM2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.SA2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.SF2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.SH2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.SH2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.SH2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.SM2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.SR2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.SR2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.TA2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2402",
+      "declared_last_days": [
+        20240214,
+        20240222
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2404",
+      "declared_last_days": [
+        20240412,
+        20240416
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2406",
+      "declared_last_days": [
+        20240614,
+        20240617
+      ]
+    },
+    {
+      "symbol": "CZCE.UR2410",
+      "declared_last_days": [
+        20241014,
+        20241021
+      ]
+    },
+    {
+      "symbol": "CZCE.WH2401",
+      "declared_last_days": [
+        20240112,
+        20240115
+      ]
+    },
+    {
+      "symbol": "CZCE.WH2405",
+      "declared_last_days": [
+        20240514,
+        20240517
+      ]
+    },
+    {
+      "symbol": "CZCE.ZC2401",
+      "declared_last_days": [
+        20240105,
+        20240108
+      ]
+    },
+    {
+      "symbol": "CZCE.ZC2404",
+      "declared_last_days": [
+        20240405,
+        20240409
+      ]
+    },
+    {
+      "symbol": "CZCE.ZC2405",
+      "declared_last_days": [
+        20240507,
+        20240510
+      ]
+    },
+    {
+      "symbol": "CZCE.ZC2410",
+      "declared_last_days": [
+        20241007,
+        20241014
+      ]
+    }
+  ],
+  "snapshot_last_day_changes_count": 91,
+  "limits": "不同日期快照的最后交易日声明有变化，可能涉及后续日程修订；未审定完整版本/有效链，不归为数据错误或覆盖旧值。"
+}

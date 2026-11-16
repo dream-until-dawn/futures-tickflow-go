@@ -16,16 +16,21 @@ const officialHistoryPlanSHA = "b04c0e8f8178832be71efadc76226199fba8142966643b96
 const additionalMarketsPlanSHA = "fccf6b372e1c53fe6d2254d524d9ae3f3d677926684fbffd084c8a0810fec200"
 const cffexObservedPlanSHA = "ea5e467a2c15fdaebef9e85dc8e6209695c508bbae007581503fe6ae3eecd233"
 const czceObservedPlanSHA = "ab25149d2a1f6e9fdaf83b42590827d0527404282038ddd68d7a06748dfaa659"
+const retainedHistoryPlanSHA = "9990b4b3ef8bafb715eb8a883c23188ca19dde5602b29f2a7e72b1341eca9eee"
 
 func approvedDirectoryPlanSHA(raw []byte) (string, error) {
 	sha := digest(raw)
-	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA && sha != additionalMarketsPlanSHA && sha != cffexObservedPlanSHA && sha != czceObservedPlanSHA {
+	if sha != directoryPlanSHA && sha != officialInventoryPlanSHA && sha != officialHistoryPlanSHA && sha != additionalMarketsPlanSHA && sha != cffexObservedPlanSHA && sha != czceObservedPlanSHA && sha != retainedHistoryPlanSHA {
 		return "", fmt.Errorf("日线执行单SHA不符")
 	}
 	return sha, nil
 }
 
 type directoryPlan struct {
+	PriorCatalog struct {
+		File string `json:"file"`
+		SHA  string `json:"sha256"`
+	} `json:"prior_catalog"`
 	Jobs          []batch.Job `json:"jobs"`
 	DirectoryRoot string      `json:"directory_root"`
 	InventoryRoot string      `json:"inventory_root"`
@@ -58,6 +63,9 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 	if err := json.Unmarshal(raw, &p); err != nil {
 		return nil, err
 	}
+	if expectedSHA == retainedHistoryPlanSHA && p.PriorCatalog.File == "" {
+		return nil, fmt.Errorf("缺少旧请求状态锁")
+	}
 	load := func(path, expected string) ([]byte, error) {
 		b, e := os.ReadFile(path)
 		if e != nil || digest(b) != expected {
@@ -84,6 +92,30 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 	keys := map[string]string{}
 	for _, c := range inv.Contracts {
 		keys[c.Key] = c.Canonical
+	}
+	// 新批必须在原封存目录中明确从未请求；空/失败/未知状态都不能续取。
+	unrequested := map[string]bool{}
+	if p.PriorCatalog.File != "" {
+		b, e := load(p.PriorCatalog.File, p.PriorCatalog.SHA)
+		if e != nil {
+			return nil, e
+		}
+		var prior struct {
+			Contracts []struct {
+				Key          string `json:"source_key"`
+				Availability struct {
+					State string `json:"state"`
+				} `json:"availability"`
+			} `json:"contracts"`
+		}
+		if e = json.Unmarshal(b, &prior); e != nil {
+			return nil, e
+		}
+		for _, c := range prior.Contracts {
+			if c.Availability.State == "not_requested_on_directory_route" {
+				unrequested[c.Key] = true
+			}
+		}
 	}
 	observed := map[string]bool{}
 	for _, input := range p.Inputs {
@@ -112,6 +144,9 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 		}
 		q := u.Query()
 		key := q.Get("symbol")
+		if p.PriorCatalog.File != "" && !unrequested[key] {
+			return nil, fmt.Errorf("新批包含已请求或未知项")
+		}
 		canonical, exists := keys[key]
 		if u.Scheme != "https" || u.Host != "edb.shinnytech.com" || u.Path != "/md/kline" || u.User != nil || u.Fragment != "" || len(q) != 4 || q.Get("period") != "86400" || q.Get("start_time") != "2021-01-01 00:00:00" || q.Get("end_time") != "2026-11-13 23:59:59" || !exists || !observed[canonical] || seen[job.URL] {
 			return nil, fmt.Errorf("日线URL/目录/官方观察不符")

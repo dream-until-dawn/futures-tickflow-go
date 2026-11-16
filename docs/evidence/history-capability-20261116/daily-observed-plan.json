@@ -1,0 +1,4217 @@
+{
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "schema": "edb-czce-single-day-observed-daily-v1",
+  "jobs": [
+    {
+      "id": "AP2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "AP2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.AP510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "AP",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CF2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CF509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CJ2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CJ509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CJ",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "CY2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.CY510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "CY",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "FG2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.FG510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "FG",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "JR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "LR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.LR509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "LR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "MA2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.MA510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "MA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "OI2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.OI509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "OI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PF2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PF510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PK2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PK510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PK",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PM2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PR2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PR510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "PX2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PX510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PX",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RI2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RM2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RM509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "RS2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RS509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RS",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SA2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SA510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SF2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SF510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SF",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SH2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SH510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SM2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SM510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "SR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.SR509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "SR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "TA2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.TA510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "TA",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "UR2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.UR510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "UR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "WH2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.WH509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "WH",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2312-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC312",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2401-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC401",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2402-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC402",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2403-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC403",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2404-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC404",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2405-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC405",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2406-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC406",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2407-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC407",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2408-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC408",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2409-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC409",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2410-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC410",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2411-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC411",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2412-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC412",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2501-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC501",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2502-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC502",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2503-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC503",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2504-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC504",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2505-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC505",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2506-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC506",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2507-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC507",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2508-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC508",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2509-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC509",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    },
+    {
+      "id": "ZC2510-retained-history",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.ZC510",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "ZC",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-retained-history-research-v1"
+    }
+  ],
+  "official_inputs": [
+    {
+      "file": "C:\\Temp\\tickflow-history-capability-20261116-v1\\observed-identities.json",
+      "sha256": "1083bc62fed5cd73c4be375a96cbc488c7c6b815aa24e256fba9b73be128b45b"
+    }
+  ],
+  "requests_max": 419,
+  "bytes_per_response_max": 2097152,
+  "actual_total_bytes_max": 878706688,
+  "timeout_seconds": 15,
+  "interval_seconds": 2,
+  "stop_on_first_failure_or_unknown": true,
+  "financial_eligible": false,
+  "control_scope": "九个实际留存官方历史参考的419个未请求具体合约；仅研究；首失败/空/未知全停，不自动续取",
+  "prior_catalog": {
+    "file": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-sealed\\catalog.json",
+    "sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb"
+  }
+}

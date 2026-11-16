@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
@@ -61,6 +62,17 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 	if err != nil || len(got) != 6 {
 		t.Fatal(got, err)
 	}
+	priorFile := filepath.Join(root, "prior.json")
+	prior := []byte(`{"contracts":[{"source_key":"CZCE.CF105","availability":{"state":"empty_unavailable"}}]}`)
+	if err = os.WriteFile(priorFile, prior, 0600); err != nil {
+		t.Fatal(err)
+	}
+	p["prior_catalog"] = map[string]string{"file": priorFile, "sha256": digest(prior)}
+	raw, _ = json.Marshal(p)
+	if _, err = directoryJobsChecked(raw, digest(raw)); err == nil || !strings.Contains(err.Error(), "已请求或未知") {
+		t.Fatalf("旧空/其他项未知应拒绝: %v", err)
+	}
+	delete(p, "prior_catalog")
 	jobs[0].URL = "https://other.invalid/md/kline"
 	raw, _ = json.Marshal(p)
 	if _, err = directoryJobsChecked(raw, digest(raw)); err == nil {
@@ -73,6 +85,44 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 	}
 	if _, err = directoryJobsChecked(raw, digest(raw)); err == nil {
 		t.Fatal("目录原件变动未拒绝")
+	}
+}
+
+func TestRetainedHistoryPlanIsFrozenAndDoesNotRepeatPriorURLs(t *testing.T) {
+	root := filepath.Join("..", "..", "..", "..", "docs", "evidence")
+	seen := map[string]bool{}
+	for _, name := range []string{"daily-pilot-plan.json", "daily-official-inventory-plan.json", "daily-official-history-master-plan.json", "daily-additional-plan.json", "daily-cffex-observed-plan.json", "daily-czce-observed-plan.json"} {
+		b, e := os.ReadFile(filepath.Join(root, "historical-contract-directory-20261115", name))
+		if e != nil {
+			t.Fatal(e)
+		}
+		var p directoryPlan
+		if e = json.Unmarshal(b, &p); e != nil {
+			t.Fatal(e)
+		}
+		for _, j := range p.Jobs {
+			seen[j.URL] = true
+		}
+	}
+	b, e := os.ReadFile(filepath.Join(root, "history-capability-20261116", "daily-observed-plan.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = approvedDirectoryPlanSHA(b); e != nil {
+		t.Fatal(e)
+	}
+	var p directoryPlan
+	if e = json.Unmarshal(b, &p); e != nil {
+		t.Fatal(e)
+	}
+	if len(p.Jobs) != 419 || p.PriorCatalog.File == "" || p.PriorCatalog.SHA == "" {
+		t.Fatal("清单范围/旧状态锁改变")
+	}
+	for _, j := range p.Jobs {
+		if seen[j.URL] {
+			t.Fatal("重发旧URL", j.URL)
+		}
+		seen[j.URL] = true
 	}
 }
 

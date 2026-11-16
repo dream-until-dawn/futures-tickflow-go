@@ -34,7 +34,15 @@ func main() {
 	launch := flag.Bool("launch", false, "仅此固定URL一次请求；默认零请求")
 	historical := flag.Bool("historical-20210104", false, "另批只取已有2021首日行情对应的一个历史参考快照")
 	offline := flag.String("offline", "", "只读已有reference.body/receipt.json目录，不发请求")
+	retained := flag.String("retained", "", "只读旧目录requests.json及历史Contracts原件，不发请求")
 	flag.Parse()
+	if *retained != "" {
+		if err := reviewRetained(*retained, *root); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
+	}
 	if *offline != "" {
 		if err := reviewExisting(*offline, *root, *historical); err != nil {
 			fmt.Fprintln(os.Stderr, err)
