@@ -1,0 +1,162 @@
+{
+  "schema": "data-gap-progress-v1",
+  "review_at_utc": "2026-11-16T11:18:16.999829+00:00",
+  "recovery": {
+    "roots": [
+      "C:/Temp",
+      "C:/VScodeProject/futures-tickflow-go",
+      "C:/VScodeProject/futures-decision-strategy/results"
+    ],
+    "hashed_candidate_files": 219,
+    "archive_files": 116,
+    "target_sha_matches": 0,
+    "old_history_path": "C:/Temp/tickflow-nonight-history-20261023-9f52710709734bdea9e86df067a7fe0d/capture/history.jsonl",
+    "status": "blocked_missing_original_bytes",
+    "limits": "只表示本轮登记范围未定位；不声明所有备份永久丢失，不用新历史替代旧现场",
+    "search_sha256": "4179c9d4cfb39248d3c1810280a0154ef940c1b204b2c778471b9502b3ac05d4",
+    "archive_search_sha256": "4b989fc3fc0efbfd7590b140c32a0e2b41cd42da2a7dbcf14e41346997da5f59"
+  },
+  "notice_originals": [
+    {
+      "url": "https://www.shfe.com.cn/publicnotice/notice/",
+      "title": "公告通知",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\01.body",
+      "bytes": 129259,
+      "sha256": "7fbbd10ec4ad0b48abd4788f51b1b40e2160772c11ef9caab14eed42e37960f9",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:52:06.1206429Z",
+      "headers_received_at": "2026-11-16T10:52:06.3540841Z",
+      "finished_at": "2026-11-16T10:52:06.3785179Z",
+      "publisher_date": null,
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    },
+    {
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261116_834084.html",
+      "title": "违规处理决定公告",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\02.body",
+      "bytes": 119865,
+      "sha256": "37bf7491df08305c47ddd89789394ec0c539296a343cf18f23d27434383058f9",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:52:07.3804444Z",
+      "headers_received_at": "2026-11-16T10:52:07.4968104Z",
+      "finished_at": "2026-11-16T10:52:07.5226194Z",
+      "publisher_date": "2026-11-16",
+      "original_receipt_state": "failed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": "原失败是本地跨标签文号误判；完整原件与失败回执均未改写，离线可见文本确认259号，不重取"
+    },
+    {
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261113_834083.html",
+      "title": "关于对部分客户采取限制开仓监管措施的公告",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\03.body",
+      "bytes": 119356,
+      "sha256": "7d572e4cb7ace42be83031cf174dca088588040d620e0b71b8efc159768f3558",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:57:57.2824246Z",
+      "headers_received_at": "2026-11-16T10:57:57.4320627Z",
+      "finished_at": "2026-11-16T10:57:57.4569012Z",
+      "publisher_date": "2026-11-13",
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    },
+    {
+      "url": "https://www.shfe.com.cn/specialtopic/investor/trade/",
+      "title": "交易",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\04.body",
+      "bytes": 247122,
+      "sha256": "8509b5116b2a7fa039e5c1e2c1597e3ae23ae791e3ad0d8cc9cda04d69cb09b5",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:57:58.4619735Z",
+      "headers_received_at": "2026-11-16T10:57:58.5754572Z",
+      "finished_at": "2026-11-16T10:57:58.6007879Z",
+      "publisher_date": null,
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    },
+    {
+      "url": "https://www.shfe.com.cn/services/calenderandholidays/tradinghours/",
+      "title": "交易时间",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\05.body",
+      "bytes": 139794,
+      "sha256": "ebb4a872fc0ce4d9fa1f654c58a89dd00bc1100dd7b3de1e305bbc80ecc66058",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:57:59.610378Z",
+      "headers_received_at": "2026-11-16T10:57:59.7452894Z",
+      "finished_at": "2026-11-16T10:57:59.7760786Z",
+      "publisher_date": null,
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    },
+    {
+      "url": "https://www.shfe.com.cn/services/calenderandholidays/holiday/",
+      "title": "休市安排",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\06.body",
+      "bytes": 130049,
+      "sha256": "cc78678ea7e1414b5c6623051e81f33ccf9707813464ed8674c25b8ade15c483",
+      "http_status": 200,
+      "requested_at": "2026-11-16T10:58:00.7823408Z",
+      "headers_received_at": "2026-11-16T10:58:00.9186434Z",
+      "finished_at": "2026-11-16T10:58:00.9492476Z",
+      "publisher_date": null,
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    },
+    {
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261116_834086.html",
+      "title": "关于对部分客户采取限制开仓监管措施的公告",
+      "body": "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\07.body",
+      "bytes": 119395,
+      "sha256": "6dc3e7d737e5a58f3edef078a62e766302f75ba1b189751467a985add3c342a0",
+      "http_status": 200,
+      "requested_at": "2026-11-16T11:01:32.322571Z",
+      "headers_received_at": "2026-11-16T11:01:32.4667721Z",
+      "finished_at": "2026-11-16T11:01:32.4923013Z",
+      "publisher_date": "2026-11-16",
+      "original_receipt_state": "received_original_scope_unreviewed",
+      "readback": "字节/长度/SHA及离线可见标题已核；适用产品、客户和完整有效链不自动认证",
+      "local_guard_correction": null
+    }
+  ],
+  "notice_bundle": {
+    "root": "C:\\Temp\\tickflow-notices-delivery-20261116-v2",
+    "manifest_sha256": "d356429ca34648e5ec2e03d4b0363c83c796146438cbddbc67a4010d04c0aa7f",
+    "requests": 7,
+    "bytes": 1004840
+  },
+  "official_increment": [
+    {
+      "source": "shfe",
+      "raw_sha256": "487ff85b898034f4a7218e40103442bead79985f6167aefc81317e29b4cb0b12",
+      "rows": 301,
+      "fields": 2709,
+      "days": [
+        20261116
+      ],
+      "comparison": "原表字面字段与解码一致；不认证价格真值、挂牌全集或历史PIT"
+    },
+    {
+      "source": "czce",
+      "raw_sha256": "17137867d7d66e58d1d6f802794b6f2ef84383de62469339507374ed75d74553",
+      "rows": 247,
+      "fields": 2223,
+      "days": [
+        20261116
+      ],
+      "comparison": "原表字面字段与解码一致；不认证价格真值、挂牌全集或历史PIT"
+    }
+  ],
+  "official_requests": 2,
+  "official_bytes": 162047,
+  "total_requests": 9,
+  "total_body_bytes": 1166887,
+  "financial_admissions_added": 0,
+  "old_differences_resolved": 0,
+  "source_feed_or_production_changed": false,
+  "tag_created": false
+}

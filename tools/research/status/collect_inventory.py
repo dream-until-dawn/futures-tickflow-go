@@ -30,7 +30,7 @@ class Collector:
         self.inputs.append(dict(path=str(path), bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest()))
         return raw
 
-    def catalog(self, manifest):
+    def catalog(self, manifest, route='official-catalog'):
         meta = json.loads(self.read(manifest))
         path = manifest.parent / 'records.jsonl'
         raw = self.read(path)
@@ -40,7 +40,7 @@ class Collector:
         for line in raw.splitlines():
             row = json.loads(line)
             record = row['record']
-            self.stats.add('official-catalog', record['exchange']+' 官方日行情', record, meta['at_utc'])
+            self.stats.add(route, record['exchange']+' 官方日行情', record, meta['at_utc'])
             count += 1
         if count != meta['rows']:
             raise ValueError('inventory_catalog_count')
@@ -229,6 +229,7 @@ def main():
     collector=Collector(Path(config['repo']))
     print('只读核官方累计目录',flush=True)
     collector.catalog(Path(config['official_catalog_manifest']))
+    for entry in config.get('official_increments',[]):collector.catalog(Path(entry['manifest']),entry['route'])
     print('只读核中金所月包及早期样本',flush=True)
     for root in config.get('cffex_roots',[]):collector.cffex(Path(root))
     collector.cffex_fixture()
@@ -251,6 +252,11 @@ def main():
     collector.not_located.extend(config.get('not_located',[]))
     result=collector.finish(config['registered_at_utc'])
     result['scope_review']=config.get('scope_review',{})
+    if config.get('gap_review'):
+        review=json.loads(collector.read(Path(config['gap_review'])))
+        result['shared_documents']=review['notice_originals']
+        # 补证报告是实际读取输入，也纳入本次集合；不把原件恢复失败改成成功。
+        result['input_files']=sorted(collector.inputs,key=lambda r:(r['path'],r['sha256']))
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(datasets=len(result['datasets']),inputs=len(result['input_files']),evidence=len(result['evidence_files'])),ensure_ascii=False))

@@ -1,6 +1,6 @@
 {
   "repo": "C:\\VScodeProject\\futures-tickflow-go",
-  "registered_at_utc": "2026-11-16T10:00:56Z",
+  "registered_at_utc": "2026-11-16T11:18:16.999829+00:00",
   "official_catalog_manifest": "C:/VScodeProject/futures-decision-strategy/results/all-market-price-catalog-20261114/catalog-v2/manifest.json",
   "known_products": [
     "SHFE.ad",
@@ -5172,11 +5172,12 @@
       "last_indexed_at": null,
       "completeness": "recorded_original_not_located",
       "expected_contract_days": null,
-      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。",
+      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。 本轮已核原路径、219候选及116归档未命中，恢复需持有人原字节/备份。",
       "evidence_shas": [
         "71c8543186d9d6b2ee8fff2b9b5f4bfab5b7f7e90434ac786da88934a8cb5754"
       ],
-      "file": "docs/adapter-recorded-history.md"
+      "file": "docs/adapter-recorded-history.md",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     },
     {
       "product": "SHFE.rb",
@@ -5193,11 +5194,12 @@
       "last_indexed_at": null,
       "completeness": "recorded_original_not_located",
       "expected_contract_days": null,
-      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。",
+      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。 本轮已核原路径、219候选及116归档未命中，恢复需持有人原字节/备份。",
       "evidence_shas": [
         "4f4753989d950ebab2298167f20f0b01b5f7a4011eded64d6709b8278c2ed4bb"
       ],
-      "file": "docs/day-progress-20261028.md"
+      "file": "docs/day-progress-20261028.md",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     },
     {
       "product": "SHFE.rb",
@@ -5214,33 +5216,37 @@
       "last_indexed_at": null,
       "completeness": "recorded_original_not_located",
       "expected_contract_days": null,
-      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。",
+      "limitations": "既有文档记录的范围和原SHA，本轮未重读到原件，不能算本轮字节复验；接收时间不是交易所事件时间。 本轮已核原路径、219候选及116归档未命中，恢复需持有人原字节/备份。",
       "evidence_shas": [
         "f31386285dcaa713fa85ee9cf765a09e4d7dcb469f8f4edc99ed68b484fbfbe8"
       ],
-      "file": "docs/day-progress-20261029.md"
+      "file": "docs/day-progress-20261029.md",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     }
   ],
   "not_located": [
     {
       "route": "rb-history-1008",
       "evidence": "docs/adapter-recorded-history.md",
-      "reason": "当前登记路径未发现原行情文件，保留旧记录，不报告本轮重读通过"
+      "reason": "已核原路径、219候选文件和116归档未命中目标SHA；恢复需原字节/备份，不能以新历史替代",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     },
     {
       "route": "rb-night-1028",
       "evidence": "docs/day-progress-20261028.md",
-      "reason": "当前登记路径未发现原行情文件，保留旧记录，不报告本轮重读通过"
+      "reason": "已核原路径、219候选文件和116归档未命中目标SHA；恢复需原字节/备份，不能以新历史替代",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     },
     {
       "route": "rb-day-1029",
       "evidence": "docs/day-progress-20261029.md",
-      "reason": "当前登记路径未发现原行情文件，保留旧记录，不报告本轮重读通过"
+      "reason": "已核原路径、219候选文件和116归档未命中目标SHA；恢复需原字节/备份，不能以新历史替代",
+      "recovery_review": "docs/evidence/data-gap-progress-20261116.json"
     }
   ],
   "scope_review": {
     "official_catalog_last_day": "2026-11-13",
-    "later_engine_update": "已独立核引擎RB冻结快照至2026-11-16及五份16/17日业务参数；不能推为其他品种OHLC也更新至16日。",
+    "later_engine_update": "另已取得11/16两个官方日表并独立回读548合约日/4932原字段；只扩实际观察，不代表全历史/全品种完整。",
     "excluded": "合成/变异/迁移重复不计行情；旧探针只有文档读数而无原件的，不推成可用行情。",
     "full_project_inventory_is_market_completeness": false
   },
@@ -5249,12 +5255,39 @@
     "C:/Temp/tickflow-historical-directory-daily-20261115-v1-sealed/acquisitions/directory/symbols-response.gz",
     "source/sinasource/testdata/README.md",
     "source/cffexsource/testdata/README.md",
-    "testdata/sina635/README.md"
+    "testdata/sina635/README.md",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\01.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\02.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\03.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\04.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\05.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\06.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\07.body",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\initial-plan.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\initial-results.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\manifest.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\new-linked-plan.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\new-linked-results.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\parent-manifest.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\remaining-plan.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\remaining-results.json",
+    "C:\\Temp\\tickflow-notices-delivery-20261116-v2\\scope.json",
+    "C:\\Temp\\tickflow-official-day-20261116-v1\\shfe\\originals\\shfe-daily-20261116.body",
+    "C:\\Temp\\tickflow-official-day-20261116-v1\\shfe\\originals\\shfe-daily-20261116.json",
+    "C:\\Temp\\tickflow-official-day-20261116-v1\\czce\\originals\\czce-daily-20261116.body",
+    "C:\\Temp\\tickflow-official-day-20261116-v1\\czce\\originals\\czce-daily-20261116.json"
   ],
   "engine_snapshot": {
     "archive": "C:/VScodeProject/futures-decision-strategy/results/review-rb-20261116/input-snapshot.tgz",
     "archive_sha256": "88768c8b8f8073e060e52a4c1a79a9415e9058039855218638d821bba9544b64",
     "manifest": "C:/VScodeProject/futures-decision-strategy/results/review-rb-20261116/export-manifest.json",
     "manifest_sha256": "d29a4f5a36c83c14f0aead35e3e6169b487b4fda28035f1c9dcc7b012a34f032"
-  }
+  },
+  "official_increments": [
+    {
+      "manifest": "C:/Temp/tickflow-official-day-20261116-v1/manifest.json",
+      "route": "official-day-20261116"
+    }
+  ],
+  "gap_review": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\data-gap-progress-20261116.json"
 }

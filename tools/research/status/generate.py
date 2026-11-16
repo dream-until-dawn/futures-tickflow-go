@@ -28,7 +28,7 @@ def source_cells(p, exchanges):
                {'minute','live_frames'},{'directory'},{'margin','fees','limits'}]
         def short_source(row):
             route=row['route']
-            if route=='official-catalog':return exchanges[p['exchange']]['short']+'（官方）'
+            if route.startswith('official-'):return exchanges[p['exchange']]['short']+'（官方）'
             if route.startswith('cffex-'):return '中金所（明文）'
             if route.startswith('parameters'):return '上期所（业务表）'
             if route.startswith('engine-rb-public-'):return '上期所（业务表）'
