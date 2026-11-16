@@ -49,6 +49,6 @@ func selectRemaining(p plan, raw []byte, prior []observation, bodies [][]byte, e
 	if prior[0].State != "received_original_scope_unreviewed" || prior[1].State != "failed" || prior[1].Error != "expected business text absent; not a verified document" {
 		return plan{}, fmt.Errorf("不属于这次已核本地误判")
 	}
-	p.URLs, p.StartIndex, p.PriorSHA = targets[2:], 2, digest(raw)
+	p.URLs, p.StartIndex, p.PriorSHA = targets[2:6], 2, digest(raw)
 	return p, nil
 }

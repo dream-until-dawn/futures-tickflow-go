@@ -30,6 +30,7 @@ var targets = []string{
 	"https://www.shfe.com.cn/specialtopic/investor/trade/",
 	"https://www.shfe.com.cn/services/calenderandholidays/tradinghours/",
 	"https://www.shfe.com.cn/services/calenderandholidays/holiday/",
+	"https://www.shfe.com.cn/publicnotice/notice/202611/t20261116_834086.html",
 }
 
 type plan struct {
@@ -68,7 +69,7 @@ func makePlan(binary, deny []byte) (plan, error) {
 	if err := json.Unmarshal(deny, &blocked); err != nil {
 		return plan{}, err
 	}
-	p := plan{BinarySHA: digest(binary), DenySHA: digest(deny), URLs: targets, Blocked: map[string]bool{}}
+	p := plan{BinarySHA: digest(binary), DenySHA: digest(deny), URLs: targets[:6], Blocked: map[string]bool{}}
 	for _, url := range blocked.URLs {
 		p.Blocked[url] = true
 	}
@@ -87,7 +88,7 @@ func contentOK(index int, raw []byte) bool {
 	text := regexp.MustCompile(`(?is)<(?:script|style)\b[^>]*>.*?</(?:script|style)>`).ReplaceAllString(string(raw), "")
 	text = regexp.MustCompile(`(?s)<!--.*?-->|<[^>]*>`).ReplaceAllString(text, "")
 	text = strings.Join(strings.Fields(html.UnescapeString(text)), "")
-	anchors := [][]string{{"公告"}, {"259", "违规"}, {"258", "限制"}, {"交易"}, {"交易时间"}, {"休市"}}
+	anchors := [][]string{{"公告"}, {"259", "违规"}, {"258", "限制"}, {"交易"}, {"交易时间"}, {"休市"}, {"公告"}}
 	for _, anchor := range anchors[index] {
 		if !strings.Contains(text, anchor) {
 			return false
@@ -154,14 +155,16 @@ func main() {
 	deny := flag.String("denylist", "", "已核旧失败URL清单")
 	launch := flag.Bool("launch", false, "执行已预检清单；默认零请求")
 	remaining := flag.String("remaining-from", "", "只续取已独立证明本地文字误判后从未请求的四项")
+	linked := flag.String("linked-from", "", "仅已取得目录明确链接的834086新原件")
+	linkedRemaining := flag.String("linked-remaining", "", "同主机后四项成功回执目录")
 	flag.Parse()
-	if err := execute(*root, *deny, *launch, *remaining); err != nil {
+	if err := execute(*root, *deny, *launch, *remaining, *linked, *linkedRemaining); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func execute(root, denyPath string, launch bool, remaining string) error {
+func execute(root, denyPath string, launch bool, remaining, linked, linkedRemaining string) error {
 	if root == "" || denyPath == "" {
 		return fmt.Errorf("必须指定out及denylist")
 	}
@@ -182,7 +185,16 @@ func execute(root, denyPath string, launch bool, remaining string) error {
 		return err
 	}
 	if remaining != "" {
+		if linked != "" {
+			return fmt.Errorf("不能混用两个独立批次")
+		}
 		p, err = remainingPlan(p, remaining)
+		if err != nil {
+			return err
+		}
+	}
+	if linked != "" {
+		p, err = linkedPlan(p, linked, linkedRemaining)
 		if err != nil {
 			return err
 		}
@@ -213,6 +225,9 @@ func execute(root, denyPath string, launch bool, remaining string) error {
 	markerPath := onceMarker
 	if remaining != "" {
 		markerPath = "C:/Temp/tickflow-notices-20261116-unattempted.started.json"
+	}
+	if linked != "" {
+		markerPath = "C:/Temp/tickflow-notices-20261116-new-linked.started.json"
 	}
 	marker, err := os.OpenFile(markerPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 	if err != nil {
