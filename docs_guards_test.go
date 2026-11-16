@@ -2588,7 +2588,8 @@ var (
 		".cjs":  "本地浏览器验收脚本，按文本扫描",
 		".mod":  "go.mod", ".sum": "go.sum", ".example": "配置模板（.env.example）",
 		".yml": "尚未出现，先占位", ".yaml": "同上", ".json": "同上",
-		".csv": "本仓生成的基线（indicator/testdata/golden.csv，go test -update 写出）—— 不是上游原样字节，照本仓规矩扫",
+		".jsonl": "逐行JSON行情接口样例是仓内文本，必须扫描控制字符，不能因新扩展名漏扫",
+		".csv":   "本仓生成的基线（indicator/testdata/golden.csv，go test -update 写出）—— 不是上游原样字节，照本仓规矩扫",
 	}
 	scanName = map[string]string{
 		"LICENSE": "纯文本", ".gitignore": "纯文本",
