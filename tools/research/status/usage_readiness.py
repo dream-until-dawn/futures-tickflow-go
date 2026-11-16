@@ -72,7 +72,7 @@ def markdown(data):
                     '| 品种 | 回测门槛 | 逐日信号门槛 | 硬项缺口 / 通过范围 |','| --- | --- | --- | --- |']
         readback=data.get('user_data_gate_readback')
         if readback:
-            gate_lines[2:2]=[f'**策略实测另列：**已读回{readback["result_files_checked"]}份真实信号消费结果并逐约核结算；单日MACD均预热不足，实际就绪信号{readback["ready_signals"]}。这是策略样本窗口限制，不把52个品种的数据门槛重新判失败。该首包不含保证金/最低开仓，通用假设文案的误示已反馈；旧结果留存，回测消费另核。见[独立读回](data-gates-consumer-readback-20261116.json)。','']
+            gate_lines[2:2]=[f'**首包历史实测：**已读回{readback["result_files_checked"]}份真实信号消费结果并逐约核结算；单日MACD均预热不足，实际就绪信号{readback["ready_signals"]}。这是策略样本窗口限制，不把52个品种的数据门槛重新判失败。该首包不含保证金/最低开仓，通用假设文案的误示后续已修正，修正版52份信号和8份RB回测探针已另行逐件读回；旧结果留存。见[修正复核](signal-history-engine-fixed-readback-20261117.json)。见[独立读回](data-gates-consumer-readback-20261116.json)。','']
         history=data.get('history_consumer_readback')
         if history:
             ready='、'.join(history['ready_contracts']) or '无'
