@@ -52552,7 +52552,7 @@
   },
   "project_inventory": {
     "schema": "project-data-inventory-v1",
-    "registered_at_utc": "2026-11-16T11:18:16.999829+00:00",
+    "registered_at_utc": "2026-11-16T11:53:13.725658+00:00",
     "datasets": [
       {
         "product": "CFFEX.IC",
@@ -158179,12 +158179,12 @@
       {
         "id": "project_inventory",
         "file": "docs/evidence/project-data-inventory-20261116.json",
-        "sha256": "b515b97df7882540863cad96851e144c61c471ea01ec4d82c96350ff025feead"
+        "sha256": "78e885f6111aa70091ce293dfe7c2e4b87162bd26a1a9a8d76ae4445bcdeaa2e"
       },
       {
         "id": "project_source_plan",
         "file": "tools/research/status/project-sources.json",
-        "sha256": "eeee184f8925f9624abe61a6663ac61f3cc9ab920576b95627a958c6b8b74405"
+        "sha256": "52827ec04c9f1de9a36fef7e34c781cc226aa4ef0d8c37b633f23804e285e253"
       }
     ],
     "profiles": [

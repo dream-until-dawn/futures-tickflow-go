@@ -1,9 +1,11 @@
 """独立回读日期绑定的Contracts原件；只登记快照，不推定完整生命周期。"""
 import datetime as dt
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
+import sys
 import xml.etree.ElementTree as ET
 
 
@@ -65,3 +67,9 @@ def append_reference(collector, entry):
         collector.stats.add('czce-reference-snapshots', '郑商所（日期绑定参考原件）',
             dict(exchange='CZCE', native=row['native'], day=review['observed_day'], fields=fields,
                  evidence=dict(sha256=review['body_sha256'], retrieved_at=review['requested_at'])))
+
+
+if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    raise SystemExit('由只读盘点入口调用，不联网')

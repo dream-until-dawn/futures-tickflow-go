@@ -27,12 +27,12 @@
     {
       "id": "project_inventory",
       "file": "docs/evidence/project-data-inventory-20261116.json",
-      "sha256": "b515b97df7882540863cad96851e144c61c471ea01ec4d82c96350ff025feead"
+      "sha256": "78e885f6111aa70091ce293dfe7c2e4b87162bd26a1a9a8d76ae4445bcdeaa2e"
     },
     {
       "id": "project_source_plan",
       "file": "tools/research/status/project-sources.json",
-      "sha256": "eeee184f8925f9624abe61a6663ac61f3cc9ab920576b95627a958c6b8b74405"
+      "sha256": "52827ec04c9f1de9a36fef7e34c781cc226aa4ef0d8c37b633f23804e285e253"
     }
   ],
   "profiles": [
@@ -81,5 +81,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "93fc2ea2e57bcc495f79edb384a49de08983adec35a829640b4ce579a069d25a"
+  "published_model_sha256": "5d7172120fc6cfcc6c20e7255c0f5d7d739b328d61a526ae48df3175e9652207"
 }

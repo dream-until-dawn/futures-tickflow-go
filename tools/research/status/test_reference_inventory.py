@@ -1,6 +1,8 @@
 """原件身份、显式年份及独立字段复核的正反控制。"""
 import copy
 import hashlib
+import io
+import sys
 import unittest
 from reference_inventory import compare
 
@@ -22,4 +24,7 @@ class ReferenceTest(unittest.TestCase):
             compare(wrong, changed)
 
 
-if __name__ == '__main__': unittest.main()
+if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    unittest.main()
