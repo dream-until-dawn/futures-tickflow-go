@@ -33,3 +33,13 @@
 盘前消费选择性原件共26件已独立核归档/成员SHA、日期、合约、时限：RB2701七成功日、最新按原包下一交易日相连六日；RM2701有11/16真实目标OHLC及两份完成预览，计一个品种/日。独立观察2026-11-16T12:28:46.951082Z早于本日21:00首开。RB旧原日表未全部附带，原HTTP时刻未知；RM零CreatedAt不作时钟，单日预览不代表多日稳定，更不是金融批准。私有账户原件没有进入本仓或公开模型。
 
 阶段性能力与剩余缺证见[逐品种条件](data-usage-readiness.md)。当前明确阻塞是来源版本/语义、缺失制度及官方生命周期/全集等资格证据；不是断言2967候选一定拿不到数据。旧受阻交易所入口不重试，三旧原件按用户要求继续待决，无新准入/Source/Feed/生产操作，不打tag。
+
+## 封存、复算与验收记录
+
+源码候选`20b6208500e935d1761e7b2a11c4d982c33c6857`在干净副本通过三个Go模块gofmt/vet/test、18目录220项Python、生成器还原指纹一致及doccheck；[CI43874653149](https://github.com/dream-until-dawn/futures-tickflow-go/actions/runs/43874653149)三矩阵通过。此后只补本验收文字，原市场请求、研究原件和封存不改写；最终主线身份以Git为准。
+
+增量取证包：`C:/Temp/tickflow-history-capability-delivery-20261116-v1`及同名ZIP，875件文件；manifest SHA256 `8c33aafd2e1789467d471e40792f2e5329737eac0a18563fb693b89d63c09c40`，ZIP SHA256 `e296b6af3182e4f5a7a0cd73c13dbf5447a6031456d677222457a8b3514504d3`。复用FrozenInputs逐件/集合校验、ZIP迁移读回及指定字节篡改的`input_file_sha`反例通过。包含419次原件、旧九参考、完整私有差异和去敏报告；不含引擎私有账户原包，不是完整金融运行输入。父研究包manifest仍为`4e9df6a6ef1cef4789e445b7016aad2906c57b7fc95c898e2fd11bfe6cbefd5b`，封存中的文档保持当时20b6208版本，后补验收文字不回写旧包。
+
+维护顺序：保留全部旧包；`review_history_batch.py`用两个`--data-root`（原83次和336次隔离目录）、本轮`daily-observed-plan.json`、原官方目录`--official-manifest`及全新`--out-root`离线重算；报价和完整差异不入Git。`collect_inventory.py --config tools/research/status/project-sources.json --out <全新仓外JSON>`只读重建台账；缺原件/未知年份保持缺口。此轮补登记76份隔离空正文后，全10064输入已逐项再验长度/SHA，未把空数据计行情。
+
+锁定新资料索引和`sources.json`各输入SHA后，`generate.py --bundle <原受信研究包> --out-root <全新目录>`生成四份同源产物：data-status.json、data-status.html、data-status.md、data-usage-readiness.md。更新发布模型SHA，再用`generate.py --check-docs`核四份文档与来源锁；浏览器核来源空格、目录展开、RB/RM证据层级和手机布局。公开CI无需仓外行情即可复现，仍不能替代原件重读或新增金融批准。

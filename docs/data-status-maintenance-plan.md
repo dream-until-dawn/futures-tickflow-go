@@ -61,3 +61,7 @@
 文档及验收证据增量128件、24,474,508字节封存至 `C:/Temp/tickflow-data-status-review-20261115-v1-sealed`，包外可信manifest SHA256 `2845716530606ac64d56c9730413fd4776a07a24a0c89c130efe118ebb7daa54`。原目录和迁移副本都能只用公开模型/所需元数据逐字节重现HTML与Markdown；篡改HTML和重算副本清单分别被目标文件SHA/可信manifest SHA拒绝。当前HTML SHA256 `7c11ed917159df064b9296fb5f134798a955e450fc0e91b3ed7510defcd8e927`，模型 SHA256 `e66724f0d90fb577b25977a954f1edde04716f48b476baa56d78fea192159c70`。见[最终复核收据](evidence/data-status-20261115/closeout-review.json)。
 
 该包不含原价CSV，不是完整Go、金融或研究原件包，不能据此跨机重跑所有原价语义/引擎生产。引擎原脚本与报告副本及本机改路径重放记录保留；完整CSV重数的输入仍是原4e9df6研究包。本轮未修改那个研究包、11份制度日历、原差异或生产数据。
+
+### 本轮完整验证与增量包
+
+20b6208通过三个Go模块、220项Python、还原演练、doccheck及CI43874653149三矩阵；表格工具28项正反测试、实际桌面/移动端和目录/消费详情检查通过，未发远端请求。公开模型现在有四份同源文档，新增data-usage-readiness.md也由生成器及check-docs绑定。875文件增量原件包、包外可信摘要和迁移/篡改结果见[本轮封存记录](history-capability-plan-20261116.md)。三旧原件仍待决，新空样本仍不可用；未新增准入、未打tag。
