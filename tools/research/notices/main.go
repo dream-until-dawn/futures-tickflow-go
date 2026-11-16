@@ -9,10 +9,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"html"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
@@ -30,10 +33,12 @@ var targets = []string{
 }
 
 type plan struct {
-	BinarySHA string          `json:"binary_sha256"`
-	DenySHA   string          `json:"denylist_sha256"`
-	URLs      []string        `json:"urls"`
-	Blocked   map[string]bool `json:"blocked"`
+	BinarySHA  string          `json:"binary_sha256"`
+	DenySHA    string          `json:"denylist_sha256"`
+	URLs       []string        `json:"urls"`
+	Blocked    map[string]bool `json:"blocked"`
+	StartIndex int             `json:"start_index"`
+	PriorSHA   string          `json:"prior_receipt_sha256,omitempty"`
 }
 
 type observation struct {
@@ -78,9 +83,13 @@ func contentOK(index int, raw []byte) bool {
 	if !bytes.Contains(bytes.ToLower(raw), []byte("<html")) {
 		return false
 	}
+	// 文号可能跨span且带空格；仅折叠可见文字，不执行脚本或改写原件。
+	text := regexp.MustCompile(`(?is)<(?:script|style)\b[^>]*>.*?</(?:script|style)>`).ReplaceAllString(string(raw), "")
+	text = regexp.MustCompile(`(?s)<!--.*?-->|<[^>]*>`).ReplaceAllString(text, "")
+	text = strings.Join(strings.Fields(html.UnescapeString(text)), "")
 	anchors := [][]string{{"公告"}, {"259", "违规"}, {"258", "限制"}, {"交易"}, {"交易时间"}, {"休市"}}
 	for _, anchor := range anchors[index] {
-		if !bytes.Contains(raw, []byte(anchor)) {
+		if !strings.Contains(text, anchor) {
 			return false
 		}
 	}
@@ -92,6 +101,7 @@ func run(root string, p plan, transport http.RoundTripper, pause func()) ([]obse
 	var results []observation
 	stopped := false
 	for index, address := range p.URLs {
+		originalIndex := index + p.StartIndex
 		item := observation{URL: address, State: "blocked_after_host_failure"}
 		if p.Blocked[address] {
 			item.State = "blocked_by_previous_evidence"
@@ -119,13 +129,13 @@ func run(root string, p plan, transport http.RoundTripper, pause func()) ([]obse
 		result, fetchErr := downloader.FetchDetailed(context.Background(), address)
 		item.HTTP, item.HeadersAt, item.Finished = result, headersAt, time.Now().UTC()
 		item.Bytes, item.SHA = len(result.Body), digest(result.Body)
-		if err = os.WriteFile(filepath.Join(root, fmt.Sprintf("%02d.body", index+1)), result.Body, 0600); err != nil {
+		if err = os.WriteFile(filepath.Join(root, fmt.Sprintf("%02d.body", originalIndex+1)), result.Body, 0600); err != nil {
 			return results, err
 		}
 		item.State = "received_original_scope_unreviewed"
 		if fetchErr != nil {
 			item.Error = fetchErr.Error()
-		} else if !contentOK(index, result.Body) {
+		} else if !contentOK(originalIndex, result.Body) {
 			item.Error = "expected business text absent; not a verified document"
 		}
 		if item.Error != "" {
@@ -143,14 +153,15 @@ func main() {
 	root := flag.String("out", "", "仓外新目录，prepare后同目录launch")
 	deny := flag.String("denylist", "", "已核旧失败URL清单")
 	launch := flag.Bool("launch", false, "执行已预检清单；默认零请求")
+	remaining := flag.String("remaining-from", "", "只续取已独立证明本地文字误判后从未请求的四项")
 	flag.Parse()
-	if err := execute(*root, *deny, *launch); err != nil {
+	if err := execute(*root, *deny, *launch, *remaining); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func execute(root, denyPath string, launch bool) error {
+func execute(root, denyPath string, launch bool, remaining string) error {
 	if root == "" || denyPath == "" {
 		return fmt.Errorf("必须指定out及denylist")
 	}
@@ -170,6 +181,12 @@ func execute(root, denyPath string, launch bool) error {
 	if err != nil {
 		return err
 	}
+	if remaining != "" {
+		p, err = remainingPlan(p, remaining)
+		if err != nil {
+			return err
+		}
+	}
 	if !launch {
 		if err = os.Mkdir(root, 0700); err != nil {
 			return err
@@ -177,7 +194,7 @@ func execute(root, denyPath string, launch bool) error {
 		if err = writeJSON(filepath.Join(root, "plan.json"), p); err != nil {
 			return err
 		}
-		fmt.Println("六项预检完成，实际请求0；命中旧失败URL者不会请求")
+		fmt.Printf("%d项预检完成，实际请求0；命中旧失败URL者不会请求\n", len(p.URLs))
 		return nil
 	}
 	prepared, err := os.ReadFile(filepath.Join(root, "plan.json"))
@@ -193,7 +210,11 @@ func execute(root, denyPath string, launch bool) error {
 	if !bytes.Equal(actual, expected) {
 		return fmt.Errorf("预检二进制/URL/拒绝表身份变化，禁止启动")
 	}
-	marker, err := os.OpenFile(onceMarker, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	markerPath := onceMarker
+	if remaining != "" {
+		markerPath = "C:/Temp/tickflow-notices-20261116-unattempted.started.json"
+	}
+	marker, err := os.OpenFile(markerPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 	if err != nil {
 		return fmt.Errorf("已有或未知启动，不得重发: %w", err)
 	}
