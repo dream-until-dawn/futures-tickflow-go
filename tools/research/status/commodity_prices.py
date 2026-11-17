@@ -10,6 +10,9 @@ def canonical(source, aliases):
     value = aliases.get(source)
     if not value or not re.fullmatch(r'(SHFE|INE|CZCE|DCE|GFEX)\.[A-Za-z]+[0-9]{4}', value):
         raise ValueError('commodity_explicit_contract_binding:' + source)
+    match=re.fullmatch(r'([A-Z]+\.[A-Za-z]+)([0-9]{3,4})',source)
+    if not match or value[:-4]!=match[1] or not value.endswith(match[2]):
+        raise ValueError('commodity_explicit_contract_binding:' + source)
     return value
 
 

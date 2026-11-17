@@ -1,12 +1,12 @@
 {
   "schema": "current-commodity-gate-assessment-v1",
-  "file": "docs/evidence/product-gates-v2-closed-20261117.json",
-  "sha256": "7596e25c55be4cb92799d93df2c29190d8d64092faa6c4ffd8014c3e2ea30b1e",
+  "file": "docs/evidence/product-gates-v2-price-candidate-20261117.json",
+  "sha256": "dba8eeabfa833b43fa70ac709b815b7418c09dbce2a6c4fde90378a9ec53159e",
   "summary": {
     "products": 81,
     "backtest": 75,
     "daily_signal": 52,
     "both": 47
   },
-  "supersedes": "docs/evidence/product-gates-v2-20261117.json"
+  "supersedes": "docs/evidence/product-gates-v2-closed-20261117.json"
 }

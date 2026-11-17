@@ -63,6 +63,21 @@
       "id": "constraint_refresh",
       "file": "docs/evidence/explicit-minimum-refresh-20261117.json",
       "sha256": "e1661a11fa1df785f90d8614bcaa10c9c18382dde6f15c6ca6415c38441040f5"
+    },
+    {
+      "id": "commodity_price_index",
+      "file": "docs/evidence/commodity-price-delivery-index-20261117.json",
+      "sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db"
+    },
+    {
+      "id": "commodity_price_delivery",
+      "file": "docs/evidence/commodity-price-delivery-status-20261117.json",
+      "sha256": "4206a848406e658ba2bef364052ac832dc6484169eecea2150444cc1e553436a"
+    },
+    {
+      "id": "commodity_price_engine_queue",
+      "file": "docs/evidence/commodity-price-engine-queue-20261117.json",
+      "sha256": "81bd4fb5616058cc20d9ffd33f996d491a6be4cd1f569c269adb4563593c0c5a"
     }
   ],
   "profiles": [
@@ -111,5 +126,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "05104e0db7fb53ec8d13a8c3f42565827488bc3dc3e1af7abfbb80e17c3b4c85"
+  "published_model_sha256": "f5959e02f9f84b9c58bb48422201a34cf5286eb0cd21a85b038d1fc56b8788e7"
 }

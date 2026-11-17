@@ -26,6 +26,7 @@ async function main() {
       const cells=page.locator('[data-product="'+p.key+'"] td');
       assert.match(await cells.nth(11).innerText(), p.user_data_gates.backtest.status==='pass'?/通过/:/待补证|未达到/);
       assert.match(await cells.nth(12).innerText(), p.user_data_gates.daily_signal.status==='pass'?/通过/:/待补证|未达到/);
+      if(data.commodity_price_delivery)assert.equal(/真实价格包/.test(await cells.nth(1).innerText()),Boolean(p.price_delivery));
     }
     assert.equal(await page.locator('#shared-list details').count(), data.project_inventory.shared_documents.length);
     assert.equal(await page.locator('#shared-list a').count(), 7);
@@ -56,6 +57,11 @@ async function main() {
     assert.equal(await page.locator('#products tr').getAttribute('data-product'), 'SHFE.rb');
     await page.locator('.product-title').click();
     assert.equal(await page.locator('#detail').isVisible(), true);
+    if(data.commodity_price_delivery) {
+      assert.match(await page.locator('#detail-body').innerText(),/真实价格交付包/);
+      assert.match(await page.locator('#detail-body').innerText(),/观察并集不是完整率/);
+      assert.match(await page.locator('#detail-body').innerText(),/资料交付验收不等于策略已就绪或生产已部署/);
+    }
     assert.match(await page.locator('#detail-body').innerText(), /用户指定的两道数据门槛/);
     assert.match(await page.locator('#detail-body').innerText(), /实际最低开仓（补充项，不阻断回测）/);
     assert.match(await page.locator('#detail-body').innerText(), /模拟手数：由回测任务显式设置/);

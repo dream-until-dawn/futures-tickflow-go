@@ -4,6 +4,7 @@ const $ = id => document.getElementById(id);
 const number = n => n.toLocaleString('zh-CN');
 const gateLabel = state => ({pass:'通过（限所列范围）',pending:'待补证',not_met:'未达到'}[state]||'待核算');
 const gateItemLabel = name => ({history_ohlc:'长期日线OHLC',current_margin:'当前保证金率',effective_min_open:'实际最低开仓手数',settlement:'有效结算价',daily_update:'按交易日抓取更新'}[name]||name);
+const dateLabel = day => day ? String(day).replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3') : '未知';
 const stateLabels = {primary:'主目录有研究日线', sample_only:'仅其他路线样本', directory_only:'本页仅有目录'};
 
 // 所有来源文字用textContent插入，原件名称不能变成HTML或执行代码。
@@ -43,6 +44,7 @@ function render() {
     append(row,'td',status.exchanges[p.exchange].short,'exchange-name');
     let cell=append(row,'td');const button=append(cell,'button',p.name,'product-title');button.type='button';button.addEventListener('click',()=>details(p));
     append(cell,'div',p.code,'mono sub');
+    if(p.price_delivery)append(cell,'div',p.price_delivery.consumer_status==='accepted_with_limits'?'真实价格包 · 离线验收见详情':'真实价格包 · 验收状态见详情','sub');
     for(const sources of sourceCells(p)) {
       cell=append(row,'td');
       for(const source of sources) append(cell,'div',source,'source-name');
@@ -96,6 +98,18 @@ function coverageDetails(p) {
 }
 function details(p) {
   $('detail-title').textContent=p.name+' · '+p.key;$('detail-body').replaceChildren();
+  if(p.price_delivery) {
+    const d=p.price_delivery, state={pending:'已成包，等待引擎独立验收',accepted_with_limits:'已按限定范围完成离线验收',blocked:'存在待解决反馈'}[d.consumer_status];
+    const section=detailSection('真实价格交付包',[
+      state+'；'+number(d.rows)+'条历史价格、'+d.historical_contracts+'个历史具体合约，当前保证金范围'+d.current_contracts+'约。',
+      '交付观察 '+dateLabel(d.coverage.first)+' → '+dateLabel(d.coverage.last)+'；逐年日期 '+Object.entries(d.coverage.valid_days_by_year).map(([y,n])=>y+'年'+n+'日').join('、')+'。观察并集不是完整率。',
+      d.official_earlier_prefix?'包含日期不重叠的官方早期/整缺年补充，具体范围见交付记录。':'每行绑定实际源响应；不拼主连、不补造缺日。',
+      '包内保证金对应 '+dateLabel(d.parameter_day)+'，回放历史属于情景，公司标准不等于账户实收；未知实际最低开仓不补1手。资料交付验收不等于策略已就绪或生产已部署。'
+    ]);
+    append(section,'p','交付登记（派生，不是行情更新）：'+timeText(d.delivery_registered_at)+'。');
+    const technical=append(section,'details');append(technical,'summary','查看交付文件及校验标识');
+    append(technical,'p','子包 '+d.exchange+'；历史文件 '+d.history_artifact+'；manifest SHA256 '+d.manifest_sha256);
+  }
   for(const ref of p.parameter_reference_supplements||[])detailSection('供应商编制参数观察（不等于真实专项已核）',[
     ref.publisher+'；来源标示更新日 '+ref.source_snapshot_day+'；'+ref.rows+'个具名合约。置信度中等，仅编制参考。',
     '已有字段 '+ref.available_reference_fields.join('、')+'；范围 '+ref.canonical_contracts.join('、')+'。',

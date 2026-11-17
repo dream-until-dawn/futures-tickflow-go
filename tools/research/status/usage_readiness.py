@@ -76,6 +76,10 @@ def markdown(data):
                     '回测长历史按自2021年前后的逐年有效OHLC观察核，逐年实际日期数在详情；不将起止跨度冒充逐日完整。2021年后新上市品种的上市日起点尚未绑定到本轮机器事实时保留待补证。最低开仓仅作补充，不阻断v2回测；逐项列审核日和具体合约；普通1手基线及旧供应商快照均不能单独代填当前有效专项，真实客户适用性另核。','',
                     '逐日信号通过表示已有目标日有效结算和既有按日采集/校验入口；不代表全部合约、不代表后台自动服务已部署，也不承诺未来每次更新成功。郑商所三位原生码用同日XML显式年月绑定。','',
                     '| 品种 | 回测门槛 | 逐日信号门槛 | 硬项缺口 / 通过范围 |','| --- | --- | --- | --- |']
+        if data.get('commodity_price_delivery'):
+            state=data['commodity_price_delivery']['consumer_status']
+            stage={'pending':'尚待引擎全原件/全行/当前参数独立验收','accepted_with_limits':'已完成记录所限离线验收','blocked':'有待解决反馈'}[state]
+            gate_lines[2:2]=['**真实价格交付另列：**75商品的474372条价格已形成五交易所自包含候选，'+stage+'。不是75品种策略已就绪或生产已部署；详见[交付维护记录](commodity-price-delivery-20261117.md)。','']
         broker=data.get('broker_margin_readback')
         if broker:
             margin_products=sum(p['user_data_gates']['backtest']['hard_items']['current_margin']['status']=='pass' for p in gated)

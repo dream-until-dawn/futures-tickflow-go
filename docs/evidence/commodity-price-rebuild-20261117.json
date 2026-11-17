@@ -1,0 +1,7 @@
+{
+  "schema": "commodity-price-real-rebuild-v1",
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "members_equal": 6882,
+  "network_requests": 0,
+  "originals_modified": false
+}

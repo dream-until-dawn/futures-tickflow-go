@@ -10,6 +10,7 @@ from page_model import model
 from extract_names import FrozenInputs, PACKS
 from inventory_model import attach, LABELS
 from usage_readiness import markdown as readiness_markdown
+from delivery_status import attach as attach_delivery
 
 
 def locked_repo(root, item):
@@ -67,6 +68,19 @@ def markdown(data):
     if data.get('research_union'):
         union=data['research_union'];states=union['states']
         lines += [f"原封存目录不改写；与本轮独立补充路线取并集后，同一{union['candidates']}候选中{states['nonempty']}非空、{states['empty_unavailable']}完整空、{states['not_requested_on_directory_route']}本路线未请求，共{union['rows']}行。其他来源重叠不相加；新差异另列待核。",'']
+    if data.get('commodity_price_delivery'):
+        delivery=data['commodity_price_delivery']
+        stage={'pending':'引擎独立验收待排期','accepted_with_limits':'限定范围离线验收完成','blocked':'有待解决反馈'}[delivery['consumer_status']]
+        lines += ['## 真实价格交付包','',
+                  f"75商品、789个当前保证金范围、{delivery['price_rows']}条历史价格已生成5个自包含子包；{stage}。资料门槛、价格交付、策略就绪和生产运行分开记录。",'',
+                  '[交付结构、原件、验收状态与新来源](commodity-price-delivery-20261117.md)。下表日期为交付观察并集，不是完整率；包内17日保证金回放历史是情景。','',
+                  '| 品种 | 交付价格行 | 观察起止 | 历史具体合约 | 当前保证金合约范围 |',
+                  '| --- | --- | --- | --- | --- |']
+        for product in data['products']:
+            if product.get('price_delivery'):
+                d=product['price_delivery'];c=d['coverage']
+                lines.append(f"| {product['key']} | {d['rows']} | {c['first']} → {c['last']} | {d['historical_contracts']} | {d['current_contracts']} |")
+        lines.append('')
     for exchange, label in data['exchanges'].items():
         lines += ['## '+label['name']+'（'+exchange+'）','',
             '| 品种 | OHLC（日线） | 成交量 | 持仓量 | 结算价 | 成交额 | 历史交易日历 | 分钟/现场 | 目录/生命周期 | 保证金/手续费/涨跌停 |',
@@ -164,6 +178,12 @@ def check_docs(repo, config):
     if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
         raise ValueError('status_product_inventory_binding')
+    delivery=next((r for r in config['repo_inputs'] if r['id']=='commodity_price_delivery'),None)
+    delivery_index=next((r for r in config['repo_inputs'] if r['id']=='commodity_price_index'),None)
+    if delivery and delivery_index:
+        projected=attach_delivery(data,locked_repo(repo,delivery_index),locked_repo(repo,delivery),delivery_index['sha256'])
+        if projected!=data:
+            raise ValueError('status_commodity_delivery_binding')
     check_rendered(repo,data)
     return data['summary']
 
@@ -208,6 +228,9 @@ def main():
         extension=repo_data['project_inventory'].get('history_extension')
         if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
         data=attach(data,repo_data['project_inventory'],repo_data.get('user_gate_facts'))
+    if 'commodity_price_delivery' in repo_data:
+        entry=next(r for r in config['repo_inputs'] if r['id']=='commodity_price_index')
+        data=attach_delivery(data,repo_data['commodity_price_index'],repo_data['commodity_price_delivery'],entry['sha256'])
     data['provenance']=dict(bundle_manifest_sha256=config['bundle_manifest_sha256'],catalog_sha256=config['catalog_sha256'],
                             repo_inputs=config['repo_inputs'],profiles=config['profiles'])
     a.out_root.mkdir(parents=True)

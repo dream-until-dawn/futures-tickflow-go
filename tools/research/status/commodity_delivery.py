@@ -44,12 +44,14 @@ def read_bundle(root, expected):
 
 
 def company_bundle(path):
+    """核已验父包的完整成员集；同名重复也拒绝，不能靠字典折叠隐藏。"""
     with zipfile.ZipFile(path) as archive:
         raw = archive.read('manifest.json')
         if digest(raw) != COMPANY_SHA:
             raise ValueError('commodity_company_manifest')
         m = json.loads(raw)
-        if set(archive.namelist()) != {'manifest.json'} | {r['file'] for r in m['files']}:
+        if (len(archive.infolist())!=len(m['files'])+1 or any(i.is_dir() for i in archive.infolist()) or
+                set(archive.namelist()) != {'manifest.json'} | {r['file'] for r in m['files']}):
             raise ValueError('commodity_company_members')
         files = {}
         for entry in m['files']:
@@ -61,6 +63,7 @@ def company_bundle(path):
 
 
 class Payloads:
+    """声明与内存字节一同冻结；先核预算，最后才写全新子目录。"""
     def __init__(self):
         self.values = {}
 
@@ -93,6 +96,7 @@ class Payloads:
 
 
 def build(repo, signal, control, company, directory, out):
+    """绑定冻结资料日，不用本机日期或最新网页无声替换场景参数。"""
     if out.exists():
         raise ValueError('commodity_output_exists')
     facts_raw = (repo / 'docs/data-gate-facts.json').read_bytes(); facts = json.loads(facts_raw)

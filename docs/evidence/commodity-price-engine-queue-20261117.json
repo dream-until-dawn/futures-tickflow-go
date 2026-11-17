@@ -1,0 +1,15 @@
+{
+  "schema": "root-recorded-engine-price-review-queue-v1",
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "received_at_utc": "2026-11-17T11:48:51.550598+00:00",
+  "origin": "explicit acknowledgement received from local engine chat; this file is the data-side record, not an engine-produced acceptance report",
+  "consumer_statement": {
+    "full_original_review_started": false,
+    "full_row_review_started": false,
+    "current_parameter_review_started": false,
+    "new_price_bundle_acceptance_evidence": null,
+    "blocking_reason": "existing human-priority RB task; no current independent review window"
+  },
+  "boundary": "Old assessment readback and RB/HC acceptance do not certify this new five-shard price bundle",
+  "new_requests_required": false
+}

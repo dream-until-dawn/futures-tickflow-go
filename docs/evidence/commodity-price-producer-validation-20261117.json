@@ -1,0 +1,12 @@
+{
+  "schema": "commodity-price-producer-validation-v1",
+  "source_commit": "8fe76da6952ce1bb769dd43193cf11b4f4e25cdb",
+  "go_modules": 3,
+  "python_directories": 18,
+  "python_tests": 279,
+  "restoration_unchanged": true,
+  "log_sha256": "6a395a9139cae11dc07fa501bbea24a3a9bb859af222ab29a800ebb80d84ede6",
+  "online_ci": "skipped_by_user",
+  "tag": false,
+  "independent_engine_acceptance": false
+}

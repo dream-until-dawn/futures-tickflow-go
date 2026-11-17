@@ -5,8 +5,13 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import hashlib
+import json
+import zipfile
+import warnings
+from unittest.mock import patch
 
-from commodity_delivery import Payloads, policy
+from commodity_delivery import Payloads, policy, company_bundle
 from commodity_prices import UniquePrices, canonical, coverage, normalize, official_fields
 from official_prefix import czce_rows
 
@@ -54,7 +59,8 @@ class CommodityPricesTest(unittest.TestCase):
 
     def test_explicit_year_and_safe_artifact_identity_are_required(self):
         self.assertEqual(canonical('CZCE.CF105',{'CZCE.CF105':'CZCE.CF2105'}),'CZCE.CF2105')
-        for aliases in [{},{'CZCE.CF105':'CZCE.CF105'},{'CZCE.CF105':'CFFEX.IF2105'}]:
+        for aliases in [{},{'CZCE.CF105':'CZCE.CF105'},{'CZCE.CF105':'CFFEX.IF2105'},
+                        {'CZCE.CF105':'CZCE.SR2105'},{'CZCE.CF105':'CZCE.CF2205'}]:
             with self.assertRaisesRegex(ValueError,'explicit_contract'):canonical('CZCE.CF105',aliases)
         payload=Payloads();payload.add('a','source-original',b'raw')
         payload.add('a','source-original',b'raw')
@@ -73,6 +79,20 @@ class CommodityPricesTest(unittest.TestCase):
         self.assertIsNone(fields['open_interest'])
         with self.assertRaisesRegex(ValueError,'czce_day'):czce_rows(raw,20221229)
         self.assertIsNone(official_fields(dict(open='1',high='1',low='2',close='1')))
+
+    def test_company_zip_duplicate_does_not_hide_behind_the_same_set_of_names(self):
+        raw=b'original';manifest=json.dumps(dict(files=[dict(file='company-original.html',bytes=len(raw),
+            sha256=hashlib.sha256(raw).hexdigest())])).encode()
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'input.zip'
+            with zipfile.ZipFile(path,'x') as z:
+                z.writestr('manifest.json',manifest);z.writestr('company-original.html',raw)
+            with patch('commodity_delivery.COMPANY_SHA',hashlib.sha256(manifest).hexdigest()):
+                self.assertEqual(company_bundle(path)['company-original.html'],raw)
+                with warnings.catch_warnings():
+                    warnings.simplefilter('ignore',UserWarning)
+                    with zipfile.ZipFile(path,'a') as z:z.writestr('company-original.html',raw)
+                with self.assertRaisesRegex(ValueError,'company_members'):company_bundle(path)
 
 
 if __name__ == '__main__':

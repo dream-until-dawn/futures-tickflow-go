@@ -1588,7 +1588,34 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ad",
+        "rows": 2851,
+        "historical_contracts": 19,
+        "coverage": {
+          "first": 20250610,
+          "last": 20261116,
+          "listing_day": 20250610,
+          "valid_days_by_year": {
+            "2025": 141,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ad-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ad-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.ag",
@@ -3484,7 +3511,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ag",
+        "rows": 15944,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ag-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ag-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.al",
@@ -5374,7 +5432,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.al",
+        "rows": 15944,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.al-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.al-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.ao",
@@ -7141,7 +7230,36 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ao",
+        "rows": 8603,
+        "historical_contracts": 48,
+        "coverage": {
+          "first": 20230619,
+          "last": 20261116,
+          "listing_day": 20230619,
+          "valid_days_by_year": {
+            "2023": 132,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ao-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ao-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.au",
@@ -9179,7 +9297,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.au",
+        "rows": 10502,
+        "historical_contracts": 75,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.au-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.au-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 8,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.br",
@@ -10948,7 +11097,36 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.br",
+        "rows": 8212,
+        "historical_contracts": 46,
+        "coverage": {
+          "first": 20230728,
+          "last": 20261116,
+          "listing_day": 20230728,
+          "valid_days_by_year": {
+            "2023": 105,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.br-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.br-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.bu",
@@ -12914,7 +13092,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.bu",
+        "rows": 20471,
+        "historical_contracts": 84,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.bu-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.bu-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 16,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.cu",
@@ -14804,7 +15013,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.cu",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.cu-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.cu-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.fu",
@@ -16697,7 +16937,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.fu",
+        "rows": 15840,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.fu-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.fu-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.hc",
@@ -18587,7 +18858,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.hc",
+        "rows": 15944,
+        "historical_contracts": 81,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.hc-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.hc-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.ni",
@@ -20477,7 +20779,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ni",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ni-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ni-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.op",
@@ -21996,7 +22329,34 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.op",
+        "rows": 2164,
+        "historical_contracts": 16,
+        "coverage": {
+          "first": 20250910,
+          "last": 20261116,
+          "listing_day": 20250910,
+          "valid_days_by_year": {
+            "2025": 75,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.op-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.op-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.pb",
@@ -23886,7 +24246,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.pb",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.pb-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.pb-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.rb",
@@ -26528,7 +26919,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.rb",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.rb-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.rb-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.ru",
@@ -28295,7 +28717,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ru",
+        "rows": 13279,
+        "historical_contracts": 69,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ru-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ru-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 10,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.sn",
@@ -30185,7 +30638,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.sn",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.sn-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.sn-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.sp",
@@ -32075,7 +32559,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.sp",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.sp-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.sp-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.ss",
@@ -33965,7 +34480,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.ss",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.ss-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.ss-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.wr",
@@ -35848,7 +36394,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.wr",
+        "rows": 15936,
+        "historical_contracts": 74,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.wr-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.wr-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "SHFE.zn",
@@ -37738,7 +38315,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "SHFE.zn",
+        "rows": 15945,
+        "historical_contracts": 82,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "SHFE.zn-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "SHFE.zn-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "SHFE",
+        "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "INE.bc",
@@ -39612,7 +40220,46 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "INE.bc",
+        "rows": 11290,
+        "historical_contracts": 74,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "INE.bc-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "INE.bc-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20230117,
+          "missing_years": [
+            2021,
+            2022
+          ],
+          "added_rows": 2599,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 12,
+        "exchange": "INE",
+        "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "INE.ec",
@@ -41270,7 +41917,36 @@
       },
       "margin_reference_supplements": [],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "INE.ec",
+        "rows": 4110,
+        "historical_contracts": 23,
+        "coverage": {
+          "first": 20230818,
+          "last": 20261116,
+          "listing_day": 20230818,
+          "valid_days_by_year": {
+            "2023": 90,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "INE.ec-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "INE.ec-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 7,
+        "exchange": "INE",
+        "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "INE.lu",
@@ -43371,7 +44047,46 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "INE.lu",
+        "rows": 11719,
+        "historical_contracts": 79,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "INE.lu-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "INE.lu-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20230117,
+          "missing_years": [
+            2021,
+            2022
+          ],
+          "added_rows": 3246,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 12,
+        "exchange": "INE",
+        "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "INE.nr",
@@ -45259,7 +45974,46 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "INE.nr",
+        "rows": 11653,
+        "historical_contracts": 78,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "INE.nr-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "INE.nr-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20230117,
+          "missing_years": [
+            2021,
+            2022
+          ],
+          "added_rows": 2962,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 12,
+        "exchange": "INE",
+        "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "INE.sc",
@@ -47303,7 +48057,38 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "INE.sc",
+        "rows": 17840,
+        "historical_contracts": 50,
+        "coverage": {
+          "first": 20210301,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "INE.sc-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "INE.sc-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 20,
+        "exchange": "INE",
+        "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "CZCE.AP",
@@ -48745,6 +49530,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 13
+      },
+      "price_delivery": {
+        "key": "CZCE.AP",
+        "rows": 3922,
+        "historical_contracts": 26,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.AP-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.AP-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 7,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -50117,6 +50933,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 11
+      },
+      "price_delivery": {
+        "key": "CZCE.CF",
+        "rows": 4770,
+        "historical_contracts": 35,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 242,
+            "2023": 232,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.CF-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.CF-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 1452,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 6,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -51543,6 +52397,37 @@
       ],
       "extension_availability": {
         "nonempty": 12
+      },
+      "price_delivery": {
+        "key": "CZCE.CJ",
+        "rows": 3582,
+        "historical_contracts": 24,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.CJ-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.CJ-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -53296,6 +54181,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.CY",
+        "rows": 6273,
+        "historical_contracts": 58,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 242,
+            "2023": 226,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.CY-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.CY-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 706,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -55050,6 +55973,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.FG",
+        "rows": 7006,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.FG-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.FG-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -59013,6 +59967,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.MA",
+        "rows": 7002,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 11,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.MA-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.MA-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -60385,6 +61370,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 11
+      },
+      "price_delivery": {
+        "key": "CZCE.OI",
+        "rows": 4734,
+        "historical_contracts": 35,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 242,
+            "2023": 232,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.OI-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.OI-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 1416,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 6,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -62111,6 +63134,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.PF",
+        "rows": 6722,
+        "historical_contracts": 41,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 10,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.PF-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.PF-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -63407,6 +64461,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 12
+      },
+      "price_delivery": {
+        "key": "CZCE.PK",
+        "rows": 5381,
+        "historical_contracts": 32,
+        "coverage": {
+          "first": 20210201,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 223,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.PK-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.PK-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20221215,
+          "missing_years": [
+            2021
+          ],
+          "added_rows": 2485,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 7,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -64463,7 +65555,41 @@
         }
       ],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "CZCE.PL",
+        "rows": 2306,
+        "historical_contracts": 21,
+        "coverage": {
+          "first": 20250722,
+          "last": 20261116,
+          "listing_day": 20250722,
+          "valid_days_by_year": {
+            "2025": 111,
+            "2026": 209
+          },
+          "artifact_ids": [
+            "CZCE.PL-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.PL-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20261116,
+          "missing_years": [
+            2025
+          ],
+          "added_rows": 2300,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "CZCE.PM",
@@ -67088,6 +68214,34 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 8
+      },
+      "price_delivery": {
+        "key": "CZCE.PR",
+        "rows": 1555,
+        "historical_contracts": 14,
+        "coverage": {
+          "first": 20240830,
+          "last": 20261116,
+          "listing_day": 20240830,
+          "valid_days_by_year": {
+            "2024": 81,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.PR-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.PR-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -68459,6 +69613,35 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 18
+      },
+      "price_delivery": {
+        "key": "CZCE.PX",
+        "rows": 3999,
+        "historical_contracts": 27,
+        "coverage": {
+          "first": 20230915,
+          "last": 20261116,
+          "listing_day": 20230915,
+          "valid_days_by_year": {
+            "2023": 70,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.PX-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.PX-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -71229,6 +72412,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 13
+      },
+      "price_delivery": {
+        "key": "CZCE.RM",
+        "rows": 5623,
+        "historical_contracts": 41,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 242,
+            "2023": 232,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.RM-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.RM-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 1669,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 7,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -72517,6 +73738,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "CZCE.RS",
+        "rows": 2239,
+        "historical_contracts": 22,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 213,
+            "2023": 111,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.RS-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.RS-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 287,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 6,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -74271,6 +75530,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.SA",
+        "rows": 7006,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.SA-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SA-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -76025,6 +77315,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.SF",
+        "rows": 6980,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.SF-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SF-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -77390,6 +78711,35 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 18
+      },
+      "price_delivery": {
+        "key": "CZCE.SH",
+        "rows": 4098,
+        "historical_contracts": 30,
+        "coverage": {
+          "first": 20230915,
+          "last": 20261116,
+          "listing_day": 20230915,
+          "valid_days_by_year": {
+            "2023": 70,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.SH-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SH-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -79144,6 +80494,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.SM",
+        "rows": 6976,
+        "historical_contracts": 45,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 10,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.SM-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SM-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -79947,7 +81328,38 @@
       },
       "margin_reference_supplements": [],
       "parameter_reference_supplements": [],
-      "extension_availability": null
+      "extension_availability": null,
+      "price_delivery": {
+        "key": "CZCE.SO",
+        "rows": 12,
+        "historical_contracts": 4,
+        "coverage": {
+          "first": 20261112,
+          "last": 20261116,
+          "listing_day": 20261112,
+          "valid_days_by_year": {
+            "2026": 3
+          },
+          "artifact_ids": [
+            "CZCE.SO-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SO-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20261116,
+          "missing_years": [],
+          "added_rows": 8,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 4,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
+      }
     },
     {
       "key": "CZCE.SR",
@@ -81319,6 +82731,44 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 11
+      },
+      "price_delivery": {
+        "key": "CZCE.SR",
+        "rows": 4762,
+        "historical_contracts": 35,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 208,
+            "2022": 242,
+            "2023": 232,
+            "2024": 242,
+            "2025": 171,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.SR-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.SR-history.jsonl",
+        "official_earlier_prefix": {
+          "before_exclusive": 20210104,
+          "missing_years": [
+            2022
+          ],
+          "added_rows": 1444,
+          "rule": "official earlier prefix or entirely absent years; no overlapping date"
+        },
+        "current_contracts": 6,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -83209,6 +84659,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.TA",
+        "rows": 6998,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 12,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.TA-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.TA-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -84963,6 +86444,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 23
+      },
+      "price_delivery": {
+        "key": "CZCE.UR",
+        "rows": 7004,
+        "historical_contracts": 47,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261116,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 230,
+            "2022": 11,
+            "2023": 242,
+            "2024": 242,
+            "2025": 193,
+            "2026": 1
+          },
+          "artifact_ids": [
+            "CZCE.UR-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "CZCE.UR-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "CZCE",
+        "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -88609,6 +90121,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 8
+      },
+      "price_delivery": {
+        "key": "DCE.a",
+        "rows": 1698,
+        "historical_contracts": 8,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.a-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.a-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -89169,6 +90712,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.b",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.b-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.b-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -89604,6 +91178,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.bb",
+        "rows": 1453,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 241,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.bb-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.bb-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -90114,6 +91719,33 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 2
+      },
+      "price_delivery": {
+        "key": "DCE.bz",
+        "rows": 365,
+        "historical_contracts": 2,
+        "coverage": {
+          "first": 20250708,
+          "last": 20261113,
+          "listing_day": 20250708,
+          "valid_days_by_year": {
+            "2025": 121,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.bz-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.bz-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -90822,6 +92454,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.c",
+        "rows": 1544,
+        "historical_contracts": 8,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.c-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.c-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -91297,6 +92960,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.cs",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.cs-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.cs-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -91879,6 +93573,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.eb",
+        "rows": 1458,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.eb-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.eb-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -92461,6 +94186,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.eg",
+        "rows": 1458,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.eg-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.eg-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -92960,6 +94716,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.fb",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.fb-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.fb-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -93520,6 +95307,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.i",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.i-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.i-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -94044,6 +95862,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.j",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.j-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.j-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -94638,6 +96487,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.jd",
+        "rows": 1458,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.jd-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.jd-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -95174,6 +97054,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.jm",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.jm-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.jm-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -95722,6 +97633,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.l",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.l-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.l-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -96213,6 +98155,34 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 3
+      },
+      "price_delivery": {
+        "key": "DCE.lg",
+        "rows": 605,
+        "historical_contracts": 3,
+        "coverage": {
+          "first": 20241118,
+          "last": 20261113,
+          "listing_day": 20241118,
+          "valid_days_by_year": {
+            "2024": 32,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.lg-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.lg-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -96729,6 +98699,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.lh",
+        "rows": 1591,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210108,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 239,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.lh-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.lh-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -97466,6 +99467,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.m",
+        "rows": 1544,
+        "historical_contracts": 8,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.m-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.m-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 8,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -98026,6 +100058,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.p",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.p-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.p-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -98602,6 +100665,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.pg",
+        "rows": 1458,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.pg-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.pg-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -99138,6 +101232,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.pp",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.pp-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.pp-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -99698,6 +101823,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.rr",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.rr-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.rr-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -100258,6 +102414,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.v",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.v-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.v-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 12,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -100762,6 +102949,37 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 7
+      },
+      "price_delivery": {
+        "key": "DCE.y",
+        "rows": 1455,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20210104,
+          "last": 20261113,
+          "listing_day": null,
+          "valid_days_by_year": {
+            "2021": 243,
+            "2022": 242,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "DCE.y-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "DCE.y-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 8,
+        "exchange": "DCE",
+        "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -101343,6 +103561,35 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 5
+      },
+      "price_delivery": {
+        "key": "GFEX.lc",
+        "rows": 960,
+        "historical_contracts": 5,
+        "coverage": {
+          "first": 20230721,
+          "last": 20261113,
+          "listing_day": 20230721,
+          "valid_days_by_year": {
+            "2023": 110,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "GFEX.lc-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "GFEX.lc-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 11,
+        "exchange": "GFEX",
+        "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -101835,6 +104082,33 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 2
+      },
+      "price_delivery": {
+        "key": "GFEX.pd",
+        "rows": 308,
+        "historical_contracts": 2,
+        "coverage": {
+          "first": 20251127,
+          "last": 20261113,
+          "listing_day": 20251127,
+          "valid_days_by_year": {
+            "2025": 25,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "GFEX.pd-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "GFEX.pd-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "GFEX",
+        "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -102378,6 +104652,34 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 3
+      },
+      "price_delivery": {
+        "key": "GFEX.ps",
+        "rows": 552,
+        "historical_contracts": 3,
+        "coverage": {
+          "first": 20241226,
+          "last": 20261113,
+          "listing_day": 20241226,
+          "valid_days_by_year": {
+            "2024": 4,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "GFEX.ps-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "GFEX.ps-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 11,
+        "exchange": "GFEX",
+        "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -102870,6 +105172,33 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 2
+      },
+      "price_delivery": {
+        "key": "GFEX.pt",
+        "rows": 308,
+        "historical_contracts": 2,
+        "coverage": {
+          "first": 20251127,
+          "last": 20261113,
+          "listing_day": 20251127,
+          "valid_days_by_year": {
+            "2025": 25,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "GFEX.pt-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "GFEX.pt-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 6,
+        "exchange": "GFEX",
+        "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -103671,6 +106000,36 @@
       "parameter_reference_supplements": [],
       "extension_availability": {
         "nonempty": 6
+      },
+      "price_delivery": {
+        "key": "GFEX.si",
+        "rows": 1340,
+        "historical_contracts": 7,
+        "coverage": {
+          "first": 20221222,
+          "last": 20261113,
+          "listing_day": 20221222,
+          "valid_days_by_year": {
+            "2022": 7,
+            "2023": 242,
+            "2024": 242,
+            "2025": 243,
+            "2026": 208
+          },
+          "artifact_ids": [
+            "GFEX.si-history.jsonl"
+          ]
+        },
+        "invalid_ohlc_excluded": 0,
+        "history_artifact": "GFEX.si-history.jsonl",
+        "official_earlier_prefix": null,
+        "current_contracts": 11,
+        "exchange": "GFEX",
+        "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+        "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+        "consumer_status": "pending",
+        "parameter_day": 20261117,
+        "delivery_registered_at": "2026-11-17T11:46:51.145623+00:00"
       }
     },
     {
@@ -308643,6 +311002,27 @@
     },
     "base_preserved": true
   },
+  "commodity_price_delivery": {
+    "schema": "commodity-price-delivery-status-v1",
+    "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+    "consumer_status": "pending",
+    "independent_readback_verified": false,
+    "parameter_day": 20261117,
+    "target_snapshot_day": 20261116,
+    "producer_commit": "8fe76da6952ce1bb769dd43193cf11b4f4e25cdb",
+    "review_recorded_at_utc": "2026-11-17T11:46:51.145623+00:00",
+    "scope": "75 products real price candidate; consumer full-original/full-row acceptance pending; not strategy readiness, production or financial admission",
+    "source_research_status": "three single GETs failed or redirected; no retry and no new settlement admission",
+    "blocking_reason": "引擎当前人工RB任务优先；新包全原件/全行/当前参数独立验收未开始",
+    "consumer_acknowledgement": {
+      "file": "docs/evidence/commodity-price-engine-queue-20261117.json",
+      "sha256": "81bd4fb5616058cc20d9ffd33f996d491a6be4cd1f569c269adb4563593c0c5a"
+    },
+    "products": 75,
+    "price_rows": 474372,
+    "current_contracts": 789,
+    "shards": 5
+  },
   "provenance": {
     "bundle_manifest_sha256": "4e9df6a6ef1cef4789e445b7016aad2906c57b7fc95c898e2fd11bfe6cbefd5b",
     "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
@@ -308706,6 +311086,16 @@
         "id": "constraint_refresh",
         "file": "docs/evidence/explicit-minimum-refresh-20261117.json",
         "sha256": "e1661a11fa1df785f90d8614bcaa10c9c18382dde6f15c6ca6415c38441040f5"
+      },
+      {
+        "id": "commodity_price_index",
+        "file": "docs/evidence/commodity-price-delivery-index-20261117.json",
+        "sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db"
+      },
+      {
+        "id": "commodity_price_delivery",
+        "file": "docs/evidence/commodity-price-delivery-status-20261117.json",
+        "sha256": "4206a848406e658ba2bef364052ac832dc6484169eecea2150444cc1e553436a"
       }
     ],
     "profiles": [

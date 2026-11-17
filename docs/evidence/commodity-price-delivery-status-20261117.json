@@ -1,0 +1,17 @@
+{
+  "schema": "commodity-price-delivery-status-v1",
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "consumer_status": "pending",
+  "independent_readback_verified": false,
+  "parameter_day": 20261117,
+  "target_snapshot_day": 20261116,
+  "producer_commit": "8fe76da6952ce1bb769dd43193cf11b4f4e25cdb",
+  "review_recorded_at_utc": "2026-11-17T11:46:51.145623+00:00",
+  "scope": "75 products real price candidate; consumer full-original/full-row acceptance pending; not strategy readiness, production or financial admission",
+  "source_research_status": "three single GETs failed or redirected; no retry and no new settlement admission",
+  "blocking_reason": "引擎当前人工RB任务优先；新包全原件/全行/当前参数独立验收未开始",
+  "consumer_acknowledgement": {
+    "file": "docs/evidence/commodity-price-engine-queue-20261117.json",
+    "sha256": "81bd4fb5616058cc20d9ffd33f996d491a6be4cd1f569c269adb4563593c0c5a"
+  }
+}
