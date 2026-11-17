@@ -1,0 +1,29 @@
+{
+  "schema": "public-settlement-new-publisher-review-v1",
+  "targets": [
+    {
+      "id": "aurelian-lc-public",
+      "url": "https://aureliandataservices.com/commodities/lc",
+      "anchors": [
+        "Settlement",
+        "lc2701"
+      ]
+    },
+    {
+      "id": "aurelian-licence",
+      "url": "https://aureliandataservices.com/licence",
+      "anchors": [
+        "Licence",
+        "Usage"
+      ]
+    }
+  ],
+  "request_budget": 2,
+  "bytes_each": 2097152,
+  "seconds_each": 15,
+  "retries": 0,
+  "redirects": false,
+  "accounts": false,
+  "purchase": false,
+  "scope": "Public factual sample and licence documentation only; no API subscription, no redistribution, no gate promotion"
+}

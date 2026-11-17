@@ -1,0 +1,1981 @@
+{
+  "schema": "commodity-price-delivery-index-v1",
+  "synthetic": false,
+  "products": 75,
+  "current_contracts": 789,
+  "assessment_sha256": "7596e25c55be4cb92799d93df2c29190d8d64092faa6c4ffd8014c3e2ea30b1e",
+  "shards": [
+    {
+      "exchange": "SHFE",
+      "manifest": "SHFE/manifest.json",
+      "manifest_sha256": "c6f8665cca65bef2f775387be7dc57fee13842cb9eefa580be87c630c1b7ddd0",
+      "manifest_bytes": 1688052,
+      "source_bytes": 107329167,
+      "source_files": 2520,
+      "products": [
+        {
+          "key": "SHFE.ad",
+          "rows": 2851,
+          "historical_contracts": 19,
+          "coverage": {
+            "first": 20250610,
+            "last": 20261116,
+            "listing_day": 20250610,
+            "valid_days_by_year": {
+              "2025": 141,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ad-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ad-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.ag",
+          "rows": 15944,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ag-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ag-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.al",
+          "rows": 15944,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.al-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.al-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.ao",
+          "rows": 8603,
+          "historical_contracts": 48,
+          "coverage": {
+            "first": 20230619,
+            "last": 20261116,
+            "listing_day": 20230619,
+            "valid_days_by_year": {
+              "2023": 132,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ao-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ao-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.au",
+          "rows": 10502,
+          "historical_contracts": 75,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.au-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.au-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 8
+        },
+        {
+          "key": "SHFE.br",
+          "rows": 8212,
+          "historical_contracts": 46,
+          "coverage": {
+            "first": 20230728,
+            "last": 20261116,
+            "listing_day": 20230728,
+            "valid_days_by_year": {
+              "2023": 105,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.br-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.br-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.bu",
+          "rows": 20471,
+          "historical_contracts": 84,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.bu-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.bu-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 16
+        },
+        {
+          "key": "SHFE.cu",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.cu-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.cu-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.fu",
+          "rows": 15840,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.fu-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.fu-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.hc",
+          "rows": 15944,
+          "historical_contracts": 81,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.hc-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.hc-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.ni",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ni-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ni-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.op",
+          "rows": 2164,
+          "historical_contracts": 16,
+          "coverage": {
+            "first": 20250910,
+            "last": 20261116,
+            "listing_day": 20250910,
+            "valid_days_by_year": {
+              "2025": 75,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.op-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.op-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.pb",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.pb-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.pb-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.rb",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.rb-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.rb-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.ru",
+          "rows": 13279,
+          "historical_contracts": 69,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ru-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ru-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 10
+        },
+        {
+          "key": "SHFE.sn",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.sn-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.sn-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.sp",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.sp-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.sp-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.ss",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.ss-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.ss-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.wr",
+          "rows": 15936,
+          "historical_contracts": 74,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.wr-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.wr-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "SHFE.zn",
+          "rows": 15945,
+          "historical_contracts": 82,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "SHFE.zn-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "SHFE.zn-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        }
+      ],
+      "price_rows": 273250,
+      "isolated_conflict_days": 0
+    },
+    {
+      "exchange": "INE",
+      "manifest": "INE/manifest.json",
+      "manifest_sha256": "5b8c9f5ac38fc4b095b151f21819eb4b456a4288f5dda2df7cbdbb514e6b8823",
+      "manifest_bytes": 771389,
+      "source_bytes": 41202390,
+      "source_files": 1352,
+      "products": [
+        {
+          "key": "INE.bc",
+          "rows": 11290,
+          "historical_contracts": 74,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "INE.bc-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "INE.bc-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20230117,
+            "missing_years": [
+              2021,
+              2022
+            ],
+            "added_rows": 2599,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 12
+        },
+        {
+          "key": "INE.ec",
+          "rows": 4110,
+          "historical_contracts": 23,
+          "coverage": {
+            "first": 20230818,
+            "last": 20261116,
+            "listing_day": 20230818,
+            "valid_days_by_year": {
+              "2023": 90,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "INE.ec-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "INE.ec-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 7
+        },
+        {
+          "key": "INE.lu",
+          "rows": 11719,
+          "historical_contracts": 79,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "INE.lu-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "INE.lu-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20230117,
+            "missing_years": [
+              2021,
+              2022
+            ],
+            "added_rows": 3246,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 12
+        },
+        {
+          "key": "INE.nr",
+          "rows": 11653,
+          "historical_contracts": 78,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "INE.nr-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "INE.nr-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20230117,
+            "missing_years": [
+              2021,
+              2022
+            ],
+            "added_rows": 2962,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 12
+        },
+        {
+          "key": "INE.sc",
+          "rows": 17840,
+          "historical_contracts": 50,
+          "coverage": {
+            "first": 20210301,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "INE.sc-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "INE.sc-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 20
+        }
+      ],
+      "price_rows": 56612,
+      "isolated_conflict_days": 0
+    },
+    {
+      "exchange": "CZCE",
+      "manifest": "CZCE/manifest.json",
+      "manifest_sha256": "02c1849cdbc6b3d32c6809d441f48f448dc15e0e1aae8560628113c34a653119",
+      "manifest_bytes": 1626768,
+      "source_bytes": 101445336,
+      "source_files": 2592,
+      "products": [
+        {
+          "key": "CZCE.AP",
+          "rows": 3922,
+          "historical_contracts": 26,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.AP-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.AP-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 7
+        },
+        {
+          "key": "CZCE.CF",
+          "rows": 4770,
+          "historical_contracts": 35,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 242,
+              "2023": 232,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.CF-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.CF-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 1452,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 6
+        },
+        {
+          "key": "CZCE.CJ",
+          "rows": 3582,
+          "historical_contracts": 24,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.CJ-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.CJ-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "CZCE.CY",
+          "rows": 6273,
+          "historical_contracts": 58,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 242,
+              "2023": 226,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.CY-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.CY-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 706,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.FG",
+          "rows": 7006,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.FG-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.FG-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.MA",
+          "rows": 7002,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 11,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.MA-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.MA-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.OI",
+          "rows": 4734,
+          "historical_contracts": 35,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 242,
+              "2023": 232,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.OI-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.OI-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 1416,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 6
+        },
+        {
+          "key": "CZCE.PF",
+          "rows": 6722,
+          "historical_contracts": 41,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 10,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.PF-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.PF-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.PK",
+          "rows": 5381,
+          "historical_contracts": 32,
+          "coverage": {
+            "first": 20210201,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 223,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.PK-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.PK-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20221215,
+            "missing_years": [
+              2021
+            ],
+            "added_rows": 2485,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 7
+        },
+        {
+          "key": "CZCE.PL",
+          "rows": 2306,
+          "historical_contracts": 21,
+          "coverage": {
+            "first": 20250722,
+            "last": 20261116,
+            "listing_day": 20250722,
+            "valid_days_by_year": {
+              "2025": 111,
+              "2026": 209
+            },
+            "artifact_ids": [
+              "CZCE.PL-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.PL-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20261116,
+            "missing_years": [
+              2025
+            ],
+            "added_rows": 2300,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.PR",
+          "rows": 1555,
+          "historical_contracts": 14,
+          "coverage": {
+            "first": 20240830,
+            "last": 20261116,
+            "listing_day": 20240830,
+            "valid_days_by_year": {
+              "2024": 81,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.PR-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.PR-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.PX",
+          "rows": 3999,
+          "historical_contracts": 27,
+          "coverage": {
+            "first": 20230915,
+            "last": 20261116,
+            "listing_day": 20230915,
+            "valid_days_by_year": {
+              "2023": 70,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.PX-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.PX-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.RM",
+          "rows": 5623,
+          "historical_contracts": 41,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 242,
+              "2023": 232,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.RM-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.RM-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 1669,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 7
+        },
+        {
+          "key": "CZCE.RS",
+          "rows": 2239,
+          "historical_contracts": 22,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 213,
+              "2023": 111,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.RS-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.RS-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 287,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 6
+        },
+        {
+          "key": "CZCE.SA",
+          "rows": 7006,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.SA-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SA-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.SF",
+          "rows": 6980,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.SF-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SF-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.SH",
+          "rows": 4098,
+          "historical_contracts": 30,
+          "coverage": {
+            "first": 20230915,
+            "last": 20261116,
+            "listing_day": 20230915,
+            "valid_days_by_year": {
+              "2023": 70,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.SH-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SH-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.SM",
+          "rows": 6976,
+          "historical_contracts": 45,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 10,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.SM-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SM-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.SO",
+          "rows": 12,
+          "historical_contracts": 4,
+          "coverage": {
+            "first": 20261112,
+            "last": 20261116,
+            "listing_day": 20261112,
+            "valid_days_by_year": {
+              "2026": 3
+            },
+            "artifact_ids": [
+              "CZCE.SO-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SO-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20261116,
+            "missing_years": [],
+            "added_rows": 8,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 4
+        },
+        {
+          "key": "CZCE.SR",
+          "rows": 4762,
+          "historical_contracts": 35,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 208,
+              "2022": 242,
+              "2023": 232,
+              "2024": 242,
+              "2025": 171,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.SR-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.SR-history.jsonl",
+          "official_earlier_prefix": {
+            "before_exclusive": 20210104,
+            "missing_years": [
+              2022
+            ],
+            "added_rows": 1444,
+            "rule": "official earlier prefix or entirely absent years; no overlapping date"
+          },
+          "current_contracts": 6
+        },
+        {
+          "key": "CZCE.TA",
+          "rows": 6998,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 12,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.TA-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.TA-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "CZCE.UR",
+          "rows": 7004,
+          "historical_contracts": 47,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261116,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 230,
+              "2022": 11,
+              "2023": 242,
+              "2024": 242,
+              "2025": 193,
+              "2026": 1
+            },
+            "artifact_ids": [
+              "CZCE.UR-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "CZCE.UR-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        }
+      ],
+      "price_rows": 108950,
+      "isolated_conflict_days": 0
+    },
+    {
+      "exchange": "DCE",
+      "manifest": "DCE/manifest.json",
+      "manifest_sha256": "9ef623c54285cce2cd77736609ed4503e7601f05dfe49af5b92e844e43809fbd",
+      "manifest_bytes": 436357,
+      "source_bytes": 27888564,
+      "source_files": 353,
+      "products": [
+        {
+          "key": "DCE.a",
+          "rows": 1698,
+          "historical_contracts": 8,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.a-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.a-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.b",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.b-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.b-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.bb",
+          "rows": 1453,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 241,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.bb-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.bb-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.bz",
+          "rows": 365,
+          "historical_contracts": 2,
+          "coverage": {
+            "first": 20250708,
+            "last": 20261113,
+            "listing_day": 20250708,
+            "valid_days_by_year": {
+              "2025": 121,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.bz-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.bz-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.c",
+          "rows": 1544,
+          "historical_contracts": 8,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.c-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.c-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.cs",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.cs-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.cs-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.eb",
+          "rows": 1458,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.eb-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.eb-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.eg",
+          "rows": 1458,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.eg-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.eg-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.fb",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.fb-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.fb-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.i",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.i-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.i-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.j",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.j-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.j-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.jd",
+          "rows": 1458,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.jd-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.jd-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.jm",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.jm-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.jm-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.l",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.l-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.l-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.lg",
+          "rows": 605,
+          "historical_contracts": 3,
+          "coverage": {
+            "first": 20241118,
+            "last": 20261113,
+            "listing_day": 20241118,
+            "valid_days_by_year": {
+              "2024": 32,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.lg-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.lg-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.lh",
+          "rows": 1591,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210108,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 239,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.lh-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.lh-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "DCE.m",
+          "rows": 1544,
+          "historical_contracts": 8,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.m-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.m-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 8
+        },
+        {
+          "key": "DCE.p",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.p-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.p-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.pg",
+          "rows": 1458,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.pg-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.pg-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.pp",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.pp-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.pp-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.rr",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.rr-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.rr-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.v",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.v-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.v-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 12
+        },
+        {
+          "key": "DCE.y",
+          "rows": 1455,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20210104,
+            "last": 20261113,
+            "listing_day": null,
+            "valid_days_by_year": {
+              "2021": 243,
+              "2022": 242,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "DCE.y-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "DCE.y-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 8
+        }
+      ],
+      "price_rows": 32092,
+      "isolated_conflict_days": 0
+    },
+    {
+      "exchange": "GFEX",
+      "manifest": "GFEX/manifest.json",
+      "manifest_sha256": "3627100924dd250d9b63b0e62058e23f95d5bc30eb5d61b34bd86fbda89e8de8",
+      "manifest_bytes": 81786,
+      "source_bytes": 23508364,
+      "source_files": 64,
+      "products": [
+        {
+          "key": "GFEX.lc",
+          "rows": 960,
+          "historical_contracts": 5,
+          "coverage": {
+            "first": 20230721,
+            "last": 20261113,
+            "listing_day": 20230721,
+            "valid_days_by_year": {
+              "2023": 110,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "GFEX.lc-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "GFEX.lc-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 11
+        },
+        {
+          "key": "GFEX.pd",
+          "rows": 308,
+          "historical_contracts": 2,
+          "coverage": {
+            "first": 20251127,
+            "last": 20261113,
+            "listing_day": 20251127,
+            "valid_days_by_year": {
+              "2025": 25,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "GFEX.pd-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "GFEX.pd-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "GFEX.ps",
+          "rows": 552,
+          "historical_contracts": 3,
+          "coverage": {
+            "first": 20241226,
+            "last": 20261113,
+            "listing_day": 20241226,
+            "valid_days_by_year": {
+              "2024": 4,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "GFEX.ps-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "GFEX.ps-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 11
+        },
+        {
+          "key": "GFEX.pt",
+          "rows": 308,
+          "historical_contracts": 2,
+          "coverage": {
+            "first": 20251127,
+            "last": 20261113,
+            "listing_day": 20251127,
+            "valid_days_by_year": {
+              "2025": 25,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "GFEX.pt-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "GFEX.pt-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 6
+        },
+        {
+          "key": "GFEX.si",
+          "rows": 1340,
+          "historical_contracts": 7,
+          "coverage": {
+            "first": 20221222,
+            "last": 20261113,
+            "listing_day": 20221222,
+            "valid_days_by_year": {
+              "2022": 7,
+              "2023": 242,
+              "2024": 242,
+              "2025": 243,
+              "2026": 208
+            },
+            "artifact_ids": [
+              "GFEX.si-history.jsonl"
+            ]
+          },
+          "invalid_ohlc_excluded": 0,
+          "history_artifact": "GFEX.si-history.jsonl",
+          "official_earlier_prefix": null,
+          "current_contracts": 11
+        }
+      ],
+      "price_rows": 3468,
+      "isolated_conflict_days": 0
+    }
+  ],
+  "raw_csv_sources": 2065,
+  "same_value_duplicates_removed": 3,
+  "price_rows": 474372
+}

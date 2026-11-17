@@ -1,0 +1,486 @@
+{
+  "schema": "root-five-shard-consumer-compatibility-v1",
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "products": 75,
+  "actual_load_and_records": [
+    {
+      "product": "SHFE.ad",
+      "contract": "SHFE.ad2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.ag",
+      "contract": "SHFE.ag2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.al",
+      "contract": "SHFE.al2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.ao",
+      "contract": "SHFE.ao2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.au",
+      "contract": "SHFE.au2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.br",
+      "contract": "SHFE.br2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.bu",
+      "contract": "SHFE.bu2809",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.cu",
+      "contract": "SHFE.cu2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.fu",
+      "contract": "SHFE.fu2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.hc",
+      "contract": "SHFE.hc2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.ni",
+      "contract": "SHFE.ni2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.op",
+      "contract": "SHFE.op2704",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.pb",
+      "contract": "SHFE.pb2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.rb",
+      "contract": "SHFE.rb2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.ru",
+      "contract": "SHFE.ru2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.sn",
+      "contract": "SHFE.sn2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.sp",
+      "contract": "SHFE.sp2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.ss",
+      "contract": "SHFE.ss2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.wr",
+      "contract": "SHFE.wr2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "SHFE.zn",
+      "contract": "SHFE.zn2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "INE.bc",
+      "contract": "INE.bc2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "INE.ec",
+      "contract": "INE.ec2709",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "INE.lu",
+      "contract": "INE.lu2709",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "INE.nr",
+      "contract": "INE.nr2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "INE.sc",
+      "contract": "INE.sc2903",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.AP",
+      "contract": "CZCE.AP2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.CF",
+      "contract": "CZCE.CF2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.CJ",
+      "contract": "CZCE.CJ2709",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.CY",
+      "contract": "CZCE.CY2709",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.FG",
+      "contract": "CZCE.FG2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.MA",
+      "contract": "CZCE.MA2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.OI",
+      "contract": "CZCE.OI2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.PF",
+      "contract": "CZCE.PF2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.PK",
+      "contract": "CZCE.PK2710",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.PL",
+      "contract": "CZCE.PL2705",
+      "target": 20261116,
+      "rows": 100
+    },
+    {
+      "product": "CZCE.PR",
+      "contract": "CZCE.PR2707",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.PX",
+      "contract": "CZCE.PX2709",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.RM",
+      "contract": "CZCE.RM2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.RS",
+      "contract": "CZCE.RS2706",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.SA",
+      "contract": "CZCE.SA2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.SF",
+      "contract": "CZCE.SF2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.SH",
+      "contract": "CZCE.SH2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.SM",
+      "contract": "CZCE.SM2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.SO",
+      "contract": "CZCE.SO2711",
+      "target": 20261116,
+      "rows": 3
+    },
+    {
+      "product": "CZCE.SR",
+      "contract": "CZCE.SR2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.TA",
+      "contract": "CZCE.TA2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "CZCE.UR",
+      "contract": "CZCE.UR2711",
+      "target": 20261116,
+      "rows": 1
+    },
+    {
+      "product": "DCE.a",
+      "contract": "DCE.a2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.b",
+      "contract": "DCE.b2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.bb",
+      "contract": "DCE.bb2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.bz",
+      "contract": "DCE.bz2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.c",
+      "contract": "DCE.c2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.cs",
+      "contract": "DCE.cs2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.eb",
+      "contract": "DCE.eb2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.eg",
+      "contract": "DCE.eg2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.fb",
+      "contract": "DCE.fb2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.i",
+      "contract": "DCE.i2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.j",
+      "contract": "DCE.j2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.jd",
+      "contract": "DCE.jd2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.jm",
+      "contract": "DCE.jm2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.l",
+      "contract": "DCE.l2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.lg",
+      "contract": "DCE.lg2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.lh",
+      "contract": "DCE.lh2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.m",
+      "contract": "DCE.m2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.p",
+      "contract": "DCE.p2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.pg",
+      "contract": "DCE.pg2701",
+      "target": 20261113,
+      "rows": 191
+    },
+    {
+      "product": "DCE.pp",
+      "contract": "DCE.pp2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.rr",
+      "contract": "DCE.rr2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.v",
+      "contract": "DCE.v2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "DCE.y",
+      "contract": "DCE.y2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "GFEX.lc",
+      "contract": "GFEX.lc2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "GFEX.pd",
+      "contract": "GFEX.pd2702",
+      "target": 20261113,
+      "rows": 178
+    },
+    {
+      "product": "GFEX.ps",
+      "contract": "GFEX.ps2701",
+      "target": 20261113,
+      "rows": 198
+    },
+    {
+      "product": "GFEX.pt",
+      "contract": "GFEX.pt2702",
+      "target": 20261113,
+      "rows": 178
+    },
+    {
+      "product": "GFEX.si",
+      "contract": "GFEX.si2701",
+      "target": 20261113,
+      "rows": 198
+    }
+  ],
+  "actual_selects": [
+    {
+      "product": "SHFE.ad",
+      "historical_contract": "SHFE.ad2710",
+      "parameter_contract": "SHFE.ad2612"
+    },
+    {
+      "product": "INE.bc",
+      "historical_contract": "INE.bc2710",
+      "parameter_contract": "INE.bc2612"
+    },
+    {
+      "product": "CZCE.AP",
+      "historical_contract": "CZCE.AP2711",
+      "parameter_contract": "CZCE.AP2612"
+    },
+    {
+      "product": "DCE.a",
+      "historical_contract": "DCE.a2701",
+      "parameter_contract": "DCE.a2701"
+    },
+    {
+      "product": "GFEX.lc",
+      "historical_contract": "GFEX.lc2701",
+      "parameter_contract": "GFEX.lc2612"
+    }
+  ],
+  "independent_engine_acceptance": false,
+  "production_changed": false
+}

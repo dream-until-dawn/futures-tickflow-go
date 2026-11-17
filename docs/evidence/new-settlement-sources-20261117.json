@@ -1,0 +1,83 @@
+{
+  "schema": "new-settlement-source-outcome-v1",
+  "requests": 3,
+  "old_failed_entries_retried": false,
+  "retries": 0,
+  "redirects_followed": 0,
+  "valid_settlement_rows": 0,
+  "daily_update_qualified": false,
+  "receipts": [
+    {
+      "url": "https://od.lk/d/NTNfMzczNTgxNl8/dceahq20161day.csv",
+      "state": "failed",
+      "bytes": 0,
+      "http": {
+        "attempted": true,
+        "response_received": true,
+        "status": 302,
+        "final_url": "https://od.lk/d/NTNfMzczNTgxNl8/dceahq20161day.csv",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": -1,
+        "server_date": "Tue, 17 Nov 2026 11:18:23 GMT",
+        "requested_at": "2026-11-17T11:18:21.7839275Z",
+        "complete": true,
+        "failure": "http_status"
+      },
+      "error": "batch: HTTP 302",
+      "receipt_sha256": "17cdc02fadffa4e9707552f6b28a2d2738f2c9a5d62362e7b3a9d8054391f538"
+    },
+    {
+      "url": "https://www.wikitter.com/fe/fecomm/fute",
+      "state": "failed",
+      "bytes": 0,
+      "http": {
+        "attempted": true,
+        "response_received": false,
+        "status": 0,
+        "content_length": -1,
+        "requested_at": "2026-11-17T11:18:09.7653315Z",
+        "complete": false,
+        "failure": "network"
+      },
+      "error": "Get \"https://www.wikitter.com/fe/fecomm/fute\": net/http: TLS handshake timeout",
+      "receipt_sha256": "78cca6072365a98ee98fe8422f236045a7320370bd1aec10c158ed1522e42cdc"
+    },
+    {
+      "url": "https://aureliandataservices.com/commodities/lc",
+      "state": "failed",
+      "bytes": 5446,
+      "http": {
+        "attempted": true,
+        "response_received": true,
+        "status": 403,
+        "final_url": "https://aureliandataservices.com/commodities/lc",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": -1,
+        "server_date": "Tue, 17 Nov 2026 11:29:01 GMT",
+        "requested_at": "2026-11-17T11:29:00.4180705Z",
+        "complete": true,
+        "failure": "http_status"
+      },
+      "error": "batch: HTTP 403",
+      "receipt_sha256": "0d52d7d780a8f67ece8983d4ee01c393a6c3f522cff6e53ea9f4910bade767c3"
+    }
+  ],
+  "other_documentation_leads": [
+    {
+      "url": "https://zhiqishuju.com/datasources.html",
+      "status": "publisher_description_only",
+      "limitation": "cached index links m2509/si0001 do not establish target concrete-contract daily settlement; linked pages failed in browse cache and not retried"
+    },
+    {
+      "url": "https://www.cnopendata.com/data/m/recent/FuturesMarket.html",
+      "status": "commercial_documentation_only",
+      "limitation": "fields described but no anonymous target-date sample or daily-use licence established"
+    },
+    {
+      "url": "https://aureliandataservices.com/commodities/lc",
+      "licence_url": "https://aureliandataservices.com/licence",
+      "status": "public_description_but_native_403",
+      "limitation": "Publisher page claims dated LC settlement table, but native request403; stopped, same-host licence native request not attempted; no access/API/licence confirmed, cached figures not admitted"
+    }
+  ]
+}

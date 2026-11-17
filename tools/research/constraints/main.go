@@ -34,6 +34,10 @@ const brokerMarginURL = "https://www.minfutures.com/main/a/20261116/86319.shtml"
 
 // 新发现的具名原始出版物；大文件预算仅限这两份完整PDF，不能泛化到任意URL。
 var listingEvidenceResources = map[string]int64{
+	"https://aureliandataservices.com/commodities/lc":                                                         2 << 20,
+	"https://aureliandataservices.com/licence":                                                                2 << 20,
+	"https://www.wikitter.com/fe/fecomm/fute":                                                                 2 << 20,
+	"https://od.lk/d/NTNfMzczNTgxNl8/dceahq20161day.csv":                                                      2 << 20,
 	"https://www.xzfutures.com/article/10126701/index.html":                                                   2 << 20,
 	"https://www.xzfutures.com/main/customerServices/settlementParameters/index.html":                         2 << 20,
 	"https://www.cfc108.com/zxjtqh/2026-11/06/article_2026110617230798868.shtml":                              2 << 20,

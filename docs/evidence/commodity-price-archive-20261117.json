@@ -1,0 +1,15 @@
+{
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "zip_sha256": "726019538d075ed37f14958844c80703104727130b868b0d5566b2f0760df92b",
+  "members": 6882,
+  "zip_bytes": 79158504,
+  "price_rows": 474372,
+  "private_root": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\commodity-prices-v1",
+  "shards": 5,
+  "products": 75,
+  "current_contracts": 789,
+  "migration_verified": true,
+  "tamper_rejected": "GFEX/files/GFEX.lc-history.jsonl",
+  "raw_public": false,
+  "independent_engine_acceptance": false
+}

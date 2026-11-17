@@ -1,0 +1,45 @@
+{
+  "schema": "new-settlement-source-bounded-review-v1",
+  "stage": "documentation-and-one-public-sample",
+  "market_scope": [
+    "DCE",
+    "GFEX"
+  ],
+  "no_old_failed_url_retry": true,
+  "requests": [
+    {
+      "id": "wikitter-product",
+      "url": "https://www.wikitter.com/fe/fecomm/fute",
+      "max_bytes": 2097152,
+      "timeout_seconds": 15
+    },
+    {
+      "id": "wikitter-dce-published-sample",
+      "url": "https://od.lk/d/NTNfMzczNTgxNl8/dceahq20161day.csv",
+      "max_bytes": 2097152,
+      "timeout_seconds": 15
+    }
+  ],
+  "redirects": false,
+  "retries": 0,
+  "accounts": false,
+  "purchase": false,
+  "admission": false,
+  "scope": "Only explicitly published anonymous sample; 2016 cannot by itself prove 2026 current settlement or daily update",
+  "targets": [
+    {
+      "id": "wikitter-product",
+      "url": "https://www.wikitter.com/fe/fecomm/fute",
+      "anchors": [
+        "结算"
+      ]
+    },
+    {
+      "id": "wikitter-dce-published-sample",
+      "url": "https://od.lk/d/NTNfMzczNTgxNl8/dceahq20161day.csv",
+      "anchors": [
+        "2016"
+      ]
+    }
+  ]
+}
