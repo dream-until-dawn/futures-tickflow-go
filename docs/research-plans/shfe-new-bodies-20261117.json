@@ -1,0 +1,21 @@
+{
+  "targets": [
+    {
+      "id": "shfe-limit-afterclose",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261117_834112.html",
+      "anchors": [
+        "<html"
+      ]
+    },
+    {
+      "id": "shfe-training-afterclose",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261117_834102.html",
+      "anchors": [
+        "<html"
+      ]
+    }
+  ],
+  "blocked": [
+    "https://www.shfe.com.cn/publicnotice/notice/202611/t20261116_834084.html"
+  ]
+}

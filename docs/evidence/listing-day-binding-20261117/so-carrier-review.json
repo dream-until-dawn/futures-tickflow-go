@@ -1,0 +1,18 @@
+{
+  "schema": "exchange-announcement-republication-review-v1",
+  "product_key": "CZCE.SO",
+  "day": 20261112,
+  "publisher": "中信建投期货官网转郑商所公告",
+  "basis": "exchange-document-regulated-broker-republication",
+  "confidence": "medium-high",
+  "source_url": "https://www.cfc108.com/zxjtqh/2026-11/06/article_2026110617230798868.shtml",
+  "source_sha256": "2c8da6bc5d5709e99b798268fca3fc54544a8d3b76e80d784cb9319ca6bf4e6a",
+  "source_bytes": 51022,
+  "receipt_sha256": "ee08e9a944f4bd51cdf4101cca51739fb43a3f6e8af51dffd9575a5bee6313e1",
+  "retrieved_at": "2026-11-17T09:12:30.8912259Z",
+  "context": "葵花籽油期货自2026年11月12日（星期四）起上市交易，当日集合竞价时间为上午8:55－9:00，交易时间为9:00－11:30和13:30－15:00。11月12日当晚起开展夜盘交易，夜盘交易时间为21:00－23:",
+  "original_exchange_url": "https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2026/11/ef50bda7a1f9417caf7ea222f40818f1.htm",
+  "original_exchange_state": "HTTP412_not_retried",
+  "direct_exchange_original_acquired": false,
+  "scope": "只作公开具名转录的上市日期事实，置信度中高；原站原件仍缺，不认证日历/原站发布真实性或历史PIT。与实际官方12日/16日日表报价观察相互印证，不以首根倒推上市。"
+}

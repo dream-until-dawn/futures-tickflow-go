@@ -31,6 +31,28 @@ func TestNewOpeningReferencesRemainFiniteAndBlockedURLsStayBlocked(t *testing.T)
 	}
 }
 
+func TestListingPrimaryDocumentBudgetsDoNotExpandOtherRequests(t *testing.T) {
+	large := 0
+	for address, limit := range listingEvidenceResources {
+		if sourceByteLimit(address) != limit {
+			t.Fatal("预算不匹配")
+		}
+		if limit > 2<<20 {
+			large++
+		}
+		candidate := target{ID: "listing", URL: address, Anchors: []string{"source"}}
+		if err := validate(requestPlan{Targets: []target{candidate}}); err != nil {
+			t.Fatal(err)
+		}
+		if err := validate(requestPlan{Targets: []target{candidate}, Blocked: []string{address}}); err == nil {
+			t.Fatal("新出版物也不得重试失败URL")
+		}
+	}
+	if large != 2 || sourceByteLimit("https://www.shfe.com.cn/unrelated.pdf") != 2<<20 {
+		t.Fatal("预算被泛化")
+	}
+}
+
 func TestOfficialPlanAndFailures(t *testing.T) {
 	base := target{ID: "rules", URL: "https://www.shfe.com.cn/a.html", Anchors: []string{"最小"}}
 	if e := validate(requestPlan{Targets: []target{base}}); e != nil {

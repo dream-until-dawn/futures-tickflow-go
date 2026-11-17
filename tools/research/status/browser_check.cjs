@@ -105,6 +105,19 @@ async function main() {
     assert.match(await page.locator('#detail-body .contract-list:not(.parameter-list)').first().innerText(), /日表记录日/);
     await page.screenshot({path:path.join(output,'history-details.png')});
     await page.click('#close-detail');await page.click('#reset');
+    // 新增历史原件、上市日期和补充参考必须在实际详情呈现，不能只改机器计数。
+    for (const [key, expectations] of [
+      ['DCE.a', [/2021/, /天勤/, /长期日线OHLC/]],
+      ['CZCE.PL', [/20250722/, /置信度/, /上市日期/]],
+      ['CZCE.SO', [/20261112/, /中高/, /原件|原站/]],
+      ['CZCE.CJ', [/九期网/, /编制参考/, /真实专项/]],
+      ['SHFE.rb', [/兴证期货/, /生效交易日未知/, /无结算价|没有结算价/]]
+    ]) {
+      await page.locator('[data-product="'+key+'"] .product-title').click();
+      const detail=await page.locator('#detail-body').innerText();
+      for(const expectation of expectations)assert.match(detail,expectation);
+      await page.click('#close-detail');
+    }
     await page.selectOption('#state', 'difference');
     assert.equal(await page.locator('#products tr').count(), data.products.filter(p => p.distinct_fields > 0 || (p.extension_quality?.distinct_fields||0)>0).length);
     await page.click('#reset');
@@ -128,7 +141,7 @@ async function main() {
     await fs.writeFile(path.join(output, 'browser-review.json'), JSON.stringify({
       status: 'passed', products: data.summary.products, checks: [
         'all-products', 'exchange-filter', 'supplementary-not-no-data', 'chinese-search',
-        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width', 'shared-originals', 'consumer-scope', 'historical-contract-details'
+        'detail-boundaries', 'difference-filter', 'cffex-unauthenticated', 'no-match', 'mobile-width', 'shared-originals', 'consumer-scope', 'historical-contract-details', 'new-historical-and-listing-evidence', 'reference-not-hard-rule-or-settlement'
       ], page_errors: errors, remote_requests: remote, price_or_admission_changed: false
     }, null, 2) + '\n');
     process.stdout.write('离线文档桌面/移动端及资料详情检查通过，无远端请求。\n');

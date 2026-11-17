@@ -150,7 +150,10 @@ def attach(data, inventory, gate_facts=None):
     if gate_facts:
         from data_gates import assess as assess_data_gates
         data['user_data_gate_facts'] = gate_facts
-        data['products'] = [dict(p,user_data_gates=assess_data_gates(p,gate_facts)) for p in data['products']]
+        data['products'] = [dict(p,user_data_gates=assess_data_gates(p,gate_facts),
+                                margin_reference_supplements=gate_facts.get('margin_reference_supplements',{}).get(p['key'],[]),
+                                parameter_reference_supplements=gate_facts.get('parameter_reference_supplements',{}).get(p['key'],[]))
+                            for p in data['products']]
     extension=inventory.get('history_extension')
     if extension:
         if extension['strict_backtest_admission_expanded'] is not False:raise ValueError('extension_scope_promotion')

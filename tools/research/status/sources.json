@@ -1,6 +1,6 @@
 {
   "schema": "data-status-input-lock-v1",
-  "as_of": "2026-11-16",
+  "as_of": "2026-11-17",
   "bundle_manifest_sha256": "4e9df6a6ef1cef4789e445b7016aad2906c57b7fc95c898e2fd11bfe6cbefd5b",
   "catalog_sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb",
   "repo_inputs": [
@@ -26,18 +26,18 @@
     },
     {
       "id": "project_inventory",
-      "file": "docs/evidence/project-data-inventory-20261116.json",
-      "sha256": "cd9fd7dcca7d4a4b61dae4041527bf7ced1f5ef7b204830ba2542fffce5e60fc"
+      "file": "docs/evidence/project-data-inventory-20261117.json",
+      "sha256": "de43715186400c398bb6c13cbcb0fd717fb12b0e2f498d61142d5eb720ec0f05"
     },
     {
       "id": "project_source_plan",
       "file": "tools/research/status/project-sources.json",
-      "sha256": "290fc6b938151855b4955ceedcdb4a3bf3304d04cbe9fd1e0ad32745faa25ca5"
+      "sha256": "356e4b3fafe3ead7288e3d5267f10cee0bd33efac97d72141171d664cd4edcad"
     },
     {
       "id": "user_gate_facts",
       "file": "docs/data-gate-facts.json",
-      "sha256": "cf57efc19158140c16fba1350c7a189e835ffebe245fb083aae990a5065a7696"
+      "sha256": "c7f7d9ac6b15d4335f29bab64182d93bb34d92f952a8db98ceebc9e5fbcd5437"
     },
     {
       "id": "user_gate_readback",
@@ -111,5 +111,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "913740c7e7af3c12aa1074d3788bea8785d3296c4525a12e9d963e4870946155"
+  "published_model_sha256": "05104e0db7fb53ec8d13a8c3f42565827488bc3dc3e1af7abfbb80e17c3b4c85"
 }

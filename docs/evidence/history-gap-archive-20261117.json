@@ -1,0 +1,17 @@
+{
+  "schema": "history-gap-evidence-archive-review-v1",
+  "private_root": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\history-gap-fill-v1",
+  "manifest_sha256": "751eb5dece9b6f0b484a46ee02b3b1c3a6761c85041b449f2bf5dc3179afbe38",
+  "archive_sha256": "86167e5ccafa2747a5a72963050648a4226fff25798ca36accca21edacdef12e",
+  "archive_bytes": 25570313,
+  "declared_members": 784,
+  "edb_original_and_receipt_files": 658,
+  "requests": 329,
+  "valid_rows": 51068,
+  "migration_verified": true,
+  "tampered_copy_rejected": "declared_zip_member_identity:0001-a2103-unobserved-research.json",
+  "all_original_bytes_unchanged": true,
+  "public_raw_prices": false,
+  "executable_bundle": false,
+  "engine_acceptance": false
+}

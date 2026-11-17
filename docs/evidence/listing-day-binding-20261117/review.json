@@ -1,0 +1,70 @@
+{
+  "schema": "direct-listing-day-review-v1",
+  "items": [
+    {
+      "product_key": "CZCE.SH",
+      "day": 20230915,
+      "official_pdf_path": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113\\czce-px-sh-journal-pdf.body",
+      "official_pdf_bytes": 3233479,
+      "official_pdf_sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+      "official_source": {
+        "id": "czce-px-sh-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2023/10/18/1697226838884489-1697226838904727.pdf",
+        "sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+        "retrieved_at": "2026-11-12T14:13:51.319696+00:00",
+        "version": "official-original"
+      },
+      "pdf_page": 45,
+      "text_file": "sh-listing-page.txt",
+      "text_bytes": 1251,
+      "text_sha256": "b5aa85824adfa875e4ecd91d8bdbb0b97e0b9a563a6d9947654551912196ad28",
+      "review_file": "docs/evidence/czce-px-sh-2023-review.json",
+      "review_sha256": "395e8e42450ed3cf53b0dd18cb6576f4997432ced43fbcede1ced0b133d42024",
+      "scope": "上市日期直接原文；不认证全年日历、时段延续、生命周期或首发可得时刻"
+    },
+    {
+      "product_key": "CZCE.PX",
+      "day": 20230915,
+      "official_pdf_path": "C:\\Temp\\tickflow-czce-px-sh-2023-20261113\\czce-px-sh-journal-pdf.body",
+      "official_pdf_bytes": 3233479,
+      "official_pdf_sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+      "official_source": {
+        "id": "czce-px-sh-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2023/10/18/1697226838884489-1697226838904727.pdf",
+        "sha256": "a2f9302b1cb84bd63248c68d4ea4daf8cb7b91e05992eea7a6975d0243d56f0a",
+        "retrieved_at": "2026-11-12T14:13:51.319696+00:00",
+        "version": "official-original"
+      },
+      "pdf_page": 48,
+      "text_file": "px-listing-page.txt",
+      "text_bytes": 1434,
+      "text_sha256": "0c92c4d3f1f9b171c1e8d3150c2dd94e9dc18c100a7ef5c08c0d906076c0e6a8",
+      "review_file": "docs/evidence/czce-px-sh-2023-review.json",
+      "review_sha256": "395e8e42450ed3cf53b0dd18cb6576f4997432ced43fbcede1ced0b133d42024",
+      "scope": "上市日期直接原文；不认证全年日历、时段延续、生命周期或首发可得时刻"
+    },
+    {
+      "product_key": "CZCE.PR",
+      "day": 20240830,
+      "official_pdf_path": "C:\\Temp\\tickflow-calendar-next-20261112\\czce-pr-journal-pdf.body",
+      "official_pdf_bytes": 3728110,
+      "official_pdf_sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+      "official_source": {
+        "id": "czce-pr-journal-pdf",
+        "url": "https://www.czce.com.cn/cn/rootfiles/2024/09/14/1726389999932285-1726389999951648.pdf",
+        "sha256": "ebeb18038fa6bdb2e007be73853a93e5c8757a9b7ddfec1eee5e2647dc66d354",
+        "retrieved_at": "2026-11-12T14:13:54.479375+00:00",
+        "version": "official-original"
+      },
+      "pdf_page": 49,
+      "text_file": "pr-listing-page.txt",
+      "text_bytes": 1242,
+      "text_sha256": "d9c728e573e57714d1dcaa1362c116ef8769956a0628bfca698cf29a6798ed24",
+      "review_file": "docs/evidence/pr-2024-followup-20261115/listing-facts.json",
+      "review_sha256": "abc8e98b2be2d9258be5ca3a092dcf30a5cb2d4fe0cf13bddf10b46b3b2953f6",
+      "scope": "上市日期直接原文；不认证全年日历、时段延续、生命周期或首发可得时刻"
+    }
+  ],
+  "network_requests": 0,
+  "calendar_qualified": false
+}

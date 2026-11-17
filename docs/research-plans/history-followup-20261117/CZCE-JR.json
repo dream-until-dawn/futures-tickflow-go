@@ -1,0 +1,219 @@
+{
+  "schema": "edb-cold-product-unrequested-history-v1",
+  "scope": "all captured unrequested past candidates for one cold product; complete empty isolated, any other error stops source",
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "prior_catalog": {
+    "file": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-sealed\\catalog.json",
+    "sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb"
+  },
+  "prior_requests": {
+    "file": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\prior-edb-keys-followup-20261117.json",
+    "sha256": "a8d569b15b58af62ca99fcdd1c94460359d0f93e875bae2c73497879024480d9"
+  },
+  "jobs": [
+    {
+      "id": "JR201-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR201",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR203-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR203",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR205-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR205",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR207-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR207",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR209-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR209",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR211-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR211",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR301-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR301",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR303-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR303",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR305-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR305",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR307-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR307",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR309-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR309",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR311-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR311",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR511-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR511",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR601-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR601",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR603-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR603",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR605-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR605",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR607-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR607",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "JR609-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.JR609",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "JR",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    }
+  ],
+  "official_inputs": [],
+  "bindings": {
+    "CZCE.JR201": "CZCE.JR2201",
+    "CZCE.JR203": "CZCE.JR2203",
+    "CZCE.JR205": "CZCE.JR2205",
+    "CZCE.JR207": "CZCE.JR2207",
+    "CZCE.JR209": "CZCE.JR2209",
+    "CZCE.JR211": "CZCE.JR2211",
+    "CZCE.JR301": "CZCE.JR2301",
+    "CZCE.JR303": "CZCE.JR2303",
+    "CZCE.JR305": "CZCE.JR2305",
+    "CZCE.JR307": "CZCE.JR2307",
+    "CZCE.JR309": "CZCE.JR2309",
+    "CZCE.JR311": "CZCE.JR2311",
+    "CZCE.JR511": "CZCE.JR2511",
+    "CZCE.JR601": "CZCE.JR2601",
+    "CZCE.JR603": "CZCE.JR2603",
+    "CZCE.JR605": "CZCE.JR2605",
+    "CZCE.JR607": "CZCE.JR2607",
+    "CZCE.JR609": "CZCE.JR2609"
+  }
+}

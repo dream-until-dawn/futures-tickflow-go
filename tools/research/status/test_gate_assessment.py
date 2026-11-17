@@ -14,7 +14,12 @@ from gate_assessment import build
 class GateAssessmentTest(unittest.TestCase):
     def test_published_assessment_recomputes_and_binds_every_input(self):
         repo = Path(__file__).resolve().parents[3]
-        report = json.loads((repo / 'docs/evidence/product-gates-v2-20261117.json').read_bytes())
+        pointer = json.loads((repo / 'docs/data-gate-assessment-current.json').read_bytes())
+        path = (repo / pointer['file']).resolve()
+        self.assertTrue(path.is_relative_to(repo))
+        raw = path.read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), pointer['sha256'])
+        report = json.loads(raw)
         for entry in report['inputs']:
             path = (repo / entry['path']).resolve()
             self.assertTrue(path.is_relative_to(repo))

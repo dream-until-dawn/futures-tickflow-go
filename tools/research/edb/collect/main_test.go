@@ -2,14 +2,38 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/dream-until-dawn/futures-tickflow-go/archive/batch"
 	"github.com/dream-until-dawn/futures-tickflow-go/refdata/evidence"
 )
+
+func TestUnobservedCSVRejectsOutsideFrozenWindow(t *testing.T) {
+	header := "datetime_nano,open,high,low,close,volume,open_oi,close_oi\n"
+	for _, sample := range []struct {
+		day   string
+		valid bool
+	}{{"2021-01-04", true}, {"2026-11-13", true}, {"2020-12-31", false}, {"2026-11-16", false}} {
+		day, err := time.Parse("2006-01-02", sample.day)
+		if err != nil {
+			t.Fatal(err)
+		}
+		body := []byte(header + fmt.Sprintf("%d,1,2,1,2,3,4,5\n", day.UnixNano()))
+		ref := evidence.Ref{ID: "synthetic", URL: docURL, SHA256: digest(body), RetrievedAt: time.Now().UTC()}
+		err = validateCSV(batch.Job{ID: "a2201-unobserved-research"}, body, ref)
+		if sample.valid && err != nil {
+			t.Fatal(err)
+		}
+		if !sample.valid && (err == nil || !strings.Contains(err.Error(), "冻结查询窗口")) {
+			t.Fatalf("窗口越界未被目标门禁拒绝: %s %v", sample.day, err)
+		}
+	}
+}
 
 func TestEDBSampleFailureAndPriorRootDoNotRetry(t *testing.T) {
 	for _, failure := range []bool{false, true} {

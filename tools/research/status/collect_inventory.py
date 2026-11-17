@@ -184,10 +184,10 @@ class Collector:
                 self.stats.add(route+'-'+item['kind'],'上期所业务参数（'+item['kind']+'）',dict(exchange=exchanges[0],native=native,day=item['day'],fields=fields,evidence=evidence))
 
     def evidence_index(self):
-        """全仓证据JSON逐件登记，不能识别的数据不静默消失，也不推为行情。"""
+        """登记源/复核证据；已知聚合快照另以当前指针管理，避免库存与评估互相自指。"""
         files=[]
         for path in sorted((self.repo/'docs/evidence').rglob('*.json')):
-            if 'project-data-inventory' in path.name:
+            if 'project-data-inventory' in path.name or path.name.startswith('product-gates-v2-'):
                 continue
             raw=path.read_bytes()
             try:
@@ -217,6 +217,9 @@ class Collector:
                 row['limitations']='日期是实际取得的业务参数/生命周期快照日，不是政策有效区间；公司实收、账户/用途差别及完整版本链未统一认证；不扩大准入。'
             if row['kind']=='turnover':row['limitations']+=' 成交额原值单位尚未统一认证，不直接跨源相加。'
             if row['route']=='cffex-monthly':row['limitations']+=' 明文HTTP不能认证发布者，CSV量额单位尚未核清。'
+            if row['route']=='edb-history-anchors':
+                row['limitations']+=' 本轮按冻结供应商目录选取具体合约历史锚点/尚未请求候选；不是合约全集、连续主连或PIT，未与官方历史逐字段对账；EDB版本及零成交语义仍待核。'
+                row['read_level']='实际完整CSV/回执、SHA、单约日期和OHLC基本检查；研究价格观察，不是金融语义或逐日完整认证'
         datasets.sort(key=lambda r:(r['product'],r['kind'],r['route'],r.get('first') or ''))
         return dict(schema='project-data-inventory-v1',registered_at_utc=utc(when),datasets=datasets,
                     input_files=sorted(self.inputs,key=lambda r:(r['path'],r['sha256'])),evidence_files=self.evidence_index(),not_located=self.not_located,

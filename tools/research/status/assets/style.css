@@ -12,3 +12,6 @@
 
 /* 每类数据分别显示覆盖与更新，手机也保持标签和值对应。 */
 .table-wrap>table{min-width:1450px}.table-wrap>table th{width:9%}.table-wrap>table th:nth-child(1){width:7%}.table-wrap>table th:nth-child(2){width:9%}dialog{width:min(1040px,calc(100vw - 28px))}.dataset-card{border:1px solid #dce4ea;border-radius:8px;padding:14px;margin:12px 0;background:#f8fbfd}.dataset-card h4{margin:0 0 10px;font-size:14px}.dataset-card dl{display:grid;grid-template-columns:125px 1fr;margin:0;font-size:12px;gap:7px 12px}.dataset-card dt{color:#586c7c}.dataset-card dd{margin:0;overflow-wrap:anywhere}@media(max-width:600px){.table-wrap>table{min-width:0}.dataset-card dl{grid-template-columns:90px 1fr}.dataset-card{padding:12px}}
+
+/* 上市原件URL可能很长，手机详情允许折行，避免遮挡置信度。 */
+.detail-section p{overflow-wrap:anywhere}

@@ -62,6 +62,14 @@ func TestEDBDirectoryPlanPositiveIdentityAndMutatedSource(t *testing.T) {
 	if err != nil || len(got) != 6 {
 		t.Fatal(got, err)
 	}
+	// 新的研究入口不能悄悄取消旧官方观察路线的门禁。
+	savedInputs := p["official_inputs"]
+	p["official_inputs"] = []map[string]string{}
+	withoutOfficial, _ := json.Marshal(p)
+	if _, err := directoryJobsChecked(withoutOfficial, digest(withoutOfficial)); err == nil || !strings.Contains(err.Error(), "官方观察") {
+		t.Fatalf("旧模式缺官方观察应被目标门禁拒绝: %v", err)
+	}
+	p["official_inputs"] = savedInputs
 	priorFile := filepath.Join(root, "prior.json")
 	prior := []byte(`{"contracts":[{"source_key":"CZCE.CF105","availability":{"state":"empty_unavailable"}}]}`)
 	if err = os.WriteFile(priorFile, prior, 0600); err != nil {

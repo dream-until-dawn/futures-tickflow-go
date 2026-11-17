@@ -1,0 +1,30 @@
+{
+  "schema": "vendor-compiled-parameter-observation-v1",
+  "product_key": "CZCE.CJ",
+  "publisher": "九期网公开编制表",
+  "source_snapshot_day": 20261117,
+  "rows": 6,
+  "canonical_contracts": [
+    "CZCE.CJ2612",
+    "CZCE.CJ2701",
+    "CZCE.CJ2703",
+    "CZCE.CJ2705",
+    "CZCE.CJ2707",
+    "CZCE.CJ2709"
+  ],
+  "available_reference_fields": [
+    "供应商明示最低开仓",
+    "单位",
+    "涨跌停参考",
+    "保证金参考",
+    "手续费参考"
+  ],
+  "source_url": "https://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ",
+  "source_sha256": "632073f879422fd8c94819a2b1f069ca3f07720de89f8c94feac25cc828baafd",
+  "retrieved_at": "2026-11-17T07:27:07.1263491Z",
+  "confidence": "medium_compilation_only",
+  "actual_exchange_rules_verified": false,
+  "applied_to_current_contracts": false,
+  "has_daily_ohlc": false,
+  "has_target_settlement": false
+}

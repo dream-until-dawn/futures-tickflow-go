@@ -1,0 +1,87 @@
+{
+  "schema": "edb-current-cold-contract-history-v1",
+  "scope": "current identity tied to 17-day facts, attempt once for unrequested source key, complete empty isolated",
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "prior_catalog": {
+    "file": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-sealed\\catalog.json",
+    "sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb"
+  },
+  "prior_requests": {
+    "file": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\prior-edb-keys-current-cold-20261117.json",
+    "sha256": "2415b891e3fb7a9c63de53208679461f248da9c2cfe1b0e42f2b75aea996e8e4"
+  },
+  "jobs": [
+    {
+      "id": "PM701-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM701",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "PM703-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM703",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "PM705-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM705",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "PM707-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM707",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "PM709-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM709",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "PM711-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.PM711",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "PM",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    }
+  ],
+  "official_inputs": [],
+  "bindings": {
+    "CZCE.PM701": "CZCE.PM2701",
+    "CZCE.PM703": "CZCE.PM2703",
+    "CZCE.PM705": "CZCE.PM2705",
+    "CZCE.PM707": "CZCE.PM2707",
+    "CZCE.PM709": "CZCE.PM2709",
+    "CZCE.PM711": "CZCE.PM2711"
+  }
+}

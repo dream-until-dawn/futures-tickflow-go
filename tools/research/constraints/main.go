@@ -32,7 +32,30 @@ type requestPlan struct {
 // brokerMarginURL 是独立发布者的当日公司保证金表；不冒充交易所原始数据。
 const brokerMarginURL = "https://www.minfutures.com/main/a/20261116/86319.shtml"
 
+// 新发现的具名原始出版物；大文件预算仅限这两份完整PDF，不能泛化到任意URL。
+var listingEvidenceResources = map[string]int64{
+	"https://www.xzfutures.com/article/10126701/index.html":                                                   2 << 20,
+	"https://www.xzfutures.com/main/customerServices/settlementParameters/index.html":                         2 << 20,
+	"https://www.cfc108.com/zxjtqh/2026-11/06/article_2026110617230798868.shtml":                              2 << 20,
+	"https://www.czce.com.cn/cn/content_file/gyjys/qhscyjcs/cgxc/2026/4/077939e9d8fc4ad088cd76a52ed8d3a0.pdf": 16 << 20,
+	"https://www.csrc.gov.cn/csrc/c100024/c7624098/7624098/files/%E4%B8%AD%E5%9B%BD%E8%AF%81%E5%88%B8%E7%9B%91%E7%9D%A3%E7%AE%A1%E7%90%86%E5%A7%94%E5%91%98%E4%BC%9A%E5%B9%B4%E6%8A%A5%EF%BC%882024%E5%B9%B4%EF%BC%89.pdf": 32 << 20,
+	"https://jrjgj.gz.gov.cn/gzdt/content/post_9166989.html":                        2 << 20,
+	"https://www.gzns.gov.cn/gznsjr/gkmlpt/content/10/10570/post_10570927.html":     2 << 20,
+	"https://www.investor.org.cn/zczx/qwzx/qhjysfb_1/202507/t20250710_810362.shtml": 2 << 20,
+	"https://www.ln.gov.cn/web/ywdt/jrln/wzxx2018/2024111908503437493/index.shtml":  2 << 20,
+}
+
+func sourceByteLimit(address string) int64 {
+	if limit := listingEvidenceResources[address]; limit > 0 {
+		return limit
+	}
+	return 2 << 20
+}
+
 func newOpeningReference(address string) bool {
+	if listingEvidenceResources[address] > 0 {
+		return true
+	}
 	u, err := url.Parse(address)
 	if err == nil && u.Host == "www.9qihuo.com" && u.Path == "/qihuoshouxufeisingle" {
 		code := strings.TrimPrefix(u.RawQuery, "heyue=")
@@ -58,7 +81,7 @@ func validate(p requestPlan) error {
 	for _, t := range p.Targets {
 		u, e := url.Parse(t.URL)
 		if e != nil || u.Scheme != "https" || u.User != nil || (u.RawQuery != "" && !newOpeningReference(t.URL)) || u.Fragment != "" || (u.Host != "www.shfe.com.cn" && u.Host != "www.czce.com.cn" && t.URL != brokerMarginURL && !newOpeningReference(t.URL)) {
-			return fmt.Errorf("非允许官方HTTPS资源")
+			return fmt.Errorf("非允许的具名HTTPS资源")
 		}
 		if t.ID == "" || filepath.Base(t.ID) != t.ID || strings.ContainsAny(t.ID, "./\\:") || len(t.Anchors) == 0 {
 			return fmt.Errorf("原件身份或正文锚点无效")
@@ -137,7 +160,7 @@ func run(planFile, root, ledger string, launch bool) error {
 			return e
 		}
 		time.Sleep(2 * time.Second)
-		dl, err := batch.NewDownloader(&http.Client{}, batch.Limits{Requests: 1, Bytes: 2 << 20, Interval: time.Second, Timeout: 15 * time.Second})
+		dl, err := batch.NewDownloader(&http.Client{}, batch.Limits{Requests: 1, Bytes: sourceByteLimit(t.URL), Interval: time.Second, Timeout: 15 * time.Second})
 		if err != nil {
 			return err
 		}

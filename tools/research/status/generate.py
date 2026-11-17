@@ -41,6 +41,8 @@ def source_cells(p, exchanges):
         cells=[list(dict.fromkeys(short_source(r) for r in p['datasets'] if r['kind'] in group and r['present_rows'] and
                 (r['kind']!='settlement' or r.get('valid_rows') is None or r['valid_rows']>0))) for group in kinds]
         if p.get('broker_margin_reference'):cells[-1].append('五矿期货（公司保证金标准）')
+        if p.get('margin_reference_supplements'):cells[-1].append('兴证期货（16日比例参考）')
+        if p.get('parameter_reference_supplements'):cells[-1].append('九期网（17日编制参考）')
         return cells
     quotes=[]
     if p['nonempty']:quotes.append('天勤 EDB')

@@ -109,7 +109,7 @@ func requirePriorResearchFiles(root string) error {
 }
 
 // validateCSV 只核非空、列结构、有限数值和递增纳秒时间，不把received等同价格获证。
-func validateCSV(_ batch.Job, body []byte, ref evidence.Ref) error {
+func validateCSV(job batch.Job, body []byte, ref evidence.Ref) error {
 	if err := ref.Verify(body); err != nil {
 		return err
 	}
@@ -132,6 +132,12 @@ func validateCSV(_ batch.Job, body []byte, ref evidence.Ref) error {
 			return fmt.Errorf("纳秒时间错误/重复/乱序")
 		}
 		previous = stamp
+		if strings.HasSuffix(job.ID, "-unobserved-research") {
+			day := time.Unix(0, stamp).In(time.FixedZone("UTC+8", 8*60*60)).Format("20060102")
+			if day < "20210101" || day > "20261113" {
+				return fmt.Errorf("目录研究CSV日期越过冻结查询窗口")
+			}
+		}
 		for i, literal := range row[1:] {
 			if len(literal) > 128 || !decimalLiteral.MatchString(literal) {
 				return fmt.Errorf("数值字面量过长")
@@ -183,6 +189,11 @@ func collectSelected(root string, planned []batch.Job, fetch func(batch.Job) (ba
 		delete(plan, "original_all_phase_requests_max")
 		plan["scope"] = "frozen directory and official-row observed contracts; daily only"
 		plan["approved_daily_plan_sha256"] = []string{directoryPlanSHA, officialInventoryPlanSHA, officialHistoryPlanSHA, additionalMarketsPlanSHA, cffexObservedPlanSHA, czceObservedPlanSHA, retainedHistoryPlanSHA}
+	}
+	if len(planned) > 0 && strings.HasSuffix(planned[0].ID, "-unobserved-research") {
+		delete(plan, "original_all_phase_requests_max")
+		plan["scope"] = "bounded supplier-directory historical anchors; no official target historical observation or lifecycle certification"
+		plan["authorization"] = "frozen per-product plan and persistent once marker; not the old official-observation route"
 	}
 	raw, _ := json.MarshalIndent(plan, "", "  ")
 	if err := os.WriteFile(filepath.Join(root, "plan.json"), append(raw, '\n'), 0600); err != nil {
@@ -379,6 +390,7 @@ func run() error {
 	research := flag.Bool("daily-research-pilot", false, "日线限定：原C2105/M2105/SI2308观察代码三项研究批，不猜月码")
 	priorResearch := flag.String("prior-research-dir", "", "三份旧供应商观察原件目录；仅研究批使用")
 	directoryPlanFile := flag.String("daily-directory-plan", "", "固定SHA执行单，目录和官方合约行双重核验")
+	unobservedPlan := flag.String("unobserved-research-plan", "", "固定单品种未请求目录研究锚点，不能当官方已观察历史")
 	czceContinuation := flag.String("czce-empty-continuation", "", "用户已选择空表头隔离后的固定164项候选，不重复旧请求")
 	czcePriorRoot := flag.String("czce-prior-root", "", "已封存且停止的旧183项原始目录，只读验证")
 	retainedParent := flag.String("retained-history-parent", "", "仅验证新419项旧任务后续336项，旧失败不重试")
@@ -387,7 +399,7 @@ func run() error {
 	if *root == "" || *docRoot == "" || *baseline == "" {
 		return fmt.Errorf("缺少明确root/document-root/official-baseline")
 	}
-	if *prepareOnly && *directoryPlanFile == "" && *czceContinuation == "" && *retainedParent == "" {
+	if *prepareOnly && *directoryPlanFile == "" && *czceContinuation == "" && *retainedParent == "" && *unobservedPlan == "" {
 		return fmt.Errorf("prepare-only必须给目录日线执行单")
 	}
 	if (*anchor && *priorEmpty != "") || (*research && (*anchor || *priorEmpty != "")) || (*research != (*priorResearch != "")) || (*directoryPlanFile != "" && (*anchor || *research || *priorEmpty != "")) {
@@ -398,6 +410,9 @@ func run() error {
 	}
 	if err := requireEvidence(*docRoot, *baseline); err != nil {
 		return err
+	}
+	if *unobservedPlan != "" && (*directoryPlanFile != "" || *czceContinuation != "" || *czcePriorRoot != "" || *retainedParent != "" || *anchor || *research || *priorEmpty != "" || *priorResearch != "") {
+		return fmt.Errorf("目录研究不能混入官方观察或旧续取模式")
 	}
 	if *retainedParent != "" && (*directoryPlanFile != "" || *czceContinuation != "" || *anchor || *research || *priorEmpty != "" || *priorResearch != "") {
 		return fmt.Errorf("历史隔离续取不能混用其他模式")
@@ -442,6 +457,20 @@ func run() error {
 			return nil
 		}
 		if err = reserveDirectoryPlan(*directoryPlanFile, *root); err != nil {
+			return err
+		}
+	}
+	if *unobservedPlan != "" {
+		var err error
+		selected, err = unobservedPilotJobs(*unobservedPlan)
+		if err != nil {
+			return err
+		}
+		if *prepareOnly {
+			fmt.Printf("目录研究离线预检通过：%d项；请求0；不认证官方历史\n", len(selected))
+			return nil
+		}
+		if err = reserveUnobservedPilot(*unobservedPlan, *root); err != nil {
 			return err
 		}
 	}
@@ -493,6 +522,15 @@ func run() error {
 	})
 	if *retainedParent != "" {
 		return collectEmptyIsolated(*root, selected, 336, retainedHistoryPlanSHA, fetch)
+	}
+	if *unobservedPlan != "" {
+		raw, err := os.ReadFile(*unobservedPlan)
+		if err != nil {
+			return err
+		}
+		if isColdUnobserved(digest(raw)) {
+			return collectEmptyIsolated(*root, selected, 40, digest(raw), fetch)
+		}
 	}
 	if *czceContinuation != "" {
 		return collectCzceIsolated(*root, selected, fetch)

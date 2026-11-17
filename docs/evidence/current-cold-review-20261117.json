@@ -1,0 +1,417 @@
+{
+  "schema": "current-cold-independent-price-review-v1",
+  "requests": 36,
+  "complete_empty": 6,
+  "products": [
+    {
+      "product_key": "CZCE.JR",
+      "rows": 521,
+      "valid_rows": 521,
+      "complete_empty": 2,
+      "valid_days_by_year": {
+        "2026": 198
+      }
+    },
+    {
+      "product_key": "CZCE.PM",
+      "rows": 439,
+      "valid_rows": 439,
+      "complete_empty": 2,
+      "valid_days_by_year": {
+        "2026": 198
+      }
+    },
+    {
+      "product_key": "CZCE.RI",
+      "rows": 603,
+      "valid_rows": 603,
+      "complete_empty": 1,
+      "valid_days_by_year": {
+        "2026": 198
+      }
+    },
+    {
+      "product_key": "CZCE.WH",
+      "rows": 603,
+      "valid_rows": 603,
+      "complete_empty": 1,
+      "valid_days_by_year": {
+        "2026": 198
+      }
+    },
+    {
+      "product_key": "CZCE.ZC",
+      "rows": 1383,
+      "valid_rows": 1383,
+      "complete_empty": 0,
+      "valid_days_by_year": {
+        "2025": 18,
+        "2026": 208
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR701-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "5c45b9cba4c4f629a781dbda8d8ef210e89d8dbeb008393434cca5e5e64fc346"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR701-unobserved-research.body",
+      "bytes": 9365,
+      "sha256": "a9580b274aae5b851c511f135ac1b0e2de90448a5d10c38ccef138c411d7f8ef"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR703-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "f3f9a093dfeaa978d3805e3f547c0420566dc50fa9fb018d8388ce78bed9a594"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR703-unobserved-research.body",
+      "bytes": 7767,
+      "sha256": "37d290e643469a78b4a15d1623ef88dbd45f916349d23b131b3e220af5282d14"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR705-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "e52857f6afbf2840ba7574d6e7f2e5ed4c14d678a92523817e03ec1fc12ba873"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR705-unobserved-research.body",
+      "bytes": 5746,
+      "sha256": "1f394e49eb0aac22085371cf5c19c4a06c9fa4c888157a75b575cd48c0c49e17"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR707-unobserved-research.json",
+      "bytes": 1085,
+      "sha256": "4587697680bd86a1f0ff5cceb6b50fb710cb387d39b6c7ca23ffc583c6e1dbc8"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR707-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR709-unobserved-research.json",
+      "bytes": 1034,
+      "sha256": "a678927b0b1d115b9f2c1c75dbf4b97ef25cab3cd9f1a221994d88b8eba5766a"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR709-unobserved-research.body",
+      "bytes": 1845,
+      "sha256": "50a0aacdb2afa7b96bc6e1dcabeee21102729498b16595f9925951310733263f"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR711-unobserved-research.json",
+      "bytes": 1087,
+      "sha256": "a309bc1656898b01cac4e38756ef802f0dfebe652a4dead241952e87eeae6b97"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR711-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM701-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "d63fcbf7774debd0c3e447fec28ed5e259ce4aac815468e43ae2a52322b6b145"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM701-unobserved-research.body",
+      "bytes": 9365,
+      "sha256": "bc774544845fb3b734395504b14ea259056483440b1edcbcd63e50f41f98ba16"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM703-unobserved-research.json",
+      "bytes": 1087,
+      "sha256": "e865802739cad6fea7c60bd4e737fd7cccc13e1f9182e56e6d54b3017e00f08b"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM703-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM705-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "f0c9d7d9e4bf739d1fcf8009c0cb7fc63538397b0bdc17b36fefe4e997bfa976"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM705-unobserved-research.body",
+      "bytes": 5746,
+      "sha256": "fc23b90d49719bc764edb1167c254297e69b0d9fe541b29eb8872b7acbf1259e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM707-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "65ba54b5d5f55f4a7951409df4d72839870a009746aa8a75f3e6ccc875bfcaeb"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM707-unobserved-research.body",
+      "bytes": 3913,
+      "sha256": "a9458ff1bacf2320ca66ce59f4fb317263f7bcd290b75f209847f889685dfe75"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM709-unobserved-research.json",
+      "bytes": 1034,
+      "sha256": "fe7ecf832593f37d6600f6378c2128efa59913a303d185de11c68908c7f7d71b"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM709-unobserved-research.body",
+      "bytes": 1845,
+      "sha256": "a517e1e32bc24344a259e77c60b1dc9f02f02e184aa49f956a6f560b3dad55f2"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM711-unobserved-research.json",
+      "bytes": 1085,
+      "sha256": "6a54693fdd006bc94893634fd9d46c7d0753d1bf248da766f93f93be07caf476"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM711-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI701-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "b542b13acb9778e2332e5fead32fb487e4fba4a57de92c7b9645996fc23779d2"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI701-unobserved-research.body",
+      "bytes": 9365,
+      "sha256": "fde5bb6c7a45246887284e65706b0aed67e7e189c9bf453e2693b0b447f25048"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI703-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "a2da70f452dfb2d8b2680d15d7b6be193832bb63502c6d4353d120dbd371f4ae"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI703-unobserved-research.body",
+      "bytes": 7767,
+      "sha256": "d37d0079d806bc3bfb537c323d060e6513ff26a0394e518925f8010f9e9f8413"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI705-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "30fab194e812e6487130b7c12285eda407390cd5462c29daab1d6e49147c0b34"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI705-unobserved-research.body",
+      "bytes": 5746,
+      "sha256": "38b049621d3a90891ba314a8a4cabcd74a52ec3391d07418ae2bac0cdd889f3e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI707-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "04c23f868493ee45d4ee77724b8e1017c267394056d37da0db59f0a52474cf20"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI707-unobserved-research.body",
+      "bytes": 3913,
+      "sha256": "e474d0f0757e50c40d3350a606636e243d989a7a4792dbbaee7d2d5d562e4582"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI709-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "6103ffca428d7b1f6018f3c7a010835a2210f0434ed7260815dae0ddf28a5537"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI709-unobserved-research.body",
+      "bytes": 1845,
+      "sha256": "863da5d936777ac978d55365c92cdfe64f52dff6c70cd3fbc71aede2e4f1cc04"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI711-unobserved-research.json",
+      "bytes": 1085,
+      "sha256": "1bb6d8007137cda9e20235e90b5f04a69711cbb2c1af6ba6fdf2db5647d8dc6e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI711-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH701-unobserved-research.json",
+      "bytes": 1033,
+      "sha256": "1b549041a1bf1cfc2eaae53ca811d877aa4bc74f4f88de79a4560e3cfd4c519e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH701-unobserved-research.body",
+      "bytes": 10553,
+      "sha256": "27ee6196ecb6aabc4bbc6dade1bcd765a9a8bd36b6203ac93692165d8eec56c8"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH703-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "eef63002877a4d341b1bfeeeb5fef597afbd8247aff37da189204311ad0e036e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH703-unobserved-research.body",
+      "bytes": 7767,
+      "sha256": "3e5edd95f7243d9fdefbc1eab2ca33a1c7ea05a1bf7de31e9d469af7b78284ab"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH705-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "cf3554f1d40ac152c82e103156b70a72a3876f9fae44915e4c0af19a359bd64b"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH705-unobserved-research.body",
+      "bytes": 5746,
+      "sha256": "87970e15ddac96a91eccfab02f81d9f2efad6c7fe35719eaf0af77a52f87cdb7"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH707-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "15b7d8cc8612e540bd406d1016eb65c0d25358ad8895c79ac1c66f79162703b0"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH707-unobserved-research.body",
+      "bytes": 3913,
+      "sha256": "8cb14782eb9b37ecef627dd278c98f0a06f07bb89f8c5ce70605602590be5f7a"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH709-unobserved-research.json",
+      "bytes": 1034,
+      "sha256": "8d5d888645cef396a9f5a03241385de6c6455562d846c2e5acd7572bc6ff2c6f"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH709-unobserved-research.body",
+      "bytes": 1921,
+      "sha256": "0fe9872d200eaac3a1a907e2aaec27936cbb531f2d757ad11f2795a734ae5fa4"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH711-unobserved-research.json",
+      "bytes": 1087,
+      "sha256": "69c0a0ddf1d77bc8040d105e7d8261fb1939d0bf1d6470d3598af6492f50d2f5"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH711-unobserved-research.body",
+      "bytes": 59,
+      "sha256": "761c45701927b72c0395df245fd471d2ebeaed1b6c0d6511eed2d697e0fcbbbd"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC612-unobserved-research.json",
+      "bytes": 1033,
+      "sha256": "03ab0bb25a351c68f64504853559c28c54ba52093c9bc9effd7dcd15246f0849"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC612-unobserved-research.body",
+      "bytes": 11585,
+      "sha256": "c8d49a58df52c77f9d9105147a86e6129b7be72e514cbcd09440c6d205ae0fb8"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC701-unobserved-research.json",
+      "bytes": 1033,
+      "sha256": "22d1acbee7105b027211784f6e8494ab28e160ccab320ef59bda91fe5ea4e947"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC701-unobserved-research.body",
+      "bytes": 10412,
+      "sha256": "7a55243cf5fd797f4d0687f0019b5009a031825f66427395a1d946e41aac940d"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC702-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "baa49dbae2f45a9cdb97c1c6bbc3e5cb2910b9c941471932f84e4adc53993069"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC702-unobserved-research.body",
+      "bytes": 9392,
+      "sha256": "1b274101076afa3b5cd90926502f0992b77ef811ca5bc83913f63fc4b3ff9d30"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC703-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "85310089c2ef7e7a865afcc0d5cea42988a861b1765dee63c9ba2b69092b2ff7"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC703-unobserved-research.body",
+      "bytes": 8678,
+      "sha256": "3a7840f829a6210fb2b705f216aafb9962180f591a4fff82f342064044b5c7b1"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC704-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "41bb65fe4dd4e2d30548ae8a38e34c2bc52b88610b81057619fbdf519991b767"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC704-unobserved-research.body",
+      "bytes": 7556,
+      "sha256": "91b1961f33c0fb355b207b729070ed4519472bdfd1c48b5b818c55b2b9f1067e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC705-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "70764f101976b5647f28af07442567a416510e65c2ee9b8679b40e567cf228af"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC705-unobserved-research.body",
+      "bytes": 6485,
+      "sha256": "4e544236fec35189fe45c77cbe42718dceba23f87977102ae47ef8de8430dfc9"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC706-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "ca40b6522dec2842f8c655fb345432e9d9f21f3c9be54871a2e2269c74647a1e"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC706-unobserved-research.body",
+      "bytes": 5567,
+      "sha256": "a55014fd494a2461e317b67e15833235cb5b2c5e2c62bb133e106f7472eb0f26"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC707-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "0cf4936e881ed3b76542cb301e58d40fd999ce4841db43f6a6405771c1401c75"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC707-unobserved-research.body",
+      "bytes": 4496,
+      "sha256": "8a088b964ea326be477b98ef59eb7fafdc64117af8bbce43a5d5d5b27aae5108"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC708-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "c750a5ebdf99e94015ef98994b688c57f3a40053efa4972fc5c686eb400d0e9c"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC708-unobserved-research.body",
+      "bytes": 3323,
+      "sha256": "6537cb8ea94d255067287064450e768e70d97d09ff970bd7124d72c292b6e38b"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC709-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "fe587983addfaedd4bb1f3e9583c212ac1dfe4d9cc097a6ddedc47bc9f9033b4"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC709-unobserved-research.body",
+      "bytes": 2252,
+      "sha256": "0023f54ef818b3267b0e2f1f6f1187f2d41611e0903364b00da8b6357450b8de"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC710-unobserved-research.json",
+      "bytes": 1034,
+      "sha256": "b7d0734fe9c0b9021e9b030aacb7b97569b6afc500e084ccc4728744ee2385da"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC710-unobserved-research.body",
+      "bytes": 1181,
+      "sha256": "c27cf9cfe50b2be998a31f8a6464f1d3d3e9fc759d2fe3ff91d0e3b1d7fd98a1"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC711-unobserved-research.json",
+      "bytes": 1032,
+      "sha256": "6585f424ad1ffde42c183461cf5c72286e87f1d2b32c2f407b46edfae535bdb4"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1\\archive\\ZC711-unobserved-research.body",
+      "bytes": 314,
+      "sha256": "809cec801b5ac7a351043ac4e1bc25591062109d5a4d16748a1d628cb83effc7"
+    }
+  ],
+  "old_failed_keys_retried": 0,
+  "official_target_comparison": false
+}

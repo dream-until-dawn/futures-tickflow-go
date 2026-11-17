@@ -1,0 +1,47 @@
+{
+  "targets": [
+    {
+      "id": "pl-yearbook",
+      "url": "https://www.czce.com.cn/cn/content_file/gyjys/qhscyjcs/cgxc/2026/4/077939e9d8fc4ad088cd76a52ed8d3a0.pdf",
+      "anchors": [
+        "%PDF-"
+      ]
+    },
+    {
+      "id": "csrc-annual-2024",
+      "url": "https://www.csrc.gov.cn/csrc/c100024/c7624098/7624098/files/%E4%B8%AD%E5%9B%BD%E8%AF%81%E5%88%B8%E7%9B%91%E7%9D%A3%E7%AE%A1%E7%90%86%E5%A7%94%E5%91%98%E4%BC%9A%E5%B9%B4%E6%8A%A5%EF%BC%882024%E5%B9%B4%EF%BC%89.pdf",
+      "anchors": [
+        "%PDF-"
+      ]
+    },
+    {
+      "id": "lc-si-gz-bureau",
+      "url": "https://jrjgj.gz.gov.cn/gzdt/content/post_9166989.html",
+      "anchors": [
+        "2023"
+      ]
+    },
+    {
+      "id": "pt-pd-nansha-bureau",
+      "url": "https://www.gzns.gov.cn/gznsjr/gkmlpt/content/10/10570/post_10570927.html",
+      "anchors": [
+        "2025"
+      ]
+    },
+    {
+      "id": "bz-investor-dce",
+      "url": "https://www.investor.org.cn/zczx/qwzx/qhjysfb_1/202507/t20250710_810362.shtml",
+      "anchors": [
+        "2025"
+      ]
+    },
+    {
+      "id": "lg-liaoning-gov",
+      "url": "https://www.ln.gov.cn/web/ywdt/jrln/wzxx2018/2024111908503437493/index.shtml",
+      "anchors": [
+        "2024"
+      ]
+    }
+  ],
+  "blocked": []
+}

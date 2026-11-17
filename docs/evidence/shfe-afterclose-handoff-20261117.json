@@ -1,0 +1,28 @@
+{
+  "schema": "public-notice-afterclose-raw-handoff-v1",
+  "index_body_sha256": "5c52cd88f6adfd6feb9823659e0881fffb3da0f8c302d10d3ba899544b607145",
+  "body_scope_sha256": "89a93030269c245f33a5d6e183172c57cc08a2fb6f5e801f34156f6cd62fe088",
+  "bodies": [
+    {
+      "id": "shfe-limit-afterclose",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261117_834112.html",
+      "bytes": 119389,
+      "sha256": "63198af7100a8433ea95879946821d77c74acdb842da9bf3879daaee049386b6",
+      "receipt_sha256": "4216e6b47e9d7a409320879f03fe772127440648c30341e474b30126fe91240a",
+      "requested_at": "2026-11-17T10:06:28.6951478Z",
+      "finished_at": "2026-11-17T10:06:28.9013928Z"
+    },
+    {
+      "id": "shfe-training-afterclose",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/202611/t20261117_834102.html",
+      "bytes": 121875,
+      "sha256": "5fc10a4ebd199486f3a4ae9a8e2008591235056db3fbe08585ab21f1fbf92af1",
+      "receipt_sha256": "091a1de800e2da5c5dc39b2cb98991fcd38924907f3eee9a4273ec0cdc0bfb16",
+      "requested_at": "2026-11-17T10:06:30.9034227Z",
+      "finished_at": "2026-11-17T10:06:30.9338615Z"
+    }
+  ],
+  "raw_complete_only": true,
+  "client_applicability_approved": false,
+  "production_changed": false
+}

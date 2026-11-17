@@ -96,6 +96,18 @@ function coverageDetails(p) {
 }
 function details(p) {
   $('detail-title').textContent=p.name+' · '+p.key;$('detail-body').replaceChildren();
+  for(const ref of p.parameter_reference_supplements||[])detailSection('供应商编制参数观察（不等于真实专项已核）',[
+    ref.publisher+'；来源标示更新日 '+ref.source_snapshot_day+'；'+ref.rows+'个具名合约。置信度中等，仅编制参考。',
+    '已有字段 '+ref.available_reference_fields.join('、')+'；范围 '+ref.canonical_contracts.join('、')+'。',
+    '最后取得 '+ref.retrieved_at+'；没有完整日线OHLC或目标日结算价。没有填入实际最低开仓空值或当前保证金硬项。',
+    '来源 '+ref.source_url+'；SHA256 '+ref.source_sha256
+  ]);
+  for(const ref of p.margin_reference_supplements||[])detailSection('额外公司比例参考（不改变当前门槛）',[
+    ref.publisher+'；资料标示日 '+ref.source_snapshot_day+' → '+ref.source_snapshot_day+'；生效交易日未知，不当作17日或下一日实收。',
+    '已读 '+ref.rows+' 条临近交割合约参考；原生代码 '+ref.source_natives.join('、')+'。列为投机/套保，不是多/空。',
+    '最后取得 '+ref.retrieved_at+'；完整原件已核，适用性待核。此表没有结算价，不能据标题满足逐日信号门槛。',
+    '来源 '+ref.source_url+'；SHA256 '+ref.source_sha256
+  ]);
   const constraintEvidence=status.constraint_supplement;
   const broker=p.broker_margin_reference;
   if(broker)detailSection('五矿期货17日公开保证金标准（参考情景）',[
@@ -127,6 +139,12 @@ function details(p) {
   }
   if(p.user_data_gates) {
     const g=p.user_data_gates;
+    const listing=status.user_data_gate_facts.listing_days?.[p.key];
+    if(listing)detailSection('上市起点的独立依据（不认证全年日历）',[
+      '明确上市日 '+listing.day+'；'+(listing.publisher||'已核官方上市通知')+'；置信度 '+(listing.confidence==='medium-high'?'中高（具名刊载/转录，非原站原件认证）':'高（仅上市日期事实）')+'。',
+      listing.limits||'仅绑定原文明示上市日起点；不将规则生效日、首根行情或合约到期日当上市日。',
+      ...(listing.evidence||[]).map(r=>'来源 '+r.url+'；SHA256 '+r.sha256)
+    ]);
     detailSection('用户指定的两道数据门槛',[
       '回测：'+gateLabel(g.backtest.status)+'；当前适用合约 '+(g.backtest.eligible_contracts.join('、')||'尚无完整交集')+'。',
       ...Object.entries(g.backtest.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),

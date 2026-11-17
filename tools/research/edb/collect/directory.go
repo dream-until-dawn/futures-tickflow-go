@@ -31,6 +31,10 @@ type directoryPlan struct {
 		File string `json:"file"`
 		SHA  string `json:"sha256"`
 	} `json:"prior_catalog"`
+	PriorRequests struct {
+		File string `json:"file"`
+		SHA  string `json:"sha256"`
+	} `json:"prior_requests"`
 	Jobs          []batch.Job `json:"jobs"`
 	DirectoryRoot string      `json:"directory_root"`
 	InventoryRoot string      `json:"inventory_root"`
@@ -56,6 +60,14 @@ func directoryJobs(planFile string) ([]batch.Job, error) {
 }
 
 func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
+	return directoryJobsPolicy(raw, expectedSHA, true)
+}
+
+// 官方观察路线保持原规则；仅按SHA冻结的有限目录研究计划可用独立入口。
+func directoryJobsPolicy(raw []byte, expectedSHA string, requireOfficial bool) ([]batch.Job, error) {
+	if !requireOfficial && !approvedUnobservedSHA(expectedSHA) {
+		return nil, fmt.Errorf("目录研究不是固定单次探针")
+	}
 	if digest(raw) != expectedSHA {
 		return nil, fmt.Errorf("日线执行单SHA不符")
 	}
@@ -65,6 +77,13 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 	}
 	if expectedSHA == retainedHistoryPlanSHA && p.PriorCatalog.File == "" {
 		return nil, fmt.Errorf("缺少旧请求状态锁")
+	}
+	limit := 8
+	if isColdUnobserved(expectedSHA) {
+		limit = 40
+	}
+	if !requireOfficial && (p.PriorCatalog.File == "" || len(p.Jobs) == 0 || len(p.Jobs) > limit || len(p.Inputs) != 0) {
+		return nil, fmt.Errorf("目录研究必须有旧未请求状态且在冻结数量预算内，无伪造官方观察")
 	}
 	load := func(path, expected string) ([]byte, error) {
 		b, e := os.ReadFile(path)
@@ -118,6 +137,20 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 		}
 	}
 	observed := map[string]bool{}
+	excludedKeys := map[string][]string{}
+	if !requireOfficial && expectedSHA != unobservedPilotSHA {
+		b, e := load(p.PriorRequests.File, p.PriorRequests.SHA)
+		if e != nil {
+			return nil, fmt.Errorf("跨路线旧请求账本缺失或改变: %w", e)
+		}
+		var prior struct {
+			Keys map[string][]string `json:"keys"`
+		}
+		if e = json.Unmarshal(b, &prior); e != nil {
+			return nil, e
+		}
+		excludedKeys = prior.Keys
+	}
 	for _, input := range p.Inputs {
 		b, e := load(input.File, input.SHA)
 		if e != nil {
@@ -148,7 +181,15 @@ func directoryJobsChecked(raw []byte, expectedSHA string) ([]batch.Job, error) {
 			return nil, fmt.Errorf("新批包含已请求或未知项")
 		}
 		canonical, exists := keys[key]
-		if u.Scheme != "https" || u.Host != "edb.shinnytech.com" || u.Path != "/md/kline" || u.User != nil || u.Fragment != "" || len(q) != 4 || q.Get("period") != "86400" || q.Get("start_time") != "2021-01-01 00:00:00" || q.Get("end_time") != "2026-11-13 23:59:59" || !exists || !observed[canonical] || seen[job.URL] {
+		if !requireOfficial {
+			if e := checkUnobservedTarget(job, key, canonical, expectedSHA); e != nil {
+				return nil, e
+			}
+			if _, exists := excludedKeys[key]; exists {
+				return nil, fmt.Errorf("目录研究包含其他路线已请求或未知源键")
+			}
+		}
+		if u.Scheme != "https" || u.Host != "edb.shinnytech.com" || u.Path != "/md/kline" || u.User != nil || u.Fragment != "" || len(q) != 4 || q.Get("period") != "86400" || q.Get("start_time") != "2021-01-01 00:00:00" || q.Get("end_time") != "2026-11-13 23:59:59" || !exists || (requireOfficial && !observed[canonical]) || seen[job.URL] {
 			return nil, fmt.Errorf("日线URL/目录/官方观察不符")
 		}
 		seen[job.URL] = true

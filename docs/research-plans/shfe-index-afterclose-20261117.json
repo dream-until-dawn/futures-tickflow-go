@@ -1,0 +1,14 @@
+{
+  "targets": [
+    {
+      "id": "shfe-index-afterclose",
+      "url": "https://www.shfe.com.cn/publicnotice/notice/",
+      "anchors": [
+        "/publicnotice/notice/"
+      ]
+    }
+  ],
+  "blocked": [
+    "https://www.shfe.com.cn/publicnotice/notice/202611/t20261116_834084.html"
+  ]
+}

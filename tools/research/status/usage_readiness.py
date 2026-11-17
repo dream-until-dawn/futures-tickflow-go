@@ -66,7 +66,13 @@ def markdown(data):
         gated=[p for p in data['products'] if p.get('user_data_gates')]
         counts={name:sum(p['user_data_gates'][name]['status']=='pass' for p in gated) for name in ('backtest','daily_signal')}
         current=data['user_data_gate_facts']['current_trade_day'];completed=data['user_data_gate_facts']['latest_completed_day']
-        gate_lines=['## 当前两门槛结果','',f'最新已收完整原件的行情日 {completed}，当前参数交易日 {current}。全项目回测通过{counts["backtest"]}个品种；逐日信号通过{counts["daily_signal"]}个品种。商品范围回测{sum(p["exchange"]!="CFFEX" and p["user_data_gates"]["backtest"]["status"]=="pass" for p in gated)}个，金融另列。这是资料条件评估，不是引擎逐品种实跑验收；两者独立，不相加为全市场完成数。','',
+        commodities=[p for p in gated if p['exchange']!='CFFEX']
+        first=[p for p in commodities if p['user_data_gates']['backtest']['status']=='pass']
+        second=[p for p in commodities if p['user_data_gates']['daily_signal']['status']=='pass']
+        both=sum(p in second for p in first)
+        first_scopes=sum(len(p['user_data_gates']['backtest']['eligible_contracts']) for p in first)
+        second_scopes=sum(len(p['user_data_gates']['daily_signal']['eligible_contracts']) for p in second)
+        gate_lines=['## 当前两门槛结果','',f'最新已收完整原件的行情日 {completed}，当前参数交易日 {current}。商品{len(commodities)}品种中，回测资料通过{len(first)}个/{first_scopes}个当前合约范围；逐日信号资料通过{len(second)}个/{second_scopes}个范围；两道均满足{both}个品种。金融回测另列{counts["backtest"]-len(first)}个，不混入商品。这是资料条件评估，不是引擎逐品种实跑验收；两者独立，不相加为全市场完成数。','',
                     '回测长历史按自2021年前后的逐年有效OHLC观察核，逐年实际日期数在详情；不将起止跨度冒充逐日完整。2021年后新上市品种的上市日起点尚未绑定到本轮机器事实时保留待补证。最低开仓仅作补充，不阻断v2回测；逐项列审核日和具体合约；普通1手基线及旧供应商快照均不能单独代填当前有效专项，真实客户适用性另核。','',
                     '逐日信号通过表示已有目标日有效结算和既有按日采集/校验入口；不代表全部合约、不代表后台自动服务已部署，也不承诺未来每次更新成功。郑商所三位原生码用同日XML显式年月绑定。','',
                     '| 品种 | 回测门槛 | 逐日信号门槛 | 硬项缺口 / 通过范围 |','| --- | --- | --- | --- |']

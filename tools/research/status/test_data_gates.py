@@ -9,6 +9,31 @@ from data_gates import current_margin, effective_minimum, evaluate, item, assess
 
 
 class DataGatesTest(unittest.TestCase):
+    def test_public_listing_facts_match_digest_bound_review_and_real_source_identity(self):
+        repo = Path(__file__).resolve().parents[3]
+        facts = json.loads((repo / 'docs/data-gate-facts.json').read_bytes())
+        reviewed = 0
+        for key, fact in facts['listing_days'].items():
+            if 'review_file' not in fact:
+                continue
+            path = (repo / fact['review_file']).resolve()
+            self.assertTrue(path.is_relative_to(repo))
+            raw = path.read_bytes()
+            self.assertEqual(hashlib.sha256(raw).hexdigest(), fact['review_sha256'])
+            review = json.loads(raw)
+            rows = review.get('items', [review])
+            row, = [r for r in rows if r['product_key'] == key]
+            self.assertEqual(row['day'], fact['day'])
+            expected = row.get('official_source') or dict(url=row['source_url'], sha256=row['source_sha256'])
+            self.assertEqual(fact['evidence'][0]['url'], expected['url'])
+            self.assertEqual(fact['evidence'][0]['sha256'], expected['sha256'])
+            self.assertFalse(fact['calendar_qualified'])
+            if key == 'CZCE.SO':
+                self.assertFalse(row['direct_exchange_original_acquired'])
+                self.assertEqual(fact['confidence'], 'medium-high')
+            reviewed += 1
+        self.assertEqual(reviewed, 12)
+
     def test_v2_removes_only_minimum_and_keeps_margin_as_hard_requirement(self):
         hard = dict(history_ohlc=item('pass', evidence_ids=['history'], reason='逐年有效观察'),
                     current_margin=item('pass', ['SHFE.rb2701'], ['rates'], '指定日比例'))

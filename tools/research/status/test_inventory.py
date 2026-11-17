@@ -15,6 +15,14 @@ from snapshot_inventory import verified_members
 
 
 class InventoryTest(unittest.TestCase):
+    def test_source_evidence_index_excludes_only_known_derived_cycles(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=root/'docs/evidence';folder.mkdir(parents=True)
+            for name in ('unknown-source.json','project-data-inventory-snapshot.json','product-gates-v2-snapshot.json'):
+                (folder/name).write_text('{"schema":"synthetic"}',encoding='utf-8')
+            rows=Collector(root).evidence_index()
+            self.assertEqual([r['file'].replace('\\','/') for r in rows],['docs/evidence/unknown-source.json'])
+
     def record(self, day, **fields):
         return dict(exchange='SHFE',native='rb2610',day=day,fields=fields,
                     evidence=dict(retrieved_at='2026-11-15T08:00:00Z',sha256='a'*64))

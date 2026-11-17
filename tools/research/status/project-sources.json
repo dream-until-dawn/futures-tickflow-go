@@ -1,6 +1,6 @@
 {
   "repo": "C:\\VScodeProject\\futures-tickflow-go",
-  "registered_at_utc": "2026-11-16T13:11:25.400338+00:00",
+  "registered_at_utc": "2026-11-17T10:11:47.259436+00:00",
   "official_catalog_manifest": "C:/VScodeProject/futures-decision-strategy/results/all-market-price-catalog-20261114/catalog-v2/manifest.json",
   "known_products": [
     "SHFE.ad",
@@ -117,6 +117,170 @@
     {
       "path": "C:/Temp/tickflow-edb-retained-remaining-20261116-v1",
       "route": "edb-retained-continuation"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-unobserved-history-pilot-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-a-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-b-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-bb-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-bz-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-c-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-cs-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-eb-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-eg-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-fb-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-i-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-j-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-jd-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-jm-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-l-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-lg-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-lh-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-m-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-p-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-pg-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-pp-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-rr-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-v-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-DCE-y-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-GFEX-lc-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-GFEX-pd-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-GFEX-ps-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-GFEX-pt-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-anchor-GFEX-si-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-GFEX-si-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1",
+      "route": "edb-history-anchors"
+    },
+    {
+      "path": "C:\\Temp\\tickflow-current-cold-CZCE-ZC-20261117-v1",
+      "route": "edb-history-anchors"
     }
   ],
   "cffex_roots": [
@@ -5365,7 +5529,104 @@
     "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2507-retained-history.body",
     "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2508-retained-history.body",
     "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2509-retained-history.body",
-    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2510-retained-history.body"
+    "C:\\Temp\\tickflow-edb-retained-remaining-20261116-v1\\archive\\ZC2510-retained-history.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR209-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR303-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR601-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR603-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-JR-20261117-v1\\archive\\JR605-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR201-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR203-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR211-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR301-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR303-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-LR-20261117-v1\\archive\\LR601-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM203-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM205-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM211-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM301-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM303-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-PM-20261117-v1\\archive\\PM511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI203-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI205-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI209-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI211-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI301-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI303-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-RI-20261117-v1\\archive\\RI603-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1\\archive\\WH305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1\\archive\\WH307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1\\archive\\WH309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1\\archive\\WH311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-WH-20261117-v1\\archive\\WH511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC302-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC303-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC304-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC305-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC306-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC307-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC308-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC309-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC311-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC511-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC512-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC601-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC602-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC603-unobserved-research.body",
+    "C:\\Temp\\tickflow-history-followup-CZCE-ZC-20261117-v1\\archive\\ZC604-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR707-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-JR-20261117-v1\\archive\\JR711-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM703-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-PM-20261117-v1\\archive\\PM711-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-RI-20261117-v1\\archive\\RI711-unobserved-research.body",
+    "C:\\Temp\\tickflow-current-cold-CZCE-WH-20261117-v1\\archive\\WH711-unobserved-research.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\bz-investor-dce.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\bz-investor-dce.receipt.json",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\csrc-annual-2024.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\csrc-annual-2024.receipt.json",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\lc-si-gz-bureau.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\lc-si-gz-bureau.receipt.json",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\lg-liaoning-gov.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\lg-liaoning-gov.receipt.json",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\pl-yearbook.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\pl-yearbook.receipt.json",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\pt-pd-nansha-bureau.body",
+    "C:\\Temp\\tickflow-listing-primary-20261117-v1\\pt-pd-nansha-bureau.receipt.json",
+    "C:\\Temp\\tickflow-so-carrier-20261117-v1\\so-listing-carrier.body",
+    "C:\\Temp\\tickflow-so-carrier-20261117-v1\\so-listing-carrier.receipt.json",
+    "C:\\Temp\\tickflow-so-listing-original-20261117-v1\\so-listing-20261117.body",
+    "C:\\Temp\\tickflow-so-listing-original-20261117-v1\\so-listing-20261117.receipt.json",
+    "C:\\Temp\\tickflow-settlement-index-20261117-v1\\xz-settlement-index.body",
+    "C:\\Temp\\tickflow-settlement-index-20261117-v1\\xz-settlement-index.receipt.json",
+    "C:\\Temp\\tickflow-settlement-article-20261117-v1\\xz-settlement-20261116.body",
+    "C:\\Temp\\tickflow-settlement-article-20261117-v1\\xz-settlement-20261116.receipt.json",
+    "C:\\Temp\\tickflow-shfe-index-afterclose-20261117-v1\\shfe-index-afterclose.body",
+    "C:\\Temp\\tickflow-shfe-index-afterclose-20261117-v1\\shfe-index-afterclose.receipt.json",
+    "C:\\Temp\\tickflow-shfe-new-bodies-20261117-v1\\shfe-limit-afterclose.body",
+    "C:\\Temp\\tickflow-shfe-new-bodies-20261117-v1\\shfe-limit-afterclose.receipt.json",
+    "C:\\Temp\\tickflow-shfe-new-bodies-20261117-v1\\shfe-training-afterclose.body",
+    "C:\\Temp\\tickflow-shfe-new-bodies-20261117-v1\\shfe-training-afterclose.receipt.json",
+    "C:\\Temp\\tickflow-product-cj-quote-20261117-v1\\cj-explicit-quote.body",
+    "C:\\Temp\\tickflow-product-cj-quote-20261117-v1\\cj-explicit-quote.receipt.json"
   ],
   "engine_snapshot": {
     "archive": "C:/VScodeProject/futures-decision-strategy/results/review-rb-20261116/input-snapshot.tgz",
@@ -5406,7 +5667,7 @@
   ],
   "consumer_premarket": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\consumer-independent-readback.json",
   "history_quality": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\daily-combined-summary.json",
-  "history_extension": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\history-capability-20261116\\new-route-catalog.json",
+  "history_extension": "C:/VScodeProject/futures-tickflow-go/docs/evidence/history-gap-directory-extension-20261117.json",
   "clear_parameters": [
     {
       "root": "C:/Temp/tickflow-czce-clear-20261116-v1",

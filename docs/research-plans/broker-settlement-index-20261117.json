@@ -1,0 +1,12 @@
+{
+  "targets": [
+    {
+      "id": "xz-settlement-index",
+      "url": "https://www.xzfutures.com/main/customerServices/settlementParameters/index.html",
+      "anchors": [
+        "2026"
+      ]
+    }
+  ],
+  "blocked": []
+}

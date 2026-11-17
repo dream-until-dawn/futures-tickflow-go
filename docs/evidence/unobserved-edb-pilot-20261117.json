@@ -1,0 +1,13 @@
+{
+  "schema": "unobserved-edb-pilot-review-v1",
+  "source_key": "DCE.a2201",
+  "rows": 243,
+  "first": 20210118,
+  "last": 20220117,
+  "sha256": "93f0d8cdc3bd375ad5e67498e06516c9cb2e0ef43b7794b7bef96ffe8997eca2",
+  "receipt_sha256": "59866de884f34c3ab299b8a57291db56fa09124e6aec2f299267f5a3abb48c48",
+  "request_count": 1,
+  "complete_200": true,
+  "official_target_comparison": false,
+  "backtest_gate_passed_from_this_one_sample": false
+}

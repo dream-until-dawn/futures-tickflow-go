@@ -1,0 +1,136 @@
+{
+  "schema": "rb-hc-v2-final-consumer-readback-v1",
+  "consumer_source_commit": "3364eb6cd0cfe198b426b99ddb371560268ac6f8",
+  "consumer_manifest_sha256": "2f5ee7b8d28e301ac048a74209aac3d55e3142d77b3acf4a138bda08032b86d2",
+  "consumer_files_verified": [
+    {
+      "file": "all-readback-index.json",
+      "bytes": 490534,
+      "sha256": "d8a637ab8559fa8bf9691e669f142280fb5433af427da3290bf9d2d7a31dae92"
+    },
+    {
+      "file": "candidate-identity.json",
+      "bytes": 6336,
+      "sha256": "181340b0e7c0451142ea3ab15ae784c230127bf0a940efba46b8af267a1be260"
+    },
+    {
+      "file": "docker-acceptance.json",
+      "bytes": 3057,
+      "sha256": "7c35c0b2a995abef653d325c56c207192f8b589a7eef548b080914c432df30c0"
+    },
+    {
+      "file": "docker-negative-controls.json",
+      "bytes": 1475,
+      "sha256": "7d851bd5fa504489ffc569204d1782dddb45ca7767393762dc43318e5416eeda"
+    },
+    {
+      "file": "docker-python-tests.json",
+      "bytes": 203,
+      "sha256": "2e15d411c34c833c77cc540501ded4dbeaaeb4bcb16fde3c75ac88e6e8f1ef14"
+    },
+    {
+      "file": "docker-runtime-snapshot.json",
+      "bytes": 616,
+      "sha256": "e6bb406ad2dbc574ec2f0da3aec4b3491f6d6d8b02ac1e49773d6de58a7ce83a"
+    },
+    {
+      "file": "failure-history.json",
+      "bytes": 1411,
+      "sha256": "8a0b368d9ee81cdc5d373caea901157b7db917777f3b4eba9481a5da7d160ecf"
+    },
+    {
+      "file": "independent-readback.json",
+      "bytes": 1215,
+      "sha256": "683d68f3283efb1a0fc059e852aea7880829951b88dcfd6b6683f71b66214a34"
+    },
+    {
+      "file": "package-identity.json",
+      "bytes": 389,
+      "sha256": "01a1dd4338738f130ac94263896a175a29ae9680d76eacdedd20641322fe1ea7"
+    },
+    {
+      "file": "quantity-mutations.json",
+      "bytes": 1022,
+      "sha256": "84c99503804963f4d2e08ebad38114fa6fedc5ec6899c6df905b7995ea74e0c5"
+    },
+    {
+      "file": "source-readback.json",
+      "bytes": 511,
+      "sha256": "0908968fa945a392bd557b2ee937de19dd558d0ec528db10d2ef785c22a5eed2"
+    },
+    {
+      "file": "upstream-manifest.json",
+      "bytes": 182580,
+      "sha256": "47d988f619fa978736d2ae7774fd39964ab28698d4479de657e6b9946e8876e1"
+    },
+    {
+      "file": "v2-signal-proof.json",
+      "bytes": 307,
+      "sha256": "e6eb68462f1e38a1eb1cec5e1b362be4bf008020a2f9ac5714573aad813f9caf"
+    },
+    {
+      "file": "validation.json",
+      "bytes": 1477,
+      "sha256": "91358ab5d4e4cbd9aa8194332a8b9b138ecbcbc25d0e87bf2fad48667d42a8e4"
+    },
+    {
+      "file": "windows-acceptance.json",
+      "bytes": 3057,
+      "sha256": "6e51a783ed575b6af4ce4aaf5590a342d20bca5454142a93d26f17faaf237eeb"
+    },
+    {
+      "file": "windows-negative-controls.json",
+      "bytes": 1475,
+      "sha256": "7d851bd5fa504489ffc569204d1782dddb45ca7767393762dc43318e5416eeda"
+    }
+  ],
+  "platforms": {
+    "windows": {
+      "verified_frozen_files": 1332,
+      "actual_results": 4,
+      "actual_target_rejections": 8,
+      "sqlite_integrity": "ok",
+      "sqlite_all_tables": {
+        "events": {
+          "rows": 16,
+          "sha256": "73f71e6d07eff17c57483ac92104c9f0695f3ef92856e8a409692af6e691b4db"
+        },
+        "jobs": {
+          "rows": 4,
+          "sha256": "1f2634a419ee63eceffe687be5e68ea482ecc956669e2ef0f468bcacef4b3d30"
+        }
+      },
+      "sqlite_sha256": "e912e0cb7d54df2b2316417e68f35eef9503f6ae2dd64e6e1d45481c4d19b028",
+      "wal_bytes": 0,
+      "db_before_after_sha_equal": true
+    },
+    "docker": {
+      "verified_frozen_files": 1332,
+      "actual_results": 4,
+      "actual_target_rejections": 8,
+      "sqlite_integrity": "ok",
+      "sqlite_all_tables": {
+        "events": {
+          "rows": 16,
+          "sha256": "220ce061fe8914f666cbf4f0d97bdded4b0dc36f1e7f5bbccec60f63d54a381d"
+        },
+        "jobs": {
+          "rows": 4,
+          "sha256": "125fdc9ec4f3293a79d4a289fb116f1bf14c944c25d3ccea90de4f80c0a5d65d"
+        }
+      },
+      "sqlite_sha256": "e0546de0365285a0de5a3ac368c27b9e5e09ea933834fa7f412a2315bec99be2",
+      "wal_bytes": 0,
+      "db_before_after_sha_equal": true
+    }
+  },
+  "requests_and_full_results_equal": true,
+  "actual_money_equations_independently_checked": true,
+  "actual_hc_minimum_kept_null": true,
+  "quantity_mutations_record_verified": 3,
+  "consumer_python_test_report": 118,
+  "root_reran_docker": false,
+  "scope": "root只读逐件核对真实产物和SQLite；不声称重跑消费者全套测试。always机械控制非盈利验证；默认MACD221条不足不改，其他品种未外推。",
+  "production_changed": false,
+  "financial_qualification_added": 0
+}

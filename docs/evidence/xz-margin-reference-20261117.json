@@ -1,0 +1,763 @@
+{
+  "schema": "company-margin-reference-source-review-v1",
+  "source_snapshot_day": 20261116,
+  "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+  "body_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+  "receipt_sha256": "09e625dad598649f67aef73eb8bc672c492043d3a735e5d4f3c044a4e4428e5b",
+  "rows": 73,
+  "products": 52,
+  "settlement_present": false,
+  "effective_day_verified": false,
+  "current_margin_replaced": false,
+  "product_references": {
+    "DCE.bz": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "bz2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.eb": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "eb2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.eg": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "eg2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.jd": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "jd2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.lg": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "lg2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.lh": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "lh2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "DCE.pg": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "pg2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "INE.bc": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "bc2611",
+        "bc2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "INE.lu": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "lu2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "INE.nr": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "nr2611",
+        "nr2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "INE.sc": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "sc2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ad": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "ad2611",
+        "ad2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ag": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "ag2611",
+        "ag2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.al": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "al2611",
+        "al2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ao": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "ao2611",
+        "ao2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.au": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "au2611",
+        "au2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.br": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "br2611",
+        "br2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.bu": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "bu2611",
+        "bu2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.cu": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "cu2611",
+        "cu2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.fu": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "fu2612",
+        "fu2701"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.hc": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "hc2611",
+        "hc2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ni": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "ni2611",
+        "ni2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.op": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "op2611",
+        "op2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.pb": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "pb2611",
+        "pb2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.rb": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "rb2611",
+        "rb2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ru": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "ru2611"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.sn": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "sn2611",
+        "sn2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.sp": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "sp2611",
+        "sp2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.ss": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "ss2611",
+        "ss2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.wr": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "wr2611",
+        "wr2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "SHFE.zn": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 2,
+      "source_natives": [
+        "zn2611",
+        "zn2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.AP": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "AP612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.CJ": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "CJ612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.CY": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "CY612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.FG": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "FG612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.MA": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "MA612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.PF": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "PF612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.PK": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "PK612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.PL": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "PL612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.PR": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "PR612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.PX": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "PX612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.SA": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "SA612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.SF": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "SF612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.SH": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "SH612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.SM": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "SM612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.TA": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "TA612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.UR": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "UR612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "CZCE.ZC": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "ZC612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "GFEX.lc": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "lc2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "GFEX.pd": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "pd2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "GFEX.ps": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "ps2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    },
+    "GFEX.pt": {
+      "publisher": "兴证期货公司临交割比例参考",
+      "source_snapshot_day": 20261116,
+      "effective_trade_day": null,
+      "rows": 1,
+      "source_natives": [
+        "pt2612"
+      ],
+      "source_url": "https://www.xzfutures.com/article/10126701/index.html",
+      "source_sha256": "1d06e4dfb998d92ea6f6f166de913bbbb2c1af8d47436f10e32aa53b8126f42f",
+      "retrieved_at": "2026-11-17T09:38:22.2011193Z",
+      "settlement_present": false,
+      "applied_to_current_contracts": false
+    }
+  }
+}

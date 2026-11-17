@@ -1,0 +1,219 @@
+{
+  "schema": "edb-cold-product-unrequested-history-v1",
+  "scope": "all captured unrequested past candidates for one cold product; complete empty isolated, any other error stops source",
+  "directory_root": "C:/Temp/tickflow-contract-directory-20261115-v1",
+  "inventory_root": "C:/Temp/tickflow-contract-directory-offline-20261115-v2",
+  "directory_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "inventory_sha256": "c7ff4e26edda99e694149e16e4790050f4e847bebb4ad940b704340c64632545",
+  "prior_catalog": {
+    "file": "C:\\Temp\\tickflow-research-catalog-delivery-20261115-v1-sealed\\catalog.json",
+    "sha256": "677519fb247a45a52201d4d80b3432b1e246f7241654ae583689eb5af96a05fb"
+  },
+  "prior_requests": {
+    "file": "C:\\VScodeProject\\futures-tickflow-go\\docs\\evidence\\prior-edb-keys-followup-20261117.json",
+    "sha256": "a8d569b15b58af62ca99fcdd1c94460359d0f93e875bae2c73497879024480d9"
+  },
+  "jobs": [
+    {
+      "id": "RI201-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI201",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI203-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI203",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI205-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI205",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI207-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI207",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI209-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI209",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI211-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI211",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI301-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI301",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI303-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI303",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI305-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI305",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI307-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI307",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI309-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI309",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI311-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI311",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI511-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI511",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI601-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI601",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI603-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI603",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI605-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI605",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI607-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI607",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    },
+    {
+      "id": "RI609-unobserved-research",
+      "url": "https://edb.shinnytech.com/md/kline?end_time=2026-11-13+23%3A59%3A59&period=86400&start_time=2021-01-01+00%3A00%3A00&symbol=CZCE.RI609",
+      "format": "edb-csv",
+      "exchange": "CZCE",
+      "product": "RI",
+      "year": 2021,
+      "day": 0,
+      "version": "shinny-edb-unobserved-directory-research-v1"
+    }
+  ],
+  "official_inputs": [],
+  "bindings": {
+    "CZCE.RI201": "CZCE.RI2201",
+    "CZCE.RI203": "CZCE.RI2203",
+    "CZCE.RI205": "CZCE.RI2205",
+    "CZCE.RI207": "CZCE.RI2207",
+    "CZCE.RI209": "CZCE.RI2209",
+    "CZCE.RI211": "CZCE.RI2211",
+    "CZCE.RI301": "CZCE.RI2301",
+    "CZCE.RI303": "CZCE.RI2303",
+    "CZCE.RI305": "CZCE.RI2305",
+    "CZCE.RI307": "CZCE.RI2307",
+    "CZCE.RI309": "CZCE.RI2309",
+    "CZCE.RI311": "CZCE.RI2311",
+    "CZCE.RI511": "CZCE.RI2511",
+    "CZCE.RI601": "CZCE.RI2601",
+    "CZCE.RI603": "CZCE.RI2603",
+    "CZCE.RI605": "CZCE.RI2605",
+    "CZCE.RI607": "CZCE.RI2607",
+    "CZCE.RI609": "CZCE.RI2609"
+  }
+}

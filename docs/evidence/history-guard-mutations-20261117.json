@@ -1,0 +1,25 @@
+{
+  "schema": "history-guard-target-mutations-v1",
+  "synthetic": true,
+  "network_requests": 0,
+  "actual_mutations": [
+    {
+      "target": "TestUnobservedCSVRejectsOutsideFrozenWindow",
+      "mutation": "date-window",
+      "expected_reason": "窗口越界未被目标门禁拒绝",
+      "exit_code": 1,
+      "source_sha256": "e0f25f4681b2430c47adc1c0ca67b532d07df8ae202f9b0f1ab461c68d4cacd0",
+      "source_unchanged": true,
+      "log_sha256": "309048373a7ba9b81c955721dd9927a0ddc261f05af13edf3389c39a8c0639f9"
+    },
+    {
+      "target": "TestEDBDirectoryPlanPositiveIdentityAndMutatedSource",
+      "mutation": "official-observation",
+      "expected_reason": "旧模式缺官方观察应被目标门禁拒绝",
+      "exit_code": 1,
+      "source_sha256": "d92aa19948413e73b0557dc943ccd5a4f153c73977c65ce6eed38b200afd2b53",
+      "source_unchanged": true,
+      "log_sha256": "a8f446aff6580ea1e3af412ac8eb1d06d6cc57a1a5698a1f20920411f3aae8e9"
+    }
+  ]
+}
