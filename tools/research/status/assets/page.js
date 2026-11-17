@@ -99,6 +99,7 @@ function details(p) {
   const constraintEvidence=status.constraint_supplement;
   const broker=p.broker_margin_reference;
   if(broker)detailSection('五矿期货17日公开保证金标准（参考情景）',[
+    p.exchange==='CFFEX'?'金融品种单列：本项不属于五商品场所交接范围，不进入引擎商品投影。':'本项属于五商品场所；交引擎的商品投影另行排除金融8品种/28条新增公司记录。',
     '覆盖日期：20261117 → 20261117；该公司公开投机标准 '+broker.company_spec_ratio+'、套保标准 '+broker.company_hedge_ratio+'（比例）。不是交易所原件或本账户实收，不替换已有交易所多空参数。',
     '特殊月份优先：'+(broker.special.map(s=>s.symbols+' 投机 '+s.company_spec_ratio+'、套保 '+s.company_hedge_ratio).join('；')||'表内未单列特殊月份')+'。不由保证金推导最低开仓。',
     '完整性：已解析来源中的品种标准和逐月份专项，非挂牌全集；最后取得 '+timeText(status.broker_margin_readback.received_at)+'；源SHA256 '+status.broker_margin_readback.source_sha256

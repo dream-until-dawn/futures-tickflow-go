@@ -1,0 +1,44 @@
+{
+  "schema": "company-margin-commodity-projection-v1",
+  "market_scope": [
+    "SHFE",
+    "INE",
+    "CZCE",
+    "DCE",
+    "GFEX"
+  ],
+  "excluded_financial": {
+    "products": [
+      "CFFEX.IC",
+      "CFFEX.IF",
+      "CFFEX.IH",
+      "CFFEX.IM",
+      "CFFEX.T",
+      "CFFEX.TF",
+      "CFFEX.TL",
+      "CFFEX.TS"
+    ],
+    "records": 28
+  },
+  "products": 81,
+  "mapped_commodity_margin_products": 80,
+  "new_company_contracts": 524,
+  "new_company_products": 55,
+  "bound_contracts": 825,
+  "manifest_sha256": "c10005856b7b9299295185505a50658442ae12dfaf96acc20cfaf7ba102410a1",
+  "archive": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\current-constraints-v1\\company-margin-commodity-v2-files-only.zip",
+  "archive_sha256": "a0dacc69c5dc45d7a23961bad8c06ed870ba872b2d68c3ba2040089b945f082f",
+  "archive_bytes": 11498536,
+  "all_members_verified": true,
+  "standalone_scope_recomputed": true,
+  "parent_manifest_sha256": "36d3ae04e45d34e992fb224a7c1229e2be8e659d38ebf6478a55183a3e8615cf",
+  "old_package_preserved": true,
+  "minimum_opening_qualified": false,
+  "financial_qualified": false,
+  "price_records_delivered": false,
+  "previous_zip_sha256": "a26c3e1f8f9f17c272aa680d29d6586dee03ee70e02f27c2a2fc05004291df21",
+  "previous_zip_rejected_member": "__pycache__/",
+  "previous_zip_preserved": true,
+  "exact_declared_member_count": 11,
+  "no_directory_entries": true
+}

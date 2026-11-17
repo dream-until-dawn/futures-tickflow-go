@@ -1,0 +1,40 @@
+{
+  "schema": "company-margin-consumer-readback-v1",
+  "version": "v1-full-project-reference-not-commodity-candidate",
+  "source_evidence_manifest_sha256": "67191d583ba4549a69f9d25686e02879363bd53be704a860b3a2fbf02392d652",
+  "registered_files_verified": 4,
+  "windows_report_sha256": "11169e5558a02abb3ee83a31648615b681e773d371ab1beccf6048b08fe81c5f",
+  "docker_report_sha256": "11169e5558a02abb3ee83a31648615b681e773d371ab1beccf6048b08fe81c5f",
+  "actual_report": {
+    "status": "reference_integrity_passed_not_admitted",
+    "policies": 89,
+    "bound_contracts": 853,
+    "new_company_contracts": 552,
+    "new_company_products": 63,
+    "all_scope_objects_streamed": 253419,
+    "producer_code_executed": false,
+    "minimum_open_unknown": 552,
+    "financial_admission_added": 0,
+    "excluded_financial_products": 8,
+    "excluded_new_financial_contracts": 28,
+    "commodity_policies": 81,
+    "new_commodity_reference_contracts": 524,
+    "production_changed": false,
+    "source_scope_day": 20261115,
+    "company_policy_day": 20261117,
+    "old_exchange_contracts_retained_in_separate_base": 301,
+    "manifest_sha256": "36d3ae04e45d34e992fb224a7c1229e2be8e659d38ebf6478a55183a3e8615cf"
+  },
+  "test_report": {
+    "tests": 8,
+    "errors": 0,
+    "failures": 0,
+    "success": true,
+    "network": "none",
+    "memory_mib": 512
+  },
+  "root_reran_docker": false,
+  "consumer_source_sha256": "cd1f7dddc159134e049615392d80a89d39c3267f552ac4f5081799b1f68d547e",
+  "latest_commodity_projection_acceptance": "pending-separate-result",
+  "admission_changed": false
+}
