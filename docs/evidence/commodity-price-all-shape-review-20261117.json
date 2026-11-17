@@ -1,0 +1,395 @@
+{
+  "schema": "root-all-price-consumer-shape-review-v1",
+  "index_sha256": "e573d97f5c61aa51166239511ca258113be6d951cbc5a3601830f34280f127db",
+  "rows": 474372,
+  "products": 75,
+  "reviews": [
+    {
+      "product": "SHFE.ad",
+      "rows": 2851,
+      "symbols": 19
+    },
+    {
+      "product": "SHFE.ag",
+      "rows": 15944,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.al",
+      "rows": 15944,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.ao",
+      "rows": 8603,
+      "symbols": 48
+    },
+    {
+      "product": "SHFE.au",
+      "rows": 10502,
+      "symbols": 75
+    },
+    {
+      "product": "SHFE.br",
+      "rows": 8212,
+      "symbols": 46
+    },
+    {
+      "product": "SHFE.bu",
+      "rows": 20471,
+      "symbols": 84
+    },
+    {
+      "product": "SHFE.cu",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.fu",
+      "rows": 15840,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.hc",
+      "rows": 15944,
+      "symbols": 81
+    },
+    {
+      "product": "SHFE.ni",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.op",
+      "rows": 2164,
+      "symbols": 16
+    },
+    {
+      "product": "SHFE.pb",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.rb",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.ru",
+      "rows": 13279,
+      "symbols": 69
+    },
+    {
+      "product": "SHFE.sn",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.sp",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.ss",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "SHFE.wr",
+      "rows": 15936,
+      "symbols": 74
+    },
+    {
+      "product": "SHFE.zn",
+      "rows": 15945,
+      "symbols": 82
+    },
+    {
+      "product": "INE.bc",
+      "rows": 11290,
+      "symbols": 74
+    },
+    {
+      "product": "INE.ec",
+      "rows": 4110,
+      "symbols": 23
+    },
+    {
+      "product": "INE.lu",
+      "rows": 11719,
+      "symbols": 79
+    },
+    {
+      "product": "INE.nr",
+      "rows": 11653,
+      "symbols": 78
+    },
+    {
+      "product": "INE.sc",
+      "rows": 17840,
+      "symbols": 50
+    },
+    {
+      "product": "CZCE.AP",
+      "rows": 3922,
+      "symbols": 26
+    },
+    {
+      "product": "CZCE.CF",
+      "rows": 4770,
+      "symbols": 35
+    },
+    {
+      "product": "CZCE.CJ",
+      "rows": 3582,
+      "symbols": 24
+    },
+    {
+      "product": "CZCE.CY",
+      "rows": 6273,
+      "symbols": 58
+    },
+    {
+      "product": "CZCE.FG",
+      "rows": 7006,
+      "symbols": 47
+    },
+    {
+      "product": "CZCE.MA",
+      "rows": 7002,
+      "symbols": 47
+    },
+    {
+      "product": "CZCE.OI",
+      "rows": 4734,
+      "symbols": 35
+    },
+    {
+      "product": "CZCE.PF",
+      "rows": 6722,
+      "symbols": 41
+    },
+    {
+      "product": "CZCE.PK",
+      "rows": 5381,
+      "symbols": 32
+    },
+    {
+      "product": "CZCE.PL",
+      "rows": 2306,
+      "symbols": 21
+    },
+    {
+      "product": "CZCE.PR",
+      "rows": 1555,
+      "symbols": 14
+    },
+    {
+      "product": "CZCE.PX",
+      "rows": 3999,
+      "symbols": 27
+    },
+    {
+      "product": "CZCE.RM",
+      "rows": 5623,
+      "symbols": 41
+    },
+    {
+      "product": "CZCE.RS",
+      "rows": 2239,
+      "symbols": 22
+    },
+    {
+      "product": "CZCE.SA",
+      "rows": 7006,
+      "symbols": 47
+    },
+    {
+      "product": "CZCE.SF",
+      "rows": 6980,
+      "symbols": 47
+    },
+    {
+      "product": "CZCE.SH",
+      "rows": 4098,
+      "symbols": 30
+    },
+    {
+      "product": "CZCE.SM",
+      "rows": 6976,
+      "symbols": 45
+    },
+    {
+      "product": "CZCE.SO",
+      "rows": 12,
+      "symbols": 4
+    },
+    {
+      "product": "CZCE.SR",
+      "rows": 4762,
+      "symbols": 35
+    },
+    {
+      "product": "CZCE.TA",
+      "rows": 6998,
+      "symbols": 47
+    },
+    {
+      "product": "CZCE.UR",
+      "rows": 7004,
+      "symbols": 47
+    },
+    {
+      "product": "DCE.a",
+      "rows": 1698,
+      "symbols": 8
+    },
+    {
+      "product": "DCE.b",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.bb",
+      "rows": 1453,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.bz",
+      "rows": 365,
+      "symbols": 2
+    },
+    {
+      "product": "DCE.c",
+      "rows": 1544,
+      "symbols": 8
+    },
+    {
+      "product": "DCE.cs",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.eb",
+      "rows": 1458,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.eg",
+      "rows": 1458,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.fb",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.i",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.j",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.jd",
+      "rows": 1458,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.jm",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.l",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.lg",
+      "rows": 605,
+      "symbols": 3
+    },
+    {
+      "product": "DCE.lh",
+      "rows": 1591,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.m",
+      "rows": 1544,
+      "symbols": 8
+    },
+    {
+      "product": "DCE.p",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.pg",
+      "rows": 1458,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.pp",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.rr",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.v",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "DCE.y",
+      "rows": 1455,
+      "symbols": 7
+    },
+    {
+      "product": "GFEX.lc",
+      "rows": 960,
+      "symbols": 5
+    },
+    {
+      "product": "GFEX.pd",
+      "rows": 308,
+      "symbols": 2
+    },
+    {
+      "product": "GFEX.ps",
+      "rows": 552,
+      "symbols": 3
+    },
+    {
+      "product": "GFEX.pt",
+      "rows": 308,
+      "symbols": 2
+    },
+    {
+      "product": "GFEX.si",
+      "rows": 1340,
+      "symbols": 7
+    }
+  ],
+  "checks": [
+    "consumer day and bounded positive number parsers",
+    "OHLC ordering",
+    "unique contract/day",
+    "source-original reference",
+    "exact historical scope and declared coverage"
+  ],
+  "not_checked": [
+    "independent full raw field semantic recomputation",
+    "independent engine acceptance",
+    "strategy or production readiness"
+  ]
+}

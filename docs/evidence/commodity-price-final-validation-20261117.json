@@ -1,0 +1,29 @@
+{
+  "schema": "commodity-price-final-local-validation-v1",
+  "code_candidate": "e5ab5b6a5d05597925ad485957e5f46840767410",
+  "go_modules": [
+    ".",
+    "adapter",
+    "tools/probe/shinny"
+  ],
+  "checks": [
+    "gofmt",
+    "vet",
+    "test"
+  ],
+  "python_directories": 18,
+  "python_tests": 282,
+  "restoration_fingerprint_unchanged": true,
+  "log_sha256": "685d350f48b75844bbf76119c0ac8bb548e06bc3b5c1b8a0496e4f3d1e637916",
+  "browser_report_sha256": "cab14826cb067af9c818218db61a10b16f6f238173de98cb12a2037f6460837f",
+  "browser_remote_requests": 0,
+  "doccheck": {
+    "documents": 203,
+    "sources": 893,
+    "mismatches": 0
+  },
+  "online_ci": "skipped_by_user",
+  "tag": false,
+  "independent_engine_acceptance": false,
+  "final_followup": "Only local validation JSON and maintenance text; no data/model/source changes after this candidate"
+}
