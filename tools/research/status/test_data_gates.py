@@ -9,6 +9,26 @@ from data_gates import current_margin, effective_minimum, evaluate, item, assess
 
 
 class DataGatesTest(unittest.TestCase):
+    def test_v2_removes_only_minimum_and_keeps_margin_as_hard_requirement(self):
+        hard = dict(history_ohlc=item('pass', evidence_ids=['history'], reason='逐年有效观察'),
+                    current_margin=item('pass', ['SHFE.rb2701'], ['rates'], '指定日比例'))
+        self.assertEqual(evaluate(hard, 'backtest')['eligible_contracts'], ['SHFE.rb2701'])
+        # v1不能因新版去掉硬项而悄悄通过；两版本字段混用必须拒绝。
+        with self.assertRaisesRegex(ValueError, 'hard_item_set'):
+            evaluate(hard, 'backtest', version=1)
+        legacy = dict(hard, effective_min_open=item(reason='真实专项未知'))
+        self.assertEqual(evaluate(legacy, 'backtest', version=1)['status'], 'pending')
+        with self.assertRaisesRegex(ValueError, 'hard_item_set'):
+            evaluate(legacy, 'backtest', version=2)
+        for version in (0, 3, True, '2'):
+            with self.assertRaisesRegex(ValueError, 'data_gate_version'):
+                evaluate(hard, 'backtest', version=version)
+        hard['current_margin'] = item(reason='只有过期保证金')
+        self.assertEqual(evaluate(hard, 'backtest')['status'], 'pending')
+        self.assertIn('current_margin:', evaluate(hard, 'backtest')['blocking_reasons'][0])
+        hard['current_margin'] = item('pass', [], ['rates'], '未绑定合约')
+        self.assertEqual(evaluate(hard, 'backtest')['status'], 'pending')
+
     def test_post_2021_listing_uses_direct_listing_witness(self):
         facts=dict(current_trade_day=20261117,latest_completed_day=20261116,current_contracts=[],
                    settlement_scopes={},daily_update_exchanges=[])
@@ -34,7 +54,9 @@ class DataGatesTest(unittest.TestCase):
         self.assertEqual(result['backtest']['status'],'pass')
         self.assertEqual(result['daily_signal']['status'],'pass')
         contract['effective_min_open_lots']=None
-        self.assertEqual(assess(product,facts)['backtest']['status'],'pending')
+        self.assertEqual(assess(product,facts)['backtest']['status'],'pass')
+        self.assertEqual(assess(product,facts)['supplementary']['effective_min_open']['status'],'pending')
+        self.assertFalse(assess(product,facts)['simulation_assumptions']['is_actual_rule'])
         self.assertEqual(assess(product,facts)['daily_signal']['status'],'pass')
         contract['effective_min_open_lots']=4
         del product['datasets'][0]['valid_days_by_year']['2023']
@@ -55,7 +77,7 @@ class DataGatesTest(unittest.TestCase):
             self.assertNotEqual(hashlib.sha256(raw+b' ').hexdigest(), artifact['sha256'])
         product = manifest['products'][0]
         for function, gate in product['gates'].items():
-            self.assertEqual(gate, evaluate(gate['hard_items'], function))
+            self.assertEqual(gate, evaluate(gate['hard_items'], function,version=1))
             self.assertEqual(gate['status'], 'pending')
             self.assertFalse(gate['eligible_contracts'])
         row = manifest['current_contracts'][0]
@@ -95,11 +117,11 @@ class DataGatesTest(unittest.TestCase):
         hard = dict(history_ohlc=item('pass', ['SHFE.rb2101'], ['history'], '2021年至今序列'),
                     current_margin=item('pass', ['SHFE.rb2701'], ['rates'], '已核'),
                     effective_min_open=item('pass', ['SHFE.rb2701'], ['review'], '已核'))
-        self.assertEqual(evaluate(hard, 'backtest')['eligible_contracts'], ['SHFE.rb2701'])
+        self.assertEqual(evaluate(hard, 'backtest',version=1)['eligible_contracts'], ['SHFE.rb2701'])
         hard['effective_min_open'] = item('pass', ['SHFE.rb2702'], ['review'], '已核')
-        self.assertEqual(evaluate(hard, 'backtest')['status'], 'pending')
+        self.assertEqual(evaluate(hard, 'backtest',version=1)['status'], 'pending')
         hard['effective_min_open'] = item(reason='只有普通1手基线')
-        self.assertEqual(evaluate(hard, 'backtest')['status'], 'pending')
+        self.assertEqual(evaluate(hard, 'backtest',version=1)['status'], 'pending')
         hard['calendar'] = item()
         with self.assertRaisesRegex(ValueError, 'hard_item_set'):
             evaluate(hard, 'backtest')

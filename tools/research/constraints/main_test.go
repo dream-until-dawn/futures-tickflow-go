@@ -7,6 +7,30 @@ import (
 	"testing"
 )
 
+func TestNewOpeningReferencesRemainFiniteAndBlockedURLsStayBlocked(t *testing.T) {
+	base := target{ID: "quote", URL: "https://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ", Anchors: []string{"最小开仓"}}
+	if err := validate(requestPlan{Targets: []target{base}}); err != nil {
+		t.Fatal(err)
+	}
+	for _, address := range []string{
+		"https://www.9qihuo.com/qihuoshouxufeisingle?heyue=IF",
+		"https://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ&retry=1",
+		"https://www.9qihuo.com/qihuoshouxufeisingle?heyue=%43J",
+		"http://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ",
+		"https://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ#fragment",
+		"https://example.org/qihuoshouxufeisingle?heyue=CJ",
+	} {
+		candidate := base
+		candidate.URL = address
+		if validate(requestPlan{Targets: []target{candidate}}) == nil {
+			t.Fatalf("不应允许 %s", address)
+		}
+	}
+	if validate(requestPlan{Targets: []target{base}, Blocked: []string{base.URL}}) == nil {
+		t.Fatal("新来源也不能绕过已失败URL账本")
+	}
+}
+
 func TestOfficialPlanAndFailures(t *testing.T) {
 	base := target{ID: "rules", URL: "https://www.shfe.com.cn/a.html", Anchors: []string{"最小"}}
 	if e := validate(requestPlan{Targets: []target{base}}); e != nil {

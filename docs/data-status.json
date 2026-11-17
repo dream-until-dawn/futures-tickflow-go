@@ -1436,8 +1436,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -1476,18 +1477,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ad2612",
+            "SHFE.ad2701",
+            "SHFE.ad2702",
+            "SHFE.ad2703",
+            "SHFE.ad2704",
+            "SHFE.ad2705",
+            "SHFE.ad2706",
+            "SHFE.ad2707",
+            "SHFE.ad2708",
+            "SHFE.ad2709",
+            "SHFE.ad2710",
+            "SHFE.ad2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -1547,6 +1553,21 @@
             "SHFE.ad2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -3289,8 +3310,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -3333,18 +3355,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ag2612",
+            "SHFE.ag2701",
+            "SHFE.ag2702",
+            "SHFE.ag2703",
+            "SHFE.ag2704",
+            "SHFE.ag2705",
+            "SHFE.ag2706",
+            "SHFE.ag2707",
+            "SHFE.ag2708",
+            "SHFE.ag2709",
+            "SHFE.ag2710",
+            "SHFE.ag2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -3404,6 +3431,21 @@
             "SHFE.ag2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -5140,8 +5182,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -5184,18 +5227,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.al2612",
+            "SHFE.al2701",
+            "SHFE.al2702",
+            "SHFE.al2703",
+            "SHFE.al2704",
+            "SHFE.al2705",
+            "SHFE.al2706",
+            "SHFE.al2707",
+            "SHFE.al2708",
+            "SHFE.al2709",
+            "SHFE.al2710",
+            "SHFE.al2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -5255,6 +5303,21 @@
             "SHFE.al2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -6870,8 +6933,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -6912,18 +6976,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ao2612",
+            "SHFE.ao2701",
+            "SHFE.ao2702",
+            "SHFE.ao2703",
+            "SHFE.ao2704",
+            "SHFE.ao2705",
+            "SHFE.ao2706",
+            "SHFE.ao2707",
+            "SHFE.ao2708",
+            "SHFE.ao2709",
+            "SHFE.ao2710",
+            "SHFE.ao2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -6983,6 +7052,21 @@
             "SHFE.ao2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -8887,8 +8971,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -8927,18 +9012,19 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.au2612",
+            "SHFE.au2701",
+            "SHFE.au2702",
+            "SHFE.au2704",
+            "SHFE.au2706",
+            "SHFE.au2708",
+            "SHFE.au2710",
+            "SHFE.au2712"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -8986,6 +9072,21 @@
             "SHFE.au2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -10603,8 +10704,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -10645,18 +10747,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.br2612",
+            "SHFE.br2701",
+            "SHFE.br2702",
+            "SHFE.br2703",
+            "SHFE.br2704",
+            "SHFE.br2705",
+            "SHFE.br2706",
+            "SHFE.br2707",
+            "SHFE.br2708",
+            "SHFE.br2709",
+            "SHFE.br2710",
+            "SHFE.br2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -10716,6 +10823,21 @@
             "SHFE.br2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -12508,8 +12630,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -12556,18 +12679,27 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.bu2612",
+            "SHFE.bu2701",
+            "SHFE.bu2702",
+            "SHFE.bu2703",
+            "SHFE.bu2704",
+            "SHFE.bu2705",
+            "SHFE.bu2706",
+            "SHFE.bu2707",
+            "SHFE.bu2708",
+            "SHFE.bu2709",
+            "SHFE.bu2710",
+            "SHFE.bu2711",
+            "SHFE.bu2712",
+            "SHFE.bu2803",
+            "SHFE.bu2806",
+            "SHFE.bu2809"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -12639,6 +12771,21 @@
             "SHFE.bu2809"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -14375,8 +14522,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -14419,18 +14567,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.cu2612",
+            "SHFE.cu2701",
+            "SHFE.cu2702",
+            "SHFE.cu2703",
+            "SHFE.cu2704",
+            "SHFE.cu2705",
+            "SHFE.cu2706",
+            "SHFE.cu2707",
+            "SHFE.cu2708",
+            "SHFE.cu2709",
+            "SHFE.cu2710",
+            "SHFE.cu2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -14490,6 +14643,21 @@
             "SHFE.cu2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -16226,8 +16394,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -16270,18 +16439,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.fu2612",
+            "SHFE.fu2701",
+            "SHFE.fu2702",
+            "SHFE.fu2703",
+            "SHFE.fu2704",
+            "SHFE.fu2705",
+            "SHFE.fu2706",
+            "SHFE.fu2707",
+            "SHFE.fu2708",
+            "SHFE.fu2709",
+            "SHFE.fu2710",
+            "SHFE.fu2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -16344,6 +16518,21 @@
             "SHFE.fu2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -18080,8 +18269,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -18124,18 +18314,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.hc2612",
+            "SHFE.hc2701",
+            "SHFE.hc2702",
+            "SHFE.hc2703",
+            "SHFE.hc2704",
+            "SHFE.hc2705",
+            "SHFE.hc2706",
+            "SHFE.hc2707",
+            "SHFE.hc2708",
+            "SHFE.hc2709",
+            "SHFE.hc2710",
+            "SHFE.hc2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -18195,6 +18390,21 @@
             "SHFE.hc2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -19931,8 +20141,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -19975,18 +20186,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ni2612",
+            "SHFE.ni2701",
+            "SHFE.ni2702",
+            "SHFE.ni2703",
+            "SHFE.ni2704",
+            "SHFE.ni2705",
+            "SHFE.ni2706",
+            "SHFE.ni2707",
+            "SHFE.ni2708",
+            "SHFE.ni2709",
+            "SHFE.ni2710",
+            "SHFE.ni2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -20046,6 +20262,21 @@
             "SHFE.ni2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -21415,8 +21646,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -21455,18 +21687,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.op2612",
+            "SHFE.op2701",
+            "SHFE.op2702",
+            "SHFE.op2703",
+            "SHFE.op2704",
+            "SHFE.op2705",
+            "SHFE.op2706",
+            "SHFE.op2707",
+            "SHFE.op2708",
+            "SHFE.op2709",
+            "SHFE.op2710",
+            "SHFE.op2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -21526,6 +21763,21 @@
             "SHFE.op2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -23262,8 +23514,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -23306,18 +23559,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.pb2612",
+            "SHFE.pb2701",
+            "SHFE.pb2702",
+            "SHFE.pb2703",
+            "SHFE.pb2704",
+            "SHFE.pb2705",
+            "SHFE.pb2706",
+            "SHFE.pb2707",
+            "SHFE.pb2708",
+            "SHFE.pb2709",
+            "SHFE.pb2710",
+            "SHFE.pb2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -23377,6 +23635,21 @@
             "SHFE.pb2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -25850,6 +26123,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pass",
           "hard_items": {
@@ -25894,27 +26168,6 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pass",
-              "scope": [
-                "SHFE.rb2612",
-                "SHFE.rb2701",
-                "SHFE.rb2702",
-                "SHFE.rb2703",
-                "SHFE.rb2704",
-                "SHFE.rb2705",
-                "SHFE.rb2706",
-                "SHFE.rb2707",
-                "SHFE.rb2708",
-                "SHFE.rb2709",
-                "SHFE.rb2710",
-                "SHFE.rb2711"
-              ],
-              "evidence_ids": [
-                "rb-minimum-model-review"
-              ],
-              "reason": "指定日具体合约限价/市价的具名模型审核，含已审专项；实际客户适用性另核"
             }
           },
           "eligible_contracts": [
@@ -25991,6 +26244,36 @@
             "SHFE.rb2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pass",
+            "scope": [
+              "SHFE.rb2612",
+              "SHFE.rb2701",
+              "SHFE.rb2702",
+              "SHFE.rb2703",
+              "SHFE.rb2704",
+              "SHFE.rb2705",
+              "SHFE.rb2706",
+              "SHFE.rb2707",
+              "SHFE.rb2708",
+              "SHFE.rb2709",
+              "SHFE.rb2710",
+              "SHFE.rb2711"
+            ],
+            "evidence_ids": [
+              "rb-minimum-model-review"
+            ],
+            "reason": "指定日具体合约限价/市价的具名模型审核，含已审专项；实际客户适用性另核"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -27615,8 +27898,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -27657,18 +27941,21 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ru2701",
+            "SHFE.ru2703",
+            "SHFE.ru2704",
+            "SHFE.ru2705",
+            "SHFE.ru2706",
+            "SHFE.ru2707",
+            "SHFE.ru2708",
+            "SHFE.ru2709",
+            "SHFE.ru2710",
+            "SHFE.ru2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -27722,6 +28009,21 @@
             "SHFE.ru2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -29458,8 +29760,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -29502,18 +29805,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.sn2612",
+            "SHFE.sn2701",
+            "SHFE.sn2702",
+            "SHFE.sn2703",
+            "SHFE.sn2704",
+            "SHFE.sn2705",
+            "SHFE.sn2706",
+            "SHFE.sn2707",
+            "SHFE.sn2708",
+            "SHFE.sn2709",
+            "SHFE.sn2710",
+            "SHFE.sn2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -29573,6 +29881,21 @@
             "SHFE.sn2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -31309,8 +31632,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -31353,18 +31677,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.sp2612",
+            "SHFE.sp2701",
+            "SHFE.sp2702",
+            "SHFE.sp2703",
+            "SHFE.sp2704",
+            "SHFE.sp2705",
+            "SHFE.sp2706",
+            "SHFE.sp2707",
+            "SHFE.sp2708",
+            "SHFE.sp2709",
+            "SHFE.sp2710",
+            "SHFE.sp2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -31424,6 +31753,21 @@
             "SHFE.sp2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -33160,8 +33504,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -33204,18 +33549,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.ss2612",
+            "SHFE.ss2701",
+            "SHFE.ss2702",
+            "SHFE.ss2703",
+            "SHFE.ss2704",
+            "SHFE.ss2705",
+            "SHFE.ss2706",
+            "SHFE.ss2707",
+            "SHFE.ss2708",
+            "SHFE.ss2709",
+            "SHFE.ss2710",
+            "SHFE.ss2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -33275,6 +33625,21 @@
             "SHFE.ss2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -35004,8 +35369,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -35048,18 +35414,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.wr2612",
+            "SHFE.wr2701",
+            "SHFE.wr2702",
+            "SHFE.wr2703",
+            "SHFE.wr2704",
+            "SHFE.wr2705",
+            "SHFE.wr2706",
+            "SHFE.wr2707",
+            "SHFE.wr2708",
+            "SHFE.wr2709",
+            "SHFE.wr2710",
+            "SHFE.wr2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -35119,6 +35490,21 @@
             "SHFE.wr2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -36855,8 +37241,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -36899,18 +37286,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "SHFE.zn2612",
+            "SHFE.zn2701",
+            "SHFE.zn2702",
+            "SHFE.zn2703",
+            "SHFE.zn2704",
+            "SHFE.zn2705",
+            "SHFE.zn2706",
+            "SHFE.zn2707",
+            "SHFE.zn2708",
+            "SHFE.zn2709",
+            "SHFE.zn2710",
+            "SHFE.zn2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -36970,6 +37362,21 @@
             "SHFE.zn2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -38690,8 +39097,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -38734,18 +39142,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "INE.bc2612",
+            "INE.bc2701",
+            "INE.bc2702",
+            "INE.bc2703",
+            "INE.bc2704",
+            "INE.bc2705",
+            "INE.bc2706",
+            "INE.bc2707",
+            "INE.bc2708",
+            "INE.bc2709",
+            "INE.bc2710",
+            "INE.bc2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -38805,6 +39218,21 @@
             "INE.bc2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -40349,8 +40777,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -40386,18 +40815,18 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "INE.ec2611",
+            "INE.ec2612",
+            "INE.ec2701",
+            "INE.ec2703",
+            "INE.ec2704",
+            "INE.ec2706",
+            "INE.ec2709"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -40445,6 +40874,21 @@
             "INE.ec2709"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -42390,8 +42834,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -42434,18 +42879,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "INE.lu2612",
+            "INE.lu2701",
+            "INE.lu2702",
+            "INE.lu2703",
+            "INE.lu2704",
+            "INE.lu2705",
+            "INE.lu2706",
+            "INE.lu2707",
+            "INE.lu2708",
+            "INE.lu2709",
+            "INE.lu2710",
+            "INE.lu2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -42508,6 +42958,21 @@
             "INE.lu2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -44242,8 +44707,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -44286,18 +44752,23 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "INE.nr2612",
+            "INE.nr2701",
+            "INE.nr2702",
+            "INE.nr2703",
+            "INE.nr2704",
+            "INE.nr2705",
+            "INE.nr2706",
+            "INE.nr2707",
+            "INE.nr2708",
+            "INE.nr2709",
+            "INE.nr2710",
+            "INE.nr2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -44357,6 +44828,21 @@
             "INE.nr2710"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -46205,8 +46691,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -46257,18 +46744,31 @@
                 "ContractDailyTradeArgument-20261117.json"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "INE.sc2612",
+            "INE.sc2701",
+            "INE.sc2702",
+            "INE.sc2703",
+            "INE.sc2704",
+            "INE.sc2705",
+            "INE.sc2706",
+            "INE.sc2707",
+            "INE.sc2708",
+            "INE.sc2709",
+            "INE.sc2710",
+            "INE.sc2711",
+            "INE.sc2712",
+            "INE.sc2803",
+            "INE.sc2806",
+            "INE.sc2809",
+            "INE.sc2812",
+            "INE.sc2903",
+            "INE.sc2906",
+            "INE.sc2909"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -46355,6 +46855,21 @@
             "INE.sc2909"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -47664,8 +48179,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -47703,18 +48219,18 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.AP2612",
+            "CZCE.AP2701",
+            "CZCE.AP2703",
+            "CZCE.AP2704",
+            "CZCE.AP2705",
+            "CZCE.AP2710",
+            "CZCE.AP2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -47762,6 +48278,21 @@
             "CZCE.AP2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -49023,8 +49554,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -49061,18 +49593,17 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.CF2701",
+            "CZCE.CF2703",
+            "CZCE.CF2705",
+            "CZCE.CF2707",
+            "CZCE.CF2709",
+            "CZCE.CF2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -49117,6 +49648,21 @@
             "CZCE.CF2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -50386,8 +50932,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -50424,18 +50971,17 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.CJ2612",
+            "CZCE.CJ2701",
+            "CZCE.CJ2703",
+            "CZCE.CJ2705",
+            "CZCE.CJ2707",
+            "CZCE.CJ2709"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -50480,6 +51026,21 @@
             "CZCE.CJ2709"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -52077,8 +52638,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -52121,18 +52683,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.CY2612",
+            "CZCE.CY2701",
+            "CZCE.CY2702",
+            "CZCE.CY2703",
+            "CZCE.CY2704",
+            "CZCE.CY2705",
+            "CZCE.CY2706",
+            "CZCE.CY2707",
+            "CZCE.CY2708",
+            "CZCE.CY2709",
+            "CZCE.CY2710",
+            "CZCE.CY2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -52195,6 +52762,21 @@
             "CZCE.CY2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -53793,8 +54375,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -53837,18 +54420,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.FG2612",
+            "CZCE.FG2701",
+            "CZCE.FG2702",
+            "CZCE.FG2703",
+            "CZCE.FG2704",
+            "CZCE.FG2705",
+            "CZCE.FG2706",
+            "CZCE.FG2707",
+            "CZCE.FG2708",
+            "CZCE.FG2709",
+            "CZCE.FG2710",
+            "CZCE.FG2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -53911,6 +54499,21 @@
             "CZCE.FG2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -55036,6 +55639,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -55070,18 +55674,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -55127,6 +55724,21 @@
             "CZCE.JR2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -55820,6 +56432,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -55845,19 +56458,12 @@
               "scope": [],
               "evidence_ids": [],
               "reason": "实际当前有效比例待补证；参考值或旧日值不冒充"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
             "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "current_margin: 实际当前有效比例待补证；参考值或旧日值不冒充",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "current_margin: 实际当前有效比例待补证；参考值或旧日值不冒充"
           ]
         },
         "daily_signal": {
@@ -55881,6 +56487,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -57485,8 +58106,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -57529,18 +58151,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.MA2612",
+            "CZCE.MA2701",
+            "CZCE.MA2702",
+            "CZCE.MA2703",
+            "CZCE.MA2704",
+            "CZCE.MA2705",
+            "CZCE.MA2706",
+            "CZCE.MA2707",
+            "CZCE.MA2708",
+            "CZCE.MA2709",
+            "CZCE.MA2710",
+            "CZCE.MA2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -57603,6 +58230,21 @@
             "CZCE.MA2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -58864,8 +59506,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -58902,18 +59545,17 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.OI2701",
+            "CZCE.OI2703",
+            "CZCE.OI2705",
+            "CZCE.OI2707",
+            "CZCE.OI2709",
+            "CZCE.OI2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -58958,6 +59600,21 @@
             "CZCE.OI2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -60528,8 +61185,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -60572,18 +61230,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.PF2612",
+            "CZCE.PF2701",
+            "CZCE.PF2702",
+            "CZCE.PF2703",
+            "CZCE.PF2704",
+            "CZCE.PF2705",
+            "CZCE.PF2706",
+            "CZCE.PF2707",
+            "CZCE.PF2708",
+            "CZCE.PF2709",
+            "CZCE.PF2710",
+            "CZCE.PF2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -60646,6 +61309,21 @@
             "CZCE.PF2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -61811,8 +62489,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -61850,18 +62529,18 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.PK2612",
+            "CZCE.PK2701",
+            "CZCE.PK2703",
+            "CZCE.PK2704",
+            "CZCE.PK2705",
+            "CZCE.PK2710",
+            "CZCE.PK2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -61909,6 +62588,21 @@
             "CZCE.PK2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -62815,6 +63509,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -62855,18 +63550,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -62930,6 +63618,21 @@
             "CZCE.PL2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -64053,6 +64756,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -64087,18 +64791,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -64144,6 +64841,21 @@
             "CZCE.PM2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -65282,6 +65994,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -65323,18 +66036,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -65398,6 +66104,21 @@
             "CZCE.PR2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -66615,6 +67336,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -66657,18 +67379,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -66732,6 +67447,21 @@
             "CZCE.PX2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -67854,6 +68584,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -67888,18 +68619,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -67945,6 +68669,21 @@
             "CZCE.RI2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -69268,8 +70007,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -69307,18 +70047,18 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.RM2701",
+            "CZCE.RM2703",
+            "CZCE.RM2705",
+            "CZCE.RM2707",
+            "CZCE.RM2708",
+            "CZCE.RM2709",
+            "CZCE.RM2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -69366,6 +70106,21 @@
             "CZCE.RM2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -70543,8 +71298,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -70581,18 +71337,17 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.RS2701",
+            "CZCE.RS2703",
+            "CZCE.RS2706",
+            "CZCE.RS2707",
+            "CZCE.RS2709",
+            "CZCE.RS2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -70637,6 +71392,21 @@
             "CZCE.RS2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -72235,8 +73005,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -72279,18 +73050,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.SA2612",
+            "CZCE.SA2701",
+            "CZCE.SA2702",
+            "CZCE.SA2703",
+            "CZCE.SA2704",
+            "CZCE.SA2705",
+            "CZCE.SA2706",
+            "CZCE.SA2707",
+            "CZCE.SA2708",
+            "CZCE.SA2709",
+            "CZCE.SA2710",
+            "CZCE.SA2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -72353,6 +73129,21 @@
             "CZCE.SA2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -73951,8 +74742,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -73995,18 +74787,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.SF2612",
+            "CZCE.SF2701",
+            "CZCE.SF2702",
+            "CZCE.SF2703",
+            "CZCE.SF2704",
+            "CZCE.SF2705",
+            "CZCE.SF2706",
+            "CZCE.SF2707",
+            "CZCE.SF2708",
+            "CZCE.SF2709",
+            "CZCE.SF2710",
+            "CZCE.SF2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -74069,6 +74866,21 @@
             "CZCE.SF2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -75280,6 +76092,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -75322,18 +76135,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -75397,6 +76203,21 @@
             "CZCE.SH2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -76995,8 +77816,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -77039,18 +77861,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.SM2612",
+            "CZCE.SM2701",
+            "CZCE.SM2702",
+            "CZCE.SM2703",
+            "CZCE.SM2704",
+            "CZCE.SM2705",
+            "CZCE.SM2706",
+            "CZCE.SM2707",
+            "CZCE.SM2708",
+            "CZCE.SM2709",
+            "CZCE.SM2710",
+            "CZCE.SM2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -77113,6 +77940,21 @@
             "CZCE.SM2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -77822,6 +78664,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -77853,18 +78696,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -77904,6 +78740,21 @@
             "CZCE.SO2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -79163,8 +80014,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -79201,18 +80053,17 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.SR2701",
+            "CZCE.SR2703",
+            "CZCE.SR2705",
+            "CZCE.SR2707",
+            "CZCE.SR2709",
+            "CZCE.SR2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -79257,6 +80108,21 @@
             "CZCE.SR2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -80991,8 +81857,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -81035,18 +81902,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.TA2612",
+            "CZCE.TA2701",
+            "CZCE.TA2702",
+            "CZCE.TA2703",
+            "CZCE.TA2704",
+            "CZCE.TA2705",
+            "CZCE.TA2706",
+            "CZCE.TA2707",
+            "CZCE.TA2708",
+            "CZCE.TA2709",
+            "CZCE.TA2710",
+            "CZCE.TA2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -81109,6 +81981,21 @@
             "CZCE.TA2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -82707,8 +83594,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -82751,18 +83639,23 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CZCE.UR2612",
+            "CZCE.UR2701",
+            "CZCE.UR2702",
+            "CZCE.UR2703",
+            "CZCE.UR2704",
+            "CZCE.UR2705",
+            "CZCE.UR2706",
+            "CZCE.UR2707",
+            "CZCE.UR2708",
+            "CZCE.UR2709",
+            "CZCE.UR2710",
+            "CZCE.UR2711"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pass",
@@ -82825,6 +83718,21 @@
             "CZCE.UR2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -84074,6 +84982,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -84110,18 +85019,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -84167,6 +85069,21 @@
             "CZCE.WH2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -85629,6 +86546,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -85669,18 +86587,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -85744,6 +86655,21 @@
             "CZCE.ZC2711"
           ],
           "blocking_reasons": []
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": {
@@ -86024,6 +86950,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -86057,18 +86984,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -86092,6 +87012,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -86443,6 +87378,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -86483,18 +87419,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -86518,6 +87447,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -86756,6 +87700,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -86789,18 +87734,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -86824,6 +87762,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -87121,6 +88074,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -87160,18 +88114,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -87195,6 +88142,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -87705,6 +88667,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -87740,18 +88703,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -87775,6 +88731,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -88053,6 +89024,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -88086,18 +89058,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -88121,6 +89086,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -88479,6 +89459,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -88519,18 +89500,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -88554,6 +89528,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -88912,6 +89901,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -88952,18 +89942,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -88987,6 +89970,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -89277,6 +90275,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -89316,18 +90315,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -89351,6 +90343,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -89702,6 +90709,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -89742,18 +90750,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -89777,6 +90778,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -90092,6 +91108,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -90132,18 +91149,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -90167,6 +91177,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -90537,6 +91562,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -90577,18 +91603,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -90612,6 +91631,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -90939,6 +91973,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -90979,18 +92014,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -91014,6 +92042,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -91353,6 +92396,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -91393,18 +92437,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -91428,6 +92465,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -91713,6 +92765,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -91746,18 +92799,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -91781,6 +92827,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -92085,6 +93146,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -92119,18 +93181,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -92154,6 +93209,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -92689,6 +93759,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -92727,18 +93798,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -92762,6 +93826,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -93113,6 +94192,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -93153,18 +94233,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -93188,6 +94261,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -93540,6 +94628,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -93580,18 +94669,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -93615,6 +94697,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -93942,6 +95039,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -93982,18 +95080,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -94017,6 +95108,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -94368,6 +95474,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -94408,18 +95515,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -94443,6 +95543,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -94794,6 +95909,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -94834,18 +95950,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -94869,6 +95978,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -95172,6 +96296,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -95208,18 +96333,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -95243,6 +96361,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -95606,6 +96739,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -95645,18 +96779,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -95680,6 +96807,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -95971,6 +97113,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -96005,18 +97148,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -96040,6 +97176,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -96367,6 +97518,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -96406,18 +97558,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -96441,6 +97586,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -96732,6 +97892,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -96766,18 +97927,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -96801,6 +97955,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -97397,6 +98566,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -97438,18 +98608,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -97473,6 +98636,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -98063,8 +99241,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -98099,18 +99278,15 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.IC2611",
+            "CFFEX.IC2612",
+            "CFFEX.IC2703",
+            "CFFEX.IC2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -98133,6 +99309,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -98723,8 +99914,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -98759,18 +99951,15 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.IF2611",
+            "CFFEX.IF2612",
+            "CFFEX.IF2703",
+            "CFFEX.IF2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -98793,6 +99982,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -99383,8 +100587,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -99419,18 +100624,15 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.IH2611",
+            "CFFEX.IH2612",
+            "CFFEX.IH2703",
+            "CFFEX.IH2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -99453,6 +100655,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -100041,6 +101258,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -100076,18 +101294,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -100111,6 +101322,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -100831,8 +102057,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -100866,18 +102093,14 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.T2612",
+            "CFFEX.T2703",
+            "CFFEX.T2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -100900,6 +102123,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -101490,8 +102728,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -101525,18 +102764,14 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.TF2612",
+            "CFFEX.TF2703",
+            "CFFEX.TF2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -101559,6 +102794,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -102145,6 +103395,7 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
           "status": "pending",
           "hard_items": {
@@ -102178,18 +103429,11 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
           "eligible_contracts": [],
           "blocking_reasons": [
-            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定",
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
+            "history_ohlc: 尚未核得2021年前后起的逐年有效OHLC，或上市日起点直接依据仍待绑定"
           ]
         },
         "daily_signal": {
@@ -102213,6 +103457,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null
@@ -102803,8 +104062,9 @@
         ]
       },
       "user_data_gates": {
+        "schema": "user-data-gates-v2",
         "backtest": {
-          "status": "pending",
+          "status": "pass",
           "hard_items": {
             "history_ohlc": {
               "status": "pass",
@@ -102838,18 +104098,14 @@
                 "broker-margin-20261117"
               ],
               "reason": "已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开"
-            },
-            "effective_min_open": {
-              "status": "pending",
-              "scope": [],
-              "evidence_ids": [],
-              "reason": "实际最低开仓及专项适用链待补证，不默认普通1手"
             }
           },
-          "eligible_contracts": [],
-          "blocking_reasons": [
-            "effective_min_open: 实际最低开仓及专项适用链待补证，不默认普通1手"
-          ]
+          "eligible_contracts": [
+            "CFFEX.TS2612",
+            "CFFEX.TS2703",
+            "CFFEX.TS2706"
+          ],
+          "blocking_reasons": []
         },
         "daily_signal": {
           "status": "pending",
@@ -102872,6 +104128,21 @@
             "settlement: 目标已收盘日有效结算待取得",
             "daily_update: 本品种逐日结算更新能力待核"
           ]
+        },
+        "supplementary": {
+          "effective_min_open": {
+            "status": "pending",
+            "scope": [],
+            "evidence_ids": [],
+            "reason": "实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手"
+          }
+        },
+        "simulation_assumptions": {
+          "minimum_open_lots": null,
+          "configured_by": "consumer-task",
+          "is_actual_rule": false,
+          "applied_to_engine": false,
+          "description": "较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则"
         }
       },
       "extension_availability": null

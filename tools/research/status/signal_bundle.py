@@ -94,7 +94,7 @@ def build(repo, model, increment, reference, reference_review, out):
         back={k:item(reason='本首批包只交付目标日日线；长期历史和当前约束未随包交付')
               for k in ('history_ohlc','current_margin','effective_min_open')}
         back['history_ohlc']['coverage']=dict(first=None,last=None,listing_day=None,artifact_ids=[],valid_days_by_year={})
-        products.append(dict(key=p['key'],name=p['name'],gates=dict(backtest=evaluate(back,'backtest'),daily_signal=evaluate(signal,'daily_signal')),
+        products.append(dict(key=p['key'],name=p['name'],gates=dict(backtest=evaluate(back,'backtest',version=1),daily_signal=evaluate(signal,'daily_signal',version=1)),
                              bonus=dict(calendar='not_in_this_bundle',history_rules='not_in_this_bundle',lifecycle='current_snapshot_only',
                                         pit='not_certified',reconciliation='original_identity_and_CZCE_year_binding' if scope else 'not_assessed',runtime_observations='single_snapshot' if scope else 'not_assessed')))
     manifest=dict(schema='user-data-gates-v1',synthetic=False,policy=dict(baseline_year=2021,latest_completed_day=20261116,

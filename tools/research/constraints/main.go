@@ -32,6 +32,20 @@ type requestPlan struct {
 // brokerMarginURL 是独立发布者的当日公司保证金表；不冒充交易所原始数据。
 const brokerMarginURL = "https://www.minfutures.com/main/a/20261116/86319.shtml"
 
+func newOpeningReference(address string) bool {
+	u, err := url.Parse(address)
+	if err == nil && u.Host == "www.9qihuo.com" && u.Path == "/qihuoshouxufeisingle" {
+		code := strings.TrimPrefix(u.RawQuery, "heyue=")
+		codes := " ad ag al ao au br bu cu fu hc ni op pb rb ru sn sp ss wr zn bc ec lu nr sc AP CF CJ CY FG JR LR MA OI PF PK PL PM PR PX RI RM RS SA SF SH SM SO SR TA UR WH ZC a b bb bz c cs eb eg fb i j jd jm l lg lh m p pg pp rr v y lc pd ps pt si "
+		return u.RawQuery == "heyue="+code && code != "" && strings.Contains(codes, " "+code+" ")
+	}
+	// 新一轮逐品种发现的具名发布者资源；不扩成任意域名或旧失败入口的替代重试。
+	return address == "https://www.founderfu.com/fzzqqh_2019/service_varieties.html" ||
+		address == "https://www.ciccwmf.cn/gsgg/86056.jhtml" ||
+		address == "https://www.guosenqh.com.cn/article/125210/index.html" ||
+		address == "https://www.9qihuo.com/qihuoshouxufeisingle?heyue=CJ"
+}
+
 func validate(p requestPlan) error {
 	if len(p.Targets) == 0 || len(p.Targets) > 40 {
 		return fmt.Errorf("请求数不在1至40范围")
@@ -43,7 +57,7 @@ func validate(p requestPlan) error {
 	}
 	for _, t := range p.Targets {
 		u, e := url.Parse(t.URL)
-		if e != nil || u.Scheme != "https" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Host != "www.shfe.com.cn" && u.Host != "www.czce.com.cn" && t.URL != brokerMarginURL) {
+		if e != nil || u.Scheme != "https" || u.User != nil || (u.RawQuery != "" && !newOpeningReference(t.URL)) || u.Fragment != "" || (u.Host != "www.shfe.com.cn" && u.Host != "www.czce.com.cn" && t.URL != brokerMarginURL && !newOpeningReference(t.URL)) {
 			return fmt.Errorf("非允许官方HTTPS资源")
 		}
 		if t.ID == "" || filepath.Base(t.ID) != t.ID || strings.ContainsAny(t.ID, "./\\:") || len(t.Anchors) == 0 {

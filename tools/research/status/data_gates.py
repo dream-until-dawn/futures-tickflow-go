@@ -6,9 +6,10 @@ from decimal import Decimal, InvalidOperation
 
 STATES = {'pass', 'pending', 'not_met'}
 REQUIRED = {
-    'backtest': ('history_ohlc', 'current_margin', 'effective_min_open'),
+    'backtest': ('history_ohlc', 'current_margin'),
     'daily_signal': ('settlement', 'daily_update'),
 }
+REQUIRED_V1 = dict(REQUIRED, backtest=('history_ohlc', 'current_margin', 'effective_min_open'))
 
 
 def item(status='pending', scope=(), evidence_ids=(), reason='尚未取得该硬项的充分依据'):
@@ -41,9 +42,11 @@ def current_margin(row, trade_day):
         return False
 
 
-def evaluate(hard_items, function):
+def evaluate(hard_items, function, version=2):
     """每项先独立判断，再取适用合约交集，避免不同合约拼成虚假的通过。"""
-    names = REQUIRED[function]
+    if type(version) is not int or version not in (1, 2):
+        raise ValueError('data_gate_version')
+    names = (REQUIRED_V1 if version == 1 else REQUIRED)[function]
     if set(hard_items) != set(names):
         raise ValueError('data_gate_hard_item_set')
     if any(v.get('status') not in STATES for v in hard_items.values()):
@@ -91,10 +94,10 @@ def assess(product, facts):
     back = dict(history_ohlc=history,
                 current_margin=item('pass' if rates else 'pending', rates,
                     rate_evidence,
-                    '已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开' if rates else '实际当前有效比例待补证；参考值或旧日值不冒充'),
-                effective_min_open=item('pass' if minimum else 'pending', minimum,
+                    '已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开' if rates else '实际当前有效比例待补证；参考值或旧日值不冒充'))
+    minimum_reference = item('pass' if minimum else 'pending', minimum,
                     minimum_evidence,
-                    '指定日具体合约限价/市价的具名模型审核，含已审专项；实际客户适用性另核' if minimum else '实际最低开仓及专项适用链待补证，不默认普通1手'))
+                    '指定日具体合约限价/市价的具名模型审核，含已审专项；实际客户适用性另核' if minimum else '实际最低开仓待补证，可显式设较大模拟值；不冒充实际1手')
     settlement = sorted(facts['settlement_scopes'].get(key, []))
     can_update = key.split('.')[0] in facts['daily_update_exchanges'] and bool(settlement)
     signal = dict(settlement=item('pass' if settlement else 'pending', settlement,
@@ -103,7 +106,10 @@ def assess(product, facts):
                   daily_update=item('pass' if can_update else 'pending', settlement if can_update else [],
                                     ['archive-batch-daily'] if can_update else [],
                                     '既有按日HTTPS入口及原件校验已实取；非全市场自动部署承诺' if can_update else '本品种逐日结算更新能力待核'))
-    return dict(backtest=evaluate(back, 'backtest'), daily_signal=evaluate(signal, 'daily_signal'))
+    return dict(schema='user-data-gates-v2', backtest=evaluate(back, 'backtest'), daily_signal=evaluate(signal, 'daily_signal'),
+                supplementary=dict(effective_min_open=minimum_reference),
+                simulation_assumptions=dict(minimum_open_lots=None, configured_by='consumer-task',is_actual_rule=False,
+                    applied_to_engine=False,description='较大模拟手数由任务显式配置；未知真实最低开仓仍为空，不保证覆盖全部真实专项，不自动改变引擎或账户规则'))
 
 
 if __name__ == "__main__":

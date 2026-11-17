@@ -25,7 +25,7 @@
 <label>排序<select id="sort"><option value="default">按交易所与代码</option><option value="rows">主目录行数最多</option><option value="differences">主目录待核字段最多</option><option value="unrequested">本路线未请求最多</option></select></label>
 <button id="reset" class="secondary" type="button">清除筛选</button>
 </div></div>
-<p>回测硬项：2021年前后以来OHLC（后上市的取上市以来）＋当前保证金率＋实际最低开仓（含已生效专项）。逐日信号硬项：有效结算价＋按交易日抓取更新。其他资料为加分项；点击品种查看逐项依据和具体合约范围。</p>
+<p>回测硬项：2021年前后以来OHLC（后上市的取上市以来）＋当前保证金率。逐日信号硬项：有效结算价＋按交易日抓取更新。实际最低开仓为补充信息，未知可采用显式模拟手数（不是实际规则）。其他资料为加分项；点击品种查看逐项依据和具体合约范围。</p>
 <div class="table-wrap"><table><thead><tr><th>交易所</th><th>品种</th><th>OHLC（日线）</th><th>成交量</th><th>持仓量</th><th>结算价</th><th>成交额</th><th>历史交易日历</th><th>分钟/现场</th><th>目录/生命周期</th><th>保证金/手续费/涨跌停</th><th>回测数据门槛</th><th>逐日信号数据门槛</th></tr></thead><tbody id="products"></tbody></table></div>
 <p id="empty" hidden>没有匹配的品种。请调整搜索或筛选条件。</p>
 </section>

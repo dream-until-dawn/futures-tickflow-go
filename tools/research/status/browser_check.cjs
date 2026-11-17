@@ -57,6 +57,8 @@ async function main() {
     await page.locator('.product-title').click();
     assert.equal(await page.locator('#detail').isVisible(), true);
     assert.match(await page.locator('#detail-body').innerText(), /用户指定的两道数据门槛/);
+    assert.match(await page.locator('#detail-body').innerText(), /实际最低开仓（补充项，不阻断回测）/);
+    assert.match(await page.locator('#detail-body').innerText(), /模拟手数：由回测任务显式设置/);
     assert.match(await page.locator('#detail-body').innerText(), /SHFE.rb2711/);
     assert.match(await page.locator('#detail-body').innerText(), /逐年观察日期/);
     assert.match(await page.locator('#detail-body').innerText(), /专项|具名模型审核/);

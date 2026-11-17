@@ -107,7 +107,7 @@ def build(repo,config,signal_root,review_path,review_root,out):
               current_margin=item('pass',scope,['ContractDailyTradeArgument-20261117.json'],'仅20261117当前交易所投机比例情景'),
               effective_min_open=item('pass',scope,['rb-minimum-model-review'],'仅指定日指定RB合约模型审核，含专项复核；真实客户适用性另核'))
     hard['history_ohlc']['coverage']=dict(first=min(dates),last=max(dates),listing_day=None,artifact_ids=['rb-history'],valid_days_by_year=years)
-    rb['gates']['backtest']=evaluate(hard,'backtest')
+    rb['gates']['backtest']=evaluate(hard,'backtest',version=1)
     seed['current_contracts']=current
     seed['artifacts']=[a for a,_ in payloads.values()]
     seed['limitations']=[s for s in seed['limitations'] if not s.startswith('本包只支持')]

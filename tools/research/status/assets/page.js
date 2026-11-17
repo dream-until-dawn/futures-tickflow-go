@@ -110,7 +110,7 @@ function details(p) {
     const current=(status.user_data_gate_facts?.current_contracts||[]).filter(r=>r.product_key===p.key);
     if(current.length||older.length) {
       const section=detailSection('当前业务参数与明确开仓字段补证',[
-        '当前保证金对应交易日 '+status.user_data_gate_facts.current_trade_day+'，交易所原表与公司公开标准情景分开，不是本账户实收；当前最低开仓仍以已审核硬项为准。',
+        '当前保证金对应交易日 '+status.user_data_gate_facts.current_trade_day+'，交易所原表与公司公开标准情景分开，不是本账户实收；实际最低开仓为补充信息，以已审核依据为准，不阻断v2回测。',
         '本轮另核226项索引、86份公告正文及现行规则，保留104份新原件。通用1手不直接填入实际最低开仓；专项证据不足保持待补证。',
         '下方历史直接字段仅为 '+dated.observation_day+' 的供应商原始快照，原件接收 '+timeText(dated.received_at)+'；发布/生效时间未证，不冒充当前参数。普通最小报单与最小开仓分别显示。'
       ]);
@@ -131,6 +131,8 @@ function details(p) {
       '回测：'+gateLabel(g.backtest.status)+'；当前适用合约 '+(g.backtest.eligible_contracts.join('、')||'尚无完整交集')+'。',
       ...Object.entries(g.backtest.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),
       '历史有效OHLC逐年观察日期（各来源最大值，不相加）：'+Object.entries(g.backtest.hard_items.history_ohlc.coverage.valid_days_by_year).map(([year,count])=>year+'年'+count+'日').join('、')+'；缺日和版本待核仍保留。',
+      '实际最低开仓（补充项，不阻断回测）：'+gateLabel(g.supplementary.effective_min_open.status)+'。'+g.supplementary.effective_min_open.reason,
+      '模拟手数：由回测任务显式设置较大值；实际未知仍为空。不是交易所实际要求，也未自动改动引擎或账户参数。',
       '逐日信号：'+gateLabel(g.daily_signal.status)+'；目标日 '+status.user_data_gate_facts.latest_completed_day+'，'+g.daily_signal.eligible_contracts.length+'个合约。',
       ...Object.entries(g.daily_signal.hard_items).map(([name,v])=>gateItemLabel(name)+'：'+gateLabel(v.status)+'。'+v.reason),
       '日历、历史制度、PIT、生命周期、对账和运行成熟度为加分项；旧严格金融包不是这两道门槛的附加条件。当前参数回放历史属于情景，不代表历史实际制度。'
