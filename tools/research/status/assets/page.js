@@ -96,6 +96,34 @@ function coverageDetails(p) {
 }
 function details(p) {
   $('detail-title').textContent=p.name+' · '+p.key;$('detail-body').replaceChildren();
+  const constraintEvidence=status.constraint_supplement;
+  const broker=p.broker_margin_reference;
+  if(broker)detailSection('五矿期货17日公开保证金标准（参考情景）',[
+    '覆盖日期：20261117 → 20261117；该公司公开投机标准 '+broker.company_spec_ratio+'、套保标准 '+broker.company_hedge_ratio+'（比例）。不是交易所原件或本账户实收，不替换已有交易所多空参数。',
+    '特殊月份优先：'+(broker.special.map(s=>s.symbols+' 投机 '+s.company_spec_ratio+'、套保 '+s.company_hedge_ratio).join('；')||'表内未单列特殊月份')+'。不由保证金推导最低开仓。',
+    '完整性：已解析来源中的品种标准和逐月份专项，非挂牌全集；最后取得 '+timeText(status.broker_margin_readback.received_at)+'；源SHA256 '+status.broker_margin_readback.source_sha256
+  ]);
+  if(constraintEvidence) {
+    const dated=constraintEvidence.historical_explicit_minimum;
+    const older=dated.products[p.key]||[];
+    const current=(status.user_data_gate_facts?.current_contracts||[]).filter(r=>r.product_key===p.key);
+    if(current.length||older.length) {
+      const section=detailSection('当前业务参数与明确开仓字段补证',[
+        '当前保证金对应交易日 '+status.user_data_gate_facts.current_trade_day+'，交易所原表与公司公开标准情景分开，不是本账户实收；当前最低开仓仍以已审核硬项为准。',
+        '本轮另核226项索引、86份公告正文及现行规则，保留104份新原件。通用1手不直接填入实际最低开仓；专项证据不足保持待补证。',
+        '下方历史直接字段仅为 '+dated.observation_day+' 的供应商原始快照，原件接收 '+timeText(dated.received_at)+'；发布/生效时间未证，不冒充当前参数。普通最小报单与最小开仓分别显示。'
+      ]);
+      if(status.constraint_refresh)append(section,'p','11月17日单次刷新结果：未取得完整响应；完整正文 '+(status.constraint_refresh.body_complete?'是':'否')+'，收到 '+status.constraint_refresh.bytes+' 字节；未从残缺响应或旧日快照补造当前最低开仓。');
+      if(current.length) {
+        const list=append(section,'details',undefined,'contract-list parameter-list');append(list,'summary','查看当前 '+current.length+' 个具体合约的保证金和已审核最低开仓');
+        for(const r of current)append(list,'p',r.symbol+'：投机多/空 '+r.margin.long+' / '+r.margin.short+'（比例；'+(r.margin.basis==='company'?'五矿公司统一标准情景':'交易所原表')+'）；实际最低开仓 '+(r.effective_min_open_lots===null?'待补证':r.effective_min_open_lots+'手')+'；依据 '+(r.minimum_evidence_ids.join('、')||'未知'));
+      }
+      if(older.length) {
+        const list=append(section,'details',undefined,'contract-list parameter-list historical-parameter-list');append(list,'summary','查看 '+dated.observation_day+' 明确字段 '+older.length+' 个合约（历史观察，未升级当前门槛）');
+        for(const r of older)append(list,'p',r.symbol+'（源键 '+r.source_native+'）：最小限价开仓 '+r.limit_min_open+'手；最小市价开仓 '+(r.market_min_open>0?r.market_min_open+'手':'未知/不可用')+'；普通最小限价报单 '+(r.ordinary_limit_min>0?r.ordinary_limit_min+'手':'未知/不可用')+'。');
+      }
+    }
+  }
   if(p.user_data_gates) {
     const g=p.user_data_gates;
     detailSection('用户指定的两道数据门槛',[

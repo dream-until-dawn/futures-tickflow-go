@@ -1,0 +1,2580 @@
+{
+  "schema": "broker-margin-readback-v1",
+  "trade_day": 20261117,
+  "publisher": "五矿期货",
+  "source_url": "https://www.minfutures.com/main/a/20261116/86319.shtml",
+  "source_sha256": "03002678752be8625520115ac527399d6bc02ebb68e21bef6072ca9ea9fbbe58",
+  "receipt_sha256": "394fe98ee8e2669c16cf7ecc9706bf9e4b6347933e44a10432ff18ccc1575a5b",
+  "received_at": "2026-11-17T06:19:35.0841104Z",
+  "policies": {
+    "SHFE.cu": {
+      "product": "SHFE.cu",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "cu2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 3
+        }
+      ],
+      "source_rows": [
+        3
+      ]
+    },
+    "SHFE.al": {
+      "product": "SHFE.al",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "al2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 4
+        }
+      ],
+      "source_rows": [
+        4
+      ]
+    },
+    "SHFE.ao": {
+      "product": "SHFE.ao",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "ao2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 5
+        }
+      ],
+      "source_rows": [
+        5
+      ]
+    },
+    "SHFE.ad": {
+      "product": "SHFE.ad",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.14",
+      "special": [
+        {
+          "symbols": "ad2612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 6
+        },
+        {
+          "symbols": "ad2701-2702",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.17",
+          "source_row": 7
+        }
+      ],
+      "source_rows": [
+        6
+      ]
+    },
+    "SHFE.zn": {
+      "product": "SHFE.zn",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "zn2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 8
+        }
+      ],
+      "source_rows": [
+        8
+      ]
+    },
+    "SHFE.pb": {
+      "product": "SHFE.pb",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "pb2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 9
+        }
+      ],
+      "source_rows": [
+        9
+      ]
+    },
+    "SHFE.ni": {
+      "product": "SHFE.ni",
+      "company_spec_ratio": "0.19",
+      "company_hedge_ratio": "0.18",
+      "special": [
+        {
+          "symbols": "ni2612-2703",
+          "company_spec_ratio": "0.21",
+          "company_hedge_ratio": "0.2",
+          "source_row": 10
+        }
+      ],
+      "source_rows": [
+        10
+      ]
+    },
+    "SHFE.sn": {
+      "product": "SHFE.sn",
+      "company_spec_ratio": "0.23",
+      "company_hedge_ratio": "0.22",
+      "special": [
+        {
+          "symbols": "sn2612-2703",
+          "company_spec_ratio": "0.24",
+          "company_hedge_ratio": "0.23",
+          "source_row": 11
+        }
+      ],
+      "source_rows": [
+        11
+      ]
+    },
+    "SHFE.au": {
+      "product": "SHFE.au",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.24",
+      "special": [],
+      "source_rows": [
+        12
+      ]
+    },
+    "SHFE.ag": {
+      "product": "SHFE.ag",
+      "company_spec_ratio": "0.3",
+      "company_hedge_ratio": "0.29",
+      "special": [
+        {
+          "symbols": "ag2612-2704",
+          "company_spec_ratio": "0.36",
+          "company_hedge_ratio": "0.35",
+          "source_row": 13
+        },
+        {
+          "symbols": "ag2705-2706",
+          "company_spec_ratio": "0.33",
+          "company_hedge_ratio": "0.32",
+          "source_row": 14
+        }
+      ],
+      "source_rows": [
+        13
+      ]
+    },
+    "SHFE.rb": {
+      "product": "SHFE.rb",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.11",
+      "special": [
+        {
+          "symbols": "rb2612",
+          "company_spec_ratio": "0.15",
+          "company_hedge_ratio": "0.15",
+          "source_row": 15
+        }
+      ],
+      "source_rows": [
+        15
+      ]
+    },
+    "SHFE.wr": {
+      "product": "SHFE.wr",
+      "company_spec_ratio": "0.22",
+      "company_hedge_ratio": "0.21",
+      "special": [],
+      "source_rows": [
+        16
+      ]
+    },
+    "SHFE.hc": {
+      "product": "SHFE.hc",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.11",
+      "special": [
+        {
+          "symbols": "hc2612",
+          "company_spec_ratio": "0.15",
+          "company_hedge_ratio": "0.15",
+          "source_row": 17
+        }
+      ],
+      "source_rows": [
+        17
+      ]
+    },
+    "SHFE.ss": {
+      "product": "SHFE.ss",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.11",
+      "special": [
+        {
+          "symbols": "ss2612",
+          "company_spec_ratio": "0.15",
+          "company_hedge_ratio": "0.15",
+          "source_row": 18
+        }
+      ],
+      "source_rows": [
+        18
+      ]
+    },
+    "SHFE.sp": {
+      "product": "SHFE.sp",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.12",
+      "special": [
+        {
+          "symbols": "sp2612",
+          "company_spec_ratio": "0.16",
+          "company_hedge_ratio": "0.16",
+          "source_row": 19
+        }
+      ],
+      "source_rows": [
+        19
+      ]
+    },
+    "SHFE.op": {
+      "product": "SHFE.op",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.12",
+      "special": [
+        {
+          "symbols": "op2612",
+          "company_spec_ratio": "0.16",
+          "company_hedge_ratio": "0.16",
+          "source_row": 20
+        }
+      ],
+      "source_rows": [
+        20
+      ]
+    },
+    "SHFE.ru": {
+      "product": "SHFE.ru",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        21
+      ]
+    },
+    "SHFE.br": {
+      "product": "SHFE.br",
+      "company_spec_ratio": "0.2",
+      "company_hedge_ratio": "0.19",
+      "special": [],
+      "source_rows": [
+        22
+      ]
+    },
+    "SHFE.fu": {
+      "product": "SHFE.fu",
+      "company_spec_ratio": "0.26",
+      "company_hedge_ratio": "0.25",
+      "special": [
+        {
+          "symbols": "fu2612、2701",
+          "company_spec_ratio": "0.3",
+          "company_hedge_ratio": "0.29",
+          "source_row": 23
+        }
+      ],
+      "source_rows": [
+        23
+      ]
+    },
+    "SHFE.bu": {
+      "product": "SHFE.bu",
+      "company_spec_ratio": "0.2",
+      "company_hedge_ratio": "0.19",
+      "special": [
+        {
+          "symbols": "bu2612-2701",
+          "company_spec_ratio": "0.24",
+          "company_hedge_ratio": "0.23",
+          "source_row": 24
+        }
+      ],
+      "source_rows": [
+        24
+      ]
+    },
+    "INE.nr": {
+      "product": "INE.nr",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "nr2612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 25
+        }
+      ],
+      "source_rows": [
+        25
+      ]
+    },
+    "INE.sc": {
+      "product": "INE.sc",
+      "company_spec_ratio": "0.26",
+      "company_hedge_ratio": "0.25",
+      "special": [
+        {
+          "symbols": "sc2612、2701",
+          "company_spec_ratio": "0.3",
+          "company_hedge_ratio": "0.29",
+          "source_row": 26
+        }
+      ],
+      "source_rows": [
+        26
+      ]
+    },
+    "INE.lu": {
+      "product": "INE.lu",
+      "company_spec_ratio": "0.26",
+      "company_hedge_ratio": "0.25",
+      "special": [
+        {
+          "symbols": "lu2612、2701",
+          "company_spec_ratio": "0.3",
+          "company_hedge_ratio": "0.29",
+          "source_row": 27
+        }
+      ],
+      "source_rows": [
+        27
+      ]
+    },
+    "INE.bc": {
+      "product": "INE.bc",
+      "company_spec_ratio": "0.17",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "bc2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.18",
+          "source_row": 28
+        }
+      ],
+      "source_rows": [
+        28
+      ]
+    },
+    "INE.ec": {
+      "product": "INE.ec",
+      "company_spec_ratio": "0.3",
+      "company_hedge_ratio": "0.3",
+      "special": [
+        {
+          "symbols": "ec2612、2703",
+          "company_spec_ratio": "0.35",
+          "company_hedge_ratio": "0.35",
+          "source_row": 29
+        }
+      ],
+      "source_rows": [
+        29
+      ]
+    },
+    "DCE.c": {
+      "product": "DCE.c",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.12",
+      "special": [],
+      "source_rows": [
+        30
+      ]
+    },
+    "DCE.cs": {
+      "product": "DCE.cs",
+      "company_spec_ratio": "0.11",
+      "company_hedge_ratio": "0.11",
+      "special": [],
+      "source_rows": [
+        31
+      ]
+    },
+    "DCE.a": {
+      "product": "DCE.a",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.12",
+      "special": [],
+      "source_rows": [
+        32
+      ]
+    },
+    "DCE.b": {
+      "product": "DCE.b",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.12",
+      "special": [],
+      "source_rows": [
+        33
+      ]
+    },
+    "DCE.m": {
+      "product": "DCE.m",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        34
+      ]
+    },
+    "DCE.y": {
+      "product": "DCE.y",
+      "company_spec_ratio": "0.14",
+      "company_hedge_ratio": "0.14",
+      "special": [],
+      "source_rows": [
+        35
+      ]
+    },
+    "DCE.p": {
+      "product": "DCE.p",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.16",
+      "special": [],
+      "source_rows": [
+        36
+      ]
+    },
+    "DCE.fb": {
+      "product": "DCE.fb",
+      "company_spec_ratio": "0.18",
+      "company_hedge_ratio": "0.18",
+      "special": [],
+      "source_rows": [
+        37
+      ]
+    },
+    "DCE.bb": {
+      "product": "DCE.bb",
+      "company_spec_ratio": "0.23",
+      "company_hedge_ratio": "0.23",
+      "special": [],
+      "source_rows": [
+        38
+      ]
+    },
+    "DCE.jd": {
+      "product": "DCE.jd",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [
+        {
+          "symbols": "jd2611",
+          "company_spec_ratio": "0.26",
+          "company_hedge_ratio": "0.26",
+          "source_row": 39
+        }
+      ],
+      "source_rows": [
+        39
+      ]
+    },
+    "DCE.rr": {
+      "product": "DCE.rr",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        40
+      ]
+    },
+    "DCE.l": {
+      "product": "DCE.l",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        41
+      ]
+    },
+    "DCE.v": {
+      "product": "DCE.v",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        43
+      ]
+    },
+    "DCE.pp": {
+      "product": "DCE.pp",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        45
+      ]
+    },
+    "DCE.j": {
+      "product": "DCE.j",
+      "company_spec_ratio": "0.19",
+      "company_hedge_ratio": "0.19",
+      "special": [],
+      "source_rows": [
+        47
+      ]
+    },
+    "DCE.jm": {
+      "product": "DCE.jm",
+      "company_spec_ratio": "0.2",
+      "company_hedge_ratio": "0.2",
+      "special": [],
+      "source_rows": [
+        48
+      ]
+    },
+    "DCE.i": {
+      "product": "DCE.i",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        49
+      ]
+    },
+    "DCE.eg": {
+      "product": "DCE.eg",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "eg2611",
+          "company_spec_ratio": "0.28",
+          "company_hedge_ratio": "0.28",
+          "source_row": 50
+        }
+      ],
+      "source_rows": [
+        50
+      ]
+    },
+    "DCE.eb": {
+      "product": "DCE.eb",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "eb2611",
+          "company_spec_ratio": "0.28",
+          "company_hedge_ratio": "0.28",
+          "source_row": 51
+        }
+      ],
+      "source_rows": [
+        51
+      ]
+    },
+    "DCE.bz": {
+      "product": "DCE.bz",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "bz2611",
+          "company_spec_ratio": "0.28",
+          "company_hedge_ratio": "0.28",
+          "source_row": 52
+        }
+      ],
+      "source_rows": [
+        52
+      ]
+    },
+    "DCE.pg": {
+      "product": "DCE.pg",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "pg2611",
+          "company_spec_ratio": "0.28",
+          "company_hedge_ratio": "0.28",
+          "source_row": 53
+        },
+        {
+          "symbols": "pg2612-2702",
+          "company_spec_ratio": "0.19",
+          "company_hedge_ratio": "0.19",
+          "source_row": 54
+        }
+      ],
+      "source_rows": [
+        53
+      ]
+    },
+    "DCE.lh": {
+      "product": "DCE.lh",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [
+        {
+          "symbols": "lh2611",
+          "company_spec_ratio": "0.25",
+          "company_hedge_ratio": "0.25",
+          "source_row": 55
+        },
+        {
+          "symbols": "lh2701-2705",
+          "company_spec_ratio": "0.15",
+          "company_hedge_ratio": "0.15",
+          "source_row": 56
+        }
+      ],
+      "source_rows": [
+        55
+      ]
+    },
+    "DCE.lg": {
+      "product": "DCE.lg",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.12",
+      "special": [
+        {
+          "symbols": "lg2611",
+          "company_spec_ratio": "0.26",
+          "company_hedge_ratio": "0.26",
+          "source_row": 57
+        }
+      ],
+      "source_rows": [
+        57
+      ]
+    },
+    "CZCE.SR": {
+      "product": "CZCE.SR",
+      "company_spec_ratio": "0.12",
+      "company_hedge_ratio": "0.12",
+      "special": [],
+      "source_rows": [
+        58
+      ]
+    },
+    "CZCE.CF": {
+      "product": "CZCE.CF",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        59
+      ]
+    },
+    "CZCE.PM": {
+      "product": "CZCE.PM",
+      "company_spec_ratio": "0.5",
+      "company_hedge_ratio": "0.5",
+      "special": [],
+      "source_rows": [
+        60
+      ]
+    },
+    "CZCE.WH": {
+      "product": "CZCE.WH",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.25",
+      "special": [],
+      "source_rows": [
+        61
+      ]
+    },
+    "CZCE.RI": {
+      "product": "CZCE.RI",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.25",
+      "special": [],
+      "source_rows": [
+        62
+      ]
+    },
+    "CZCE.LR": {
+      "product": "CZCE.LR",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.25",
+      "special": [],
+      "source_rows": [
+        63
+      ]
+    },
+    "CZCE.JR": {
+      "product": "CZCE.JR",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.25",
+      "special": [],
+      "source_rows": [
+        64
+      ]
+    },
+    "CZCE.RM": {
+      "product": "CZCE.RM",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        65
+      ]
+    },
+    "CZCE.RS": {
+      "product": "CZCE.RS",
+      "company_spec_ratio": "0.5",
+      "company_hedge_ratio": "0.5",
+      "special": [],
+      "source_rows": [
+        66
+      ]
+    },
+    "CZCE.OI": {
+      "product": "CZCE.OI",
+      "company_spec_ratio": "0.14",
+      "company_hedge_ratio": "0.14",
+      "special": [],
+      "source_rows": [
+        67
+      ]
+    },
+    "CZCE.CY": {
+      "product": "CZCE.CY",
+      "company_spec_ratio": "0.11",
+      "company_hedge_ratio": "0.11",
+      "special": [
+        {
+          "symbols": "CY612",
+          "company_spec_ratio": "0.16",
+          "company_hedge_ratio": "0.16",
+          "source_row": 68
+        }
+      ],
+      "source_rows": [
+        68
+      ]
+    },
+    "CZCE.AP": {
+      "product": "CZCE.AP",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "AP612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 69
+        }
+      ],
+      "source_rows": [
+        69
+      ]
+    },
+    "CZCE.CJ": {
+      "product": "CZCE.CJ",
+      "company_spec_ratio": "0.14",
+      "company_hedge_ratio": "0.14",
+      "special": [
+        {
+          "symbols": "CJ612",
+          "company_spec_ratio": "0.21",
+          "company_hedge_ratio": "0.21",
+          "source_row": 70
+        }
+      ],
+      "source_rows": [
+        70
+      ]
+    },
+    "CZCE.ZC": {
+      "product": "CZCE.ZC",
+      "company_spec_ratio": "0.54",
+      "company_hedge_ratio": "0.54",
+      "special": [],
+      "source_rows": [
+        71
+      ]
+    },
+    "CZCE.TA": {
+      "product": "CZCE.TA",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "TA612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 72
+        },
+        {
+          "symbols": "TA701",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 73
+        }
+      ],
+      "source_rows": [
+        72
+      ]
+    },
+    "CZCE.MA": {
+      "product": "CZCE.MA",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "MA612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 74
+        },
+        {
+          "symbols": "MA701",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 75
+        }
+      ],
+      "source_rows": [
+        74
+      ]
+    },
+    "CZCE.FG": {
+      "product": "CZCE.FG",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "FG612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 76
+        }
+      ],
+      "source_rows": [
+        76
+      ]
+    },
+    "CZCE.SF": {
+      "product": "CZCE.SF",
+      "company_spec_ratio": "0.14",
+      "company_hedge_ratio": "0.14",
+      "special": [
+        {
+          "symbols": "SF612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 77
+        }
+      ],
+      "source_rows": [
+        77
+      ]
+    },
+    "CZCE.SM": {
+      "product": "CZCE.SM",
+      "company_spec_ratio": "0.14",
+      "company_hedge_ratio": "0.14",
+      "special": [
+        {
+          "symbols": "SM612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 78
+        }
+      ],
+      "source_rows": [
+        78
+      ]
+    },
+    "CZCE.UR": {
+      "product": "CZCE.UR",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "UR612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 79
+        }
+      ],
+      "source_rows": [
+        79
+      ]
+    },
+    "CZCE.SA": {
+      "product": "CZCE.SA",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "SA612",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 80
+        }
+      ],
+      "source_rows": [
+        80
+      ]
+    },
+    "CZCE.PF": {
+      "product": "CZCE.PF",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "PF612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 81
+        }
+      ],
+      "source_rows": [
+        81
+      ]
+    },
+    "CZCE.PK": {
+      "product": "CZCE.PK",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [
+        {
+          "symbols": "PK612",
+          "company_spec_ratio": "0.16",
+          "company_hedge_ratio": "0.16",
+          "source_row": 82
+        }
+      ],
+      "source_rows": [
+        82
+      ]
+    },
+    "CZCE.PX": {
+      "product": "CZCE.PX",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "PX612",
+          "company_spec_ratio": "0.23",
+          "company_hedge_ratio": "0.23",
+          "source_row": 83
+        },
+        {
+          "symbols": "PX701",
+          "company_spec_ratio": "0.17",
+          "company_hedge_ratio": "0.17",
+          "source_row": 84
+        }
+      ],
+      "source_rows": [
+        83
+      ]
+    },
+    "CZCE.SH": {
+      "product": "CZCE.SH",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.16",
+      "special": [
+        {
+          "symbols": "SH612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 85
+        }
+      ],
+      "source_rows": [
+        85
+      ]
+    },
+    "CZCE.PR": {
+      "product": "CZCE.PR",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "PR612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 86
+        }
+      ],
+      "source_rows": [
+        86
+      ]
+    },
+    "CZCE.PL": {
+      "product": "CZCE.PL",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [
+        {
+          "symbols": "PL612",
+          "company_spec_ratio": "0.18",
+          "company_hedge_ratio": "0.18",
+          "source_row": 87
+        }
+      ],
+      "source_rows": [
+        87
+      ]
+    },
+    "CZCE.SO": {
+      "product": "CZCE.SO",
+      "company_spec_ratio": "0.15",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        88
+      ]
+    },
+    "GFEX.si": {
+      "product": "GFEX.si",
+      "company_spec_ratio": "0.16",
+      "company_hedge_ratio": "0.15",
+      "special": [],
+      "source_rows": [
+        89
+      ]
+    },
+    "GFEX.lc": {
+      "product": "GFEX.lc",
+      "company_spec_ratio": "0.25",
+      "company_hedge_ratio": "0.24",
+      "special": [],
+      "source_rows": [
+        90
+      ]
+    },
+    "GFEX.ps": {
+      "product": "GFEX.ps",
+      "company_spec_ratio": "0.2",
+      "company_hedge_ratio": "0.2",
+      "special": [],
+      "source_rows": [
+        91
+      ]
+    },
+    "GFEX.pt": {
+      "product": "GFEX.pt",
+      "company_spec_ratio": "0.24",
+      "company_hedge_ratio": "0.24",
+      "special": [],
+      "source_rows": [
+        92
+      ]
+    },
+    "GFEX.pd": {
+      "product": "GFEX.pd",
+      "company_spec_ratio": "0.24",
+      "company_hedge_ratio": "0.24",
+      "special": [],
+      "source_rows": [
+        93
+      ]
+    },
+    "CFFEX.IF": {
+      "product": "CFFEX.IF",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        94
+      ]
+    },
+    "CFFEX.IH": {
+      "product": "CFFEX.IH",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        95
+      ]
+    },
+    "CFFEX.IC": {
+      "product": "CFFEX.IC",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        96
+      ]
+    },
+    "CFFEX.IM": {
+      "product": "CFFEX.IM",
+      "company_spec_ratio": "0.13",
+      "company_hedge_ratio": "0.13",
+      "special": [],
+      "source_rows": [
+        97
+      ]
+    },
+    "CFFEX.TS": {
+      "product": "CFFEX.TS",
+      "company_spec_ratio": "0.01",
+      "company_hedge_ratio": "0.01",
+      "special": [],
+      "source_rows": [
+        98
+      ]
+    },
+    "CFFEX.TF": {
+      "product": "CFFEX.TF",
+      "company_spec_ratio": "0.022",
+      "company_hedge_ratio": "0.022",
+      "special": [],
+      "source_rows": [
+        99
+      ]
+    },
+    "CFFEX.T": {
+      "product": "CFFEX.T",
+      "company_spec_ratio": "0.03",
+      "company_hedge_ratio": "0.03",
+      "special": [],
+      "source_rows": [
+        100
+      ]
+    },
+    "CFFEX.TL": {
+      "product": "CFFEX.TL",
+      "company_spec_ratio": "0.045",
+      "company_hedge_ratio": "0.045",
+      "special": [],
+      "source_rows": [
+        101
+      ]
+    }
+  },
+  "bound_ratios": {
+    "SHFE.cu2612": "0.19",
+    "SHFE.cu2701": "0.19",
+    "SHFE.cu2702": "0.19",
+    "SHFE.cu2703": "0.17",
+    "SHFE.cu2704": "0.17",
+    "SHFE.cu2705": "0.17",
+    "SHFE.cu2706": "0.17",
+    "SHFE.cu2707": "0.17",
+    "SHFE.cu2708": "0.17",
+    "SHFE.cu2709": "0.17",
+    "SHFE.cu2710": "0.17",
+    "SHFE.cu2711": "0.17",
+    "SHFE.al2612": "0.19",
+    "SHFE.al2701": "0.19",
+    "SHFE.al2702": "0.19",
+    "SHFE.al2703": "0.17",
+    "SHFE.al2704": "0.17",
+    "SHFE.al2705": "0.17",
+    "SHFE.al2706": "0.17",
+    "SHFE.al2707": "0.17",
+    "SHFE.al2708": "0.17",
+    "SHFE.al2709": "0.17",
+    "SHFE.al2710": "0.17",
+    "SHFE.al2711": "0.17",
+    "SHFE.ao2612": "0.19",
+    "SHFE.ao2701": "0.19",
+    "SHFE.ao2702": "0.19",
+    "SHFE.ao2703": "0.17",
+    "SHFE.ao2704": "0.17",
+    "SHFE.ao2705": "0.17",
+    "SHFE.ao2706": "0.17",
+    "SHFE.ao2707": "0.17",
+    "SHFE.ao2708": "0.17",
+    "SHFE.ao2709": "0.17",
+    "SHFE.ao2710": "0.17",
+    "SHFE.ao2711": "0.17",
+    "SHFE.ad2612": "0.18",
+    "SHFE.ad2701": "0.18",
+    "SHFE.ad2702": "0.18",
+    "SHFE.ad2703": "0.15",
+    "SHFE.ad2704": "0.15",
+    "SHFE.ad2705": "0.15",
+    "SHFE.ad2706": "0.15",
+    "SHFE.ad2707": "0.15",
+    "SHFE.ad2708": "0.15",
+    "SHFE.ad2709": "0.15",
+    "SHFE.ad2710": "0.15",
+    "SHFE.ad2711": "0.15",
+    "SHFE.zn2612": "0.19",
+    "SHFE.zn2701": "0.19",
+    "SHFE.zn2702": "0.19",
+    "SHFE.zn2703": "0.17",
+    "SHFE.zn2704": "0.17",
+    "SHFE.zn2705": "0.17",
+    "SHFE.zn2706": "0.17",
+    "SHFE.zn2707": "0.17",
+    "SHFE.zn2708": "0.17",
+    "SHFE.zn2709": "0.17",
+    "SHFE.zn2710": "0.17",
+    "SHFE.zn2711": "0.17",
+    "SHFE.pb2612": "0.19",
+    "SHFE.pb2701": "0.19",
+    "SHFE.pb2702": "0.19",
+    "SHFE.pb2703": "0.17",
+    "SHFE.pb2704": "0.17",
+    "SHFE.pb2705": "0.17",
+    "SHFE.pb2706": "0.17",
+    "SHFE.pb2707": "0.17",
+    "SHFE.pb2708": "0.17",
+    "SHFE.pb2709": "0.17",
+    "SHFE.pb2710": "0.17",
+    "SHFE.pb2711": "0.17",
+    "SHFE.ni2612": "0.21",
+    "SHFE.ni2701": "0.21",
+    "SHFE.ni2702": "0.21",
+    "SHFE.ni2703": "0.21",
+    "SHFE.ni2704": "0.19",
+    "SHFE.ni2705": "0.19",
+    "SHFE.ni2706": "0.19",
+    "SHFE.ni2707": "0.19",
+    "SHFE.ni2708": "0.19",
+    "SHFE.ni2709": "0.19",
+    "SHFE.ni2710": "0.19",
+    "SHFE.ni2711": "0.19",
+    "SHFE.sn2612": "0.24",
+    "SHFE.sn2701": "0.24",
+    "SHFE.sn2702": "0.24",
+    "SHFE.sn2703": "0.24",
+    "SHFE.sn2704": "0.23",
+    "SHFE.sn2705": "0.23",
+    "SHFE.sn2706": "0.23",
+    "SHFE.sn2707": "0.23",
+    "SHFE.sn2708": "0.23",
+    "SHFE.sn2709": "0.23",
+    "SHFE.sn2710": "0.23",
+    "SHFE.sn2711": "0.23",
+    "SHFE.au2612": "0.25",
+    "SHFE.au2701": "0.25",
+    "SHFE.au2702": "0.25",
+    "SHFE.au2704": "0.25",
+    "SHFE.au2706": "0.25",
+    "SHFE.au2708": "0.25",
+    "SHFE.au2710": "0.25",
+    "SHFE.au2712": "0.25",
+    "SHFE.ag2612": "0.36",
+    "SHFE.ag2701": "0.36",
+    "SHFE.ag2702": "0.36",
+    "SHFE.ag2703": "0.36",
+    "SHFE.ag2704": "0.36",
+    "SHFE.ag2705": "0.33",
+    "SHFE.ag2706": "0.33",
+    "SHFE.ag2707": "0.3",
+    "SHFE.ag2708": "0.3",
+    "SHFE.ag2709": "0.3",
+    "SHFE.ag2710": "0.3",
+    "SHFE.ag2711": "0.3",
+    "SHFE.rb2612": "0.15",
+    "SHFE.rb2701": "0.12",
+    "SHFE.rb2702": "0.12",
+    "SHFE.rb2703": "0.12",
+    "SHFE.rb2704": "0.12",
+    "SHFE.rb2705": "0.12",
+    "SHFE.rb2706": "0.12",
+    "SHFE.rb2707": "0.12",
+    "SHFE.rb2708": "0.12",
+    "SHFE.rb2709": "0.12",
+    "SHFE.rb2710": "0.12",
+    "SHFE.rb2711": "0.12",
+    "SHFE.wr2612": "0.22",
+    "SHFE.wr2701": "0.22",
+    "SHFE.wr2702": "0.22",
+    "SHFE.wr2703": "0.22",
+    "SHFE.wr2704": "0.22",
+    "SHFE.wr2705": "0.22",
+    "SHFE.wr2706": "0.22",
+    "SHFE.wr2707": "0.22",
+    "SHFE.wr2708": "0.22",
+    "SHFE.wr2709": "0.22",
+    "SHFE.wr2710": "0.22",
+    "SHFE.wr2711": "0.22",
+    "SHFE.hc2612": "0.15",
+    "SHFE.hc2701": "0.12",
+    "SHFE.hc2702": "0.12",
+    "SHFE.hc2703": "0.12",
+    "SHFE.hc2704": "0.12",
+    "SHFE.hc2705": "0.12",
+    "SHFE.hc2706": "0.12",
+    "SHFE.hc2707": "0.12",
+    "SHFE.hc2708": "0.12",
+    "SHFE.hc2709": "0.12",
+    "SHFE.hc2710": "0.12",
+    "SHFE.hc2711": "0.12",
+    "SHFE.ss2612": "0.15",
+    "SHFE.ss2701": "0.12",
+    "SHFE.ss2702": "0.12",
+    "SHFE.ss2703": "0.12",
+    "SHFE.ss2704": "0.12",
+    "SHFE.ss2705": "0.12",
+    "SHFE.ss2706": "0.12",
+    "SHFE.ss2707": "0.12",
+    "SHFE.ss2708": "0.12",
+    "SHFE.ss2709": "0.12",
+    "SHFE.ss2710": "0.12",
+    "SHFE.ss2711": "0.12",
+    "SHFE.sp2612": "0.16",
+    "SHFE.sp2701": "0.13",
+    "SHFE.sp2702": "0.13",
+    "SHFE.sp2703": "0.13",
+    "SHFE.sp2704": "0.13",
+    "SHFE.sp2705": "0.13",
+    "SHFE.sp2706": "0.13",
+    "SHFE.sp2707": "0.13",
+    "SHFE.sp2708": "0.13",
+    "SHFE.sp2709": "0.13",
+    "SHFE.sp2710": "0.13",
+    "SHFE.sp2711": "0.13",
+    "SHFE.op2612": "0.16",
+    "SHFE.op2701": "0.13",
+    "SHFE.op2702": "0.13",
+    "SHFE.op2703": "0.13",
+    "SHFE.op2704": "0.13",
+    "SHFE.op2705": "0.13",
+    "SHFE.op2706": "0.13",
+    "SHFE.op2707": "0.13",
+    "SHFE.op2708": "0.13",
+    "SHFE.op2709": "0.13",
+    "SHFE.op2710": "0.13",
+    "SHFE.op2711": "0.13",
+    "SHFE.ru2701": "0.16",
+    "SHFE.ru2703": "0.16",
+    "SHFE.ru2704": "0.16",
+    "SHFE.ru2705": "0.16",
+    "SHFE.ru2706": "0.16",
+    "SHFE.ru2707": "0.16",
+    "SHFE.ru2708": "0.16",
+    "SHFE.ru2709": "0.16",
+    "SHFE.ru2710": "0.16",
+    "SHFE.ru2711": "0.16",
+    "SHFE.br2612": "0.2",
+    "SHFE.br2701": "0.2",
+    "SHFE.br2702": "0.2",
+    "SHFE.br2703": "0.2",
+    "SHFE.br2704": "0.2",
+    "SHFE.br2705": "0.2",
+    "SHFE.br2706": "0.2",
+    "SHFE.br2707": "0.2",
+    "SHFE.br2708": "0.2",
+    "SHFE.br2709": "0.2",
+    "SHFE.br2710": "0.2",
+    "SHFE.br2711": "0.2",
+    "SHFE.fu2612": "0.3",
+    "SHFE.fu2701": "0.3",
+    "SHFE.fu2702": "0.26",
+    "SHFE.fu2703": "0.26",
+    "SHFE.fu2704": "0.26",
+    "SHFE.fu2705": "0.26",
+    "SHFE.fu2706": "0.26",
+    "SHFE.fu2707": "0.26",
+    "SHFE.fu2708": "0.26",
+    "SHFE.fu2709": "0.26",
+    "SHFE.fu2710": "0.26",
+    "SHFE.fu2711": "0.26",
+    "SHFE.bu2612": "0.24",
+    "SHFE.bu2701": "0.24",
+    "SHFE.bu2702": "0.2",
+    "SHFE.bu2703": "0.2",
+    "SHFE.bu2704": "0.2",
+    "SHFE.bu2705": "0.2",
+    "SHFE.bu2706": "0.2",
+    "SHFE.bu2707": "0.2",
+    "SHFE.bu2708": "0.2",
+    "SHFE.bu2709": "0.2",
+    "SHFE.bu2710": "0.2",
+    "SHFE.bu2711": "0.2",
+    "SHFE.bu2712": "0.2",
+    "SHFE.bu2803": "0.2",
+    "SHFE.bu2806": "0.2",
+    "SHFE.bu2809": "0.2",
+    "INE.nr2612": "0.17",
+    "INE.nr2701": "0.16",
+    "INE.nr2702": "0.16",
+    "INE.nr2703": "0.16",
+    "INE.nr2704": "0.16",
+    "INE.nr2705": "0.16",
+    "INE.nr2706": "0.16",
+    "INE.nr2707": "0.16",
+    "INE.nr2708": "0.16",
+    "INE.nr2709": "0.16",
+    "INE.nr2710": "0.16",
+    "INE.nr2711": "0.16",
+    "INE.sc2612": "0.3",
+    "INE.sc2701": "0.3",
+    "INE.sc2702": "0.26",
+    "INE.sc2703": "0.26",
+    "INE.sc2704": "0.26",
+    "INE.sc2705": "0.26",
+    "INE.sc2706": "0.26",
+    "INE.sc2707": "0.26",
+    "INE.sc2708": "0.26",
+    "INE.sc2709": "0.26",
+    "INE.sc2710": "0.26",
+    "INE.sc2711": "0.26",
+    "INE.sc2712": "0.26",
+    "INE.sc2803": "0.26",
+    "INE.sc2806": "0.26",
+    "INE.sc2809": "0.26",
+    "INE.sc2812": "0.26",
+    "INE.sc2903": "0.26",
+    "INE.sc2906": "0.26",
+    "INE.sc2909": "0.26",
+    "INE.lu2612": "0.3",
+    "INE.lu2701": "0.3",
+    "INE.lu2702": "0.26",
+    "INE.lu2703": "0.26",
+    "INE.lu2704": "0.26",
+    "INE.lu2705": "0.26",
+    "INE.lu2706": "0.26",
+    "INE.lu2707": "0.26",
+    "INE.lu2708": "0.26",
+    "INE.lu2709": "0.26",
+    "INE.lu2710": "0.26",
+    "INE.lu2711": "0.26",
+    "INE.bc2612": "0.19",
+    "INE.bc2701": "0.19",
+    "INE.bc2702": "0.19",
+    "INE.bc2703": "0.17",
+    "INE.bc2704": "0.17",
+    "INE.bc2705": "0.17",
+    "INE.bc2706": "0.17",
+    "INE.bc2707": "0.17",
+    "INE.bc2708": "0.17",
+    "INE.bc2709": "0.17",
+    "INE.bc2710": "0.17",
+    "INE.bc2711": "0.17",
+    "INE.ec2611": "0.3",
+    "INE.ec2612": "0.35",
+    "INE.ec2701": "0.3",
+    "INE.ec2703": "0.35",
+    "INE.ec2704": "0.3",
+    "INE.ec2706": "0.3",
+    "INE.ec2709": "0.3",
+    "DCE.c2701": "0.12",
+    "DCE.c2703": "0.12",
+    "DCE.c2705": "0.12",
+    "DCE.c2707": "0.12",
+    "DCE.c2709": "0.12",
+    "DCE.c2711": "0.12",
+    "DCE.cs2701": "0.11",
+    "DCE.cs2703": "0.11",
+    "DCE.cs2705": "0.11",
+    "DCE.cs2707": "0.11",
+    "DCE.cs2709": "0.11",
+    "DCE.cs2711": "0.11",
+    "DCE.a2701": "0.12",
+    "DCE.a2703": "0.12",
+    "DCE.a2705": "0.12",
+    "DCE.a2707": "0.12",
+    "DCE.a2709": "0.12",
+    "DCE.a2711": "0.12",
+    "DCE.b2612": "0.12",
+    "DCE.b2701": "0.12",
+    "DCE.b2702": "0.12",
+    "DCE.b2703": "0.12",
+    "DCE.b2704": "0.12",
+    "DCE.b2705": "0.12",
+    "DCE.b2706": "0.12",
+    "DCE.b2707": "0.12",
+    "DCE.b2708": "0.12",
+    "DCE.b2709": "0.12",
+    "DCE.b2710": "0.12",
+    "DCE.b2711": "0.12",
+    "DCE.m2612": "0.13",
+    "DCE.m2701": "0.13",
+    "DCE.m2703": "0.13",
+    "DCE.m2705": "0.13",
+    "DCE.m2707": "0.13",
+    "DCE.m2708": "0.13",
+    "DCE.m2709": "0.13",
+    "DCE.m2711": "0.13",
+    "DCE.y2612": "0.14",
+    "DCE.y2701": "0.14",
+    "DCE.y2703": "0.14",
+    "DCE.y2705": "0.14",
+    "DCE.y2707": "0.14",
+    "DCE.y2708": "0.14",
+    "DCE.y2709": "0.14",
+    "DCE.y2711": "0.14",
+    "DCE.p2612": "0.16",
+    "DCE.p2701": "0.16",
+    "DCE.p2702": "0.16",
+    "DCE.p2703": "0.16",
+    "DCE.p2704": "0.16",
+    "DCE.p2705": "0.16",
+    "DCE.p2706": "0.16",
+    "DCE.p2707": "0.16",
+    "DCE.p2708": "0.16",
+    "DCE.p2709": "0.16",
+    "DCE.p2710": "0.16",
+    "DCE.p2711": "0.16",
+    "DCE.fb2612": "0.18",
+    "DCE.fb2701": "0.18",
+    "DCE.fb2702": "0.18",
+    "DCE.fb2703": "0.18",
+    "DCE.fb2704": "0.18",
+    "DCE.fb2705": "0.18",
+    "DCE.fb2706": "0.18",
+    "DCE.fb2707": "0.18",
+    "DCE.fb2708": "0.18",
+    "DCE.fb2709": "0.18",
+    "DCE.fb2710": "0.18",
+    "DCE.fb2711": "0.18",
+    "DCE.bb2701": "0.23",
+    "DCE.bb2703": "0.23",
+    "DCE.bb2705": "0.23",
+    "DCE.bb2707": "0.23",
+    "DCE.bb2709": "0.23",
+    "DCE.bb2711": "0.23",
+    "DCE.jd2611": "0.26",
+    "DCE.jd2612": "0.13",
+    "DCE.jd2701": "0.13",
+    "DCE.jd2702": "0.13",
+    "DCE.jd2703": "0.13",
+    "DCE.jd2704": "0.13",
+    "DCE.jd2705": "0.13",
+    "DCE.jd2706": "0.13",
+    "DCE.jd2707": "0.13",
+    "DCE.jd2708": "0.13",
+    "DCE.jd2709": "0.13",
+    "DCE.jd2710": "0.13",
+    "DCE.rr2612": "0.13",
+    "DCE.rr2701": "0.13",
+    "DCE.rr2702": "0.13",
+    "DCE.rr2703": "0.13",
+    "DCE.rr2704": "0.13",
+    "DCE.rr2705": "0.13",
+    "DCE.rr2706": "0.13",
+    "DCE.rr2707": "0.13",
+    "DCE.rr2708": "0.13",
+    "DCE.rr2709": "0.13",
+    "DCE.rr2710": "0.13",
+    "DCE.rr2711": "0.13",
+    "DCE.l2612": "0.15",
+    "DCE.l2701": "0.15",
+    "DCE.l2702": "0.15",
+    "DCE.l2703": "0.15",
+    "DCE.l2704": "0.15",
+    "DCE.l2705": "0.15",
+    "DCE.l2706": "0.15",
+    "DCE.l2707": "0.15",
+    "DCE.l2708": "0.15",
+    "DCE.l2709": "0.15",
+    "DCE.l2710": "0.15",
+    "DCE.l2711": "0.15",
+    "DCE.v2612": "0.15",
+    "DCE.v2701": "0.15",
+    "DCE.v2702": "0.15",
+    "DCE.v2703": "0.15",
+    "DCE.v2704": "0.15",
+    "DCE.v2705": "0.15",
+    "DCE.v2706": "0.15",
+    "DCE.v2707": "0.15",
+    "DCE.v2708": "0.15",
+    "DCE.v2709": "0.15",
+    "DCE.v2710": "0.15",
+    "DCE.v2711": "0.15",
+    "DCE.pp2612": "0.15",
+    "DCE.pp2701": "0.15",
+    "DCE.pp2702": "0.15",
+    "DCE.pp2703": "0.15",
+    "DCE.pp2704": "0.15",
+    "DCE.pp2705": "0.15",
+    "DCE.pp2706": "0.15",
+    "DCE.pp2707": "0.15",
+    "DCE.pp2708": "0.15",
+    "DCE.pp2709": "0.15",
+    "DCE.pp2710": "0.15",
+    "DCE.pp2711": "0.15",
+    "DCE.j2612": "0.19",
+    "DCE.j2701": "0.19",
+    "DCE.j2702": "0.19",
+    "DCE.j2703": "0.19",
+    "DCE.j2704": "0.19",
+    "DCE.j2705": "0.19",
+    "DCE.j2706": "0.19",
+    "DCE.j2707": "0.19",
+    "DCE.j2708": "0.19",
+    "DCE.j2709": "0.19",
+    "DCE.j2710": "0.19",
+    "DCE.j2711": "0.19",
+    "DCE.jm2612": "0.2",
+    "DCE.jm2701": "0.2",
+    "DCE.jm2702": "0.2",
+    "DCE.jm2703": "0.2",
+    "DCE.jm2704": "0.2",
+    "DCE.jm2705": "0.2",
+    "DCE.jm2706": "0.2",
+    "DCE.jm2707": "0.2",
+    "DCE.jm2708": "0.2",
+    "DCE.jm2709": "0.2",
+    "DCE.jm2710": "0.2",
+    "DCE.jm2711": "0.2",
+    "DCE.i2612": "0.15",
+    "DCE.i2701": "0.15",
+    "DCE.i2702": "0.15",
+    "DCE.i2703": "0.15",
+    "DCE.i2704": "0.15",
+    "DCE.i2705": "0.15",
+    "DCE.i2706": "0.15",
+    "DCE.i2707": "0.15",
+    "DCE.i2708": "0.15",
+    "DCE.i2709": "0.15",
+    "DCE.i2710": "0.15",
+    "DCE.i2711": "0.15",
+    "DCE.eg2611": "0.28",
+    "DCE.eg2612": "0.15",
+    "DCE.eg2701": "0.15",
+    "DCE.eg2702": "0.15",
+    "DCE.eg2703": "0.15",
+    "DCE.eg2704": "0.15",
+    "DCE.eg2705": "0.15",
+    "DCE.eg2706": "0.15",
+    "DCE.eg2707": "0.15",
+    "DCE.eg2708": "0.15",
+    "DCE.eg2709": "0.15",
+    "DCE.eg2710": "0.15",
+    "DCE.eb2611": "0.28",
+    "DCE.eb2612": "0.15",
+    "DCE.eb2701": "0.15",
+    "DCE.eb2702": "0.15",
+    "DCE.eb2703": "0.15",
+    "DCE.eb2704": "0.15",
+    "DCE.eb2705": "0.15",
+    "DCE.eb2706": "0.15",
+    "DCE.eb2707": "0.15",
+    "DCE.eb2708": "0.15",
+    "DCE.eb2709": "0.15",
+    "DCE.eb2710": "0.15",
+    "DCE.bz2611": "0.28",
+    "DCE.bz2612": "0.15",
+    "DCE.bz2701": "0.15",
+    "DCE.bz2702": "0.15",
+    "DCE.bz2703": "0.15",
+    "DCE.bz2704": "0.15",
+    "DCE.bz2705": "0.15",
+    "DCE.bz2706": "0.15",
+    "DCE.bz2707": "0.15",
+    "DCE.bz2708": "0.15",
+    "DCE.bz2709": "0.15",
+    "DCE.bz2710": "0.15",
+    "DCE.pg2611": "0.28",
+    "DCE.pg2612": "0.19",
+    "DCE.pg2701": "0.19",
+    "DCE.pg2702": "0.19",
+    "DCE.pg2703": "0.15",
+    "DCE.pg2704": "0.15",
+    "DCE.pg2705": "0.15",
+    "DCE.pg2706": "0.15",
+    "DCE.pg2707": "0.15",
+    "DCE.pg2708": "0.15",
+    "DCE.pg2709": "0.15",
+    "DCE.pg2710": "0.15",
+    "DCE.lh2611": "0.25",
+    "DCE.lh2701": "0.15",
+    "DCE.lh2703": "0.15",
+    "DCE.lh2705": "0.15",
+    "DCE.lh2707": "0.13",
+    "DCE.lh2709": "0.13",
+    "DCE.lg2611": "0.26",
+    "DCE.lg2701": "0.12",
+    "DCE.lg2703": "0.12",
+    "DCE.lg2705": "0.12",
+    "DCE.lg2707": "0.12",
+    "DCE.lg2709": "0.12",
+    "CZCE.SR2701": "0.12",
+    "CZCE.SR2703": "0.12",
+    "CZCE.SR2705": "0.12",
+    "CZCE.SR2707": "0.12",
+    "CZCE.SR2709": "0.12",
+    "CZCE.SR2711": "0.12",
+    "CZCE.CF2701": "0.13",
+    "CZCE.CF2703": "0.13",
+    "CZCE.CF2705": "0.13",
+    "CZCE.CF2707": "0.13",
+    "CZCE.CF2709": "0.13",
+    "CZCE.CF2711": "0.13",
+    "CZCE.PM2701": "0.5",
+    "CZCE.PM2703": "0.5",
+    "CZCE.PM2705": "0.5",
+    "CZCE.PM2707": "0.5",
+    "CZCE.PM2709": "0.5",
+    "CZCE.PM2711": "0.5",
+    "CZCE.WH2701": "0.25",
+    "CZCE.WH2703": "0.25",
+    "CZCE.WH2705": "0.25",
+    "CZCE.WH2707": "0.25",
+    "CZCE.WH2709": "0.25",
+    "CZCE.WH2711": "0.25",
+    "CZCE.RI2701": "0.25",
+    "CZCE.RI2703": "0.25",
+    "CZCE.RI2705": "0.25",
+    "CZCE.RI2707": "0.25",
+    "CZCE.RI2709": "0.25",
+    "CZCE.RI2711": "0.25",
+    "CZCE.JR2701": "0.25",
+    "CZCE.JR2703": "0.25",
+    "CZCE.JR2705": "0.25",
+    "CZCE.JR2707": "0.25",
+    "CZCE.JR2709": "0.25",
+    "CZCE.JR2711": "0.25",
+    "CZCE.RM2701": "0.13",
+    "CZCE.RM2703": "0.13",
+    "CZCE.RM2705": "0.13",
+    "CZCE.RM2707": "0.13",
+    "CZCE.RM2708": "0.13",
+    "CZCE.RM2709": "0.13",
+    "CZCE.RM2711": "0.13",
+    "CZCE.RS2701": "0.5",
+    "CZCE.RS2703": "0.5",
+    "CZCE.RS2706": "0.5",
+    "CZCE.RS2707": "0.5",
+    "CZCE.RS2709": "0.5",
+    "CZCE.RS2711": "0.5",
+    "CZCE.OI2701": "0.14",
+    "CZCE.OI2703": "0.14",
+    "CZCE.OI2705": "0.14",
+    "CZCE.OI2707": "0.14",
+    "CZCE.OI2709": "0.14",
+    "CZCE.OI2711": "0.14",
+    "CZCE.CY2612": "0.16",
+    "CZCE.CY2701": "0.11",
+    "CZCE.CY2702": "0.11",
+    "CZCE.CY2703": "0.11",
+    "CZCE.CY2704": "0.11",
+    "CZCE.CY2705": "0.11",
+    "CZCE.CY2706": "0.11",
+    "CZCE.CY2707": "0.11",
+    "CZCE.CY2708": "0.11",
+    "CZCE.CY2709": "0.11",
+    "CZCE.CY2710": "0.11",
+    "CZCE.CY2711": "0.11",
+    "CZCE.AP2612": "0.17",
+    "CZCE.AP2701": "0.16",
+    "CZCE.AP2703": "0.16",
+    "CZCE.AP2704": "0.16",
+    "CZCE.AP2705": "0.16",
+    "CZCE.AP2710": "0.16",
+    "CZCE.AP2711": "0.16",
+    "CZCE.CJ2612": "0.21",
+    "CZCE.CJ2701": "0.14",
+    "CZCE.CJ2703": "0.14",
+    "CZCE.CJ2705": "0.14",
+    "CZCE.CJ2707": "0.14",
+    "CZCE.CJ2709": "0.14",
+    "CZCE.ZC2612": "0.54",
+    "CZCE.ZC2701": "0.54",
+    "CZCE.ZC2702": "0.54",
+    "CZCE.ZC2703": "0.54",
+    "CZCE.ZC2704": "0.54",
+    "CZCE.ZC2705": "0.54",
+    "CZCE.ZC2706": "0.54",
+    "CZCE.ZC2707": "0.54",
+    "CZCE.ZC2708": "0.54",
+    "CZCE.ZC2709": "0.54",
+    "CZCE.ZC2710": "0.54",
+    "CZCE.ZC2711": "0.54",
+    "CZCE.TA2612": "0.18",
+    "CZCE.TA2701": "0.17",
+    "CZCE.TA2702": "0.15",
+    "CZCE.TA2703": "0.15",
+    "CZCE.TA2704": "0.15",
+    "CZCE.TA2705": "0.15",
+    "CZCE.TA2706": "0.15",
+    "CZCE.TA2707": "0.15",
+    "CZCE.TA2708": "0.15",
+    "CZCE.TA2709": "0.15",
+    "CZCE.TA2710": "0.15",
+    "CZCE.TA2711": "0.15",
+    "CZCE.MA2612": "0.18",
+    "CZCE.MA2701": "0.17",
+    "CZCE.MA2702": "0.15",
+    "CZCE.MA2703": "0.15",
+    "CZCE.MA2704": "0.15",
+    "CZCE.MA2705": "0.15",
+    "CZCE.MA2706": "0.15",
+    "CZCE.MA2707": "0.15",
+    "CZCE.MA2708": "0.15",
+    "CZCE.MA2709": "0.15",
+    "CZCE.MA2710": "0.15",
+    "CZCE.MA2711": "0.15",
+    "CZCE.FG2612": "0.17",
+    "CZCE.FG2701": "0.16",
+    "CZCE.FG2702": "0.16",
+    "CZCE.FG2703": "0.16",
+    "CZCE.FG2704": "0.16",
+    "CZCE.FG2705": "0.16",
+    "CZCE.FG2706": "0.16",
+    "CZCE.FG2707": "0.16",
+    "CZCE.FG2708": "0.16",
+    "CZCE.FG2709": "0.16",
+    "CZCE.FG2710": "0.16",
+    "CZCE.FG2711": "0.16",
+    "CZCE.SF2612": "0.17",
+    "CZCE.SF2701": "0.14",
+    "CZCE.SF2702": "0.14",
+    "CZCE.SF2703": "0.14",
+    "CZCE.SF2704": "0.14",
+    "CZCE.SF2705": "0.14",
+    "CZCE.SF2706": "0.14",
+    "CZCE.SF2707": "0.14",
+    "CZCE.SF2708": "0.14",
+    "CZCE.SF2709": "0.14",
+    "CZCE.SF2710": "0.14",
+    "CZCE.SF2711": "0.14",
+    "CZCE.SM2612": "0.17",
+    "CZCE.SM2701": "0.14",
+    "CZCE.SM2702": "0.14",
+    "CZCE.SM2703": "0.14",
+    "CZCE.SM2704": "0.14",
+    "CZCE.SM2705": "0.14",
+    "CZCE.SM2706": "0.14",
+    "CZCE.SM2707": "0.14",
+    "CZCE.SM2708": "0.14",
+    "CZCE.SM2709": "0.14",
+    "CZCE.SM2710": "0.14",
+    "CZCE.SM2711": "0.14",
+    "CZCE.UR2612": "0.18",
+    "CZCE.UR2701": "0.16",
+    "CZCE.UR2702": "0.16",
+    "CZCE.UR2703": "0.16",
+    "CZCE.UR2704": "0.16",
+    "CZCE.UR2705": "0.16",
+    "CZCE.UR2706": "0.16",
+    "CZCE.UR2707": "0.16",
+    "CZCE.UR2708": "0.16",
+    "CZCE.UR2709": "0.16",
+    "CZCE.UR2710": "0.16",
+    "CZCE.UR2711": "0.16",
+    "CZCE.SA2612": "0.17",
+    "CZCE.SA2701": "0.15",
+    "CZCE.SA2702": "0.15",
+    "CZCE.SA2703": "0.15",
+    "CZCE.SA2704": "0.15",
+    "CZCE.SA2705": "0.15",
+    "CZCE.SA2706": "0.15",
+    "CZCE.SA2707": "0.15",
+    "CZCE.SA2708": "0.15",
+    "CZCE.SA2709": "0.15",
+    "CZCE.SA2710": "0.15",
+    "CZCE.SA2711": "0.15",
+    "CZCE.PF2612": "0.18",
+    "CZCE.PF2701": "0.15",
+    "CZCE.PF2702": "0.15",
+    "CZCE.PF2703": "0.15",
+    "CZCE.PF2704": "0.15",
+    "CZCE.PF2705": "0.15",
+    "CZCE.PF2706": "0.15",
+    "CZCE.PF2707": "0.15",
+    "CZCE.PF2708": "0.15",
+    "CZCE.PF2709": "0.15",
+    "CZCE.PF2710": "0.15",
+    "CZCE.PF2711": "0.15",
+    "CZCE.PK2612": "0.16",
+    "CZCE.PK2701": "0.13",
+    "CZCE.PK2703": "0.13",
+    "CZCE.PK2704": "0.13",
+    "CZCE.PK2705": "0.13",
+    "CZCE.PK2710": "0.13",
+    "CZCE.PK2711": "0.13",
+    "CZCE.PX2612": "0.23",
+    "CZCE.PX2701": "0.17",
+    "CZCE.PX2702": "0.15",
+    "CZCE.PX2703": "0.15",
+    "CZCE.PX2704": "0.15",
+    "CZCE.PX2705": "0.15",
+    "CZCE.PX2706": "0.15",
+    "CZCE.PX2707": "0.15",
+    "CZCE.PX2708": "0.15",
+    "CZCE.PX2709": "0.15",
+    "CZCE.PX2710": "0.15",
+    "CZCE.PX2711": "0.15",
+    "CZCE.SH2612": "0.18",
+    "CZCE.SH2701": "0.16",
+    "CZCE.SH2702": "0.16",
+    "CZCE.SH2703": "0.16",
+    "CZCE.SH2704": "0.16",
+    "CZCE.SH2705": "0.16",
+    "CZCE.SH2706": "0.16",
+    "CZCE.SH2707": "0.16",
+    "CZCE.SH2708": "0.16",
+    "CZCE.SH2709": "0.16",
+    "CZCE.SH2710": "0.16",
+    "CZCE.SH2711": "0.16",
+    "CZCE.PR2612": "0.18",
+    "CZCE.PR2701": "0.15",
+    "CZCE.PR2702": "0.15",
+    "CZCE.PR2703": "0.15",
+    "CZCE.PR2704": "0.15",
+    "CZCE.PR2705": "0.15",
+    "CZCE.PR2706": "0.15",
+    "CZCE.PR2707": "0.15",
+    "CZCE.PR2708": "0.15",
+    "CZCE.PR2709": "0.15",
+    "CZCE.PR2710": "0.15",
+    "CZCE.PR2711": "0.15",
+    "CZCE.PL2612": "0.18",
+    "CZCE.PL2701": "0.15",
+    "CZCE.PL2702": "0.15",
+    "CZCE.PL2703": "0.15",
+    "CZCE.PL2704": "0.15",
+    "CZCE.PL2705": "0.15",
+    "CZCE.PL2706": "0.15",
+    "CZCE.PL2707": "0.15",
+    "CZCE.PL2708": "0.15",
+    "CZCE.PL2709": "0.15",
+    "CZCE.PL2710": "0.15",
+    "CZCE.PL2711": "0.15",
+    "CZCE.SO2705": "0.15",
+    "CZCE.SO2707": "0.15",
+    "CZCE.SO2709": "0.15",
+    "CZCE.SO2711": "0.15",
+    "GFEX.si2612": "0.16",
+    "GFEX.si2701": "0.16",
+    "GFEX.si2702": "0.16",
+    "GFEX.si2703": "0.16",
+    "GFEX.si2704": "0.16",
+    "GFEX.si2705": "0.16",
+    "GFEX.si2706": "0.16",
+    "GFEX.si2707": "0.16",
+    "GFEX.si2708": "0.16",
+    "GFEX.si2709": "0.16",
+    "GFEX.si2710": "0.16",
+    "GFEX.lc2612": "0.25",
+    "GFEX.lc2701": "0.25",
+    "GFEX.lc2702": "0.25",
+    "GFEX.lc2703": "0.25",
+    "GFEX.lc2704": "0.25",
+    "GFEX.lc2705": "0.25",
+    "GFEX.lc2706": "0.25",
+    "GFEX.lc2707": "0.25",
+    "GFEX.lc2708": "0.25",
+    "GFEX.lc2709": "0.25",
+    "GFEX.lc2710": "0.25",
+    "GFEX.ps2612": "0.2",
+    "GFEX.ps2701": "0.2",
+    "GFEX.ps2702": "0.2",
+    "GFEX.ps2703": "0.2",
+    "GFEX.ps2704": "0.2",
+    "GFEX.ps2705": "0.2",
+    "GFEX.ps2706": "0.2",
+    "GFEX.ps2707": "0.2",
+    "GFEX.ps2708": "0.2",
+    "GFEX.ps2709": "0.2",
+    "GFEX.ps2710": "0.2",
+    "GFEX.pt2612": "0.24",
+    "GFEX.pt2702": "0.24",
+    "GFEX.pt2704": "0.24",
+    "GFEX.pt2706": "0.24",
+    "GFEX.pt2708": "0.24",
+    "GFEX.pt2710": "0.24",
+    "GFEX.pd2612": "0.24",
+    "GFEX.pd2702": "0.24",
+    "GFEX.pd2704": "0.24",
+    "GFEX.pd2706": "0.24",
+    "GFEX.pd2708": "0.24",
+    "GFEX.pd2710": "0.24",
+    "CFFEX.IF2611": "0.13",
+    "CFFEX.IF2612": "0.13",
+    "CFFEX.IF2703": "0.13",
+    "CFFEX.IF2706": "0.13",
+    "CFFEX.IH2611": "0.13",
+    "CFFEX.IH2612": "0.13",
+    "CFFEX.IH2703": "0.13",
+    "CFFEX.IH2706": "0.13",
+    "CFFEX.IC2611": "0.13",
+    "CFFEX.IC2612": "0.13",
+    "CFFEX.IC2703": "0.13",
+    "CFFEX.IC2706": "0.13",
+    "CFFEX.IM2611": "0.13",
+    "CFFEX.IM2612": "0.13",
+    "CFFEX.IM2703": "0.13",
+    "CFFEX.IM2706": "0.13",
+    "CFFEX.TS2612": "0.01",
+    "CFFEX.TS2703": "0.01",
+    "CFFEX.TS2706": "0.01",
+    "CFFEX.TF2612": "0.022",
+    "CFFEX.TF2703": "0.022",
+    "CFFEX.TF2706": "0.022",
+    "CFFEX.T2612": "0.03",
+    "CFFEX.T2703": "0.03",
+    "CFFEX.T2706": "0.03",
+    "CFFEX.TL2612": "0.045",
+    "CFFEX.TL2703": "0.045",
+    "CFFEX.TL2706": "0.045"
+  },
+  "unmapped": {},
+  "added_company_contracts": [
+    "DCE.c2701",
+    "DCE.c2703",
+    "DCE.c2705",
+    "DCE.c2707",
+    "DCE.c2709",
+    "DCE.c2711",
+    "DCE.cs2701",
+    "DCE.cs2703",
+    "DCE.cs2705",
+    "DCE.cs2707",
+    "DCE.cs2709",
+    "DCE.cs2711",
+    "DCE.a2701",
+    "DCE.a2703",
+    "DCE.a2705",
+    "DCE.a2707",
+    "DCE.a2709",
+    "DCE.a2711",
+    "DCE.b2612",
+    "DCE.b2701",
+    "DCE.b2702",
+    "DCE.b2703",
+    "DCE.b2704",
+    "DCE.b2705",
+    "DCE.b2706",
+    "DCE.b2707",
+    "DCE.b2708",
+    "DCE.b2709",
+    "DCE.b2710",
+    "DCE.b2711",
+    "DCE.m2612",
+    "DCE.m2701",
+    "DCE.m2703",
+    "DCE.m2705",
+    "DCE.m2707",
+    "DCE.m2708",
+    "DCE.m2709",
+    "DCE.m2711",
+    "DCE.y2612",
+    "DCE.y2701",
+    "DCE.y2703",
+    "DCE.y2705",
+    "DCE.y2707",
+    "DCE.y2708",
+    "DCE.y2709",
+    "DCE.y2711",
+    "DCE.p2612",
+    "DCE.p2701",
+    "DCE.p2702",
+    "DCE.p2703",
+    "DCE.p2704",
+    "DCE.p2705",
+    "DCE.p2706",
+    "DCE.p2707",
+    "DCE.p2708",
+    "DCE.p2709",
+    "DCE.p2710",
+    "DCE.p2711",
+    "DCE.fb2612",
+    "DCE.fb2701",
+    "DCE.fb2702",
+    "DCE.fb2703",
+    "DCE.fb2704",
+    "DCE.fb2705",
+    "DCE.fb2706",
+    "DCE.fb2707",
+    "DCE.fb2708",
+    "DCE.fb2709",
+    "DCE.fb2710",
+    "DCE.fb2711",
+    "DCE.bb2701",
+    "DCE.bb2703",
+    "DCE.bb2705",
+    "DCE.bb2707",
+    "DCE.bb2709",
+    "DCE.bb2711",
+    "DCE.jd2611",
+    "DCE.jd2612",
+    "DCE.jd2701",
+    "DCE.jd2702",
+    "DCE.jd2703",
+    "DCE.jd2704",
+    "DCE.jd2705",
+    "DCE.jd2706",
+    "DCE.jd2707",
+    "DCE.jd2708",
+    "DCE.jd2709",
+    "DCE.jd2710",
+    "DCE.rr2612",
+    "DCE.rr2701",
+    "DCE.rr2702",
+    "DCE.rr2703",
+    "DCE.rr2704",
+    "DCE.rr2705",
+    "DCE.rr2706",
+    "DCE.rr2707",
+    "DCE.rr2708",
+    "DCE.rr2709",
+    "DCE.rr2710",
+    "DCE.rr2711",
+    "DCE.l2612",
+    "DCE.l2701",
+    "DCE.l2702",
+    "DCE.l2703",
+    "DCE.l2704",
+    "DCE.l2705",
+    "DCE.l2706",
+    "DCE.l2707",
+    "DCE.l2708",
+    "DCE.l2709",
+    "DCE.l2710",
+    "DCE.l2711",
+    "DCE.v2612",
+    "DCE.v2701",
+    "DCE.v2702",
+    "DCE.v2703",
+    "DCE.v2704",
+    "DCE.v2705",
+    "DCE.v2706",
+    "DCE.v2707",
+    "DCE.v2708",
+    "DCE.v2709",
+    "DCE.v2710",
+    "DCE.v2711",
+    "DCE.pp2612",
+    "DCE.pp2701",
+    "DCE.pp2702",
+    "DCE.pp2703",
+    "DCE.pp2704",
+    "DCE.pp2705",
+    "DCE.pp2706",
+    "DCE.pp2707",
+    "DCE.pp2708",
+    "DCE.pp2709",
+    "DCE.pp2710",
+    "DCE.pp2711",
+    "DCE.j2612",
+    "DCE.j2701",
+    "DCE.j2702",
+    "DCE.j2703",
+    "DCE.j2704",
+    "DCE.j2705",
+    "DCE.j2706",
+    "DCE.j2707",
+    "DCE.j2708",
+    "DCE.j2709",
+    "DCE.j2710",
+    "DCE.j2711",
+    "DCE.jm2612",
+    "DCE.jm2701",
+    "DCE.jm2702",
+    "DCE.jm2703",
+    "DCE.jm2704",
+    "DCE.jm2705",
+    "DCE.jm2706",
+    "DCE.jm2707",
+    "DCE.jm2708",
+    "DCE.jm2709",
+    "DCE.jm2710",
+    "DCE.jm2711",
+    "DCE.i2612",
+    "DCE.i2701",
+    "DCE.i2702",
+    "DCE.i2703",
+    "DCE.i2704",
+    "DCE.i2705",
+    "DCE.i2706",
+    "DCE.i2707",
+    "DCE.i2708",
+    "DCE.i2709",
+    "DCE.i2710",
+    "DCE.i2711",
+    "DCE.eg2611",
+    "DCE.eg2612",
+    "DCE.eg2701",
+    "DCE.eg2702",
+    "DCE.eg2703",
+    "DCE.eg2704",
+    "DCE.eg2705",
+    "DCE.eg2706",
+    "DCE.eg2707",
+    "DCE.eg2708",
+    "DCE.eg2709",
+    "DCE.eg2710",
+    "DCE.eb2611",
+    "DCE.eb2612",
+    "DCE.eb2701",
+    "DCE.eb2702",
+    "DCE.eb2703",
+    "DCE.eb2704",
+    "DCE.eb2705",
+    "DCE.eb2706",
+    "DCE.eb2707",
+    "DCE.eb2708",
+    "DCE.eb2709",
+    "DCE.eb2710",
+    "DCE.bz2611",
+    "DCE.bz2612",
+    "DCE.bz2701",
+    "DCE.bz2702",
+    "DCE.bz2703",
+    "DCE.bz2704",
+    "DCE.bz2705",
+    "DCE.bz2706",
+    "DCE.bz2707",
+    "DCE.bz2708",
+    "DCE.bz2709",
+    "DCE.bz2710",
+    "DCE.pg2611",
+    "DCE.pg2612",
+    "DCE.pg2701",
+    "DCE.pg2702",
+    "DCE.pg2703",
+    "DCE.pg2704",
+    "DCE.pg2705",
+    "DCE.pg2706",
+    "DCE.pg2707",
+    "DCE.pg2708",
+    "DCE.pg2709",
+    "DCE.pg2710",
+    "DCE.lh2611",
+    "DCE.lh2701",
+    "DCE.lh2703",
+    "DCE.lh2705",
+    "DCE.lh2707",
+    "DCE.lh2709",
+    "DCE.lg2611",
+    "DCE.lg2701",
+    "DCE.lg2703",
+    "DCE.lg2705",
+    "DCE.lg2707",
+    "DCE.lg2709",
+    "CZCE.SR2701",
+    "CZCE.SR2703",
+    "CZCE.SR2705",
+    "CZCE.SR2707",
+    "CZCE.SR2709",
+    "CZCE.SR2711",
+    "CZCE.CF2701",
+    "CZCE.CF2703",
+    "CZCE.CF2705",
+    "CZCE.CF2707",
+    "CZCE.CF2709",
+    "CZCE.CF2711",
+    "CZCE.PM2701",
+    "CZCE.PM2703",
+    "CZCE.PM2705",
+    "CZCE.PM2707",
+    "CZCE.PM2709",
+    "CZCE.PM2711",
+    "CZCE.WH2701",
+    "CZCE.WH2703",
+    "CZCE.WH2705",
+    "CZCE.WH2707",
+    "CZCE.WH2709",
+    "CZCE.WH2711",
+    "CZCE.RI2701",
+    "CZCE.RI2703",
+    "CZCE.RI2705",
+    "CZCE.RI2707",
+    "CZCE.RI2709",
+    "CZCE.RI2711",
+    "CZCE.JR2701",
+    "CZCE.JR2703",
+    "CZCE.JR2705",
+    "CZCE.JR2707",
+    "CZCE.JR2709",
+    "CZCE.JR2711",
+    "CZCE.RM2701",
+    "CZCE.RM2703",
+    "CZCE.RM2705",
+    "CZCE.RM2707",
+    "CZCE.RM2708",
+    "CZCE.RM2709",
+    "CZCE.RM2711",
+    "CZCE.RS2701",
+    "CZCE.RS2703",
+    "CZCE.RS2706",
+    "CZCE.RS2707",
+    "CZCE.RS2709",
+    "CZCE.RS2711",
+    "CZCE.OI2701",
+    "CZCE.OI2703",
+    "CZCE.OI2705",
+    "CZCE.OI2707",
+    "CZCE.OI2709",
+    "CZCE.OI2711",
+    "CZCE.CY2612",
+    "CZCE.CY2701",
+    "CZCE.CY2702",
+    "CZCE.CY2703",
+    "CZCE.CY2704",
+    "CZCE.CY2705",
+    "CZCE.CY2706",
+    "CZCE.CY2707",
+    "CZCE.CY2708",
+    "CZCE.CY2709",
+    "CZCE.CY2710",
+    "CZCE.CY2711",
+    "CZCE.AP2612",
+    "CZCE.AP2701",
+    "CZCE.AP2703",
+    "CZCE.AP2704",
+    "CZCE.AP2705",
+    "CZCE.AP2710",
+    "CZCE.AP2711",
+    "CZCE.CJ2612",
+    "CZCE.CJ2701",
+    "CZCE.CJ2703",
+    "CZCE.CJ2705",
+    "CZCE.CJ2707",
+    "CZCE.CJ2709",
+    "CZCE.ZC2612",
+    "CZCE.ZC2701",
+    "CZCE.ZC2702",
+    "CZCE.ZC2703",
+    "CZCE.ZC2704",
+    "CZCE.ZC2705",
+    "CZCE.ZC2706",
+    "CZCE.ZC2707",
+    "CZCE.ZC2708",
+    "CZCE.ZC2709",
+    "CZCE.ZC2710",
+    "CZCE.ZC2711",
+    "CZCE.TA2612",
+    "CZCE.TA2701",
+    "CZCE.TA2702",
+    "CZCE.TA2703",
+    "CZCE.TA2704",
+    "CZCE.TA2705",
+    "CZCE.TA2706",
+    "CZCE.TA2707",
+    "CZCE.TA2708",
+    "CZCE.TA2709",
+    "CZCE.TA2710",
+    "CZCE.TA2711",
+    "CZCE.MA2612",
+    "CZCE.MA2701",
+    "CZCE.MA2702",
+    "CZCE.MA2703",
+    "CZCE.MA2704",
+    "CZCE.MA2705",
+    "CZCE.MA2706",
+    "CZCE.MA2707",
+    "CZCE.MA2708",
+    "CZCE.MA2709",
+    "CZCE.MA2710",
+    "CZCE.MA2711",
+    "CZCE.FG2612",
+    "CZCE.FG2701",
+    "CZCE.FG2702",
+    "CZCE.FG2703",
+    "CZCE.FG2704",
+    "CZCE.FG2705",
+    "CZCE.FG2706",
+    "CZCE.FG2707",
+    "CZCE.FG2708",
+    "CZCE.FG2709",
+    "CZCE.FG2710",
+    "CZCE.FG2711",
+    "CZCE.SF2612",
+    "CZCE.SF2701",
+    "CZCE.SF2702",
+    "CZCE.SF2703",
+    "CZCE.SF2704",
+    "CZCE.SF2705",
+    "CZCE.SF2706",
+    "CZCE.SF2707",
+    "CZCE.SF2708",
+    "CZCE.SF2709",
+    "CZCE.SF2710",
+    "CZCE.SF2711",
+    "CZCE.SM2612",
+    "CZCE.SM2701",
+    "CZCE.SM2702",
+    "CZCE.SM2703",
+    "CZCE.SM2704",
+    "CZCE.SM2705",
+    "CZCE.SM2706",
+    "CZCE.SM2707",
+    "CZCE.SM2708",
+    "CZCE.SM2709",
+    "CZCE.SM2710",
+    "CZCE.SM2711",
+    "CZCE.UR2612",
+    "CZCE.UR2701",
+    "CZCE.UR2702",
+    "CZCE.UR2703",
+    "CZCE.UR2704",
+    "CZCE.UR2705",
+    "CZCE.UR2706",
+    "CZCE.UR2707",
+    "CZCE.UR2708",
+    "CZCE.UR2709",
+    "CZCE.UR2710",
+    "CZCE.UR2711",
+    "CZCE.SA2612",
+    "CZCE.SA2701",
+    "CZCE.SA2702",
+    "CZCE.SA2703",
+    "CZCE.SA2704",
+    "CZCE.SA2705",
+    "CZCE.SA2706",
+    "CZCE.SA2707",
+    "CZCE.SA2708",
+    "CZCE.SA2709",
+    "CZCE.SA2710",
+    "CZCE.SA2711",
+    "CZCE.PF2612",
+    "CZCE.PF2701",
+    "CZCE.PF2702",
+    "CZCE.PF2703",
+    "CZCE.PF2704",
+    "CZCE.PF2705",
+    "CZCE.PF2706",
+    "CZCE.PF2707",
+    "CZCE.PF2708",
+    "CZCE.PF2709",
+    "CZCE.PF2710",
+    "CZCE.PF2711",
+    "CZCE.PK2612",
+    "CZCE.PK2701",
+    "CZCE.PK2703",
+    "CZCE.PK2704",
+    "CZCE.PK2705",
+    "CZCE.PK2710",
+    "CZCE.PK2711",
+    "CZCE.PX2612",
+    "CZCE.PX2701",
+    "CZCE.PX2702",
+    "CZCE.PX2703",
+    "CZCE.PX2704",
+    "CZCE.PX2705",
+    "CZCE.PX2706",
+    "CZCE.PX2707",
+    "CZCE.PX2708",
+    "CZCE.PX2709",
+    "CZCE.PX2710",
+    "CZCE.PX2711",
+    "CZCE.SH2612",
+    "CZCE.SH2701",
+    "CZCE.SH2702",
+    "CZCE.SH2703",
+    "CZCE.SH2704",
+    "CZCE.SH2705",
+    "CZCE.SH2706",
+    "CZCE.SH2707",
+    "CZCE.SH2708",
+    "CZCE.SH2709",
+    "CZCE.SH2710",
+    "CZCE.SH2711",
+    "CZCE.PR2612",
+    "CZCE.PR2701",
+    "CZCE.PR2702",
+    "CZCE.PR2703",
+    "CZCE.PR2704",
+    "CZCE.PR2705",
+    "CZCE.PR2706",
+    "CZCE.PR2707",
+    "CZCE.PR2708",
+    "CZCE.PR2709",
+    "CZCE.PR2710",
+    "CZCE.PR2711",
+    "CZCE.PL2612",
+    "CZCE.PL2701",
+    "CZCE.PL2702",
+    "CZCE.PL2703",
+    "CZCE.PL2704",
+    "CZCE.PL2705",
+    "CZCE.PL2706",
+    "CZCE.PL2707",
+    "CZCE.PL2708",
+    "CZCE.PL2709",
+    "CZCE.PL2710",
+    "CZCE.PL2711",
+    "CZCE.SO2705",
+    "CZCE.SO2707",
+    "CZCE.SO2709",
+    "CZCE.SO2711",
+    "GFEX.si2612",
+    "GFEX.si2701",
+    "GFEX.si2702",
+    "GFEX.si2703",
+    "GFEX.si2704",
+    "GFEX.si2705",
+    "GFEX.si2706",
+    "GFEX.si2707",
+    "GFEX.si2708",
+    "GFEX.si2709",
+    "GFEX.si2710",
+    "GFEX.lc2612",
+    "GFEX.lc2701",
+    "GFEX.lc2702",
+    "GFEX.lc2703",
+    "GFEX.lc2704",
+    "GFEX.lc2705",
+    "GFEX.lc2706",
+    "GFEX.lc2707",
+    "GFEX.lc2708",
+    "GFEX.lc2709",
+    "GFEX.lc2710",
+    "GFEX.ps2612",
+    "GFEX.ps2701",
+    "GFEX.ps2702",
+    "GFEX.ps2703",
+    "GFEX.ps2704",
+    "GFEX.ps2705",
+    "GFEX.ps2706",
+    "GFEX.ps2707",
+    "GFEX.ps2708",
+    "GFEX.ps2709",
+    "GFEX.ps2710",
+    "GFEX.pt2612",
+    "GFEX.pt2702",
+    "GFEX.pt2704",
+    "GFEX.pt2706",
+    "GFEX.pt2708",
+    "GFEX.pt2710",
+    "GFEX.pd2612",
+    "GFEX.pd2702",
+    "GFEX.pd2704",
+    "GFEX.pd2706",
+    "GFEX.pd2708",
+    "GFEX.pd2710",
+    "CFFEX.IF2611",
+    "CFFEX.IF2612",
+    "CFFEX.IF2703",
+    "CFFEX.IF2706",
+    "CFFEX.IH2611",
+    "CFFEX.IH2612",
+    "CFFEX.IH2703",
+    "CFFEX.IH2706",
+    "CFFEX.IC2611",
+    "CFFEX.IC2612",
+    "CFFEX.IC2703",
+    "CFFEX.IC2706",
+    "CFFEX.IM2611",
+    "CFFEX.IM2612",
+    "CFFEX.IM2703",
+    "CFFEX.IM2706",
+    "CFFEX.TS2612",
+    "CFFEX.TS2703",
+    "CFFEX.TS2706",
+    "CFFEX.TF2612",
+    "CFFEX.TF2703",
+    "CFFEX.TF2706",
+    "CFFEX.T2612",
+    "CFFEX.T2703",
+    "CFFEX.T2706",
+    "CFFEX.TL2612",
+    "CFFEX.TL2703",
+    "CFFEX.TL2706"
+  ],
+  "scope_source_sha256": "4bdfbc84a30edea7fd38cae7eadb86648fe6c688bb4fd48e1a0e39410b253a94",
+  "base_facts_sha256": "151511219f387256164c2832d2da47a07d0ba8fbb64ee48ea11ed0ebad30f3ba",
+  "limits": [
+    "公司公开投机标准，非交易所原件或本账户实收；未更改引擎公司参数",
+    "公司投机统一比例仅用于公司参数情景，不伪装发布者给出了分方向客户数据",
+    "只映射既有明确合约年月/到期范围和当前已核集合，不声称挂牌全集；新月份不编造",
+    "最低开仓一律不从公司比例或普通1手填入；回测通过范围不因此增加"
+  ]
+}

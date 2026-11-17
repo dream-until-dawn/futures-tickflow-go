@@ -38,8 +38,10 @@ def source_cells(p, exchanges):
             if route.startswith('edb-'):return '天勤 EDB'
             if route=='verified-calendar':return '官方公告／规则'
             return row['source']
-        return [list(dict.fromkeys(short_source(r) for r in p['datasets'] if r['kind'] in group and r['present_rows'] and
+        cells=[list(dict.fromkeys(short_source(r) for r in p['datasets'] if r['kind'] in group and r['present_rows'] and
                 (r['kind']!='settlement' or r.get('valid_rows') is None or r['valid_rows']>0))) for group in kinds]
+        if p.get('broker_margin_reference'):cells[-1].append('五矿期货（公司保证金标准）')
+        return cells
     quotes=[]
     if p['nonempty']:quotes.append('天勤 EDB')
     if any(s['source']=='EDB旧有限日线样本' for s in p['supplementary']):quotes.append('天勤 EDB（样本）')
@@ -149,6 +151,13 @@ def check_docs(repo, config):
         history=data['history_consumer_readback'];facts=data['user_data_gate_facts']
         if history['target_day']!=facts['latest_completed_day'] or history['signal_trade_day']!=facts['current_trade_day']:
             raise ValueError('status_history_consumer_readback_day_scope')
+    constraints=next((r for r in config['repo_inputs'] if r['id']=='constraint_supplement'),None)
+    if constraints and data.get('constraint_supplement')!=locked_repo(repo,constraints):
+        raise ValueError('status_constraint_supplement_binding')
+    for name in ['broker_margin_readback','constraint_refresh']:
+        locked=next((r for r in config['repo_inputs'] if r['id']==name),None)
+        if locked and data.get(name)!=locked_repo(repo,locked):
+            raise ValueError('status_'+name+'_binding')
     extension=data.get('project_inventory',{}).get('history_extension')
     if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')
     if inventory and data['products']!=attach(data,data['project_inventory'])['products']:
@@ -189,6 +198,10 @@ def main():
         data['user_data_gate_readback']=repo_data['user_gate_readback']
     if 'history_consumer_readback' in repo_data:
         data['history_consumer_readback']=repo_data['history_consumer_readback']
+    if 'constraint_supplement' in repo_data:
+        data['constraint_supplement']=repo_data['constraint_supplement']
+    for name in ['broker_margin_readback','constraint_refresh']:
+        if name in repo_data:data[name]=repo_data[name]
     if 'project_inventory' in repo_data:
         extension=repo_data['project_inventory'].get('history_extension')
         if extension and extension['parent_catalog_sha256']!=config['catalog_sha256']:raise ValueError('status_extension_parent_sha')

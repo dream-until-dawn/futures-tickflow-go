@@ -76,6 +76,15 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /官方历史合约全集/);
     await page.click('#close-detail');
     await page.click('#reset');
+    await page.fill('#search','LC');
+    await page.locator('[data-product="GFEX.lc"] .product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /20261115.*明确字段/);
+    assert.match(await page.locator('#detail-body').innerText(), /历史观察，未升级当前门槛/);
+    await page.locator('#detail-body .historical-parameter-list').first().click();
+    assert.match(await page.locator('#detail-body').innerText(), /最小限价开仓 2手/);
+    assert.match(await page.locator('#detail-body').innerText(), /普通最小限价报单 1手/);
+    await page.screenshot({path:path.join(output,'dated-opening-minimum.png')});
+    await page.click('#close-detail');await page.click('#reset');
     await page.fill('#search','RM');
     await page.locator('[data-product="CZCE.RM"] .product-title').click();
     assert.match(await page.locator('#detail-body').innerText(), /仅单日未审核模型预览/);
@@ -89,9 +98,9 @@ async function main() {
     await page.fill('#search','AP');
     await page.locator('[data-product="CZCE.AP"] .product-title').click();
     assert.match(await page.locator('#detail-body').innerText(), /本轮历史日线补充/);
-    assert.ok(await page.locator('#detail-body .contract-list').count()>0);
-    await page.locator('#detail-body .contract-list summary').first().click();
-    assert.match(await page.locator('#detail-body .contract-list').first().innerText(), /日表记录日/);
+    assert.ok(await page.locator('#detail-body .contract-list:not(.parameter-list)').count()>0);
+    await page.locator('#detail-body .contract-list:not(.parameter-list) summary').first().click();
+    assert.match(await page.locator('#detail-body .contract-list:not(.parameter-list)').first().innerText(), /日表记录日/);
     await page.screenshot({path:path.join(output,'history-details.png')});
     await page.click('#close-detail');await page.click('#reset');
     await page.selectOption('#state', 'difference');

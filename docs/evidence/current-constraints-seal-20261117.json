@@ -1,0 +1,13 @@
+{
+  "schema": "constraint-evidence-retention-v1",
+  "archive": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\current-constraints-v1\\evidence.zip",
+  "sha256": "3d184c0dd747992377a40172684be7808ceb44c65f1bb687a7bfff6e749548bf",
+  "bytes": 13487005,
+  "files": 214,
+  "all_originals_individually_verified": true,
+  "migration_verified": true,
+  "targeted_mutation_rejected": "ContractDailyTradeArgument-20261117.json",
+  "restored_verified": true,
+  "admission_changed": false,
+  "not_a_new_qualified_backtest_package": true
+}

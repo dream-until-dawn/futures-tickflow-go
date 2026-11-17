@@ -1,0 +1,16 @@
+{
+  "accounts": false,
+  "exception_approval_required": true,
+  "execute_before": "2026-11-17T15:00:00+08:00",
+  "expanded_bytes_max": 805306368,
+  "marker": "C:/Temp/tickflow-explicit-minimum-refresh-20261117.once",
+  "purpose": "仅取明确open_min_limit_order_volume/open_min_market_order_volume，不使用普通最小报单或SDK默认1",
+  "redirects": 0,
+  "requests": 1,
+  "retries": 0,
+  "schema": "explicit-minimum-refresh-plan-v1",
+  "timeout_seconds": 240,
+  "trade_day": 20261117,
+  "url": "https://openmd.shinnytech.com/t/md/symbols/latest.json",
+  "wire_bytes_max": 33554432
+}

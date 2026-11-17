@@ -140,6 +140,22 @@ class StatusModelTest(unittest.TestCase):
             raw=b'{}';(repo/'docs/data-status.json').write_bytes(b'[]')
             with self.assertRaisesRegex(ValueError,'^status_published_model_sha$'):check_docs(repo,dict(published_model_sha256=hashlib.sha256(raw).hexdigest()))
 
+    def test_old_direct_minimum_cannot_be_promoted_in_rehashed_model(self):
+        repo=Path(__file__).resolve().parents[3]
+        config=json.loads((Path(__file__).parent/'sources.json').read_bytes())
+        data=json.loads((repo/'docs/data-status.json').read_bytes())
+        data['constraint_supplement']['historical_explicit_minimum']['current_qualification']=True
+        raw=(json.dumps(data,ensure_ascii=False,indent=2)+'\n').encode()
+        with tempfile.TemporaryDirectory() as directory:
+            target=Path(directory)
+            for entry in config['repo_inputs']+config['profiles']:
+                path=target/entry['file'];path.parent.mkdir(parents=True,exist_ok=True)
+                path.write_bytes((repo/entry['file']).read_bytes())
+            (target/'docs/data-status.json').write_bytes(raw)
+            config['published_model_sha256']=hashlib.sha256(raw).hexdigest()
+            with self.assertRaisesRegex(ValueError,'^status_constraint_supplement_binding$'):
+                check_docs(target,config)
+
 
 if __name__=='__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")

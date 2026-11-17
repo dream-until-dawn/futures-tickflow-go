@@ -1,0 +1,19 @@
+{
+  "schema": "current-constraints-increment-seal-v1",
+  "company_archive": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\current-constraints-v1\\company-margin-reference.zip",
+  "company_archive_sha256": "7641cde25007e382d92b60eefd2fd4ebb0a6c4c21e74a4d2e65a319ec64bd2cf",
+  "company_archive_bytes": 11498554,
+  "manifest_sha256": "36d3ae04e45d34e992fb224a7c1229e2be8e659d38ebf6478a55183a3e8615cf",
+  "files": 11,
+  "all_members_individually_verified": true,
+  "minimum_opening_qualified": false,
+  "price_records_delivered": false,
+  "failure_archive": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\current-constraints-v1\\refresh-failure.zip",
+  "failure_archive_sha256": "130a05231ed56beec7fbb99937b4026da148f1ee92bbc0a61671c7371d125a3d",
+  "failed_response_qualified": false,
+  "migration_verified": true,
+  "standalone_producer_recomputed": true,
+  "new_company_records_checked": 552,
+  "targeted_mutation_rejected": "company-original.html",
+  "restored_and_reverified": true
+}

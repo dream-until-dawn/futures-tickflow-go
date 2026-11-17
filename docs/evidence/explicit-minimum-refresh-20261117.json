@@ -1,0 +1,23 @@
+{
+  "body_complete": false,
+  "bytes": 856568,
+  "content_encoding": "gzip",
+  "defaults_applied": false,
+  "error": "context deadline exceeded",
+  "etag": "\"21ddf500ed539ba08cf3c000fdad72a448dbaeccb2ab9d266c456dbb0f7ecbab\"",
+  "final_url": "https://openmd.shinnytech.com/t/md/symbols/latest.json",
+  "received_at": "2026-11-17T06:15:37.2314706Z",
+  "requested_at": "2026-11-17T06:11:37.2310474Z",
+  "server_date": "Tue, 17 Nov 2026 06:11:39 GMT",
+  "sha256": "1a204951e44540826857aeed7f354a3dd702d6b2131fbece41c24d830a201ab4",
+  "state": "failed",
+  "status": 200,
+  "url": "https://openmd.shinnytech.com/t/md/symbols/latest.json",
+  "schema": "explicit-minimum-refresh-failure-v1",
+  "approval": "用户明确允许11月17日本次更新取证，仅一次，已使用",
+  "binary_sha256": "0bd3b10d8d9280034d6b45f0f71d297abe0122b441947537119cfbaf29fc8e1a",
+  "qualified_current_minimum_added": 0,
+  "retries": 0,
+  "decision": "不完整响应，不解作完整快照，不补日、不重试",
+  "original_receipt_sha256": "b5cb493803eddf7876086ed76c2dd73fb19b098f57e8e13a245cb2f5cf7e1697"
+}

@@ -37,7 +37,7 @@
     {
       "id": "user_gate_facts",
       "file": "docs/data-gate-facts.json",
-      "sha256": "151511219f387256164c2832d2da47a07d0ba8fbb64ee48ea11ed0ebad30f3ba"
+      "sha256": "cf57efc19158140c16fba1350c7a189e835ffebe245fb083aae990a5065a7696"
     },
     {
       "id": "user_gate_readback",
@@ -48,6 +48,21 @@
       "id": "history_consumer_readback",
       "file": "docs/signal-history-v5-consumer-readback-20261117.json",
       "sha256": "e553ae74bcf1545c12f97ac97bdef8dbe2d100e26e19074f62f46fd0d0379c5e"
+    },
+    {
+      "id": "constraint_supplement",
+      "file": "docs/evidence/current-constraints-supplement-20261117.json",
+      "sha256": "7b525152aec0f5d2c505018199df459d0e89b1e520502a2826c405fd3e2b3c25"
+    },
+    {
+      "id": "broker_margin_readback",
+      "file": "docs/evidence/broker-margin-readback-20261117.json",
+      "sha256": "5e2ab585d1ac718783fca1be18eca30e9ebd4f8639a95fc1f56db244870b8b61"
+    },
+    {
+      "id": "constraint_refresh",
+      "file": "docs/evidence/explicit-minimum-refresh-20261117.json",
+      "sha256": "e1661a11fa1df785f90d8614bcaa10c9c18382dde6f15c6ca6415c38441040f5"
     }
   ],
   "profiles": [
@@ -96,5 +111,5 @@
       "sha256": "40aed477c9af5573add513fe1dc978927eb0f3bea98b0d0ddd7c9096d44c1d7e"
     }
   ],
-  "published_model_sha256": "c6fbf728fa66e8675ada68b003bd5abadc1d3650de4c76a36c536b92d66cbd0c"
+  "published_model_sha256": "731b4047c97a1b106346eea9fc2ff3678cc59f678e87aeaf34116c3f4c1c9104"
 }

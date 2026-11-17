@@ -67,9 +67,13 @@ def markdown(data):
         counts={name:sum(p['user_data_gates'][name]['status']=='pass' for p in gated) for name in ('backtest','daily_signal')}
         current=data['user_data_gate_facts']['current_trade_day'];completed=data['user_data_gate_facts']['latest_completed_day']
         gate_lines=['## 当前两门槛结果','',f'最新完整行情日 {completed}，当前参数交易日 {current}。回测通过{counts["backtest"]}个品种；逐日信号通过{counts["daily_signal"]}个品种。两者独立，不相加为全市场完成数。','',
-                    '回测长历史按自2021年前后的逐年有效OHLC观察核，逐年实际日期数在详情；不将起止跨度冒充逐日完整。2021年后新上市品种的上市日起点尚未绑定到本轮机器事实时保留待补证。当前RB最低开仓依据是指定日、指定12合约的具名模型审核，实际客户适用性另核；不是同交易所的普遍声明。','',
+                    '回测长历史按自2021年前后的逐年有效OHLC观察核，逐年实际日期数在详情；不将起止跨度冒充逐日完整。2021年后新上市品种的上市日起点尚未绑定到本轮机器事实时保留待补证。最低开仓逐项列审核日和具体合约；普通1手基线及旧供应商快照均不能单独代填当前有效专项，真实客户适用性另核。','',
                     '逐日信号通过表示已有目标日有效结算和既有按日采集/校验入口；不代表全部合约、不代表后台自动服务已部署，也不承诺未来每次更新成功。郑商所三位原生码用同日XML显式年月绑定。','',
                     '| 品种 | 回测门槛 | 逐日信号门槛 | 硬项缺口 / 通过范围 |','| --- | --- | --- | --- |']
+        broker=data.get('broker_margin_readback')
+        if broker:
+            margin_products=sum(p['user_data_gates']['backtest']['hard_items']['current_margin']['status']=='pass' for p in gated)
+            gate_lines[2:2]=[f'**当前保证金补充：**{margin_products}品种有已映射的当前比例，其中原25品种保留交易所投机多空原件；其他来源采用明确发布者的公司公开标准情景，不能当作本账户实收。另有{len(broker["policies"])}品种的五矿期货17日公开政策及特殊月份原文，未有具体合约范围者仅显示品种政策。最低开仓没有从保证金或普通1手补填。见[本轮来源和待决](current-opening-constraints-20261117.md)。','']
         readback=data.get('user_data_gate_readback')
         if readback:
             gate_lines[2:2]=[f'**首包历史实测：**已读回{readback["result_files_checked"]}份真实信号消费结果并逐约核结算；单日MACD均预热不足，实际就绪信号{readback["ready_signals"]}。这是策略样本窗口限制，不把52个品种的数据门槛重新判失败。该首包不含保证金/最低开仓，通用假设文案的误示后续已修正，修正版52份信号和8份RB回测探针已另行逐件读回；旧结果留存。见[修正复核](signal-history-engine-fixed-readback-20261117.json)。见[独立读回](data-gates-consumer-readback-20261116.json)。','']

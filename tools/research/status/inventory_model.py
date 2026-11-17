@@ -144,6 +144,8 @@ def attach(data, inventory, gate_facts=None):
     quality=inventory.get('history_quality',{}).get('by_product',{})
     data['products']=[dict(p,extension_quality=quality.get(p['key'])) for p in data['products']]
     data['products'] = [dict(p,usage_readiness=assess(p)) for p in data['products']]
+    broker=data.get('broker_margin_readback',{}).get('policies',{})
+    data['products']=[dict(p,broker_margin_reference=broker.get(p['key'])) for p in data['products']]
     gate_facts = gate_facts or data.get('user_data_gate_facts')
     if gate_facts:
         from data_gates import assess as assess_data_gates

@@ -86,13 +86,15 @@ def assess(product, facts):
     current = [r for r in facts['current_contracts'] if r['product_key'] == key]
     rates = [r['symbol'] for r in current if current_margin(r, day)]
     minimum = [r['symbol'] for r in current if effective_minimum(r, day)]
+    rate_evidence = sorted({e for r in current if r['symbol'] in rates for e in r['margin']['evidence_ids']})
+    minimum_evidence = sorted({e for r in current if r['symbol'] in minimum for e in r['minimum_evidence_ids']})
     back = dict(history_ohlc=history,
                 current_margin=item('pass' if rates else 'pending', rates,
-                    ['ContractDailyTradeArgument-20261117.json'] if rates else [],
-                    '已核指定交易日交易所投机多空比例' if rates else '实际当前有效比例待补证；参考值或旧日值不冒充'),
+                    rate_evidence,
+                    '已核指定日交易所比例或明确发布者的公司公开标准情景；来源与账户实收分开' if rates else '实际当前有效比例待补证；参考值或旧日值不冒充'),
                 effective_min_open=item('pass' if minimum else 'pending', minimum,
-                    ['rb-minimum-model-review'] if minimum else [],
-                    '仅指定日指定RB合约的具名模型审核；客户适用性另核' if minimum else '实际最低开仓及专项适用链待补证，不默认普通1手'))
+                    minimum_evidence,
+                    '指定日具体合约限价/市价的具名模型审核，含已审专项；实际客户适用性另核' if minimum else '实际最低开仓及专项适用链待补证，不默认普通1手'))
     settlement = sorted(facts['settlement_scopes'].get(key, []))
     can_update = key.split('.')[0] in facts['daily_update_exchanges'] and bool(settlement)
     signal = dict(settlement=item('pass' if settlement else 'pending', settlement,
