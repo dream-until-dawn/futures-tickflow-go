@@ -1,0 +1,10 @@
+{
+  "schema": "v2-control-archive-v1",
+  "path": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\two-gates-v2\\rb-hc-control-v1.zip",
+  "bytes": 1956767,
+  "sha256": "3fa29607497bf2e3e6bfaf56d391a162748f9a7b1d3230c6c85a1e7f5dbbee34",
+  "files": 328,
+  "manifest_sha256": "47d988f619fa978736d2ae7774fd39964ab28698d4479de657e6b9946e8876e1",
+  "exact_declared_members": true,
+  "all_members_reread_equal": true
+}

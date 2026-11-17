@@ -1,0 +1,35 @@
+{
+  "schema": "two-product-v2-price-readback-v1",
+  "manifest_sha256": "47d988f619fa978736d2ae7774fd39964ab28698d4479de657e6b9946e8876e1",
+  "artifacts_checked": 327,
+  "history": {
+    "SHFE.rb": {
+      "rows": 15945,
+      "contracts": 82,
+      "valid_days_by_year": {
+        "2021": 243,
+        "2022": 242,
+        "2023": 242,
+        "2024": 242,
+        "2025": 243,
+        "2026": 209
+      }
+    },
+    "SHFE.hc": {
+      "rows": 15944,
+      "contracts": 81,
+      "valid_days_by_year": {
+        "2021": 243,
+        "2022": 242,
+        "2023": 242,
+        "2024": 242,
+        "2025": 243,
+        "2026": 209
+      }
+    }
+  },
+  "history_source_rows_independently_recomputed": true,
+  "actual_hc_minimum_kept_unknown": true,
+  "engine_acceptance": false,
+  "production_tasks_added": 0
+}

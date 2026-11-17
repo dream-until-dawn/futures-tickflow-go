@@ -27,3 +27,7 @@
 复算账本见[81商品逐项报告](evidence/product-gates-v2-20261117.json)，每项列两道状态、具体范围、硬项缺口及下一阶段；其中39个第一道待补证，逐项原因可查。报告绑定输入路径、长度和SHA，只含资料评估，不含价格负载，不可直接当作引擎执行包。可点击详情见[数据情况表](data-status.html)。引擎独立验收和运行成熟度另列，未新增任务或部署。
 
 本轮数量增加来自用户取消最低开仓硬条件，不是新下载了41品种历史行情；旧失败来源不重试，线上CI继续跳过，本地验证结果另记。不打tag。
+
+## 小范围真实价格候选
+
+另行生成[RB与HC对照包](v2-backtest-control-pack-20261117.md)，它与81商品资料评估分开。真实包顶层schema=user-data-gates-v2、synthetic=false；products每项仅gates.backtest/daily_signal，supplementary和simulation_assumptions在产品层另列。artifacts仍逐件id/role/path/bytes/sha256，价格行仍product_key/symbol/source_native/day/fields/source_id，current_contracts仍保留实际null值与原件保证金。包仅两品种当前参数情景，未选定任务模拟数量，不能把它外推至42品种全部已交付或已执行。
