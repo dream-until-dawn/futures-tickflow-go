@@ -1,0 +1,65 @@
+{
+  "schema": "engine-closed-assessment-root-readback-v1",
+  "consumer_file": "C:\\VScodeProject\\futures-decision-strategy\\results\\upstream-closed-gates-readback-20261117.json",
+  "consumer_bytes": 926,
+  "consumer_sha256": "dd03eeb6a131e21742aba8556005db3cc8bbeaa5453eb0dc7a1d6287d9974088",
+  "assessment_file": "docs/evidence/product-gates-v2-closed-20261117.json",
+  "assessment_sha256": "7596e25c55be4cb92799d93df2c29190d8d64092faa6c4ffd8014c3e2ea30b1e",
+  "input_count_verified": 5,
+  "summary": {
+    "products": 81,
+    "backtest": 75,
+    "daily_signal": 52,
+    "both": 47
+  },
+  "eligible_contract_counts": {
+    "backtest": 789,
+    "daily_signal": 527
+  },
+  "pending": [
+    "CZCE.JR",
+    "CZCE.LR",
+    "CZCE.PM",
+    "CZCE.RI",
+    "CZCE.WH",
+    "CZCE.ZC"
+  ],
+  "consumer_report": {
+    "schema": "engine-upstream-ledger-readback-v1",
+    "report_sha256": "7596e25c55be4cb92799d93df2c29190d8d64092faa6c4ffd8014c3e2ea30b1e",
+    "inputs_verified": 5,
+    "deterministic_report_rebuilt": true,
+    "independent_counts": {
+      "products": 81,
+      "backtest": 75,
+      "daily_signal": 52,
+      "both": 47
+    },
+    "eligible_contract_counts": {
+      "backtest": 789,
+      "daily_signal": 527
+    },
+    "first_gate_pending": [
+      "CZCE.JR",
+      "CZCE.LR",
+      "CZCE.PM",
+      "CZCE.RI",
+      "CZCE.WH",
+      "CZCE.ZC"
+    ],
+    "exchange_product_counts": {
+      "SHFE": 20,
+      "INE": 5,
+      "CZCE": 28,
+      "DCE": 23,
+      "GFEX": 5
+    },
+    "limits": [
+      "metadata and deterministic assessment readback only",
+      "not full raw history or new listing original-body acceptance",
+      "no executable 75-product bundle, production task or financial admission",
+      "actual minimum remains unknown"
+    ]
+  },
+  "limits": "Only assessment, input hashes and counts; not full new raw-original acceptance, executable bundle or deployment"
+}
