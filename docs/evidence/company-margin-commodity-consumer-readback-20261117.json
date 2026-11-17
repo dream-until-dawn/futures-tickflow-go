@@ -1,0 +1,116 @@
+{
+  "schema": "commodity-company-reference-independent-readback-v1",
+  "source_manifest_sha256": "02c4e0487e33a1611bb6f0ea8e547df68e1410a8819596db57277486e25360dc",
+  "registered_evidence_files_verified": 9,
+  "consumer_result": {
+    "status": "reference_integrity_passed_not_admitted",
+    "policies": 81,
+    "bound_contracts": 825,
+    "new_company_contracts": 524,
+    "new_company_products": 55,
+    "all_scope_objects_streamed": 253419,
+    "producer_code_executed": false,
+    "minimum_open_unknown": 524,
+    "financial_admission_added": 0,
+    "excluded_financial_products": 0,
+    "excluded_new_financial_contracts": 0,
+    "commodity_policies": 81,
+    "new_commodity_reference_contracts": 524,
+    "production_changed": false,
+    "source_scope_day": 20261115,
+    "company_policy_day": 20261117,
+    "old_exchange_contracts_retained_in_separate_base": 301,
+    "commodity_projection": {
+      "market_scope": [
+        "CZCE",
+        "DCE",
+        "GFEX",
+        "INE",
+        "SHFE"
+      ],
+      "financial_records_consumed": 0,
+      "parent_projection_equal": true,
+      "original_inputs_unchanged": true,
+      "excluded_financial": {
+        "products": [
+          "CFFEX.IC",
+          "CFFEX.IF",
+          "CFFEX.IH",
+          "CFFEX.IM",
+          "CFFEX.T",
+          "CFFEX.TF",
+          "CFFEX.TL",
+          "CFFEX.TS"
+        ],
+        "records": 28
+      }
+    },
+    "manifest_sha256": "c10005856b7b9299295185505a50658442ae12dfaf96acc20cfaf7ba102410a1"
+  },
+  "zip_verification": {
+    "status": "passed",
+    "zip": "C:\\VScodeProject\\futures-tickflow-data\\delivery\\20261117\\current-constraints-v1\\company-margin-commodity-v2-files-only.zip",
+    "sha256": "a0dacc69c5dc45d7a23961bad8c06ed870ba872b2d68c3ba2040089b945f082f",
+    "bytes": 11498536,
+    "files": 11,
+    "directories": 0,
+    "undeclared_members": 0,
+    "all_members_equal_original_files": true,
+    "manifest_sha256": "c10005856b7b9299295185505a50658442ae12dfaf96acc20cfaf7ba102410a1",
+    "old_zip_rejection_retained": true,
+    "windows_and_docker_full_acceptance_equal": true
+  },
+  "negative_controls": {
+    "status": "passed",
+    "source_manifest_sha256": "c10005856b7b9299295185505a50658442ae12dfaf96acc20cfaf7ba102410a1",
+    "mutations_in_memory_only": true,
+    "production_changed": false,
+    "controls": [
+      {
+        "case": "declared_scope",
+        "rejected": true,
+        "reason": "商品market_scope混入其他场所或缺失"
+      },
+      {
+        "case": "company_row",
+        "rejected": true,
+        "reason": "商品消费记录混入金融或其他场所"
+      },
+      {
+        "case": "known_product",
+        "rejected": true,
+        "reason": "商品消费记录混入金融或其他场所"
+      },
+      {
+        "case": "bound_contract",
+        "rejected": true,
+        "reason": "商品消费记录混入金融或其他场所"
+      },
+      {
+        "case": "false_exclusion_count",
+        "rejected": true,
+        "reason": "金融排除计数与父包不符"
+      }
+    ]
+  },
+  "docker_test_report": {
+    "tests": 11,
+    "errors": 0,
+    "failures": 0,
+    "success": true,
+    "network": "none",
+    "memory_mib": 512
+  },
+  "root_reran_docker": false,
+  "local_validation": {
+    "tested_commit": "2dc70fe16250e969a48f784530cad7ee784b4711",
+    "go_modules": 3,
+    "gofmt_vet_test": "passed",
+    "python_tests": 261,
+    "module_sweep_log_sha256": "16a4ac4a2f56573b791db78b134a0c936a4493324d54b198222d2ca0ee0f0cb9",
+    "restoration": "same e3b0c44298fc",
+    "online_ci": "skipped-by-user"
+  },
+  "admission_added": 0,
+  "production_task_added": 0
+}
