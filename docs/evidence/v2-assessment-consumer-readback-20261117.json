@@ -1,0 +1,51 @@
+{
+  "schema": "assessment-consumer-readback-v1",
+  "consumer_manifest_sha256": "46659c7405543c61c18f9be971736befc7e185b3cc8246cf2d0abe01e831d151",
+  "consumer_files_checked": [
+    {
+      "file": "binding-and-compatibility.json",
+      "bytes": 1455,
+      "sha256": "d8b6396d34faf662f74ec34f6f4e380c04eade8155b3e4db985b192c2c5db4ba"
+    },
+    {
+      "file": "docker-summary.json",
+      "bytes": 722,
+      "sha256": "96eb3552eabd41be7923aba711c9055addb072c440ed2643a18c95071b59c11f"
+    },
+    {
+      "file": "docker-tests.json",
+      "bytes": 119,
+      "sha256": "edf4dd6a40f1de8916673801cc5c4a6edb7758c907a569e1806769c415a07aab"
+    },
+    {
+      "file": "independent.json",
+      "bytes": 8804,
+      "sha256": "8160bf5b2e6bdc0c285ddf8532cef1ea795df0e9f3b0076be1acd6d678394eb9"
+    },
+    {
+      "file": "negative-controls.json",
+      "bytes": 1071,
+      "sha256": "d54ef02beb73f2cfec10096d799da4bde555780f4b37a02f8a3823484ab6c236"
+    },
+    {
+      "file": "upstream-assessment.json",
+      "bytes": 332627,
+      "sha256": "50c062d50059041e7aabc031935110d3c10e9585081eaaff5250188cdde88201"
+    }
+  ],
+  "windows_docker_summary_equal": true,
+  "assessment_bytes_equal": true,
+  "actual_rejection_controls": 6,
+  "consumer_test_report": {
+    "tests": 23,
+    "errors": 0,
+    "failures": 0,
+    "success": true,
+    "network": "none",
+    "memory_mib": 512
+  },
+  "engine_backtests_run": 0,
+  "tasks_registered": 0,
+  "production_changed": false,
+  "scope": "资料评估独立消费，只读核对对方真实文件；本仓未重跑Docker，不声称价格执行已通过"
+}
