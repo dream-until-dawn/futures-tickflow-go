@@ -1,0 +1,1 @@
+{"browser": "desktop/mobile/details passed; zero remote requests", "doccheck": "203 docs / 893 declarations", "go_root": "go test ./... passed after correcting new script UTF8 formatting", "online_ci": "skipped_by_user", "source_and_migration_files": 2844, "status_tests": 96, "tag_created": false, "tamper_reason": "native_handoff_source_sha"}
