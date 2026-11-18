@@ -1,1 +1,23 @@
-{"browser": "desktop/mobile/details passed; zero remote requests", "doccheck": "203 docs / 893 declarations", "full_go_modules": 3, "full_log": "C:/Temp/tickflow-rm-hc-full-validation-20261118.log", "full_python_directories": 18, "full_python_tests": 288, "full_sweep_revision": "f58723d0f81985c2867388abfc2f17ace8ceecfe", "generator_restore_drill": "passed; workspace fingerprint unchanged", "go_root": "go test ./... passed after correcting new script UTF8 formatting", "online_ci": "skipped_by_user", "source_and_migration_files": 2844, "status_tests": 96, "tag_created": false, "tamper_reason": "native_handoff_source_sha"}
+{
+  "browser": "desktop/mobile/details passed; zero remote requests",
+  "doccheck": "203 docs / 893 declarations",
+  "full_go_modules": 3,
+  "full_log": "C:/Temp/tickflow-rm-hc-extension-full-20261118.log",
+  "full_python_directories": 18,
+  "full_python_tests": 292,
+  "full_sweep_revision": "8a16f1ac8717db5191c3179ab771866d6d3500c3",
+  "generator_restore_drill": "passed; workspace fingerprint unchanged",
+  "go_root": "go test ./... passed after correcting new script UTF8 formatting",
+  "online_ci": "skipped_by_user",
+  "source_and_migration_files": 2844,
+  "status_tests": 100,
+  "tag_created": false,
+  "tamper_reason": "native_handoff_source_sha",
+  "initial_validation": {
+    "full_sweep_revision": "f58723d0f81985c2867388abfc2f17ace8ceecfe",
+    "full_python_tests": 288,
+    "full_log": "C:/Temp/tickflow-rm-hc-full-validation-20261118.log"
+  },
+  "final_browser": "C:/Temp/tickflow-rm-hc-browser-20261118-final",
+  "old_75_index_and_zip": "SHA unchanged"
+}

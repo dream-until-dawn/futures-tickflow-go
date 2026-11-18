@@ -1,0 +1,12 @@
+{
+  "status": "documentation_search_transport_failed",
+  "queries": [
+    "site.tushare.pro/document 期货 日线行情 GFEX DCE fut_daily 结算",
+    "site.myquant.cn/docs 期货 日线 settle_price 结算 数据"
+  ],
+  "result": "connection failed: error sending request",
+  "publisher_pages_read": 0,
+  "new_native_market_requests": 0,
+  "qualified_new_sources": 0,
+  "interpretation": "检索工具连接失败，不是发布者拒绝或数据不存在的证据；旧失败入口未重试；不采购、不用账户、不提高信号门槛"
+}
