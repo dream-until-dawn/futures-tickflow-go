@@ -82,6 +82,7 @@ async function main() {
     assert.match(await page.locator('#detail-body').innerText(), /本轮原件暂未定位/);
     await page.screenshot({ path: path.join(output, 'rb-detail.png') });
     assert.match(await page.locator('#detail-body').innerText(), /官方历史合约全集/);
+    assert.equal(await page.locator('#detail-body a[href="rm-hc-evidence-handoff-20261118.md"]').count(),0);
     await page.click('#close-detail');
     await page.click('#reset');
     await page.fill('#search','LC');
@@ -96,6 +97,17 @@ async function main() {
     await page.fill('#search','RM');
     await page.locator('[data-product="CZCE.RM"] .product-title').click();
     assert.match(await page.locator('#detail-body').innerText(), /仅单日未审核模型预览/);
+    assert.match(await page.locator('#detail-body').innerText(), /已完成限定独立回读，历史准入仍待证/);
+    assert.equal(await page.locator('#detail-body a[href="rm-hc-evidence-handoff-20261118.md"]').count(),1);
+    await page.screenshot({path:path.join(output,'rm-native-handoff.png')});
+    await page.click('#close-detail');await page.click('#reset');
+    await page.fill('#search','HC');
+    await page.locator('[data-product="SHFE.hc"] .product-title').click();
+    assert.match(await page.locator('#detail-body').innerText(), /不是11月18日行情更新/);
+    assert.match(await page.locator('#detail-body').innerText(), /4,236份官方业务表/);
+    assert.match(await page.locator('#detail-body').innerText(), /最后8个行情日缺参数/);
+    assert.equal(await page.locator('#detail-body a[href="rm-hc-evidence-handoff-20261118.md"]').count(),1);
+    await page.screenshot({path:path.join(output,'hc-native-handoff.png')});
     await page.click('#close-detail');await page.click('#reset');
     await page.fill('#search','SC');
     await page.locator('[data-product="INE.sc"] .product-title').click();
