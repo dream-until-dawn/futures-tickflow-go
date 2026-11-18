@@ -12,6 +12,62 @@ from native_handoff import checked, encoded, sha, verify
 
 LEDGER_SHA = '497819e8c28ea1a9cc7f2c92b997b4dc9d3a6d27df7f7a8f83d91f45f4c96132'
 KINDS = {'ContractBaseInfo', 'ContractDailyTradeArgument', 'Settlement'}
+EXTENSION_LEDGER_SHA = '5a71f410b809472cb0ef7d80c9773dcf01ea5f0cd5c01623db6578cf0f830a52'
+EXTENSION_DAYS = {'20261104','20261105','20261106','20261109','20261110','20261111','20261112'}
+
+
+def extension_entries(ledger):
+    selected = [e for e in ledger if e['day'] > '20261103']
+    expected = {(d, k) for d in EXTENSION_DAYS for k in KINDS}
+    expected |= {('20261113', k) for k in KINDS - {'Settlement'}}
+    actual = [(e['day'], e['kind']) for e in selected]
+    if len(actual) != len(set(actual)) or set(actual) != expected:
+        raise ValueError('hc_parameters_extension_exact_scope')
+    return selected
+
+
+def extend(source, out):
+    """单独保留23表增量；13日缺结算业务表，绝不伪报三表齐备。"""
+    if out.exists():
+        raise ValueError('hc_parameters_output_exists')
+    ledger_raw = checked(source / 'ledger.json', EXTENSION_LEDGER_SHA)
+    entries = extension_entries(json.loads(ledger_raw))
+    out.mkdir(parents=True)
+    members = []
+    def store(name, raw):
+        path = out / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw)
+        members.append(dict(path=name, bytes=len(raw), sha256=sha(raw)))
+    store('ledger.json', ledger_raw)
+    selected = []
+    scopes = collections.defaultdict(dict)
+    for e in entries:
+        if Path(e['file']).name != e['file'] or e['state'] != 'dated_table_validated' or e['http_status'] != 200:
+            raise ValueError('hc_parameters_extension_source_identity')
+        raw = checked(source / e['file'], e['sha256'], e['bytes'])
+        rows = select(raw, e['day'], e['kind'])
+        name = 'originals/' + e['file']
+        store(name, raw)
+        scopes[e['day']][e['kind']] = sorted(r['INSTRUMENTID'] for r in rows)
+        selected.extend(dict(day=int(e['day']), kind=e['kind'], fields=r,
+                             source=name, source_url=e['url'], effective_at=None,
+                             actual_min_open_lots=None) for r in rows)
+    for day, values in scopes.items():
+        if len({tuple(v) for v in values.values()}) != 1:
+            raise ValueError('hc_parameters_extension_contract_scope')
+    store('hc-native-parameters.jsonl', b''.join(map(encoded, selected)))
+    report = dict(schema='hc-native-parameters-extension-v1', network_requests=0,
+                  parent_ledger_sha256=EXTENSION_LEDGER_SHA, tables=len(entries), hc_rows=len(selected),
+                  complete_three_table_days=sorted(EXTENSION_DAYS),
+                  incomplete_days={'20261113':['Settlement']}, independent_engine_acceptance='pending',
+                  limitations=['表日/生效/PIT仍分开；不把13日两表说成三表齐备',
+                               '未补最低开仓、专项费用或金融准入；原件不覆写'])
+    store('report.json', encoded(report))
+    manifest = encoded(dict(schema='hc-native-parameter-files-v1', members=members))
+    (out / 'manifest.json').write_bytes(manifest)
+    assert verify(out, sha(manifest)) == len(members) + 1
+    return dict(report=report, manifest_sha256=sha(manifest), output=str(out))
 
 
 def select(raw, day, kind):
@@ -97,5 +153,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source', type=Path)
     parser.add_argument('out', type=Path)
+    parser.add_argument('--extension', action='store_true')
     args = parser.parse_args()
-    print(json.dumps(build(args.source, args.out), ensure_ascii=False, indent=2))
+    print(json.dumps((extend if args.extension else build)(args.source, args.out), ensure_ascii=False, indent=2))

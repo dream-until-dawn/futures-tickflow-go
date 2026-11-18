@@ -104,8 +104,8 @@ async function main() {
     await page.fill('#search','HC');
     await page.locator('[data-product="SHFE.hc"] .product-title').click();
     assert.match(await page.locator('#detail-body').innerText(), /不是11月18日行情更新/);
-    assert.match(await page.locator('#detail-body').innerText(), /4,236份官方业务表/);
-    assert.match(await page.locator('#detail-body').innerText(), /最后8个行情日缺参数/);
+    assert.match(await page.locator('#detail-body').innerText(), /4,236份官方业务表及追加23表/);
+    assert.match(await page.locator('#detail-body').innerText(), /2026-11-13缺Settlement业务表/);
     assert.equal(await page.locator('#detail-body a[href="rm-hc-evidence-handoff-20261118.md"]').count(),1);
     await page.screenshot({path:path.join(output,'hc-native-handoff.png')});
     await page.click('#close-detail');await page.click('#reset');

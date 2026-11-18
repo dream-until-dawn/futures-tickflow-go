@@ -3,11 +3,19 @@ import copy
 import io
 import sys
 import unittest
-from hc_parameters import select
+from hc_parameters import select, extension_entries, EXTENSION_DAYS, KINDS
 from native_handoff import encoded
 
 
 class HCParametersTest(unittest.TestCase):
+    def test_extension_requires_exact_23_tables_and_keeps_missing_settlement(self):
+        entries=[dict(day=d,kind=k) for d in EXTENSION_DAYS for k in KINDS]
+        entries += [dict(day='20261113',kind=k) for k in KINDS-{'Settlement'}]
+        self.assertEqual(len(extension_entries(entries)),23)
+        for changed in (entries[:-1], entries+[entries[0]], entries+[dict(day='20261113',kind='Settlement')]):
+            with self.assertRaisesRegex(ValueError,'hc_parameters_extension_exact_scope'):
+                extension_entries(changed)
+
     def value(self):
         return dict(report_date='2021-01-04', ContractDailyTradeArgument=[dict(
             INSTRUMENTID='hc2101', TRADINGDAY='20210104', SPEC_LONGMARGINRATIO='.15')])
