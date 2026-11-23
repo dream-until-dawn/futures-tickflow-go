@@ -1,0 +1,211 @@
+{
+  "schema": "czce-missing-year-source-audit-v1",
+  "catalog_sha256": "57c148fa66ce8276f92ee7883fe0aa909a643559efaab23833663caea868b3d8",
+  "source": "all-market-price-catalog-20261114/catalog-v2",
+  "network_requests": 0,
+  "groups": [
+    {
+      "product": "JR",
+      "year": 2024,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    },
+    {
+      "product": "LR",
+      "year": 2023,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20230103,
+      "last": 20231229
+    },
+    {
+      "product": "LR",
+      "year": 2024,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    },
+    {
+      "product": "LR",
+      "year": 2025,
+      "rows": 885,
+      "positive_volume": 0,
+      "zero_volume": 885,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 885,
+      "reasons": {
+        "OHLC缺失或非正": 885
+      },
+      "observed_days": 243,
+      "first": 20250102,
+      "last": 20251231
+    },
+    {
+      "product": "LR",
+      "year": 2026,
+      "rows": 10,
+      "positive_volume": 0,
+      "zero_volume": 10,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 10,
+      "reasons": {
+        "OHLC缺失或非正": 10
+      },
+      "observed_days": 10,
+      "first": 20260105,
+      "last": 20260116
+    },
+    {
+      "product": "PM",
+      "year": 2023,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20230103,
+      "last": 20231229
+    },
+    {
+      "product": "PM",
+      "year": 2024,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    },
+    {
+      "product": "RI",
+      "year": 2023,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20230103,
+      "last": 20231229
+    },
+    {
+      "product": "RI",
+      "year": 2024,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    },
+    {
+      "product": "WH",
+      "year": 2024,
+      "rows": 1452,
+      "positive_volume": 0,
+      "zero_volume": 1452,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 1452,
+      "reasons": {
+        "OHLC缺失或非正": 1452
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    },
+    {
+      "product": "ZC",
+      "year": 2024,
+      "rows": 2904,
+      "positive_volume": 0,
+      "zero_volume": 2904,
+      "missing_volume": 0,
+      "valid_ohlc": 0,
+      "positive_settlement": 2904,
+      "reasons": {
+        "OHLC缺失或非正": 2904
+      },
+      "observed_days": 242,
+      "first": 20240102,
+      "last": 20241231
+    }
+  ],
+  "raw_samples": [
+    {
+      "day": 20230103,
+      "rows": 18,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2023/20230103/FutureDataDaily.txt",
+      "sha256": "d72947ddbc318bd31146bf38230ce8ed5e2b34888921b9efa8dfb1bd86106eb4"
+    },
+    {
+      "day": 20240102,
+      "rows": 42,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2024/20240102/FutureDataDaily.txt",
+      "sha256": "cce80985453e21f9b07557945ddecf6d8c8397a181f3d6cc86c041920eaf2bc2"
+    },
+    {
+      "day": 20250102,
+      "rows": 6,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2025/20250102/FutureDataDaily.txt",
+      "sha256": "0cd0e34d6012af49f4b78ca448132ceb50e8b75d0d7e6b9a4e87deab3cf91ad6"
+    },
+    {
+      "day": 20260116,
+      "rows": 1,
+      "url": "https://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20260116/FutureDataDaily.txt",
+      "sha256": "e384cd22b5f72ac53b9770f6b28bcdc9448cb081947f6b0888a7a538b890a155"
+    }
+  ],
+  "wrong_day_control": "rejected"
+}

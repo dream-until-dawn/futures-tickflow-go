@@ -1,0 +1,56 @@
+{
+  "private_root": "C:\\Temp\\tickflow-hc-opening-fee-20261123-v1",
+  "manifest_sha256": "d81ba428e95be72eed6a0082a25c7974f4222d4d75798a4043152cb50d57165a",
+  "report": {
+    "schema": "hc-fee-effective-boundary-v1",
+    "source_manifest_sha256": "24af929ec4cfa1d101da8735ea16854e4534ce41bd9fe845a178ab30df414b00",
+    "source_notice": "https://www.shfe.com.cn/publicnotice/notice/202405/t20240529_801782.html",
+    "effective_trade_day": 20240531,
+    "first_session_local": "2024-05-30T21:00:00+08:00",
+    "observations": [
+      {
+        "day": "20240529",
+        "sha256": "2dfa1c6d960f252dfa369acaacae87da8eb8925f4afb6995c2c0f6b3cc9038ff",
+        "rates": {
+          "hc2407": "0.0001",
+          "hc2408": "0.0001",
+          "hc2409": "0.0001",
+          "hc2410": "0.0001"
+        }
+      },
+      {
+        "day": "20240530",
+        "sha256": "789725813b0d07d0a2a0869b17897a068d0d588b208bd97e60ecf105b9489327",
+        "rates": {
+          "hc2407": "0.0001",
+          "hc2408": "0.0001",
+          "hc2409": "0.0001",
+          "hc2410": "0.0001"
+        }
+      },
+      {
+        "day": "20240531",
+        "sha256": "5b2c511ae6ea09c9cbcd77cbc290803e587990e5cadd9299743908a2cc4d77b3",
+        "rates": {
+          "hc2407": "0.0001",
+          "hc2408": "0.00002",
+          "hc2409": "0.00002",
+          "hc2410": "0.0001"
+        }
+      },
+      {
+        "day": "20240603",
+        "sha256": "4a8cd94d25059ae9a352ce0e244ba41c516204244645be0b38273ac5fea81197",
+        "rates": {
+          "hc2407": "0.0001",
+          "hc2408": "0.0001",
+          "hc2409": "0.00002",
+          "hc2410": "0.0001"
+        }
+      }
+    ],
+    "previous_table_controls_rejected": 2,
+    "close_today_table_field_present": false,
+    "first_historical_availability_proven": false
+  }
+}
