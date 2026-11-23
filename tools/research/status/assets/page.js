@@ -104,7 +104,10 @@ function details(p) {
       '此为旧原件重新整理，不是11月18日行情更新。观察候选不是上市全集；历史金融规则、因果换月及正式交易起点尚未认证。'
     ]);
     const link=append(extra,'a','查看逐年统计、原件链和缺项');link.href='rm-hc-evidence-handoff-20261118.md';
-    if(p.key==='SHFE.hc')append(extra,'p','另有初批4,236份官方业务表及追加23表，含原始保证金、费用及上市到期字段；合计1,419日三表齐备，2026-11-13缺Settlement业务表，第二批待独立复核。表日不自动等于生效时刻。');
+    if(p.key==='SHFE.hc') {
+      append(extra,'p','初批4,236份官方业务表及追加23表保留原始保证金、费用和上市到期字段。2026-11-13的Settlement业务表已从既有采集恢复，合计1,420日三表齐备。恢复件已通过引擎独立回读，首发和生效时间仍待证。');
+      const recovery=append(extra,'a','查看11月23日原件恢复与对账');recovery.href='data-acquisition-followup-20261123.md';
+    }
   }
   if(p.price_delivery) {
     const d=p.price_delivery, state={pending:'已成包，等待引擎独立验收',accepted_with_limits:'已按限定范围完成离线验收',blocked:'存在待解决反馈'}[d.consumer_status];

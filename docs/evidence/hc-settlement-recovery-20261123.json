@@ -1,0 +1,33 @@
+{
+  "private_root": "C:\\Temp\\tickflow-hc-settlement-20261113-recovered-20261123-v1",
+  "manifest_sha256": "d683d4f589a71ff20700ea5bf382e4b5fcd75ec410d4952f4c05f6edb657fd96",
+  "report_sha256": "c24ae69d61465297ef85c5cfb995c8dc668cc4a4dfc8e3284ed50ebcf1bfcfd2",
+  "historic_business_table_coverage": {
+    "three_table_days": 1420,
+    "through": 20261113
+  },
+  "report": {
+    "report_day": 20261113,
+    "table_update_date": "20261113 16:10:00",
+    "hc_contracts": 12,
+    "settlement_quote_matches": 12,
+    "margin_differences": [],
+    "network_requests": 0,
+    "original_sha256": "4193c6592c406a26bce9f635d3ca4b5689c6feb394c4152d8ef30a8d5fcfefcc",
+    "original_bytes": 108476,
+    "source_url": "https://www.shfe.com.cn/data/busiparamdata/future/Settlement20261113.dat",
+    "source_attempt": "20261113-rb-12aabbb9eb88",
+    "parameter_parent_manifest_sha256": "3bf4c9efa00d6a961daab87db94842b39317a6fbe4cbf1a41af7b2975327ee6b",
+    "quote_parent_manifest_sha256": "5aad22ce69fd54a10ad8c8ce32dd352d16b7c2b8837961ede620550e41d05bb9",
+    "existing_capture_and_preparation_identical": true,
+    "negative_controls": [
+      "changed settlement",
+      "missing HC row",
+      "wrong table date",
+      "wrong source hash"
+    ],
+    "first_publication_verified": false,
+    "opening_effective_time_verified": false,
+    "engine_readback": "pending"
+  }
+}
